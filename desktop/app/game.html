@@ -3800,8 +3800,24 @@ function initAudio() {
     audio.ctx = null;
   }
 }
+// «Будить» звук на телефонах: iPhone і Android засинають, поки не було дотику; resume() треба викликати прямо в обробнику дотику.
+// Тихий порожній звук допомагає iOS остаточно «розблокувати» аудіо.
+function unlockSilent() {
+  try {
+    const ac = audio.ctx, src = ac.createBufferSource();
+    src.buffer = ac.createBuffer(1, 1, 22050);
+    src.connect(ac.destination);
+    src.start(0);
+  } catch (e) { /* нічого */ }
+}
 function resumeAudio() {
-  if (audio.ctx && audio.ctx.state === 'suspended' && !document.hidden) audio.ctx.resume();
+  const ac = audio.ctx;
+  if (!ac || document.hidden) return;
+  if (ac.state !== 'running') {
+    const p = ac.resume();
+    if (p && p.then) p.then(unlockSilent, () => {});
+  }
+  unlockSilent();
 }
 function applyVolumes(instant) {
   if (!audio.ctx) return;
@@ -3999,7 +4015,7 @@ function updateSoundUI() {
 function setupSound() {
   parseMusic();
   // перший дотик/натискання вмикає звук (вимога браузерів); далі будить його, якщо він заснув
-  ['pointerdown', 'keydown', 'touchstart', 'touchend', 'click'].forEach(ev => document.addEventListener(ev, initAudio, { passive: true }));
+  ['pointerdown', 'pointerup', 'keydown', 'touchstart', 'touchend', 'click'].forEach(ev => document.addEventListener(ev, initAudio, { passive: true }));
   ui.soundBtn.addEventListener('click', () => { ui.soundModal.hidden = false; updateSoundUI(); });
   ui.soundClose.addEventListener('click', () => { ui.soundModal.hidden = true; saveGame(); });
   ui.soundModal.addEventListener('click', e => { if (e.target === ui.soundModal) { ui.soundModal.hidden = true; saveGame(); } });
@@ -4010,7 +4026,7 @@ function setupSound() {
   // неактивна вкладка — музика (і весь звук) завмирає, активна — продовжується
   document.addEventListener('visibilitychange', () => {
     if (!audio.ctx) return;
-    if (document.hidden) audio.ctx.suspend(); else audio.ctx.resume();
+    if (document.hidden) audio.ctx.suspend(); else resumeAudio();
   });
   updateSoundUI();
 }
