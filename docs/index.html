@@ -383,7 +383,7 @@ body[data-epoch="3"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 #wheelClose { margin-top: 6px; }
 .modal-box { width: min(92vw, 360px); padding: 26px 22px 22px; text-align: center; }
 .modal-box h2 { font-size: 16px; line-height: 1.4; margin-bottom: 14px; }
-.modal-box p { font-size: 13px; line-height: 1.8; margin-bottom: 6px; }
+.modal-box p { font-size: 13px; line-height: 1.8; margin-bottom: 6px; white-space: pre-line; }
 .modal-box .big { font-size: 22px; color: var(--red); display: block; margin: 8px 0; word-break: break-word; }
 
 /* ===== Телефон / вузький екран: сцена вгорі, панель і вкладки внизу ===== */
@@ -535,7 +535,8 @@ body[data-epoch="3"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
           <h2 data-i18n="setSave"></h2>
           <p class="ws-line" data-i18n="setSaveNote"></p>
           <textarea id="exportBox" rows="3" readonly></textarea>
-          <div class="row"><button type="button" class="btn" id="exportBtn" data-i18n="exportBtn"></button><button type="button" class="btn" id="copyBtn" data-i18n="copyBtn"></button></div>
+          <p class="ws-line" id="exportInfo"></p>
+          <div class="row"><button type="button" class="btn" id="exportBtn" data-i18n="exportBtn"></button><button type="button" class="btn" id="copyBtn" data-i18n="copyBtn"></button><button type="button" class="btn" id="shareBtn" data-i18n="shareBtn" hidden></button></div>
           <textarea id="importBox" rows="3" data-i18n-ph="importPlaceholder"></textarea>
           <button type="button" class="btn wide" id="importBtn" data-i18n="importBtn"></button>
           <button type="button" class="btn wide danger" id="resetBtn" data-i18n="resetBtn"></button>
@@ -1634,7 +1635,9 @@ const translations = {
     importTitle: 'Завантажити збереження?', importText: 'Поточний прогрес на цьому пристрої буде замінено.', importYes: 'Так, завантажити',
     importFail: 'Код не підійшов. Перевір, що скопіювала його повністю.', importNoStorage: 'Не вдалося зберегти: сховище браузера недоступне.',
     resetBtn: 'Скинути весь прогрес', resetTitle: 'Скинути прогрес?', resetText: 'Усе буде видалено назавжди: монетки, звірята, глави, нагороди й кристали. Це неможливо скасувати!', resetYes: 'Так, видалити все',
-    dbgHour: '+1 година часу', dbgX100: '×100 монеток'
+    dbgHour: '+1 година часу', dbgX100: '×100 монеток',
+    shareBtn: 'Надіслати',
+    saveSummary: 'У збереженні: «{0}», відділів куплено: {1}, звірят: {2}, кристалів: {3}, зароблено: {4}'
   },
   en: {
     pageTitle: 'Capy Through Time',
@@ -1971,7 +1974,9 @@ const translations = {
     importTitle: 'Load this save?', importText: 'Your current progress on this device will be replaced.', importYes: 'Yes, load it',
     importFail: "That code didn't work. Make sure you copied all of it.", importNoStorage: "Couldn't save: browser storage is unavailable.",
     resetBtn: 'Reset all progress', resetTitle: 'Reset progress?', resetText: 'Everything will be deleted forever: coins, animals, chapters, awards and crystals. This cannot be undone!', resetYes: 'Yes, delete everything',
-    dbgHour: '+1 hour of time', dbgX100: '×100 coins'
+    dbgHour: '+1 hour of time', dbgX100: '×100 coins',
+    shareBtn: 'Share',
+    saveSummary: 'Save contains: "{0}", departments bought: {1}, animals: {2}, crystals: {3}, earned: {4}'
   }
 };
 
@@ -2785,7 +2790,7 @@ const ui = {
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
   paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), paneStats: $('pane-stats'), statsCard: $('statsCard'),
   paneSettings: $('pane-settings'), setLangBtns: $('setLangBtns'), setNumFmt: $('setNumFmt'), setAnim: $('setAnim'), setSound: $('setSound'),
-  exportBox: $('exportBox'), importBox: $('importBox'), exportBtn: $('exportBtn'), copyBtn: $('copyBtn'), importBtn: $('importBtn'), resetBtn: $('resetBtn'),
+  exportBox: $('exportBox'), importBox: $('importBox'), exportInfo: $('exportInfo'), shareBtn: $('shareBtn'), exportBtn: $('exportBtn'), copyBtn: $('copyBtn'), importBtn: $('importBtn'), resetBtn: $('resetBtn'),
   debugCard: $('debugCard'), dbgHour: $('dbgHour'), dbgX100: $('dbgX100'), statEpoch: $('statEpoch'),
   confirmModal: $('confirmModal'), confirmTitle: $('confirmTitle'), confirmText: $('confirmText'), confirmYes: $('confirmYes'), confirmNo: $('confirmNo'),
   timeWarp: $('timeWarp'), warpClock: $('warpClock'),
@@ -4343,10 +4348,22 @@ function parseImportCode(text) {
   if (!data.state || typeof data.state !== 'object') throw new Error('state');
   return data;
 }
+// Коротко про те, що лежить у збереженні (щоб перед перенесенням було видно, чи це справді твій прогрес)
+function saveSummary(st) {
+  const lvl = Math.max(1, Math.min(LEVELS.length, Math.floor(st.shopLevel || 1)));
+  const depts = (st.depts || []).reduce((a, b) => a + (b || 0), 0);
+  const team = (st.team || []).filter(v => v > 0).length;
+  return t('saveSummary', t('levelName_' + lvl), fmt(depts), team, fmt(st.crystalsTotal || 0), fmt(Math.floor(st.totalEarned || 0)));
+}
+function showExport() {
+  ui.exportBox.value = makeExportCode();
+  ui.exportBox.select();
+  ui.exportInfo.textContent = saveSummary(state);
+}
 function importSave() {
   let data;
   try { data = parseImportCode(ui.importBox.value); } catch (e) { showToast(t('importFail'), 'bad'); return; }
-  askConfirm(t('importTitle'), t('importText'), t('importYes'), () => {
+  askConfirm(t('importTitle'), t('importText') + '\n\n' + saveSummary(data.state), t('importYes'), () => {
     const fresh = createDefaultState();
     mergeInto(fresh, data.state);
     Object.assign(state, fresh);
@@ -4361,8 +4378,13 @@ function hardReset() {
   try { localStorage.removeItem(CONFIG.SAVE_KEY); } catch (e) { /* нічого */ }
   location.reload();
 }
+function shareExport() {
+  showExport();
+  if (navigator.share) navigator.share({ text: ui.exportBox.value }).catch(() => {});
+}
 function copyExport() {
   ui.exportBox.value = makeExportCode();
+  ui.exportInfo.textContent = saveSummary(state);
   ui.exportBox.focus(); ui.exportBox.select();
   let ok = false;
   try { ok = document.execCommand('copy'); } catch (e) { /* нічого */ }
@@ -4423,7 +4445,8 @@ function setupProgression() {
   });
   ui.setAnim.addEventListener('click', () => { state.settings.animations = !animOn(); applyViewSettings(); updateUI(); saveGame(); });
   ui.setSound.addEventListener('click', () => { ui.soundModal.hidden = false; updateSoundUI(); });
-  ui.exportBtn.addEventListener('click', () => { ui.exportBox.value = makeExportCode(); ui.exportBox.select(); });
+  ui.exportBtn.addEventListener('click', showExport);
+  if (navigator.share) { ui.shareBtn.hidden = false; ui.shareBtn.addEventListener('click', shareExport); }
   ui.copyBtn.addEventListener('click', copyExport);
   ui.importBtn.addEventListener('click', importSave);
   ui.resetBtn.addEventListener('click', () => askConfirm(t('resetTitle'), t('resetText'), t('resetYes'), hardReset));
