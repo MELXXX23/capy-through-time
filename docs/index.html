@@ -235,6 +235,9 @@ button:disabled { cursor: default; }
 
 /* ===== Панель і вкладки ===== */
 #tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+.tabmore { display: none; }
+#musicStyleRow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+#musicStyleRow .btn { flex: 1 1 28%; font-size: 11px; padding: 9px 4px; }
 .tab { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 9px 2px 8px; font-size: 9px; line-height: 1.1; min-width: 0; }
 .tab .tab-icon { font-size: 18px; line-height: 1; }
 .tab .tab-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -377,6 +380,10 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 #dlgName { font-size: 15px; color: var(--red); min-height: 18px; margin-bottom: 8px; }
 #dlgText { font-size: 14px; line-height: 1.9; min-height: calc(1.9em * 4); white-space: pre-line; flex: 1; }
 #dlgText.title { font-size: 17px; text-align: center; padding-top: 14px; color: var(--red); }
+.dlg-choices { display: flex; flex-direction: column; gap: 8px; margin: 6px 0 10px; }
+.dlg-choices[hidden] { display: none; }
+.dlg-choices .btn { text-align: left; font-size: 13px; line-height: 1.6; padding: 10px 12px; display: block; width: 100%; }
+.dlg-choices .btn small { display: block; margin-top: 4px; font-size: 10px; color: var(--brown); }
 #dlgNext { align-self: flex-end; font-size: 15px; color: var(--brown); animation: blink 0.8s steps(2, jump-none) infinite; visibility: hidden; }
 #dlgNext.on { visibility: visible; }
 #dlgSkip { position: absolute; right: 6px; top: -42px; padding: 10px 12px; font-size: 11px; background: var(--panel); color: var(--dark); }
@@ -443,8 +450,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @media (max-width: 820px) and (orientation: portrait), (max-width: 560px) {
   #app {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr);
-    grid-template-areas: "top" "stage" "panel";
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "top" "stage";
   }
   #topbar { padding: 6px 8px; gap: 8px; }
   #hud { padding: 6px 12px 6px 10px; gap: 8px; }
@@ -452,15 +459,25 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #coinCount { font-size: 20px; }
   #cps { font-size: 11px; margin-top: 5px; }
   .lang-btn { padding: 9px 8px; min-width: 44px; font-size: 13px; }
-  #stage { padding: 14px 12px; }
+  #stage { padding: 14px 12px 78px; }
   #scene { box-shadow: 0 0 0 3px var(--darker), 0 0 0 6px var(--honey), 0 0 0 9px var(--darker); }
-  #app.panel-closed { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) 0; }
-  #panelToggle { top: auto; right: auto; left: 50%; bottom: 0; width: 78px; height: 30px; margin: 0 0 0 -39px; }
-  #app #panelToggle svg { transform: rotate(90deg); }              /* меню відкрите — стрілка вниз (сховати) */
-  #app.panel-closed #panelToggle svg { transform: rotate(-90deg); } /* меню сховане — стрілка вгору (показати) */
-  #panel { margin: 0 8px 8px; padding: 12px; flex-direction: column-reverse; }
-  #tabs { margin: 10px 0 0; }
-  #tabContent { padding: 2px 2px 4px; }
+  #app.panel-closed { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  #panelToggle { display: none; }
+  /* Мінімалістичне меню: внизу тонка смужка з іконками; торкнувся — вміст виїжджає над нею, торкнувся ще раз чи сцени — ховається */
+  #panel, #app.panel-closed #panel { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0 6px calc(6px + env(safe-area-inset-bottom)); padding: 8px; flex-direction: column-reverse; max-height: 82dvh; }
+  #tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+  .tab, .tabmore { flex: 1 1 18%; padding: 7px 2px; }
+  .tab .tab-icon { font-size: 22px; }
+  .tab .tab-name { display: none; }
+  .tab.secondary { display: none; flex: 1 1 22%; order: 0; padding: 6px 2px 5px; gap: 4px; }
+  .tab.secondary .tab-icon { font-size: 18px; }
+  .tab.secondary .tab-name { display: block; }
+  #app.more-open .tab.secondary:not([hidden]) { display: flex; }
+  .tab.primary, .tabmore { order: 1; }
+  .tabmore { display: flex; align-items: center; justify-content: center; font-size: 22px; line-height: 1; }
+  #app.more-open .tabmore { background: var(--honey); }
+  #tabContent { display: none; max-height: 46dvh; margin-bottom: 8px; padding: 2px 2px 4px; }
+  #app.sheet-open #tabContent { display: block; }
   .card { padding: 10px 12px; margin-bottom: 8px; }
   #toasts { top: 58px; }
   .chip { font-size: 10px; padding: 3px 5px; }
@@ -488,9 +505,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
       <div id="boosts" aria-live="polite"></div>
     </div>
     <div id="topRight">
-      <button type="button" id="soundBtn" class="btn" data-i18n-aria="soundTitle">🔊</button>
       <button type="button" id="wheelOpen" class="btn" data-i18n-aria="wheelTitle">🎡</button>
-      <div id="langSwitch" role="group" data-i18n-aria="langLabel"></div>
     </div>
   </header>
 
@@ -645,6 +660,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 <div id="soundModal" hidden>
   <div class="frame modal-box" role="dialog" aria-modal="true" aria-labelledby="soundTitle">
     <h2 id="soundTitle" data-i18n="soundTitle"></h2>
+    <p class="ws-line" data-i18n="musicStyle"></p>
+    <div class="row" id="musicStyleRow"></div>
     <label class="vol"><span data-i18n="soundMusic"></span><input type="range" id="musicVol" min="0" max="100" step="1"></label>
     <label class="vol"><span data-i18n="soundSfx"></span><input type="range" id="sfxVol" min="0" max="100" step="1"></label>
     <button type="button" class="btn wide" id="muteBtn"></button>
@@ -680,6 +697,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
       <div class="dlg-main">
         <div id="dlgName"></div>
         <div id="dlgText"></div>
+        <div id="dlgChoices" class="dlg-choices" hidden></div>
         <div id="dlgNext">▼</div>
       </div>
     </div>
@@ -1050,6 +1068,7 @@ const TEAM_PARTS = {
   leo:     { body: 'n', belly: 'w', feet: 'd', top: ['..d.....', '..dod...', '..dooddd', '..dooooo', '..dooooo', '..doXooo', '..doxooo', '..dowwwk', '..dowwww', '...dwwww'] },
   murzyk:  { body: 'u', belly: 'u', feet: 'e', top: ['..d.....', '..ded...', '..deeddd', '..deeeee', '..deeeee', '..deXeee', '..dexeee', '..deEEEp', '..deEEEE', '...deeee'] },
   zhuzha:  { body: 'p', belly: 'q', feet: 'g', top: ['.ddd....', '.dwkd...', '.dgggddd', '.dgggggg', '..dggggg', '..dggggg', '..dgggmm', '..dddddd', '..dgmmmm', '...dgggg'] },
+  shnyr:   { body: 'e', belly: 'E', feet: 'k', top: ['..d.....', '..ded...', '..deeddd', '..deeeee', '..dkkkkE', '..dkwkkE', '..dkkkkE', '..deEEEk', '..deEEEE', '...deeee'] },
   toma:    { body: 'b', belly: 'c', feet: 'e', top: ['....dddd', '..ddEEEE', 'eedEEEEE', 'eqdEEEEE', 'eqdEEEEE', 'eqdEXEEE', 'eedExEEE', '.edEEEEE', '..dEEEEe', '...dEEEe'] }
 };
 
@@ -1080,14 +1099,38 @@ const TEAM = [
   { id: 'murzyk', level: 6, baseCost: 1.4e13, bonus: { type: 'deptIncome', depts: [9, 11], per: 0.2 },
     spot: { f: 0.60, y: 157, move: 'stand', prop: 'tablet' } },
   { id: 'toma',   level: 6, baseCost: 1.7e13, bonus: { type: 'deptCost', per: 0.02, cap: 0.2 },
-    spot: { f: 0.93, r: 10, y: 158, move: 'patrol', prop: 'cart' } }
+    spot: { f: 0.93, r: 10, y: 158, move: 'patrol', prop: 'cart' } },
+  { id: 'shnyr',  level: 2, baseCost: 3e4,    bonus: { type: 'global', per: 0.02 }, needs: 'shnyrJoined',
+    spot: { f: 0.78, r: 12, y: 156, move: 'patrol', prop: 'none' } }
 ];
 const TEAM_PHRASES = 6;   // скільки фраз у кожного звірятка (див. translations)
 const CAPY_PHRASES = 6;
 
 // Сюжетні персонажі, яких не можна найняти (той самий спосіб збирання 16×16, що й у команди)
+const SHNYR_HEAD = ['..d.....', '..ded...', '..deeddd', '..deeeee', '..dkkkkE', '..dkwkkE', '..dkkkkE', '..deEEEk', '..deEEEE', '...deeee'];
+const shnyrWith = (rows, extra) => { const t = SHNYR_HEAD.slice(); Object.keys(extra || {}).forEach(k => { t[k] = extra[k]; }); rows.forEach((row, i) => { t[i] = row; }); return t; };
 const NPC_PARTS = {
-  shnyr: { body: 'e', belly: 'E', feet: 'k', top: ['..d.....', '..ded...', '..deeddd', '..deeeee', '..dkkkkE', '..dkwkkE', '..dkkkkE', '..deEEEk', '..deEEEE', '...deeee'] }
+  shnyr: { body: 'e', belly: 'E', feet: 'k', top: SHNYR_HEAD },
+  // Гості епох (кожен має свою історію): Піп, Зіна, Макс, Бітик, Лесик, Орбіт, Лумі, Бруно
+  pip:   { body: 'k', belly: 'w', feet: 'o', top: ['...wwwww', '..dwwwww', '..dkkkkk', '.dkkkkkk', '.dkwwwww', '.dkwXwww', '.dkwxwwo', '.dkwwwwo', '..dkwwww', '...dkkkk'] },
+  zina:  { body: 'w', belly: 'E', feet: 'k', top: ['.kk.....', '.kffffff', '.fdwkwkw', '.fdwwkww', '..dkwwkw', '..dwXwww', '..dwxwww', '..dwEEEE', '..dwEEEk', '...dwwww'] },
+  maks:  { body: 'b', belly: 'c', feet: 'd', top: ['.bb.....', '.bbddddd', '..dbbbbb', '.dTTTTTT', 'ccdbbbbb', 'ccdbXccc', '.cdbxccc', '..dbcccc', '..dbccck', '...dcccc'] },
+  bitik: { body: 'e', belly: 'S', feet: 'n', top: ['.......r', '.......d', '.dddddEE', '.dEEEEEE', '.dEkkkkk', '.dEkTkkk', '.dEkkkkk', '.dEkkkkk', '.dEkTTTT', '..dEEEEE'] },
+  lesyk: { body: 'b', belly: 'c', feet: 'd', top: ['.b.b....', '.bbb.b.b', '..dbbbbb', '..dllllll', '..dlllll', '..dlXlll', '..dlxlll', '..dlcccc', '..dlccck', '...dllll'].map(x => x.slice(0, 8)) },
+  orbit: { body: 'w', belly: 'S', feet: 'e', top: ['....SSSS', '..SSSSSS', '.SdllllL', '.SdlllLL', '.SlllbbL', '.SlXllll', '.SlxllLL', '.SlllcccL'.slice(0, 8), '..SlcccL', '...SSSSS'].map(x => x.slice(0, 8)) },
+  lumi:  { body: 'y', belly: 'w', feet: 'h', top: ['.f.....f', '..f...f.', '..dddddd', '.dyyyyyy', '.dyyyyyy', '.dyXyyyy', '.dyxyyyy', '.dywwwww', '..dywwww', '...dyyyy'].map(x => x.slice(0, 8)) },
+  bruno: { body: 'e', belly: 'E', feet: 'k', top: ['...rrrrr', '..rrrrrr', '..dwwkkw', '..dwwkkw', '..dkwwww', '..dwXwww', '..dwxwww', '..dkkkkk', '..dwwwww', '...dkwww'] },
+  // Шнирь у різних ролях (костюми епох)
+  pietro: { body: 'o', belly: 'y', feet: 'h', top: ['......pp', '...nnnnn', '..dnnnnn', '..dwwwww', '..dwwwww', '..dwXwww', '..dwxwwo', '..dwwwwo', '..dwwwwr', '...dwwww'] },
+  shnyr0: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['r..y....', 'rrryyy..', '.dryrddd']) },                // блазень на ярмарку
+  shnyr1: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['....yyyy', '...yrrrr', '..dyyyyy']) },        // комівояжер у солом'яному капелюсі
+  shnyr2: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['.f.ffff.', '.ffd.dff', '.fdeeddd']) },          // діджей із навушниками
+  shnyr3: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['....vvvv', '..vvvvvv', '.dvvvvvv']) },          // геймер у кепці
+  shnyr4: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['....kkkk', '..kkkkkk', '.kkkkkkk', '.dkkkkkk'], { 5: '..dkTkkE' }) },   // хакер у капюшоні
+  shnyr5: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['.g.g.g..', '.ggggggg', '..dgeddd']) },          // «еко-інспектор» із вінком
+  shnyr6: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['....SSSS', '..SSSSSS', '.SSwwwww']) },           // у скафандрі
+  shnyr7: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['...f.f.f', '..f.f.f.', '..dfeddd'], { 5: '..dkfkkE' }) },   // неоновий бос
+  shnyr8: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['...rrrrr', '..rrrrrr', '..dreddd']) }            // у береті, позує художнику
 };
 // Чарівний годинник 16×16 (пише сам діалог у фіналі)
 const CLOCK_ROWS = [
@@ -1228,8 +1271,113 @@ const MUSIC = {
     { wave: 'noise', vol: 0.35, pattern: Array(8).fill('k:4 .:4 s:4 .:4') }
   ] }
 };
-// Яка мелодія грає на якому рівні магазину (свята мають власну — поле music у HOLIDAYS)
-const MUSIC_BY_LEVEL = ['calm', 'calm', 'market', 'market', 'mall', 'mall'];
+// Ще два стилі музики (вибирається в налаштуваннях звуку): «Пригодницька» — бадьорий чіптюн, «Спокійна» — м'яка 8-бітна лоу-фай
+const DRUMS_CHIP = 'k:2 h:2 s:2 h:2 k:2 k:2 s:2 h:2';
+MUSIC.chipA = { bpm: 138, channels: [
+  { wave: 'square', vol: 0.09, pattern: [
+    'E5:2 G5:2 C6:2 G5:2 E5:2 G5:2 C6:4', 'D5:2 G5:2 B5:2 G5:2 D5:2 G5:2 B5:4', 'C5:2 E5:2 A5:2 E5:2 C5:2 E5:2 A5:4', 'A4:2 C5:2 F5:2 C5:2 A4:2 C5:2 F5:4',
+    'G5:4 E5:2 G5:2 C6:4 G5:4', 'B5:4 G5:2 B5:2 D6:4 B5:4', 'A5:4 F5:2 A5:2 C6:4 A5:4', 'B5:2 A5:2 G5:2 F5:2 G5:8'] },
+  { wave: 'square', vol: 0.032, pattern: [
+    arpBar('C4', 'E4', 'G4'), arpBar('B3', 'D4', 'G4'), arpBar('A3', 'C4', 'E4'), arpBar('A3', 'C4', 'F4'),
+    arpBar('C4', 'E4', 'G4'), arpBar('B3', 'D4', 'G4'), arpBar('A3', 'C4', 'F4'), arpBar('B3', 'D4', 'G4')] },
+  { wave: 'triangle', vol: 0.22, pattern: [
+    'C3:2 C3:2 G3:2 C3:2 E3:2 C3:2 G3:2 C3:2', 'G2:2 G2:2 D3:2 G2:2 B2:2 G2:2 D3:2 G2:2', 'A2:2 A2:2 E3:2 A2:2 C3:2 A2:2 E3:2 A2:2', 'F2:2 F2:2 C3:2 F2:2 A2:2 F2:2 C3:2 F2:2',
+    'C3:2 C3:2 G3:2 C3:2 E3:2 C3:2 G3:2 C3:2', 'G2:2 G2:2 D3:2 G2:2 B2:2 G2:2 D3:2 G2:2', 'F2:2 F2:2 C3:2 F2:2 A2:2 F2:2 C3:2 F2:2', 'G2:2 G2:2 D3:2 G2:2 B2:2 G2:2 D3:2 G2:2'] },
+  { wave: 'noise', vol: 0.36, pattern: Array(8).fill(DRUMS_CHIP) }
+] };
+MUSIC.chipB = { bpm: 150, channels: [
+  { wave: 'square', vol: 0.09, pattern: [
+    'D5:1 F#5:1 A5:2 D6:4 A5:2 F#5:2 A5:4', 'C#5:1 E5:1 A5:2 C#6:4 A5:2 E5:2 A5:4', 'B4:1 D5:1 F#5:2 B5:4 F#5:2 D5:2 F#5:4', 'B4:1 D5:1 G5:2 B5:4 G5:2 D5:2 G5:4',
+    'A5:2 F#5:2 D5:2 F#5:2 A5:4 D6:4', 'E6:2 C#6:2 A5:2 C#6:2 E6:4 A5:4', 'D6:2 B5:2 G5:2 B5:2 D6:4 G5:4', 'C#6:2 B5:2 A5:2 G#5:2 A5:8'] },
+  { wave: 'square', vol: 0.032, pattern: [
+    arpBar('D4', 'F#4', 'A4'), arpBar('A3', 'C#4', 'E4'), arpBar('B3', 'D4', 'F#4'), arpBar('G3', 'B3', 'D4'),
+    arpBar('D4', 'F#4', 'A4'), arpBar('A3', 'C#4', 'E4'), arpBar('G3', 'B3', 'D4'), arpBar('A3', 'C#4', 'E4')] },
+  { wave: 'triangle', vol: 0.22, pattern: [
+    'D2:2 D3:2 D2:2 D3:2 A2:2 A3:2 A2:2 D3:2', 'A2:2 A3:2 A2:2 A3:2 E3:2 E3:2 A2:2 A3:2', 'B2:2 B3:2 B2:2 B3:2 F#3:2 F#3:2 B2:2 B3:2', 'G2:2 G3:2 G2:2 G3:2 D3:2 D3:2 G2:2 G3:2',
+    'D2:2 D3:2 D2:2 D3:2 A2:2 A3:2 A2:2 D3:2', 'A2:2 A3:2 A2:2 A3:2 E3:2 E3:2 A2:2 A3:2', 'G2:2 G3:2 G2:2 G3:2 D3:2 D3:2 G2:2 G3:2', 'A2:2 A3:2 A2:2 A3:2 E3:2 E3:2 A2:2 A3:2'] },
+  { wave: 'noise', vol: 0.38, pattern: Array(8).fill('k:2 h:2 s:2 h:2 k:2 h:2 s:2 k:2') }
+] };
+const DRUMS_CHILL = 'k:4 h:2 .:2 s:4 h:2 .:2';
+MUSIC.chillA = { bpm: 78, channels: [
+  { wave: 'triangle', vol: 0.17, pattern: [
+    'E5:6 C5:2 A4:8', 'A4:4 C5:4 F5:8', 'E5:6 G5:2 E5:8', 'D5:4 B4:4 G4:8',
+    'E5:4 A5:4 G5:4 E5:4', 'F5:6 E5:2 C5:8', 'D5:4 F5:4 A5:4 C6:4', 'B5:6 G#5:2 E5:8'] },
+  { wave: 'square', vol: 0.04, pattern: [
+    'A3:4 C4:4 E4:4 G4:4', 'F3:4 A3:4 C4:4 E4:4', 'C4:4 E4:4 G4:4 B4:4', 'G3:4 B3:4 D4:4 B3:4',
+    'A3:4 C4:4 E4:4 G4:4', 'F3:4 A3:4 C4:4 E4:4', 'D3:4 F3:4 A3:4 C4:4', 'E3:4 G#3:4 B3:4 D4:4'] },
+  { wave: 'triangle', vol: 0.2, pattern: [
+    'A2:8 E3:8', 'F2:8 C3:8', 'C3:8 G2:8', 'G2:8 D3:8', 'A2:8 E3:8', 'F2:8 C3:8', 'D3:8 A2:8', 'E2:8 B2:8'] },
+  { wave: 'noise', vol: 0.26, pattern: Array(8).fill(DRUMS_CHILL) }
+] };
+MUSIC.chillB = { bpm: 92, channels: [
+  { wave: 'triangle', vol: 0.17, pattern: [
+    'A5:4 F5:4 D5:4 F5:4', 'D5:4 F5:4 A5:4 D6:4', 'C6:4 A5:4 F5:4 A5:4', 'G5:4 E5:4 C5:4 E5:4',
+    'D5:2 F5:2 A5:4 D6:4 A5:4', 'Bb5:2 A5:2 F5:4 D5:4 F5:4', 'G5:4 Bb5:4 D6:4 Bb5:4', 'C#6:6 E6:2 A5:8'] },
+  { wave: 'square', vol: 0.04, pattern: [
+    'D3:4 F3:4 A3:4 C4:4', 'Bb2:4 D3:4 F3:4 A3:4', 'F3:4 A3:4 C4:4 A3:4', 'C3:4 E3:4 G3:4 E3:4',
+    'D3:4 F3:4 A3:4 C4:4', 'Bb2:4 D3:4 F3:4 A3:4', 'G2:4 Bb2:4 D3:4 F3:4', 'A2:4 C#3:4 E3:4 G3:4'] },
+  { wave: 'triangle', vol: 0.2, pattern: [
+    'D2:6 D3:2 A2:8', 'Bb1:6 Bb2:2 F2:8', 'F2:6 F3:2 C3:8', 'C2:6 C3:2 G2:8', 'D2:6 D3:2 A2:8', 'Bb1:6 Bb2:2 F2:8', 'G2:6 G3:2 D3:8', 'A1:6 A2:2 E2:8'] },
+  { wave: 'noise', vol: 0.28, pattern: Array(8).fill('k:2 h:2 s:2 h:2 k:2 .:2 s:2 h:2') }
+] };
+// Стилі музики: які мелодії грають на яких рівнях магазину (свята мають власну — поле music у HOLIDAYS)
+const MUSIC_STYLES = [
+  { id: 'classic', levels: ['calm', 'calm', 'market', 'market', 'mall', 'mall'] },
+  { id: 'chip',    levels: ['chipA', 'chipA', 'chipA', 'chipB', 'chipB', 'chipB'] },
+  { id: 'chill',   levels: ['chillA', 'chillA', 'chillA', 'chillB', 'chillB', 'chillB'] }
+];
+// Характер музики в кожній епосі (індекс — як в EPOCHS): bpm — множник темпу, shift — на скільки пів-тонів вище, lead/bass/arp — тембри, drums — малюнок ударних (null — без них).
+// Відродження (0) звучить без змін — як оригінал.
+const EPOCH_MUSIC = [
+  null,
+  { bpm: 0.94, shift: 2,  lead: 'triangle', bass: 'triangle', drums: 'k:4 .:4 s:4 .:2 h:2' },                                  // ретро: м'яке, з поштовхом
+  { bpm: 1.14, shift: 3,  lead: 'sawtooth', bass: 'square',   drums: 'k:2 h:2 k:2 h:2 k:2 h:2 k:2 h:2' },                      // диско: чотири долі
+  { bpm: 1.2,  shift: 5,  lead: 'square',   bass: 'triangle', arp: 'square', drums: 'k:2 h:1 h:1 s:2 h:1 h:1 k:2 h:1 h:1 s:2 h:1 h:1' },   // аркади: швидко й дзвінко
+  { bpm: 1.05, shift: 0,  lead: 'sawtooth', bass: 'sawtooth', drums: 'k:3 .:1 h:2 s:2 .:2 k:2 h:2 s:2' },                      // інтернет: цифровий
+  { bpm: 0.84, shift: -3, lead: 'sine',     bass: 'sine',     drums: '.:4 h:2 .:2 .:4 h:2 .:2' },                              // еко: легке, повітряне
+  { bpm: 0.78, shift: -5, lead: 'sine',     bass: 'triangle', arp: 'sine', drums: null },                                       // космос: повільне, без барабанів
+  { bpm: 1.1,  shift: -1, lead: 'sawtooth', bass: 'sawtooth', drums: 'k:2 .:2 s:2 .:2 k:2 k:2 s:2 h:2' }                       // неон: синтвейв
+];
+const WAVE_GAIN = { square: 1, triangle: 1, sine: 1.45, sawtooth: 0.55 };
+const SHARP_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+function shiftNote(tok, semis) {
+  const m = /^([A-G])([#b]?)(\d)$/.exec(tok);
+  if (!m || !semis) return tok;
+  const midi = NOTE_INDEX[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0) + (Number(m[3]) + 1) * 12 + semis;
+  return SHARP_NAMES[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1);
+}
+function parseTokens(text) {
+  let step = 0;
+  const events = text.trim().split(/\s+/).map(tok => {
+    const [name, len] = tok.split(':');
+    const e = { step, len: parseInt(len, 10) || 1, tok: name };
+    step += e.len;
+    return e;
+  });
+  return { events, total: step };
+}
+// Мелодія для пари (базова мелодія, епоха): темп, тональність, тембри й ударні змінюються (результат кешується)
+function trackDef(key) {
+  const [baseId, epStr] = key.split('#');
+  if (epStr === undefined) return MUSIC_PARSED[baseId];
+  const ep = Number(epStr), prof = EPOCH_MUSIC[ep], base = MUSIC_PARSED[baseId];
+  if (!prof) return base;
+  if (MUSIC_PARSED[key]) return MUSIC_PARSED[key];
+  const channels = base.channels.map((ch, ci) => {
+    if (ch.wave === 'noise') {
+      if (!prof.drums) return { wave: 'noise', vol: 0, events: [{ step: 0, len: ch.total, tok: '.' }], total: ch.total };
+      const bar = parseTokens(prof.drums).total;
+      const text = Array(Math.max(1, Math.round(ch.total / bar))).fill(prof.drums).join(' ');
+      const parsed = parseTokens(text);
+      return { wave: 'noise', vol: ch.vol, events: parsed.events, total: parsed.total };
+    }
+    const role = ci === 0 ? 'lead' : ch.wave === 'triangle' ? 'bass' : 'arp';
+    const wave = prof[role] || ch.wave;
+    const events = ch.events.map(e => ({ step: e.step, len: e.len, tok: e.tok === '.' ? '.' : shiftNote(e.tok, prof.shift) }));
+    return { wave, vol: ch.vol * (WAVE_GAIN[wave] || 1) / (WAVE_GAIN[ch.wave] || 1), events, total: ch.total };
+  });
+  return (MUSIC_PARSED[key] = { bpm: base.bpm * prof.bpm, channels, total: base.total });
+}
 
 // ---- Подорож у часі, майстерня, епохи, досягнення (етап 7) ----
 
@@ -1335,7 +1483,20 @@ const GLYPHS = {
 };
 
 // Нові сюжетні фрагменти: kind 'ep' — епохи (ep1…ep4), 'tut' — туторіал. Тексти: ep{N}_title, ep{N}_{k}, tut1_{k}.
-const EPOCH_STORIES = [1, 2, 3, 4, 5, 6, 7, 8].map(() => ({ lines: ['narr', 'capy', 'clock', 'capy'] }));      // 8 фрагментів: прихід у епохи 2…8 і нове коло
+// 8 історій: прихід у епохи 2…8 і нове коло. guest — гість епохи; pre — репліки до вибору; потім Капі обирає (o1/o2), reply — хто відповідає; post — кінець.
+// Тексти: ep{N}_title, ep{N}_{k} (по порядку pre, потім post), ep{N}_o1/o2 (варіанти Капі), ep{N}_r1/r2 (відповіді)
+const EPOCH_STORIES = [
+  { guest: 'pip', pre: ['narr', 'pip', 'capy', 'shnyr1', 'pip', 'capy'], reply: ['shnyr1', 'shnyr1'], post: ['pip', 'capy', 'clock'] },
+  { guest: 'zina', pre: ['narr', 'zina', 'capy', 'shnyr2', 'zina', 'capy'], reply: ['shnyr2', 'shnyr2'], post: ['zina', 'capy', 'clock'] },
+  { guest: 'maks', pre: ['narr', 'maks', 'capy', 'shnyr3', 'maks', 'capy'], reply: ['shnyr3', 'shnyr3'], post: ['maks', 'capy', 'clock'] },
+  { guest: 'bitik', pre: ['narr', 'bitik', 'capy', 'shnyr4', 'bitik', 'capy'], reply: ['shnyr4', 'bitik'], post: ['bitik', 'capy', 'clock'] },
+  { guest: 'lesyk', pre: ['narr', 'lesyk', 'capy', 'shnyr5', 'lesyk', 'capy'], reply: ['shnyr5', 'shnyr5'], post: ['lesyk', 'capy', 'clock'] },
+  { guest: 'orbit', pre: ['narr', 'orbit', 'capy', 'shnyr6', 'orbit', 'capy'], reply: ['shnyr6', 'shnyr6'], post: ['orbit', 'capy', 'clock'] },
+  { guest: 'lumi', pre: ['narr', 'lumi', 'capy', 'shnyr7', 'lumi', 'capy'], reply: ['shnyr7', 'shnyr7'], post: ['lumi', 'shnyr7', 'capy', 'clock'] },
+  { guest: 'bruno', pre: ['narr', 'bruno', 'capy', 'shnyr8', 'bruno', 'capy'], reply: ['bruno', 'bruno'], post: ['bruno', 'capy', 'clock'] },
+  { guest: 'pietro', pre: ['narr', 'pietro', 'capy', 'shnyr0', 'pietro', 'capy'], reply: ['shnyr0', 'shnyr0'], post: ['pietro', 'capy', 'clock'] }
+];
+const GUEST_IDS = EPOCH_STORIES.map(e => e.guest);
 const TUTORIAL = { lines: ['capy', 'capy', 'capy', 'capy'] };
 
 // Умова відкриття глави для стану s (використовується і в грі, і при міграції старих збережень)
@@ -1463,6 +1624,31 @@ SPRITES.ghost = { rows: [
 SPRITES.ghost_s = { rows: ['.www.', 'wwwww', 'wkwkw', 'wwwww', 'wwwww', 'wwwww', 'w.w.w'] };
 Object.keys(GLYPHS).forEach(k => { SPRITES['glyph_' + k] = { rows: GLYPHS[k] }; });
 SPRITES.glyph_coin = SPRITES.coin;
+// Монетки й кристали під стиль кожної епохи (індекс — як в EPOCHS): флорин, кафе-жетон, платівка, аркадний жетон, цифрова монета, листок, зоряна монета, неон
+const EPOCH_COIN_ROWS = [
+  ['..dddd..', '.dhyyhd.', 'dhyhohhd', 'dhhooohd', 'dhhhohhd', 'dhhooohd', '.dhhhhd.', '..dddd..'],
+  ['..dddd..', '.dTwwTd.', 'dTTTwTTd', 'dTwwwwwd', 'dTTwwwTd', 'dTwTTwTd', '.dTTTTd.', '..dddd..'],
+  ['..dddd..', '.dkkkwd.', 'dkkkkwkd', 'dkkffkkd', 'dkkffkkd', 'dkwkkkkd', '.dwkkkd.', '..dddd..'],
+  ['..dddd..', '.dvTTvd.', 'dvTvvTvd', 'dvTTTTvd', 'dvTvvvvd', 'dvTvvvvd', '.dvvvvd.', '..dddd..'],
+  ['..dddd..', '.dnaand.', 'dnanaand', 'dnaaaand', 'dnanaand', 'dnaannnd', '.dnnnnd.', '..dddd..'],
+  ['..dddd..', '.dgmmgd.', 'dgmgggGd', 'dgggGGgd', 'dgGGGggd', 'dgGgggwd', '.dgggGd.', '..dddd..'],
+  ['..dddd..', '.dEwwEd.', 'dEwEEEEd', 'dEEnnEEd', 'duunnuud', 'dEEnnEEd', '.dEEEEd.', '..dddd..'],
+  ['..ffff..', '.fkkkkf.', 'fkkTTkkf', 'fkTkkTkf', 'fkTkkTkf', 'fkkTTkkf', '.fkkkkf.', '..ffff..']
+];
+EPOCH_COIN_ROWS.forEach((rows, i) => { SPRITES['coin_' + i] = { rows }; });
+const EPOCH_COIN_COLORS = [['h', 'y'], ['T', 'w'], ['k', 'f'], ['v', 'T'], ['n', 'a'], ['g', 'm'], ['E', 'w'], ['k', 'T']];    // [основа, відблиск] для колеса фортуни
+[{ S: 'p', s: 'r', w: 'w' }, { S: 'T', s: 'n', w: 'w' }, { S: 'f', s: 'P', w: 'y' }, { S: 'v', s: 'V', w: 'T' },
+ { S: 'a', s: 'n', w: 'w' }, { S: 'm', s: 'g', w: 'w' }, { S: 'S', s: 'u', w: 'y' }, { S: 'T', s: 'f', w: 'w' }].forEach((map, i) => {
+  SPRITES['gem_' + i] = { rows: GLYPHS.gem.map(row => row.replace(/[A-Za-z]/g, ch => map[ch] || ch)) };
+});
+const EPOCH_GEM_EMOJI = ['💎', '🔮', '🪩', '👾', '💠', '🍀', '🌠', '✨'];     // у текстах значок кристала теж змінюється
+function coinSprite() { return 'coin_' + (state.epoch % EPOCH_COIN_ROWS.length); }
+function gemSprite() { return 'gem_' + (state.epoch % EPOCH_COIN_ROWS.length); }
+function refreshCoinIcon() {
+  const g = ui.coinIcon.getContext('2d');
+  g.imageSmoothingEnabled = false; g.clearRect(0, 0, 8, 8);
+  g.drawImage(getSpriteCanvas(coinSprite()), 0, 0);
+}
 
 /* =====================================================================
    ТЕКСТИ (єдиний словник; жодного тексту прямо в коді)
@@ -1477,7 +1663,7 @@ const translations = {
     tab_shop: 'Магазин',
     tab_departments: 'Відділи',
     tab_team: 'Команда',
-    tab_story: 'Історія',
+    tab_story: 'Щоденник',
     capiName: 'Капі',
     capiHello: 'Привіт! Я Капі. У мене лише одна монетка й оця крамничка. Тапни по ній — і справа піде!',
     statTapPower: 'Монеток за тап',
@@ -1727,7 +1913,7 @@ const translations = {
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
 
     soundTitle: 'Звук',
-    soundMusic: 'Музика',
+    tabMore: 'Ще', soundMusic: 'Музика', musicStyle: 'Стиль музики', musicStyle_classic: 'Класична', musicStyle_chip: 'Пригодницька', musicStyle_chill: 'Спокійна',
     soundSfx: 'Звукові ефекти',
     soundMuteOn: '🔇 Вимкнути звук',
     soundMuteOff: '🔊 Увімкнути звук',
@@ -1736,6 +1922,172 @@ const translations = {
     tab_workshop: 'Годинник', tab_achievements: 'Нагороди', tab_stats: 'Рекорди', tab_settings: 'Налашт.',
     statEpoch: 'Епоха',
     epoch_0: 'Відродження', epoch_1: 'Ретро', epoch_2: 'Диско', epoch_3: 'Аркади', epoch_4: 'Інтернет', epoch_5: 'Еко', epoch_6: 'Космос', epoch_7: 'Неон',
+    ep1_title: 'Ретро-епоха',
+    ep1_0: 'Годинник цокнув, і містечко вкрилося пастельними барвами. У небі попливло повітряне судно, а на розі засвітилася вивіска «Молочний бар».',
+    ep1_1: 'Вітаю в моєму барі! Я Піп. Мій музичний автомат грає лише одну пісню, і так уже цілий тиждень!',
+    ep1_2: 'Одну пісню? Це, мабуть, найдовший хіт у світі.',
+    ep1_3: 'Новинка сезону! «Вічна платівка з усіма хітами». Гарантія діє, поки покупець стоїть біля прилавка!',
+    ep1_4: 'Це він! Продав мені автомат «з усіма хітами» за цілий мішок монет.',
+    ep1_5: 'Шнирю? Ти що, і сюди дістався крізь час?',
+    ep1_6: 'Дякую! Автомат співає, коктейлі збиваються, життя вдалося!',
+    ep1_7: 'Ретро — це коли минуле встигло стати модним.',
+    ep1_8: 'Тік-так. Час нікуди не зникає. Він просто змінює стиль.',
+    ep1_o1: 'А гарантія діє на минуле?',
+    ep1_o2: 'Поверни гроші, і ми забудемо цю історію.',
+    ep1_r1: 'На минуле? Ну... стукни по автомату збоку, і він заграє щось нове!',
+    ep1_r2: 'Гаразд, гаразд. Ось монети. Але платівка таки грала!',
+    ep2_title: 'Епоха диско',
+    ep2_0: 'Годинник цокнув, і вулицею полилася музика. Над магазином закружляли різнобарвні промені, а дзеркальна куля розсипала по бруківці тисячу зайчиків.',
+    ep2_1: 'Привіт! Я Зіна, діджейка цього кварталу. Але мої платівки зникли просто перед вечіркою!',
+    ep2_2: 'Усі? Це катастрофа для танцювального вечора.',
+    ep2_3: 'Усі? Не бачив. Я просто підготував сюрприз: «Діджей Шнирь» заграє найкращий сет!',
+    ep2_4: 'Ось воно що! У нього мої платівки та мій пульт!',
+    ep2_5: 'Шнирю, вечірку треба рятувати. Що пропонуєш?',
+    ep2_6: 'Дякую! Вечірку врятовано, а Шнирь навіть має свій трек. Непоганий!',
+    ep2_7: 'Диско — це коли минуле навчилося танцювати.',
+    ep2_8: 'Тік-так, тік-так... Бачиш? Навіть я йду в такт!',
+    ep2_o1: 'Влаштуймо танцювальний двобій!',
+    ep2_o2: 'Віддай платівки, а потім пограєш разом із Зіною.',
+    ep2_r1: 'Двобій? Гаразд! Але танцювати я вмію лише повз ритм.',
+    ep2_r2: 'Разом? Це як?.. Ну гаразд, тримайте платівки. Але один трек я таки заграю!',
+    ep3_title: 'Аркадна епоха',
+    ep3_0: 'Годинник цокнув, і вулицю залило фіолетовим сяйвом. З дверей аркадного залу долинуло «пінг-пінг-пінг», а в небі зійшло смугасте сонце.',
+    ep3_1: 'Я Макс, господар цього залу. Хтось побив мій рекорд, а в таблиці красується підпис «ШНИ»!',
+    ep3_2: 'ШНИ... Невже той єнот?',
+    ep3_3: 'Чесна гра! Я просто знайшов у грі секретний код. Невеличкий. На безкінечні життя.',
+    ep3_4: 'Чесна? Він навіть жодного жетона в автомат не кинув!',
+    ep3_5: 'Шнирю, жетони самі в автомат не потраплять.',
+    ep3_6: 'Тепер у залі чесна гра, а в таблиці чесний «ШНИ». Двадцять очок, зате наші!',
+    ep3_7: 'Жетон — це монетка, що встигла стати грою.',
+    ep3_8: 'Гру закінчено? Ні. Ще один рівень, ще одне коло.',
+    ep3_o1: 'Зіграймо: хто програє, той підмітає зал.',
+    ep3_o2: 'Зніми код і скажи чесно, скільки набрав.',
+    ep3_r1: 'Підмітати? Гаразд! Але я не програю, у мене ж секретний код... Ой.',
+    ep3_r2: 'Добре, добре. Без коду я набрав лише... двадцять очок. І то випадкових.',
+    ep4_title: 'Інтернет-епоха',
+    ep4_0: 'Годинник цокнув, і над містечком спалахнула невидима мережа. На вивісках з\'явилися значки Wi-Fi, а у вітринах екрани та вподобайки.',
+    ep4_1: 'Біп! Я Бітик, робот-консультант. Хтось змінив усі ціни на сайті магазину на «одну монетку».',
+    ep4_2: 'На одну? Це не акція, це кінець бізнесу.',
+    ep4_3: 'Ха! Це не злом, це «нестандартне встановлення ціни». Я лише хотів купити все й одразу.',
+    ep4_4: 'Він вгадав мій пароль! А пароль був «12345»...',
+    ep4_5: 'Шнирю, Бітику потрібен захист, а цінам спокій. Що робимо?',
+    ep4_6: 'Дякую! Тепер усе онлайн, навіть учорашній день зберігається в хмарі.',
+    ep4_7: 'Учорашній день у хмарі — це навіть зручніше за годинник.',
+    ep4_8: 'Тік-так. Збережено. Хоча я й сам хмара часу.',
+    ep4_o1: 'Змінімо пароль на «Шнирь_не_ламай».',
+    ep4_o2: 'Повернімо ціни та поставимо справжній захист.',
+    ep4_r1: 'Ого, тепер він складніший за мої хитрощі. Гаразд, більше не ламатиму... до наступного оновлення.',
+    ep4_r2: 'Ціни повернуто, захист стоїть. Біп-біп! А Шнирю знижка за чесну поведінку.',
+    ep5_title: 'Еко-епоха',
+    ep5_0: 'Годинник цокнув, дахи зазеленіли, а на пагорбах закрутилися вітряки. Пахне квітами й свіжою травою.',
+    ep5_1: 'Вітаю, я Лесик, міський садівник. Хтось ходить містом і бере «еко-збір» за кожне деревце!',
+    ep5_2: 'Еко-збір? А що це за збір?',
+    ep5_3: 'Законна плата «за дихання міським повітрям». Квитанція ось. Виписана самому собі.',
+    ep5_4: 'Казав, що на «зелене майбутнє», а купив собі ще один мішок!',
+    ep5_5: 'Шнирю, майбутнє зелене лише тоді, коли воно чесне.',
+    ep5_6: 'Дякую! Дерева посаджено, збір повернено, а Шнирь навіть полив капусту!',
+    ep5_7: 'Зелені ідеї не старіють: їх завжди можна посадити знову.',
+    ep5_8: 'Тік-так. Навіть мені в такі часи легше дихається.',
+    ep5_o1: 'Влаштуймо змагання: хто більше посадить дерев!',
+    ep5_o2: 'Поверни збір і допоможи пересадити грядки.',
+    ep5_r1: 'Змагання? Я посаджу цілий ліс! Правда, у мене лише одне насінинка... Але яка!',
+    ep5_r2: 'Гаразд. Збір повертаю, лопату беру. До чесної праці не звик, та спробую.',
+    ep6_title: 'Космічна епоха',
+    ep6_0: 'Годинник цокнув, небо над містечком потемніло. З пагорба злетіла ракета, а на дахах засвітилися антени. Це космічна епоха.',
+    ep6_1: 'Позивний «Орбіт», астронавт! З мого корабля зникло космічне печиво!',
+    ep6_2: 'Космічне печиво? Чим воно особливе?',
+    ep6_3: 'Воно... пролітає крізь час. Я лише допоміг йому дістатися моєї кишені. Для безпеки.',
+    ep6_4: 'Для безпеки? Ти заховав його в кишеню мого скафандра!',
+    ep6_5: 'Шнирю, космос великий, а печива мало. Що будемо робити?',
+    ep6_6: 'Дякую, екіпаже! Ракета злетить без проблем. Печиво на борту, друзі на Землі.',
+    ep6_7: 'У космосі час тече повільніше, а печиво зникає швидше.',
+    ep6_8: 'Ось тут я з тобою згоден. Тік... так...',
+    ep6_o1: 'Поділімо печиво на всіх, по-космічному!',
+    ep6_o2: 'Повернімо печиво, а потім разом полагодимо ракету.',
+    ep6_r1: 'Поділити? Ну... я з\'їв лише... хм... половину. Решту діліть!',
+    ep6_r2: 'Гаразд, поверну. Але ракета мені теж подобається. Можна я покерую?',
+    ep7_title: 'Неонова епоха',
+    ep7_0: 'Годинник цокнув, і містечко спалахнуло неоном. Вивіски засяяли рожевим і блакитним, а над дахами закружляли маленькі дрони.',
+    ep7_1: 'Я Лумі, майстер неонових вивісок. Але мої трубки гаснуть щойно я їх вмикаю! Хтось викрав найяскравішу!',
+    ep7_2: 'Найяскравішу? Зараз знайдемо.',
+    ep7_3: 'Я... взяв її на пробу. Хотів засяяти на весь квартал. А вона лише блимає, коли я поруч.',
+    ep7_4: 'Бо вона працює від добрих справ! А не від крадіжок!',
+    ep7_5: 'Шнирю, не набридло тікати? Світло працює, коли поряд друзі.',
+    ep7_6: 'Дивіться, вивіска засвітилася! Вона таки працює від добрих справ.',
+    ep7_7: 'Гаразд, здаюся. Хочу до команди! Обіцяю: хитрий тепер лише у добрих справах.',
+    ep7_8: 'Ласкаво просимо, Шнирю! Магазин лише виграє.',
+    ep7_9: 'Тік-так. Нарешті Шнирь на правильному боці часу.',
+    ep7_o1: 'Кидай здобич і приєднуйся до нас, будеш світити на весь квартал!',
+    ep7_o2: 'Поверни вивіску, а ми знайдемо тобі чесну роботу.',
+    ep7_r1: 'До вас? На справжню роботу? Звучить як найкращий мій план за всю історію.',
+    ep7_r2: 'Чесна робота... А там платять печивом? Тоді згоден.',
+    ep8_title: 'Нове коло',
+    ep8_0: 'Коло замкнулося: знову площа, знову прапорці над вуличкою, знову одна-єдина монетка. Та тепер скрізь знайомі обличчя.',
+    ep8_1: 'Я Бруно, художник. Мені замовили картину «Усі друзі крізь усі епохи», а натурники розбіглися!',
+    ep8_2: 'Усі? Ми ж мандруємо крізь час разом. Запросімо всіх.',
+    ep8_3: 'Я готовий позувати! Тільки щоб на картині я виглядав грізним, але добрим.',
+    ep8_4: 'Грізним, але добрим... Як це намалювати?',
+    ep8_5: 'Просто посміхнись, Шнирю. Це в тебе виходить найкраще.',
+    ep8_6: 'Картина готова: у кожній епосі в нас є друзі. А Відродження вдруге вийшло кращим за перше.',
+    ep8_7: 'Відродження-2 — як продовження кіно, тільки краще.',
+    ep8_8: 'Тік-так. Кожне нове коло робить історію яскравішою.',
+    ep8_o1: 'А намалюй годинник, що підморгує!',
+    ep8_o2: 'Намалюй усіх нас: усю команду, від першої епохи.',
+    ep8_r1: 'Годинник, що підморгує? Тут потрібна майстерність. Але вийшло: тік-так, і моргнув!',
+    ep8_r2: 'Усю команду? Оце вже шедевр! Підходьте, усі в кадр!',
+    speaker_pip: 'Пінгвін Піп',
+    guestSay_pip_0: 'Молочний коктейль? Тільки для друзів!',
+    guestSay_pip_1: 'Автомат уже грає багато пісень!',
+    guestSay_pip_2: 'Ретро — це завжди круто.',
+    speaker_zina: 'Зебра Зіна',
+    guestSay_zina_0: 'Раз-два-три, у такт!',
+    guestSay_zina_1: 'Ну що, потанцюємо?',
+    guestSay_zina_2: 'Яка чудова ніч для вечірки!',
+    speaker_maks: 'Мавпа Макс',
+    guestSay_maks_0: 'Ще одна гра? Тільки чесна!',
+    guestSay_maks_1: 'Мій рекорд знову мій.',
+    guestSay_maks_2: 'Пінг-пінг-пінг!',
+    speaker_bitik: 'Робот Бітик',
+    guestSay_bitik_0: 'Біп-буп! Пароль змінено.',
+    guestSay_bitik_1: 'Я онлайн. А ти?',
+    guestSay_bitik_2: 'Усе збережено в хмарі.',
+    speaker_lesyk: 'Олень Лесик',
+    guestSay_lesyk_0: 'Дерева люблять уважність.',
+    guestSay_lesyk_1: 'Бур\'ян — це просто рослина не на своєму місці.',
+    guestSay_lesyk_2: 'Дихайте глибше!',
+    speaker_orbit: 'Песик Орбіт',
+    guestSay_orbit_0: 'Земле, я Орбіт, приймай!',
+    guestSay_orbit_1: 'Печиво на борту.',
+    guestSay_orbit_2: 'Космос — це тиха краса.',
+    speaker_lumi: 'Світлячок Лумі',
+    guestSay_lumi_0: 'Світло працює від добрих справ.',
+    guestSay_lumi_1: 'Блим-блим!',
+    guestSay_lumi_2: 'Я світлячок, мені можна.',
+    speaker_bruno: 'Борсук Бруно',
+    guestSay_bruno_0: 'Усе — картина, якщо дивитися правильно.',
+    guestSay_bruno_1: 'Мазок тут, мазок там.',
+    guestSay_bruno_2: 'Мій шедевр ще попереду.',
+    choiceTitle: 'Що відповісти?', choiceFun: 'Жартом: тап ×5 на 10 хв', choiceSerious: 'Серйозно: дохід ×2 на 10 хв',
+    choiceBonusTap: 'Бонус за жарт: тап ×5 на 10 хвилин!', choiceBonusIncome: 'Бонус за серйозну відповідь: дохід ×2 на 10 хвилин!',
+    shnyrJoined: 'Шнирь тепер у команді! Подивись вкладку «Команда».',
+    team_shnyr: 'Єнот Шнирь', team_shnyr_role: 'Хитрий консультант', team_shnyr_trait: 'Знає всі лазівки. Тепер використовує їх для добра.',
+    team_shnyr_say_0: 'Хитро? Ні, економно!', team_shnyr_say_1: 'Знаю лазівку для знижки.', team_shnyr_say_2: 'Я перевихований... майже.', team_shnyr_say_3: 'Печиво — моя валюта.', team_shnyr_say_4: 'Тепер я працюю чесно!', team_shnyr_say_5: 'Тільки не питайте про бухгалтерію.',
+    team_shnyr_sit_0: 'Сідай, розкажу, як я колись брав печиво. Ой, не брав.', team_shnyr_sit_1: 'Мій день кращий, ніж учорашній я!',
+    ep9_title: 'Епоха Відродження',
+    ep9_0: 'На площі зупинився мандрівний півень із лютнею та пір\'їною на береті. Містечко тільки-но прокидалося: Відродження — час майстрів, співаків і сміливих ідей.',
+    ep9_1: 'Вітаю! Я П\'єтро, менестрель. Граю на всіх ярмарках, але моя лютня замовкла: хтось замінив струни на макарони!',
+    ep9_2: 'На макарони? Це, може, й смачно, та мелодії від цього мало.',
+    ep9_3: 'Це не я! Я лише вирішив, що менестрелям треба обідати. Багато. Прямо під час концерту.',
+    ep9_4: 'Ага, ось хто пустив струни на вечерю! Без струн немає музики, а без музики немає ярмарку!',
+    ep9_5: 'Шнирю, скажи чесно: де справжні струни?',
+    ep9_6: 'Дякую! Лютня співає, ярмарок гуде, а макарони нарешті на тарілці.',
+    ep9_7: 'Відродження — це коли старі речі раптом починають звучати по-новому.',
+    ep9_8: 'Тік-так. Навіть я іноді вважаю, що минуле смачніше за теперішнє.',
+    ep9_o1: 'Тоді зіграймо оркестр на макаронах: це ж нова мода!', ep9_o2: 'Віддай струни, а я допоможу тобі з обідом.', ep9_r1: 'Оркестр на макаронах? Я в ділі! Тільки хай ніхто не їсть інструменти.', ep9_r2: 'Угу... Струни в мене в кишені. Обід за вами, і ми квити!',
+    speaker_pietro: 'Півень П\'єтро',
+    guestSay_pietro_0: 'Лютня співає, ярмарок гуде!',
+    guestSay_pietro_1: 'Хто за піснею, той за мною!',
+    guestSay_pietro_2: 'Відродження — це коли все знову звучить.',
     epochTitle_0: 'Епоха Відродження', epochTitle_1: 'Ретро-епоха', epochTitle_2: 'Епоха диско', epochTitle_3: 'Аркадна епоха',
     epochTitle_4: 'Епоха інтернету', epochTitle_5: 'Еко-епоха', epochTitle_6: 'Космічна епоха', epochTitle_7: 'Неонове майбутнє',
     epochSub_0: 'Площа оживає, над вулицею майорять прапорці, а в кишені — лише одна монетка.',
@@ -1754,46 +2106,6 @@ const translations = {
     tut1_2: 'У вкладці «Команда» наймай друзів-звіряток. Кожне допомагає по-своєму, а якщо тапнути по звірятку, воно щось скаже.',
     tut1_3: 'А щоб магазин ріс, розширюй його: нові відділи, нові друзі й нові глави історії. Вперед!',
 
-    ep1_title: 'Ретро-епоха',
-    ep1_0: 'Стрілки закрутилися, і містечко вкрилося пастельними барвами, а в небі попливло повітряне судно.',
-    ep1_1: 'Оце так ретро! Вивіски сяють, як у старому кіно, а в кафе грає платівка!',
-    ep1_2: 'У кожної епохи — свої дива. Дивись і вчися.',
-    ep1_3: 'А мені тут подобається. Починаємо!',
-    ep2_title: 'Епоха диско',
-    ep2_0: 'Годинник цокнув, і вулицею полилася музика. Над магазином закружляли різнобарвні промені.',
-    ep2_1: 'Дзеркальна куля! Тут усе блищить і танцює!',
-    ep2_2: 'Ритм — найкращий порадник у торгівлі. Раз-два, раз-два!',
-    ep2_3: 'Тоді танцюємо до першого мільйона!',
-    ep3_title: 'Аркадна епоха',
-    ep3_0: 'Світ раптом став пікселем. На небі зійшло смугасте сонце, а вдалині заграла чіптюнова мелодія.',
-    ep3_1: 'Монетки, рівні, бонуси... Це ж справжня гра!',
-    ep3_2: 'Ти і так у грі. Лишилося пройти всі рівні.',
-    ep3_3: 'Натискаю «Старт»!',
-    ep4_title: 'Епоха інтернету',
-    ep4_0: 'Стрілки забігали швидко-швидко. Над вулицею пролетіли літаки, а вікна заблищали склом.',
-    ep4_1: 'Тепер усе поруч: листи, замовлення, новини...',
-    ep4_2: 'Світ маленький, а ринок великий. Не гай часу!',
-    ep4_3: 'Тоді відкриваємо онлайн і офлайн водночас!',
-    ep5_title: 'Еко-епоха',
-    ep5_0: 'Годинник цокнув, і над дахами повиростали зелені сади. На пагорбах закрутилися вітряки.',
-    ep5_1: 'Чисте повітря й сонячні панелі. Тут навіть бруківка усміхається.',
-    ep5_2: 'Розумний магазин дбає про місто. І заробляє на цьому.',
-    ep5_3: 'Садимо, будуємо, торгуємо!',
-    ep6_title: 'Космічна епоха',
-    ep6_0: 'Стрілки закрутилися проти всіх законів. Небо потемніло, і над містом злетіла ракета.',
-    ep6_1: 'Космос?! Мої покупці тепер, мабуть, з інших планет!',
-    ep6_2: 'У космосі теж потрібні булочки. Є де розгулятися.',
-    ep6_3: 'Пристібайте ремені — летимо за монетками!',
-    ep7_title: 'Неонове майбутнє',
-    ep7_0: 'Годинник стрибнув далеко вперед. Над містом засвітилися неони, а між хмарочосами забриніли дрони.',
-    ep7_1: 'Неонові вивіски! Моя крамничка тепер наче з майбутнього.',
-    ep7_2: 'Майбутнє — це просто минуле, яке ще не сталося. До роботи!',
-    ep7_3: 'Мерехтіть, неони, — Капі повертається!',
-    ep8_title: 'Нове коло',
-    ep8_0: 'Коло замкнулося: знову площа, знову прапорці над вуличкою, знову одна-єдина монетка.',
-    ep8_1: 'Я пам\'ятаю кожну епоху. І кожного друга.',
-    ep8_2: 'Так і росте справжній магнат: з кожним колом мудрішає.',
-    ep8_3: 'Тоді в нове відродження, з новою монеткою!',
 
     wsTitle: 'Майстерня часу',
     wsCrystals: 'Кристали часу: 💎 {0}',
@@ -1911,7 +2223,7 @@ const translations = {
     tab_shop: 'Shop',
     tab_departments: 'Depts.',
     tab_team: 'Team',
-    tab_story: 'Story',
+    tab_story: 'Diary',
     capiName: 'Capy',
     capiHello: "Hi! I'm Capy. All I have is one coin and this little shop. Tap it and let's get going!",
     statTapPower: 'Coins per tap',
@@ -2154,7 +2466,7 @@ const translations = {
     prize_jackpot: 'JACKPOT! +{0}',
 
     soundTitle: 'Sound',
-    soundMusic: 'Music',
+    tabMore: 'More', soundMusic: 'Music', musicStyle: 'Music style', musicStyle_classic: 'Classic', musicStyle_chip: 'Adventure', musicStyle_chill: 'Chill',
     soundSfx: 'Sound effects',
     soundMuteOn: '🔇 Mute sound',
     soundMuteOff: '🔊 Unmute sound',
@@ -2162,6 +2474,172 @@ const translations = {
     tab_workshop: 'Workshop', tab_achievements: 'Awards', tab_stats: 'Stats', tab_settings: 'Settings',
     statEpoch: 'Epoch',
     epoch_0: 'Renaissance', epoch_1: 'Retro', epoch_2: 'Disco', epoch_3: 'Arcade', epoch_4: 'Internet', epoch_5: 'Eco', epoch_6: 'Space', epoch_7: 'Neon',
+    ep1_title: 'Retro Age',
+    ep1_0: 'The watch ticked and the town turned pastel. An airship floated into the sky, and a sign lit up on the corner: "Milk Bar".',
+    ep1_1: 'Welcome to my bar! I am Pip. My jukebox plays only one song, and it has been like that for a whole week!',
+    ep1_2: 'Just one song? That must be the longest hit in the world.',
+    ep1_3: 'Latest sensation! The "Eternal Record with All the Hits". Warranty valid while the customer stands at the counter!',
+    ep1_4: 'It is him! He sold me a jukebox "with all the hits" for a whole sack of coins.',
+    ep1_5: 'Shnyr? Did you really follow us through time?',
+    ep1_6: 'Thank you! The jukebox sings, the milkshakes whirl, life is good!',
+    ep1_7: 'Retro is when the past has become fashionable.',
+    ep1_8: 'Tick-tock. Time never disappears. It just changes style.',
+    ep1_o1: 'Does the warranty cover the past?',
+    ep1_o2: 'Return the money and we will forget this story.',
+    ep1_r1: 'The past? Well... hit the jukebox on the side and it will play something new!',
+    ep1_r2: 'Fine, fine. Here are the coins. But the record did play!',
+    ep2_title: 'Disco Age',
+    ep2_0: 'The watch ticked and music poured down the street. Colourful beams swirled above the shop, and a mirror ball scattered a thousand sparkles over the pavement.',
+    ep2_1: 'Hi! I am Zina, DJ of this block. But my records vanished right before the party!',
+    ep2_2: 'All of them? That is a disaster for a dance night.',
+    ep2_3: 'All of them? Never saw them. I merely prepared a surprise: "DJ Shnyr" will play the best set ever!',
+    ep2_4: 'So that is it! He has my records and my console!',
+    ep2_5: 'Shnyr, the party needs saving. What do you suggest?',
+    ep2_6: 'Thanks! The party is saved, and Shnyr even has his own track. Not bad at all!',
+    ep2_7: 'Disco is when the past learns to dance.',
+    ep2_8: 'Tick-tock, tick-tock... See? Even I keep the beat!',
+    ep2_o1: 'Let us have a dance battle!',
+    ep2_o2: 'Give the records back, then play together with Zina.',
+    ep2_r1: 'A battle? Fine! But I can only dance off the beat.',
+    ep2_r2: 'Together? How does that work?.. Fine, here are the records. But I will play at least one track!',
+    ep3_title: 'Arcade Age',
+    ep3_0: 'The watch ticked and the street flooded with purple glow. "Ping-ping-ping" came from the arcade doorway, and a striped sun rose in the sky.',
+    ep3_1: 'I am Max, owner of this arcade. Somebody broke my record, and the table shows the name "SHN"!',
+    ep3_2: 'SHN... Could it be that raccoon?',
+    ep3_3: 'Fair play! I just found a secret code in the game. A small one. For infinite lives.',
+    ep3_4: 'Fair? He never put a single token into the machine!',
+    ep3_5: 'Shnyr, tokens do not drop into the machine by themselves.',
+    ep3_6: 'The arcade is fair again, and the table has an honest "SHN". Twenty points, but ours!',
+    ep3_7: 'A token is a coin that has become a game.',
+    ep3_8: 'Game over? No. One more level, one more circle.',
+    ep3_o1: 'Let us play: the loser sweeps the arcade.',
+    ep3_o2: 'Remove the code and say honestly how much you scored.',
+    ep3_r1: 'Sweep? Fine! But I will not lose, I have a secret code... Oops.',
+    ep3_r2: 'All right, all right. Without the code I scored only... twenty points. And those were accidental.',
+    ep4_title: 'Internet Age',
+    ep4_0: 'The watch ticked and an invisible network flashed over the town. Wi-Fi icons appeared on the signs, and screens and likes in the windows.',
+    ep4_1: 'Beep! I am Bitik, a consultant robot. Somebody changed all the prices on the shop website to "one coin".',
+    ep4_2: 'To one? That is not a sale, that is the end of the business.',
+    ep4_3: 'Ha! That is not hacking, that is "creative price setting". I only wanted to buy everything at once.',
+    ep4_4: 'He guessed my password! And the password was "12345"...',
+    ep4_5: 'Shnyr, Bitik needs protection and the prices need peace. What do we do?',
+    ep4_6: 'Thank you! Everything is online now, even yesterday is stored in the cloud.',
+    ep4_7: 'Yesterday in the cloud is even handier than a watch.',
+    ep4_8: 'Tick-tock. Saved. Though I am a cloud of time myself.',
+    ep4_o1: 'Change the password to "Shnyr_dont_hack".',
+    ep4_o2: 'Restore the prices and set up real protection.',
+    ep4_r1: 'Wow, now it is harder than my tricks. Fine, I will not hack any more... until the next update.',
+    ep4_r2: 'Prices are back, protection is on. Beep-beep! And Shnyr gets a discount for honest behaviour.',
+    ep5_title: 'Eco Age',
+    ep5_0: 'The watch ticked, the roofs turned green, and windmills began to spin on the hills. The air smells of flowers and fresh grass.',
+    ep5_1: 'Hello, I am Lesyk, the city gardener. Somebody walks around town collecting an "eco fee" for every little tree!',
+    ep5_2: 'An eco fee? What kind of fee is that?',
+    ep5_3: 'A legal payment "for breathing city air". Here is the receipt. Written out to myself.',
+    ep5_4: 'He said it was for a "green future", and bought himself another sack!',
+    ep5_5: 'Shnyr, the future is green only when it is honest.',
+    ep5_6: 'Thank you! Trees are planted, the fee is returned, and Shnyr even watered the cabbages!',
+    ep5_7: 'Green ideas never grow old: you can always plant them again.',
+    ep5_8: 'Tick-tock. Even I breathe easier in such times.',
+    ep5_o1: 'Let us compete: who plants more trees!',
+    ep5_o2: 'Return the fee and help replant the garden beds.',
+    ep5_r1: 'A contest? I will plant a whole forest! True, I have just one seed... but what a seed!',
+    ep5_r2: 'All right. I return the fee and take the shovel. Not used to honest work, but I will try.',
+    ep6_title: 'Space Age',
+    ep6_0: 'The watch ticked and the sky over the town turned dark. A rocket took off from the hill, and antennas lit up on the roofs. Welcome to the space age.',
+    ep6_1: 'Call sign Orbit, astronaut! The cosmic cookies vanished from my ship!',
+    ep6_2: 'Cosmic cookies? What is special about them?',
+    ep6_3: 'They... fly through time. I only helped them reach my pocket. For safety.',
+    ep6_4: 'For safety? You stuffed them into a pocket of my spacesuit!',
+    ep6_5: 'Shnyr, space is big and cookies are few. What shall we do?',
+    ep6_6: 'Thanks, crew! The rocket will fly without a hitch. Cookies on board, friends on Earth.',
+    ep6_7: 'In space time flows slowly, and cookies vanish quickly.',
+    ep6_8: 'Here I agree with you. Tick... tock...',
+    ep6_o1: 'Let us share the cookies with everyone, space style!',
+    ep6_o2: 'Return the cookies, then fix the rocket together.',
+    ep6_r1: 'Share? Well... I ate only... hm... half. Share the rest!',
+    ep6_r2: 'Fine, I will return them. But I like the rocket too. May I steer?',
+    ep7_title: 'Neon Age',
+    ep7_0: 'The watch ticked and the town lit up in neon. Signs glowed pink and blue, and little drones swirled above the roofs.',
+    ep7_1: 'I am Lumi, neon sign maker. But my tubes go out the moment I switch them on! The brightest one was stolen!',
+    ep7_2: 'The brightest one? We will find it.',
+    ep7_3: 'I... took it for a test. I wanted to shine over the whole block. But it only flickers when I am near.',
+    ep7_4: 'Because it runs on good deeds! Not on stealing!',
+    ep7_5: 'Shnyr, tired of running? Light works when friends are close.',
+    ep7_6: 'Look, the sign is glowing! It really runs on good deeds.',
+    ep7_7: 'All right, I give up. I want in the team! I promise: from now on I am sly only in good deeds.',
+    ep7_8: 'Welcome, Shnyr! The shop can only win.',
+    ep7_9: 'Tick-tock. At last Shnyr is on the right side of time.',
+    ep7_o1: 'Drop the loot and join us, you will shine over the whole block!',
+    ep7_o2: 'Return the sign, and we will find you honest work.',
+    ep7_r1: 'Join you? For a real job? Sounds like my best plan in all of history.',
+    ep7_r2: 'Honest work... Do they pay in cookies? Then I agree.',
+    ep8_title: 'A New Circle',
+    ep8_0: 'The circle closed: the square again, the pennants over the street again, one single coin again. But now familiar faces are everywhere.',
+    ep8_1: 'I am Bruno, painter. I was commissioned a picture, "All Friends Across All Epochs", but the models ran away!',
+    ep8_2: 'All of them? We travel through time together. Let us invite everyone.',
+    ep8_3: 'I am ready to pose! Just make me look fearsome, but kind.',
+    ep8_4: 'Fearsome but kind... How do I paint that?',
+    ep8_5: 'Just smile, Shnyr. You do that best of all.',
+    ep8_6: 'The painting is ready: in every epoch we have friends. And the second Renaissance turned out better than the first.',
+    ep8_7: 'Renaissance 2 is like a sequel, only better.',
+    ep8_8: 'Tick-tock. Every new circle makes history brighter.',
+    ep8_o1: 'And paint a clock that winks!',
+    ep8_o2: 'Paint all of us, the whole team from the first epoch.',
+    ep8_r1: 'A winking clock? That takes skill. But it worked: tick-tock, and it winked!',
+    ep8_r2: 'The whole team? Now that is a masterpiece! Come closer, everybody in the frame!',
+    speaker_pip: 'Pip the Penguin',
+    guestSay_pip_0: 'A milkshake? Friends only!',
+    guestSay_pip_1: 'The jukebox plays lots of songs now!',
+    guestSay_pip_2: 'Retro is always cool.',
+    speaker_zina: 'Zina the Zebra',
+    guestSay_zina_0: 'One-two-three, in rhythm!',
+    guestSay_zina_1: 'Shall we dance?',
+    guestSay_zina_2: 'What a night for a party!',
+    speaker_maks: 'Max the Monkey',
+    guestSay_maks_0: 'Another game? Fair play only!',
+    guestSay_maks_1: 'My record is mine again.',
+    guestSay_maks_2: 'Ping-ping-ping!',
+    speaker_bitik: 'Bitik the Robot',
+    guestSay_bitik_0: 'Beep-boop! Password changed.',
+    guestSay_bitik_1: 'I am online. Are you?',
+    guestSay_bitik_2: 'Everything is saved in the cloud.',
+    speaker_lesyk: 'Lesyk the Deer',
+    guestSay_lesyk_0: 'Trees love attention.',
+    guestSay_lesyk_1: 'A weed is just a plant in the wrong place.',
+    guestSay_lesyk_2: 'Breathe deeper!',
+    speaker_orbit: 'Orbit the Dog',
+    guestSay_orbit_0: 'Earth, this is Orbit, come in!',
+    guestSay_orbit_1: 'Cookies on board.',
+    guestSay_orbit_2: 'Space is quiet beauty.',
+    speaker_lumi: 'Lumi the Firefly',
+    guestSay_lumi_0: 'Light runs on good deeds.',
+    guestSay_lumi_1: 'Blink-blink!',
+    guestSay_lumi_2: 'I am a firefly, I am allowed.',
+    speaker_bruno: 'Bruno the Badger',
+    guestSay_bruno_0: 'Everything is a painting if you look right.',
+    guestSay_bruno_1: 'A stroke here, a stroke there.',
+    guestSay_bruno_2: 'My masterpiece is still ahead.',
+    choiceTitle: 'What to say?', choiceFun: 'Jokingly: tap ×5 for 10 min', choiceSerious: 'Seriously: income ×2 for 10 min',
+    choiceBonusTap: 'Joke bonus: tap ×5 for 10 minutes!', choiceBonusIncome: 'Serious answer bonus: income ×2 for 10 minutes!',
+    shnyrJoined: 'Shnyr is now on the team! Check the "Team" tab.',
+    team_shnyr: 'Shnyr the Raccoon', team_shnyr_role: 'Sly consultant', team_shnyr_trait: 'Knows every loophole. Now uses them for good.',
+    team_shnyr_say_0: 'Sly? No, thrifty!', team_shnyr_say_1: 'I know a discount loophole.', team_shnyr_say_2: 'I am reformed... almost.', team_shnyr_say_3: 'Cookies are my currency.', team_shnyr_say_4: 'I work honestly now!', team_shnyr_say_5: 'Just do not ask about the accounting.',
+    team_shnyr_sit_0: 'Sit, I will tell you how I used to take cookies. Oh, I did not.', team_shnyr_sit_1: 'My day beats yesterday\'s me!',
+    ep9_title: 'Renaissance Age',
+    ep9_0: 'A travelling rooster with a lute and a feather in his beret stopped on the square. The town was just waking up: the Renaissance, a time of masters, singers and bold ideas.',
+    ep9_1: 'Greetings! I am Pietro, a minstrel. I play at every fair, but my lute went silent: somebody replaced the strings with spaghetti!',
+    ep9_2: 'Spaghetti? That may be tasty, but it does not make much melody.',
+    ep9_3: 'It was not me! I merely decided that minstrels must dine. A lot. Right during the concert.',
+    ep9_4: 'Aha, so that is who sent the strings to dinner! No strings, no music, and no music, no fair!',
+    ep9_5: 'Shnyr, tell the truth: where are the real strings?',
+    ep9_6: 'Thank you! The lute sings, the fair buzzes, and the spaghetti is finally on a plate.',
+    ep9_7: 'Renaissance is when old things suddenly sound new.',
+    ep9_8: 'Tick-tock. Even I sometimes think the past tastes better than the present.',
+    ep9_o1: 'Then let us play an orchestra of spaghetti: it is a new fashion!', ep9_o2: 'Give back the strings and I will help you with lunch.', ep9_r1: 'An orchestra of spaghetti? Count me in! Just let nobody eat the instruments.', ep9_r2: 'Mm-hm... The strings are in my pocket. Lunch is on you and we are even!',
+    speaker_pietro: 'Pietro the Rooster',
+    guestSay_pietro_0: 'The lute sings, the fair buzzes!',
+    guestSay_pietro_1: 'Follow the song, follow me!',
+    guestSay_pietro_2: 'Renaissance is when everything sounds again.',
     epochTitle_0: 'Renaissance Age', epochTitle_1: 'Retro Age', epochTitle_2: 'Disco Age', epochTitle_3: 'Arcade Age',
     epochTitle_4: 'Internet Age', epochTitle_5: 'Eco Age', epochTitle_6: 'Space Age', epochTitle_7: 'Neon Future',
     epochSub_0: 'The square comes alive, pennants flutter over the street, and there is just one coin in the pocket.',
@@ -2180,46 +2658,6 @@ const translations = {
     tut1_2: 'In the "Team" tab, hire animal friends. Each one helps in their own way, and if you tap an animal it will say something.',
     tut1_3: 'To make the shop grow, expand it: new departments, new friends and new story chapters. Onward!',
 
-    ep1_title: 'Retro Age',
-    ep1_0: 'The hands spun, and the town was covered in pastel colours while an airship floated across the sky.',
-    ep1_1: 'How retro! The signs glow like in an old movie, and a record is playing in the cafe!',
-    ep1_2: 'Every epoch has its own wonders. Watch and learn.',
-    ep1_3: "I like it here. Let's begin!",
-    ep2_title: 'Disco Age',
-    ep2_0: 'The watch ticked and music poured down the street. Colourful beams swirled above the shop.',
-    ep2_1: 'A mirror ball! Everything here sparkles and dances!',
-    ep2_2: 'Rhythm is the best business advisor. One-two, one-two!',
-    ep2_3: "Then let's dance to the first million!",
-    ep3_title: 'Arcade Age',
-    ep3_0: 'The world suddenly turned into pixels. A striped sun rose, and a chiptune melody played far away.',
-    ep3_1: 'Coins, levels, bonuses... This is a real game!',
-    ep3_2: "You're already in a game. Just clear all the levels.",
-    ep3_3: 'Pressing "Start"!',
-    ep4_title: 'Internet Age',
-    ep4_0: 'The hands raced faster and faster. Planes flew over the street and the windows gleamed with glass.',
-    ep4_1: 'Now everything is close: letters, orders, news...',
-    ep4_2: "The world is small, the market is big. Don't waste time!",
-    ep4_3: "Then let's open online and offline at once!",
-    ep5_title: 'Eco Age',
-    ep5_0: 'The watch ticked and green gardens grew on the rooftops. Windmills began to turn on the hills.',
-    ep5_1: 'Clean air and solar panels. Even the cobblestones smile here.',
-    ep5_2: 'A smart shop cares for the town. And earns from it.',
-    ep5_3: 'We plant, we build, we trade!',
-    ep6_title: 'Space Age',
-    ep6_0: 'The hands spun against all laws. The sky grew dark and a rocket took off above the town.',
-    ep6_1: 'Space?! My customers must be from other planets now!',
-    ep6_2: 'Even in space they need buns. Plenty of room to grow.',
-    ep6_3: 'Fasten your seatbelts — off to chase coins!',
-    ep7_title: 'Neon Future',
-    ep7_0: 'The watch jumped far ahead. Neon lights lit up over the town and drones hummed between the skyscrapers.',
-    ep7_1: 'Neon signs! My little shop looks like it is from the future.',
-    ep7_2: 'The future is just a past that has not happened yet. Back to work!',
-    ep7_3: 'Flicker, neons — Capy is back!',
-    ep8_title: 'A New Circle',
-    ep8_0: 'The circle closed: the square again, the pennants over the street again, one single coin again.',
-    ep8_1: 'I remember every epoch. And every friend.',
-    ep8_2: 'That is how a real tycoon grows: wiser with every circle.',
-    ep8_3: 'Then into a new Renaissance, with a new coin!',
 
     wsTitle: 'Time Workshop',
     wsCrystals: 'Time Crystals: 💎 {0}',
@@ -2377,13 +2815,13 @@ function createDefaultState() {
     shopLevel: 1,                      // 1 = крамничка ... 6 = торговий центр
     depts: DEPARTMENTS.map(() => 0),   // скільки штук кожного відділу куплено
     team: TEAM.map(() => 0),           // рівень кожного звірятка: 0 — не найняте, 1…10
-    story: { done: 0, shnyrFriend: false, finale: false, nights: 0 },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
+    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
     // Події: час (мс від 1970 р.) наступного розпродажу / неприємності та активні бусти
     events: { nextSale: 0, saleUntil: 0, nextTrouble: 0, incomeBoostUntil: 0, incomeBoostMult: 1, tapBoostUntil: 0, tapBoostMult: 1, nextMail: 0, mailPending: 0 },
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни
     stats: { ghostsCaught: 0, raccoonsCaught: 0, raccoonsLost: 0, wheelSpins: 0, timeTravels: 0, puddlesFixed: 0, deptsBought: 0, milestones: 0, teamMaxLevel: 0, maxLevel: 1, holidaysSeen: 0, jackpots: 0 },
     // звук 0…1; анімації; формат чисел; стать гравця ('f' / 'm'); день і ніч; чи відкрите меню; чи бачив підказку про гортання
-    settings: { musicVol: 0.6, sfxVol: 0.8, muted: false, animations: true, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
+    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
     dayPhase: 0.3,                     // час доби 0…1: 0.25 — схід сонця, 0.5 — полудень, 0.75 — захід, 0 — північ
     epochIntroSeen: -1,                // для якої епохи вже показали заставку-анімацію
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
@@ -2519,7 +2957,7 @@ function requirementsMet(def) {
 function expandCost(def) { return def.cost * expandCostMult(); }
 
 /* ---------- Команда: найм і прокачка ---------- */
-function isTeamUnlocked(i) { return TEAM[i].level <= state.shopLevel; }
+function isTeamUnlocked(i) { return TEAM[i].level <= state.shopLevel && (!TEAM[i].needs || !!state.story[TEAM[i].needs]); }
 // Ціна переходу звірятка на рівень lvl (lvl = 1 — найм)
 function teamCost(i, lvl) {
   const known = lvl === 1 && state.teamKnown[i] ? CONFIG.TEAM_KNOWN_DISCOUNT : 1;   // знайоме звірятко наймати дешевше
@@ -2658,6 +3096,7 @@ function t(key, ...args) {
   let str = male && male[key] !== undefined ? male[key] : dict[key];
   if (str === undefined) str = translations.en[key];
   if (str === undefined) return key;
+  if (str.includes('💎')) str = str.replace(/💎/g, EPOCH_GEM_EMOJI[state.epoch % EPOCH_GEM_EMOJI.length]);      // кристал виглядає за стилем епохи
   return str.replace(/\{(\d+)\}/g, (_, i) => (args[i] !== undefined ? args[i] : ''));
 }
 
@@ -2734,7 +3173,7 @@ function getSpriteCanvas(name, variant) {
 }
 
 // Контур для звіряток: тіні-силуети, зсунуті на піксель у чотири боки, роблять спрайт чітким на будь-якому тлі
-const OUTLINED = /^(capy|team_|npc_shnyr|bunny_|mouse_|duck_|dog_)/;
+const OUTLINED = /^(capy|team_|npc_(?!clock)|bunny_|mouse_|duck_|dog_)/;
 const outlineCache = new Map();
 function getOutlinedCanvas(name, variant) {
   const key = name + '|' + (variant || '');
@@ -3039,15 +3478,26 @@ function buildGroundLayer() {
   houseLit = buildLitLayer(houseGlass);
   return c;
 }
-// Смуга дороги знизу сцени: асфальт, пунктир і зупинка для поштової машини з конвертом
+// Смуга дороги знизу сцени: асфальт, пунктир, острівець із поштоматом і затока для поштової машини з розміткою
 function drawRoadG(g, x0, W, H) {
   const top = H - 36, bx = LAYOUT.centerX - 70;
   g.globalAlpha = 0.55; R(g, x0, top, W, 36, 'd'); g.globalAlpha = 1;
   R(g, x0, top, W, 1, 'w'); R(g, x0, top + 1, W, 1, 'e');
-  for (let x = Math.floor(x0 / 14) * 14; x < x0 + W; x += 14) R(g, x, top + 18, 8, 1, 'y');
-  R(g, bx - 22, top + 8, 44, 1, 'w'); R(g, bx - 22, top + 31, 44, 1, 'w'); R(g, bx - 22, top + 8, 1, 24, 'w'); R(g, bx + 21, top + 8, 1, 24, 'w');
-  R(g, bx - 6, top + 16, 12, 9, 'w'); R(g, bx - 6, top + 16, 12, 1, 'd'); R(g, bx - 6, top + 24, 12, 1, 'd'); R(g, bx - 6, top + 16, 1, 9, 'd'); R(g, bx + 5, top + 16, 1, 9, 'd');
-  lineG(g, bx - 6, top + 16, bx, top + 21, 'd'); lineG(g, bx + 5, top + 16, bx, top + 21, 'd');
+  for (let x = Math.floor(x0 / 14) * 14; x < x0 + W; x += 14) if (x < bx - 42 || x > bx + 26) R(g, x, top + 18, 8, 1, 'y');
+  // затока: світліший асфальт, жовта пунктирна рамка, стрілки руху, обмежувач коліс
+  g.globalAlpha = 0.3; R(g, bx - 21, top + 9, 46, 24, 'e'); g.globalAlpha = 1;
+  for (let x = bx - 21; x < bx + 25; x += 4) { R(g, x, top + 9, 2, 1, 'y'); R(g, x, top + 32, 2, 1, 'y'); }
+  for (let y = top + 9; y < top + 33; y += 4) { R(g, bx + 24, y, 1, 2, 'y'); }
+  g.globalAlpha = 0.85;
+  for (let k = 0; k < 3; k++) { const x = bx + 15 - k * 9; lineG(g, x, top + 15, x - 4, top + 20, 'w'); lineG(g, x, top + 25, x - 4, top + 20, 'w'); }
+  g.globalAlpha = 1;
+  R(g, bx + 19, top + 14, 2, 12, 'w'); R(g, bx + 19, top + 14, 2, 1, 'd'); R(g, bx + 19, top + 25, 2, 1, 'd');
+  // острівець безпеки з діагональною жовтою розміткою — тут стоїть поштомат
+  g.globalAlpha = 0.65; R(g, bx - 39, top + 9, 18, 24, 'k'); g.globalAlpha = 1;
+  for (let y = top + 9; y < top + 33; y++) for (let x = bx - 39; x < bx - 21; x++) if ((x + y) % 7 < 2) R(g, x, y, 1, 1, 'y');
+  R(g, bx - 39, top + 9, 18, 1, 'w'); R(g, bx - 39, top + 32, 18, 1, 'w'); R(g, bx - 39, top + 9, 1, 24, 'w'); R(g, bx - 22, top + 9, 1, 24, 'w');
+  // конуси на кутах затоки
+  [[bx - 21, top + 7], [bx + 25, top + 7], [bx + 25, top + 34]].forEach(([cx, cy]) => { R(g, cx - 2, cy + 4, 5, 1, 'd'); R(g, cx - 1, cy + 1, 3, 3, 'o'); R(g, cx, cy - 1, 1, 2, 'o'); R(g, cx - 1, cy + 2, 3, 1, 'w'); });
 }
 function manholeG(g, x, y) {                  // люк у перспективі (приплюснутий овал)
   const hw = [4, 6, 7, 7, 7, 6, 4];
@@ -3366,11 +3816,11 @@ function palmG(g, x, y) {                          // пальма в діжці
   R(g, x, y - 3, 1, 11, 'd'); R(g, x - 1, y - 1, 1, 9, 'b');
   [[-5, -3], [-3, -5], [3, -5], [5, -3], [0, -6]].forEach(p => { lineG(g, x, y - 3, x + p[0], y + p[1], 'G'); R(g, x + p[0], y + p[1], 2, 1, 'g'); });
 }
-function buntingG(g, x0, x1, y) {                  // гірлянда з прапорців
+function buntingG(g, x0, x1, y) {                  // гірлянда з кольорових кульок
   for (let x = x0; x <= x1; x++) {
     const sag = Math.round(3 * Math.sin((x - x0) / (x1 - x0) * Math.PI));
     R(g, x, y + sag, 1, 1, 'd');
-    if ((x - x0) % 6 === 3) { const c = ['r', 'y', 'g', 'n', 'p'][Math.floor((x - x0) / 6) % 5]; R(g, x - 1, y + sag + 1, 3, 1, c); R(g, x, y + sag + 2, 1, 1, c); }
+    if ((x - x0) % 6 === 3) { const c = ['r', 'y', 'g', 'n', 'p'][Math.floor((x - x0) / 6) % 5]; R(g, x - 1, y + sag + 1, 3, 3, 'd'); R(g, x, y + sag + 1, 2, 2, c); R(g, x, y + sag + 1, 1, 1, 'w'); }
   }
 }
 function acG(g, x, y) { R(g, x, y, 9, 6, 'd'); R(g, x + 1, y + 1, 7, 4, 'E'); R(g, x + 2, y + 2, 5, 1, 'e'); R(g, x + 2, y + 4, 5, 1, 'e'); R(g, x + 1, y + 1, 7, 1, 'w'); }
@@ -3493,7 +3943,7 @@ function drawRoof(g, style, w, top, look) {
         R(g, lx, y, 2, 1, 'b'); R(g, lx + rw - 2, y, 2, 1, 'b');                 // дошки по краях фронтону
       }
       disc(g, cx, 19, 6, 'd'); disc(g, cx, 19, 5, 'b'); disc(g, cx, 19, 4, 's'); R(g, cx - 4, 19, 9, 1, 'd'); R(g, cx, 15, 1, 9, 'd'); R(g, cx - 2, 17, 2, 1, 'S');
-      R(g, cx, 0, 1, 9, 'd'); R(g, cx + 1, 1, 7, 4, 'r'); R(g, cx + 1, 1, 7, 1, 'w'); R(g, cx + 1, 4, 7, 1, 'd');
+      spireG(g, cx, 0);                                           // шпиль із кулькою замість прапорця
       break;
     }
     case 2: {                                       // плаский дах із парапетом, кондиціонерами й антеною
@@ -3514,7 +3964,7 @@ function drawRoof(g, style, w, top, look) {
       R(g, cx - 34, 1, 68, 13, 'd'); R(g, cx - 33, 2, 66, 11, 'r'); R(g, cx - 33, 2, 66, 1, 'o');
       wordG(g, cx - 14, 5, 'SUPER', 'w');
       R(g, cx - 28, 14, 2, 1, 'd'); R(g, cx + 26, 14, 2, 1, 'd');
-      flagG(g, 10, 3, 'r'); flagG(g, w - 20, 3, 'n');
+      spireG(g, 10, 3); spireG(g, w - 20, 3);
       break;
     }
     case 4: {                                       // мансардний дах із слуховими вікнами та годинниковою вежею
@@ -3769,7 +4219,7 @@ const ui = {
   stage: $('stage'), scene: $('scene'), world: $('world'), view: $('view'),
   shopOverlay: $('shopOverlay'), sign: $('sign'), signText: $('signText'), floaters: $('floaters'),
   coinCount: $('coinCount'), cps: $('cps'), coinIcon: $('coinIcon'),
-  langSwitch: $('langSwitch'), tabs: $('tabs'),
+  tabs: $('tabs'),
   paneShop: $('pane-shop'), paneDepts: $('pane-departments'), paneSoon: $('pane-soon'),
   soonTitle: $('soonTitle'), capiPortrait: $('capiPortrait'), saveWarn: $('saveWarn'),
   shopName: $('shopName'), shopLevelLabel: $('shopLevelLabel'),
@@ -3791,9 +4241,9 @@ const ui = {
   timeWarp: $('timeWarp'), warpClock: $('warpClock'),
   letterModal: $('letterModal'), letterTitle: $('letterTitle'), letterText: $('letterText'), letterBoost: $('letterBoost'), letterBtn: $('letterBtn'),
   epochIntro: $('epochIntro'), eiEmblem: $('eiEmblem'), eiNum: $('eiNum'), eiTitle: $('eiTitle'), eiSub: $('eiSub'), eiSparks: $('eiSparks'),
-  soundBtn: $('soundBtn'), soundModal: $('soundModal'), musicVol: $('musicVol'), sfxVol: $('sfxVol'), muteBtn: $('muteBtn'), soundClose: $('soundClose'),
+  soundModal: $('soundModal'), musicVol: $('musicVol'), musicStyleRow: $('musicStyleRow'), sfxVol: $('sfxVol'), muteBtn: $('muteBtn'), soundClose: $('soundClose'),
   dialog: $('dialog'), dlgBox: $('dialogBox'), dlgWrap: $('dlgPortraitWrap'), dlgPortrait: $('dlgPortrait'),
-  dlgName: $('dlgName'), dlgText: $('dlgText'), dlgNext: $('dlgNext'), dlgSkip: $('dlgSkip'),
+  dlgName: $('dlgName'), dlgText: $('dlgText'), dlgChoices: $('dlgChoices'), dlgNext: $('dlgNext'), dlgSkip: $('dlgSkip'),
   toasts: $('toasts'), modal: $('modal'), modalTitle: $('modalTitle'), modalText: $('modalText'), modalBig: $('modalBig'), modalBtn: $('modalBtn')
 };
 const ctx = ui.view.getContext('2d');
@@ -3869,7 +4319,7 @@ function layoutScene() {
   const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
   const availW = ui.stage.clientWidth - padX;
   // на телефоні з відкритим меню сцена займає не більше ~44% висоти, решту віддаємо панелі
-  const availH = (mobile && state.settings.panelOpen) ? window.innerHeight * 0.44 - padY : ui.stage.clientHeight - padY;
+  const availH = ui.stage.clientHeight - padY;
   const EB = (mobile && state.settings.panelOpen) ? 0 : CONFIG.EXTRA_BOTTOM;     // додаткова бруківка знизу
   const needY = shop ? Math.max(0, shop.h + 6 - LAYOUT.curbY) : 0;               // скільки неба над «ядром» потрібно високому магазину
   const H1 = H0 + EB + needY;
@@ -3981,32 +4431,40 @@ function setText(el, text, cacheKey) {
   el.textContent = text;
 }
 
-function buildLangSwitch() {
-  ui.langSwitch.innerHTML = '';
-  LANGS.forEach(lang => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'lang-btn btn';
-    b.dataset.lang = lang.id;
-    b.textContent = lang.label;
-    b.addEventListener('click', () => setLanguage(lang.id));
-    ui.langSwitch.appendChild(b);
-  });
-}
-
 function buildTabs() {
   ui.tabs.innerHTML = '';
   TABS.forEach(tab => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'tab btn' + (tab.ready ? '' : ' soon');
+    b.className = 'tab btn ' + (TABS_PRIMARY.includes(tab.id) ? 'primary' : 'secondary') + (tab.ready ? '' : ' soon');
     b.dataset.tab = tab.id;
     b.setAttribute('role', 'tab');
     b.innerHTML = '<span class="tab-icon"></span><span class="tab-name"></span>';
     b.querySelector('.tab-icon').textContent = tab.icon;
-    b.addEventListener('click', () => showTab(tab.id));
+    b.addEventListener('click', () => onTabClick(tab.id));
     ui.tabs.appendChild(b);
   });
+  const more = document.createElement('button');          // «⋯» — друга частина вкладок (лише на телефоні)
+  more.type = 'button'; more.className = 'tabmore btn'; more.textContent = '⋯';
+  more.addEventListener('click', () => ui.app.classList.toggle('more-open'));
+  ui.tabs.appendChild(more);
+  ui.tabMore = more;
+}
+const TABS_PRIMARY = ['shop', 'departments', 'team', 'story'];
+// На телефоні вміст вкладки виїжджає над смужкою іконок; повторний дотик до тієї ж вкладки його ховає
+function setSheet(open) {
+  ui.app.classList.toggle('sheet-open', open);
+  if (!open) ui.app.classList.remove('more-open');
+}
+function onTabClick(id) {
+  if (mobileMQ.matches) {
+    if (ui.app.classList.contains('sheet-open') && state.tab === id) { setSheet(false); return; }
+    showTab(id);
+    setSheet(true);
+    if (TABS_PRIMARY.includes(id)) ui.app.classList.remove('more-open');
+    return;
+  }
+  showTab(id);
 }
 
 function showTab(id) {
@@ -4112,8 +4570,8 @@ function applyTranslations() {
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
-  ui.langSwitch.querySelectorAll('.lang-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
-  ui.tabs.querySelectorAll('.tab').forEach(b => { b.querySelector('.tab-name').textContent = t('tab_' + b.dataset.tab); });
+  ui.tabs.querySelectorAll('.tab').forEach(b => { b.querySelector('.tab-name').textContent = t('tab_' + b.dataset.tab); b.title = t('tab_' + b.dataset.tab); b.setAttribute('aria-label', t('tab_' + b.dataset.tab)); });
+  if (ui.tabMore) ui.tabMore.setAttribute('aria-label', t('tabMore'));
   const tab = TABS.find(x => x.id === state.tab);
   if (tab && !tab.ready) ui.soonTitle.textContent = tab.icon + ' ' + t('tab_' + tab.id);
   DEPARTMENTS.forEach((d, i) => { deptEls[i].name.textContent = t('dept_' + d.id); });
@@ -4207,7 +4665,7 @@ function updateTeamUI() {
       el.btn.disabled = state.coins < cost;
     }
   });
-  const nextLocked = TEAM.find((m, i) => !isTeamUnlocked(i));
+  const nextLocked = TEAM.find((m, i) => !isTeamUnlocked(i) && !m.needs);
   teamLockedEl.hidden = !nextLocked;
   if (nextLocked) setText(teamLockedEl, t('lockedTeam', t('levelName_' + nextLocked.level)), 'tlocked');
 }
@@ -5004,6 +5462,7 @@ function updateAnimations(dt) {
   updateCustomers(dt);
   updateActors(dt);
   updateCameos(dt);
+  updateGuests(dt);
 
   // монетки: політ, гравітація, зникання
   for (let i = fx.coins.length - 1; i >= 0; i--) {
@@ -5193,7 +5652,8 @@ function drum(dest, kind, t0, vol) {
 function desiredTrack() {
   if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music]) return theme.holiday.music;
   if (theme.season === 'halloween' && MUSIC.halloween) return 'halloween';
-  return MUSIC_BY_LEVEL[Math.min(MUSIC_BY_LEVEL.length, state.shopLevel) - 1];
+  const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
+  return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + (state.epoch % EPOCH_MUSIC.length);
 }
 // Перемикає мелодію плавно: стара стихає, нова наростає
 function updateMusic() {
@@ -5212,7 +5672,7 @@ function updateMusic() {
   gain.gain.value = 0;
   gain.gain.setTargetAtTime(1, now + 0.1, 0.25);
   gain.connect(audio.musicGain);
-  const def = MUSIC_PARSED[id];
+  const def = trackDef(id);
   audio.track = { id, def, gain, start: now + 0.15, pos: def.channels.map(() => ({ idx: 0, loop: 0 })), stopped: false };
 }
 // Планувальник: заздалегідь ставить у чергу ноти, що зазвучать найближчими 0,25 с
@@ -5337,15 +5797,21 @@ function updateSoundUI() {
   const s = state.settings;
   ui.musicVol.value = Math.round(s.musicVol * 100);
   ui.sfxVol.value = Math.round(s.sfxVol * 100);
-  ui.soundBtn.textContent = s.muted ? '🔇' : '🔊';
-  ui.soundBtn.classList.toggle('muted', s.muted);
   ui.muteBtn.textContent = t(s.muted ? 'soundMuteOff' : 'soundMuteOn');
+  if (!ui.musicStyleRow.children.length) {
+    MUSIC_STYLES.forEach((st, i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn'; b.dataset.style = i;
+      b.addEventListener('click', () => { state.settings.musicStyle = i; updateMusic(); updateSoundUI(); saveGame(); });
+      ui.musicStyleRow.appendChild(b);
+    });
+  }
+  ui.musicStyleRow.querySelectorAll('button').forEach(b => { b.textContent = t('musicStyle_' + MUSIC_STYLES[b.dataset.style].id); b.setAttribute('aria-pressed', String(Number(b.dataset.style) === (s.musicStyle | 0))); });
 }
 function setupSound() {
   parseMusic();
   // перший дотик/натискання вмикає звук (вимога браузерів); далі будить його, якщо він заснув
   ['pointerdown', 'pointerup', 'keydown', 'touchstart', 'touchend', 'click'].forEach(ev => document.addEventListener(ev, initAudio, { passive: true }));
-  ui.soundBtn.addEventListener('click', () => { ui.soundModal.hidden = false; updateSoundUI(); });
   ui.soundClose.addEventListener('click', () => { ui.soundModal.hidden = true; saveGame(); });
   ui.soundModal.addEventListener('click', e => { if (e.target === ui.soundModal) { ui.soundModal.hidden = true; saveGame(); } });
   ui.musicVol.addEventListener('input', () => { state.settings.musicVol = ui.musicVol.value / 100; applyVolumes(); });
@@ -5405,6 +5871,7 @@ function currentEpoch() { return EPOCHS[state.epoch % EPOCHS.length]; }
 /* ---------- Епохи: зовнішній вигляд міста ---------- */
 function rebuildEpochLayers() {
   document.body.dataset.epoch = String(state.epoch % EPOCHS.length);
+  refreshCoinIcon();
   skyLayer = buildSkyLayer();
   groundLayer = buildGroundLayer();
   theme.key = null;              // змусити updateTheme перерахувати прикраси
@@ -5545,8 +6012,8 @@ function updateWarp(dt) {
     ui.timeWarp.hidden = true;
     document.body.classList.remove('warping');
     // новий сюжетний фрагмент епохи
-    const storyNo = ((state.epoch - 1) % EPOCH_STORIES.length) + 1, label = (state.epoch % EPOCHS.length) + 1;
-    playEpochIntro(state.epoch, () => startDialogue(storyNo, false, 'ep', label));
+    const storyNo = ((state.epoch - 1) % EPOCHS.length) + 1, label = (state.epoch % EPOCHS.length) + 1;
+    playEpochIntro(state.epoch, () => { if (!state.story.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); });      // історія — лише вперше, далі тільки заставка
   }
 }
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
@@ -5573,6 +6040,7 @@ function applyTimeTravel() {
   resetEpochFx();
   rebuildShop(true);
   syncActors();
+  syncGuests();
   layoutScene();
   updateMusic();
   updateUI();
@@ -5656,7 +6124,7 @@ function makeBadge(a, unlocked) {
   disc(g, 8, 8, 6, unlocked ? ACH_TIER_COLORS[a.tier % ACH_TIER_COLORS.length] : 'E');
   if (unlocked) { R(g, 4, 3, 3, 1, 'w'); R(g, 3, 4, 1, 2, 'w'); }
   g.globalAlpha = unlocked ? 1 : 0.3;
-  g.drawImage(getSpriteCanvas('glyph_' + a.glyph), 4, 4);
+  g.drawImage(getSpriteCanvas(a.glyph === 'coin' ? coinSprite() : a.glyph === 'gem' ? gemSprite() : 'glyph_' + a.glyph), 4, 4);
   return c;
 }
 function buildAchievements() {
@@ -5728,7 +6196,7 @@ function updateStatsUI() {
     stTap: fmt(tapValue(), 1),
     stTaps: fmt(s.taps),
     stDepts: fmt(st.deptsBought),
-    stCrystals: '💎 ' + fmt(s.crystals) + ' / ' + fmt(s.crystalsTotal),
+    stCrystals: EPOCH_GEM_EMOJI[state.epoch % EPOCH_GEM_EMOJI.length] + ' ' + fmt(s.crystals) + ' / ' + fmt(s.crystalsTotal),
     stTravels: fmt(st.timeTravels),
     stRaccoons: st.raccoonsCaught + ' / ' + st.raccoonsLost,
     stPuddles: fmt(st.puddlesFixed),
@@ -6344,6 +6812,7 @@ function drawDecorGround() {
     drawPumpkin(shop.x + shop.w + 8, LAYOUT.curbY + 5);
     drawPumpkin(Math.min(300, shop.x + shop.w + 40), LAYOUT.curbY + 7);
   }
+  drawStreetGarlands();
   if (theme.decor.has('garlands')) drawGarland();
   if (theme.decor.has('balloons')) {
     const bob = Math.round(Math.sin(animClock * 1.5) * 2);
@@ -6594,6 +7063,51 @@ function drawNightShade() {
   ctx.globalAlpha = 1;
 }
 const SEASON_MOOD = { summer: ['#ffc060', 0.08], autumn: ['#ff9a50', 0.06], winter: ['#cfe6ff', 0.09] };
+
+// Гірлянди між ліхтарями вздовж вулиці: удень тьмяні, вночі яскраво світяться кольоровими вогниками
+const BULB_SETS = [['y', 'h', 'p', 'm', 's'], ['p', 'T', 'w', 'y', 'q'], ['f', 'y', 'j', 'w', 'J'], ['v', 'T', 'f', 'y', 'w'], ['a', 'S', 'w', 's', 'T'], ['g', 'm', 'y', 'h', 'w'], ['S', 'w', 'u', 's', 'y'], ['f', 'T', 'v', 'f', 'T']];
+function bulbColors() { return (theme.holiday && theme.lights && theme.lights.length) ? theme.lights : BULB_SETS[state.epoch % BULB_SETS.length]; }
+function awningBulbs(fn) {
+  if (build || !shop) return;
+  const cols = bulbColors(), tw = Math.floor(animClock * 1.5), y0 = shop.y + shop.h - 39 + 13;
+  for (let x = shop.x + 3; x < shop.x + shop.w - 3; x += 6) {
+    const sag = Math.round(2 * Math.sin(((x - shop.x) % 12) / 12 * Math.PI));
+    fn(x, y0 + sag, cols[(Math.floor((x - shop.x) / 6) + tw) % cols.length]);
+  }
+}
+function garlandSpans() {
+  const xs = lampXs.slice().sort((a, b) => a - b), out = [];
+  for (let i = 0; i + 1 < xs.length; i++) {
+    const a = xs[i] + 1, b = xs[i + 1] + 1;
+    if (shop && a < shop.x + shop.w && b > shop.x) continue;          // між ліхтарями біля магазину гірлянда закрила б фасад
+    out.push([a, b]);
+  }
+  return out;
+}
+function garlandY(a, b, x) { return 92 + Math.round(6 * Math.sin((x - a) / (b - a) * Math.PI)); }
+function forEachBulb(fn) {
+  const cols = bulbColors(), tw = Math.floor(animClock * 1.5);
+  garlandSpans().forEach(([a, b]) => {
+    for (let k = 4; k < b - a - 2; k += 7) { const x = a + k; fn(x, garlandY(a, b, x) + 1, cols[(Math.floor(k / 7) + tw) % cols.length]); }
+  });
+}
+function drawStreetGarlands() {
+  garlandSpans().forEach(([a, b]) => { for (let x = a; x <= b; x++) R(ctx, x, garlandY(a, b, x), 1, 1, 'd'); });
+  const day = 1 - Math.min(1, sky.lamp * 1.4);                           // удень — тьмяні лампочки
+  ctx.globalAlpha = 0.55 + 0.45 * (1 - day);
+  forEachBulb((x, y, c) => R(ctx, x, y, 2, 2, c));
+  awningBulbs((x, y, c) => R(ctx, x, y, 2, 2, c));
+  ctx.globalAlpha = 1;
+}
+function drawStreetGarlandGlow(L) {
+  awningBulbs((x, y, c) => { ctx.globalAlpha = L * 0.16; disc(ctx, x, y, 6, c); ctx.globalAlpha = L; R(ctx, x, y, 2, 2, c); });
+  forEachBulb((x, y, c) => {
+    ctx.globalAlpha = L * 0.13; disc(ctx, x, y, 8, c);
+    ctx.globalAlpha = L * 0.3; disc(ctx, x, y, 4, c);
+    ctx.globalAlpha = L; R(ctx, x - 1, y - 1, 3, 3, c); R(ctx, x, y, 1, 1, 'w');
+  });
+  ctx.globalAlpha = 1;
+}
 // Світло поверх затемнення: вікна будинків і магазину, ліхтарі з ореолом і плямою на тротуарі
 function drawNightLights() {
   const L = sky.lamp;
@@ -6606,13 +7120,25 @@ function drawNightLights() {
     drawCanvasSprite(ctx, shop.lit, shop.x, shop.y, { sx: sc.sx, sy: sc.sy, alpha: L * 0.55 });
   }
   lampXs.forEach(x => {
-    ctx.globalAlpha = L * 0.1;
-    for (let i = 0; i < 5; i++) { const hw = 28 - i * 5; R(ctx, x + 1 - hw, 128 + i * 4, hw * 2, 4, 'y'); }   // пляма світла на землі
-    ctx.globalAlpha = L * 0.12; disc(ctx, x + 1, 90, 18, 'y');
-    ctx.globalAlpha = L * 0.2; disc(ctx, x + 1, 90, 11, 'y');
+    ctx.globalAlpha = L * 0.2;
+    for (let i = 0; i < 6; i++) { const hw = 36 - i * 5; R(ctx, x + 1 - hw, 126 + i * 4, hw * 2, 4, 'y'); }   // пляма світла на землі
+    ctx.globalAlpha = L * 0.06; disc(ctx, x + 1, 90, 30, 'y');
+    ctx.globalAlpha = L * 0.13; disc(ctx, x + 1, 90, 20, 'y');
+    ctx.globalAlpha = L * 0.24; disc(ctx, x + 1, 90, 12, 'y');
     ctx.globalAlpha = L;
     R(ctx, x - 2, 88, 6, 5, 'y'); R(ctx, x - 1, 89, 2, 2, 'w');
   });
+  if (!build && shop) {                                              // світло з дверей і вітрин падає на тротуар
+    const cx = shop.x + shop.door.x + shop.door.w / 2;
+    for (let i = 0; i < 8; i++) { ctx.globalAlpha = L * 0.12; R(ctx, Math.round(cx - 15 - i * 4), LAYOUT.curbY + i * 4, 30 + i * 8, 4, 'y'); }
+    ctx.globalAlpha = L * 0.1; R(ctx, shop.x - 4, LAYOUT.curbY, shop.w + 8, 9, 'y');
+  }
+  drawStreetGarlandGlow(L);
+  if (mail.state !== 'idle' || state.events.mailPending) {            // фари поштової машини й підсвітка поштомата
+    const bx = mailBoxX(), by = mailRoadY() - 16;
+    ctx.globalAlpha = L * (state.events.mailPending ? 0.18 + 0.1 * Math.sin(animClock * 5) : 0.1); disc(ctx, bx, by, 14, 'T');
+    if (mail.state === 'arriving' || mail.state === 'leaving') { ctx.globalAlpha = L * 0.22; disc(ctx, Math.round(mail.x) - 18, mailRoadY() - 6, 9, 'y'); ctx.globalAlpha = L * 0.1; R(ctx, Math.round(mail.x) - 44, mailRoadY() - 8, 26, 5, 'y'); }
+  }
   ctx.globalAlpha = 1;
   drawEpochGlow(animClock);
 }
@@ -6744,28 +7270,41 @@ function drawMailTruck() {
   R(ctx, x - 15, y - 11, 13, 8, 'n'); R(ctx, x - 14, y - 10, 5, 4, 's'); R(ctx, x - 14, y - 10, 2, 1, 'S'); R(ctx, x - 6, y - 10, 3, 3, 'h');   // кабіна
   R(ctx, x - 17, y - 8, 3, 5, 'n'); R(ctx, x - 17, y - 4, 3, 2, 'e'); R(ctx, x - 17, y - 7, 1, 2, 'y');
   [x - 11, x + 9].forEach(wx => { disc(ctx, wx, y - 2, 3, 'd'); R(ctx, wx - 1, y - 3, 2, 2, 'e'); });
-  if (mail.state === 'stopped' && mail.t > 0.4 && mail.t < 3.4) {         // кур'єр-песик несе лист до скриньки
-    const k = Math.min(1, (mail.t - 0.4) / 2.2), cx = Math.round(mail.x - 14 + (mailBoxX() - (mail.x - 14)) * k), fr = Math.floor(animClock * 6) % 2;
+  if (mail.state === 'stopped' && mail.t > 0.4 && mail.t < 3.4) {         // кур'єр-песик несе лист до поштомата й кладе його в комірку
+    const tx = mailBoxX() + 12, k = Math.min(1, (mail.t - 0.4) / 1.8), cx = Math.round(mail.x - 14 + (tx - (mail.x - 14)) * k), fr = k < 1 ? Math.floor(animClock * 6) % 2 : 0;
     drawSprite(ctx, 'dog_' + fr, cx - 8, y - 17, { flip: true });
     if (k < 1) R(ctx, cx - 9, y - 11, 4, 3, 'w');
+    else if (mail.t < 3.0) {                                              // конверт летить із пащі в комірку
+      const u = (mail.t - 2.2) / 0.8, ex = Math.round(cx - 9 + (mailBoxX() + 1 - (cx - 9)) * u), ey = Math.round(y - 11 + (y - 18 - (y - 11)) * u - Math.sin(u * Math.PI) * 5);
+      R(ctx, ex, ey, 4, 3, 'w'); R(ctx, ex + 1, ey + 1, 2, 1, 'r');
+    }
   }
 }
-function drawMailBox() {                                       // скринька біля дороги; з листом — підстрибуючий конверт
-  const pending = !!state.events.mailPending;
-  if (!pending && mail.state === 'idle') return;
-  const x = mailBoxX(), y = mailRoadY() - 1;
-  R(ctx, x - 1, y - 12, 2, 12, 'd'); R(ctx, x - 5, y - 20, 11, 8, 'd'); R(ctx, x - 4, y - 19, 9, 6, 'r'); R(ctx, x - 4, y - 19, 9, 1, 'o'); R(ctx, x - 2, y - 16, 5, 1, 'd');
-  if (pending) {
-    const bob = Math.round(Math.sin(animClock * 5) * 2);
-    R(ctx, x - 6, y - 32 + bob, 13, 9, 'd'); R(ctx, x - 5, y - 31 + bob, 11, 7, 'w'); lineG(ctx, x - 5, y - 31 + bob, x, y - 27 + bob, 'e'); lineG(ctx, x + 5, y - 31 + bob, x, y - 27 + bob, 'e');
-    R(ctx, x + 2, y - 30 + bob, 3, 3, 'r');
-    if (Math.floor(animClock * 4) % 2) { R(ctx, x - 9, y - 34 + bob, 1, 3, 'y'); R(ctx, x - 10, y - 33 + bob, 3, 1, 'y'); R(ctx, x + 9, y - 30 + bob, 1, 3, 'y'); R(ctx, x + 8, y - 29 + bob, 3, 1, 'y'); }
+// Поштомат біля дороги: комірки, екран і маячок. З листом одна комірка світиться й блимає
+function drawMailBox() {
+  const x = mailBoxX(), y = mailRoadY() - 1, pending = !!state.events.mailPending, blink = Math.floor(animClock * 3) % 2, arriving = mail.state !== 'idle' && !pending;
+  ctx.globalAlpha = 0.28; R(ctx, x - 9, y - 1, 19, 2, 'd'); ctx.globalAlpha = 1;
+  R(ctx, x - 6, y - 3, 3, 3, 'd'); R(ctx, x + 4, y - 3, 3, 3, 'd');                                  // ніжки
+  R(ctx, x - 8, y - 27, 17, 25, 'd'); R(ctx, x - 7, y - 26, 15, 23, 'n');                              // корпус
+  R(ctx, x - 7, y - 26, 1, 23, 'v');
+  R(ctx, x - 9, y - 30, 19, 4, 'd'); R(ctx, x - 8, y - 29, 17, 2, 'o'); R(ctx, x - 8, y - 29, 17, 1, 'y');     // дашок
+  R(ctx, x - 7, y - 24, 8, 7, 'd'); R(ctx, x - 6, y - 23, 6, 5, 'k');                                // екран
+  R(ctx, x - 5, y - 22, 4, 1, 'T'); if (blink || pending) R(ctx, x - 5, y - 20, 3, 1, 'T');
+  R(ctx, x + 2, y - 24, 6, 7, 'd'); [[3, -23], [5, -23], [3, -21], [5, -21], [3, -19], [5, -19]].forEach(p => R(ctx, x + p[0], y + p[1], 1, 1, 'E'));   // клавіатура
+  for (let j = 0; j < 2; j++) for (let i = 0; i < 3; i++) {                                              // комірки 3×2
+    const dx = x - 6 + i * 5, dy = y - 15 + j * 6, lit = pending && i === 1 && j === 0;
+    R(ctx, dx, dy, 4, 5, 'd'); R(ctx, dx + 1, dy + 1, 2, 3, lit ? (blink ? 'y' : 'w') : (arriving && i === 1 && j === 0 ? 'e' : 'S')); R(ctx, dx + 3, dy + 2, 1, 1, 'h');
   }
+  if (pending) {                                                                                       // з комірки визирає лист
+    R(ctx, x - 3, y - 18, 6, 3, 'd'); R(ctx, x - 2, y - 17, 4, 1, 'w'); R(ctx, x + 1, y - 17, 1, 1, 'r');
+    if (Math.floor(animClock * 4) % 2) { R(ctx, x - 12, y - 24, 1, 3, 'y'); R(ctx, x - 13, y - 23, 3, 1, 'y'); R(ctx, x + 12, y - 20, 1, 3, 'y'); R(ctx, x + 11, y - 19, 3, 1, 'y'); }
+  }
+  R(ctx, x - 1, y - 34, 3, 4, 'd'); R(ctx, x - 1, y - 33, 3, 3, pending ? (blink ? 'r' : 'o') : 'e');         // маячок
 }
 function hitMail(p) {
   if (!state.events.mailPending) return false;
   const x = mailBoxX(), y = mailRoadY();
-  if (Math.abs(p.x - x) <= 10 && p.y >= y - 38 && p.y <= y + 2) { openLetter(); return true; }
+  if (Math.abs(p.x - x) <= 11 && p.y >= y - 36 && p.y <= y + 3) { openLetter(); return true; }
   return false;
 }
 // Лист: випадковий відправник (звірята-друзі) і випадковий бонус
@@ -6819,9 +7358,10 @@ function streakMult(streak) { return 1 + CONFIG.WHEEL_STREAK_STEP * (Math.min(st
 
 // Маленькі піксельні значки на секторах
 function drawWheelIcon(g, kind, cx, cy) {
-  const coin = (x, y) => { disc(g, x, y, 4, 'd'); disc(g, x, y, 3, 'h'); R(g, x - 1, y - 2, 2, 1, 'y'); };
+  const cc = EPOCH_COIN_COLORS[state.epoch % EPOCH_COIN_COLORS.length];
+  const coin = (x, y) => { disc(g, x, y, 4, 'd'); disc(g, x, y, 3, cc[0]); R(g, x - 1, y - 2, 2, 1, cc[1]); };
   switch (kind) {
-    case 'gem': { const rows = GLYPHS.gem; rows.forEach((row, ry) => { for (let rx = 0; rx < 8; rx++) if (row[rx] !== '.') R(g, cx - 4 + rx, cy - 4 + ry, 1, 1, row[rx]); }); break; }
+    case 'gem': { const rows = SPRITES[gemSprite()].rows; rows.forEach((row, ry) => { for (let rx = 0; rx < 8; rx++) if (row[rx] !== '.') R(g, cx - 4 + rx, cy - 4 + ry, 1, 1, row[rx]); }); break; }
     case 'coin1': coin(cx, cy); break;
     case 'coin2': coin(cx - 4, cy + 2); coin(cx + 4, cy - 2); break;
     case 'coin3': coin(cx - 5, cy + 3); coin(cx + 5, cy + 3); coin(cx, cy - 3); break;
@@ -7045,11 +7585,14 @@ function speakerSprite(sp) {
   if (sp === 'capy') return capySprite();
   if (sp === 'shnyr') return 'npc_shnyr';
   if (sp === 'clock') return 'npc_clock';
+  if (/^shnyr\d$/.test(sp) || GUEST_IDS.includes(sp)) return 'npc_' + sp;       // костюми Шниря та гості епох
   return 'team_' + sp;
 }
 function speakerName(sp) {
   if (sp === 'narr' || sp === 'title') return '';
   if (sp === 'capy' || sp === 'shnyr' || sp === 'clock') return t('speaker_' + sp);
+  if (/^shnyr\d$/.test(sp)) return t('speaker_shnyr');
+  if (GUEST_IDS.includes(sp)) return t('speaker_' + sp);
   return t('team_' + sp);
 }
 function pageText(p) {
@@ -7059,12 +7602,46 @@ function pageText(p) {
 
 function renderDialogText() {
   ui.dlgText.textContent = dialog.text.slice(0, Math.floor(dialog.shown));
-  ui.dlgNext.classList.toggle('on', dialog.shown >= dialog.text.length);
+  ui.dlgNext.classList.toggle('on', !dialog.choosing && dialog.shown >= dialog.text.length);
+}
+// Вибір відповіді Капі: два варіанти — жартівливий (тап ×5) і серйозний (дохід ×2), обидва на 10 хвилин
+function buildChoiceButtons() {
+  const n = dialog.chapter;
+  ui.dlgChoices.innerHTML = '';
+  [1, 2].forEach(i => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn';
+    const main = document.createElement('span'); main.textContent = t('ep' + n + '_o' + i);
+    const hint = document.createElement('small'); hint.textContent = t(i === 1 ? 'choiceFun' : 'choiceSerious');
+    b.append(main, hint);
+    b.addEventListener('click', e => { e.stopPropagation(); chooseOption(i); });
+    ui.dlgChoices.appendChild(b);
+  });
+  ui.dlgChoices.hidden = false;
+}
+function choicePages(n, def, i) { return [{ speaker: 'capy', key: 'ep' + n + '_o' + i }, { speaker: def.reply[i - 1], key: 'ep' + n + '_r' + i }]; }
+function applyChoiceBonus(i) {
+  const ev = state.events, now = Date.now(), ms = 10 * 60000;
+  if (i === 1) { if (!(ev.tapBoostUntil > now && ev.tapBoostMult > 5)) { ev.tapBoostUntil = now + ms; ev.tapBoostMult = 5; } showToast(t('choiceBonusTap'), 'good'); }
+  else { if (!(ev.incomeBoostUntil > now && ev.incomeBoostMult > 2)) { ev.incomeBoostUntil = now + ms; ev.incomeBoostMult = 2; } showToast(t('choiceBonusIncome'), 'good'); }
+  recalcIncome();
+}
+function chooseOption(i) {
+  if (!dialog.active || !dialog.choosing) return;
+  const n = dialog.chapter, def = EPOCH_STORIES[n - 1];
+  dialog.choosing = false;
+  ui.dlgChoices.hidden = true;
+  if (!dialog.replay) { state.story.choices[n - 1] = i; applyChoiceBonus(i); saveGame(); }
+  dialog.pages.splice(dialog.page + 1, 0, ...choicePages(n, def, i));
+  dialog.page++;
+  showDialogPage();
 }
 function showDialogPage() {
   const p = dialog.pages[dialog.page];
-  dialog.text = pageText(p);
-  dialog.shown = 0;
+  dialog.choosing = !!p.choice;
+  ui.dlgChoices.hidden = true;
+  dialog.text = p.choice ? t('choiceTitle') : pageText(p);
+  dialog.shown = p.choice ? dialog.text.length : 0;
   ui.dlgText.classList.toggle('title', p.speaker === 'title');
   ui.dlgName.textContent = speakerName(p.speaker);
   const spr = speakerSprite(p.speaker);
@@ -7078,6 +7655,7 @@ function showDialogPage() {
     g.drawImage(c, (side - c.width) >> 1, side - c.height);
   }
   renderDialogText();
+  if (p.choice) buildChoiceButtons();
 }
 
 // Запускає главу n (kind 'ch'), фрагмент епохи (kind 'ep') або туторіал (kind 'tut').
@@ -7092,7 +7670,14 @@ function startDialogue(n, replay = false, kind = 'ch', labelNo = n) {
   dialog.replay = replay;
   dialog.page = 0;
   const prefix = kind === 'tut' ? 'tut' + n : kind + n;
-  dialog.pages = [...(kind === 'tut' ? [] : [{ speaker: 'title' }]), ...def.lines.map((sp, k) => ({ speaker: sp, key: prefix + '_' + k }))];
+  dialog.choosing = false;
+  if (kind === 'ep') {
+    // історія епохи: вступ → вибір Капі (жарт чи серйозно) → відповідь → завершення. При перечитуванні вибір береться зі збереженого
+    const stored = replay ? state.story.choices[n - 1] : 0;
+    dialog.pages = [{ speaker: 'title' }, ...def.pre.map((sp, k) => ({ speaker: sp, key: 'ep' + n + '_' + k })),
+      ...(stored > 0 ? choicePages(n, def, stored) : [{ speaker: 'capy', choice: true }]),
+      ...def.post.map((sp, j) => ({ speaker: sp, key: 'ep' + n + '_' + (def.pre.length + j) }))];
+  } else dialog.pages = [...(kind === 'tut' ? [] : [{ speaker: 'title' }]), ...def.lines.map((sp, k) => ({ speaker: sp, key: prefix + '_' + k }))];
   ui.dlgSkip.textContent = t('storySkip');
   ui.dialog.hidden = false;
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -7101,7 +7686,7 @@ function startDialogue(n, replay = false, kind = 'ch', labelNo = n) {
 
 // Тап / клік: показати весь текст одразу, а якщо він уже повний — перейти далі
 function advanceDialog() {
-  if (!dialog.active) return;
+  if (!dialog.active || dialog.choosing) return;
   if (dialog.shown < dialog.text.length) { dialog.shown = dialog.text.length; renderDialogText(); return; }
   dialog.page++;
   if (dialog.page >= dialog.pages.length) endDialogue(); else showDialogPage();
@@ -7111,10 +7696,17 @@ function endDialogue() {
   if (!dialog.active) return;
   const n = dialog.chapter, replay = dialog.replay, kind = dialog.kind;
   dialog.active = false;
+  dialog.choosing = false;
+  ui.dlgChoices.hidden = true;
   ui.dialog.hidden = true;
   if (replay) return;
   if (kind === 'tut') { state.tutorialDone = true; storyTimer = 1; saveGame(); return; }
-  if (kind === 'ep') { storyTimer = 1; saveGame(); return; }
+  if (kind === 'ep') {
+    const st = state.story;
+    if (!st.guests[n - 1]) { st.guests[n - 1] = Math.max(...st.guests) + 1; syncGuests(n - 1); }       // гість лишається жити в місті
+    if (n === 7 && !st.shnyrJoined) { st.shnyrJoined = true; showToast(t('shnyrJoined'), 'big'); }   // у Неоновій епосі Шнирь стає другом і працівником
+    storyTimer = 1; updateUI(); saveGame(); return;
+  }
   state.story.done = Math.max(state.story.done, n);
   if (n === 3) spawnCameo('npc_shnyr');          // Шнирь тікає з печивом
   if (n === 6) state.story.shnyrFriend = true;
@@ -7139,8 +7731,9 @@ function refreshDialogLanguage() {
   if (!dialog.active) return;
   const ratio = dialog.text.length ? dialog.shown / dialog.text.length : 0;
   const p = dialog.pages[dialog.page];
-  dialog.text = pageText(p);
-  dialog.shown = ratio >= 1 ? dialog.text.length : Math.floor(ratio * dialog.text.length);
+  dialog.text = p.choice ? t('choiceTitle') : pageText(p);
+  dialog.shown = ratio >= 1 || p.choice ? dialog.text.length : Math.floor(ratio * dialog.text.length);
+  if (p.choice) buildChoiceButtons();
   ui.dlgName.textContent = speakerName(p.speaker);
   ui.dlgSkip.textContent = t('storySkip');
   renderDialogText();
@@ -7166,6 +7759,7 @@ function checkStory(dt) {
   if (dialog.active || build || !ui.modal.hidden || warp || epochIntro.active) return;
   if (state.epochIntroSeen < state.epoch) { playEpochIntro(state.epoch); return; }               // нова епоха: спершу заставка
   if (state.story.done >= 1 && !state.tutorialDone) { startDialogue(1, false, 'tut'); return; }   // коротке навчання після першої глави
+  if (state.story.done >= 4 && state.tutorialDone && !state.story.guests[8]) { startDialogue(9, false, 'ep', 1); return; }       // гість першої епохи
   const next = state.story.done;
   if (next >= CHAPTERS.length) return;
   if (triggerMet(CHAPTERS[next].trigger, state)) startDialogue(next + 1);
@@ -7174,7 +7768,7 @@ function checkStory(dt) {
 // Вкладка «Історія»: відкриті глави з кнопкою «Читати»
 function updateStoryUI() {
   if (ui.paneStory.hidden) return;
-  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels;
+  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels + '|' + state.story.guests[8];
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
@@ -7189,13 +7783,17 @@ function updateStoryUI() {
     ui.storyList.appendChild(card);
   }
   // фрагменти епох (відкриваються подорожами в часі)
-  for (let k = 1; k <= Math.min(EPOCH_STORIES.length, state.stats.timeTravels); k++) {
+  const epEntries = [];
+  if (state.story.guests[8] > 0) epEntries.push(9);                                   // історія першої епохи (П'єтро)
+  for (let k = 1; k <= Math.min(EPOCHS.length, state.stats.timeTravels); k++) epEntries.push(k);
+  for (const k of epEntries) {
+    const label = k === 9 ? 1 : (k % EPOCHS.length) + 1;
     const card = document.createElement('div');
     card.className = 'card chapter-card';
     const num = document.createElement('div'); num.className = 'num'; num.textContent = '⏳';
-    const title = document.createElement('div'); title.className = 'title'; title.textContent = t('epochLabel', (k % EPOCHS.length) + 1) + ': ' + t('ep' + k + '_title');
+    const title = document.createElement('div'); title.className = 'title'; title.textContent = t('epochLabel', label) + ': ' + t('ep' + k + '_title');
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
-    btn.addEventListener('click', () => startDialogue(k, true, 'ep', (k % EPOCHS.length) + 1));
+    btn.addEventListener('click', () => startDialogue(k, true, 'ep', label));
     card.append(num, title, btn);
     ui.storyList.appendChild(card);
   }
@@ -7205,6 +7803,51 @@ function updateStoryUI() {
     lock.textContent = t('storyLocked');
     ui.storyList.appendChild(lock);
   }
+}
+
+/* ---------- Гості епох: після історії лишаються ходити містом ---------- */
+const guestWalkers = [];
+const GUESTS_MAX = 4;             // скільки гостей одночасно гуляє (найновіші)
+// Узгоджує гостей на вулиці зі збереженням; arrive — номер гостя, що тільки-но прийшов (заходить зліва)
+function syncGuests(arrive) {
+  const met = state.story.guests.map((o, k) => [o, k]).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, GUESTS_MAX).map(x => x[1]);
+  for (let i = guestWalkers.length - 1; i >= 0; i--) if (!met.includes(guestWalkers[i].k)) guestWalkers.splice(i, 1);
+  met.forEach(k => {
+    if (guestWalkers.some(g => g.k === k)) return;
+    guestWalkers.push({ k, id: GUEST_IDS[k], x: arrive === k ? worldL() - 12 : rand(worldL() + 20, worldR() - 20), y: rand(LAYOUT.streetTop + 10, roadFloor()),
+      dir: 1, t: rand(0, 10), mode: 'idle', wait: rand(0.3, 2), speed: rand(12, 20), moving: false, tx: 0, ty: 0, sayIn: rand(15, 40) });
+  });
+}
+function updateGuests(dt) {
+  guestWalkers.forEach(g => {
+    g.t += dt;
+    g.y = Math.min(g.y, roadFloor());
+    if (g.mode === 'idle') {
+      g.moving = false; g.wait -= dt;
+      if (g.wait <= 0) { g.tx = Math.max(worldL() + 14, Math.min(worldR() - 14, g.x + rand(-90, 90))); g.ty = rand(LAYOUT.streetTop + 8, roadFloor()); g.speed = rand(12, 20); g.mode = 'walk'; }
+    } else {
+      const dx = g.tx - g.x, dy = g.ty - g.y, d = Math.hypot(dx, dy), step = g.speed * dt;
+      if (d <= step) { g.x = g.tx; g.y = g.ty; g.mode = 'idle'; g.wait = rand(1, 5); g.moving = false; }
+      else { g.x += dx / d * step; g.y += dy / d * step; g.moving = true; if (Math.abs(dx) > 0.5) g.dir = dx > 0 ? 1 : -1; }
+    }
+    g.sayIn -= dt;
+    if (g.sayIn <= 0) { g.sayIn = rand(35, 70); if (Object.keys(bubbleEls).length < 1 && animOn()) guestSay(g); }
+  });
+}
+function guestSay(g) {
+  showBubble('g' + g.k, t('guestSay_' + g.id + '_' + Math.floor(Math.random() * 3)), g.x, g.y - 19, () => ({ x: g.x, y: g.y - 19 }));
+}
+function hitGuest(p) {
+  let best = null;
+  guestWalkers.forEach(g => { if (Math.abs(p.x - g.x) <= 10 && p.y >= g.y - 19 && p.y <= g.y + 3 && (!best || g.y > best.y)) best = g; });
+  return best;
+}
+function drawGuest(g) {
+  const x = Math.round(g.x), y = Math.round(g.y), step = g.moving ? Math.floor(g.t * 5) % 2 : 0;
+  ctx.globalAlpha = 0.22; R(ctx, x - 6, y, 12, 2, 'd'); ctx.globalAlpha = 1;
+  drawSprite(ctx, 'npc_' + g.id, x - 8, y - 16 - step, { flip: step === 1 });
+  if (hasHats()) drawHat(x, y - 13 - step, 20 + g.k);
+  if (hasScarves()) drawScarf(x, y - 16 - step, g.k);
 }
 
 /* ---------- Камео: гість пробігає вулицею ---------- */
@@ -7256,12 +7899,15 @@ function hitShop(p) {
 
 function setupInput() {
   const sceneTap = e => {
+    if (ui.app.classList.contains('sheet-open')) setSheet(false);          // телефон: дотик до гри ховає меню
     const p = toScenePoint(e.clientX, e.clientY);
     if (handleEventTap(p)) return;              // калюжа або єнот
     if (hitGhost(p)) return;                    // привид (Хелловін)
     if (hitMail(p)) return;                     // конверт біля поштової скриньки
     const actor = hitActor(p);                  // звірятка стоять попереду магазину — тап по ним каже фразу
     if (actor) { actor.hop = 1; actorSay(actor); if (hitShop(p)) doTap(p.x, p.y); return; }   // і тап по магазину теж рахується
+    const guest = hitGuest(p);                  // гість епохи теж щось каже
+    if (guest) { guestSay(guest); if (hitShop(p)) doTap(p.x, p.y); return; }
     if (hitCapy(p)) { capySay(); if (hitShop(p)) doTap(p.x, p.y); return; }
     if (hitShop(p)) doTap(p.x, p.y);
   };
@@ -7304,6 +7950,7 @@ function setupInput() {
   ui.epochIntro.addEventListener('click', () => { if (epochIntro.active && performance.now() - epochIntro.startedAt > 1500) { epochIntro.timers.forEach(clearTimeout); epochIntro.timers = []; ui.epochIntro.classList.add('out'); epochIntro.timers.push(setTimeout(finishEpochIntro, 600)); } });
   document.addEventListener('keydown', e => {
     if (!dialog.active || e.target === ui.dlgSkip) return;
+    if (dialog.choosing && (e.key === '1' || e.key === '2')) { chooseOption(+e.key); return; }
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') { e.preventDefault(); advanceDialog(); }
   });
   ui.expandBtn.addEventListener('click', expandShop);
@@ -7348,9 +7995,10 @@ function render(time) {
   const items = customers.filter(c => !c.inside).map(c => ({ y: c.y, draw: () => drawCustomer(c) }));       // ті, хто всередині, малюються разом з магазином
   actors.forEach(a => items.push({ y: a.y, draw: () => drawActor(a) }));
   cameos.forEach(c => items.push({ y: c.y, draw: () => drawCameo(c) }));
+  guestWalkers.forEach(g => items.push({ y: g.y, draw: () => drawGuest(g) }));
   if (trouble && trouble.type === 'thief') items.push({ y: trouble.y, draw: drawRaccoon });
   benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); });
-  if (state.events.mailPending || mail.state !== 'idle') items.push({ y: mailRoadY() - 1, draw: drawMailBox });
+  if (view.extraB >= 30 || state.events.mailPending || mail.state !== 'idle') items.push({ y: mailRoadY() - 1, draw: drawMailBox });
   if (mail.state !== 'idle') items.push({ y: mailRoadY(), draw: drawMailTruck });
   items.push({
     y: cp.footY,
@@ -7388,7 +8036,7 @@ function render(time) {
   fx.coins.forEach(p => {
     const fade = 1 - Math.max(0, (p.age - p.life * 0.6) / (p.life * 0.4));
     const spin = [1, 0.6, 0.25, 0.6][Math.floor(p.age * 12 + p.spin) % 4];
-    drawSprite(ctx, 'coin', p.x - 4, p.y - 4, { sx: spin, alpha: fade });
+    drawSprite(ctx, coinSprite(), p.x - 4, p.y - 4, { sx: spin, alpha: fade });
   });
   // іскорки
   fx.sparks.forEach(p => {
@@ -7509,19 +8157,17 @@ function init() {
   skyLayer = buildSkyLayer();
   groundLayer = buildGroundLayer();
   rebuildShop(true);
-  const iconCtx = ui.coinIcon.getContext('2d');
-  iconCtx.imageSmoothingEnabled = false;
-  iconCtx.drawImage(getSpriteCanvas('coin'), 0, 0);
+  refreshCoinIcon();
   drawCapiPortrait();
 
   // інтерфейс
-  buildLangSwitch();
   buildTabs();
   buildBuyModes();
   buildDeptCards();
   buildTeamCards();
   setupProgression();
   syncActors();
+  syncGuests();
   showTab(state.tab);
   applyTranslations();
   updateSaveWarning();
