@@ -1,4 +1,4 @@
-# Капі крізь час (Capy Through Time)
+# CapyTap: Market (раніше «Капі крізь час» / Capy Through Time)
 
 ## Що це за гра
 Браузерна гра-клікер з піксель-артом в одному файлі `game.html`.

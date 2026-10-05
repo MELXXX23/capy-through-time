@@ -3,10 +3,10 @@
 const { app, BrowserWindow, Menu, shell } = require('electron');
 const path = require('path');
 
-const WINDOW_TITLE = 'Capy Through Time — Капі крізь час';
+const WINDOW_TITLE = 'CapyTap: Market';
 const DEBUG = process.argv.includes('--debug');      // npm run debug → відкриває гру з ?debug=1
 
-app.setName('Capy Through Time');
+app.setName('Capy Through Time');      // ВАЖЛИВО: ім'я лишається старим, бо від нього залежить папка зі збереженнями (%APPDATA%\Capy Through Time). Змінити — втратити збереження
 
 // Дозволяємо лише один запуск: другий клік по ярлику просто піднімає вікно, яке вже відкрите
 const gotLock = app.requestSingleInstanceLock();

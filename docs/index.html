@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#2a1d1a">
-<title>Capy Through Time</title>
+<title>CapyTap: Market</title>
 <style>@font-face{font-family:'Press Start 2P';src:url('fonts/PressStart2P-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:block}</style>
 <!-- Піксельний шрифт з чіткою кирилицею (Pixelify Sans малює українські літери криво, тому Press Start 2P). Без інтернету спрацює запасний моноширинний -->
 <style>
@@ -899,7 +899,7 @@ const SHOP_LOOK = [
 const DOOR_WIDTHS = [22, 22, 28, 30, 36];
 
 // Типи покупців (звірятка). Спрайти складаються з тіла і двох кадрів ніг (див. SPRITES)
-const CUSTOMER_TYPES = ['bunny', 'mouse', 'duck', 'dog'];
+const CUSTOMER_TYPES = ['bunny', 'mouse', 'duck', 'dog', 'cat', 'pig', 'sheep', 'cow', 'squirrel', 'deer', 'raccoon', 'hedgehog', 'penguin', 'koala', 'tiger', 'monkey', 'hamster', 'chick', 'frog', 'foxcub'];
 const BAG_COLORS = ['p', 'h', 'g', 'n', 'u'];
 
 // Формат великих чисел: суфікси для перших розрядів, далі aa, ab, ac...
@@ -971,7 +971,12 @@ const PALETTE = {
   a: '#b8e3ff', // крижано-блакитний
   j: '#ff9e5e', // захід сонця
   J: '#f4748f', // корал
-  z: '#1b2a4a'  // темно-синій
+  z: '#1b2a4a', // темно-синій
+  O: '#302418', // контур Капі
+  B: '#bd8449', // шерсть Капі
+  M: '#7c4830', // морда й вушко Капі
+  L: '#9c6c3c', // світліші плями Капі
+  K: '#140e0b'  // око Капі
 };
 
 // Покупці: тіло 16×13 і по два кадри ніг (3 рядки). Дивляться вправо.
@@ -1533,41 +1538,135 @@ const SPRITES = {
     '..WWWWWWWWWWWWWWWWWWWW..'
   ], variants: { grey: { w: '#b8b6bf', W: '#9d9ba7' }, light: { w: '#e4e7ee', W: '#cbd0db' }, dark: { w: '#7c7890', W: '#625f78' } } },
   // Капі 28×24 (дивиться вправо; X — око, при кліпанні стає шерстю). Дівчина: квіточка, рожева сукня й бантик
-  capy: {
-    rows: [
-      '............................',
-      '............................',
-      '............................',
-      '...............dd..p........',
-      '...............pb.pyp.......',
-      '...............dbddpd.......',
-      '..............dlllllldd.....',
-      '..............dllcclllldd...',
-      '..............dlclllllllld..',
-      '..............dlllllcXllllkd',
-      '.....dddddddddlllllllxllllbd',
-      '....dbbbbbbbbpbplllllllbllld',
-      '...dllllbbbbbprpllllllllbbld',
-      '..dllllpppppppplllllllllllld',
-      '.dlllllpqqqqqqplllllccccccld',
-      '.dlblllpppppppplllllllccccld',
-      '.dlblllpppppppplllllllllldd.',
-      '..dlbllpppppppplllddddddd...',
-      '...dllcpppppppplld..........',
-      '....dlcqwqwqwqwld...........',
-      '....dllddddddlld............',
-      '....dbd......dbd............',
-      '....dld......dld............',
-      '...ddddd....ddddd...........'
-    ],
-    variants: { blink: { X: PALETTE.l } }
-  }
+
 };
-// Додаємо покупців як спрайти «тип_кадр»
+// Покупці у стилі «чібі»: велика голова, тіло-ґудзик, дві ніжки, м'який контур. Малюються кодом один раз на старті (18×23, ноги внизу)
+const CHIBI = (function () {
+  const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return { c, g: c.getContext('2d'), w, h }; };
+  const rect = (S, x, y, w, h, col) => { S.g.fillStyle = col; S.g.fillRect(x, y, w, h); };
+  const px = (S, x, y, col) => { if (x >= 0 && y >= 0 && x < S.w && y < S.h) rect(S, x, y, 1, 1, col); };
+  const ell = (S, cx, cy, rx, ry, col, shade, hi) => {
+    for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++) for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+      const dx = (x - cx) / rx, dy = (y - cy) / ry;
+      if (dx * dx + dy * dy <= 1) { let c = col; if (shade && (dy > 0.35 || dx * 0.6 + dy > 0.75)) c = shade; if (hi && dx < -0.35 && dy < -0.35) c = hi; px(S, x, y, c); }
+    }
+  };
+  const outline = (S, col) => {
+    const o = mk(S.w + 2, S.h + 2), d = S.g.getImageData(0, 0, S.w, S.h).data;
+    const has = (x, y) => x >= 0 && y >= 0 && x < S.w && y < S.h && d[(y * S.w + x) * 4 + 3] > 0;
+    o.g.fillStyle = col;
+    for (let y = -1; y <= S.h; y++) for (let x = -1; x <= S.w; x++) if (!has(x, y) && (has(x - 1, y) || has(x + 1, y) || has(x, y - 1) || has(x, y + 1))) o.g.fillRect(x + 1, y + 1, 1, 1);
+    o.g.drawImage(S.c, 1, 1);
+    return o.c;
+  };
+  const PK = '#ef8fa3', E = '#2a1d1a', WH = '#ffffff';
+  // Кожен покупець: b — шерсть, s — тінь, h — відблиск, o — колір контуру (м'який, темніший за звіря)
+  const PAL = {
+    bunny:    { b: '#fff4dc', s: '#e2d3b8', h: '#ffffff', o: '#8a7560' },
+    mouse:    { b: '#aaa6a2', s: '#8d8884', h: '#c9c5c0', o: '#4f4a48' },
+    duck:     { b: '#ffe08a', s: '#f0bf55', h: '#fff0b5', o: '#8a5a2a' },
+    dog:      { b: '#b57a45', s: '#8f5c33', h: '#d49a62', o: '#4a2d18' },
+    cat:      { b: '#e8863c', s: '#c46a28', h: '#f6a860', o: '#6e3a14' },
+    pig:      { b: '#f4a8b8', s: '#d98aa0', h: '#ffc8d4', o: '#8a4258' },
+    sheep:    { b: '#fdf6ea', s: '#e6dac6', h: '#ffffff', o: '#6a5a52' },
+    cow:      { b: '#fff4dc', s: '#e2d3b8', h: '#ffffff', o: '#4a3a34' },
+    squirrel: { b: '#c9743a', s: '#a65a28', h: '#e09258', o: '#5e2e12' },
+    deer:     { b: '#c9955a', s: '#a87a44', h: '#e0b078', o: '#5a3a1c' },
+    raccoon:  { b: '#9a9a9e', s: '#7c7c82', h: '#b8b8bc', o: '#3a3a40' },
+    hedgehog: { b: '#a07850', s: '#80603c', h: '#b89068', o: '#4a3020' },
+    penguin:  { b: '#3a3d4a', s: '#2a2c38', h: '#55596a', o: '#171822' },
+    koala:    { b: '#9aa0a8', s: '#7e848c', h: '#b8bec6', o: '#3e4248' },
+    tiger:    { b: '#f09a38', s: '#d07c24', h: '#f8b862', o: '#6a3a10' },
+    monkey:   { b: '#9c6a3c', s: '#7e522c', h: '#b88456', o: '#4a2c14' },
+    hamster:  { b: '#f2d4a0', s: '#dcb878', h: '#fae8c4', o: '#7a5a30' },
+    chick:    { b: '#ffe566', s: '#f2c840', h: '#fff2a0', o: '#8a6a1a' },
+    frog:     { b: '#6dbb5a', s: '#4f9a43', h: '#8ad278', o: '#2a5a24' },
+    foxcub:   { b: '#e8742c', s: '#c85a1c', h: '#f4985a', o: '#5e2a10' }
+  };
+  const eye = (S, x, y) => { rect(S, x, y, 2, 2, E); px(S, x, y, WH); };
+  function make(a, frame) {
+    const p = PAL[a], S = mk(16, 21), hy = 11, step = frame ? 1 : 0, DK = '#2a1d1a';
+    let fc = p.s, belly = p.h;                                    // колір ніжок і животика
+    // --- що за головою / тілом (вуха, роги, хвіст)
+    switch (a) {
+      case 'bunny': ell(S, 5.5, 4, 1.8, 4.5, p.b, p.s); ell(S, 10.5, 4, 1.8, 4.5, p.b, p.s); rect(S, 5, 2, 1, 5, PK); rect(S, 10, 2, 1, 5, PK); break;
+      case 'mouse': ell(S, 3.5, 7, 2.6, 2.6, p.b, p.s); ell(S, 12.5, 7, 2.6, 2.6, p.b, p.s); ell(S, 3.5, 7, 1.4, 1.4, PK); ell(S, 12.5, 7, 1.4, 1.4, PK); break;
+      case 'dog': ell(S, 3, 10, 2, 3.4, '#6f4526'); ell(S, 13, 10, 2, 3.4, '#6f4526'); belly = '#e8c08a'; break;
+      case 'duck': px(S, 7, 4, p.b); px(S, 8, 3, p.b); px(S, 9, 4, p.b); fc = '#e8863c'; break;
+      case 'cat': rect(S, 3, 4, 3, 3, p.b); px(S, 3, 3, p.b); px(S, 4, 5, PK); rect(S, 10, 4, 3, 3, p.b); px(S, 12, 3, p.b); px(S, 11, 5, PK); rect(S, 13, 14, 3, 5, p.b); px(S, 15, 13, p.b); belly = '#fff4dc'; break;
+      case 'pig': ell(S, 3.5, 6, 2, 2, p.b, p.s); ell(S, 12.5, 6, 2, 2, p.b, p.s); px(S, 3, 6, PK); px(S, 12, 6, PK); fc = '#d98aa0'; break;
+      case 'sheep': ell(S, 2.5, 9, 2, 1.6, '#4a3e38'); ell(S, 13.5, 9, 2, 1.6, '#4a3e38'); fc = '#4a3e38'; break;
+      case 'cow': ell(S, 2.5, 8, 2.2, 1.4, '#fff4dc', p.s); ell(S, 13.5, 8, 2.2, 1.4, '#fff4dc', p.s); rect(S, 4, 4, 2, 2, '#e8d8a8'); rect(S, 10, 4, 2, 2, '#e8d8a8'); fc = '#4a3a34'; break;
+      case 'squirrel': ell(S, 13.5, 14, 2.6, 5, p.b, p.s); ell(S, 13.5, 12, 1.4, 3, p.h); rect(S, 4, 4, 2, 3, p.b); px(S, 4, 3, DK); rect(S, 10, 4, 2, 3, p.b); px(S, 11, 3, DK); belly = '#fff0d0'; break;
+      case 'deer': rect(S, 4, 2, 1, 4, '#7a5030'); rect(S, 3, 2, 1, 1, '#7a5030'); px(S, 5, 3, '#7a5030'); rect(S, 11, 2, 1, 4, '#7a5030'); rect(S, 12, 2, 1, 1, '#7a5030'); px(S, 10, 3, '#7a5030'); ell(S, 2.5, 8, 2, 1.4, p.b, p.s); ell(S, 13.5, 8, 2, 1.4, p.b, p.s); belly = '#fff0d0'; break;
+      case 'raccoon': ell(S, 3.5, 6.5, 2.4, 2.4, p.b, p.s); ell(S, 12.5, 6.5, 2.4, 2.4, p.b, p.s); ell(S, 3.5, 6.5, 1.2, 1.2, '#3a3a40'); ell(S, 12.5, 6.5, 1.2, 1.2, '#3a3a40'); rect(S, 13, 15, 3, 4, p.b); rect(S, 13, 16, 3, 1, '#3a3a40'); rect(S, 13, 18, 3, 1, '#3a3a40'); belly = '#cfcfd2'; break;
+      case 'hedgehog': for (let i = 0; i < 6; i++) { px(S, 3 + i * 2, 5 + (i % 2), '#5a4030'); px(S, 3 + i * 2, 6 + (i % 2), '#5a4030'); } px(S, 1, 9, '#5a4030'); px(S, 14, 9, '#5a4030'); px(S, 1, 12, '#5a4030'); px(S, 14, 12, '#5a4030'); belly = '#f0d8b0'; break;
+      case 'penguin': belly = '#ffffff'; fc = '#f08a2e'; ell(S, 2, 17, 1.6, 2.6, p.b); ell(S, 14, 17, 1.6, 2.6, p.b); break;
+      case 'koala': ell(S, 2.5, 7, 3, 3, p.b, p.s); ell(S, 13.5, 7, 3, 3, p.b, p.s); ell(S, 2.5, 7, 1.6, 1.6, '#f4eee6'); ell(S, 13.5, 7, 1.6, 1.6, '#f4eee6'); belly = '#e6e8ea'; break;
+      case 'tiger': ell(S, 3.5, 6.5, 2.2, 2.2, p.b, p.s); ell(S, 12.5, 6.5, 2.2, 2.2, p.b, p.s); ell(S, 3.5, 6.5, 1.1, 1.1, '#fff4dc'); ell(S, 12.5, 6.5, 1.1, 1.1, '#fff4dc'); belly = '#fff4dc'; break;
+      case 'monkey': ell(S, 1.8, 11, 2.2, 2.4, p.b, p.s); ell(S, 14.2, 11, 2.2, 2.4, p.b, p.s); ell(S, 1.8, 11, 1.1, 1.2, '#f0c898'); ell(S, 14.2, 11, 1.1, 1.2, '#f0c898'); rect(S, 13, 15, 3, 1, p.b); rect(S, 15, 13, 1, 3, p.b); belly = '#f0c898'; break;
+      case 'hamster': ell(S, 3.5, 6.5, 1.8, 1.8, p.b, p.s); ell(S, 12.5, 6.5, 1.8, 1.8, p.b, p.s); px(S, 3, 6, PK); px(S, 12, 6, PK); belly = '#fff4dc'; break;
+      case 'chick': px(S, 8, 3, p.b); px(S, 7, 4, p.b); px(S, 9, 4, p.b); px(S, 8, 4, p.b); fc = '#f08a2e'; break;
+      case 'frog': fc = '#4f9a43'; belly = '#d8f0b0'; break;
+      case 'foxcub': rect(S, 3, 3, 3, 4, p.b); px(S, 3, 2, DK); px(S, 4, 2, DK); rect(S, 10, 3, 3, 4, p.b); px(S, 11, 2, DK); px(S, 12, 2, DK); rect(S, 13, 14, 3, 5, p.b); rect(S, 14, 17, 2, 2, '#fff4dc'); belly = '#fff4dc'; break;
+    }
+    // --- ніжки й тіло
+    ell(S, 5.5, 20, 2.2, 1, fc); ell(S, 10.5, 20, 2.2, 1, fc); if (step) rect(S, 4, 19, 3, 1, fc);
+    ell(S, 8, 17, 4.6, 3.3, p.b, p.s);
+    ell(S, 8, 17.5, 2.6, 1.8, belly);
+    if (a === 'cow') { rect(S, 10, 15, 3, 2, '#3a2a24'); }
+    if (a === 'tiger') { [[4, 15], [11, 15], [4, 18], [11, 18]].forEach(q => rect(S, q[0], q[1], 1, 2, DK)); }
+    if (a === 'deer') { [[6, 15], [10, 16], [8, 18]].forEach(q => px(S, q[0], q[1], '#fff4dc')); }
+    if (a === 'hedgehog') ell(S, 8, 17.5, 2.6, 1.8, '#f0d8b0');
+    // --- голова
+    ell(S, 8, hy, 6.2, 5.2, p.b, p.s, p.h);
+    // --- обличчя
+    switch (a) {
+      case 'bunny': case 'mouse': eye(S, 4, hy - 1); eye(S, 10, hy - 1); [[7, 2], [8, 2], [3, 2], [12, 2], [4, 2], [11, 2]].forEach(q => px(S, q[0], hy + q[1], PK)); break;
+      case 'dog': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.4, 3, 2, '#e8c08a'); px(S, 7, hy + 1, E); px(S, 8, hy + 1, E); rect(S, 7, hy + 3, 2, 1, PK); break;
+      case 'duck': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.4, 3, 1.5, '#e8863c'); rect(S, 5, hy + 3, 6, 1, '#c96d28'); px(S, 3, hy + 2, '#ffb0a0'); px(S, 12, hy + 2, '#ffb0a0'); break;
+      case 'cat': eye(S, 4, hy - 1); eye(S, 10, hy - 1); [[7, -5], [9, -5], [8, -4]].forEach(q => px(S, q[0], hy + q[1], p.s)); rect(S, 3, hy - 4, 1, 2, p.s); rect(S, 12, hy - 4, 1, 2, p.s); px(S, 7, hy + 2, PK); px(S, 8, hy + 2, PK); px(S, 7, hy + 3, DK); px(S, 8, hy + 3, DK); rect(S, 0, hy + 1, 2, 1, '#fff4dc'); rect(S, 14, hy + 1, 2, 1, '#fff4dc'); break;
+      case 'pig': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.6, 3, 2, '#e888a0'); px(S, 7, hy + 2, '#8a4258'); px(S, 9, hy + 2, '#8a4258'); px(S, 3, hy + 2, '#ff9ab0'); px(S, 12, hy + 2, '#ff9ab0'); break;
+      case 'sheep': ell(S, 8, hy + 0.6, 4.2, 4.2, '#6a5a52'); rect(S, 5, hy - 1, 2, 2, WH); rect(S, 9, hy - 1, 2, 2, WH); px(S, 5, hy, DK); px(S, 10, hy, DK); px(S, 7, hy + 2, '#3a2e2a'); px(S, 8, hy + 2, '#3a2e2a'); ell(S, 5, 6, 1.6, 1.4, p.b); ell(S, 8, 5.4, 1.8, 1.5, p.b); ell(S, 11, 6, 1.6, 1.4, p.b); break;
+      case 'cow': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 5.5, hy - 3, 2.2, 1.6, '#3a2a24'); ell(S, 8, hy + 2.8, 3.6, 2, '#f4a8b8'); px(S, 7, hy + 2, '#a8586c'); px(S, 9, hy + 2, '#a8586c'); break;
+      case 'squirrel': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.4, 2.8, 1.8, '#fff0d0'); px(S, 7, hy + 2, DK); px(S, 8, hy + 2, DK); px(S, 3, hy + 2, '#ff9a7a'); px(S, 12, hy + 2, '#ff9a7a'); break;
+      case 'deer': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.6, 2.6, 1.8, '#e8c898'); px(S, 7, hy + 2, DK); px(S, 8, hy + 2, DK); break;
+      case 'raccoon': rect(S, 2, hy - 2, 12, 3, '#3a3a40'); rect(S, 3, hy - 1, 2, 2, WH); rect(S, 11, hy - 1, 2, 2, WH); px(S, 4, hy, DK); px(S, 11, hy, DK); ell(S, 8, hy + 2.6, 2.6, 1.8, '#d8d8dc'); rect(S, 7, hy + 1, 2, 1, DK); break;
+      case 'hedgehog': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2, 5, 3.4, '#f0d8b0'); eye(S, 4, hy - 1); eye(S, 10, hy - 1); px(S, 7, hy + 2, DK); px(S, 8, hy + 2, DK); break;
+      case 'penguin': ell(S, 8, hy + 1, 4.8, 4, '#ffffff'); eye(S, 4, hy - 1); eye(S, 10, hy - 1); rect(S, 6, hy + 2, 4, 2, '#f08a2e'); rect(S, 7, hy + 4, 2, 1, '#d4701c'); break;
+      case 'koala': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.2, 2, 1.8, '#3a3438'); break;
+      case 'tiger': eye(S, 4, hy - 1); eye(S, 10, hy - 1); rect(S, 7, hy - 5, 2, 2, DK); rect(S, 3, hy - 4, 1, 2, DK); rect(S, 12, hy - 4, 1, 2, DK); rect(S, 1, hy + 1, 2, 1, DK); rect(S, 13, hy + 1, 2, 1, DK); ell(S, 8, hy + 2.6, 3, 2, '#fff4dc'); rect(S, 7, hy + 2, 2, 1, '#e0707a'); break;
+      case 'monkey': ell(S, 8, hy + 1.4, 4.6, 3.6, '#f0c898'); eye(S, 4, hy - 1); eye(S, 10, hy - 1); px(S, 7, hy + 2, '#7a4a30'); px(S, 8, hy + 2, '#7a4a30'); rect(S, 6, hy + 4, 4, 1, '#7a4a30'); break;
+      case 'hamster': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 3.5, hy - 2, 2.4, 1.8, '#e0a860'); ell(S, 12.5, hy - 2, 2.4, 1.8, '#e0a860'); ell(S, 8, hy + 2.6, 4.6, 2, '#fff4dc'); px(S, 7, hy + 1, PK); px(S, 8, hy + 1, PK); px(S, 3, hy + 2, '#ffb0a0'); px(S, 12, hy + 2, '#ffb0a0'); break;
+      case 'chick': eye(S, 4, hy - 1); eye(S, 10, hy - 1); rect(S, 6, hy + 2, 4, 2, '#f08a2e'); px(S, 3, hy + 2, '#ffb0a0'); px(S, 12, hy + 2, '#ffb0a0'); break;
+      case 'frog': ell(S, 4.5, hy - 5, 2.4, 2.4, p.b, p.s, p.h); ell(S, 11.5, hy - 5, 2.4, 2.4, p.b, p.s, p.h); rect(S, 3, hy - 6, 3, 3, WH); rect(S, 10, hy - 6, 3, 3, WH); rect(S, 4, hy - 5, 2, 2, DK); rect(S, 11, hy - 5, 2, 2, DK); rect(S, 4, hy + 2, 8, 1, '#2a5a24'); rect(S, 3, hy + 1, 1, 1, '#2a5a24'); rect(S, 12, hy + 1, 1, 1, '#2a5a24'); px(S, 6, hy, '#2a5a24'); px(S, 9, hy, '#2a5a24'); px(S, 3, hy + 3, '#ff9ab0'); px(S, 12, hy + 3, '#ff9ab0'); break;
+      case 'foxcub': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.8, 5.4, 2.4, '#fff4dc'); ell(S, 8, hy + 2.8, 5.4, 2.4, '#fff4dc'); rect(S, 7, hy + 1, 2, 2, DK); break;
+    }
+    return outline(S, p.o);
+  }
+  // Пакети з покупками: 3 види (багет і зелень / квіти / яблуко), різні кольори, білі ручки
+  const BAGS = {};
+  const BAG_COL = { p: ['#ef8fa3', '#d4537e'], h: ['#f2b84b', '#c98a1e'], g: ['#4f9a63', '#2f7a4a'], n: ['#3d5a8c', '#2d467a'], u: ['#8b6bb0', '#6a4a94'] };
+  function bag(kind, color) {
+    const key = kind + color;
+    if (BAGS[key]) return BAGS[key];
+    const S = mk(10, 13), col = (BAG_COL[color] || BAG_COL.p)[0], sh = (BAG_COL[color] || BAG_COL.p)[1];
+    if (kind === 0) { rect(S, 4, 0, 2, 5, '#e8b060'); px(S, 4, 0, '#f6d28a'); px(S, 5, 2, '#c98a3a'); px(S, 5, 4, '#c98a3a'); rect(S, 6, 2, 1, 3, '#4f9a63'); }
+    if (kind === 1) { ell(S, 3, 3, 1.3, 1.3, PK); ell(S, 6, 2, 1.3, 1.3, '#ffe08a'); rect(S, 3, 4, 1, 2, '#4f9a63'); rect(S, 6, 3, 1, 3, '#4f9a63'); }
+    if (kind === 2) { rect(S, 3, 1, 4, 4, '#e0604a'); px(S, 4, 1, '#ff9a8a'); rect(S, 5, 0, 1, 2, '#4f9a63'); }
+    rect(S, 1, 5, 8, 8, col); rect(S, 1, 11, 8, 2, sh); rect(S, 1, 5, 8, 1, WH); rect(S, 3, 7, 4, 3, '#fff4dc');
+    if (kind === 0) { px(S, 4, 8, sh); px(S, 5, 8, sh); }
+    if (kind === 1) { rect(S, 4, 8, 2, 1, '#e0604a'); px(S, 4, 7, '#e0604a'); px(S, 5, 7, '#e0604a'); }
+    if (kind === 2) { px(S, 4, 8, sh); px(S, 5, 9, sh); px(S, 6, 8, sh); }
+    rect(S, 2, 3, 1, 3, '#fff4dc'); rect(S, 7, 3, 1, 3, '#fff4dc');
+    return (BAGS[key] = outline(S, '#4a3228'));
+  }
+  return { make, bag };
+})();
+// Додаємо покупців як спрайти «тип_кадр» (готові малюнки-canvas)
 CUSTOMER_TYPES.forEach(type => {
-  const p = CUSTOMER_PARTS[type];
-  SPRITES[type + '_0'] = { rows: [...p.body, ...p.legsA] };
-  SPRITES[type + '_1'] = { rows: [...p.body, ...p.legsB] };
+  SPRITES[type + '_0'] = { canvas: CHIBI.make(type, 0) };
+  SPRITES[type + '_1'] = { canvas: CHIBI.make(type, 1) };
 });
 // Звірята-працівники: збираємо 16×16 з верхньої половини голови + спільного тулуба, права половина — дзеркало
 const CHIBI_LOWER = ['...d1111', '...d1122', '...d1222', '...d1222', '...d1111', '....33..'];
@@ -1578,33 +1677,53 @@ function composeChibi(p) {
 TEAM.forEach(m => { SPRITES['team_' + m.id] = { rows: composeChibi(TEAM_PARTS[m.id]) }; });
 Object.keys(NPC_PARTS).forEach(id => { SPRITES['npc_' + id] = { rows: composeChibi(NPC_PARTS[id]) }; });
 SPRITES.npc_clock = { rows: CLOCK_ROWS };
-// Скін Капі для хлопця: листочки на голові, синя футболка з метеликом
-SPRITES.capy_m = { rows: [
-      '............................',
-      '............................',
-      '............................',
-      '...............ddgg.gg......',
-      '...............bd.gGg.......',
-      '...............dbddGd.......',
-      '..............dlllllldd.....',
-      '..............dllcclllldd...',
-      '..............dlclllllllld..',
-      '..............dlllllcXllllkd',
-      '.....dddddddddlllllllxllllbd',
-      '....dbbbbbbbbrbblllllllbllld',
-      '...dllllbbbbbrrrllllllllbbld',
-      '..dllllnnnnnnnnrllllllllllld',
-      '.dlllllnnnnnnnnlllllccccccld',
-      '.dlblllSSSSSSSSlllllllccccld',
-      '.dlblllnnnnnnnnlllllllllldd.',
-      '..dlbllSSSSSSSSlllddddddd...',
-      '...dllcnnnnnnnnlld..........',
-      '....dlcnnnnnnnnld...........',
-      '....dllddddddlld............',
-      '....dbd......dbd............',
-      '....dld......dld............',
-      '...ddddd....ddddd...........'
-], variants: SPRITES.capy.variants };
+// Капі: 28×24, дивиться вправо (у грі віддзеркалюється). Контур намальований прямо в спрайті.
+// База — 27×21, намальована дивлячись ліворуч: O — контур, B — шерсть, M — морда/вушко, L — світліші плями, K — око.
+// Одяг (капелюшок + вбрання) накладається поверх бази, потім усе віддзеркалюється.
+const CAPY_BASE = [
+  '......OO...OO..............',
+  '.....OOOOOOMMO.............',
+  '...OOBBBBBOBMO.............',
+  '..OBBBBBBBBBOBO............',
+  '.OBBBBBBBBBBBBBO...........',
+  'OBBBBBBKKBBBBBBBOOOOOOO....',
+  'OMMMBBBKKBBBBBBBBBBBBBBO...',
+  'OMOMMBBBBBBBBBBBBBBBBBBBO..',
+  'OMMMMBBBBBBBBBBBBBBBBBBBBO.',
+  'OMMMMBBBBBBBBBBBBBBBBBBBBBO',
+  'OMMMMBBBBBBBBBBBBBBBBBBBBBO',
+  '.OMMMBBBBBBBBBBBBBBBBBBBBBO',
+  '..OOOOLLBBBBBBBBBBBBBBBBBBO',
+  '......OBBBBBBBBBBBBBBBBBBBO',
+  '......OBBBBBBBBBBBBBBBBBBBO',
+  '.......OBBBBBBBBBBBBBBBBBO.',
+  '.......OLLBBBBBBBBBBBBBBBO.',
+  '.......OLLOBBBOLLLLBBBBBO..',
+  '........OMOBBOOOOOMMOBBO...',
+  '........OOOMMO....OOOMMO...',
+  '..........OOO.......OOO....'
+];
+function makeCapyRows(outfit) {
+  const W = 27, grid = Array.from({ length: 24 }, (_, y) => y < 3 ? Array(W).fill('.') : CAPY_BASE[y - 3].split(''));
+  const put = (x, y, c) => { if (grid[y] && x >= 0 && x < W) grid[y][x] = c; };
+  const dye = (x0, x1, y0, y1, col) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (grid[y][x] === 'B' || grid[y][x] === 'L') grid[y][x] = col; };   // фарбує лише шерсть
+  const box = (x, y, w, h, fill) => { for (let j = -1; j <= h; j++) for (let i = -1; i <= w; i++) put(x + i, y + j, (i < 0 || j < 0 || i >= w || j >= h) ? 'O' : fill); };   // прямокутник із контуром
+  const around = cells => cells.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { if (grid[y + dy] && grid[y + dy][x + dx] === '.') grid[y + dy][x + dx] = 'O'; }));   // контур навколо прикраси
+  if (outfit === 'girl') {                                 // рожева квіточка на голові + рожева сукня в горошок
+    dye(12, 21, 10, 16, 'p');
+    for (let x = 12; x <= 21; x++) if (grid[16][x] === 'p') put(x, 16, x % 2 ? 'w' : 'q');
+    [[14, 12], [17, 14], [20, 12], [15, 15], [19, 10]].forEach(p => { if (grid[p[1]][p[0]] === 'p') put(p[0], p[1], 'w'); });
+    const fl = [[7, 1, 'p'], [6, 2, 'p'], [7, 2, 'y'], [8, 2, 'p'], [7, 3, 'p']];
+    fl.forEach(([x, y, c]) => put(x, y, c)); around(fl);
+  } else if (outfit === 'boy') {                           // зелений листочок на голові + синя футболка в смужку
+    dye(12, 21, 10, 16, 'n'); for (let x = 12; x <= 21; x++) { if (grid[12][x] === 'n') put(x, 12, 'w'); if (grid[15][x] === 'n') put(x, 15, 'w'); }
+    const lf = [[6, 1, 'g'], [5, 2, 'g'], [6, 2, 'g'], [8, 1, 'g'], [8, 2, 'g'], [9, 2, 'g'], [7, 2, 'G'], [7, 3, 'G']];
+    lf.forEach(([x, y, c]) => put(x, y, c)); around(lf);
+  }
+  return grid.map(row => '.' + row.reverse().join(''));
+}
+SPRITES.capy = { rows: makeCapyRows('girl'), variants: { blink: { K: PALETTE.B } } };
+SPRITES.capy_m = { rows: makeCapyRows('boy'), variants: { blink: { K: PALETTE.B } } };
 // Привид 11×13 (для «Полювання на привидів») і малий привид 5×7 (блимає у вікнах будинків на Хелловін)
 SPRITES.ghost = { rows: [
   '...ddddd...',
@@ -1656,7 +1775,7 @@ function refreshCoinIcon() {
 
 const translations = {
   uk: {
-    pageTitle: 'Капі крізь час',
+    pageTitle: 'CapyTap: Market',
     langLabel: 'Мова',
     sceneLabel: 'Піксельна вулиця з магазином Капі. Тапай по магазину, щоб заробляти монетки.',
     perSecond: '{0} / сек',
@@ -2216,7 +2335,7 @@ const translations = {
     time_morning: '🌅 Ранок', time_day: '☀️ День', time_evening: '🌇 Вечір', time_night: '🌙 Ніч'
   },
   en: {
-    pageTitle: 'Capy Through Time',
+    pageTitle: 'CapyTap: Market',
     langLabel: 'Language',
     sceneLabel: "A pixel street with Capy's shop. Tap the shop to earn coins.",
     perSecond: '{0} / sec',
@@ -3151,6 +3270,7 @@ function getSpriteCanvas(name, variant) {
   const key = name + '|' + (variant || '');
   if (spriteCache.has(key)) return spriteCache.get(key);
   const spr = SPRITES[name];
+  if (spr.canvas) { spriteCache.set(key, spr.canvas); return spr.canvas; }          // готовий малюнок (покупці)
   const over = (variant && spr.variants && spr.variants[variant]) || {};
   const rows = spr.rows;
   const w = rows[0].length, h = rows.length;
@@ -3173,7 +3293,7 @@ function getSpriteCanvas(name, variant) {
 }
 
 // Контур для звіряток: тіні-силуети, зсунуті на піксель у чотири боки, роблять спрайт чітким на будь-якому тлі
-const OUTLINED = /^(capy|team_|npc_(?!clock)|bunny_|mouse_|duck_|dog_)/;
+const OUTLINED = /^(team_|npc_(?!clock))/;
 const outlineCache = new Map();
 function getOutlinedCanvas(name, variant) {
   const key = name + '|' + (variant || '');
@@ -5394,7 +5514,7 @@ function updateInside(c, dt) {
   c.x = stop.x; c.moving = false;
   if (stop.exit) {                                              // виходить із покупками
     c.mode = 'exiting'; c.t = 0;
-    c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)];
+    c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)]; c.bagKind = Math.floor(Math.random() * 3);
     c.dir = Math.random() < 0.5 ? 1 : -1;
     c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16;
     return;
@@ -5409,7 +5529,7 @@ function ejectInside() {
   customers.forEach(c => {
     if (!(c.inside || c.mode === 'inside' || c.mode === 'entering')) return;
     c.inside = false; c.mode = 'exiting'; c.x = dr.cx; c.y = LAYOUT.curbY + 2; c.alpha = 1; c.esc = null;
-    c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)];
+    c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)]; c.bagKind = Math.floor(Math.random() * 3);
     c.dir = Math.random() < 0.5 ? 1 : -1;
     c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16;
   });
@@ -5418,19 +5538,17 @@ function drawCustomer(c) {
   const moving = c.mode === 'inside' ? !!c.moving : true;
   const frame = moving ? Math.floor(c.anim * 6) % 2 : 0;
   const bob = frame ? -1 : 0;
-  const x = Math.round(c.x - 8), y = Math.round(c.y - 16) + bob;
-  ctx.globalAlpha = 0.2 * c.alpha; R(ctx, x + 2, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
-  drawSprite(ctx, c.type + '_' + frame, x, y, { flip: c.dir < 0, alpha: c.alpha });
-  if (hasHats() && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(c.dir > 0 ? x + 12 : x + 3, y + 3, c.hat); }
+  const sx = Math.round(c.x - 9), sy = Math.round(c.y - 23) + bob;            // спрайт 18×23: ноги внизу, центр по x
+  ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 3, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
+  drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha });
+  if (hasHats() && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(sx + 9, sy + 8, c.hat); }
   if (hasScarves() && c.alpha > 0.9) {       // шарфик на шиї покупця
-    const sc = SCARF_COLORS[CUSTOMER_TYPES.indexOf(c.type) % SCARF_COLORS.length], nx = c.dir > 0 ? x + 9 : x + 4;
-    R(ctx, nx, y + 6, 3, 3, sc); R(ctx, nx, y + 7, 3, 1, 'w'); R(ctx, c.dir > 0 ? nx - 2 : nx + 3, y + 8, 2, 3, sc);
+    const sc = SCARF_COLORS[CUSTOMER_TYPES.indexOf(c.type) % SCARF_COLORS.length], nx = c.dir > 0 ? sx + 10 : sx + 5;
+    R(ctx, sx + 4, sy + 16, 10, 2, sc); R(ctx, sx + 4, sy + 17, 10, 1, 'w'); R(ctx, nx, sy + 18, 3, 4, sc);
   }
-  if (c.bag) {   // пакет з покупками
-    const bx = c.dir > 0 ? x + 13 : x + 1;
-    R(ctx, bx, y + 9, 1, 1, 'd');
-    R(ctx, bx - 1, y + 10, 4, 5, c.bag);
-    R(ctx, bx - 1, y + 10, 4, 1, 'w');
+  if (c.bag) {   // пакет з покупками в лапці, злегка гойдається
+    const bc = CHIBI.bag(c.bagKind || 0, c.bag), bx = c.dir > 0 ? sx + 14 : sx - 6;
+    drawCanvasSprite(ctx, bc, bx, sy + 11 + (frame ? 1 : 0), { alpha: c.alpha });
   }
 }
 
@@ -8010,10 +8128,10 @@ function render(time) {
         sy: 1 + 0.045 * breath,
         variant: capyAnim.blinkLeft > 0 ? 'blink' : ''
       });
-      if (hasHats()) drawHat(cp.x + 6, cp.footY - 18, 9);
+      if (hasHats()) drawHat(cp.x + 6, cp.footY - 20, 9);
       if (hasScarves()) {                    // шарфик Капі
-        R(ctx, cp.x + 8, cp.footY - 16, 5, 5, 'r'); R(ctx, cp.x + 8, cp.footY - 14, 5, 1, 'w');
-        R(ctx, cp.x + 10, cp.footY - 11, 3, 6, 'r'); R(ctx, cp.x + 10, cp.footY - 9, 3, 1, 'w'); R(ctx, cp.x + 10, cp.footY - 6, 3, 1, 'w');
+        R(ctx, cp.x + 6, cp.footY - 14, 9, 3, 'r'); R(ctx, cp.x + 6, cp.footY - 13, 9, 1, 'w');
+        R(ctx, cp.x + 9, cp.footY - 11, 3, 5, 'r'); R(ctx, cp.x + 9, cp.footY - 9, 3, 1, 'w');
       }
     }
   });

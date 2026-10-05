@@ -2,7 +2,7 @@
   "name": "capy-through-time",
   "productName": "Capy Through Time",
   "version": "1.0.0",
-  "description": "Capy Through Time — Капі крізь час: піксельна гра-клікер про капібару Капі",
+  "description": "CapyTap: Market — піксельна гра-клікер про капібару Капі (раніше «Капі крізь час»)",
   "author": "Capy",
   "license": "UNLICENSED",
   "private": true,
@@ -21,8 +21,8 @@
   },
   "build": {
     "appId": "com.capy.throughtime",
-    "productName": "Capy Through Time",
-    "copyright": "Capy Through Time",
+    "productName": "CapyTap Market",
+    "copyright": "CapyTap: Market",
     "directories": {
       "output": "dist",
       "buildResources": "build"
@@ -45,11 +45,11 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Capy Through Time",
-      "artifactName": "CapyThroughTime-Setup-${version}.exe"
+      "shortcutName": "CapyTap Market",
+      "artifactName": "CapyTapMarket-Setup-${version}.exe"
     },
     "portable": {
-      "artifactName": "CapyThroughTime-Portable-${version}.exe"
+      "artifactName": "CapyTapMarket-Portable-${version}.exe"
     }
   }
 }
