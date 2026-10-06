@@ -4329,11 +4329,12 @@ function wordG(g, x, y, word, c) {                  // крихітний нап
 }
 // Вивіска «CAPYTAP» на даху: однакова назва на кожному рівні, але кольори свої в кожній епосі
 const EPOCH_ROOF_SIGN = [['t', 'y'], ['p', 'w'], ['P', 'y'], ['V', 'T'], ['n', 'a'], ['G', 'm'], ['z', 'a'], ['k', 'f']];   // [фон, літери]
+const ROOF_GLOW = ['T', 'T', 'y', 'f', 'f', 'p', 'f', 'y'];        // колір нічного сяйва «CAPYTAP» по епохах (не збігається з назвою магазину)
 let lastRoofSign = null;
 function roofSignG(g, cx, y, big) {
   const [fill, ink] = EPOCH_ROOF_SIGN[viewEpoch() % EPOCH_ROOF_SIGN.length];
   const pw = big ? 68 : 49, ph = big ? 13 : 9, x = cx - (pw >> 1), ty = y + ((ph - 5) >> 1);
-  lastRoofSign = { x, y, w: pw, h: ph };
+  lastRoofSign = { x, y, w: pw, h: ph, tx: cx - 20, ty: big ? ty + 1 : ty };
   R(g, x, y, pw, ph, 'd'); R(g, x + 1, y + 1, pw - 2, ph - 2, fill); R(g, x + 1, y + 1, pw - 2, 1, ink);
   wordG(g, cx - 20, big ? ty + 1 : ty, 'CAPYTAP', ink);
   if (big) { R(g, x + 2, y + 2, 1, 1, ink); R(g, x + pw - 3, y + 2, 1, 1, ink); R(g, x + 2, y + ph - 3, 1, 1, ink); R(g, x + pw - 3, y + ph - 3, 1, 1, ink); }
@@ -5926,8 +5927,26 @@ function hitCapy(p) {
   return p.x >= c.x && p.x <= c.x + 28 && p.y >= c.footY - 24 && p.y <= c.footY;
 }
 
-// Бульбашка з фразою над головою (key — щоб у одного персонажа була лише одна)
+// Межі видимої частини сцени для бульбашок (у координатах сцени)
+function bubbleBounds() {
+  const sceneH = parseFloat(ui.scene.style.height) || (view.h * sceneUnit);
+  const top = -view.offY + (view.h * sceneUnit - sceneH) / sceneUnit;
+  const tb = document.getElementById("topbar"), tbh = tb ? tb.getBoundingClientRect().bottom : 0;                        // верхню панель з рахунком бульбашки не перекривають
+  return { l: visL(), r: visR(), t: top + 2, b: top + sceneH / sceneUnit, il: visL() + 38 / sceneUnit, ir: visR() - 40 / sceneUnit, it: top + (tbh + 6) / sceneUnit };
+}
+// Ставить бульбашку так, щоб вона повністю лишалась у кадрі
+function placeBubble(el, x, y) {
+  const bb = bubbleBounds(), hw = el.offsetWidth / 2 / sceneUnit + 2, hh = el.offsetHeight / sceneUnit + 6;
+  const cx = Math.max(bb.il + hw, Math.min(bb.ir - hw, x)), cy = Math.max(bb.it + hh, Math.min(bb.b - 4, y));
+  el._cx = cx;
+  el.style.left = pctX(cx) + '%';
+  el.style.top = pctY(cy) + '%';
+}
+function dropBubble(key) { const el = bubbleEls[key]; if (el) { clearTimeout(el._timer); el.remove(); delete bubbleEls[key]; } }
+// Бульбашка з фразою над головою (key — щоб у одного персонажа була лише одна). Якщо той, хто говорить, поза видимою частиною вулиці — фраза не з'являється
 function showBubble(key, text, x, y, follow) {
+  const bb = bubbleBounds();
+  if (x < bb.l - 2 || x > bb.r + 2) { dropBubble(key); return; }
   let el = bubbleEls[key];
   if (!el) {
     el = document.createElement('div');
@@ -5937,30 +5956,26 @@ function showBubble(key, text, x, y, follow) {
   }
   el.textContent = text;
   playSfx('pip');
-  const margin = Math.min(38, viewCrop.w / 2);   // бульбашка не виходить за видиму частину сцени
-  const cx = Math.max(visL() + margin, Math.min(visR() - margin, x));
+  el._follow = follow || null;                  // follow — функція, що дає поточне місце того, хто говорить
+  el._x = x; el._y = Math.max(24, y);
+  placeBubble(el, x, el._y);
   Object.keys(bubbleEls).forEach(k => {                  // нова бульбашка прибирає старі поруч, щоб репліки не налазили одна на одну
     const o = bubbleEls[k];
-    if (k !== key && Math.abs(o._cx - cx) < 58) { clearTimeout(o._timer); o.remove(); delete bubbleEls[k]; }
+    if (k !== key && Math.abs(o._cx - el._cx) < 58) dropBubble(k);
   });
-  el._cx = cx; el._follow = follow || null;                  // follow — функція, що дає поточне місце того, хто говорить
-  el.style.left = pctX(cx) + '%';
-  el.style.top = pctY(Math.max(24, y)) + '%';
   el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
   clearTimeout(el._timer);
   el._timer = setTimeout(() => { el.remove(); delete bubbleEls[key]; }, CONFIG.BUBBLE_SECONDS * 1000);
 }
 // Бульбашки йдуть слідом за звірятком, яке говорить
 function updateBubbles() {
-  const margin = Math.min(38, viewCrop.w / 2);
+  const bb = bubbleBounds();
   Object.keys(bubbleEls).forEach(k => {
     const el = bubbleEls[k];
-    if (!el._follow) return;
+    if (!el._follow) { if (el._x < bb.l - 2 || el._x > bb.r + 2) { dropBubble(k); return; } placeBubble(el, el._x, el._y); return; }
     const p = el._follow();
-    const cx = Math.max(visL() + margin, Math.min(visR() - margin, p.x));
-    el._cx = cx;
-    el.style.left = pctX(cx) + '%';
-    el.style.top = pctY(Math.max(24, p.y)) + '%';
+    if (p.x < bb.l - 2 || p.x > bb.r + 2) { dropBubble(k); return; }        // звірятко пішло за межі кадру — репліка зникає
+    placeBubble(el, p.x, Math.max(24, p.y));
   });
 }
 function actorSay(a) {
@@ -7947,7 +7962,13 @@ function drawNightLights() {
     const sc = getShopScale();
     drawCanvasSprite(ctx, shop.lit, shop.x, shop.y, { sx: sc.sx, sy: sc.sy, alpha: L * 0.55 });
     const rs = shop.roofSign, pulse = 0.85 + 0.15 * Math.sin(animClock * 2.2);        // м'яке сяйво навколо вивісок
-    if (rs) { [[7, 0.07], [4, 0.1], [2, 0.14]].forEach(([pad, al]) => { ctx.globalAlpha = L * al * pulse; R(ctx, shop.x + rs.x - pad, shop.y + rs.y - pad, rs.w + pad * 2, rs.h + pad * 2, 'y'); }); ctx.globalAlpha = L * 0.3 * pulse; R(ctx, shop.x + rs.x + 1, shop.y + rs.y + 1, rs.w - 2, rs.h - 2, 'w'); }
+    if (rs) {                                                   // «CAPYTAP» світиться іншим кольором, ніж назва магазину
+      const gc = ROOF_GLOW[viewEpoch() % ROOF_GLOW.length];
+      [[10, 0.07], [7, 0.1], [4, 0.14], [2, 0.2]].forEach(([pad, al]) => { ctx.globalAlpha = L * al * pulse; R(ctx, shop.x + rs.x - pad, shop.y + rs.y - pad, rs.w + pad * 2, rs.h + pad * 2, gc); });
+      ctx.globalAlpha = L * 0.55; R(ctx, shop.x + rs.x + 1, shop.y + rs.y + 1, rs.w - 2, rs.h - 2, gc);
+      ctx.globalAlpha = L; wordG(ctx, shop.x + rs.tx, shop.y + rs.ty, 'CAPYTAP', 'w');
+      ctx.globalAlpha = L * 0.6 * pulse; wordG(ctx, shop.x + rs.tx - 1, shop.y + rs.ty, 'CAPYTAP', gc); wordG(ctx, shop.x + rs.tx + 1, shop.y + rs.ty, 'CAPYTAP', gc);
+    }
     const sg = shop.sign; [[5, 0.06], [2, 0.1]].forEach(([pad, al]) => { ctx.globalAlpha = L * al; R(ctx, shop.x + sg.x - pad, shop.y + sg.y - pad, sg.w + pad * 2, sg.h + pad * 2, 'y'); });
     ctx.globalAlpha = 1;
   }

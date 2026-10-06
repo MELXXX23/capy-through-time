@@ -50,6 +50,16 @@ button:disabled { cursor: default; }
 [hidden] { display: none !important; }
 :focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
 
+/* Меню залежить від епохи: панель, картки, кнопки та рамки */
+body[data-epoch="0"] { --panel: #bfe3f2; --panel-dark: #8fc3dc; --card: #e9f6fc; --honey: #5f9fc9; --mint: #8fd3ea; --brown: #3f6283; }
+body[data-epoch="1"] { --panel: #ffd6e1; --panel-dark: #f2adc2; --card: #fff0f4; --honey: #e8789a; --mint: #f6a3b8; --brown: #8a4a5e; }
+body[data-epoch="2"] { --panel: #dcc3e6; --panel-dark: #bd93cf; --card: #f3e6f8; --honey: #b04fd0; --mint: #d08ad9; --brown: #5a2e63; }
+body[data-epoch="3"] { --panel: #cdc3f2; --panel-dark: #a493e2; --card: #ece8fb; --honey: #7a5cc9; --mint: #9a85e8; --brown: #3a2a66; }
+body[data-epoch="4"] { --panel: #d3ecfb; --panel-dark: #a5d2f2; --card: #eef8ff; --honey: #3d8fd6; --mint: #8ccaf5; --brown: #2f5f8f; }
+body[data-epoch="5"] { --panel: #cfeed6; --panel-dark: #9fd4ae; --card: #eaf8ee; --honey: #4f9a63; --mint: #6fc08c; --brown: #3f6f4a; }
+body[data-epoch="6"] { --panel: #c3cde6; --panel-dark: #93a5cf; --card: #e4e9f5; --honey: #4d6fb8; --mint: #7f99d6; --brown: #2b3f6a; }
+body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb; --honey: #ff5fa2; --mint: #6fe3e8; --brown: #243a66; }
+
 /* Піксельна рамка зі «сходинками» по кутах */
 .frame, .card, .btn {
   clip-path: polygon(
@@ -64,7 +74,7 @@ button:disabled { cursor: default; }
 }
 .card {
   --notch: 3px;
-  background: var(--cream);
+  background: var(--card, var(--cream));
   box-shadow: inset 0 0 0 3px var(--brown);
   padding: 12px 14px;
   margin-bottom: 10px;
@@ -82,19 +92,21 @@ button:disabled { cursor: default; }
   height: 100dvh;
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(340px, 38vw, 470px);
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas: "top top" "stage panel";
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "stage panel";
+  position: relative;
 }
 #topbar {
-  grid-area: top;
+  position: absolute; top: 0; left: 0; right: clamp(340px, 38vw, 470px); z-index: 20; pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 8px 12px;
-  background: var(--darker);
-  border-bottom: 4px solid var(--brown);
+  background: transparent;
 }
+#topbar > * { pointer-events: auto; }
+#app.panel-closed #topbar { right: 0; }
 #stage {
   grid-area: stage;
   position: relative;
@@ -105,7 +117,7 @@ button:disabled { cursor: default; }
   min-height: 0;
   padding: 0;
   overflow: hidden;
-  background: repeating-conic-gradient(#3b2a22 0 25%, #33241d 0 50%) 0 0 / 16px 16px;
+  background: #4b3f3a;
 }
 /* Меню справа можна згорнути стрілкою — тоді вся гра на весь екран */
 #app.panel-closed { grid-template-columns: minmax(0, 1fr) 0; }
@@ -156,6 +168,8 @@ button:disabled { cursor: default; }
 #boosts:empty { display: none; }
 .chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; font-size: 11px; line-height: 1.2; color: var(--dark); background: var(--cream); box-shadow: 0 0 0 2px var(--honey); white-space: nowrap; }
 .chip.bad { background: #cfe6f5; box-shadow: 0 0 0 2px #3d5a8c; }
+.chip.quiet { background: rgba(42, 29, 26, .62); color: #efe2cc; box-shadow: 0 0 0 1px rgba(255, 255, 255, .18); opacity: .92; }
+.chip.quiet .ico { filter: grayscale(1); opacity: .7; }
 .chip.dark { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 2px var(--honey); }
 .chip .ico { font-size: 11px; }
 #topRight { display: flex; align-items: center; gap: 8px; flex: none; }
@@ -165,7 +179,7 @@ button:disabled { cursor: default; }
 #wheelOpen.ready::after { content: ''; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; background: var(--red); box-shadow: 0 0 0 2px var(--cream); }
 
 /* Банер подій над сценою (розпродаж, чорна п'ятниця, протікання, міні-гра) */
-#eventBanner { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); z-index: 8; max-width: 94%; padding: 6px 12px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--dark); background: var(--yellow); box-shadow: 0 0 0 3px var(--dark); pointer-events: none; white-space: nowrap; }
+#eventBanner { position: absolute; top: 74px; left: 50%; transform: translateX(-50%); z-index: 8; max-width: 94%; padding: 6px 12px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--dark); background: var(--yellow); box-shadow: 0 0 0 3px var(--dark); pointer-events: none; white-space: nowrap; }
 #eventBanner.bf { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 3px var(--honey); }
 #eventBanner.leak { background: #cfe6f5; box-shadow: 0 0 0 3px #3d5a8c; }
 #eventBanner.game { background: #ffd3c9; box-shadow: 0 0 0 3px var(--red); }
@@ -188,6 +202,11 @@ button:disabled { cursor: default; }
   touch-action: manipulation;
 }
 #scene.pannable { touch-action: none; }
+.pan-btn { position: absolute; z-index: 12; bottom: 22%; width: 34px; height: 54px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--panel); }
+.pan-btn svg { width: 14px; height: 24px; shape-rendering: crispEdges; fill: var(--dark); }
+.pan-btn:disabled { opacity: .3; }
+#panL { left: 0; }
+#panR { right: 0; }
 #world {
   position: relative;
   width: 960px;
@@ -218,6 +237,9 @@ button:disabled { cursor: default; }
   line-height: 1.05;
 }
 #signText { display: block; max-width: 100%; text-wrap: balance; text-shadow: 0 calc(var(--u) * 0.5) 0 var(--darker); }
+#shopOverlay.lit #sign { filter: brightness(1.25); }
+#shopOverlay.lit #signText { color: #fffbe6; text-shadow: 0 0 calc(var(--u) * 1.2) var(--glow, #ffd36a), 0 0 calc(var(--u) * 3.5) var(--glow, #ffb347), 0 calc(var(--u) * 0.5) 0 var(--darker); }
+body[data-epoch="1"] { --glow: #ff8fb3; } body[data-epoch="2"] { --glow: #ff5fa2; } body[data-epoch="3"] { --glow: #7ffcff; } body[data-epoch="4"] { --glow: #9fd8ff; } body[data-epoch="5"] { --glow: #b6ff9a; } body[data-epoch="6"] { --glow: #9cc9ff; } body[data-epoch="7"] { --glow: #33ddff; }
 #floaters { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .floater {
   position: absolute;
@@ -295,6 +317,24 @@ button:disabled { cursor: default; }
 .team-card .t-now { font-size: 11px; line-height: 1.6; margin-top: 4px; color: var(--green); }
 .team-card .t-next { font-size: 10px; line-height: 1.6; margin-top: 2px; color: var(--brown); }
 .team-card.unhired .portrait { filter: grayscale(.8) brightness(.8); }
+/* Розділ «Команда»: колір фону героїв і кнопки залежить від епохи */
+.team-card { background: var(--tc-card, #fff4dc); }
+.team-card .portrait { background: var(--tc-portrait, var(--mint)); }
+.team-card .btn.go:not(:disabled) { background: var(--tc-btn, var(--mint)); color: var(--tc-btn-text, var(--dark)); }
+body[data-epoch="0"] { --tc-portrait: #c4ebf5; --tc-card: #e9f7fc; --tc-btn: #8fd3ea; --tc-btn-text: var(--dark); }
+body[data-epoch="1"] { --tc-portrait: #ffc9d4; --tc-card: #ffedf1; --tc-btn: #f6a3b8; --tc-btn-text: var(--dark); }
+body[data-epoch="2"] { --tc-portrait: #6d3b6e; --tc-card: #3a2140; --tc-btn: #8a4d8b; --tc-btn-text: #fff4dc; }
+body[data-epoch="3"] { --tc-portrait: #7a5cc9; --tc-card: #36285f; --tc-btn: #7a5cc9; --tc-btn-text: #fff4dc; }
+body[data-epoch="4"] { --tc-portrait: #b8e3ff; --tc-card: #e8f6ff; --tc-btn: #8ccaf5; --tc-btn-text: var(--dark); }
+body[data-epoch="5"] { --tc-portrait: #8ed4a6; --tc-card: #e4f6ea; --tc-btn: #6fc08c; --tc-btn-text: var(--dark); }
+body[data-epoch="6"] { --tc-portrait: #1b2a4a; --tc-card: #111a30; --tc-btn: #2d4c8a; --tc-btn-text: #fff4dc; }
+body[data-epoch="7"] { --tc-portrait: #3d5a8c; --tc-card: #1e2f4d; --tc-btn: #3d5a8c; --tc-btn-text: #fff4dc; }
+body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoch="6"] .team-card, body[data-epoch="7"] .team-card { --tc-name: #fff4dc; --tc-role: #ffc9d4; --tc-trait: #e6d6c0; --tc-now: #8ed4a6; }
+.team-card .t-name, .team-card .t-lvl { color: var(--tc-name, var(--dark)); }
+.team-card .t-role { color: var(--tc-role, var(--red)); }
+.team-card .t-trait, .team-card .t-next { color: var(--tc-trait, var(--brown)); }
+.team-card .t-now { color: var(--tc-now, var(--green)); }
+
 .team-card .btn.wide { margin-top: 8px; }
 
 /* ===== Майстерня часу, досягнення, налаштування ===== */
@@ -307,7 +347,12 @@ button:disabled { cursor: default; }
 .row .btn { flex: 1; padding: 10px 6px; font-size: 12px; }
 .row .btn[aria-pressed="true"] { background: var(--honey); }
 #setSeason { display: grid; grid-template-columns: repeat(3, 1fr); }
-#setSeason .btn { padding: 10px 2px; font-size: 11px; }
+#setEpochView { display: grid; grid-template-columns: repeat(2, 1fr); }
+#setSeason .btn.locked { opacity: .6; cursor: not-allowed; }
+#setSeason .btn img.lock { width: 12px; height: 15px; margin-left: 5px; vertical-align: -2px; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+#setSeason .btn, #setEpochView .btn { padding: 10px 2px; font-size: 11px; }
+#setEpochView .btn span { display: block; }
+#setEpochView .ev-earned { margin-top: 4px; font-size: 9px; opacity: .85; }
 #setTime { display: grid; grid-template-columns: repeat(2, 1fr); }
 #setTime .btn { padding: 9px 2px; font-size: 11px; }
 #pane-settings .btn.wide { margin-top: 6px; }
@@ -400,11 +445,13 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .bubble {
   position: absolute;
   transform: translate(-50%, -100%);
-  max-width: calc(var(--u) * 44);
+  max-width: min(max(calc(var(--u) * 46), 124px), 62vw);
   width: max-content;
+  box-sizing: border-box;
   padding: calc(var(--u) * 1.3) calc(var(--u) * 2.2);
-  font-size: max(9px, calc(var(--u) * 3.5));
+  font-size: max(8px, min(calc(var(--u) * 3.3), 13px));
   line-height: 1.5;
+  overflow-wrap: break-word;
   text-align: center;
   color: var(--dark);
   background: var(--cream);
@@ -432,8 +479,14 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .vol input[type="range"] { width: 100%; height: 26px; accent-color: var(--green); cursor: pointer; }
 #soundBtn { padding: 5px 10px; font-size: 18px; line-height: 1.3; background: var(--panel); }
 #soundBtn.muted { opacity: .6; }
-#modal, #wheelModal, #letterModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
-#modal[hidden], #wheelModal[hidden], #letterModal[hidden] { display: none; }
+#modal, #wheelModal, #letterModal, #circusModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
+#modal[hidden], #wheelModal[hidden], #letterModal[hidden], #circusModal[hidden] { display: none; }
+#circusWheel { width: min(64vw, 256px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+.clown-win { width: min(76vw, 288px); margin: 0 auto 6px; box-shadow: 0 0 0 3px var(--brown); }
+#clownCanvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+#circusSub { font-size: 11px; line-height: 1.6; margin: 4px 0 6px; }
+#circusResult { min-height: 22px; font-size: 15px !important; }
+#circusClose { margin-top: 6px; }
 .wheel-box { max-height: 96vh; overflow-y: auto; padding-top: 22px; }
 .wheel-wrap { display: flex; justify-content: center; margin: 4px 0 8px; }
 #wheelCanvas { width: min(64vw, 256px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
@@ -450,18 +503,18 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @media (max-width: 820px) and (orientation: portrait), (max-width: 560px) {
   #app {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-    grid-template-areas: "top" "stage";
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "stage";
   }
+  #topbar, #app.panel-closed #topbar { right: 0; }
   #topbar { padding: 6px 8px; gap: 8px; }
   #hud { padding: 6px 12px 6px 10px; gap: 8px; }
   #coinIcon { width: 24px; height: 24px; }
   #coinCount { font-size: 20px; }
   #cps { font-size: 11px; margin-top: 5px; }
   .lang-btn { padding: 9px 8px; min-width: 44px; font-size: 13px; }
-  #stage { padding: 14px 12px 78px; }
-  #scene { box-shadow: 0 0 0 3px var(--darker), 0 0 0 6px var(--honey), 0 0 0 9px var(--darker); }
-  #app.panel-closed { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  #stage { padding: 0 0 78px; }
+  #app.panel-closed { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
   #panelToggle { display: none; }
   /* Мінімалістичне меню: внизу тонка смужка з іконками; торкнувся — вміст виїжджає над нею, торкнувся ще раз чи сцени — ховається */
   #panel, #app.panel-closed #panel { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0 6px calc(6px + env(safe-area-inset-bottom)); padding: 8px; flex-direction: column-reverse; max-height: 82dvh; }
@@ -505,7 +558,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
       <div id="boosts" aria-live="polite"></div>
     </div>
     <div id="topRight">
-      <button type="button" id="wheelOpen" class="btn" data-i18n-aria="wheelTitle">🎡</button>
+      <button type="button" id="wheelOpen" class="btn" data-i18n-aria="wheelTitle">🎰</button>
     </div>
   </header>
 
@@ -514,6 +567,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
       <svg viewBox="0 0 5 9" aria-hidden="true"><path d="M0 0h2v1h1v1h1v1h1v3H4v1H3v1H2v1H0V8h1V7h1V6h1V3H2V2H1V1H0z"/></svg>
     </button>
     <div id="scene" role="button" tabindex="0" data-i18n-aria="sceneLabel">
+      <button type="button" id="panL" class="btn pan-btn" aria-label="◀"><svg viewBox="0 0 5 9" aria-hidden="true"><path d="M5 0H3v1H2v1H1v1H0v3h1v1h1v1h1v1h2V8H4V7H3V6H2V3h1V2h1V1h1z"/></svg></button>
+      <button type="button" id="panR" class="btn pan-btn" aria-label="▶"><svg viewBox="0 0 5 9" aria-hidden="true"><path d="M0 0h2v1h1v1h1v1h1v3H4v1H3v1H2v1H0V8h1V7h1V6h1V3H2V2H1V1H0z"/></svg></button>
       <div id="eventBanner" hidden></div>
       <div id="world">
         <canvas id="view" width="320" height="180"></canvas>
@@ -609,14 +664,19 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
           <h2 data-i18n="setSeason"></h2>
           <p class="ws-line" data-i18n="setSeasonNote"></p>
           <div class="row" id="setSeason"></div>
+          <p class="ws-line" data-i18n="setTime"></p>
+          <div class="row" id="setTime"></div>
+        </div>
+        <div class="card" id="epochViewCard" hidden>
+          <h2 data-i18n="setEpochView"></h2>
+          <p class="ws-line" data-i18n="setEpochViewNote"></p>
+          <div class="row" id="setEpochView"></div>
         </div>
         <div class="card">
           <h2 data-i18n="setView"></h2>
           <button type="button" class="btn wide" id="setSound" data-i18n="setSound"></button>
           <button type="button" class="btn wide" id="setAnim"></button>
           <button type="button" class="btn wide" id="setDayNight"></button>
-          <p class="ws-line" data-i18n="setTime"></p>
-          <div class="row" id="setTime"></div>
           <p class="ws-line" data-i18n="setNumFmt"></p>
           <div class="row" id="setNumFmt"></div>
         </div>
@@ -633,6 +693,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
         <div class="card" id="debugCard" hidden>
           <h2>🛠 DEBUG</h2>
           <button type="button" class="btn wide" id="dbgHour" data-i18n="dbgHour"></button>
+          <button type="button" class="btn wide" id="dbgCircus" data-i18n="dbgCircus"></button>
           <button type="button" class="btn wide" id="dbgX100" data-i18n="dbgX100"></button>
         </div>
       </div>
@@ -679,6 +740,17 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
     <p id="wheelGhostNote" hidden></p>
     <button type="button" class="btn wide" id="wheelGhostBtn" hidden></button>
     <button type="button" class="btn wide" id="wheelClose" data-i18n="wheelClose"></button>
+  </div>
+</div>
+<div id="circusModal" hidden>
+  <div class="frame modal-box wheel-box" role="dialog" aria-modal="true" aria-labelledby="circusTitle">
+    <div class="clown-win"><canvas id="clownCanvas" width="72" height="40" aria-hidden="true"></canvas></div>
+    <h2 id="circusTitle"></h2>
+    <p id="circusSub"></p>
+    <div class="wheel-wrap"><canvas id="circusWheel" width="128" height="140" aria-hidden="true"></canvas></div>
+    <span class="big" id="circusResult"></span>
+    <button type="button" class="btn wide go" id="circusBtn"></button>
+    <button type="button" class="btn wide" id="circusClose"></button>
   </div>
 </div>
 <div id="letterModal" hidden>
@@ -735,11 +807,17 @@ const CONFIG = {
   SCENE_W: 320,               // внутрішня ширина сцени (пікселів)
   SCENE_H: 180,               // внутрішня висота сцени
   EXTRA_BOTTOM: 36,           // скільки рядків бруківки додається знизу, щоб було більше видно й де гуляти
-  MAX_VIEW_W: 720,            // найширша сцена на великому екрані (пікселів сцени)
+  MAX_VIEW_W: 2600,            // найширша сцена на великому екрані (пікселів сцени)
   MIN_VIEW_W: 296,            // на вузькому вікні масштаб збільшується, а краї «ядра» (до 12 пікселів) можуть не поміститися
   MAX_OFF_Y: 400,             // скільки додаткового неба можна додати зверху на високому екрані
-  MOBILE_PAD: 96,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
+  WORLD_W: 1000,              // ширина всієї вулиці на ПК (пікселів сцени): її можна гортати стрілками ◀ ▶
+  MOBILE_PAD: 220,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
   DAY_SECONDS: 300,           // скільки секунд триває повна доба (день + ніч)
+  CIRCUS_FIRST_MINUTES: 4,     // перший «!» цирку з'являється через 4 хвилини гри
+  CIRCUS_HOURS: 24,            // раз на 24 ігрові години, тобто щодоби гри (CONFIG.DAY_SECONDS)
+  CIRCUS_BANG_SECONDS: 40,     // скільки секунд висить «!», поки гравець не натисне
+  CIRCUS_DRIVE_SECONDS: 5,     // скільки їде цирк справа наліво
+  CIRCUS_SETUP_SECONDS: 5,     // скільки розкладається шатро
   MAIL_MINUTES: 40,           // поштова машина приїздить раз на 40 хвилин
   MAIL_FIRST_SECONDS: 90,     // перша — через 90 секунд після початку гри
   SUMMER_REST_MIN: 20,        // влітку звірятка раз на 20–38 секунд зупиняються перепочити й попити водички
@@ -855,6 +933,12 @@ const TABS = [
   { id: 'settings',    icon: '⚙️', ready: true }
 ];
 
+// Товари в кожній епосі: іконки відділів (назви — у словнику, ключі good_епоха_відділ) і що лежить на полицях
+const EPOCH_GOODS_ICONS = [["🕯️","🍯","🪶","🪆","🧼","🍎","🥖","👘","🥾","🔭","🍷","🎭"],["💌","🍦","📓","🚂","🧽","🥫","🍩","👗","👞","📺","🍔","🎞️"],["🪩","🍭","💿","🪀","💄","🍍","🥐","🕺","👢","📼","🍕","💃"],["🪙","🥤","📼","🎮","🔋","🍌","🍪","🧥","👟","🕹️","🌭","📹"],["💾","🍫","🖱️","🐣","🔌","🥗","☕","👕","👟","💻","🍣","📡"],["♻️","🥜","📒","🪵","🧴","🥕","🍞","🧶","🥿","🔆","🥗","🌳"],["⭐","🧃","🪐","🚀","🧪","🌱","🍙","🧑‍🚀","👢","🛰️","🍜","🌌"],["💡","🧋","🖊️","🤖","🫧","🍇","🍰","🧥","🛹","🥽","🍢","🎆"]];
+const EPOCH_GOODS_KINDS = [["candle","jar","scroll",null,null,null,null,null,null,"scroll","cup","mask"],[null,"cone","scroll",null,null,"jar",null,null,null,null,null,"cassette"],["bulb","cone","record",null,"tube",null,null,null,null,"cassette",null,"bulb"],[null,"cup","cassette","gamepad","tube",null,null,null,null,"gamepad",null,"cassette"],["cassette","cup","laptop",null,"tube",null,"cup",null,null,"laptop",null,"laptop"],[null,"jar",null,null,"tube",null,null,null,null,"solar","plant","plant"],[null,"tube",null,"rocket","tube","plant",null,null,null,"robot","cup","bulb"],["bulb","cup","laptop","robot","tube",null,"cone","bulb",null,"visor","cup","bulb"]];
+function deptIcon(i) { return EPOCH_GOODS_ICONS[viewEpoch() % EPOCH_GOODS_ICONS.length][i] || DEPARTMENTS[i].icon; }
+function deptName(i) { return t('good_' + (viewEpoch() % EPOCH_GOODS_ICONS.length) + '_' + i); }
+
 // Відділи: від дешевих до дорогих (ціна ≈ ×11, дохід ≈ ×7 на кожному кроці).
 // level — на якому рівні магазину відділ відкривається; display — що лежить у вітрині
 const DEPARTMENTS = [
@@ -887,16 +971,16 @@ const LEVELS = [
 // bay = вітрина з двома відділами, win = звичайне вікно. Решта — кольори й стиль.
 // Магазин — «відкритий розріз»: крізь скляний фасад видно поверхи, стелажі відділів, ескалатори й покупців-звірят.
 // floors — скільки стелажів (по 2 відділи) на кожному поверсі, знизу вгору; торговий центр — 3 поверхи, решта — не більше 2.
-const FLOOR_H = 30;               // висота верхнього поверху (пікселів)
+const FLOOR_H = 34;               // висота верхнього поверху (пікселів)
 const SHOP_LOOK = [
-  { w: 104, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 130, top: 24, floors: [2], inner: ['y'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 158, top: 16, floors: [2, 1], inner: ['S', 'm'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
-  { w: 188, top: 22, floors: [2, 2], inner: ['m', 'q'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
-  { w: 216, top: 28, floors: [2, 3], inner: ['q', 'S'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
-  { w: 244, top: 30, floors: [2, 2, 2], inner: ['m', 'q', 'S'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
+  { w: 130, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 164, top: 24, floors: [2], inner: ['y'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 198, top: 16, floors: [2, 1], inner: ['S', 'm'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
+  { w: 234, top: 22, floors: [2, 2], inner: ['m', 'q'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
+  { w: 270, top: 28, floors: [2, 3], inner: ['q', 'S'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
+  { w: 306, top: 30, floors: [2, 2, 2], inner: ['m', 'q', 'S'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
 ];
-const DOOR_WIDTHS = [22, 22, 28, 30, 36];
+const DOOR_WIDTHS = [26, 26, 32, 36, 42];
 
 // Типи покупців (звірятка). Спрайти складаються з тіла і двох кадрів ніг (див. SPRITES)
 const CUSTOMER_TYPES = ['bunny', 'mouse', 'duck', 'dog', 'cat', 'pig', 'sheep', 'cow', 'squirrel', 'deer', 'raccoon', 'hedgehog', 'penguin', 'koala', 'tiger', 'monkey', 'hamster', 'chick', 'frog', 'foxcub'];
@@ -921,11 +1005,12 @@ const LAYOUT = {
 // Фонові будиночки
 const HOUSES = [
   { x: -8,  w: 52, h: 66, wall: 'q', roof: 'r' },
-  { x: 46,  w: 46, h: 54, wall: 'y', roof: 'b' },
-  { x: 94,  w: 44, h: 70, wall: 'm', roof: 'n' },
+  { x: 44,  w: 46, h: 54, wall: 'y', roof: 'b' },
+  { x: 90,  w: 44, h: 70, wall: 'm', roof: 'n' },
+  { x: 134, w: 62, h: 62, wall: 'c', roof: 'r' },
   { x: 196, w: 48, h: 60, wall: 'p', roof: 'b' },
-  { x: 246, w: 46, h: 72, wall: 'y', roof: 'r' },
-  { x: 294, w: 52, h: 58, wall: 'q', roof: 'n' }
+  { x: 244, w: 46, h: 72, wall: 'y', roof: 'r' },
+  { x: 290, w: 52, h: 58, wall: 'q', roof: 'n' }
 ];
 
 // Хмаринки: x, y, швидкість (пікселів за секунду)
@@ -1648,7 +1733,8 @@ const CHIBI = (function () {
   const BAGS = {};
   const BAG_COL = { p: ['#ef8fa3', '#d4537e'], h: ['#f2b84b', '#c98a1e'], g: ['#4f9a63', '#2f7a4a'], n: ['#3d5a8c', '#2d467a'], u: ['#8b6bb0', '#6a4a94'] };
   function bag(kind, color) {
-    const key = kind + color;
+    const ep = (typeof viewEpoch === 'function') ? viewEpoch() % 8 : 1;
+    const key = kind + color + '_' + ep;
     if (BAGS[key]) return BAGS[key];
     const S = mk(10, 13), col = (BAG_COL[color] || BAG_COL.p)[0], sh = (BAG_COL[color] || BAG_COL.p)[1];
     if (kind === 0) { rect(S, 4, 0, 2, 5, '#e8b060'); px(S, 4, 0, '#f6d28a'); px(S, 5, 2, '#c98a3a'); px(S, 5, 4, '#c98a3a'); rect(S, 6, 2, 1, 3, '#4f9a63'); }
@@ -1659,6 +1745,14 @@ const CHIBI = (function () {
     if (kind === 1) { rect(S, 4, 8, 2, 1, '#e0604a'); px(S, 4, 7, '#e0604a'); px(S, 5, 7, '#e0604a'); }
     if (kind === 2) { px(S, 4, 8, sh); px(S, 5, 9, sh); px(S, 6, 8, sh); }
     rect(S, 2, 3, 1, 3, '#fff4dc'); rect(S, 7, 3, 1, 3, '#fff4dc');
+    // покупки залежать від епохи: кошик, блискучий пакет, коробка гри, посилка, сітка з овочами, капсула, неонова торба
+    if (ep === 0) { rect(S, 1, 6, 8, 7, '#c98a3a'); for (let y = 6; y < 13; y++) for (let x = 1; x < 9; x++) if ((x + y) % 2) px(S, x, y, '#a8703f'); rect(S, 1, 6, 8, 1, '#8a5a2a'); rect(S, 2, 2, 1, 4, '#8a5a2a'); rect(S, 7, 2, 1, 4, '#8a5a2a'); rect(S, 2, 2, 6, 1, '#8a5a2a'); rect(S, 3, 3, 2, 3, '#e8b060'); rect(S, 5, 4, 2, 2, '#4f9a63'); }
+    else if (ep === 2) { for (let k = 0; k < 6; k++) px(S, 2 + (k * 3) % 7, 6 + (k * 5) % 6, k % 2 ? '#ffffff' : '#ffe08a'); rect(S, 1, 9, 8, 1, '#ff5fa2'); }
+    else if (ep === 3) { rect(S, 1, 5, 8, 8, '#2a1d1a'); rect(S, 1, 5, 8, 1, '#7a5cc9'); rect(S, 2, 7, 6, 2, '#3fa7a0'); rect(S, 3, 10, 1, 1, '#ffe08a'); rect(S, 5, 10, 2, 1, '#ff5fa2'); px(S, 3, 8, '#ffffff'); rect(S, 4, 1, 2, 4, '#c26b4a'); }
+    else if (ep === 4) { rect(S, 1, 5, 8, 8, '#d9a066'); rect(S, 1, 5, 8, 1, '#e8b87a'); rect(S, 4, 5, 2, 8, '#fff4dc'); rect(S, 1, 10, 3, 2, '#ffffff'); px(S, 2, 11, '#4a3228'); px(S, 7, 8, '#3d5a8c'); rect(S, 2, 3, 1, 2, '#4a3228'); rect(S, 7, 3, 1, 2, '#4a3228'); }
+    else if (ep === 5) { rect(S, 1, 5, 8, 8, '#4f9a63'); for (let y = 5; y < 13; y++) for (let x = 1; x < 9; x++) if ((x + y) % 2) px(S, x, y, '#2f6b48'); rect(S, 2, 7, 2, 2, '#e8863c'); rect(S, 5, 8, 3, 3, '#c4553d'); rect(S, 3, 10, 2, 2, '#ffe08a'); rect(S, 6, 5, 1, 3, '#8ed4a6'); rect(S, 2, 3, 1, 2, '#8ed4a6'); rect(S, 7, 3, 1, 2, '#8ed4a6'); }
+    else if (ep === 6) { rect(S, 2, 5, 6, 8, '#9c9087'); rect(S, 1, 6, 8, 6, '#cfc5b8'); rect(S, 3, 7, 4, 2, '#86cfe8'); rect(S, 2, 10, 6, 1, '#4a3228'); rect(S, 4, 12, 2, 1, '#ffe08a'); rect(S, 4, 2, 2, 3, '#9c9087'); px(S, 4, 1, '#c4553d'); }
+    else if (ep === 7) { rect(S, 1, 5, 8, 8, '#1b1230'); for (let x = 1; x < 9; x++) { px(S, x, 5, '#ff5fa2'); px(S, x, 12, '#3fa7a0'); } for (let y = 5; y < 13; y++) { px(S, 1, y, '#ff5fa2'); px(S, 8, y, '#3fa7a0'); } rect(S, 3, 8, 4, 1, '#3fa7a0'); px(S, 4, 7, '#ff5fa2'); px(S, 5, 9, '#ffffff'); }
     return (BAGS[key] = outline(S, '#4a3228'));
   }
   return { make, bag };
@@ -1675,6 +1769,128 @@ function composeChibi(p) {
   return [...p.top, ...lower].map(r => r + r.split('').reverse().join(''));
 }
 TEAM.forEach(m => { SPRITES['team_' + m.id] = { rows: composeChibi(TEAM_PARTS[m.id]) }; });
+// ===== Костюми героїв по епохах =====
+const TEAM_GLASSES = (put, kind) => {
+  if (kind === 'round') { [4,5,6,9,10,11].forEach(x => { put(x, 5, 'k'); put(x, 6, 'k'); }); put(7, 5, 'k'); put(8, 5, 'k'); put(4, 5, 'w'); put(9, 5, 'w'); }
+  else if (kind === 'visor') { for (let x = 3; x <= 12; x++) { put(x, 4, 'T'); put(x, 6, 'T'); } put(3, 5, 'T'); put(12, 5, 'T'); put(2, 5, 'f'); put(13, 5, 'f'); }
+  else if (kind === 'nerd') { [4,5,6,9,10,11].forEach(x => { put(x, 4, 'k'); put(x, 6, 'k'); }); put(4, 5, 'k'); put(6, 5, 'k'); put(9, 5, 'k'); put(11, 5, 'k'); put(7, 5, 'k'); put(8, 5, 'k'); }
+};
+// прикраси на тулубі
+function teamDeco(kind, c, put) {
+  const row = (y, x0, x1, col) => { for (let x = x0; x <= x1; x++) put(x, y, col); };
+  switch (kind) {
+    case 'belt': row(13, 4, 11, c); put(7, 13, 'y'); put(8, 13, 'y'); break;
+    case 'stripes': row(11, 4, 11, c); row(13, 4, 11, c); break;
+    case 'bow': row(10, 6, 9, c); put(7, 11, c); put(8, 11, c); break;
+    case 'buttons': put(7, 11, c); put(8, 11, c); put(7, 13, c); put(8, 13, c); break;
+    case 'scarf': row(10, 4, 11, c); put(10, 11, c); put(10, 12, c); put(11, 12, c); break;
+    case 'pocket': row(13, 4, 6, c); put(5, 12, c); put(6, 12, c); break;
+    case 'dots': [[4,11],[6,12],[9,11],[11,12],[5,14],[10,14],[7,13]].forEach(q => put(q[0], q[1], c)); break;
+    case 'collar': put(5, 10, c); put(6, 10, c); put(9, 10, c); put(10, 10, c); break;
+  }
+}
+const TEAM_COSTUMES = [
+ {
+   hats: [
+     ['......dddd....y.', '....ddrrrrdd.yy.', '...drrrrrrrrd.y.', '...dddddddddd...'],
+     ['................', '....dddddd......', '...dbbbbbbd.....', '..ddbbbbbbdd....'],
+     ['.....dwwwwd.....', '....dwwwwwwd....', '...dwwqqqwwwd...', '...dwwwwwwwwd...'],
+     ['....h.h..h.h....', '....hhhhhhhh....', '....hrhhhhrh....', '................'],
+     ['.....dddd...y...', '....dGGGGd..yy..', '...dGGGGGGd.y...', '...dddddddddd...'],
+     null ],
+   outfits: [ {b:'c',l:'w',d:'belt',c:'b'}, {b:'r',l:'y',d:'collar',c:'w'}, {b:'g',l:'c',d:'pocket',c:'G'}, {b:'n',l:'w',d:'scarf',c:'y'}, {b:'u',l:'q',d:'buttons',c:'y'}, {b:'t',l:'W',d:'stripes',c:'b'} ] },
+ {
+   hats: [
+     ['.....dddddd.....', '....dwwwwwwd....', '....drrrrrrd....', '....dwwwwwwd....'],
+     ['.....dd..dd.....', '....dppddppd....', '.....dd..dd.....', '................'],
+     ['................', '....dddddd......', '...duuuuuud.....', '..dduuuuuudd....'],
+     ['................', '....dddddd......', '...dnnnnnnd.....', '..ddwwwwwwdd....'],
+     ['.....rrrrr......', '....rrrrrrr.....', '....drrrrrd.....', '.......w........'],
+     null ],
+   outfits: [ {b:'S',l:'w',d:'bow',c:'r'}, {b:'p',l:'w',d:'dots',c:'w'}, {b:'w',l:'S',d:'stripes',c:'r'}, {b:'T',l:'w',d:'collar',c:'w'}, {b:'y',l:'w',d:'buttons',c:'r'}, {b:'n',l:'w',d:'pocket',c:'w'} ] },
+ {
+   hats: [
+     ['.....dddddd.....', '.....dPPPPd..y..', '.....dffffd.....', '..dddddddddddd..'],
+     ['...dkkkkkkkkd...', '..dkkkkkkkkkkd..', '..dkkkkkkkkkkd..', '...dkkkkkkkkd...'],
+     ['....dEwEwEd.....', '...dEEEEEEEd....', '...dwEEwEEEd....', '....dEEEEEd.....'],
+     ['................', '................', '..dffffffffffd..', '..dyffffffffyd..'],
+     ['....dyyyyyyd....', '...dyyyyyyyyd...', '.dddddddddddddd.', '................'],
+     null ],
+   outfits: [ {b:'P',l:'f',d:'collar',c:'y'}, {b:'o',l:'y',d:'stripes',c:'r'}, {b:'f',l:'q',d:'buttons',c:'y'}, {b:'T',l:'w',d:'collar',c:'w'}, {b:'v',l:'P',d:'dots',c:'y'}, {b:'k',l:'f',d:'belt',c:'y'} ],
+   glasses: ['round'] },
+ {
+   hats: [
+     ['.....dddddd.....', '...dTTTTTTTd....', '..dTTffffTTTd...', '.dddddddddddd...'],
+     ['.......f........', '......fff.......', '.....fffff......', '....dfffffd.....'],
+     ['................', '....dgggggg.....', '...dgggggggd....', '..ddddddddd.....'],
+     ['.....y..........', '....dddd........', '...dTTTTd.......', '...dfTfTd.......'],
+     ['................', '................', '..dryyyyyyrd....', '..drrrrrrrrd....'],
+     null ],
+   outfits: [ {b:'v',l:'k',d:'buttons',c:'T'}, {b:'f',l:'z',d:'stripes',c:'y'}, {b:'T',l:'k',d:'collar',c:'y'}, {b:'o',l:'w',d:'stripes',c:'v'}, {b:'g',l:'k',d:'belt',c:'y'}, {b:'n',l:'y',d:'dots',c:'f'} ] },
+ {
+   hats: [
+     'headphones',
+     ['....dnnnnnnd....', '...dnnnnnnnnd...', '...dnnnnnnnnd...', '...dn......nd...'],
+     ['................', '....dwwwwwd.....', '...dwwwwwwwd....', '..ddddddddddd...'],
+     ['.....dkkkkd.....', '....dkkkkkkd....', '....dkkkkkkd....', '....dkkkkkkd....'],
+     ['.......k........', '......kkk.......', '......k.k.......', '................'],
+     null ],
+   outfits: [ {b:'n',l:'S',d:'buttons',c:'w'}, {b:'k',l:'e',d:'stripes',c:'a'}, {b:'r',l:'w',d:'pocket',c:'w'}, {b:'u',l:'q',d:'dots',c:'w'}, {b:'g',l:'m',d:'collar',c:'w'}, {b:'w',l:'a',d:'belt',c:'n'} ],
+   glasses: ['nerd'] },
+ {
+   hats: [
+     ['.....hhhhhh.....', '....hhhhhhhh....', '....hggggggh....', '.hhhhhhhhhhhhhh.'],
+     ['..g..g..g..g....', '..GgGgGgGgGg....', '...dGGGGGGd.....', '................'],
+     ['................', '................', '..dgggggggggd...', '..dgwgwgwgwgd...'],
+     ['....dwwwwwwd....', '...dwwwwwwwwd...', '.dwwwwwwwwwwwwd.', '.....p..p.......'],
+     ['.....dmmmmd.....', '....dmmmmmmd....', '....dmwmwmmd....', '....dmmmmmmd....'],
+     null ],
+   outfits: [ {b:'c',l:'g',d:'pocket',c:'G'}, {b:'m',l:'w',d:'stripes',c:'g'}, {b:'w',l:'g',d:'belt',c:'b'}, {b:'g',l:'c',d:'buttons',c:'y'}, {b:'y',l:'w',d:'collar',c:'g'}, {b:'b',l:'c',d:'dots',c:'y'} ] },
+ {
+   hats: [
+     'bubble',
+     ['....y......y....', '.....e....e.....', '.....dddddd.....', '................'],
+     ['................', '.....dddddd.....', '....dkaakaad....', '....dddddddd....'],
+     ['................', '.....dddddd.....', '....drrrrrrd....', '....dryyyyrd....'],
+     ['.....eeeee......', '....eEEEEEe.....', '....eEEEEEe.....', '.....eeeee......'],
+     'bubble' ],
+   outfits: [ {b:'E',l:'a',d:'buttons',c:'r'}, {b:'w',l:'E',d:'stripes',c:'r'}, {b:'o',l:'y',d:'collar',c:'w'}, {b:'n',l:'a',d:'belt',c:'y'}, {b:'u',l:'E',d:'dots',c:'y'}, {b:'g',l:'m',d:'pocket',c:'w'} ] },
+ {
+   hats: [
+     ['.....f....f.....', '....fTffffTf....', '................', '................'],
+     ['......TTTT......', '.....T....T.....', '......TTTT......', '................'],
+     ['...f........f...', '...ff......ff...', '..dffffffffffd..', '................'],
+     ['.......T........', '......TT........', '.....TTT........', '....dTTTTd......'],
+     ['................', '.....dddddd.....', '....dTTTTTTd....', '....dffffffd....'],
+     null ],
+   outfits: [ {b:'k',l:'z',d:'stripes',c:'f'}, {b:'z',l:'T',d:'buttons',c:'f'}, {b:'u',l:'k',d:'belt',c:'T'}, {b:'f',l:'k',d:'collar',c:'T'}, {b:'T',l:'z',d:'dots',c:'w'}, {b:'v',l:'k',d:'pocket',c:'f'} ],
+   glasses: ['visor'] }
+];
+// Костюм героя в епосі: тулуб, капелюх і прикраси (кожен герой одягнений по-своєму)
+function composeTeamCostume(id, epoch) {
+  const p = TEAM_PARTS[id], k = Object.keys(TEAM_PARTS).indexOf(id), cs = TEAM_COSTUMES[epoch % TEAM_COSTUMES.length];
+  const o = cs.outfits[(k * 5 + 1) % cs.outfits.length], hat = cs.hats[(k * 2 + (k >> 2)) % cs.hats.length];
+  const lower = CHIBI_LOWER.map(row => row.replace(/1/g, o.b).replace(/2/g, o.l).replace(/3/g, p.feet));
+  const g = [...p.top, ...lower].map(row => (row + row.split('').reverse().join('')).split(''));
+  const put = (x, y, c) => { if (y >= 0 && y < 16 && x >= 0 && x < 16) g[y][x] = c; };
+  teamDeco(o.d, o.c, put);
+  if (Array.isArray(hat)) hat.forEach((row, i) => row.split('').forEach((c, x) => { if (c !== '.') put(x, i, c); }));
+  else if (hat === 'headphones') {
+    for (let x = 4; x <= 11; x++) put(x, 0, 'k');
+    [[3, 1], [12, 1], [2, 2], [13, 2], [2, 3], [13, 3]].forEach(q => put(q[0], q[1], 'k'));
+    [5, 6, 7].forEach(y => { put(1, y, 'k'); put(2, y, 'a'); put(14, y, 'k'); put(13, y, 'a'); });
+  } else if (hat === 'bubble') {                                  // скляний шолом навколо голови
+    const inE = (x, y) => Math.pow((x + .5 - 8) / 7.4, 2) + Math.pow((y + .5 - 5.2) / 6.1, 2) <= 1;
+    for (let y = 0; y <= 10; y++) for (let x = 0; x < 16; x++) if (!inE(x, y) && (inE(x - 1, y) || inE(x + 1, y) || inE(x, y - 1) || inE(x, y + 1)) && g[y][x] === '.') g[y][x] = 'a';
+    put(3, 2, 'w'); put(4, 1, 'w');
+    for (let x = 3; x <= 12; x++) if (g[10][x] !== '.' && g[10][x] !== 'd') g[10][x] = 'e';
+  }
+  if (cs.glasses && k % 5 === 3) TEAM_GLASSES(put, cs.glasses[0]);
+  return g.map(row => row.join(''));
+}
+// Спрайти героїв для кожної епохи: team_<id>_e<номер>
+TEAM.forEach(m => { for (let e = 0; e < 8; e++) SPRITES['team_' + m.id + '_e' + e] = { rows: composeTeamCostume(m.id, e) }; });
+function teamSprite(id) { return 'team_' + id + '_e' + (viewEpoch() % 8); }
 Object.keys(NPC_PARTS).forEach(id => { SPRITES['npc_' + id] = { rows: composeChibi(NPC_PARTS[id]) }; });
 SPRITES.npc_clock = { rows: CLOCK_ROWS };
 // Капі: 28×24, дивиться вправо (у грі віддзеркалюється). Контур намальований прямо в спрайті.
@@ -1761,8 +1977,22 @@ const EPOCH_COIN_COLORS = [['h', 'y'], ['T', 'w'], ['k', 'f'], ['v', 'T'], ['n',
   SPRITES['gem_' + i] = { rows: GLYPHS.gem.map(row => row.replace(/[A-Za-z]/g, ch => map[ch] || ch)) };
 });
 const EPOCH_GEM_EMOJI = ['💎', '🔮', '🪩', '👾', '💠', '🍀', '🌠', '✨'];     // у текстах значок кристала теж змінюється
-function coinSprite() { return 'coin_' + (state.epoch % EPOCH_COIN_ROWS.length); }
-function gemSprite() { return 'gem_' + (state.epoch % EPOCH_COIN_ROWS.length); }
+// Яку епоху зараз показуємо: справжню або ту, що користувач переглядає (лише вигляд, прогрес не змінюється)
+// Обрана минула епоха (state.activeEpoch, -1 — поточна). Заробіток, зокрема офлайн, записується в обрану епоху
+function previewIdx() { const a = state.activeEpoch; return (state.epoch >= 1 && a >= 0 && a < EPOCHS.length && a !== state.epoch % EPOCHS.length) ? a : null; }
+function viewEpoch() { const p = previewIdx(); return p !== null ? p : state.epoch; }
+// Скільки монет зароблено в кожній епосі: різницю від останньої перевірки додаємо до обраної епохи
+function syncEpochEarned() {
+  if (state.epochSeen < 0) {                         // перший запуск після оновлення: те, що зароблено в цьому проході, — до поточної епохи
+    if (state.epochEarned.every(v => v === 0)) state.epochEarned[state.epoch % EPOCHS.length] = Math.floor(Math.max(0, state.totalEarned - state.runStartEarned));
+    state.epochSeen = state.totalEarned; return;
+  }
+  const d = state.totalEarned - state.epochSeen;
+  if (d > 0) { const i = viewEpoch() % EPOCHS.length; state.epochEarned[i] = (state.epochEarned[i] || 0) + d; }
+  state.epochSeen = state.totalEarned;
+}
+function coinSprite() { return 'coin_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
+function gemSprite() { return 'gem_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
 function refreshCoinIcon() {
   const g = ui.coinIcon.getContext('2d');
   g.imageSmoothingEnabled = false; g.clearRect(0, 0, 8, 8);
@@ -1801,11 +2031,11 @@ const translations = {
     levelName_5: 'Універмаг',
     levelName_6: 'Торговий центр',
     sign_1: 'Усе за копійку',
-    sign_2: 'Магазинчик Капі',
-    sign_3: 'Мінімаркет «Капі»',
-    sign_4: 'Супермаркет «Капі»',
-    sign_5: 'Універмаг «Капі»',
-    sign_6: 'Торговий центр «Капі»',
+    sign_2: 'Магазинчик',
+    sign_3: 'Мінімаркет',
+    sign_4: 'Супермаркет',
+    sign_5: 'Універмаг',
+    sign_6: 'Торговий центр',
     shopLevelLabel: 'Рівень магазину: {0} / {1}',
 
     // Відділи
@@ -1833,8 +2063,9 @@ const translations = {
 
     // Розширення
     expandTitle: 'Розширення: {0}',
-    expandNote: 'Новий рівень дає ×2 до всього доходу і відкриває нові відділи.',
+    expandNote: 'Новий рівень дає ×2 до всього доходу і відкриває нові відділи. Спершу найми всіх звірят цього рівня.',
     expandBtn: 'Розширити · {0}',
+    reqHire: 'Найняти: {0}',
     expandMax: 'Це вже торговий центр — мрія Капі здійснилася! 🎉',
     buildDone: 'Магазин розширено: тепер це «{0}»!',
     newDepts: 'Нові відділи: {0}',
@@ -2019,14 +2250,20 @@ const translations = {
     shnyrSay_0: 'Хе-хе, моє!', shnyrSay_1: 'Мішок мій, монетки теж!', shnyrSay_2: 'Спробуй упіймай!',
     shnyrOuch_0: 'Ай!', shnyrOuch_1: 'Ой-ой!', shnyrOuch_2: 'Влучив!',
 
-    wheelTitle: 'Колесо фортуни',
+    wheelTitle: 'Барабан фортуни',
     wheelLegend: '🪙 монети · ⚡ дохід · 👆 тап · ⭐ джекпот · 💎 кристал',
     wheelStreak: 'Серія днів: {0} (призи ×{1})',
     wheelSpin: 'Крутити!',
-    wheelWait: 'Наступне колесо через {0}',
+    wheelWait: 'Наступний барабан через {0}',
     wheelClose: 'Закрити',
     wheelReady: 'Колесо фортуни готове! 🎡',
     prize_coins: 'Монети: +{0}',
+    themeLocked: 'Необхідно пройти 2 епоху',
+    circusFlag: 'ЦИРК ФОРТУНИ', circusTitle: 'Цирк Фортуни', circusSub: 'Клоун Бубон: «Крути — не помилишся!»', circusSpin: 'Крутити!', circusDone: 'Дякую, цирку!',
+    circusBang: 'Біля магазину щось з’явилось… Тапни на червоний «!»', circusArrived: 'Цирк Фортуни розкрився! Тапни на нього',
+    circusAgain: 'Ще одна спроба! Крути знову', prize_skin: 'Новий скін: {0}! Він чекає у вкладці скінів',
+    skin_hero_party: 'Герої у святкових костюмах', skin_hero_ninja: 'Герої-ніндзя',
+    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_snowglobe: 'Сніжна куля над містом',
     prize_income: 'Дохід ×{0} на {1} хв!',
     prize_tap: 'Тап ×{0} на {1} хв!',
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
@@ -2256,12 +2493,12 @@ const translations = {
     achDesc_taps: 'Тапни по магазину {0} разів', achDesc_earned: 'Зароби за весь час {0} монеток', achDesc_level: 'Розшир магазин до рівня {0}',
     achDesc_deptsBought: 'Купи {0} відділів', achDesc_milestones: 'Досягни віх відділів: {0}', achDesc_teamEver: 'Познайомся зі звірятами в команді: {0}',
     achDesc_teamMax: 'Прокач звірятко до рівня {0}', achDesc_raccoons: 'Впіймай єнота разів: {0}', achDesc_puddles: 'Прибери калюж: {0}',
-    achDesc_wheel: 'Крути колесо фортуни разів: {0}', achDesc_travels: 'Здійсни подорожей у часі: {0}', achDesc_crystals: 'Здобудь кристалів часу: {0}',
+    achDesc_wheel: 'Крути барабан фортуни разів: {0}', achDesc_travels: 'Здійсни подорожей у часі: {0}', achDesc_crystals: 'Здобудь кристалів часу: {0}',
     achDesc_chapters: 'Прочитай глав історії: {0}', achDesc_holidays: 'Побачи свят у місті: {0}', achDesc_hours: 'Пограй годин: {0}',
 
     stEpoch: 'Епоха', stPlay: 'Час у грі', stEarned: 'Зароблено за весь час', stRun: 'Зароблено в цьому забігу', stCps: 'Дохід',
     stTap: 'Монеток за тап', stTaps: 'Тапів', stDepts: 'Куплено відділів', stCrystals: 'Кристали (зараз / усього)', stTravels: 'Подорожей у часі',
-    stRaccoons: 'Єнотів упіймано / втрачено', stPuddles: 'Калюж прибрано', stWheel: 'Обертів колеса', stAch: 'Нагород', stChapters: 'Глав прочитано',
+    stRaccoons: 'Єнотів упіймано / втрачено', stPuddles: 'Калюж прибрано', stWheel: 'Обертів барабана', stAch: 'Нагород', stChapters: 'Глав прочитано',
     durationFmt: '{0} д {1} год {2} хв',
 
     setLang: 'Мова', setView: 'Вигляд і звук', setSound: '🔊 Налаштування звуку',
@@ -2273,7 +2510,7 @@ const translations = {
     importTitle: 'Завантажити збереження?', importText: 'Поточний прогрес на цьому пристрої буде замінено.', importYes: 'Так, завантажити',
     importFail: 'Код не підійшов. Перевір, що скопіювала його повністю.', importNoStorage: 'Не вдалося зберегти: сховище браузера недоступне.',
     resetBtn: 'Скинути весь прогрес', resetTitle: 'Скинути прогрес?', resetText: 'Усе буде видалено назавжди: монетки, звірята, глави, нагороди й кристали. Це неможливо скасувати!', resetYes: 'Так, видалити все',
-    dbgHour: '+1 година часу', dbgX100: '×100 монеток',
+    dbgHour: '+1 година часу', dbgX100: '×100 монеток', dbgCircus: 'Цирк зараз',
     shareBtn: 'Надіслати',
     saveSummary: 'У збереженні: «{0}», відділів куплено: {1}, звірят: {2}, кристалів: {3}, зароблено: {4}',
     panelHide: 'Сховати меню', panelShow: 'Відкрити меню',
@@ -2296,6 +2533,7 @@ const translations = {
     team_toma_say_3: 'Хобот не підведе: усе на своїх місцях.', team_toma_say_4: 'Я пам\'ятаю, де лежить кожен гвинтик.', team_toma_say_5: 'Склад як слон: великий і спокійний.',
     capy_say_3: 'Вітаю в моєму магазині! Заходьте!', capy_say_4: 'Квіточка на голові приносить удачу.', capy_say_5: 'Капібари — найспокійніші торговці на світі.',
     // Пори року, літо, Хелловін
+    setEpochView: 'Перегляд епох', setEpochViewNote: 'Обери одну з пройдених епох: зміниться вигляд міста, товари й музика. Під назвою видно, скільки монет зароблено в епосі. Нові монети, зокрема поки тебе немає в грі, рахуються в обраній епосі. Нові епохи відкриваються подорожжю в часі.', epochViewing: 'Епоха: {0}', epochBalance: 'Баланс: {0}',
     setSeason: 'Пора року', setSeasonNote: 'Змінює дерева, погоду й настрій вулиці. «Авто» бере пору року з дати на пристрої.',
     season_auto: 'Авто', season_spring: '🌸 Весна', season_summer: '☀️ Літо', season_autumn: '🍂 Осінь', season_winter: '❄️ Зима', season_halloween: '🎃 Хелловін',
     summerSay_0: 'Фух, яка спека! Дайте водички.', summerSay_1: 'Перепочину хвилинку... і за роботу!', summerSay_2: 'Ох, сонечко пече. Ковток води — і далі!',
@@ -2316,7 +2554,7 @@ const translations = {
     letter_leo: 'Привіт. Є план: ти читаєш цей лист, отримуєш бонус, ми всі в плюсі. Домовились?',
     letter_pao: 'Це Пао! У листі бамбук і удача. Знижки не лишились, а от бонус — так!',
     letterBoost_income: 'Дохід ×{0} на {1} хв', letterBoost_tap: 'Тап ×{0} на {1} хв', letterBoost_coins: '+{0} монеток',
-    letterBoost_wheel: 'Колесо фортуни знову готове!', letterBoost_sale: 'Розпродаж ×2 на 2 хвилини!', letterBoost_crystal: 'Кристал часу +1 💎',
+    letterBoost_wheel: 'Барабан фортуни знову готовий!', letterBoost_sale: 'Розпродаж ×2 на 2 хвилини!', letterBoost_crystal: 'Кристал часу +1 💎',
     nightHint_1: 'Ніч перша. У кишені Капі щось тихенько цокає...', nightHint_2: 'Ніч друга. Цокання стало голосніше. Щось має статися!',
     // Репліки на лавочці: звірята питають, як минув твій день
     team_spike_sit_0: 'Присядь, поговоримо. Як минув твій день? Мій був колючий.', team_spike_sit_1: 'Ну що, як день? Копійка до копійки?',
@@ -2360,11 +2598,11 @@ const translations = {
     levelName_5: 'Department Store',
     levelName_6: 'Shopping Mall',
     sign_1: 'Everything for a Penny',
-    sign_2: "Capy's Corner Shop",
-    sign_3: "Capy's Mini-Market",
-    sign_4: "Capy's Supermarket",
-    sign_5: "Capy's Department Store",
-    sign_6: "Capy's Shopping Mall",
+    sign_2: 'Corner Shop',
+    sign_3: 'Mini-Market',
+    sign_4: 'Supermarket',
+    sign_5: 'Department Store',
+    sign_6: 'Shopping Mall',
     shopLevelLabel: 'Shop level: {0} / {1}',
 
     dept_trinkets: 'Trinkets & Matches',
@@ -2390,8 +2628,9 @@ const translations = {
     lockedDepts: '🔒 New departments open at level "{0}"',
 
     expandTitle: 'Expansion: {0}',
-    expandNote: 'A new level gives ×2 to all income and opens new departments.',
+    expandNote: 'A new level gives ×2 to all income and opens new departments. First hire every animal of this level.',
     expandBtn: 'Expand · {0}',
+    reqHire: 'Hire: {0}',
     expandMax: "It's a shopping mall now — Capy's dream came true! 🎉",
     buildDone: 'Shop expanded: now it is a "{0}"!',
     newDepts: 'New departments: {0}',
@@ -2572,7 +2811,7 @@ const translations = {
     shnyrSay_0: 'Hehe, mine!', shnyrSay_1: 'The sack is mine, and so are the coins!', shnyrSay_2: 'Catch me if you can!',
     shnyrOuch_0: 'Ouch!', shnyrOuch_1: 'Oof!', shnyrOuch_2: 'Got me!',
 
-    wheelTitle: 'Wheel of Fortune',
+    wheelTitle: 'Fortune Drum',
     wheelLegend: '🪙 coins · ⚡ income · 👆 tap · ⭐ jackpot · 💎 crystal',
     wheelStreak: 'Day streak: {0} (prizes ×{1})',
     wheelSpin: 'Spin!',
@@ -2580,6 +2819,12 @@ const translations = {
     wheelClose: 'Close',
     wheelReady: 'The Wheel of Fortune is ready! 🎡',
     prize_coins: 'Coins: +{0}',
+    themeLocked: 'Finish epoch 2 first',
+    circusFlag: 'LUCKY CIRCUS', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Spin it, you cannot lose!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
+    circusBang: 'Something showed up by the shop... Tap the red "!"', circusArrived: 'The Fortune Circus is open! Tap it',
+    circusAgain: 'One more try! Spin again', prize_skin: 'New skin: {0}! It waits in the skins tab',
+    skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',
+    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_snowglobe: 'Snow globe over town',
     prize_income: 'Income ×{0} for {1} min!',
     prize_tap: 'Tap ×{0} for {1} min!',
     prize_jackpot: 'JACKPOT! +{0}',
@@ -2808,12 +3053,12 @@ const translations = {
     achDesc_taps: 'Tap the shop {0} times', achDesc_earned: 'Earn {0} coins in total', achDesc_level: 'Expand the shop to level {0}',
     achDesc_deptsBought: 'Buy {0} departments', achDesc_milestones: 'Reach department milestones: {0}', achDesc_teamEver: 'Meet animals on your team: {0}',
     achDesc_teamMax: 'Upgrade an animal to level {0}', achDesc_raccoons: 'Catch the raccoon times: {0}', achDesc_puddles: 'Clean up puddles: {0}',
-    achDesc_wheel: 'Spin the wheel times: {0}', achDesc_travels: 'Travel through time: {0}', achDesc_crystals: 'Collect time crystals: {0}',
+    achDesc_wheel: 'Spin the fortune drum times: {0}', achDesc_travels: 'Travel through time: {0}', achDesc_crystals: 'Collect time crystals: {0}',
     achDesc_chapters: 'Read story chapters: {0}', achDesc_holidays: 'See holidays in town: {0}', achDesc_hours: 'Play hours: {0}',
 
     stEpoch: 'Epoch', stPlay: 'Play time', stEarned: 'Earned all time', stRun: 'Earned this run', stCps: 'Income',
     stTap: 'Coins per tap', stTaps: 'Taps', stDepts: 'Departments bought', stCrystals: 'Crystals (now / total)', stTravels: 'Time travels',
-    stRaccoons: 'Raccoons caught / lost', stPuddles: 'Puddles cleaned', stWheel: 'Wheel spins', stAch: 'Awards', stChapters: 'Chapters read',
+    stRaccoons: 'Raccoons caught / lost', stPuddles: 'Puddles cleaned', stWheel: 'Drum spins', stAch: 'Awards', stChapters: 'Chapters read',
     durationFmt: '{0} d {1} h {2} m',
 
     setLang: 'Language', setView: 'Display & sound', setSound: '🔊 Sound settings',
@@ -2825,7 +3070,7 @@ const translations = {
     importTitle: 'Load this save?', importText: 'Your current progress on this device will be replaced.', importYes: 'Yes, load it',
     importFail: "That code didn't work. Make sure you copied all of it.", importNoStorage: "Couldn't save: browser storage is unavailable.",
     resetBtn: 'Reset all progress', resetTitle: 'Reset progress?', resetText: 'Everything will be deleted forever: coins, animals, chapters, awards and crystals. This cannot be undone!', resetYes: 'Yes, delete everything',
-    dbgHour: '+1 hour of time', dbgX100: '×100 coins',
+    dbgHour: '+1 hour of time', dbgX100: '×100 coins', dbgCircus: 'Circus now',
     shareBtn: 'Share',
     saveSummary: 'Save contains: "{0}", departments bought: {1}, animals: {2}, crystals: {3}, earned: {4}',
     panelHide: 'Hide menu', panelShow: 'Show menu',
@@ -2846,6 +3091,7 @@ const translations = {
     team_murzyk_say_3: 'Purr! Charging up in the sun.', team_murzyk_say_4: 'A mouse? No, I only fix computer ones.', team_murzyk_say_5: 'Cables look so tasty... I mean, complicated.',
     team_toma_say_3: 'My trunk never fails: everything is in its place.', team_toma_say_4: 'I remember where every little screw is.', team_toma_say_5: 'The warehouse is like an elephant: big and calm.',
     capy_say_3: 'Welcome to my shop! Come on in!', capy_say_4: 'The flower on my head brings luck.', capy_say_5: 'Capybaras are the calmest shopkeepers in the world.',
+    setEpochView: 'Epoch viewer', setEpochViewNote: 'Pick one of the epochs you have passed: the look, goods and music change. Under each name you see the coins earned in that epoch. New coins, including offline ones, count in the selected epoch. New epochs unlock with time travel.', epochViewing: 'Epoch: {0}', epochBalance: 'Balance: {0}',
     setSeason: 'Season', setSeasonNote: 'Changes the trees, weather and mood of the street. "Auto" uses the date on your device.',
     season_auto: 'Auto', season_spring: '🌸 Spring', season_summer: '☀️ Summer', season_autumn: '🍂 Autumn', season_winter: '❄️ Winter', season_halloween: '🎃 Halloween',
     summerSay_0: 'Phew, so hot! Some water, please.', summerSay_1: 'A minute\'s rest... and back to work!', summerSay_2: 'The sun is burning. A sip of water and on we go!',
@@ -2866,7 +3112,7 @@ const translations = {
     letter_leo: 'Hi. I have a plan: you read this letter, get a bonus, and we are all in the black. Deal?',
     letter_pao: 'It is Pao! The letter holds bamboo and luck. No discounts left, but the bonus is real!',
     letterBoost_income: 'Income ×{0} for {1} min', letterBoost_tap: 'Tap ×{0} for {1} min', letterBoost_coins: '+{0} coins',
-    letterBoost_wheel: 'The wheel of fortune is ready again!', letterBoost_sale: 'Sale ×2 for 2 minutes!', letterBoost_crystal: 'Time crystal +1 💎',
+    letterBoost_wheel: 'The fortune drum is ready again!', letterBoost_sale: 'Sale ×2 for 2 minutes!', letterBoost_crystal: 'Time crystal +1 💎',
     nightHint_1: 'Night one. Something is quietly ticking in Capy\'s pocket...', nightHint_2: 'Night two. The ticking is louder. Something is about to happen!',
     team_spike_sit_0: 'Sit down, let\'s talk. How was your day? Mine was prickly.', team_spike_sit_1: 'So, how\'s the day? Penny to penny?',
     team_bodya_sit_0: 'Sit! How was your day? Mine was solid as a dam.', team_bodya_sit_1: 'Plank by plank — tell me, how was your day?',
@@ -2946,6 +3192,10 @@ function createDefaultState() {
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
     // Подорож у часі: кристали, епоха, покращення майстерні, знайомі звірята
     crystals: 0, crystalsTotal: 0, epoch: 0, runStartEarned: 0,
+    circus: { next: 0, phase: 0, spun: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
+    skinsMask: 0,                             // виграні скіни (біти за списком SKIN_POOL)
+    epochEarned: [0, 0, 0, 0, 0, 0, 0, 0],   // зароблено монет у кожній епосі
+    epochSeen: -1, activeEpoch: -1,          // до якої суми заробіток уже розписано по епохах; обрана епоха (-1 — поточна)
     ws: WORKSHOP.map(() => 0),
     teamKnown: TEAM.map(() => 0),
     ach: ACHIEVEMENTS.map(() => 0),     // 1 — досягнення отримано
@@ -3070,8 +3320,12 @@ function plannedBuy(i) {
 function nextLevelDef() {
   return state.shopLevel < LEVELS.length ? LEVELS[state.shopLevel] : null;
 }
+// Щоб перейти на новий рівень, треба найняти лише нових звірят цього рівня (хто вже відкритий); тих, кого наймали раніше, не питаємо
+function hireRequirements() {
+  return TEAM.map((m, i) => i).filter(i => TEAM[i].level === state.shopLevel && isTeamUnlocked(i));
+}
 function requirementsMet(def) {
-  return def.requires.every(r => state.depts[r.dept] >= r.count);
+  return def.requires.every(r => state.depts[r.dept] >= r.count) && hireRequirements().every(i => state.team[i] >= 1);
 }
 function expandCost(def) { return def.cost * expandCostMult(); }
 
@@ -3172,6 +3426,7 @@ function mergeInto(target, src) {
 function saveGame() {
   if (savingDisabled) return;
   try {
+    syncEpochEarned();
     state.savedAt = Date.now();
     localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify({ v: CONFIG.SAVE_VERSION, state }));
     if (!storageOk) { storageOk = true; updateSaveWarning(); }
@@ -3209,13 +3464,18 @@ function loadGame() {
    ТЕКСТИ І ФОРМАТУВАННЯ ЧИСЕЛ
    ===================================================================== */
 
+// Назви відділів по епохах
+(function () {
+  const U = {"good_0_0":"Свічки й сірники","good_0_1":"Мед і марципани","good_0_2":"Пера й пергамент","good_0_3":"Дерев’яні ляльки","good_0_4":"Мило й трави","good_0_5":"Городина й садовина","good_0_6":"Хлібня","good_0_7":"Камзоли й сукні","good_0_8":"Чоботи","good_0_9":"Телескопи й компаси","good_0_10":"Таверна","good_0_11":"Театр масок","good_1_0":"Листівки й значки","good_1_1":"Морозиво й содова","good_1_2":"Зошити й друкарські машинки","good_1_3":"Залізничні іграшки","good_1_4":"Пральні порошки","good_1_5":"Консерви","good_1_6":"Пончики","good_1_7":"Сукні в горошок","good_1_8":"Мокасини","good_1_9":"Лампові телевізори","good_1_10":"Закусочна","good_1_11":"Кіно під зорями","good_2_0":"Блискітки й значки","good_2_1":"Льодяники","good_2_2":"Платівки","good_2_3":"Йо-йо й фрісбі","good_2_4":"Лаки й парфуми","good_2_5":"Екзотичні фрукти","good_2_6":"Круасани","good_2_7":"Клеші й блискучі костюми","good_2_8":"Платформи","good_2_9":"Магнітофони","good_2_10":"Піцерія","good_2_11":"Диско-зала","good_3_0":"Жетони й наліпки","good_3_1":"Газовані напої","good_3_2":"Касети й постери","good_3_3":"Ігрові приставки","good_3_4":"Батарейки","good_3_5":"Фруктові снеки","good_3_6":"Печиво й пончики","good_3_7":"Куртки-бомбери","good_3_8":"Кросівки","good_3_9":"Аркадні автомати","good_3_10":"Фастфуд","good_3_11":"Відеопрокат","good_4_0":"Дискети й флешки","good_4_1":"Чіпси й енергетики","good_4_2":"Мишки й клавіатури","good_4_3":"Тамагочі й фігурки","good_4_4":"Кабелі й зарядки","good_4_5":"Готові салати","good_4_6":"Кав’ярня","good_4_7":"Мерч і футболки","good_4_8":"Кеди","good_4_9":"Ноутбуки","good_4_10":"Суші-бар","good_4_11":"Стрімінг-зал","good_5_0":"Багаторазові речі","good_5_1":"Горіхи й сухофрукти","good_5_2":"Еко-зошити","good_5_3":"Дерев’яні конструктори","good_5_4":"Еко-засоби для дому","good_5_5":"Фермерські овочі","good_5_6":"Хліб на заквасці","good_5_7":"Одяг із льону","good_5_8":"Взуття з переробки","good_5_9":"Сонячні панелі","good_5_10":"Веган-кафе","good_5_11":"Еко-кіно просто неба","good_6_0":"Зоряні сувеніри","good_6_1":"Їжа в тюбиках","good_6_2":"Карти зірок","good_6_3":"Ракети-іграшки","good_6_4":"Антигравітаційні очисники","good_6_5":"Гідропонні овочі","good_6_6":"Космічна випічка","good_6_7":"Скафандри","good_6_8":"Магнітні черевики","good_6_9":"Супутники й гаджети","good_6_10":"Космо-кухня","good_6_11":"Планетарій","good_7_0":"Неонові брелоки","good_7_1":"Бабл-ті й желе","good_7_2":"Голо-блокноти","good_7_3":"Роботи-іграшки","good_7_4":"Нано-очисники","good_7_5":"Лабораторні фрукти","good_7_6":"3D-десерти","good_7_7":"Світні куртки","good_7_8":"Левітуючі кеди","good_7_9":"VR-окуляри","good_7_10":"Вуличний фудкорт","good_7_11":"Голограм-шоу"}, E = {"good_0_0":"Candles & Matches","good_0_1":"Honey & Marzipan","good_0_2":"Quills & Parchment","good_0_3":"Wooden Dolls","good_0_4":"Soap & Herbs","good_0_5":"Garden Produce","good_0_6":"Bread Hall","good_0_7":"Doublets & Gowns","good_0_8":"Boots","good_0_9":"Telescopes & Compasses","good_0_10":"Tavern","good_0_11":"Mask Theatre","good_1_0":"Postcards & Pins","good_1_1":"Ice Cream & Soda","good_1_2":"Notebooks & Typewriters","good_1_3":"Toy Trains","good_1_4":"Washing Powders","good_1_5":"Canned Goods","good_1_6":"Donuts","good_1_7":"Polka-dot Dresses","good_1_8":"Loafers","good_1_9":"Tube TVs","good_1_10":"Diner","good_1_11":"Drive-in Cinema","good_2_0":"Glitter & Badges","good_2_1":"Lollipops","good_2_2":"Vinyl Records","good_2_3":"Yo-yos & Frisbees","good_2_4":"Hairspray & Perfume","good_2_5":"Exotic Fruit","good_2_6":"Croissants","good_2_7":"Flares & Sparkly Suits","good_2_8":"Platform Boots","good_2_9":"Tape Players","good_2_10":"Pizzeria","good_2_11":"Disco Hall","good_3_0":"Tokens & Stickers","good_3_1":"Fizzy Drinks","good_3_2":"Tapes & Posters","good_3_3":"Game Consoles","good_3_4":"Batteries","good_3_5":"Fruit Snacks","good_3_6":"Cookies & Donuts","good_3_7":"Bomber Jackets","good_3_8":"Sneakers","good_3_9":"Arcade Machines","good_3_10":"Fast Food","good_3_11":"Video Rental","good_4_0":"Floppies & USB Sticks","good_4_1":"Chips & Energy Drinks","good_4_2":"Mice & Keyboards","good_4_3":"Tamagotchis & Figures","good_4_4":"Cables & Chargers","good_4_5":"Ready Salads","good_4_6":"Coffee Shop","good_4_7":"Merch & T-shirts","good_4_8":"Canvas Shoes","good_4_9":"Laptops","good_4_10":"Sushi Bar","good_4_11":"Streaming Hall","good_5_0":"Reusable Things","good_5_1":"Nuts & Dried Fruit","good_5_2":"Eco Notebooks","good_5_3":"Wooden Blocks","good_5_4":"Eco Cleaners","good_5_5":"Farm Veggies","good_5_6":"Sourdough Bread","good_5_7":"Linen Clothes","good_5_8":"Recycled Shoes","good_5_9":"Solar Panels","good_5_10":"Vegan Café","good_5_11":"Open-air Eco Cinema","good_6_0":"Star Souvenirs","good_6_1":"Food in Tubes","good_6_2":"Star Maps","good_6_3":"Toy Rockets","good_6_4":"Anti-gravity Cleaners","good_6_5":"Hydroponic Veggies","good_6_6":"Space Pastries","good_6_7":"Spacesuits","good_6_8":"Magnetic Boots","good_6_9":"Satellites & Gadgets","good_6_10":"Cosmo Kitchen","good_6_11":"Planetarium","good_7_0":"Neon Keychains","good_7_1":"Bubble Tea & Jelly","good_7_2":"Holo Notebooks","good_7_3":"Toy Robots","good_7_4":"Nano Cleaners","good_7_5":"Lab-grown Fruit","good_7_6":"3D Desserts","good_7_7":"Glowing Jackets","good_7_8":"Hover Sneakers","good_7_9":"VR Goggles","good_7_10":"Street Food Court","good_7_11":"Hologram Show"};
+  Object.assign(translations.uk, U); Object.assign(translations.en, E);
+})();
 function t(key, ...args) {
   const dict = translations[state.lang] || translations.en;
   const male = state.settings.gender === 'm' ? GENDER_TEXTS.m[state.lang] : null;   // чоловічі варіанти, якщо є
   let str = male && male[key] !== undefined ? male[key] : dict[key];
   if (str === undefined) str = translations.en[key];
   if (str === undefined) return key;
-  if (str.includes('💎')) str = str.replace(/💎/g, EPOCH_GEM_EMOJI[state.epoch % EPOCH_GEM_EMOJI.length]);      // кристал виглядає за стилем епохи
+  if (str.includes('💎')) str = str.replace(/💎/g, EPOCH_GEM_EMOJI[viewEpoch() % EPOCH_GEM_EMOJI.length]);      // кристал виглядає за стилем епохи
   return str.replace(/\{(\d+)\}/g, (_, i) => (args[i] !== undefined ? args[i] : ''));
 }
 
@@ -3360,6 +3620,7 @@ function hash2(x, y) { return (((x * 73856093) ^ (y * 19349663)) >>> 0); }
 // ще вулиця з боків (offX) і небо зверху (offY). Усе, що малюється в шарах, — у координатах «ядра».
 const view = { offX: 0, offY: 0, extraB: 0, w: 320, h: 180 };
 let glassRects = null;           // вікна магазину (для нічного світла)
+let houseDoors = [];            // двері будиночків (центр по x, низ по y): сюди заходять покупці зі своїми пакетами
 let houseGlass = null;           // вікна будинків на задньому плані
 let houseLit = null;             // шар з освітленими вікнами будинків
 let buildSeason = 'spring';      // для якої пори року зараз малюється земля
@@ -3384,13 +3645,24 @@ function newLayer() {
 /* ---------- Небо (статичний шар; сонце, місяць і зорі малюються окремо, див. «День і ніч») ---------- */
 function buildSkyLayer() {
   const { c, g } = newLayer();
-  const x0 = -view.offX, W = view.w, top = -view.offY;
+  const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
   const [c1, c2, c3] = currentEpoch().sky;      // три кольори неба залежать від епохи
-  R(g, x0, top, W, 34 - top, c1);
-  for (let y = 34; y < 40; y++) for (let x = x0; x < x0 + W; x++) R(g, x, y, 1, 1, (x + y) % 2 ? c1 : c2);
-  R(g, x0, 40, W, 30, c2);
-  for (let y = 70; y < 76; y++) for (let x = x0; x < x0 + W; x++) R(g, x, y, 1, 1, (x + y) % 2 ? c2 : c3);
-  R(g, x0, 76, W, 60, c3);
+  const hx = k => { const h = PALETTE[k]; return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; };
+  const A = hx(c1), B = hx(c2), C = hx(c3), mix = (p, q, t) => p.map((v, i) => Math.round(v + (q[i] - v) * t));
+  const col = u => { const lvl = Math.floor(u * 5) / 5; return u < 1 ? mix(A, B, lvl) : mix(B, C, Math.floor((u - 1) * 5) / 5); };
+  const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+  const rows = hor - top;
+  for (let y = top; y < hor; y++) {
+    const f = (y - top) / rows, u = f < 0.45 ? f / 0.45 : 1 + Math.pow((f - 0.45) / 0.55, 0.9), step = 1 / 5, fr = ((u < 1 ? u : u - 1) / step) % 1;
+    const c0 = col(u), c1b = col(Math.min(2, u + step * (u < 1 ? 1 : 1)));
+    for (let x = x0; x < x0 + W; x++) {
+      const th = bayer[(y & 3)][(x - x0) & 3] / 16, cc = fr > th ? c1b : c0;
+      g.fillStyle = 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')'; g.fillRect(x, y, 1, 1);
+    }
+  }
+  // тепле сяйво біля обрію
+  for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
+  g.globalAlpha = 1;
   return c;
 }
 
@@ -3462,12 +3734,40 @@ function drawHouse(g, spec, lamps) {
     }
   }
   if (doorOk) {                              // двері з козирком і сходинкою
+    houseDoors.push({ x: doorX + 5, y: base });
     R(g, doorX, base - 15, doorW, 15, 'd'); R(g, doorX + 1, base - 14, doorW - 2, 14, 'b');
     R(g, doorX + 2, base - 12, 3, 5, 'l'); R(g, doorX + 5, base - 12, 3, 5, 'l'); R(g, doorX + 2, base - 6, 6, 5, 'l'); R(g, doorX + doorW - 3, base - 7, 1, 1, 'h');
     const aw = ['r', 'n', 'g', 'u'][(hs >>> 2) % 4];
     R(g, doorX - 2, base - 19, doorW + 4, 3, aw); for (let k = doorX - 2; k < doorX + doorW + 2; k += 3) R(g, k, base - 19, 1, 3, 'w');
     R(g, doorX - 2, base - 16, doorW + 4, 1, 'd');
     R(g, doorX - 1, base - 1, doorW + 2, 1, 'E');
+  }
+  epochHouseDeco(g, spec, top, base, floors, hs, doorOk ? doorX : -9999);
+}
+// Деталі будиночків на фоні під епоху: балки, лампочки, неон, ліани, труби, антени
+function epochHouseDeco(g, spec, top, base, floors, hs, doorX) {
+  const { x, w, h } = spec, fx = currentEpoch().id;
+  switch (fx) {
+    case 'renaissance':
+      g.globalAlpha = 0.8; R(g, x + 1, top + 1, 2, h - 1, 'b'); R(g, x + w - 3, top + 1, 2, h - 1, 'b');
+      for (let f = 1; f < floors; f++) R(g, x + 1, base - 6 - f * 19 + 1, w - 2, 1, 'b');
+      g.globalAlpha = 1; if (doorX > 0) { R(g, doorX + 12, base - 13, 1, 3, 'd'); R(g, doorX + 12, base - 10, 5, 4, 'd'); R(g, doorX + 13, base - 9, 3, 2, 'h'); } break;
+    case 'retro':
+      if (doorX > 0) { R(g, doorX - 4, base - 12, 3, 5, 'd'); R(g, doorX - 3, base - 11, 1, 3, 'f'); }
+      for (let k = x + 3; k < x + w - 3; k += 6) R(g, k, top + 3, 3, 1, (k >> 1) % 2 ? 'q' : 'w'); break;
+    case 'disco':
+      for (let k = x + 2; k < x + w - 2; k += 4) R(g, k, top - 1, 2, 2, ((k >> 2) + hs) % 3 === 0 ? 'f' : ((k >> 2) + hs) % 3 === 1 ? 'y' : 'T'); break;
+    case 'arcade':
+      R(g, x + 1, top + 2, w - 2, 1, 'T'); R(g, x + 1, top + 4, w - 2, 1, 'f'); break;
+    case 'internet':
+      if (hs % 2) { for (let a = -4; a <= 4; a++) { const hh = Math.round(Math.sqrt(16 - a * a) * 0.8); R(g, x + w - 8 + a, top + 8 - hh, 1, hh + 1, 'E'); } R(g, x + w - 8, top + 4, 1, 6, 'd'); }
+      else { R(g, x + 4, top + 5, 7, 4, 'd'); R(g, x + 5, top + 6, 5, 2, 'E'); } break;
+    case 'eco':
+      R(g, x + 1, top + 2, 1, Math.min(h - 12, 30), 'G'); for (let k = 0; k < 6; k++) { R(g, x + 2, top + 4 + k * 5, 2, 2, k % 2 ? 'g' : 'm'); } R(g, x + w - 5, top - 2, 4, 3, 'b'); R(g, x + w - 5, top - 4, 4, 2, 'g'); R(g, x + w - 4, top - 5, 1, 1, 'p'); break;
+    case 'space':
+      R(g, x + 2, top + 2, 1, h - 10, 'e'); R(g, x + w - 3, top + 2, 1, h - 10, 'e'); R(g, x + (w >> 1), top - 16, 1, 10, 'd'); R(g, x + (w >> 1), top - 17, 1, 1, 'r'); break;
+    case 'neon':
+      R(g, x + w - 4, top + 3, 1, h - 10, hs % 2 ? 'f' : 'T'); R(g, x + 3, top + 3, 1, h - 10, hs % 2 ? 'T' : 'f'); R(g, x + 1, top + 1, w - 2, 1, 'f'); break;
   }
 }
 
@@ -3485,16 +3785,20 @@ function seedBenches() {
 
   actors.forEach(a => { if (a.mode === 'toBench' || a.mode === 'sit') { a.mode = 'idle'; a.wait = 1; a.bench = null; if (a.y < LAYOUT.streetTop + 6) a.y = LAYOUT.streetTop + 8; } });
 }
+const BENCH_PAL = { renaissance: ['E', 'w', 'e'], retro: ['p', 'q', 'f'], disco: ['P', 'f', 'u'], arcade: ['v', 'T', 'V'], internet: ['e', 'E', 'n'], eco: ['b', 'g', 'G'], space: ['E', 'S', 'n'], neon: ['k', 'T', 'f'] };
+function benchColors() { return BENCH_PAL[currentEpoch().id] || ['b', 'l', 'c']; }
 function drawBenchBack(b) {        // спинка й сидіння (малюється ПЕРЕД тим, хто сидить)
-  const x = b.x, y = b.y;
-  R(ctx, x - 16, y - 18, 32, 2, 'b'); R(ctx, x - 16, y - 18, 32, 1, 'l'); R(ctx, x - 16, y - 14, 32, 2, 'b');
+  const x = b.x, y = b.y, [bb, bl, bc] = benchColors();
+  R(ctx, x - 16, y - 18, 32, 2, bb); R(ctx, x - 16, y - 18, 32, 1, bl); R(ctx, x - 16, y - 14, 32, 2, bb);
   R(ctx, x - 16, y - 19, 2, 12, 'd'); R(ctx, x + 14, y - 19, 2, 12, 'd');
-  R(ctx, x - 16, y - 9, 32, 2, 'l'); R(ctx, x - 16, y - 9, 32, 1, 'c');
+  R(ctx, x - 16, y - 9, 32, 2, bl); R(ctx, x - 16, y - 9, 32, 1, bc);
+  if (currentEpoch().id === 'neon') { R(ctx, x - 14, y - 16, 28, 1, 'f'); R(ctx, x - 14, y - 8, 28, 1, 'T'); }
 }
 function drawBenchFront(b) {       // передня планка й ніжки (малюється ПІСЛЯ того, хто сидить — ніби він сидить на лавці)
   const x = b.x, y = b.y;
   ctx.globalAlpha = 0.2; R(ctx, x - 16, y, 32, 2, 'd'); ctx.globalAlpha = 1;
-  R(ctx, x - 16, y - 7, 32, 3, 'b'); R(ctx, x - 16, y - 7, 32, 1, 'l'); R(ctx, x - 16, y - 5, 32, 1, 'd');
+  const [fb, fl] = benchColors();
+  R(ctx, x - 16, y - 7, 32, 3, fb); R(ctx, x - 16, y - 7, 32, 1, fl); R(ctx, x - 16, y - 5, 32, 1, 'd');
   R(ctx, x - 15, y - 4, 3, 4, 'd'); R(ctx, x + 12, y - 4, 3, 4, 'd');
 }
 
@@ -3537,11 +3841,31 @@ function drawBush(g, x, y) {
 }
 
 /* ---------- Земля: пагорби, будинки, тротуар, бруківка (статичний шар) ---------- */
+// Далекий обрій за будинками: силует міста епохи (вежі, хмарочоси, купола, неонові вежі)
+function farSkyline(g, x0, W) {
+  const ep = currentEpoch().id, base = 112, col = { renaissance: 'e', retro: 'S', disco: 'P', arcade: 'V', internet: 'n', eco: 'G', space: 'n', neon: 'V' }[ep] || 'e';
+  g.globalAlpha = 0.5;
+  for (let x = x0; x < x0 + W; ) {
+    const hs = hash2(x + 31, 7), bw = 12 + hs % 14, bh = 14 + (hs >>> 4) % 28;
+    switch (ep) {
+      case 'renaissance': R(g, x, base - bh, bw, bh, col); R(g, x + (bw >> 1) - 1, base - bh - 8, 3, 8, col); for (let k = 0; k < bw; k += 3) R(g, x + k, base - bh - 2, 2, 2, col); break;
+      case 'retro': R(g, x, base - bh / 2, bw, bh / 2, col); if (hs % 3 === 0) { R(g, x + 2, base - bh / 2 - 7, bw - 4, 7, col); R(g, x + 4, base - bh / 2 - 10, 2, 3, col); } break;
+      case 'disco': R(g, x, base - bh, bw, bh, col); for (let yy = base - bh + 3; yy < base - 3; yy += 5) for (let k = 2; k < bw - 2; k += 4) R(g, x + k, yy, 2, 2, hash2(k + x, yy) % 3 ? col : 'y'); break;
+      case 'arcade': for (let k = 0; k < bh; k++) R(g, x + Math.round(k * bw / (2 * bh)), base - k, Math.max(1, bw - Math.round(k * bw / bh)), 1, col); break;
+      case 'internet': R(g, x, base - bh - 10, bw - 3, bh + 10, col); R(g, x + (bw >> 2), base - bh - 16, 1, 6, col); for (let yy = base - bh - 6; yy < base - 3; yy += 6) R(g, x + 2, yy, bw - 7, 2, 'a'); break;
+      case 'eco': disc(g, x + (bw >> 1), base - 6, 9 + hs % 5, col); R(g, x + (bw >> 1), base - 3, 1, 3, 'd'); break;
+      case 'space': for (let a = -bw; a <= bw; a++) { const hh = Math.round(Math.sqrt(Math.max(0, bw * bw - a * a)) * 0.9); R(g, x + bw + a, base - hh, 1, hh, col); } if (hs % 3 === 0) R(g, x + bw, base - bh - 10, 1, 10, col); break;
+      case 'neon': R(g, x, base - bh - 14, bw - 4, bh + 14, col); for (let yy = base - bh - 10; yy < base - 3; yy += 5) R(g, x + 2, yy, bw - 8, 1, hash2(yy, x) % 2 ? 'f' : 'T'); break;
+    }
+    x += (ep === 'space' ? bw * 2 : bw) + 2 + hs % 6;
+  }
+  g.globalAlpha = 1;
+}
 function buildGroundLayer() {
   const { c, g } = newLayer();
   const H = worldB();
   const x0 = -view.offX, W = view.w;      // ліва межа й повна ширина полотна (у координатах «ядра»)
-  houseGlass = [];
+  houseGlass = []; houseDoors = [];
   buildSeason = seasonNow();
   const lamps = lampPositions();
 
@@ -3551,6 +3875,7 @@ function buildGroundLayer() {
     R(g, x, top, 1, LAYOUT.horizonY - top, 'm');
     if (top + 1 < LAYOUT.horizonY) R(g, x, top, 1, 1, 'g');
   }
+  farSkyline(g, x0, W);
   // будиночки
   const eh = currentEpoch().houses;      // у деяких епохах будинки мають інші кольори
   HOUSES.concat(extraHouses()).forEach((h, i) => {
@@ -3637,19 +3962,18 @@ function extraHouses() {
   const walls = ['q', 'y', 'm', 'p', 'c', 'w', 'y', 'm'], roofs = ['r', 'b', 'n', 'b', 'r', 'n'];
   const make = (i) => {
     const hs = hash2(i * 7 + 3, 11);
-    return { w: 44 + hs % 14, h: 54 + (hs >>> 4) % 20, wall: walls[hs % walls.length], roof: roofs[(hs >>> 3) % roofs.length], gap: 1 + (hs >>> 9) % 4 };
+    return { w: 44 + hs % 14, h: 54 + (hs >>> 4) % 20, wall: walls[hs % walls.length], roof: roofs[(hs >>> 3) % roofs.length], gap: 0 };
   };
   const list = [];
-  let x = -4;                                    // ліворуч від ядра (крайній будинок ядра починається з −4)
+  let x = -8;                                    // ліворуч від ядра (крайній будинок ядра починається з −8)
   for (let i = 0; x > -view.offX - 40; i++) {
     const hs = make(i);
-    x -= hs.w + hs.gap + 1;
+    x -= hs.w;
     list.push({ x, w: hs.w, h: hs.h, wall: hs.wall, roof: hs.roof });
   }
-  x = 346;                                       // праворуч (крайній будинок ядра закінчується на 346)
+  x = 342;                                       // праворуч (крайній будинок ядра закінчується на 342)
   for (let i = 20; x < CONFIG.SCENE_W + view.offX + 4; i++) {
     const hs = make(i);
-    x += hs.gap + 1;
     list.push({ x, w: hs.w, h: hs.h, wall: hs.wall, roof: hs.roof });
     x += hs.w;
   }
@@ -3706,42 +4030,68 @@ function drawStreetTree(g, x, v, season) {
   const pal = {
     spring: ['q', 'p', 'w', 'b', ['p', 'p', 'w', 'q', 'm']],
     summer: ['g', 'G', 'm', 'G', ['m', 'G', 'y']],
-    autumn: ['o', 'r', 'h', 'b', ['h', 'y', 'r', 'h']],
+    autumn: ['o', 'r', 'h', 'b', ['h', 'y', 'r', 'h', 'o']],
     halloween: ['u', 'n', 'p', 'k', ['o', 'o', 'y', 'p']]
   }[season];
-  // ствол із корінням і корою
+  // тінь від дерева на землі
+  g.globalAlpha = 0.22; R(g, x - 17, base, 34, 3, 'd'); R(g, x - 12, base + 3, 24, 1, 'd'); g.globalAlpha = 1;
+  // ствол: кора з тріщинами, мох, коріння, розвилки гілок під кроною
   R(g, x - 3, base - 18, 6, 18, 'd'); R(g, x - 2, base - 18, 4, 18, 'b'); R(g, x - 2, base - 18, 1, 18, 'l');
+  g.globalAlpha = 0.35; R(g, x + 1, base - 18, 1, 18, 'd'); g.globalAlpha = 1;
   for (let k = 0; k < 5; k++) R(g, x - 1 + (k % 2), base - 16 + k * 3, 1, 2, 'd');
-  R(g, x - 6, base - 2, 12, 3, 'd'); R(g, x - 5, base - 2, 10, 2, 'b');
-  // крона з великих куль
+  R(g, x - 2, base - 6, 1, 2, 'g'); R(g, x - 2, base - 10, 1, 1, 'm');
+  R(g, x - 6, base - 2, 12, 3, 'd'); R(g, x - 5, base - 2, 10, 2, 'b'); R(g, x - 8, base - 1, 3, 2, 'd'); R(g, x - 7, base - 1, 2, 1, 'b'); R(g, x + 5, base - 1, 3, 2, 'd'); R(g, x + 5, base - 1, 2, 1, 'b');
+  lineG(g, x - 1, base - 17, x - 9, base - 27, 'd'); lineG(g, x, base - 17, x - 8, base - 27, 'b'); lineG(g, x + 1, base - 17, x + 9, base - 27, 'd'); lineG(g, x, base - 17, x + 8, base - 27, 'b');
+  // крона з багатьох кульок: нерівний силует
   const cy = base - 34;
-  const discs = [[0, -2, 12], [-10, 5, 9], [10, 5, 9], [0, 7, 11], [-5, -9, 8], [6, -8, 8]];
+  const discs = [[0, -2, 12], [-10, 5, 9], [10, 5, 9], [0, 7, 11], [-5, -9, 8], [6, -8, 8], [-15, -1, 6], [15, 0, 6], [0, -13, 6], [-8, 13, 6], [9, 13, 6]];
   const inside = (px, py) => discs.some(d => { const dx = px - (x + d[0]), dy = py - (cy + d[1]); return dx * dx + dy * dy <= d[2] * d[2] + 1; });
   discs.forEach(d => disc(g, x + d[0], cy + d[1], d[2] + 1, pal[3]));
   discs.forEach(d => disc(g, x + d[0], cy + d[1], d[2], pal[0]));
-  // освітлення: тінь знизу-праворуч, світло зверху-ліворуч, дрібна фактура листя
-  for (let py = cy - 20; py <= cy + 20; py++) for (let px = x - 22; px <= x + 22; px++) {
+  // об'ємне світло: світла верхня ліва частина, тінь знизу-праворуч, глибокі тіні між кульками, дрібне листя
+  for (let py = cy - 22; py <= cy + 22; py++) for (let px = x - 24; px <= x + 24; px++) {
     if (!inside(px, py)) continue;
-    const sh = (px - x) * 0.45 + (py - cy) * 0.9;
-    const n = hash2(px * 3 + 1, py * 5 + 7) % 11;
-    if (sh > 8 || (sh > 4 && n < 3)) R(g, px, py, 1, 1, pal[1]);
-    else if (sh < -9 || (sh < -4 && n < 2)) R(g, px, py, 1, 1, pal[2]);
+    const sh = (px - x) * 0.45 + (py - cy) * 0.9, n = hash2(px * 3 + 1, py * 5 + 7) % 11, edge = !inside(px - 1, py) || !inside(px + 1, py) || !inside(px, py - 1) || !inside(px, py + 1);
+    if (sh > 12 && n < 5) R(g, px, py, 1, 1, pal[3]);
+    else if (sh > 8 || (sh > 4 && n < 3)) R(g, px, py, 1, 1, pal[1]);
+    else if (sh < -10 && n < 7) R(g, px, py, 1, 1, pal[2]);
+    else if (sh < -5 && n < 2) R(g, px, py, 1, 1, pal[2]);
     else if (n === 0) R(g, px, py, 1, 1, pal[1]);
+    if (edge && py > cy + 2 && hash2(px, py) % 3 === 0) R(g, px, py, 1, 1, pal[1]);          // зубчики листя знизу
+    if (edge && py < cy - 4 && hash2(py, px) % 3 === 0) R(g, px, py, 1, 1, pal[2]);          // блиск на верхніх краях
   }
-  // цвіт навесні (густо), яскраві плями влітку, жовте листя восени
-  const dots = season === 'spring' ? 46 : 22;
-  for (let k = 0; k < dots; k++) {
-    const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 13;
-    const px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.1);
-    if (!inside(px, py)) continue;
-    const c = pal[4][k % pal[4].length];
-    R(g, px, py, season === 'spring' ? 2 : 1, season === 'spring' ? 2 : 1, c);
+  // дрібні листочки по кроні (2 пікселі): світлі зверху, темні знизу
+  for (let k = 0; k < 34; k++) {
+    const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 17, px = x + Math.round(Math.cos(a) * rr * 1.2), py = cy + 1 + Math.round(Math.sin(a) * rr * 1.05);
+    if (!inside(px, py) || !inside(px + 1, py + 1)) continue;
+    R(g, px, py, 2, 1, py < cy ? pal[2] : pal[1]);
+  }
+  // сезонні деталі: цвіт навесні, ягоди влітку, строкате листя восени
+  if (season === 'spring') {
+    for (let k = 0; k < 56; k++) {
+      const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 15, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.1);
+      if (!inside(px, py)) continue;
+      R(g, px, py, 2, 2, pal[4][k % pal[4].length]); if (k % 5 === 0) R(g, px, py, 1, 1, 'y');
+    }
+  } else if (season === 'summer') {
+    for (let k = 0; k < 24; k++) {
+      const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 14, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.1);
+      if (inside(px, py)) R(g, px, py, 1, 1, pal[4][k % pal[4].length]);
+    }
+    [[-6, 4], [5, 8], [-1, 14], [9, 1], [-11, 9]].forEach(([dx, dy], i) => { if (inside(x + dx, cy + dy)) { R(g, x + dx, cy + dy, 2, 2, i % 2 ? 'r' : 'o'); R(g, x + dx, cy + dy, 1, 1, 'w'); } });
+  } else if (season === 'autumn') {
+    for (let k = 0; k < 60; k++) {
+      const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 16, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.1);
+      if (inside(px, py)) R(g, px, py, 2, 1, pal[4][k % pal[4].length]);
+    }
+    for (let k = 0; k < 5; k++) R(g, x - 14 + hash2(k, x + 2) % 28, cy + 17 + hash2(x, k) % 9, 1, 1, pal[4][k % pal[4].length]);       // листя, що падає
   }
   if (season === 'halloween') treeHalloweenDecor(g, x, cy);
-  // на землі: пелюстки навесні, опале листя восени
+  // на землі: пелюстки навесні, опале листя восени, трава й камінці
+  for (let k = 0; k < 6; k++) { R(g, x - 15 + hash2(k, x + 4) % 30, base + 1, 1, 2, 'g'); }
   if (season === 'spring' || season === 'autumn') {
     const gp = season === 'spring' ? ['q', 'p', 'w'] : ['o', 'h', 'r'];
-    for (let k = 0; k < 14; k++) R(g, x - 14 + (hash2(k, x) % 28), base + 1 + (hash2(x, k) % 2), 2, 1, gp[k % 3]);
+    for (let k = 0; k < 20; k++) R(g, x - 16 + (hash2(k, x) % 32), base + 1 + (hash2(x, k) % 2), 2, 1, gp[k % 3]);
   }
 }
 // Хелловін: на дереві висять гарбузи-ліхтарики, привиди й гірлянда з вогників
@@ -3856,6 +4206,23 @@ function drawItem(g, kind, x, yb, k) {
       break;
     case 'cinema':
       R(g, x, yb - 7, 3, 7, ['u', 'r', 'n'][k % 3]); R(g, x + 1, yb - 5, 1, 1, 'y'); break;
+    case 'candle': R(g, x + 1, yb - 6, 1, 1, 'o'); R(g, x, yb - 4, 3, 4, 'w'); R(g, x + 1, yb - 5, 1, 1, 'd'); break;
+    case 'jar': R(g, x, yb - 4, 4, 4, c); R(g, x, yb - 5, 4, 1, 'd'); R(g, x + 1, yb - 3, 2, 1, 'w'); break;
+    case 'scroll': R(g, x, yb - 5, 4, 5, 'w'); R(g, x, yb - 5, 4, 1, 'c'); R(g, x, yb - 1, 4, 1, 'c'); R(g, x + 1, yb - 3, 2, 1, 'e'); break;
+    case 'record': R(g, x, yb - 5, 4, 5, 'k'); R(g, x + 1, yb - 4, 2, 2, c); break;
+    case 'cassette': R(g, x, yb - 3, 5, 3, 'd'); R(g, x, yb - 3, 5, 1, c); R(g, x + 1, yb - 2, 1, 1, 'w'); R(g, x + 3, yb - 2, 1, 1, 'w'); break;
+    case 'gamepad': R(g, x, yb - 3, 5, 3, 'e'); R(g, x, yb - 3, 5, 1, 'E'); R(g, x + 1, yb - 2, 1, 1, 'r'); R(g, x + 3, yb - 2, 1, 1, 'g'); break;
+    case 'laptop': R(g, x, yb - 4, 4, 3, 'd'); R(g, x + 1, yb - 3, 2, 1, 'a'); R(g, x - 1, yb - 1, 6, 1, 'e'); break;
+    case 'plant': R(g, x + 1, yb - 2, 2, 2, 'b'); R(g, x, yb - 5, 4, 3, 'g'); R(g, x + 1, yb - 6, 2, 1, 'm'); break;
+    case 'robot': R(g, x, yb - 4, 4, 4, 'e'); R(g, x, yb - 4, 4, 1, 'E'); R(g, x + 1, yb - 3, 1, 1, 's'); R(g, x + 2, yb - 3, 1, 1, 's'); R(g, x + 1, yb - 5, 2, 1, 'd'); break;
+    case 'rocket': R(g, x + 1, yb - 6, 2, 5, 'w'); R(g, x + 1, yb - 7, 2, 1, 'r'); R(g, x, yb - 3, 1, 3, 'r'); R(g, x + 3, yb - 3, 1, 3, 'r'); break;
+    case 'cup': R(g, x, yb - 4, 3, 4, c); R(g, x + 1, yb - 6, 1, 2, 'd'); R(g, x, yb - 1, 3, 1, 'd'); break;
+    case 'bulb': R(g, x, yb - 5, 3, 4, c); R(g, x + 1, yb - 4, 1, 2, 'w'); R(g, x, yb - 1, 3, 1, 'd'); break;
+    case 'tube': R(g, x, yb - 6, 2, 6, c); R(g, x, yb - 6, 2, 1, 'd'); R(g, x + 3, yb - 4, 2, 4, 's'); break;
+    case 'cone': R(g, x, yb - 4, 3, 2, c); R(g, x + 1, yb - 2, 1, 2, 'c'); R(g, x, yb - 4, 3, 1, 'w'); break;
+    case 'mask': R(g, x, yb - 4, 4, 4, 'y'); R(g, x + 1, yb - 3, 1, 1, 'd'); R(g, x + 2, yb - 3, 1, 1, 'd'); R(g, x + 1, yb - 1, 2, 1, 'd'); break;
+    case 'solar': R(g, x, yb - 4, 5, 4, 'n'); R(g, x, yb - 4, 5, 1, 'a'); R(g, x + 2, yb - 4, 1, 4, 'a'); break;
+    case 'visor': R(g, x, yb - 3, 5, 2, 'd'); R(g, x + 1, yb - 2, 3, 1, 's'); R(g, x, yb - 4, 5, 1, c); break;
   }
 }
 
@@ -3880,7 +4247,7 @@ function drawShelf(g, x, y, bayNo, tiers) {
   R(g, x, y + 1, 34, 17, 'w');
   for (let s2 = 0; s2 < 2; s2++) {
     const dept = bayNo * 2 + s2;
-    if (dept < DEPARTMENTS.length) drawDisplay(g, x + 1 + s2 * 17, y + 1, s2 ? 16 : 15, 16, DEPARTMENTS[dept].display, tiers[dept]);
+    if (dept < DEPARTMENTS.length) drawDisplay(g, x + 1 + s2 * 17, y + 1, s2 ? 16 : 15, 16, (EPOCH_GOODS_KINDS[viewEpoch() % EPOCH_GOODS_KINDS.length] || [])[dept] || DEPARTMENTS[dept].display, tiers[dept]);
   }
   R(g, x + 16, y + 1, 1, 17, 'b');
   R(g, x - 1, y + 18, 36, 1, 'd');
@@ -3954,9 +4321,21 @@ function spireG(g, x, y) {                          // нейтральний ш
   R(g, x, y + 3, 1, 8, 'd'); R(g, x - 1, y + 2, 3, 1, 'd'); R(g, x - 1, y, 3, 2, 'y'); R(g, x, y - 1, 1, 1, 'y'); R(g, x - 1, y + 5, 3, 1, 'h');
 }
 function flagG(g, x, y, c) { R(g, x, y, 1, 11, 'd'); R(g, x + 1, y, 8, 5, c); R(g, x + 1, y, 8, 1, 'w'); R(g, x + 1, y + 4, 8, 1, 'd'); R(g, x, y - 1, 1, 1, 'h'); }
-const FONT5 = { S: ['.####', '#....', '.###.', '....#', '####.'], U: ['#...#', '#...#', '#...#', '#...#', '.###.'], P: ['####.', '#...#', '####.', '#....', '#....'], E: ['#####', '#....', '####.', '#....', '#####'], R: ['####.', '#...#', '####.', '#..#.', '#...#'] };
+const FONT5 = { S: ['.####', '#....', '.###.', '....#', '####.'], U: ['#...#', '#...#', '#...#', '#...#', '.###.'], P: ['####.', '#...#', '####.', '#....', '#....'], E: ['#####', '#....', '####.', '#....', '#####'], R: ['####.', '#...#', '####.', '#..#.', '#...#'], C: ['.####', '#....', '#....', '#....', '.####'], A: ['.###.', '#...#', '#####', '#...#', '#...#'], Y: ['#...#', '#...#', '.###.', '..#..', '..#..'], T: ['#####', '..#..', '..#..', '..#..', '..#..'] };
 function wordG(g, x, y, word, c) {                  // крихітний напис пікселями
   for (let i = 0; i < word.length; i++) FONT5[word[i]].forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') R(g, x + i * 6 + rx, y + ry, 1, 1, c); });
+}
+// Вивіска «CAPYTAP» на даху: однакова назва на кожному рівні, але кольори свої в кожній епосі
+const EPOCH_ROOF_SIGN = [['t', 'y'], ['p', 'w'], ['P', 'y'], ['V', 'T'], ['n', 'a'], ['G', 'm'], ['z', 'a'], ['k', 'f']];   // [фон, літери]
+const ROOF_GLOW = ['T', 'T', 'y', 'f', 'f', 'p', 'f', 'y'];        // колір нічного сяйва «CAPYTAP» по епохах (не збігається з назвою магазину)
+let lastRoofSign = null;
+function roofSignG(g, cx, y, big) {
+  const [fill, ink] = EPOCH_ROOF_SIGN[viewEpoch() % EPOCH_ROOF_SIGN.length];
+  const pw = big ? 68 : 49, ph = big ? 13 : 9, x = cx - (pw >> 1), ty = y + ((ph - 5) >> 1);
+  lastRoofSign = { x, y, w: pw, h: ph, tx: cx - 20, ty: big ? ty + 1 : ty };
+  R(g, x, y, pw, ph, 'd'); R(g, x + 1, y + 1, pw - 2, ph - 2, fill); R(g, x + 1, y + 1, pw - 2, 1, ink);
+  wordG(g, cx - 20, big ? ty + 1 : ty, 'CAPYTAP', ink);
+  if (big) { R(g, x + 2, y + 2, 1, 1, ink); R(g, x + pw - 3, y + 2, 1, 1, ink); R(g, x + 2, y + ph - 3, 1, 1, ink); R(g, x + pw - 3, y + ph - 3, 1, 1, ink); }
 }
 function corniceG(g, w, y, trim) {                  // карниз під дахом
   R(g, 0, y, w, 1, 'l'); R(g, 0, y + 1, w, 2, trim); R(g, 0, y + 3, w, 1, 'd');
@@ -3966,9 +4345,9 @@ function corniceG(g, w, y, trim) {                  // карниз під да�
 // trim — колір карнизу; col — [колона, відблиск]; frame — [рамка, кільце] вивіски; glass — колір скла; base — цоколь; band — візерунок карниза;
 // awning — 'scallop' (зубчики) чи 'flat' (пряма стрічка з підсвіткою); fx — особливий декор епохи
 const EPOCH_SHOP = [
-  { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance' },
-  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro' },
-  { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco' },
+  { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance', roofs: [0, 1, 1, 4, 4, 4] },
+  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 6] },
+  { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco', roofs: [2, 2, 3, 3, 6, 6] },
   { flat: true, roofPal: { r: 'v', n: 'V' }, trim: 'V', col: ['V', 'v'], frame: ['k', 'T'], glass: 'v', base: 'V', band: ['checker', 'v'], awning: 'flat', inner: ['V', 'P', 'v'], fx: 'arcade' },
   { flat: true, roofPal: { r: 'n', n: 'e' }, trim: 'a', col: ['e', 'E'], frame: ['n', 'a'], glass: 'a', base: 'e', band: ['dots', 'n'], awning: 'flat', inner: ['a', 'w', 'S'], fx: 'internet' },
   { flat: true, roofPal: { r: 'g', n: 'G' }, trim: 'g', col: ['b', 'c'], frame: ['G', 'm'], glass: 'm', base: 'b', band: ['leaf', 'G'], awning: 'flat', inner: ['m', 'c', 'y'], fx: 'eco' },
@@ -3976,7 +4355,7 @@ const EPOCH_SHOP = [
   { flat: true, roofPal: { r: 'f', n: 'T' }, trim: 'k', col: ['k', 'T'], frame: ['k', 'f'], glass: 'v', base: 'k', band: ['zig', 'T'], awning: 'flat', inner: ['k', 'V', 'z'], fx: 'neon' }
 ];
 const FLAT_ROOF = [2, 2, 2, 3, 6, 5];       // який дах у «плоских» епохах для кожного рівня
-function epochShopStyle() { return EPOCH_SHOP[state.epoch % EPOCH_SHOP.length]; }
+function epochShopStyle() { return EPOCH_SHOP[viewEpoch() % EPOCH_SHOP.length]; }
 function withPal(map, fn) {                   // тимчасово підміняє кольори палітри на час малювання
   if (!map) { fn(); return; }
   const sv = {}; Object.keys(map).forEach(k => { sv[k] = PALETTE[k]; PALETTE[k] = PALETTE[map[k]]; });
@@ -3999,6 +4378,155 @@ function neonLine(g, x, y, w, h, c) {         // неонова трубка: я
   g.globalAlpha = 0.28; R(g, x - 1, y - 1, w + 2, h + 2, c); g.globalAlpha = 1; R(g, x, y, w, h, c);
 }
 // Рисочки епохи на фасаді (виконуються після основного фасаду)
+/* ---------- Деталізація фасаду під кожну епоху: таверна, закусочна, диско-клуб, аркада, інтернет-магазин, еко-ринок, космостанція, неон ---------- */
+function barrelG(g, x, yb) {                       // діжка: 9×11
+  R(g, x, yb - 11, 9, 11, 'd'); R(g, x + 1, yb - 10, 7, 9, 'b'); R(g, x + 1, yb - 10, 2, 9, 'l');
+  R(g, x, yb - 8, 9, 1, 'd'); R(g, x, yb - 3, 9, 1, 'd'); R(g, x + 3, yb - 6, 3, 2, 'h');
+}
+function crateG(g, x, yb, c) { R(g, x, yb - 8, 10, 8, 'd'); R(g, x + 1, yb - 7, 8, 6, c); R(g, x + 1, yb - 7, 8, 1, 'w'); R(g, x + 4, yb - 7, 2, 6, 'd'); }
+function speakerG(g, x, yb) {                       // колонка: 10×16 із двома динаміками
+  R(g, x, yb - 16, 10, 16, 'k'); R(g, x + 1, yb - 15, 8, 14, 'z'); disc(g, x + 5, yb - 11, 3, 'k'); disc(g, x + 5, yb - 11, 1, 'e'); disc(g, x + 5, yb - 5, 2, 'k'); disc(g, x + 5, yb - 5, 1, 'e');
+}
+function cabinetG(g, x, yb, c) {                    // ігровий автомат: 13×22
+  R(g, x, yb - 22, 13, 22, 'k'); R(g, x + 1, yb - 21, 11, 20, c); R(g, x + 2, yb - 19, 9, 8, 'k'); R(g, x + 3, yb - 18, 7, 6, 's'); R(g, x + 4, yb - 17, 2, 2, 'y'); R(g, x + 7, yb - 15, 2, 2, 'r');
+  R(g, x + 2, yb - 9, 9, 3, 'd'); R(g, x + 4, yb - 8, 1, 1, 'r'); R(g, x + 7, yb - 8, 2, 1, 'y'); R(g, x + 1, yb - 3, 11, 3, 'd');
+}
+function lockerG(g, x, yb) {                        // посилкові комірки: 18×18
+  R(g, x, yb - 18, 18, 18, 'd'); for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) { R(g, x + 1 + i * 6, yb - 17 + j * 6, 5, 5, [['T', 'S', 'y'], ['p', 'T', 'S'], ['S', 'y', 'p']][j][i]); R(g, x + 4 + i * 6, yb - 15 + j * 6, 1, 1, 'd'); }
+}
+function bannerHang(g, x, y, c1, c2, n) { for (let i = 0; i < n; i++) { R(g, x + i * 6, y, 5, 1, 'd'); for (let k = 0; k < 4; k++) R(g, x + i * 6 + k, y + 1 + k, 5 - k - (k > 2 ? 1 : 0), 1, i % 2 ? c1 : c2); } }
+function solarG(g, x, y, n) { for (let i = 0; i < n; i++) { R(g, x + i * 10, y, 9, 4, 'd'); R(g, x + i * 10 + 1, y + 1, 7, 2, 'n'); R(g, x + i * 10 + 4, y + 1, 1, 2, 'a'); R(g, x + i * 10 + 3, y + 4, 3, 2, 'd'); } }
+function dishG(g, x, y) { for (let a = -5; a <= 5; a++) { const hh = Math.round(Math.sqrt(25 - a * a) * 0.8); R(g, x + a, y - hh, 1, hh + 1, 'E'); } R(g, x, y - 5, 1, 7, 'd'); R(g, x - 3, y + 2, 7, 1, 'd'); R(g, x + 1, y - 6, 1, 1, 'r'); }
+function hologram(g, x, y, w, h, c) { g.globalAlpha = 0.35; R(g, x, y, w, h, c); g.globalAlpha = 1; for (let k = 2; k < h; k += 3) { g.globalAlpha = 0.6; R(g, x, y + k, w, 1, 'w'); g.globalAlpha = 1; } R(g, x, y, w, 1, c); R(g, x, y + h - 1, w, 1, c); R(g, x, y, 1, h, c); R(g, x + w - 1, y, 1, h, c); }
+function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
+  const top = look.top, f0 = floors[0], yb = h - 7, big = level >= 4;
+  const L0 = 11, L1 = door.x - 6, R0 = door.x + door.w + 6, R1 = w - 12;           // вільні місця біля дверей на нижньому поверсі
+  const slotsL = 1, slotsR = 1;                         // лише по одній тематичній деталі з кожного боку від дверей
+  const flat = es.flat;
+  switch (es.fx) {
+    case 'renaissance': {                              // таверна: дерев'яні балки, діжки, вивіска з кухлем
+      for (let i = 0; i < slotsL; i++) barrelG(g, L0 + i * 13, yb);
+      if (slotsR > 1) for (let i = 0; i < slotsR - 1; i++) barrelG(g, R1 - 9 - i * 13, yb); else barrelG(g, R1 - 9, yb);
+      const bx = w - 38, by = yG + 12;                 // кронштейн і дошка-вивіска «кухоль»
+      R(g, bx, by, 18, 2, 'd'); R(g, bx + 17, by - 4, 2, 6, 'd'); R(g, bx + 2, by + 2, 1, 4, 'd'); R(g, bx + 14, by + 2, 1, 4, 'd');
+      R(g, bx, by + 6, 17, 13, 'd'); R(g, bx + 1, by + 7, 15, 11, 'l'); R(g, bx + 1, by + 7, 15, 1, 'c');
+      R(g, bx + 5, by + 9, 6, 7, 'w'); R(g, bx + 5, by + 9, 6, 2, 'y'); R(g, bx + 11, by + 10, 2, 4, 'w'); R(g, bx + 6, by + 15, 4, 1, 'd');
+      [[11, yG + 14], [w - 15, yG + 14]].forEach(p => lanternG(g, p[0], p[1]));
+      break;
+    }
+    case 'retro': {                                    // закусочна 50-х: хромова смужка, неонова стрілка, джюкбокс
+      for (let x = 4; x < w - 4; x++) R(g, x, yB, 1, 1, (x >> 1) % 2 ? 'w' : 'E');
+      R(g, 4, yB + 1, w - 8, 1, 'e');
+      for (let x = 8; x < w - 20; x += 5) R(g, x, top + 7, 1, 1, 'q');
+      const jx = L0 + 4; R(g, jx, yb - 20, 14, 20, 'd'); R(g, jx + 1, yb - 19, 12, 18, 'p'); R(g, jx + 3, yb - 16, 8, 8, 'd'); R(g, jx + 4, yb - 15, 6, 6, 'y'); R(g, jx + 6, yb - 14, 2, 4, 'r'); R(g, jx + 2, yb - 6, 10, 3, 'd'); R(g, jx + 3, yb - 5, 8, 1, 'q'); R(g, jx + 3, yb - 20, 8, 1, 'f');
+      const sx = R0 + 3; R(g, sx, yb - 13, 9, 13, 'd'); R(g, sx + 1, yb - 12, 7, 11, 'w'); R(g, sx + 2, yb - 11, 5, 3, 'r'); R(g, sx + 2, yb - 7, 5, 5, 'S'); R(g, sx + 3, yb - 4, 3, 1, 'p'); R(g, sx + 4, yb - 14, 1, 1, 'r');   // молочний коктейль
+      [[w - 20, top + 12], [10, top + 12]].forEach(p => { R(g, p[0], p[1], 1, 4, 'f'); R(g, p[0] - 1, p[1] + 1, 3, 1, 'f'); });
+      break;
+    }
+    case 'disco': {                                    // диско-клуб: дзеркальна куля, колонки, промені
+      const bx = (w >> 1) - 40; R(g, bx, yG + 8, 1, 5, 'd'); disc(g, bx, yG + 18, 6, 'd'); disc(g, bx, yG + 18, 5, 'E');
+      for (let a = -5; a <= 5; a += 2) for (let b = -5; b <= 5; b += 2) if (a * a + b * b < 24) R(g, bx + a, yG + 18 + b, 1, 1, ((a + b) / 2) & 1 ? 'w' : 'S'); R(g, bx - 2, yG + 15, 2, 1, 'w');
+      g.globalAlpha = 0.18; for (let i = 0; i < 4; i++) for (let k = 0; k < 24; k++) R(g, bx - 18 + i * 12 + (k >> 1) * (i - 1.5) * 0.7, yG + 20 + k, 3, 1, ['f', 'T', 'y', 'p'][i]); g.globalAlpha = 1;
+      for (let i = 0; i < slotsL; i++) speakerG(g, L0 + 1 + i * 13, yb);
+      for (let i = 0; i < slotsR; i++) speakerG(g, R1 - 10 - i * 13, yb);
+      break;
+    }
+    case 'arcade': {                                   // зал ігрових автоматів
+      for (let i = 0; i < Math.min(2, Math.max(1, Math.floor((L1 - L0) / 14))); i++) cabinetG(g, L0 + i * 14, yb, ['v', 'f', 'T'][i % 3]);
+      for (let i = 0; i < Math.min(2, Math.max(1, Math.floor((R1 - R0) / 14))); i++) cabinetG(g, R1 - 13 - i * 14, yb, ['T', 'f', 'v'][i % 3]);
+      ['.#.#.', '#####', '##.##', '#####', '.#.#.'].forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') { R(g, 8 + rx, yG - 12 + ry, 1, 1, 'T'); R(g, w - 14 + rx, yG - 12 + ry, 1, 1, 'f'); } });   // піксельні прибульці на стіні
+      R(g, door.x + (door.w >> 1) - 1, yG - 14, 2, 12, 'd'); disc(g, door.x + (door.w >> 1), yG - 15, 3, 'r');         // великий джойстик над входом
+      break;
+    }
+    case 'internet': {                                 // інтернет-магазин: Wi-Fi, поштомати-комірки, антена, стрічка новин
+      for (let a = 1; a <= 3; a++) for (let t2 = -a * 2; t2 <= a * 2; t2++) { const yy = Math.round(Math.sqrt(Math.max(0, a * a * 6 - t2 * t2)) * 0.6); if (yy > 0) R(g, 12 + t2 + 6, yB - yy - 2, 1, 1, 'a'); }
+      R(g, 17, yB - 1, 2, 2, 'a');
+      for (let i = 0; i < 1; i++) lockerG(g, L0 + i * 20, yb);
+      for (let i = 0; i < 1; i++) { const rx = R1 - 18 - i * 20; R(g, rx, yb - 18, 18, 18, 'd'); R(g, rx + 1, yb - 17, 16, 16, 'k'); for (let k = 0; k < 4; k++) R(g, rx + 2, yb - 15 + k * 4, 14 - (k * 3) % 5, 2, k % 2 ? 'a' : 'T'); }
+      if (flat) { dishG(g, w - 22, 10); dishG(g, 24, 12); }
+      break;
+    }
+    case 'eco': {                                      // еко-ринок: дерев'яні рейки, кадки з деревами, сонячні панелі
+      for (let i = 0; i < slotsL; i++) { const px = L0 + 2 + i * 13; R(g, px, yb - 6, 9, 6, 'b'); R(g, px, yb - 6, 9, 1, 'l'); disc(g, px + 4, yb - 12, 5, 'G'); disc(g, px + 4, yb - 12, 4, 'g'); R(g, px + 3, yb - 8, 3, 3, 'b'); R(g, px + 2, yb - 14, 2, 2, 'm'); }
+      for (let i = 0; i < slotsR; i++) { const px = R1 - 12 - i * 13; R(g, px, yb - 6, 9, 6, 'b'); R(g, px, yb - 6, 9, 1, 'l'); R(g, px + 1, yb - 12, 7, 6, 'g'); R(g, px + 2, yb - 14, 2, 2, 'p'); R(g, px + 5, yb - 13, 2, 2, 'y'); R(g, px + 3, yb - 11, 3, 5, 'G'); }
+      if (flat) { solarG(g, 14, 0, Math.min(5, Math.floor((w - 70) / 10))); R(g, w - 24, 0, 1, 1, 'd'); }
+      break;
+    }
+    case 'space': {                                    // космічна станція: шви обшивки, попереджувальні смуги, антени
+      for (let i = 0; i < 8; i++) { R(g, door.x - 12 + i * 3, yG + 8, 2, 2, i % 2 ? 'y' : 'd'); R(g, door.x + 4 + door.w - 12 + i * 3 - 12 + 12, yG + 8, 0, 0, 'd'); }
+      for (let x = door.x - 4; x < door.x + door.w + 4; x += 4) R(g, x, yG + 8, 2, 2, ((x - door.x) / 4 | 0) % 2 ? 'y' : 'k');
+      for (let i = 0; i < slotsL; i++) { const px = L0 + i * 13; R(g, px, yb - 14, 10, 14, 'd'); R(g, px + 1, yb - 13, 8, 12, 'e'); disc(g, px + 5, yb - 8, 3, 'n'); disc(g, px + 5, yb - 8, 2, 's'); R(g, px + 4, yb - 9, 1, 1, 'w'); }
+      for (let i = 0; i < slotsR; i++) { const px = R1 - 11 - i * 13; R(g, px, yb - 12, 9, 12, 'd'); R(g, px + 1, yb - 11, 7, 10, 'z'); R(g, px + 2, yb - 9, 5, 1, 'T'); R(g, px + 2, yb - 7, 3, 1, 'T'); R(g, px + 2, yb - 5, 4, 1, 'f'); }
+      if (flat) { R(g, 18, 0, 1, 8, 'd'); R(g, 15, 2, 7, 1, 'd'); R(g, 16, 4, 5, 1, 'd'); R(g, 18, 0, 1, 1, 'r'); R(g, w - 36, 2, 1, 6, 'd'); R(g, w - 38, 2, 5, 1, 'e'); }
+      break;
+    }
+    case 'neon': {                                     // неонове місто: голографічна реклама, світні стовпи, дрон
+      if (flat) { hologram(g, 10, 1, 34, 12, 'T'); R(g, 14, 4, 14, 1, 'w'); R(g, 14, 7, 20, 1, 'f'); hologram(g, w - 46, 0, 34, 14, 'f'); R(g, w - 42, 4, 18, 1, 'w'); R(g, w - 42, 8, 10, 1, 'T'); }
+      for (let i = 0; i < slotsL; i++) { const px = L0 + 3 + i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'f' : 'T'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'T' : 'f'); }
+      for (let i = 0; i < slotsR; i++) { const px = R1 - 6 - i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'T' : 'f'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'f' : 'T'); }
+      neonLine(g, door.x - 2, yG + 10, 1, 24, 'T'); neonLine(g, door.x + door.w + 1, yG + 10, 1, 24, 'f');
+      break;
+    }
+  }
+}
+
+/* ---------- Вивіска й дах: окремий вигляд під кожну епоху ---------- */
+// Прикраси по краях вивіски (текст лежить посередині, тож малюємо ліворуч і праворуч) та рамка в стилі епохи
+function signMotif(g, es, w, top) {
+  const y0 = top + 8, y1 = top + 24, mx = [10, w - 10];                       // межі вивіски й центри лівої/правої прикраси
+  switch (es.fx) {
+    case 'renaissance':                                                        // дерев'яна дошка з гербовими щитами та ланцюгами
+      mx.forEach(x => { R(g, x - 5, y0 + 3, 11, 11, 'd'); R(g, x - 4, y0 + 4, 9, 9, 'r'); R(g, x - 4, y0 + 4, 9, 2, 'y'); R(g, x - 1, y0 + 6, 3, 7, 'w'); R(g, x - 3, y0 + 8, 7, 2, 'w'); R(g, x - 4, y0 + 13, 9, 1, 'd'); });
+      for (let x = 22; x < w - 22; x += 14) { R(g, x, y0 + 1, 1, 1, 'y'); R(g, x + 7, y1 - 1, 1, 1, 'y'); }
+      R(g, 26, y0 - 6, 1, 6, 'd'); R(g, w - 27, y0 - 6, 1, 6, 'd');
+      break;
+    case 'retro':                                                              // хром, ромби й зірки
+      for (let x = 6; x < w - 6; x++) { R(g, x, y0 + 1, 1, 1, (x >> 1) % 2 ? 'w' : 'E'); R(g, x, y1 - 1, 1, 1, (x >> 1) % 2 ? 'E' : 'w'); }
+      mx.forEach(x => { ['..#..', '.###.', '#####', '.###.', '..#..'].forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') R(g, x - 2 + rx, y0 + 5 + ry, 1, 1, 'f'); }); R(g, x - 1, y0 + 6, 3, 1, 'q'); });
+      break;
+    case 'disco':                                                              // маркізні лампочки і дзеркальні кулі
+      for (let x = 7; x < w - 7; x += 4) { R(g, x, y0, 2, 2, (x >> 2) % 2 ? 'y' : 'f'); R(g, x, y1 - 1, 2, 2, (x >> 2) % 2 ? 'f' : 'y'); }
+      mx.forEach(x => { disc(g, x, y0 + 8, 5, 'd'); disc(g, x, y0 + 8, 4, 'E'); [[-2, -2], [1, -1], [-1, 1], [2, 2], [0, -3]].forEach(p => R(g, x + p[0], y0 + 8 + p[1], 1, 1, 'w')); R(g, x, y0 + 2, 1, 2, 'd'); });
+      break;
+    case 'arcade':                                                             // піксельні прибульці та сітка
+      mx.forEach((x, i) => { ['.#.....#.', '..#...#..', '.#######.', '##.###.##', '#########', '#.#####.#', '#.#...#.#', '...##.##.'].forEach((row, ry) => { for (let rx = 0; rx < 9; rx++) if (row[rx] === '#') R(g, x - 4 + rx, y0 + 4 + ry, 1, 1, i ? 'f' : 'T'); }); });
+      for (let x = 24; x < w - 24; x += 6) R(g, x, y1 - 1, 3, 1, (x / 6 | 0) % 2 ? 'f' : 'T');
+      break;
+    case 'internet':                                                           // вікно браузера: кнопки, адресний рядок
+      R(g, 7, y0 + 1, w - 14, 4, 'e'); R(g, 7, y0 + 1, w - 14, 1, 'E'); R(g, 9, y0 + 2, 2, 2, 'r'); R(g, 13, y0 + 2, 2, 2, 'y'); R(g, 17, y0 + 2, 2, 2, 'g');
+      R(g, 24, y0 + 2, w - 48, 2, 'w'); R(g, w - 20, y0 + 2, 10, 2, 'a');
+      [w - 9].forEach(x => { disc(g, x, y0 + 10, 3, 'a'); R(g, x - 1, y0 + 9, 3, 2, 'n'); });
+      R(g, 9, y0 + 8, 6, 5, 'a'); R(g, 10, y0 + 9, 4, 3, 'n'); R(g, 11, y0 + 12, 2, 1, 'a');
+      break;
+    case 'eco':                                                                // вінки з листя й ліани
+      mx.forEach(x => { for (let a = 0; a < 12; a++) { const ang = a / 12 * Math.PI * 2; R(g, Math.round(x + Math.cos(ang) * 5), Math.round(y0 + 9 + Math.sin(ang) * 5), 2, 2, a % 3 ? 'g' : 'm'); } R(g, x - 1, y0 + 8, 2, 2, 'p'); R(g, x + 1, y0 + 10, 2, 2, 'y'); });
+      for (let x = 20; x < w - 20; x += 9) { R(g, x, y0, 1, 2 + (x % 3), 'g'); R(g, x - 1, y0 + 2 + (x % 3), 3, 1, 'm'); }
+      break;
+    case 'space':                                                              // металева панель із болтами й попереджувальними смугами
+      mx.forEach((x, i) => { for (let k = 0; k < 11; k++) { R(g, x - 6 + k, y0 + 2 + (k % 4), 1, 2, 'y'); } for (let k = 0; k < 11; k++) { R(g, x - 6 + k, y0 + 11 + (k % 4) % 3, 1, 2, 'k'); } R(g, x - 6, y0 + 2, 12, 1, 'd'); R(g, x - 6, y0 + 14, 12, 1, 'd'); });
+      for (let x = 24; x < w - 24; x += 10) { R(g, x, y0 + 1, 1, 1, 'E'); R(g, x, y1 - 1, 1, 1, 'E'); }
+      break;
+    case 'neon':                                                               // неонова трубка по контуру та стрілки
+      neonLine(g, 7, y0 + 1, w - 14, 1, 'f'); neonLine(g, 7, y1 - 1, w - 14, 1, 'T'); neonLine(g, 7, y0 + 1, 1, 15, 'T'); neonLine(g, w - 8, y0 + 1, 1, 15, 'f');
+      mx.forEach((x, i) => { for (let k = 0; k < 4; k++) { R(g, x - 3 + k, y0 + 4 + k, 1, 1, i ? 'T' : 'f'); R(g, x - 3 + k, y0 + 12 - k, 1, 1, i ? 'T' : 'f'); R(g, x + 1 + k, y0 + 4 + k, 1, 1, i ? 'f' : 'T'); R(g, x + 1 + k, y0 + 12 - k, 1, 1, i ? 'f' : 'T'); } });
+      break;
+  }
+}
+// Велика примітна деталь на даху в центрі: те, що одразу видно здалеку
+function roofProp(g, es, w, top, level, cx) {
+  cx = cx || (w >> 1); const y = Math.max(0, top - 8);
+  switch (es.fx) {
+    case 'renaissance': R(g, cx - 1, y - 2, 2, 12, 'd'); R(g, cx - 5, y + 2, 10, 1, 'd'); [[-5, 0], [4, 0]].forEach(p => R(g, cx + p[0], y + p[1] + 1, 2, 2, 'd')); R(g, cx, y - 3, 6, 3, 'r'); R(g, cx + 5, y - 2, 2, 1, 'y'); break;   // флюгер-півник
+    case 'retro': R(g, cx - 1, y - 3, 3, 14, 'd'); for (let a = -2; a <= 2; a++) R(g, cx - 6 + Math.abs(a), y - 2 + a + 2, 12 - 2 * Math.abs(a), 1, a % 2 ? 'f' : 'p'); R(g, cx - 6, y + 3, 12, 1, 'd'); break;                          // пілон-зірка
+    case 'disco': disc(g, cx, y + 4, 7, 'd'); disc(g, cx, y + 4, 6, 'E'); for (let a = -6; a <= 6; a += 2) for (let b = -6; b <= 6; b += 2) if (a * a + b * b < 30) R(g, cx + a, y + 4 + b, 1, 1, ((a + b) / 2) & 1 ? 'w' : 'S'); R(g, cx - 3, y + 1, 2, 1, 'w'); R(g, cx, y - 4, 1, 3, 'd'); break;
+    case 'arcade': disc(g, cx, y + 4, 8, 'd'); disc(g, cx, y + 4, 7, 'y'); R(g, cx + 1, y + 3, 8, 3, 'd'); R(g, cx + 1, y + 4, 7, 1, 'd'); R(g, cx - 2, y + 0, 2, 2, 'd'); [[11, 4], [14, 4]].forEach(p => R(g, cx + p[0], y + p[1], 2, 2, 'y')); break;                                    // піксельний «Пакман» із крапками
+    case 'internet': for (let a = 1; a <= 3; a++) for (let t2 = -a * 3; t2 <= a * 3; t2++) { const yy = Math.round(Math.sqrt(Math.max(0, a * a * 11 - t2 * t2)) * 0.7); if (yy > 0) R(g, cx + t2, y + 10 - yy, 1, 1, 'a'); } disc(g, cx, y + 10, 2, 'a'); R(g, cx - 1, y + 10, 3, 1, 'n'); break;
+    case 'eco': R(g, cx - 1, y + 2, 2, 12, 'w'); for (let k = 0; k < 3; k++) { const a = k * 2.09 + 0.5; for (let i = 1; i < 8; i++) R(g, cx + Math.cos(a) * i, y + 2 + Math.sin(a) * i, 1, 1, 'w'); } R(g, cx - 1, y + 1, 3, 3, 'g'); break;                                       // вітряк
+    case 'space': R(g, cx - 2, y + 2, 5, 11, 'w'); R(g, cx - 2, y + 2, 5, 1, 'd'); R(g, cx - 1, y - 2, 3, 4, 'r'); R(g, cx, y - 4, 1, 2, 'r'); R(g, cx - 5, y + 9, 3, 4, 'r'); R(g, cx + 3, y + 9, 3, 4, 'r'); R(g, cx - 1, y + 5, 3, 3, 's'); break;                     // ракета
+    case 'neon': hologram(g, cx - 18, y - 2, 36, 12, 'T'); R(g, cx - 14, y + 1, 18, 1, 'w'); R(g, cx - 14, y + 4, 28, 1, 'f'); R(g, cx - 14, y + 7, 12, 1, 'T'); break;
+  }
+}
+
 function epochFacadeFx(g, es, w, h, look, level, floors, yG) {
   const top = look.top, flatTop = es.flat && level <= 3;
   switch (es.fx) {
@@ -4062,7 +4590,6 @@ function drawRoof(g, style, w, top, look) {
         tiles(y, lx, rw, 'r', (y - y0) % 2);
         R(g, lx, y, 2, 1, 'b'); R(g, lx + rw - 2, y, 2, 1, 'b');                 // дошки по краях фронтону
       }
-      disc(g, cx, 19, 6, 'd'); disc(g, cx, 19, 5, 'b'); disc(g, cx, 19, 4, 's'); R(g, cx - 4, 19, 9, 1, 'd'); R(g, cx, 15, 1, 9, 'd'); R(g, cx - 2, 17, 2, 1, 'S');
       spireG(g, cx, 0);                                           // шпиль із кулькою замість прапорця
       break;
     }
@@ -4081,8 +4608,7 @@ function drawRoof(g, style, w, top, look) {
       R(g, 0, 14, w, 2, 'w'); R(g, 0, 14, w, 1, 'd');
       R(g, 1, 16, w - 2, y1 - 15, trim); R(g, 1, 16, w - 2, 1, 'E');
       for (let x = 8; x < w - 20; x += 22) { R(g, x, 18, 16, y1 - 18, 'd'); R(g, x + 1, 19, 14, y1 - 20, 'w'); }
-      R(g, cx - 34, 1, 68, 13, 'd'); R(g, cx - 33, 2, 66, 11, 'r'); R(g, cx - 33, 2, 66, 1, 'o');
-      wordG(g, cx - 14, 5, 'SUPER', 'w');
+      roofSignG(g, cx, 1, true);
       R(g, cx - 28, 14, 2, 1, 'd'); R(g, cx + 26, 14, 2, 1, 'd');
       spireG(g, 10, 3); spireG(g, w - 20, 3);
       break;
@@ -4139,6 +4665,7 @@ function drawRoof(g, style, w, top, look) {
       break;
     }
   }
+  if (style !== 3) roofSignG(g, cx, y1 - 8, false);
 }
 
 // Сніг на даху: верхні два пікселі кожного стовпчика даху стають білими (тонкі стовпчики — прапори, антени — не чіпаємо)
@@ -4161,7 +4688,7 @@ function boxG(g, x, y, c1, c2) { R(g, x, y, 14, 4, 'd'); R(g, x + 1, y + 1, 12, 
 function buildShopCanvas(level, tiers) {
   glassRects = [];
   const es = epochShopStyle(), look0 = SHOP_LOOK[level - 1];
-  const look = Object.assign({}, look0, { trim: es.trim || look0.trim, roof: es.flat ? FLAT_ROOF[level - 1] : look0.roof, inner: es.inner || look0.inner });
+  const look = Object.assign({}, look0, { trim: es.trim || look0.trim, roof: es.flat ? FLAT_ROOF[level - 1] : (es.roofs ? es.roofs[level - 1] : look0.roof), inner: es.inner || look0.inner });
   const w = look.w, trim = look.trim, F = look.floors.length, up = F - 1;
   const yB = look.top + 25;          // тут закінчується вивіска
   const yG = yB + FLOOR_H * up;      // тут починається нижній поверх (навіс)
@@ -4253,6 +4780,7 @@ function buildShopCanvas(level, tiers) {
   R(g, 5, look.top + 8, 2, 2, 'y'); R(g, w - 7, look.top + 8, 2, 2, 'y'); R(g, 5, look.top + 23, 2, 2, 'y'); R(g, w - 7, look.top + 23, 2, 2, 'y');
   if (level >= 3) for (let x = 12; x < w - 12; x += 6) R(g, x, look.top + 9, 1, 1, 'y');
   if (level === 2) buntingG(g, 8, w - 9, yB + 1);
+  signMotif(g, es, w, look.top);
 
   floors.forEach(fl => {
     const hF = fl.fy - fl.top;
@@ -4306,6 +4834,8 @@ function buildShopCanvas(level, tiers) {
   if (level === 3) { acG(g, w - 22, floors[1].top + 4); }
 
   epochFacadeFx(g, es, w, h, look, level, floors, yG);
+  roofProp(g, es, w, look.top, level, Math.round(w * 0.16)); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, Math.round(w * 0.84));       // примітні деталі на даху по боках від вивіски
+  epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
 
   if (seasonNow() === 'winter') snowCap(front, look.top + 4);      // взимку на даху лежить сніг
 
@@ -4321,10 +4851,12 @@ function buildShopCanvas(level, tiers) {
     if (r[2] > 30) { lg.globalAlpha = 0.3; R(lg, r[0], r[1], r[2], r[3], 'y'); lg.globalAlpha = 1; }       // інтер'єр: лише легке тепле світіння, щоб крізь скло було видно звірят
     else { R(lg, r[0], r[1], r[2], r[3], 'y'); R(lg, r[0], r[1] + r[3] - 3, r[2], 3, 'h'); }                 // ліхтарики й дрібні вікна світяться яскраво
   });
+  if (lastRoofSign) { lg.globalAlpha = 0.7; R(lg, lastRoofSign.x + 1, lastRoofSign.y + 1, lastRoofSign.w - 2, lastRoofSign.h - 2, 'y'); lg.globalAlpha = 1; }          // вивіска «CAPYTAP» світиться вночі
+  lg.globalAlpha = 0.28; R(lg, 7, look.top + 10, w - 14, 13, 'y'); lg.globalAlpha = 1;                                                                                       // і назва магазину теж
   glassRects = null;
 
   return {
-    canvas, back, front, w, h, lit, yB,
+    canvas, back, front, w, h, lit, yB, roofSign: lastRoofSign,
     sign: { x: 7, y: look.top + 10, w: w - 14, h: 13 },
     door, floors, escalators
   };
@@ -4348,12 +4880,13 @@ const ui = {
   buyModes: $('buyModes'), deptList: $('deptList'),
   paneTeam: $('pane-team'), teamList: $('teamList'), bubbles: $('bubbles'),
   paneStory: $('pane-story'), storyList: $('storyList'),
-  eventBanner: $('eventBanner'), boosts: $('boosts'), wheelOpen: $('wheelOpen'),
+  panL: $('panL'), panR: $('panR'), eventBanner: $('eventBanner'), boosts: $('boosts'), wheelOpen: $('wheelOpen'),
   wheelModal: $('wheelModal'), wheelCanvas: $('wheelCanvas'), wheelStreak: $('wheelStreak'), wheelResult: $('wheelResult'),
+  circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
   wheelBtn: $('wheelBtn'), wheelGhostBtn: $('wheelGhostBtn'), wheelGhostNote: $('wheelGhostNote'), wheelClose: $('wheelClose'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
   paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), paneStats: $('pane-stats'), statsCard: $('statsCard'),
-  app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setTime: $('setTime'), setDayNight: $('setDayNight'),
+  app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'),
   paneSettings: $('pane-settings'), setLangBtns: $('setLangBtns'), setNumFmt: $('setNumFmt'), setAnim: $('setAnim'), setSound: $('setSound'),
   exportBox: $('exportBox'), importBox: $('importBox'), exportInfo: $('exportInfo'), shareBtn: $('shareBtn'), exportBtn: $('exportBtn'), copyBtn: $('copyBtn'), importBtn: $('importBtn'), resetBtn: $('resetBtn'),
   debugCard: $('debugCard'), dbgHour: $('dbgHour'), dbgX100: $('dbgX100'), statEpoch: $('statEpoch'),
@@ -4387,7 +4920,7 @@ let deptLockedEl = null;       // картка «нові відділи від�
 // Перебудовує спрайт магазину, якщо змінився рівень або наповненість вітрин
 function rebuildShop(force) {
   const tiers = state.depts.map(tierOf);
-  const sig = state.shopLevel + '|' + tiers.slice(0, state.shopLevel * 2).join('') + '|' + seasonNow() + '|' + (state.epoch % EPOCH_SHOP.length);
+  const sig = state.shopLevel + '|' + tiers.slice(0, state.shopLevel * 2).join('') + '|' + seasonNow() + '|' + (viewEpoch() % EPOCH_SHOP.length);
   if (!force && shop && shop.sig === sig) return false;
   const levelChanged = !shop || shop.level !== state.shopLevel;
   if (levelChanged && shop) ejectInside();
@@ -4428,7 +4961,7 @@ function updateSignText() {
 // Підбирає найбільший цілий множник, щоб пікселі лишалися чіткими.
 // ПК: сцена на весь вільний простір — на широкому екрані додаються будинки, ліхтарі й бруківка з боків, а на високому — небо зверху.
 // Телефон: сцена «наближена» до магазину (так вивіска читається), а вся вулиця ширша за екран — її можна гортати пальцем.
-const cam = { pan: 0 };                // зсув камери на телефоні (пікселів сцени) відносно центру вулиці
+const cam = { pan: 0, goal: 0 };                // зсув камери на телефоні (пікселів сцени) відносно центру вулиці
 let layoutReady = false;
 function layoutScene() {
   const W0 = CONFIG.SCENE_W, H0 = CONFIG.SCENE_H;
@@ -4448,11 +4981,12 @@ function layoutScene() {
     offX = CONFIG.MOBILE_PAD;
     const want = shop ? Math.min(W0, Math.max(176, (shop.w + 40) & ~1)) : W0;      // скільки вулиці хочемо показати
     k = Math.max(1, Math.floor(Math.min(availW * dpr / (want * 0.9), availH * dpr / H1)));   // можна обрізати до 10%, щоб збільшити масштаб
-    cropW = Math.min(want, Math.floor(availW * dpr / k));
+    cropW = availW * dpr / k;                                                      // на всю ширину екрана, без смуг по боках
+    offX = Math.max(CONFIG.MOBILE_PAD, Math.ceil((cropW - W0) / 2) + 8);
   } else {
     k = Math.max(1, Math.floor(Math.min(availW * dpr / CONFIG.MIN_VIEW_W, availH * dpr / H1)));
     const visW = Math.min(CONFIG.MAX_VIEW_W, availW * dpr / k);                     // скільки пікселів сцени вміщується в ширину (дробове)
-    offX = Math.max(0, Math.ceil((visW - W0) / 2));
+    offX = Math.max(0, Math.ceil((visW - W0) / 2), Math.ceil((CONFIG.WORLD_W - W0) / 2));        // вулиця завжди широка, видно лише її частину
     cropW = Math.min(W0 + 2 * offX, visW);
   }
   // Усю висоту займає сцена: зайві рядки діляться між небом зверху (більшість) і бруківкою знизу
@@ -4469,14 +5003,15 @@ function layoutScene() {
     ctx.imageSmoothingEnabled = false;
     rebuildAllLayers();
   }
+  cropW = Math.min(view.w, availW / unit);
   viewCrop = { x: 0, w: cropW };
   sceneUnit = unit;
   const sceneH = Math.min(view.h * unit, availH);
-  ui.scene.style.width = (cropW * sceneUnit) + 'px';
+  ui.scene.style.width = availW + 'px';
   ui.scene.style.height = sceneH + 'px';
   ui.world.style.marginTop = (-(view.h * unit - sceneH)) + 'px';                   // зайве небо зверху обрізається, бруківка знизу видна повністю
   ui.scene.style.setProperty('--u', sceneUnit + 'px');
-  ui.scene.classList.toggle('pannable', mobile && cropW < view.w);
+  ui.scene.classList.toggle('pannable', cropW < view.w);
   ui.world.style.width = (view.w * sceneUnit) + 'px';
   ui.world.style.height = (view.h * sceneUnit) + 'px';
   applyCamera();
@@ -4490,7 +5025,20 @@ function applyCamera() {
   cam.pan = x - base;
   viewCrop.x = x;
   ui.world.style.marginLeft = (-x * sceneUnit) + 'px';
+  if (ui.panL) { ui.panL.disabled = x <= 0.5; ui.panR.disabled = x >= view.w - viewCrop.w - 0.5; const can = viewCrop.w < view.w; ui.panL.hidden = ui.panR.hidden = !can; }
 }
+// Плавний рух камери до цілі (стрілки ◀ ▶, клавіші, перетягування)
+function panBy(dx) {
+  const base = view.offX + (CONFIG.SCENE_W - viewCrop.w) / 2, lo = -base, hi = view.w - viewCrop.w - base;
+  cam.goal = Math.max(lo, Math.min(hi, cam.goal + dx));
+}
+function updateCamera(dt) {
+  if (Math.abs(cam.goal - cam.pan) < 0.2) { if (cam.goal !== cam.pan && !camDragging) { cam.pan = cam.goal; applyCamera(); } return; }
+  if (camDragging) { cam.goal = cam.pan; return; }
+  cam.pan += (cam.goal - cam.pan) * Math.min(1, dt * 9);
+  applyCamera();
+}
+let camDragging = false;
 // Перебудовує всі шари під поточний розмір полотна
 function rebuildAllLayers() {
   skyLayer = buildSkyLayer();
@@ -4621,11 +5169,11 @@ function buildDeptCards() {
       '<div class="dept-income"><div class="each"></div><div class="total"></div></div>' +
       '<div class="ms"><div class="ms-bar"><i></i></div><span class="ms-text"></span></div>' +
       '<button type="button" class="btn wide buy"></button>';
-    card.querySelector('.dept-icon').textContent = d.icon;
+    card.querySelector('.dept-icon').textContent = deptIcon(i);
     card.querySelector('.buy').addEventListener('click', () => buyDept(i));
     ui.deptList.appendChild(card);
     deptEls[i] = {
-      card,
+      card, icon: card.querySelector('.dept-icon'),
       name: card.querySelector('.dept-name'), count: card.querySelector('.dept-count'),
       each: card.querySelector('.each'), total: card.querySelector('.total'),
       bar: card.querySelector('.ms-bar i'), msText: card.querySelector('.ms-text'),
@@ -4651,7 +5199,8 @@ function buildTeamCards() {
     const cv = card.querySelector('.portrait');
     const pc = cv.getContext('2d');
     pc.imageSmoothingEnabled = false;
-    pc.drawImage(getSpriteCanvas('team_' + m.id), 0, 0);
+    pc.drawImage(getSpriteCanvas(teamSprite(m.id)), 0, 0);
+    cv.dataset.tid = m.id;
     card.querySelector('button').addEventListener('click', () => hireOrUpgrade(i));
     ui.teamList.appendChild(card);
     teamEls[i] = {
@@ -4674,7 +5223,7 @@ function bonusText(i, lvl) {
     case 'expandCost': return t('bonus_expandCost', pct(Math.min(b.per * lvl, b.cap)));
     case 'offline': return t('bonus_offline', pct(CONFIG.OFFLINE_RATE + b.rate * lvl), CONFIG.OFFLINE_MAX_HOURS + b.hours * lvl);
     case 'thief': return t('bonus_thief', pct(Math.min(b.per * lvl, b.cap)));
-    case 'deptIncome': return t('bonus_deptIncome', b.depts.map(d => t('dept_' + DEPARTMENTS[d].id)).join(', '), fmt(1 + b.per * lvl, 2));
+    case 'deptIncome': return t('bonus_deptIncome', b.depts.map(d => deptName(d)).join(', '), fmt(1 + b.per * lvl, 2));
     case 'global': return t('bonus_global', fmt(1 + b.per * lvl, 2));
     case 'event': return t('bonus_event', pct(b.per * lvl));
     case 'fix': return t('bonus_fix', pct(b.per * lvl));
@@ -4694,7 +5243,7 @@ function applyTranslations() {
   if (ui.tabMore) ui.tabMore.setAttribute('aria-label', t('tabMore'));
   const tab = TABS.find(x => x.id === state.tab);
   if (tab && !tab.ready) ui.soonTitle.textContent = tab.icon + ' ' + t('tab_' + tab.id);
-  DEPARTMENTS.forEach((d, i) => { deptEls[i].name.textContent = t('dept_' + d.id); });
+  DEPARTMENTS.forEach((d, i) => { deptEls[i].name.textContent = deptName(i); deptEls[i].icon.textContent = deptIcon(i); });
   ui.buyModes.querySelectorAll('.buy-mode').forEach(b => {
     b.textContent = b.dataset.mode === 'max' ? t('buyMax') : '×' + b.dataset.mode;
   });
@@ -4723,8 +5272,13 @@ function updateSaveWarning() {
 
 // Оновлює лічильник і панель (тільки якщо текст змінився)
 function updateUI() {
-  setText(ui.coinCount, fmt(Math.floor(state.coins)), 'coins');
-  setText(ui.cps, t('perSecond', fmt(state.cps, 1)), 'cps');
+  if (previewIdx() !== null) {                       // обрана минула епоха: угорі її заробіток, баланс для витрат — у підписі
+    setText(ui.coinCount, fmt(Math.floor(state.epochEarned[previewIdx()] || 0)), 'coins');
+    setText(ui.cps, t('perSecond', fmt(state.cps, 1)), 'cps');
+  } else {
+    setText(ui.coinCount, fmt(Math.floor(state.coins)), 'coins');
+    setText(ui.cps, t('perSecond', fmt(state.cps, 1)), 'cps');
+  }
 
   // вкладка «Магазин»
   setText(ui.shopName, t('levelName_' + state.shopLevel), 'shopName');
@@ -4811,7 +5365,8 @@ function updateDepartmentsUI() {
     const nextLevel = state.shopLevel + 1;
     setText(ui.expandTitle, t('expandTitle', t('levelName_' + nextLevel)), 'expandTitle');
     setText(ui.expandNote, t('expandNote'), 'expandNote');
-    const sig = nextLevel + '|' + state.lang + '|' + next.requires.map(r => Math.min(state.depts[r.dept], r.count)).join(',');
+    const hires = hireRequirements();
+    const sig = nextLevel + '|' + state.lang + '|' + next.requires.map(r => Math.min(state.depts[r.dept], r.count)).join(',') + '|' + hires.map(i => state.team[i] >= 1 ? 1 : 0).join('');
     if (uiCache.reqSig !== sig) {
       uiCache.reqSig = sig;
       ui.expandReqs.innerHTML = '';
@@ -4820,9 +5375,20 @@ function updateDepartmentsUI() {
         const have = state.depts[r.dept];
         row.className = 'req' + (have >= r.count ? ' ok' : '');
         const name = document.createElement('span');
-        name.textContent = DEPARTMENTS[r.dept].icon + ' ' + t('dept_' + DEPARTMENTS[r.dept].id);
+        name.textContent = deptIcon(r.dept) + ' ' + deptName(r.dept);
         const val = document.createElement('b');
         val.textContent = (have >= r.count ? '✓ ' : '') + Math.min(have, r.count) + ' / ' + r.count;
+        row.append(name, val);
+        ui.expandReqs.appendChild(row);
+      });
+      hires.forEach(i => {                                            // найняти звірят цього рівня
+        const done = state.team[i] >= 1;
+        const row = document.createElement('div');
+        row.className = 'req' + (done ? ' ok' : '');
+        const name = document.createElement('span');
+        name.textContent = '🐾 ' + t('reqHire', t('team_' + TEAM[i].id));
+        const val = document.createElement('b');
+        val.textContent = (done ? '✓ ' : '') + (done ? 1 : 0) + ' / 1';
         row.append(name, val);
         ui.expandReqs.appendChild(row);
       });
@@ -4839,7 +5405,7 @@ function updateDepartmentsUI() {
     if (!unlocked) return;
     const count = state.depts[i];
     const each = deptIncomeEach(i);
-    setText(el.name, t('dept_' + d.id), 'dn' + i);
+    setText(el.name, deptName(i), 'dn' + i); setText(el.icon, deptIcon(i), 'di' + i);
     setText(el.count, '×' + fmt(count), 'dc' + i);
     setText(el.each, t('deptEach', fmt(each, 1)), 'de' + i);
     setText(el.total, t('deptTotal', fmt(each * count, 1)), 'dt' + i);
@@ -4890,7 +5456,7 @@ function buyDept(i) {
   state.depts[i] += n;
   state.stats.deptsBought += n;
   CONFIG.MILESTONES.forEach(m => {
-    if (before < m && state.depts[i] >= m) { showToast(t('milestoneToast', t('dept_' + DEPARTMENTS[i].id), m), 'good'); playSfx('milestone'); state.stats.milestones++; }
+    if (before < m && state.depts[i] >= m) { showToast(t('milestoneToast', deptName(i), m), 'good'); playSfx('milestone'); state.stats.milestones++; }
   });
   recalcIncome();
   rebuildShop();
@@ -5019,15 +5585,50 @@ function drawBirds() {
   if (vis <= 0.05 || !birds.length) return;
   ctx.globalAlpha = vis;
   birds.forEach(b => {
-    const x = Math.round(b.x), y = Math.round(b.y + Math.sin(animClock * 1.3 + b.bob) * 2);
-    const up = animOn() ? Math.floor(animClock * b.wing + b.ph) % 2 === 0 : true;
-    R(ctx, x - 1, y, 3, 1, 'd'); R(ctx, x + (b.vx > 0 ? 2 : -2), y, 1, 1, 'd');           // тіло й голівка
-    if (up) { R(ctx, x - 4, y - 2, 3, 1, 'd'); R(ctx, x + 2, y - 2, 3, 1, 'd'); R(ctx, x - 5, y - 3, 1, 1, 'd'); R(ctx, x + 5, y - 3, 1, 1, 'd'); }
-    else { R(ctx, x - 4, y + 1, 3, 1, 'd'); R(ctx, x + 2, y + 1, 3, 1, 'd'); R(ctx, x - 5, y + 2, 1, 1, 'd'); R(ctx, x + 5, y + 2, 1, 1, 'd'); }
+    const dir = b.vx > 0 ? 1 : -1, x = Math.round(b.x), y = Math.round(b.y + Math.sin(animClock * 1.3 + b.bob) * 2);
+    const ph = animOn() ? Math.floor(animClock * b.wing + b.ph) % 4 : 0;           // 4 кадри помаху крилами
+    ctx.globalAlpha = 0.18 * vis; R(ctx, x - 3, y + 9, 7, 1, 'd'); ctx.globalAlpha = vis;       // легка тінь знизу
+    // тіло з об'ємом: темна спинка, світлий живіт
+    R(ctx, x - 3 * dir - (dir > 0 ? 0 : 1), y, 6, 2, 'd'); R(ctx, x - 2 * dir - (dir > 0 ? 0 : 1), y + 2, 4, 1, 'd');
+    R(ctx, x - 1 * dir - (dir > 0 ? 0 : 1), y + 1, 3, 1, 'e'); R(ctx, x - 1 * dir - (dir > 0 ? 0 : 1), y + 2, 2, 1, 'E');
+    R(ctx, x + 3 * dir - (dir > 0 ? 0 : 1), y - 1, 2, 3, 'd'); R(ctx, x + 3 * dir - (dir > 0 ? 0 : 1), y, 1, 1, 'w');                // голова й око
+    R(ctx, x + 5 * dir - (dir > 0 ? 0 : 0), y, 1, 1, 'h');                                                                       // дзьоб
+    R(ctx, x - 4 * dir - (dir > 0 ? 0 : 1), y, 2, 1, 'd'); R(ctx, x - 5 * dir - (dir > 0 ? 0 : 1), y + 1, 1, 1, 'd');           // хвіст
+    // крила: широкі, з пір'ям і світлішим низом
+    const up = ph === 0 ? 3 : ph === 1 ? 1 : ph === 2 ? -1 : 1;                   // підйом кінчика крила
+    for (let side = -1; side <= 1; side += 2) {
+      for (let k = 1; k <= 5; k++) {
+        const wx = x + side * k, wy = y - 1 - Math.round(up * k / 6 * 2);
+        R(ctx, wx, wy, 1, 2 + (k < 4 ? 1 : 0), k < 5 ? 'd' : 'e');
+        if (k > 1 && k < 5) R(ctx, wx, wy + 2 + (k < 4 ? 1 : 0), 1, 1, 'e');
+      }
+      R(ctx, x + side * 5, y - 1 - Math.round(up), 1, 1, 'd');
+    }
   });
   ctx.globalAlpha = 1;
 }
 
+// Хмара-канвас: купчаста / середня / довга, з світлим верхом, тінню знизу й м'яким краєм
+const cloudCache = {};
+function cloudCanvas(kind, tint) {
+  const key = kind + '|' + tint;
+  if (cloudCache[key]) return cloudCache[key];
+  const T = { '': ['#ffffff', '#f1f4f8', '#d3dde9', '#b3c3d6'], light: ['#f7f9fc', '#e4eaf1', '#c6d1df', '#a8b7cb'], grey: ['#dde1e8', '#bec5d0', '#9ca5b3', '#7e8898'], dark: ['#928fae', '#706d8e', '#55536f', '#3f3d57'] }[tint] || ['#ffffff', '#f1f4f8', '#d3dde9', '#b3c3d6'];
+  const puffs = [[[10, 12, 7], [20, 9, 9], [31, 11, 7], [38, 13, 5], [16, 14, 7], [26, 14, 8]], [[8, 9, 6], [16, 7, 7], [24, 9, 6], [12, 10, 6], [20, 11, 5]], [[8, 6, 5], [16, 5, 6], [26, 6, 6], [36, 6, 5], [44, 7, 4], [20, 7, 6], [32, 7, 5]]][kind % 3];
+  const W = [46, 32, 52][kind % 3], H = [22, 16, 13][kind % 3], c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  const inCl = (x, y) => puffs.some(p => (x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]) * 1.15 <= p[2] * p[2]) && y <= H - 3;
+  let top = H, bot = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (inCl(x, y)) { top = Math.min(top, y); bot = Math.max(bot, y); }
+  for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) {
+    if (!inCl(x, y)) continue;
+    const v = (y - top) / Math.max(1, bot - top), n = ((x * 7 + y * 13) % 5 === 0) ? 0.08 : 0, lit = ((x * 3 + y * 5) & 1) ? 0.05 : 0;
+    const t = v + n - lit * (1 - v) - (inCl(x - 2, y - 2) ? 0 : 0.18);
+    g.fillStyle = t < 0.18 ? T[0] : t < 0.52 ? T[1] : t < 0.8 ? T[2] : T[3];
+    g.fillRect(x, y, 1, 1);
+  }
+  for (let x = 0; x < W; x++) { const yb = bot; if (inCl(x, yb) && x % 2) { g.fillStyle = T[3]; g.fillRect(x, yb + 1, 1, 1); } }       // розмитий нижній край
+  return (cloudCache[key] = c);
+}
 // Хмар по сезонах: влітку мало, навесні помірно, восени й узимку багато й сірі, на Хелловін темні
 const CLOUD_BY_SEASON = { spring: [1.0, 'white'], summer: [0.35, 'white'], autumn: [1.8, 'grey'], winter: [1.5, 'light'], halloween: [1.4, 'dark'] };
 function seedClouds() {
@@ -5038,7 +5639,7 @@ function seedClouds() {
   for (let i = 0; i < n; i++) {
     const b = CLOUDS[i % CLOUDS.length];
     const v = cfg[1] === 'white' ? (theme.season === 'spring' && i % 4 === 3 ? 'light' : '') : cfg[1] === 'grey' ? (i % 4 === 3 ? 'light' : 'grey') : cfg[1] === 'light' ? (i % 2 ? 'light' : '') : 'dark';
-    clouds.push({ x: rand(worldL(), worldR()), y: rand(4 - view.offY, 46), speed: b.speed * rand(0.8, 1.3), v, big: cfg[0] > 1.2 && i % 3 === 0 });
+    clouds.push({ x: rand(worldL(), worldR()), y: rand(4 - view.offY, 46), speed: b.speed * rand(0.8, 1.3), v, kind: i % 3, big: cfg[0] > 1.2 && i % 3 === 0 });
   }
 }
 let build = null;                                 // триває будівництво нового рівня
@@ -5050,7 +5651,7 @@ function rand(a, b) { return a + Math.random() * (b - a); }
 // Масштаб магазину для поточного стискання (використовується і в canvas, і для вивіски)
 function getShopScale() {
   const sq = Math.max(-0.5, Math.min(0.5, shopAnim.squash));
-  const sx = 1 + 0.25 * sq, sy = 1 - 0.4 * sq;
+  const sx = 1 + 0.14 * sq, sy = 1 - 0.24 * sq;
   // як і в drawCanvasSprite, округлюємо до цілих пікселів, щоб вивіска збігалася зі спрайтом
   return { sx: Math.max(1, Math.round(shop.w * sx)) / shop.w, sy: Math.max(1, Math.round(shop.h * sy)) / shop.h };
 }
@@ -5067,7 +5668,7 @@ function finishBuild() {
   shopAnim.vel = 6;
   playSfx('levelup');
   showToast(t('buildDone', t('levelName_' + state.shopLevel)), 'big');
-  const opened = DEPARTMENTS.filter(d => d.level === state.shopLevel).map(d => t('dept_' + d.id));
+  const opened = DEPARTMENTS.map((d, i) => d.level === state.shopLevel ? deptName(i) : null).filter(Boolean);
   if (opened.length) showToast(t('newDepts', opened.join(', ')), 'good');
 }
 function spawnDust(x, y, n) {
@@ -5288,7 +5889,7 @@ function drawActor(a) {
   let flip = a.moving ? waddle === 1 : false;
   if (m.id === 'tonya') flip = Math.floor(a.t / 3) % 2 === 1;   // охоронниця виглядає то вліво, то вправо
   ctx.globalAlpha = 0.22; R(ctx, x - 6, y, 12, 2, 'd'); ctx.globalAlpha = 1;
-  drawSprite(ctx, 'team_' + m.id, x - 8, y - 16 - waddle - idleBob - hopY, { flip });
+  drawSprite(ctx, teamSprite(m.id), x - 8, y - 16 - waddle - idleBob - hopY, { flip });
   if (hasHats()) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);
   if (!sitting) drawTeamProp(m.spot.prop, x, y - waddle - hopY, a.t, a.dir);
   if (a.rest > 0) drawDrink(x, y - hopY, a.t);
@@ -5324,8 +5925,26 @@ function hitCapy(p) {
   return p.x >= c.x && p.x <= c.x + 28 && p.y >= c.footY - 24 && p.y <= c.footY;
 }
 
-// Бульбашка з фразою над головою (key — щоб у одного персонажа була лише одна)
+// Межі видимої частини сцени для бульбашок (у координатах сцени)
+function bubbleBounds() {
+  const sceneH = parseFloat(ui.scene.style.height) || (view.h * sceneUnit);
+  const top = -view.offY + (view.h * sceneUnit - sceneH) / sceneUnit;
+  const tb = document.getElementById("topbar"), tbh = tb ? tb.getBoundingClientRect().bottom : 0;                        // верхню панель з рахунком бульбашки не перекривають
+  return { l: visL(), r: visR(), t: top + 2, b: top + sceneH / sceneUnit, il: visL() + 38 / sceneUnit, ir: visR() - 40 / sceneUnit, it: top + (tbh + 6) / sceneUnit };
+}
+// Ставить бульбашку так, щоб вона повністю лишалась у кадрі
+function placeBubble(el, x, y) {
+  const bb = bubbleBounds(), hw = el.offsetWidth / 2 / sceneUnit + 2, hh = el.offsetHeight / sceneUnit + 6;
+  const cx = Math.max(bb.il + hw, Math.min(bb.ir - hw, x)), cy = Math.max(bb.it + hh, Math.min(bb.b - 4, y));
+  el._cx = cx;
+  el.style.left = pctX(cx) + '%';
+  el.style.top = pctY(cy) + '%';
+}
+function dropBubble(key) { const el = bubbleEls[key]; if (el) { clearTimeout(el._timer); el.remove(); delete bubbleEls[key]; } }
+// Бульбашка з фразою над головою (key — щоб у одного персонажа була лише одна). Якщо той, хто говорить, поза видимою частиною вулиці — фраза не з'являється
 function showBubble(key, text, x, y, follow) {
+  const bb = bubbleBounds();
+  if (x < bb.l - 2 || x > bb.r + 2) { dropBubble(key); return; }
   let el = bubbleEls[key];
   if (!el) {
     el = document.createElement('div');
@@ -5335,30 +5954,26 @@ function showBubble(key, text, x, y, follow) {
   }
   el.textContent = text;
   playSfx('pip');
-  const margin = Math.min(38, viewCrop.w / 2);   // бульбашка не виходить за видиму частину сцени
-  const cx = Math.max(visL() + margin, Math.min(visR() - margin, x));
+  el._follow = follow || null;                  // follow — функція, що дає поточне місце того, хто говорить
+  el._x = x; el._y = Math.max(24, y);
+  placeBubble(el, x, el._y);
   Object.keys(bubbleEls).forEach(k => {                  // нова бульбашка прибирає старі поруч, щоб репліки не налазили одна на одну
     const o = bubbleEls[k];
-    if (k !== key && Math.abs(o._cx - cx) < 58) { clearTimeout(o._timer); o.remove(); delete bubbleEls[k]; }
+    if (k !== key && Math.abs(o._cx - el._cx) < 58) dropBubble(k);
   });
-  el._cx = cx; el._follow = follow || null;                  // follow — функція, що дає поточне місце того, хто говорить
-  el.style.left = pctX(cx) + '%';
-  el.style.top = pctY(Math.max(24, y)) + '%';
   el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
   clearTimeout(el._timer);
   el._timer = setTimeout(() => { el.remove(); delete bubbleEls[key]; }, CONFIG.BUBBLE_SECONDS * 1000);
 }
 // Бульбашки йдуть слідом за звірятком, яке говорить
 function updateBubbles() {
-  const margin = Math.min(38, viewCrop.w / 2);
+  const bb = bubbleBounds();
   Object.keys(bubbleEls).forEach(k => {
     const el = bubbleEls[k];
-    if (!el._follow) return;
+    if (!el._follow) { if (el._x < bb.l - 2 || el._x > bb.r + 2) { dropBubble(k); return; } placeBubble(el, el._x, el._y); return; }
     const p = el._follow();
-    const cx = Math.max(visL() + margin, Math.min(visR() - margin, p.x));
-    el._cx = cx;
-    el.style.left = pctX(cx) + '%';
-    el.style.top = pctY(Math.max(24, p.y)) + '%';
+    if (p.x < bb.l - 2 || p.x > bb.r + 2) { dropBubble(k); return; }        // звірятко пішло за межі кадру — репліка зникає
+    placeBubble(el, p.x, Math.max(24, p.y));
   });
 }
 function actorSay(a) {
@@ -5458,7 +6073,37 @@ function updateCustomers(dt) {
       case 'exiting':
         c.y += step * 0.8;
         if (c.y >= LAYOUT.curbY + 1) c.inside = false;
-        if (c.y >= c.lane) { c.y = c.lane; c.mode = 'pass'; c.alpha = 1; c.inside = false; }
+        if (c.y >= c.lane) { c.y = c.lane; c.mode = c.homeDoor ? 'toHome' : 'pass'; c.alpha = 1; c.inside = false; }
+        break;
+      case 'toHome': {                                    // несе покупки додому: йде до дверей будиночка
+        const dx = c.homeDoor.x - c.x;
+        if (Math.abs(dx) <= step) { c.x = c.homeDoor.x; c.mode = 'homeUp'; }
+        else { c.dir = Math.sign(dx); c.x += c.dir * step; }
+        break;
+      }
+      case 'homeUp':
+        c.y -= step * 0.8;
+        if (c.y <= c.homeDoor.y + 1) { c.y = c.homeDoor.y + 1; c.mode = 'homeIn'; c.t = 0; }
+        break;
+      case 'homeIn':                                      // двері відчиняються, звірятко зникає всередині
+        c.t += dt; c.alpha = Math.max(0, 1 - c.t / 0.6);
+        if (c.t >= 0.6) { c.mode = 'homeStay'; c.t = 0; c.stay = rand(7, 16); c.inside = true; c.bag = null; }
+        break;
+      case 'homeStay':
+        c.t += dt;
+        if (c.t >= c.stay) { c.mode = 'homeOut'; c.t = 0; c.inside = false; c.alpha = 0; }
+        break;
+      case 'homeOut':
+        c.t += dt; c.alpha = Math.min(1, c.t / 0.6);
+        if (c.t >= 0.6) { c.mode = 'homeDown'; c.alpha = 1; }
+        break;
+      case 'homeDown':
+        c.y += step * 0.8;
+        if (c.y >= c.lane) {
+          c.y = c.lane; c.homeDoor = null; c.dir = c.x < shop.x + shop.w / 2 ? 1 : -1;
+          if (Math.random() < 0.5) { c.mode = 'toDoor'; c.doorX = shop.x + shop.door.x + shop.door.w / 2 + rand(-4, 4); }
+          else { c.mode = 'pass'; c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16; }
+        }
         break;
     }
   }
@@ -5517,10 +6162,18 @@ function updateInside(c, dt) {
     c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)]; c.bagKind = Math.floor(Math.random() * 3);
     c.dir = Math.random() < 0.5 ? 1 : -1;
     c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16;
+    c.homeDoor = pickHome(c);                                   // частина покупців іде зі своїми пакетами додому
     return;
   }
   c.dwell += dt;
   if (c.dwell >= stop.t) { c.plan.shift(); c.dwell = 0; }
+}
+// Чи піде покупець додому: обираємо двері будиночка недалеко від магазину (не за самим магазином)
+function pickHome(c) {
+  if (!houseDoors.length || Math.random() > 0.55) return null;
+  const cx = shop.x + shop.w / 2;
+  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8 && Math.abs(d.x - c.x) < 340);
+  return cand.length ? cand[Math.floor(Math.random() * cand.length)] : null;
 }
 // Коли магазин перебудовується, усі, хто всередині, виходять надвір
 function ejectInside() {
@@ -5539,6 +6192,7 @@ function drawCustomer(c) {
   const frame = moving ? Math.floor(c.anim * 6) % 2 : 0;
   const bob = frame ? -1 : 0;
   const sx = Math.round(c.x - 9), sy = Math.round(c.y - 23) + bob;            // спрайт 18×23: ноги внизу, центр по x
+  if ((c.mode === 'homeIn' || c.mode === 'homeOut') && c.homeDoor) { const d = c.homeDoor; R(ctx, d.x - 5, d.y - 15, 10, 15, 'd'); R(ctx, d.x - 4, d.y - 14, 8, 14, 'h'); R(ctx, d.x - 4, d.y - 14, 8, 2, 'y'); }   // двері будиночка відчинені, всередині тепле світло
   ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 3, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
   drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha });
   if (hasHats() && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(sx + 9, sy + 8, c.hat); }
@@ -5557,7 +6211,7 @@ function updateAnimations(dt) {
   const steps = Math.max(1, Math.ceil(dt / 0.01));
   const h = dt / steps;
   for (let i = 0; i < steps; i++) {
-    shopAnim.vel += (-420 * shopAnim.squash - 16 * shopAnim.vel) * h;
+    shopAnim.vel += (-300 * shopAnim.squash - 17 * shopAnim.vel) * h;
     shopAnim.squash += shopAnim.vel * h;
   }
   if (Math.abs(shopAnim.squash) < 0.001 && Math.abs(shopAnim.vel) < 0.01) { shopAnim.squash = 0; shopAnim.vel = 0; }
@@ -5771,7 +6425,7 @@ function desiredTrack() {
   if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music]) return theme.holiday.music;
   if (theme.season === 'halloween' && MUSIC.halloween) return 'halloween';
   const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
-  return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + (state.epoch % EPOCH_MUSIC.length);
+  return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + (viewEpoch() % EPOCH_MUSIC.length);
 }
 // Перемикає мелодію плавно: стара стихає, нова наростає
 function updateMusic() {
@@ -5835,6 +6489,17 @@ const SFX = {
   hire()      { melody('square', [['E5', 0.07], ['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.2]], 0.22); },
   upgrade()   { melody('square', [['G5', 0.06], ['B5', 0.06], ['D6', 0.14]], 0.22); },
   milestone() { melody('triangle', [['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.25]], 0.4); },
+  circusMarch() {   // восьмитактний цирковий марш: мелодія на квадраті, бас «ум-па»
+    const ac = audio.ctx, beat = 60 / 150, t0 = ac.currentTime + 0.05;
+    const MEL = [[['C5', .5], ['E5', .5], ['G5', 1], ['E5', .5], ['C5', .5], ['G4', 1]], [['F5', .5], ['A5', .5], ['C6', 1], ['A5', .5], ['F5', .5], ['C5', 1]], [['G5', .5], ['B5', .5], ['D6', 1], ['B5', .5], ['G5', .5], ['D5', 1]], [['E5', 1], ['C5', 1], ['G4', 1], ['C5', 1]], [['C5', .5], ['E5', .5], ['G5', 1], ['C6', 1], ['G5', 1]], [['A5', .5], ['G5', .5], ['F5', 1], ['A5', .5], ['C6', .5], ['A5', 1]], [['B5', .5], ['A5', .5], ['G5', 1], ['F5', .5], ['D5', .5], ['G5', 1]], [['E5', .5], ['D5', .5], ['C5', 1], ['C5', 2]]];
+    const BASS = [['C3', 'G3', 'E3'], ['F2', 'C3', 'A2'], ['G2', 'D3', 'B2'], ['C3', 'G3', 'E3'], ['C3', 'G3', 'E3'], ['F2', 'C3', 'A2'], ['G2', 'D3', 'B2'], ['C3', 'G3', 'E3']];
+    MEL.forEach((bar, bi) => {
+      const t = t0 + bi * 4 * beat; let b = 0;
+      bar.forEach(([n, len]) => { tone(audio.sfxGain, 'square', noteFreq(n), t + b * beat, len * beat * 0.9, 0.16); b += len; });
+      const [root, fifth, third] = BASS[bi];
+      for (let k = 0; k < 4; k++) { if (k % 2 === 0) tone(audio.sfxGain, 'triangle', noteFreq(root), t + k * beat, beat * 0.8, 0.3); else { tone(audio.sfxGain, 'square', noteFreq(third) * 2, t + k * beat, beat * 0.4, 0.08); tone(audio.sfxGain, 'square', noteFreq(fifth) * 2, t + k * beat, beat * 0.4, 0.08); } }
+    });
+  },
   sale()      { melody('square', [['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.07], ['E6', 0.07], ['G6', 0.25]], 0.2); },
   build() {   // стукіт молотків під час будівництва
     const ac = audio.ctx, t0 = ac.currentTime + 0.05;
@@ -5970,9 +6635,11 @@ function drawCapiPortrait() {
   g.drawImage(getSpriteCanvas(capySprite()), 0, 4);
 }
 // Яка зараз пора року: з налаштувань або (в режимі «Авто») за датою пристрою; Хелловін — за датою свята
+// Вибір пори року й Хелловіну відкривається після проходження 2 епохи (поки що діє «Авто»)
+function themesUnlocked() { return state.epoch >= 2; }
 function seasonNow() {
   const s = state.settings.season;
-  if (s !== 'auto' && SEASONS.includes(s)) return s;
+  if (s !== 'auto' && SEASONS.includes(s) && themesUnlocked()) return s;
   const forced = forcedHoliday();
   if (forced === 'halloween') return 'halloween';
   if (forced === 'newyear') return 'winter';
@@ -5984,17 +6651,18 @@ function seasonNow() {
 function isDebug() {
   try { return new URLSearchParams(location.search).get('debug') === '1' || window.__debug === true; } catch (e) { return false; }
 }
-function currentEpoch() { return EPOCHS[state.epoch % EPOCHS.length]; }
+function currentEpoch() { return EPOCHS[viewEpoch() % EPOCHS.length]; }
 
 /* ---------- Епохи: зовнішній вигляд міста ---------- */
 function rebuildEpochLayers() {
-  document.body.dataset.epoch = String(state.epoch % EPOCHS.length);
+  document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length);
   refreshCoinIcon();
   skyLayer = buildSkyLayer();
   groundLayer = buildGroundLayer();
   theme.key = null;              // змусити updateTheme перерахувати прикраси
   seedEpochFx();
   updateTheme();
+  document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => { const c2 = cv.getContext('2d'); c2.clearRect(0, 0, 16, 16); c2.drawImage(getSpriteCanvas(teamSprite(cv.dataset.tid)), 0, 0); });
   if (shop) rebuildShop(true);
 }
 function resetEpochFx() {
@@ -6136,12 +6804,14 @@ function updateWarp(dt) {
 }
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
 function applyTimeTravel() {
+  syncEpochEarned();
   const gain = prestigeGain();
   state.crystals += gain;
   state.crystalsTotal += gain;
   state.stats.timeTravels++;
   state.stats.maxLevel = Math.max(state.stats.maxLevel, state.shopLevel);
   state.epoch++;
+  state.activeEpoch = -1;
   state.team.forEach((lv, i) => { if (lv > 0) state.teamKnown[i] = 1; });      // звірятка лишаються знайомими
   state.coins = CONFIG.START_COINS;
   state.depts = DEPARTMENTS.map(() => 0);
@@ -6314,7 +6984,7 @@ function updateStatsUI() {
     stTap: fmt(tapValue(), 1),
     stTaps: fmt(s.taps),
     stDepts: fmt(st.deptsBought),
-    stCrystals: EPOCH_GEM_EMOJI[state.epoch % EPOCH_GEM_EMOJI.length] + ' ' + fmt(s.crystals) + ' / ' + fmt(s.crystalsTotal),
+    stCrystals: EPOCH_GEM_EMOJI[viewEpoch() % EPOCH_GEM_EMOJI.length] + ' ' + fmt(s.crystals) + ' / ' + fmt(s.crystalsTotal),
     stTravels: fmt(st.timeTravels),
     stRaccoons: st.raccoonsCaught + ' / ' + st.raccoonsLost,
     stPuddles: fmt(st.puddlesFixed),
@@ -6344,12 +7014,60 @@ function applyViewSettings() {
   document.body.classList.toggle('no-anim', !animOn());
   resetEpochFx();
 }
+// Перегляд минулих епох: лише вигляд, прогрес не змінюється
+function setEpochPreview(e) {
+  syncEpochEarned();
+  state.activeEpoch = (e === null || e === state.epoch % EPOCHS.length) ? -1 : e;
+  rebuildEpochLayers();
+  refreshDeptTexts();
+  updateMusic();
+  updateUI();
+  saveGame();
+}
+function refreshDeptTexts() { uiCache.reqSig = ''; uiCache.boostSig = ''; DEPARTMENTS.forEach((d, i) => { if (deptEls[i]) { deptEls[i].name.textContent = deptName(i); deptEls[i].icon.textContent = deptIcon(i); } }); }
+function updateEpochViewUI() {
+  const card = $('epochViewCard');
+  if (!card) return;
+  card.hidden = false;                              // картка видна завжди; поки пройдено лише одну епоху — одна кнопка
+  if (state.epoch < 1 && state.activeEpoch >= 0) { state.activeEpoch = -1; rebuildEpochLayers(); }
+  const box = ui.setEpochView, top = Math.min(state.epoch, EPOCHS.length - 1), cur = viewEpoch() % EPOCHS.length, sig = state.lang + '|' + top + '|' + cur + '|' + state.epochEarned.map(v => fmt(Math.floor(v))).join(',');
+  if (box._sig === sig) return;
+  box._sig = sig; box.innerHTML = '';
+  for (let e = 0; e <= top; e++) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn lang-pick';
+    const n1 = document.createElement('span'); n1.textContent = t('epoch_' + e);
+    const n2 = document.createElement('span'); n2.className = 'ev-earned'; n2.textContent = '🪙 ' + fmt(Math.floor(state.epochEarned[e] || 0));
+    b.append(n1, n2);
+    b.setAttribute('aria-pressed', String(e === cur));
+    b.addEventListener('click', () => { setEpochPreview(e); });
+    box.appendChild(b);
+  }
+}
+// Маленький піксельний замочок для закритих тем
+let lockUrl = '';
+function lockIconUrl() {
+  if (lockUrl) return lockUrl;
+  const cv = document.createElement('canvas'); cv.width = 8; cv.height = 10; const g = cv.getContext('2d');
+  const px = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  px(2, 0, 4, 1, '#4a3228'); px(1, 1, 1, 3, '#4a3228'); px(6, 1, 1, 3, '#4a3228'); px(2, 1, 1, 3, '#9c9087'); px(5, 1, 1, 3, '#9c9087'); px(2, 0, 4, 1, '#9c9087');
+  px(0, 4, 8, 6, '#4a3228'); px(1, 5, 6, 4, '#f2b84b'); px(1, 5, 6, 1, '#ffe08a'); px(3, 6, 2, 2, '#4a3228');
+  return (lockUrl = cv.toDataURL());
+}
 function updateSettingsUI() {
   if (ui.paneSettings.hidden) return;
+  updateEpochViewUI();
   setText(ui.setAnim, t(animOn() ? 'setAnimOn' : 'setAnimOff'), 'setAnim');
   setText(ui.setDayNight, t(dayNightOn() ? 'setDayNightOn' : 'setDayNightOff'), 'setDayNight');
   ui.setTime.querySelectorAll('button').forEach(b => { b.textContent = t('time_' + b.dataset.time); });
-  ui.setSeason.querySelectorAll('button').forEach(b => { b.textContent = t('season_' + b.dataset.season); b.setAttribute('aria-pressed', String(b.dataset.season === state.settings.season)); });
+  ui.setSeason.querySelectorAll('button').forEach(b => {
+    const locked = b.dataset.season !== 'auto' && !themesUnlocked();
+    b.textContent = t('season_' + b.dataset.season);
+    b.classList.toggle('locked', locked);
+    b.title = locked ? t('themeLocked') : '';
+    if (locked) { const im = document.createElement('img'); im.className = 'lock'; im.alt = ''; im.src = lockIconUrl(); b.appendChild(im); }
+    b.setAttribute('aria-pressed', String(b.dataset.season === state.settings.season && !locked));
+  });
   ui.setGender.querySelectorAll('button').forEach(b => { b.textContent = t('gender_' + b.dataset.gender); b.setAttribute('aria-pressed', String(b.dataset.gender === state.settings.gender)); });
   ui.setNumFmt.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.fmt === state.settings.numFmt)));
   ui.setNumFmt.querySelectorAll('button').forEach(b => { b.textContent = t('numFmt_' + b.dataset.fmt); });
@@ -6476,7 +7194,7 @@ function setupProgression() {
   SEASONS.forEach(s => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn lang-pick'; b.dataset.season = s;
-    b.addEventListener('click', () => { state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
+    b.addEventListener('click', () => { if (s !== 'auto' && !themesUnlocked()) { showToast(t('themeLocked'), 'bad'); return; } state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
     ui.setSeason.appendChild(b);
   });
   // швидко перемкнути час доби (далі сонце й місяць рухаються самі)
@@ -6500,7 +7218,7 @@ function setupProgression() {
   ui.debugCard.hidden = !isDebug();
   ui.dbgHour.addEventListener('click', debugHour);
   ui.dbgX100.addEventListener('click', debugX100);
-  document.body.dataset.epoch = String(state.epoch % EPOCHS.length);
+  document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length);
   const wc = ui.warpClock.getContext('2d');
   wc.imageSmoothingEnabled = false;
   wc.drawImage(getSpriteCanvas('npc_clock'), 0, 0);      // великий годинник у центрі анімації подорожі
@@ -6543,7 +7261,7 @@ function updateTheme() {
   else { holiday = HOLIDAYS.find(h => inRange(now, h.from, h.to)) || null; bf = isBlackFriday(now); }
   const season = seasonNow();
   const auto = state.settings.season === 'auto';
-  const key = (holiday ? holiday.id : '') + '|' + bf + '|' + (state.epoch % EPOCHS.length) + '|' + season;
+  const key = (holiday ? holiday.id : '') + '|' + bf + '|' + (viewEpoch() % EPOCHS.length) + '|' + season;
   if (theme.key === key) return false;
   theme.key = key;
   if (holiday) state.stats.holidaysSeen |= (1 << HOLIDAYS.indexOf(holiday));
@@ -6589,15 +7307,19 @@ function fmtTime(sec) {
 function updateBoostsUI() {
   const now = Date.now(), power = eventPowerMult(), items = [];
   const ev = state.events;
-  if (theme.blackFriday) items.push({ cls: 'dark', icon: BLACK_FRIDAY.icon, text: t('boost_bf', fmt(1 + (CONFIG.BLACK_FRIDAY_MULT - 1) * power, 2)) });
+  const bannerBusy = !!ghostHunt || !!(trouble && ((trouble.type === 'thief' && trouble.state === 'run') || trouble.type === 'leak'));   // інакше цю подію вже показує банер — не дублюємо
+  if (!bannerBusy) { /* банер вище покаже розпродаж / чорну п'ятницю */ }
+  else if (theme.blackFriday) items.push({ cls: 'dark', icon: BLACK_FRIDAY.icon, text: t('boost_bf', fmt(1 + (CONFIG.BLACK_FRIDAY_MULT - 1) * power, 2)) });
   else if (ev.saleUntil > now) items.push({ icon: '🏷️', text: t('boost_sale', fmt(1 + (CONFIG.SALE_MULT - 1) * power, 2)) + ' ' + fmtTime((ev.saleUntil - now) / 1000) });
   if (theme.holiday) {
     const h = theme.holiday;
     let bonus = '';
     if (h.bonus.global) bonus = t('hb_global', Math.round(h.bonus.global * power * 100));
-    else if (h.bonus.depts) bonus = Object.keys(h.bonus.depts).map(i => t('hb_dept', t('dept_' + DEPARTMENTS[i].id), fmt(1 + h.bonus.depts[i] * power, 2))).join(', ');
+    else if (h.bonus.depts) bonus = Object.keys(h.bonus.depts).map(i => t('hb_dept', deptName(i), fmt(1 + h.bonus.depts[i] * power, 2))).join(', ');
     items.push({ icon: h.icon, text: t('holiday_' + h.id) + ': ' + bonus });
   }
+  // під рахунком завжди: перша рамка — баланс, біля неї — епоха
+  items.unshift({ cls: 'quiet', icon: '🪙', text: t('epochBalance', fmt(Math.floor(state.coins))) }, { cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
   if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
   if (state.ghosts > 0) items.push({ cls: 'dark', icon: '👻', text: t('boost_ghosts', state.ghosts) });
@@ -7184,7 +7906,7 @@ const SEASON_MOOD = { summer: ['#ffc060', 0.08], autumn: ['#ff9a50', 0.06], wint
 
 // Гірлянди між ліхтарями вздовж вулиці: удень тьмяні, вночі яскраво світяться кольоровими вогниками
 const BULB_SETS = [['y', 'h', 'p', 'm', 's'], ['p', 'T', 'w', 'y', 'q'], ['f', 'y', 'j', 'w', 'J'], ['v', 'T', 'f', 'y', 'w'], ['a', 'S', 'w', 's', 'T'], ['g', 'm', 'y', 'h', 'w'], ['S', 'w', 'u', 's', 'y'], ['f', 'T', 'v', 'f', 'T']];
-function bulbColors() { return (theme.holiday && theme.lights && theme.lights.length) ? theme.lights : BULB_SETS[state.epoch % BULB_SETS.length]; }
+function bulbColors() { return (theme.holiday && theme.lights && theme.lights.length) ? theme.lights : BULB_SETS[viewEpoch() % BULB_SETS.length]; }
 function awningBulbs(fn) {
   if (build || !shop) return;
   const cols = bulbColors(), tw = Math.floor(animClock * 1.5), y0 = shop.y + shop.h - 39 + 13;
@@ -7229,6 +7951,7 @@ function drawStreetGarlandGlow(L) {
 // Світло поверх затемнення: вікна будинків і магазину, ліхтарі з ореолом і плямою на тротуарі
 function drawNightLights() {
   const L = sky.lamp;
+  ui.shopOverlay.classList.toggle('lit', L > 0.3);                  // назва магазину теж світиться (CSS)
   if (L <= 0.02) return;
   ctx.globalAlpha = L * 0.9;
   if (houseLit) ctx.drawImage(houseLit, -view.offX, -view.offY);
@@ -7236,6 +7959,16 @@ function drawNightLights() {
   if (!build && shop.lit) {
     const sc = getShopScale();
     drawCanvasSprite(ctx, shop.lit, shop.x, shop.y, { sx: sc.sx, sy: sc.sy, alpha: L * 0.55 });
+    const rs = shop.roofSign, pulse = 0.85 + 0.15 * Math.sin(animClock * 2.2);        // м'яке сяйво навколо вивісок
+    if (rs) {                                                   // «CAPYTAP» світиться іншим кольором, ніж назва магазину
+      const gc = ROOF_GLOW[viewEpoch() % ROOF_GLOW.length];
+      [[10, 0.07], [7, 0.1], [4, 0.14], [2, 0.2]].forEach(([pad, al]) => { ctx.globalAlpha = L * al * pulse; R(ctx, shop.x + rs.x - pad, shop.y + rs.y - pad, rs.w + pad * 2, rs.h + pad * 2, gc); });
+      ctx.globalAlpha = L * 0.55; R(ctx, shop.x + rs.x + 1, shop.y + rs.y + 1, rs.w - 2, rs.h - 2, gc);
+      ctx.globalAlpha = L; wordG(ctx, shop.x + rs.tx, shop.y + rs.ty, 'CAPYTAP', 'w');
+      ctx.globalAlpha = L * 0.6 * pulse; wordG(ctx, shop.x + rs.tx - 1, shop.y + rs.ty, 'CAPYTAP', gc); wordG(ctx, shop.x + rs.tx + 1, shop.y + rs.ty, 'CAPYTAP', gc);
+    }
+    const sg = shop.sign; [[5, 0.06], [2, 0.1]].forEach(([pad, al]) => { ctx.globalAlpha = L * al; R(ctx, shop.x + sg.x - pad, shop.y + sg.y - pad, sg.w + pad * 2, sg.h + pad * 2, 'y'); });
+    ctx.globalAlpha = 1;
   }
   lampXs.forEach(x => {
     ctx.globalAlpha = L * 0.2;
@@ -7349,6 +8082,357 @@ function drawGhostHunt() {
   ctx.globalAlpha = 1;
 }
 
+
+/* =====================================================================
+   ЦИРК ФОРТУНИ: раз на 24 години в правому куті з'являється червоний «!», який мигає й грає марш.
+   Тап по ньому → цирк-причіп їде справа наліво ~5 с → тап по цирку → вікно з колесом на 12 секторів і клоуном Бубоном.
+   ===================================================================== */
+// 12 секторів: 8 звичайних призів колеса (монети, дохід, тап, кристал, джекпот) та 4 скіни (Капі, магазин, погода, герої)
+const CIRCUS_SECTORS = (function () {
+  const W = WHEEL_SECTORS, sk = (type, color, icon) => ({ kind: 'skin', skin: type, weight: 7, color, icon });
+  return [W[0], sk('capy', 'c', 'hat'), W[1], W[2], sk('shop', 'q', 'house'), W[3], W[4], sk('weather', 'S', 'cloud'), W[5], W[6], sk('hero', 'w', 'paw'), W[7]];
+})();
+const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_snowglobe', 'hero_party', 'hero_ninja'];   // номер у списку = біт у state.skinsMask; перша частина — тип скіна
+const circus = { x: 0, drive: 0, t: 0, bangT: 0, anim: null, angle: 0, tex: null, setup: 1, setupT: 0 };
+
+/* ---- малюнок: шатро-причіп із колесом та клоуном (кольорові коди, окремий canvas 120×80) ---- */
+const CIRCUS_ART = (function () {
+  const D = '#4a3228', DD = '#2a1d1a', RED = '#c4553d', CR = '#fff4dc', YEL = '#ffe08a', GLD = '#f2b84b', BR = '#7a4f35', OUT = '#3a1f1a';
+  const SEG = ['#c4553d', '#ffe08a', '#4f9a63', '#3d5a8c', '#ef8fa3', '#e8863c', '#8b6bb0', '#8ed4a6', '#f2b84b', '#86cfe8', '#ffc9d4', '#ff5fa2'];
+  const rr = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+  const dsc = (g, cx, cy, r, c) => { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r + r * 0.4) rr(g, cx + x, cy + y, 1, 1, c); };
+  const GL = {
+    'Ц': ['#..#.', '#..#.', '#..#.', '#####', '....#'], 'И': ['#...#', '#..##', '#.#.#', '##..#', '#...#'], 'Р': ['####.', '#...#', '####.', '#....', '#....'],
+    'К': ['#...#', '#..#.', '###..', '#..#.', '#...#'], 'Ф': ['..#..', '.###.', '#.#.#', '.###.', '..#..'], 'О': ['.###.', '#...#', '#...#', '#...#', '.###.'],
+    'Т': ['#####', '..#..', '..#..', '..#..', '..#..'], 'У': ['#...#', '#...#', '.####', '....#', '.###.'], 'Н': ['#...#', '#...#', '#####', '#...#', '#...#'],
+    'L': ['#....', '#....', '#....', '#....', '#####'], 'U': ['#...#', '#...#', '#...#', '#...#', '.###.'], 'C': ['.####', '#....', '#....', '#....', '.####'],
+    'K': ['#...#', '#..#.', '###..', '#..#.', '#...#'], 'Y': ['#...#', '.#.#.', '..#..', '..#..', '..#..'], 'I': ['#####', '..#..', '..#..', '..#..', '#####'],
+    'R': ['####.', '#...#', '####.', '#..#.', '#...#'], 'S': ['.####', '#....', '.###.', '....#', '####.']
+  };
+  // довгий прапор-стрічка з назвою; кожен стовпчик іде хвилею
+  function flag(g, x0, y0, len, t, fill, ink, text) {
+    const pix = {}; let cx = 3;
+    for (const ch of text) { if (ch === ' ') { cx += 3; continue; } const gl = GL[ch]; if (!gl) continue; gl.forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') (pix[cx + rx] = pix[cx + rx] || []).push(ry); }); cx += 6; }
+    for (let i = 0; i < len; i++) {
+      const amp = 0.4 + 1.8 * (i / len), off = Math.round(Math.sin(i * 0.32 - t * 5) * amp), top = y0 + off, h = 9;
+      const notch = i > len - 6 ? i - (len - 6) : 0;
+      for (let y = 0; y < h; y++) { if (notch && Math.abs(y - 4) < Math.min(notch, 4) && i > len - notch) continue; rr(g, x0 + i, top + y, 1, 1, (y === 0 || y === h - 1) ? CR : fill); }
+      (pix[i] || []).forEach(ry => rr(g, x0 + i, top + 2 + ry, 1, 1, ink));
+    }
+  }
+  function wheelF(g, cx, cy, rad, t) {
+    const rot = t * 0.4;
+    for (let y = -rad - 2; y <= rad + 2; y++) for (let x = -rad - 2; x <= rad + 2; x++) {
+      const r = Math.sqrt(x * x + y * y); if (r > rad + 1.6) continue; let col;
+      if (r > rad - 0.6) col = D;
+      else if (r > rad - 2.4) { const a = Math.atan2(y, x) + rot; col = (Math.floor(a / 0.4488) + Math.floor(t * 3)) % 2 ? YEL : CR; }
+      else if (r < 2.4) col = r < 1.4 ? GLD : D;
+      else { const a = Math.atan2(y, x) + rot + Math.PI * 2, k = Math.floor(a / (Math.PI * 2 / 12)) % 12; col = SEG[k]; const fr = (a / (Math.PI * 2 / 12)) % 1; if (fr < 0.1 || fr > 0.93) col = D; }
+      rr(g, cx + x, cy + y, 1, 1, col);
+    }
+    rr(g, cx - 2, cy - rad - 3, 5, 1, GLD); rr(g, cx - 2, cy - rad - 2, 5, 1, D); rr(g, cx - 1, cy - rad - 1, 3, 1, RED); rr(g, cx, cy - rad, 1, 2, RED);
+  }
+  function clown(g, ox, by, t) {
+    const arm = Math.floor(t * 3) % 2;
+    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, RED); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 7, by - 2, 3, 1, RED);
+    rr(g, ox + 1, by - 7, 3, 5, '#4f9a63'); rr(g, ox + 7, by - 7, 3, 5, YEL);
+    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, '#8b6bb0');
+    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, YEL));
+    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, CR); rr(g, ox + 4, by - 14, 3, 1, '#ef8fa3');
+    if (arm) { rr(g, ox - 2, by - 13, 3, 2, D); rr(g, ox - 3, by - 17, 2, 5, D); rr(g, ox - 2, by - 16, 1, 4, '#8b6bb0'); rr(g, ox - 4, by - 18, 2, 2, CR); rr(g, ox + 9, by - 12, 3, 5, D); rr(g, ox + 10, by - 11, 1, 4, '#8b6bb0'); }
+    else { rr(g, ox - 2, by - 12, 3, 5, D); rr(g, ox - 1, by - 11, 1, 4, '#8b6bb0'); rr(g, ox + 9, by - 13, 3, 2, D); rr(g, ox + 11, by - 17, 2, 5, D); rr(g, ox + 11, by - 16, 1, 4, '#8b6bb0'); rr(g, ox + 12, by - 18, 2, 2, CR); }
+    dsc(g, ox + 5, by - 20, 5, D); dsc(g, ox + 5, by - 20, 4, CR);
+    dsc(g, ox - 1, by - 21, 2, D); dsc(g, ox - 1, by - 21, 1, '#e8863c'); dsc(g, ox + 11, by - 21, 2, D); dsc(g, ox + 11, by - 21, 1, '#e8863c');
+    rr(g, ox + 3, by - 21, 1, 2, DD); rr(g, ox + 7, by - 21, 1, 2, DD);
+    rr(g, ox + 4, by - 19, 3, 2, RED); rr(g, ox + 5, by - 20, 1, 1, '#ff8a7a');
+    rr(g, ox + 3, by - 17, 5, 1, RED); rr(g, ox + 2, by - 18, 1, 1, RED); rr(g, ox + 8, by - 18, 1, 1, RED);
+    rr(g, ox + 3, by - 28, 5, 1, D); rr(g, ox + 4, by - 27, 3, 2, '#3d5a8c'); rr(g, ox + 3, by - 25, 5, 1, '#3d5a8c'); rr(g, ox + 2, by - 24, 7, 1, D); rr(g, ox + 5, by - 29, 1, 1, YEL);
+  }
+  // шатро: гострий верх, смуги віялом, фестончасті стінки, темний вхід (кожне малюється один раз)
+  function makeTent(o) {
+    const W = o.w, H = o.h, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    const cx = o.cx, ay = o.ay, roofB = o.roofB, floor = o.floor, scallop = o.scallop, c1 = o.c1, c2 = o.c2, cap = '#7a2f2f', shade = '#c9bfb0', fan = o.fan;
+    const hwRoof = y => 3 + (o.hw - 3) * Math.pow((y - ay) / (roofB - ay), 1.7);
+    const edge = x => roofB + 2 - Math.round(o.sc * Math.sin(Math.PI * ((((x - cx + 600) % scallop) / scallop))));
+    for (let y = ay; y <= floor; y++) {
+      const inRoof = y <= roofB + 2;
+      const hw = inRoof ? Math.round(hwRoof(Math.min(y, roofB))) : o.hw + 3 - Math.round(2 * Math.sin((y - roofB) / (floor - roofB) * Math.PI));
+      for (let x = cx - hw; x <= cx + hw; x++) {
+        const e = edge(x); let col;
+        if (y < e) { if (y < ay + o.capH && Math.abs(x - cx) < 4 + (y - ay) * 0.2) col = cap; else col = Math.floor(((x - cx) / Math.max(2, y - ay + 2)) * fan + 200) % 2 ? c1 : c2; }
+        else { col = Math.floor((x - cx + 200) / o.stripe) % 2 ? c1 : c2; if (y > e + 1 && y < e + 3 && (x + y) % 2) col = shade; }
+        rr(g, x, y, 1, 1, col);
+      }
+    }
+    [[cx - 2, ay + 6], [cx + 1, ay + 8], [cx - 1, ay + 4]].forEach(p => rr(g, p[0], p[1], 1, 1, CR));
+    if (o.door) {
+      for (let y = 48; y <= floor; y++) { const hw = y < 52 ? 3 + (y - 48) * 1.5 : 9; for (let x = Math.round(cx - hw); x <= Math.round(cx + hw); x++) rr(g, x, y, 1, 1, '#1d1410'); }
+      for (let y = 50; y <= floor; y++) { rr(g, cx - 10 - Math.floor((y - 50) / 8), y, 2, 1, CR); rr(g, cx + 9 + Math.floor((y - 50) / 8), y, 2, 1, CR); }
+    } else {
+      for (let y = floor - 9; y <= floor; y++) { const hw = y < floor - 6 ? 2 : 4; for (let x = cx - hw; x <= cx + hw; x++) rr(g, x, y, 1, 1, '#1d1410'); }
+    }
+    const d = g.getImageData(0, 0, W, H).data, has = (x, y) => x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 0;
+    const out = document.createElement('canvas'); out.width = W; out.height = H; const og = out.getContext('2d'); og.fillStyle = OUT;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!has(x, y) && (has(x - 1, y) || has(x + 1, y) || has(x, y - 1) || has(x, y + 1))) og.fillRect(x, y, 1, 1);
+    og.drawImage(cv, 0, 0);
+    return out;
+  }
+  let tents = null;
+  const clamp01 = v => Math.max(0, Math.min(1, v)), eo = k => 1 - (1 - k) * (1 - k), back = k => { const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
+  const lerp = (a, b, k) => a + (b - a) * k;
+  // s: 0 — їде причіпом, 1 — розкладений: платформа й колеса зникли, шатро сіло на землю, виросли два малі шатра, клоун вийшов і махає
+  function draw(g, t, s, moving) {
+    if (!tents) tents = {
+      main: makeTent({ w: 160, h: 84, cx: 80, ay: 14, roofB: 44, floor: 62, hw: 31, scallop: 12, sc: 3, fan: 5, stripe: 6, capH: 12, c1: RED, c2: CR, door: true }),
+      side: makeTent({ w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: RED, c2: CR, door: false }),
+      side2: makeTent({ w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: CR, c2: RED, door: false })
+    };
+    g.clearRect(0, 0, 160, 84);
+    const e = (a, b) => clamp01((s - a) / (b - a)), GY = 76;
+    const bob = moving ? Math.floor(t * 6) % 2 : 0, sink = 14 * eo(e(0.10, 0.45)), platA = 1 - eo(e(0.0, 0.30));
+    // малі шатра виростають із землі (з відскоком) і здіймають пил
+    [[tents.side, 30, e(0.30, 0.58)], [tents.side2, 130, e(0.45, 0.72)]].forEach(([cv, cx, k]) => {
+      if (k <= 0) return;
+      const sc = Math.max(0.05, back(k)), sx = 0.6 + 0.4 * Math.min(1, sc);
+      g.save(); g.translate(cx, GY); g.scale(sx, sc); g.drawImage(cv, -24, -38); g.restore();
+      if (k < 0.95) for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI, r = 2 + 6 * k + i % 2; g.globalAlpha = 0.6 * (1 - k); dsc(g, Math.round(cx + Math.cos(a) * (14 + 10 * k) * (i % 2 ? 1 : -1)), GY - 1 - Math.round(Math.sin(a) * 3 * k), 2, CR); }
+      g.globalAlpha = 1;
+    });
+    // головне шатро (разом зі щоглою й прапором) осідає на землю
+    g.save(); g.translate(0, bob + sink);
+    g.drawImage(tents.main, 0, 0);
+    rr(g, 80, 3, 1, 12, OUT); flag(g, 81, 3, 70, t, RED, CR, circusFlagText());
+    g.restore();
+    // платформа й колеса візка зникають
+    if (platA > 0.02) {
+      g.save(); g.globalAlpha = platA; g.translate(0, bob + (1 - platA) * 10);
+      rr(g, 38, 62, 84, 6, D); rr(g, 39, 63, 82, 4, BR); rr(g, 39, 63, 82, 1, '#a8703f'); rr(g, 39, 67, 82, 1, '#5a3a28');
+      for (let x = 42; x < 122; x += 6) rr(g, x, 65, 2, 1, YEL);
+      rr(g, 34, 65, 5, 2, D); rr(g, 34, 64, 2, 1, GLD);
+      for (let x = 40; x <= 124; x += 4) rr(g, x, 61, 2, 1, (Math.floor(t * 3) + (x - 40) / 4) % 2 ? YEL : '#4f9a63');
+      g.restore();
+      g.save(); g.globalAlpha = platA; g.translate(0, (1 - platA) * 12);
+      [48, 110].forEach(wx => { const wy = 71; dsc(g, wx, wy, 5, DD); dsc(g, wx, wy, 4, '#6a5a50'); dsc(g, wx, wy, 1, GLD); for (let k = 0; k < 4; k++) { const a = t * 6 * platA + k * Math.PI / 2; for (let i = 1; i < 4; i++) rr(g, wx + Math.cos(a) * i, wy + Math.sin(a) * i, 1, 1, CR); } });
+      g.restore();
+      g.globalAlpha = 1;
+    }
+    // колесо фортуни їде з платформи на землю, ближче до малого шатра
+    const wk = eo(e(0.10, 0.60)), wx = lerp(50, 108, wk), wy = lerp(52 + bob, 64, wk);
+    if (wy + 10 < GY) rr(g, wx - 1, wy + 10, 3, GY - wy - 10, D);
+    wheelF(g, Math.round(wx), Math.round(wy), 11, t);
+    // клоун: стоїть на платформі → заходить у шатро → виходить на землю й махає рукою
+    const walkIn = e(0.12, 0.30), walkOut = e(0.62, 0.84);
+    let cxp = 96, vis = 1;
+    if (s < 0.30) cxp = lerp(96, 75, eo(walkIn));
+    else if (s < 0.62) { cxp = 75; vis = 0; }
+    else cxp = lerp(75, 52, eo(walkOut));
+    if (s > 0.26 && s <= 0.34) vis = 1 - e(0.26, 0.34); else if (s >= 0.56 && s < 0.64) vis = e(0.56, 0.64);
+    if (vis > 0.02) { g.globalAlpha = vis; clown(g, Math.round(cxp), Math.round(62 + sink + bob * (s < 0.3 ? 1 : 0)), t); g.globalAlpha = 1; }
+  }
+  // клоун у вікні колеса: жонглює, підстрибує, моргає (canvas 72×40)
+  function clownWindow(g, t) {
+    g.clearRect(0, 0, 72, 40); rr(g, 0, 0, 72, 40, '#c4ebf5');
+    for (let x = 0; x < 72; x += 6) { g.globalAlpha = 0.25; rr(g, x, 0, 3, 40, '#ffffff'); g.globalAlpha = 1; }
+    rr(g, 0, 34, 72, 6, RED); rr(g, 0, 34, 72, 1, CR);
+    for (let i = 0; i < 12; i++) rr(g, i * 6 + 1, 36, 2, 2, i % 2 ? YEL : CR);
+    const hop = Math.abs(Math.sin(t * 3)) * 3, by = 33 - hop, ox = 30;
+    ['#c4553d', YEL, '#4f9a63'].forEach((c, k) => { const a = t * 4 + k * 2.09, bx = ox + 5 + Math.cos(a) * 16, byb = by - 28 - Math.sin(a) * 10; dsc(g, bx, byb, 2, D); dsc(g, bx, byb, 1, c); });
+    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, RED); rr(g, ox + 7, by - 2, 3, 1, RED);
+    rr(g, ox + 1, by - 7, 3, 5, '#4f9a63'); rr(g, ox + 7, by - 7, 3, 5, YEL);
+    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, '#8b6bb0');
+    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, YEL));
+    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, CR); rr(g, ox + 4, by - 14, 3, 1, '#ef8fa3');
+    const up = Math.floor(t * 4) % 2;
+    rr(g, ox - 2, by - (up ? 17 : 12), 3, 5, D); rr(g, ox - 1, by - (up ? 16 : 11), 1, 4, '#8b6bb0');
+    rr(g, ox + 10, by - (up ? 12 : 17), 3, 5, D); rr(g, ox + 11, by - (up ? 11 : 16), 1, 4, '#8b6bb0');
+    const hy = by - 20;
+    dsc(g, ox + 5, hy, 5, D); dsc(g, ox + 5, hy, 4, CR);
+    dsc(g, ox - 1, hy - 1, 2, D); dsc(g, ox - 1, hy - 1, 1, '#e8863c'); dsc(g, ox + 11, hy - 1, 2, D); dsc(g, ox + 11, hy - 1, 1, '#e8863c');
+    if ((t % 2.4) > 2.25) { rr(g, ox + 3, hy - 1, 2, 1, DD); rr(g, ox + 7, hy - 1, 2, 1, DD); } else { rr(g, ox + 3, hy - 1, 1, 2, DD); rr(g, ox + 7, hy - 1, 1, 2, DD); }
+    rr(g, ox + 4, hy + 1, 3, 2, RED); rr(g, ox + 5, hy, 1, 1, '#ff8a7a');
+    const sm = Math.floor(t * 2) % 2; rr(g, ox + 3, hy + 3 + sm, 5, 1, RED); rr(g, ox + 2, hy + 2 + sm, 1, 1, RED); rr(g, ox + 8, hy + 2 + sm, 1, 1, RED);
+    rr(g, ox + 3, hy - 8, 5, 1, D); rr(g, ox + 4, hy - 7, 3, 2, '#3d5a8c'); rr(g, ox + 3, hy - 5, 5, 1, '#3d5a8c'); rr(g, ox + 2, hy - 4, 7, 1, D); rr(g, ox + 5, hy - 9, 1, 1, YEL);
+    for (let i = 0; i < 8; i++) { const x = (i * 9 + t * 8) % 72, y = (i * 7 + t * 14) % 34; rr(g, x, y, 1, 1, ['#ef8fa3', YEL, '#4f9a63', '#3d5a8c'][i % 4]); }
+  }
+  // червоний «!» (12×26)
+  let bang = null;
+  function bangSprite() {
+    if (bang) return bang;
+    bang = document.createElement('canvas'); bang.width = 12; bang.height = 26; const g = bang.getContext('2d');
+    for (let y = 0; y < 18; y++) { const w = Math.round(10 - y * 0.32), x0 = 6 - (w >> 1); rr(g, x0, y, w, 1, '#d62f2f'); rr(g, x0 + w - 2, y, 2, 1, '#a82020'); rr(g, x0, y, 1, 1, '#ef5a4f'); }
+    dsc(g, 6, 22, 3, '#d62f2f'); rr(g, 7, 22, 3, 2, '#a82020'); rr(g, 4, 20, 1, 1, '#ef5a4f');
+    return bang;
+  }
+  return { draw, clownWindow, bangSprite };
+})();
+function circusFlagText() { return t('circusFlag'); }
+
+/* ---- логіка ---- */
+function circusStopX() { return Math.min(mailBoxX() + 40, Math.max(visL() + 72, mailBoxX())); }   // стає так, щоб шатра повністю закрили поштомат
+function circusStartX() { return visR() + 90; }
+function bangPos() { return { x: Math.min(visR() - 14, shop.x + shop.w + 13), y: LAYOUT.streetTop + 9 }; }   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
+function circusY() { return mailRoadY() + 2; }
+function circusQuiet() { return !dialog.active && !epochIntro.active && !build && !trouble && !ghostHunt && ui.modal.hidden && ui.wheelModal.hidden && ui.letterModal.hidden && ui.circusModal.hidden; }
+function updateCircus(dt) {
+  const c = state.circus, now = Date.now();
+  circus.t += dt;
+  const dayMs = CONFIG.DAY_SECONDS * 1000;
+  if (!c.next) c.next = now + CONFIG.CIRCUS_FIRST_MINUTES * 60000;
+  if (!circus.inited) {                           // після перезапуску цирк уже стоїть розкладений (або від'їжджає)
+    circus.inited = true;
+    if (c.phase === 2 || c.phase === 2.5 || c.phase === 2.7) { c.phase = 3; circus.setup = 1; }
+    else if (c.phase === 3.5) c.phase = 4;
+    if (c.phase === 3) circus.setup = 1;
+  }
+  if (c.phase === 0) {
+    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs; c.phase = 1; c.spun = 0; circus.bangT = 0; playSfx('circusMarch'); showToast(t('circusBang'), 'good'); saveGame(); }
+  } else if (c.phase === 1) {                      // «!» чекає на тап, а з часом зникає (гравець сам вирішує, чи тикати)
+    circus.bangT += dt;
+    if (circus.bangT > CONFIG.CIRCUS_BANG_SECONDS) { c.phase = 0; saveGame(); }
+  } else if (c.phase === 2.5) {                    // їде справа наліво
+    circus.drive += dt;
+    const k = Math.min(1, circus.drive / CONFIG.CIRCUS_DRIVE_SECONDS);
+    circus.x = circusStartX() + (circusStopX() - circusStartX()) * k;
+    circus.setup = 0;
+    if (k >= 1) { c.phase = 2.7; circus.x = circusStopX(); circus.setupT = 0; playSfx('build'); }
+  } else if (c.phase === 2.7) {                    // шатро розкладається: колеса й платформа зникають, вилазять три куполи, виходить клоун
+    circus.setupT += dt; circus.x = circusStopX();
+    circus.setup = Math.min(1, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
+    if (circus.setup >= 1) { c.phase = 3; showToast(t('circusArrived'), 'good'); playSfx('wheelWin'); saveGame(); }
+  } else if (c.phase === 3) {
+    circus.x = circusStopX(); circus.setup = 1;
+  } else if (c.phase === 3.5) {                    // збирається назад
+    circus.setupT -= dt; circus.x = circusStopX();
+    circus.setup = Math.max(0, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
+    if (circus.setup <= 0) { c.phase = 4; playSfx('pip'); }
+  } else if (c.phase === 4) {                      // від'їжджає ліворуч
+    circus.x -= 60 * dt;
+    if (circus.x < worldL() - 140) { c.phase = 0; if (c.next < now + 60000) c.next = now + 60000; saveGame(); }
+  }
+  updateCircusSpin(dt);
+  if (!ui.circusModal.hidden) { drawCircusWheel(); const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; CIRCUS_ART.clownWindow(g, circus.t); }
+}
+const circusCanvas = document.createElement('canvas'); circusCanvas.width = 160; circusCanvas.height = 84;
+function drawCircus() {
+  const c = state.circus; if (c.phase < 2) return;
+  const s = circus.setup === undefined ? 0 : circus.setup, moving = c.phase === 2.5 || c.phase === 4;
+  const g = circusCanvas.getContext('2d'); CIRCUS_ART.draw(g, circus.t, s, moving);
+  const x = Math.round(circus.x) - 80, y = circusY();
+  ctx.globalAlpha = 0.25; R(ctx, x + 6 + Math.round(8 * s), y - 2, 128 - Math.round(8 * s) * 2 + (s < 0.5 ? -30 + Math.round(60 * s) : 0), 3, 'd'); ctx.globalAlpha = 1;
+  ctx.drawImage(circusCanvas, x, y - 76);
+  if (c.phase === 3 && !c.spun && Math.floor(circus.t * 2) % 2) {        // мерехтливі іскри — «тапни на мене»
+    R(ctx, x + 26, y - 78, 1, 3, 'y'); R(ctx, x + 25, y - 77, 3, 1, 'y'); R(ctx, x + 136, y - 56, 1, 3, 'y'); R(ctx, x + 135, y - 55, 3, 1, 'y'); R(ctx, x + 70, y - 90, 1, 3, 'y'); R(ctx, x + 69, y - 89, 3, 1, 'y');
+  }
+}
+function drawBang() {
+  const c = state.circus; if (c.phase !== 1) return;
+  const p = bangPos(), steps = [1, 1.15, 1.3, 1.15], k = steps[Math.floor(circus.bangT * 4) % 4], spr = CIRCUS_ART.bangSprite();
+  const w = Math.round(9 * k), h = Math.round(20 * k);
+  if (circus.bangT > CONFIG.CIRCUS_BANG_SECONDS - 8 && Math.floor(circus.bangT * 6) % 2) return;       // наприкінці блимає й зникає
+  ctx.globalAlpha = 0.25; R(ctx, p.x - 5, p.y - 1, 11, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.drawImage(spr, Math.round(p.x - w / 2), p.y - h, w, h);
+}
+function hitCircus(p) {
+  const c = state.circus;
+  if (c.phase === 1) {
+    const b = bangPos();
+    if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) { c.phase = 2.5; circus.drive = 0; circus.x = circusStartX(); playSfx('build'); saveGame(); return true; }
+  } else if (c.phase === 3) {
+    const y = circusY();
+    if (p.x >= circus.x - 80 && p.x <= circus.x + 80 && p.y >= y - 80 && p.y <= y) { openCircus(); return true; }
+  }
+  return false;
+}
+
+/* ---- вікно колеса ---- */
+function drawCircusIcon(g, icon, cx, cy) {
+  switch (icon) {
+    case 'house': R(g, cx - 5, cy - 1, 11, 7, 'd'); R(g, cx - 4, cy, 9, 5, 'w'); for (let i = 0; i < 5; i++) R(g, cx - 5 + i, cy - 2 - i, 11 - 2 * i, 1, 'd'); for (let i = 0; i < 4; i++) R(g, cx - 4 + i, cy - 2 - i, 9 - 2 * i, 1, 'r'); R(g, cx - 1, cy + 2, 3, 4, 'd'); break;
+    case 'cloud': disc(g, cx - 3, cy + 1, 3, 'd'); disc(g, cx + 3, cy + 1, 3, 'd'); disc(g, cx, cy - 2, 4, 'd'); disc(g, cx - 3, cy + 1, 2, 'w'); disc(g, cx + 3, cy + 1, 2, 'w'); disc(g, cx, cy - 2, 3, 'w'); R(g, cx - 4, cy + 3, 9, 2, 'w'); disc(g, cx + 5, cy - 5, 2, 'y'); break;
+    case 'paw': disc(g, cx, cy + 2, 4, 'd'); disc(g, cx, cy + 2, 3, 'c'); [[-4, -3], [-1, -5], [2, -5], [5, -3]].forEach(p => { disc(g, cx + p[0], cy + p[1], 2, 'd'); disc(g, cx + p[0], cy + p[1], 1, 'c'); }); break;
+    case 'bag': R(g, cx - 4, cy - 2, 9, 8, 'd'); R(g, cx - 3, cy - 1, 7, 6, 'h'); R(g, cx - 2, cy - 5, 5, 3, 'd'); R(g, cx - 1, cy - 4, 3, 1, 'h'); R(g, cx, cy, 1, 3, 'd'); break;
+    case 'hat': R(g, cx - 6, cy + 2, 13, 3, 'd'); R(g, cx - 5, cy + 3, 11, 1, 'u'); R(g, cx - 3, cy - 6, 7, 9, 'd'); R(g, cx - 2, cy - 5, 5, 7, 'u'); R(g, cx - 2, cy, 5, 2, 'y'); R(g, cx, cy - 3, 1, 1, 'w'); break;
+    case 'gift': R(g, cx - 5, cy - 1, 11, 8, 'd'); R(g, cx - 4, cy, 9, 6, 'r'); R(g, cx - 1, cy - 1, 3, 8, 'y'); R(g, cx - 5, cy + 2, 11, 1, 'y'); R(g, cx - 4, cy - 4, 4, 3, 'd'); R(g, cx - 3, cy - 3, 2, 1, 'y'); R(g, cx + 1, cy - 4, 4, 3, 'd'); R(g, cx + 2, cy - 3, 2, 1, 'y'); break;
+    case 'clover': disc(g, cx - 3, cy - 2, 3, 'd'); disc(g, cx + 3, cy - 2, 3, 'd'); disc(g, cx - 3, cy + 3, 3, 'd'); disc(g, cx + 3, cy + 3, 3, 'd'); disc(g, cx - 3, cy - 2, 2, 'g'); disc(g, cx + 3, cy - 2, 2, 'g'); disc(g, cx - 3, cy + 3, 2, 'g'); disc(g, cx + 3, cy + 3, 2, 'g'); R(g, cx, cy, 1, 7, 'G'); break;
+    default: drawWheelIcon(g, icon, cx, cy);
+  }
+}
+function buildCircusWheelTexture() {
+  const S = 128, cv = document.createElement('canvas'); cv.width = S; cv.height = S; const g = cv.getContext('2d');
+  const cx = 64, cy = 64, step = Math.PI / 6;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const dx = x + 0.5 - cx, dy = y + 0.5 - cy, r = Math.sqrt(dx * dx + dy * dy);
+    if (r > 62) continue;
+    let col;
+    if (r >= 59) col = 'd';
+    else if (r < 9) col = r >= 7 ? 'd' : 'h';
+    else { let a = Math.atan2(dx, -dy); if (a < 0) a += Math.PI * 2; const sec = Math.floor(a / step), frac = a / step - sec, edge = Math.min(frac, 1 - frac) * step * r; col = edge < 0.9 ? 'd' : (r >= 55.5 && r < 57 ? ((Math.floor(a / step * 3) % 2) ? 'w' : 'y') : CIRCUS_SECTORS[sec].color); }
+    R(g, x, y, 1, 1, col);
+  }
+  CIRCUS_SECTORS.forEach((s, i) => { const a = (i + 0.5) * step; drawCircusIcon(g, s.icon, Math.round(cx + Math.sin(a) * 38), Math.round(cy - Math.cos(a) * 38)); });
+  return cv;
+}
+function drawCircusWheel() {
+  const g = ui.circusWheel.getContext('2d'); g.imageSmoothingEnabled = false;
+  if (!circus.tex) circus.tex = buildCircusWheelTexture();
+  g.clearRect(0, 0, 128, 140); g.save(); g.translate(64, 76); g.rotate(circus.angle); g.drawImage(circus.tex, -64, -64); g.restore();
+  for (let i = 0; i < 12; i++) { R(g, 64 - (12 - i), 2 + i, (12 - i) * 2, 1, 'd'); if (i > 1) R(g, 64 - (12 - i) + 2, 2 + i, (12 - i) * 2 - 4, 1, 'r'); }
+}
+function openCircus() {
+  if (dialog.active) return;
+  ui.circusModal.hidden = false;
+  ui.circusTitle.textContent = t('circusTitle'); ui.circusSub.textContent = t('circusSub');
+  ui.circusClose.textContent = t(state.circus.spun ? 'circusDone' : 'wheelClose');
+  ui.circusResult.textContent = '';
+  updateCircusButtons();
+}
+function updateCircusButtons() {
+  ui.circusBtn.textContent = t('circusSpin');
+  ui.circusBtn.disabled = !!circus.anim || !!state.circus.spun;
+}
+function closeCircus() {
+  if (circus.anim) return;
+  ui.circusModal.hidden = true;
+  if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
+}
+function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !(state.skinsMask & (1 << i))); }
+function circusSpin() {
+  if (circus.anim || state.circus.spun) return;
+  const now = Date.now(), weight = x => (x.kind === 'crystal' && !state.story.finale ? 0 : (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : x.weight));
+  const total = CIRCUS_SECTORS.reduce((a, x) => a + weight(x), 0);
+  let roll = Math.random() * total, idx = 0;
+  for (; idx < CIRCUS_SECTORS.length - 1; idx++) { roll -= weight(CIRCUS_SECTORS[idx]); if (roll < 0) break; }
+  const sec = CIRCUS_SECTORS[idx];
+  let text;
+  if (sec.kind === 'coins' || sec.kind === 'jackpot') {
+    const gain = Math.floor(state.cps * sec.seconds + sec.flat * levelMult()); state.coins += gain; state.totalEarned += gain;
+    text = t(sec.kind === 'jackpot' ? 'prize_jackpot' : 'prize_coins', fmt(gain)); if (sec.kind === 'jackpot') state.stats.jackpots++;
+  } else if (sec.kind === 'crystal') { state.crystals += 1; state.crystalsTotal += 1; text = t('prize_crystal', 1); }
+  else if (sec.kind === 'income') { state.events.incomeBoostUntil = now + sec.minutes * 60000; state.events.incomeBoostMult = sec.mult; text = t('prize_income', sec.mult, sec.minutes); }
+  else if (sec.kind === 'tap') { state.events.tapBoostUntil = now + sec.minutes * 60000; state.events.tapBoostMult = sec.mult; text = t('prize_tap', sec.mult, sec.minutes); }
+  else { const free = circusFreeSkins(sec.skin), pick = free[Math.floor(Math.random() * free.length)]; state.skinsMask |= (1 << pick); text = t('prize_skin', t('skin_' + SKIN_POOL[pick])); }
+  recalcIncome();
+  const step = Math.PI / 6, from = circus.angle % (Math.PI * 2), to = Math.PI * 2 * 5 + (Math.PI * 2 - (idx + 0.5) * step) + rand(-0.35, 0.35) * step;
+  circus.anim = { t: 0, dur: CONFIG.WHEEL_SPIN_SECONDS, from, to, text, again: false };
+  ui.circusResult.textContent = '…';
+  state.circus.spun = 1;
+  updateCircusButtons(); updateUI(); saveGame();
+}
+function updateCircusSpin(dt) {
+  const a = circus.anim; if (!a) return;
+  a.t += dt;
+  const k = Math.min(1, a.t / a.dur), e = 1 - Math.pow(1 - k, 3), prev = Math.floor(circus.angle / (Math.PI / 6));
+  circus.angle = a.from + (a.to - a.from) * e;
+  if (Math.floor(circus.angle / (Math.PI / 6)) !== prev && performance.now() - audio.lastTick > 40) { audio.lastTick = performance.now(); playSfx('wheelTick'); }
+  if (k >= 1) {
+    circus.anim = null; circus.angle = a.to % (Math.PI * 2);
+    ui.circusResult.textContent = a.text; playSfx('wheelWin'); showToast(a.text, 'good');
+    ui.circusClose.textContent = t(state.circus.spun ? 'circusDone' : 'wheelClose');
+    updateCircusButtons(); updateUI(); saveGame();
+  }
+}
+
+
 /* ---------- Поштова машина: раз на 40 хвилин привозить лист із випадковим бонусом ---------- */
 const mail = { state: 'idle', x: 0, t: 0, letter: null };
 function mailRoadY() { return worldB() - 7; }                 // де стоять колеса на дорозі
@@ -7359,7 +8443,7 @@ function updateMail(dt) {
   if (!ev.nextMail) ev.nextMail = now + CONFIG.MAIL_FIRST_SECONDS * 1000;
   const quiet = !dialog.active && !epochIntro.active && !build && ui.modal.hidden && ui.wheelModal.hidden && ui.letterModal.hidden;
   if (mail.state === 'idle') {
-    if (now >= ev.nextMail && quiet) {
+    if (now >= ev.nextMail && quiet && state.circus.phase === 0) {
       ev.nextMail = now + CONFIG.MAIL_MINUTES * 60000;
       if (!ev.mailPending) { mail.state = 'arriving'; mail.x = worldR() + 50; mail.t = 0; playSfx('sale'); showToast(t('mailArrive'), 'big'); }
     }
@@ -7476,7 +8560,7 @@ function streakMult(streak) { return 1 + CONFIG.WHEEL_STREAK_STEP * (Math.min(st
 
 // Маленькі піксельні значки на секторах
 function drawWheelIcon(g, kind, cx, cy) {
-  const cc = EPOCH_COIN_COLORS[state.epoch % EPOCH_COIN_COLORS.length];
+  const cc = EPOCH_COIN_COLORS[viewEpoch() % EPOCH_COIN_COLORS.length];
   const coin = (x, y) => { disc(g, x, y, 4, 'd'); disc(g, x, y, 3, cc[0]); R(g, x - 1, y - 2, 2, 1, cc[1]); };
   switch (kind) {
     case 'gem': { const rows = SPRITES[gemSprite()].rows; rows.forEach((row, ry) => { for (let rx = 0; rx < 8; rx++) if (row[rx] !== '.') R(g, cx - 4 + rx, cy - 4 + ry, 1, 1, row[rx]); }); break; }
@@ -7525,17 +8609,35 @@ function buildWheelTexture() {
   });
   return c;
 }
+// Барабан фортуни: вертикальний барабан із 8 комірок-призів; обертається вгору, призова комірка зупиняється між двома червоними стрілками
+let drumCells = null;
+function buildDrumCells() {
+  return WHEEL_SECTORS.map(sec => {
+    const c = document.createElement('canvas'); c.width = 96; c.height = 30; const g = c.getContext('2d');
+    R(g, 0, 0, 96, 30, 'd'); R(g, 2, 2, 92, 26, sec.color); R(g, 2, 2, 92, 3, 'w'); R(g, 2, 25, 92, 3, 'd'); g.globalAlpha = 0.25; R(g, 2, 25, 92, 3, 'd'); g.globalAlpha = 1;
+    drawWheelIcon(g, sec.icon, 26, 15); drawWheelIcon(g, sec.icon, 70, 15);
+    R(g, 47, 6, 2, 18, 'd'); R(g, 46, 4, 4, 2, 'w'); R(g, 46, 24, 4, 2, 'w');
+    return c;
+  });
+}
 function drawWheel() {
   const g = ui.wheelCanvas.getContext('2d');
   g.imageSmoothingEnabled = false;
   g.clearRect(0, 0, 128, 140);
-  g.save();
-  g.translate(64, 76);
-  g.rotate(wheelAngle);
-  g.drawImage(wheelTexture, -64, -64);
-  g.restore();
-  // стрілка-вказівник зверху
-  for (let i = 0; i < 12; i++) { R(g, 64 - (12 - i) , 2 + i, (12 - i) * 2, 1, 'd'); if (i > 1) R(g, 64 - (12 - i) + 2, 2 + i, (12 - i) * 2 - 4, 1, 'r'); }
+  if (!drumCells) drumCells = buildDrumCells();
+  R(g, 12, 18, 104, 116, 'd'); R(g, 14, 20, 100, 112, 'k');                                  // корпус барабана
+  const step = Math.PI / 4, order = [];
+  for (let i = 0; i < 8; i++) { const ang = (i + 0.5) * step + wheelAngle, c = Math.cos(ang); if (c > 0.05) order.push({ i, c, y: 76 - Math.sin(ang) * 52 }); }
+  order.sort((p, q) => p.c - q.c).forEach(o => {
+    const h = Math.max(2, Math.round(30 * o.c)), y = Math.round(o.y - h / 2);
+    g.drawImage(drumCells[o.i], 0, 0, 96, 30, 16, y, 96, h);
+    if (o.c < 0.95) { g.globalAlpha = 0.55 * (1 - o.c); R(g, 16, y, 96, h, 'k'); g.globalAlpha = 1; }
+  });
+  g.globalAlpha = 0.28; R(g, 16, 22, 96, 18, 'k'); R(g, 16, 112, 96, 18, 'k'); g.globalAlpha = 1;   // затемнення зверху й знизу — об'єм
+  R(g, 8, 14, 112, 6, 'e'); R(g, 8, 14, 112, 2, 'E'); R(g, 8, 132, 112, 6, 'e'); R(g, 8, 136, 112, 2, 'd'); R(g, 8, 14, 112, 1, 'd'); R(g, 8, 19, 112, 1, 'd'); R(g, 8, 132, 112, 1, 'd');
+  for (let x = 14; x < 118; x += 12) { R(g, x, 16, 2, 2, 'd'); R(g, x, 134, 2, 2, 'd'); }
+  for (let i = 0; i < 9; i++) { R(g, 2 + i, 66 + i, 1, 20 - i * 2 > 0 ? 20 - i * 2 : 1, 'r'); R(g, 125 - i, 66 + i, 1, 20 - i * 2 > 0 ? 20 - i * 2 : 1, 'r'); }   // червоні стрілки-вказівники з боків
+  R(g, 0, 66, 2, 20, 'd'); R(g, 126, 66, 2, 20, 'd');
 }
 function updateWheelUI() {
   if (ui.wheelModal.hidden) return;
@@ -7631,6 +8733,7 @@ function updateEvents(dt) {
   updateGhostHunt(dt);
   updateWeather(dt);
   updateMail(dt);
+  updateCircus(dt);
   updateBirds(dt);
   updateEpochFeatures(dt);
   updateShootingStar(dt);
@@ -7679,12 +8782,16 @@ function initEvents() {
   ui.wheelOpen.addEventListener('click', openWheel);
   ui.wheelClose.addEventListener('click', closeWheel);
   ui.wheelBtn.addEventListener('click', () => spinWheel(false));
+  ui.circusBtn.addEventListener('click', circusSpin);
+  ui.circusClose.addEventListener('click', closeCircus);
+  ui.circusModal.addEventListener('click', e => { if (e.target === ui.circusModal) closeCircus(); });
+  ui.dbgCircus.addEventListener('click', () => { const c = state.circus; if (c.phase === 0 || c.phase === 4) { c.phase = 0; c.next = Date.now() - 1; } showToast('Цирк скоро!', 'good'); });
   ui.letterBtn.addEventListener('click', claimLetter);
   ui.wheelGhostBtn.addEventListener('click', () => spinWheel(true));
   ui.wheelModal.addEventListener('click', e => { if (e.target === ui.wheelModal) closeWheel(); });
   if (theme.holiday) {
     const h = theme.holiday;
-    const bonus = h.bonus.global ? t('hb_global', Math.round(h.bonus.global * 100)) : Object.keys(h.bonus.depts || {}).map(i => t('hb_dept', t('dept_' + DEPARTMENTS[i].id), fmt(1 + h.bonus.depts[i], 2))).join(', ');
+    const bonus = h.bonus.global ? t('hb_global', Math.round(h.bonus.global * 100)) : Object.keys(h.bonus.depts || {}).map(i => t('hb_dept', deptName(i), fmt(1 + h.bonus.depts[i], 2))).join(', ');
     showToast(t('holidayToast', h.icon + ' ' + t('holiday_' + h.id), bonus), 'big');
   }
 }
@@ -7704,7 +8811,7 @@ function speakerSprite(sp) {
   if (sp === 'shnyr') return 'npc_shnyr';
   if (sp === 'clock') return 'npc_clock';
   if (/^shnyr\d$/.test(sp) || GUEST_IDS.includes(sp)) return 'npc_' + sp;       // костюми Шниря та гості епох
-  return 'team_' + sp;
+  return teamSprite(sp);
 }
 function speakerName(sp) {
   if (sp === 'narr' || sp === 'title') return '';
@@ -7997,7 +9104,7 @@ function doTap(x, y) {
   state.coins += gain;
   state.totalEarned += gain;
   state.taps += 1;
-  if (animOn()) shopAnim.vel = 7;        // поштовх пружині — магазин сплющується
+  if (animOn()) shopAnim.vel = 4.2;      // м'який поштовх: магазин легко присідає й пружно вертається
   playSfx('tap');
   spawnTapEffects(x, y);
   spawnFloater(x + rand(-8, 8), y - 6, '+' + fmt(gain, 1));
@@ -8021,20 +9128,19 @@ function setupInput() {
     const p = toScenePoint(e.clientX, e.clientY);
     if (handleEventTap(p)) return;              // калюжа або єнот
     if (hitGhost(p)) return;                    // привид (Хелловін)
+    if (hitCircus(p)) return;                   // червоний «!» або цирк Фортуни
     if (hitMail(p)) return;                     // конверт біля поштової скриньки
-    const actor = hitActor(p);                  // звірятка стоять попереду магазину — тап по ним каже фразу
-    if (actor) { actor.hop = 1; actorSay(actor); if (hitShop(p)) doTap(p.x, p.y); return; }   // і тап по магазину теж рахується
-    const guest = hitGuest(p);                  // гість епохи теж щось каже
-    if (guest) { guestSay(guest); if (hitShop(p)) doTap(p.x, p.y); return; }
-    if (hitCapy(p)) { capySay(); if (hitShop(p)) doTap(p.x, p.y); return; }
-    if (hitShop(p)) doTap(p.x, p.y);
+    const actor = hitActor(p);                  // звірятко підстрибує й каже фразу, а магазин усе одно дає монетку
+    if (actor) { actor.hop = 1; actorSay(actor); }
+    else { const guest = hitGuest(p); if (guest) guestSay(guest); else if (hitCapy(p)) capySay(); }
+    doTap(p.x, p.y);                            // тапати можна в будь-яку точку екрана
   };
   // На телефоні вулицю можна гортати пальцем: тап рахується при відпусканні, якщо палець не рушав
   const drags = new Map();
   ui.scene.addEventListener('pointerdown', e => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     if (!ui.scene.classList.contains('pannable')) { sceneTap(e); return; }
-    drags.set(e.pointerId, { x: e.clientX, pan: cam.pan, moved: false });
+    drags.set(e.pointerId, { x: e.clientX, pan: cam.pan, moved: false }); camDragging = true;
     try { ui.scene.setPointerCapture(e.pointerId); } catch (err) { /* нічого */ }
   });
   ui.scene.addEventListener('pointermove', e => {
@@ -8042,16 +9148,20 @@ function setupInput() {
     if (!d) return;
     const dx = e.clientX - d.x;
     if (!d.moved && Math.abs(dx) > 9) d.moved = true;
-    if (d.moved) { cam.pan = d.pan - dx / sceneUnit; applyCamera(); }
+    if (d.moved) { cam.pan = d.pan - dx / sceneUnit; applyCamera(); cam.goal = cam.pan; }
   });
   const endDrag = (e, cancelled) => {
     const d = drags.get(e.pointerId);
     if (!d) return;
-    drags.delete(e.pointerId);
+    drags.delete(e.pointerId); camDragging = drags.size > 0; cam.goal = cam.pan;
     if (!d.moved && !cancelled) sceneTap(e);
   };
   ui.scene.addEventListener('pointerup', e => endDrag(e, false));
   ui.scene.addEventListener('pointercancel', e => endDrag(e, true));
+  ui.panL.addEventListener('pointerdown', e => e.stopPropagation()); ui.panR.addEventListener('pointerdown', e => e.stopPropagation());
+  ui.panL.addEventListener('click', e => { e.stopPropagation(); panBy(-viewCrop.w * 0.6); });
+  ui.panR.addEventListener('click', e => { e.stopPropagation(); panBy(viewCrop.w * 0.6); });
+  document.addEventListener('keydown', e => { if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.target.closest('input,textarea') && ui.modal.hidden && ui.wheelModal.hidden && ui.circusModal.hidden && ui.letterModal.hidden) panBy((e.key === 'ArrowLeft' ? -1 : 1) * viewCrop.w * 0.3); });
   ui.panelToggle.addEventListener('click', () => { state.settings.panelOpen = !state.settings.panelOpen; applyPanel(); saveGame(); });
   // з клавіатури: Enter або пробіл тапають по магазину
   ui.scene.addEventListener('keydown', e => {
@@ -8085,7 +9195,7 @@ function render(time) {
   ctx.translate(view.offX, view.offY);          // далі все малюється в координатах «ядра» сцени
   drawEpochBack();
   drawDecorBack();
-  clouds.forEach(c => drawSprite(ctx, 'cloud', c.x, c.y, { variant: c.v, sx: c.big ? 1.8 : 1, sy: c.big ? 1.4 : 1 }));
+  clouds.forEach(c => { const cv = cloudCanvas(c.kind || 0, c.v || ''); drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), { sx: c.big ? 1.5 : 1, sy: c.big ? 1.5 : 1 }); });
   drawBirds();
   drawEpochSky(time);
   ctx.drawImage(groundLayer, -view.offX, -view.offY);
@@ -8118,6 +9228,8 @@ function render(time) {
   benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); });
   if (view.extraB >= 30 || state.events.mailPending || mail.state !== 'idle') items.push({ y: mailRoadY() - 1, draw: drawMailBox });
   if (mail.state !== 'idle') items.push({ y: mailRoadY(), draw: drawMailTruck });
+  if (state.circus.phase >= 2) items.push({ y: circusY(), draw: drawCircus });
+  if (state.circus.phase === 1) items.push({ y: bangPos().y, draw: drawBang });
   items.push({
     y: cp.footY,
     draw: () => {
@@ -8218,6 +9330,7 @@ let animClock = 0;
 function frame(now) {
   const dt = Math.min(CONFIG.MAX_DT, Math.max(0, (now - lastFrame) / 1000));
   lastFrame = now;
+  updateCamera(dt);
   animClock += dt;
 
   // дохід
@@ -8226,6 +9339,7 @@ function frame(now) {
     state.coins += gain;
     state.totalEarned += gain;
   }
+  syncEpochEarned();
   // автотапи з майстерні часу: тапають по магазину самі
   const autoTaps = wsLevel('autoTap');
   if (autoTaps > 0) {
@@ -8233,7 +9347,7 @@ function frame(now) {
     state.coins += gain;
     state.totalEarned += gain;
     autoTapAcc += dt * autoTaps;
-    if (autoTapAcc >= 1) { autoTapAcc = 0; if (animOn()) shopAnim.vel = Math.max(shopAnim.vel, 3); }
+    if (autoTapAcc >= 1) { autoTapAcc = 0; if (animOn()) shopAnim.vel = Math.max(shopAnim.vel, 1.6); }
   }
   state.playTime += dt;
   const prevPhase = state.dayPhase;
