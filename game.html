@@ -535,6 +535,27 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .vol input[type="range"] { width: 100%; height: 26px; accent-color: var(--green); cursor: pointer; }
 #soundBtn { padding: 5px 10px; font-size: 18px; line-height: 1.3; background: var(--panel); }
 #soundBtn.muted { opacity: .6; }
+#lootModal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 16px; background: radial-gradient(circle at 50% 45%, rgba(120, 60, 150, .75), rgba(14, 8, 24, .94) 70%); overflow: hidden; animation: lootFade .35s ease-out; }
+#lootModal[hidden] { display: none; }
+.loot-rays { position: absolute; left: 50%; top: 50%; width: 220vmax; height: 220vmax; margin: -110vmax 0 0 -110vmax; background: repeating-conic-gradient(from 0deg, rgba(255, 214, 102, .30) 0 7deg, rgba(255, 214, 102, 0) 7deg 20deg); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 38%); mask-image: radial-gradient(circle, #000 0, transparent 38%); animation: lootSpin 18s linear infinite; pointer-events: none; }
+.loot-card { position: relative; width: min(92vw, 360px); text-align: center; padding: 18px 16px 16px; overflow: hidden; background: linear-gradient(#3b2358, #24143a); color: #fff4dc; box-shadow: 0 0 0 3px #1a0f26, 0 0 0 6px #f2b84b, 0 0 46px 8px rgba(255, 200, 60, .75); animation: lootPop .6s cubic-bezier(.2, 1.7, .4, 1); }
+.loot-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, .55) 50%, transparent 62%); transform: translateX(-130%); animation: lootShine 2.6s ease-in-out .6s infinite; pointer-events: none; }
+.loot-tag { font-size: 12px; letter-spacing: 2px; color: #ffe08a; text-shadow: 0 0 10px #f2b84b, 2px 2px 0 #1a0f26; animation: lootPulse 1.2s ease-in-out infinite; }
+.loot-stage { margin: 14px auto 12px; width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(255, 214, 102, .45), rgba(255, 214, 102, 0) 70%), #2c1a46; box-shadow: inset 0 0 0 3px #1a0f26; }
+.loot-stage canvas { max-width: 88%; max-height: 88%; image-rendering: pixelated; image-rendering: crisp-edges; filter: drop-shadow(0 0 10px rgba(255, 224, 138, .9)); animation: lootBob 1.8s ease-in-out infinite; }
+.loot-card h2 { margin: 0 0 4px; font-size: 18px; line-height: 1.3; color: #fff4dc; text-shadow: 2px 2px 0 #1a0f26; }
+.loot-card p { margin: 0 0 14px; font-size: 11px; color: #d9c4f2; }
+.loot-card .row { display: flex; gap: 8px; }
+.loot-card .row .btn { flex: 1; }
+.loot-spark { position: absolute; color: #ffe08a; font-size: 16px; pointer-events: none; opacity: 0; animation: lootRise 2.4s ease-out infinite; text-shadow: 0 0 8px #f2b84b; }
+@keyframes lootFade { from { opacity: 0; } }
+@keyframes lootSpin { to { transform: rotate(360deg); } }
+@keyframes lootPop { 0% { transform: scale(.3) rotate(-6deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes lootShine { 0%, 40% { transform: translateX(-130%); } 100% { transform: translateX(130%); } }
+@keyframes lootPulse { 50% { transform: scale(1.08); } }
+@keyframes lootBob { 50% { transform: translateY(-6px); } }
+@keyframes lootRise { 0% { transform: translateY(20px) scale(.5); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(-90px) scale(1.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .loot-rays, .loot-card::after, .loot-spark, .loot-stage canvas, .loot-tag { animation: none; } }
 #modal, #wheelModal, #letterModal, #circusModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
 #modal[hidden], #wheelModal[hidden], #letterModal[hidden], #circusModal[hidden] { display: none; }
 #circusWheel { width: min(64vw, 256px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
@@ -587,8 +608,10 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   .tab.primary, .tabmore { order: 1; }
   .tabmore { display: flex; align-items: center; justify-content: center; font-size: 22px; line-height: 1; }
   #app.more-open .tabmore { background: var(--honey); }
-  #tabContent { display: none; max-height: 46dvh; margin-bottom: 8px; padding: 2px 2px 4px; }
+  #tabContent { display: none; max-height: 40dvh; margin-bottom: 8px; padding: 2px 2px 4px; }
   #app.sheet-open #tabContent { display: block; }
+  #app.sheet-open #stage { padding-bottom: calc(40dvh + 100px); }
+  #app.sheet-open #boosts, #app.sheet-open #goalLine { display: none; }          /* поки відкрито меню, зверху нічого не закриває небо й магазин */
   .card { padding: 10px 12px; margin-bottom: 8px; }
   #toasts { top: 58px; }
   .chip { font-size: 10px; padding: 3px 5px; }
@@ -601,22 +624,23 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @media (orientation: landscape) and (max-height: 520px) {
   #app:not(.panel-closed) { grid-template-columns: minmax(0, 1fr) 300px; }
   #app:not(.panel-closed) #topbar { right: 300px; }
-  #topbar { padding: 2px 8px 6px; }
-  #hud { padding: 3px 11px 3px 8px; gap: 7px; }
-  #coinIcon { width: 20px; height: 20px; }
-  #coinCount { font-size: 16px; }
+  #topbar { padding: 4px 8px 6px; }
+  #hud { padding: 7px 13px 6px 9px; gap: 8px; }
+  #coinIcon { width: 22px; height: 22px; }
+  #coinCount { font-size: 18px; line-height: 1.2; }
   #wheelOpen { display: none; }
-  #cps { margin-top: 3px; font-size: 10px; }
+  #cps { margin-top: 4px; font-size: 10px; }
   #gemBox { font-size: 16px; padding-left: 8px; }
   #gemIcon { font-size: 17px; }
   #boosts { gap: 4px; }
   .chip { font-size: 9px; padding: 3px 5px; }
   #goalLine { font-size: 8px; padding: 2px 5px; }
-  #eventBanner { top: 56px; font-size: 10px; padding: 3px 8px; }
+  #eventBanner { top: 64px; font-size: 10px; padding: 3px 8px; }
   #panel { margin: 6px 6px 6px 0; padding: 8px; }
-  #tabs { grid-template-columns: repeat(8, 1fr); gap: 3px; margin-bottom: 8px; }
-  .tab { padding: 6px 0 5px; }
-  .tab .tab-icon { font-size: 17px; }
+  #tabs { grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+  .tab { padding: 8px 0 7px; overflow: hidden; }
+  .tab .tab-icon { font-size: 19px; }
+  .tab .tab-icon canvas { width: 1.7em; height: 1.7em; }
   #panelToggle { width: 30px; height: 56px; margin-top: -28px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -885,6 +909,16 @@ function bootDone() {
     <button type="button" class="btn wide" id="circusClose"></button>
   </div>
 </div>
+<div id="lootModal" hidden>
+  <div class="loot-rays"></div>
+  <div class="loot-card" role="dialog" aria-modal="true" aria-labelledby="lootName">
+    <div class="loot-tag" id="lootTag"></div>
+    <div class="loot-stage"><canvas id="lootCanvas" width="30" height="24"></canvas></div>
+    <h2 id="lootName"></h2>
+    <p id="lootType"></p>
+    <div class="row"><button type="button" class="btn go" id="lootWear"></button><button type="button" class="btn" id="lootClose"></button></div>
+  </div>
+</div>
 <div id="letterModal" hidden>
   <div class="frame modal-box" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
     <h2 id="letterTitle"></h2>
@@ -938,6 +972,7 @@ function bootDone() {
 const CONFIG = {
   SCENE_W: 320,               // внутрішня ширина сцени (пікселів)
   SCENE_H: 180,               // внутрішня висота сцени
+  OPEN_EXTRA: 60,             // ПК: коли меню відкрите, камера «відїжджає»: у кадр додається стільки рядків неба й дороги (масштаб менший)
   EXTRA_BOTTOM: 36,           // скільки рядків бруківки додається знизу, щоб було більше видно й де гуляти
   MAX_VIEW_W: 2600,            // найширша сцена на великому екрані (пікселів сцени)
   MIN_VIEW_W: 296,            // на вузькому вікні масштаб збільшується, а краї «ядра» (до 12 пікселів) можуть не поміститися
@@ -2503,10 +2538,10 @@ const translations = {
     ch1_2: "Доброго ранку, місто. Я Капі. Приїхала здалеку з однією монетою в кишені й великими амбіціями.",
     ch1_3: "Мрія проста: власна крамниця. А ось і вона — стара будка на розі, яка бачила кращі часи.",
     ch1_4: "Трохи обшарпана, зате з навісом. Назву її «Усе за копійку». Копійка в мене вже є. Майже.",
-    ch1_5: "Так починаються великі історії. І великі борги. Тапай по магазину й заробляй перші монети.",
+    ch1_5: "Так починаються великі історії. І великі борги. Тапай по магазину й заробляй перші монети. Перший покупець уже стоїть біля дверей.",
 
     ch2_title: 'Перші друзі',
-    ch2_0: "За кілька днів справи пішли вгору. Покупці йшли один за одним, і Капі ледве встигала то торгувати, то рахувати.",
+    ch2_0: "Кілька днів тапання — і каса вже дзвенить. Покупців стільки, що Капі ледве встигала то торгувати, то рахувати. Їй потрібна допомога.",
     ch2_1: "Перепрошую, у вас не знайдеться вакансії? Я їжак Голка. Резюме колюче, зате чесне.",
     ch2_2: "Ти колючий. Для співбесіди це проблема?",
     ch2_3: "Це захист від сумнівних покупців. І, між іншим, я чудово рахую гроші.",
@@ -2515,35 +2550,35 @@ const translations = {
     ch2_6: "Підказка: відкрий вкладку «Команда» й найми Голку. Він збільшить силу тапу.",
 
     ch3_title: 'Хтось краде!',
-    ch3_0: "Магазин ріс, і про нього заговорило все місто. Разом із покупцями прийшов хтось іще.",
+    ch3_0: "Із Голкою на касі справи пішли ще краще, і про магазин заговорило все місто. Разом із покупцями прийшов хтось іще.",
     ch3_1: "Капі, з прилавка зникла пачка печива. Я встиг помітити лише смугастий хвіст.",
     ch3_2: "Смугастий хвіст... Здається, я знаю, хто це.",
     ch3_3: "Нічого особистого, просто бізнес. Я Шнирь, найспритніший єнот у цьому місті.",
     ch3_4: "Ти поцупив моє печиво. Поверни негайно.",
     ch3_5: "Воно вже... частково з’їдене. Вважай, це дегустація. Цур, мене не ловити!",
     ch3_6: "Втік. Нічого, наступного разу будемо готові.",
-    ch3_7: "Шнирь хитрий, але начебто не злий. Він ще повернеться. Тримай очі відкритими.",
+    ch3_7: "Шнирь хитрий, але начебто не злий. Він ще повернеться. Тримай очі відкритими, а цінне ховай подалі.",
 
     ch4_title: 'Дивний годинник',
-    ch4_0: "Розбираючи склад, Капі натрапила на дивну річ.",
+    ch4_0: "Шукаючи, де сховати цінне від єнота, Капі перебирала склад і натрапила на дивну річ.",
     ch4_1: "Кишеньковий годинник. Старий, але гарний. Золото потемніло, скло трохи тріснуло.",
     ch4_2: "Він цокає. Але стрілки йдуть назад.",
     ch4_3: "Мабуть, зламаний. Дідусь казав: годинник, що йде назад, або зламаний, або чарівний.",
     ch4_4: "Чарівний? Дуже сумнівно. Але гарний — залишу собі.",
-    ch4_5: "Годинник тихо цокнув у кишені, ніби всміхнувся.",
+    ch4_5: "Годинник тихо цокнув у кишені, ніби всміхнувся. Схоже, це було не востаннє.",
 
     ch5_title: 'Супермаркет',
-    ch5_0: "Магазин виріс у справжній супермаркет. Про Капі та її «Усе за копійку» говорить усе місто, і до команди потяглися нові люди.",
+    ch5_0: "Годинник у кишені цокав усе впевненіше, а справи йшли вгору. Магазин виріс у справжній супермаркет. Про Капі та її «Усе за копійку» говорить усе місто, і до команди потяглися нові люди.",
     ch5_1: "Капі, я Бодя, бобер-будівельник. Чув, у вас розширення. Дошки потрібні? Рахунок надішлю окремо.",
     ch5_2: "Я Зоя, продавчиня. Які вітрини... Я б і сніг узимку продала. Двічі.",
     ch5_3: "У-гу. Я Соня, бухгалтерка. Хтось має рахувати ці гори монет, перш ніж вони зникнуть самі.",
     ch5_4: "Тоня. Охороняю. Повільно, зате принципово.",
     ch5_5: "Заходьте, друзі. Навіть не знаю, як вам дякувати.",
     ch5_6: "Дякувати? Я перший у черзі за премією.",
-    ch5_7: "Команда росте. Наймай нових співробітників у вкладці «Команда».",
+    ch5_7: "Команда росте. Наймай нових співробітників у вкладці «Команда». А тим часом хтось невидимий стежить за вашою крамницею з темряви.",
 
     ch6_title: 'Шнирь у біді',
-    ch6_0: "Одного дощового вечора Капі почула дивний звук біля чорного входу.",
+    ch6_0: "Пізно ввечері, коли команда роз’їхалась по домівках, Капі лишилась рахувати виручку. Надворі лив дощ, а біля чорного входу щось ворухнулось.",
     ch6_1: "Хтось плаче? Шнирю, це ти?",
     ch6_2: "Я не плачу. Це дощ. На обличчі. Тільки на обличчі.",
     ch6_3: "Чому ти крадеш, Шнирю? У тебе що, немає дому?",
@@ -2551,10 +2586,10 @@ const translations = {
     ch6_5: "Якби хтось просто сказав мені «привіт»... А всі кричать: «Тримайте єнота!»",
     ch6_6: "Привіт, Шнирю. Просто так. Заходь, у нас гарячий чай і булочки.",
     ch6_7: "Справді? Тоді я більше не краду. Ну, хіба що дуже рідко. Жартую.",
-    ch6_8: "Відтоді Шнирь більше не злодій. Він друг. Здебільшого.",
+    ch6_8: "Відтоді Шнирь більше не злодій. Він друг. Здебільшого. А попереду на всіх чекали великі справи.",
 
     ch7_title: 'Торговий центр',
-    ch7_0: "Минув час. Крамниця стала магазином, потім супермаркетом, а тепер...",
+    ch7_0: "Минули місяці. Шнирь став улюбленцем покупців, а команда — справжньою родиною. Крамниця стала магазином, потім супермаркетом, а тепер...",
     ch7_1: "На вулиці виріс справжній торговий центр зі скляним дахом, кінотеатром і запахом свіжої випічки.",
     ch7_2: "Я це зробила. Торговий центр «Капі». З однієї монети.",
     ch7_3: "Ти зробила, ми зробили, а премію отримав я. Гарний день.",
@@ -2564,7 +2599,7 @@ const translations = {
     ch7_7: "Мій годинник... Він ожив?",
 
     ch8_title: 'Фінал: годинник цокає',
-    ch8_0: "Золотий годинник повільно піднявся з кишені й завис у повітрі. Стрілки закрутилися назад.",
+    ch8_0: "І справді: золотий годинник повільно піднявся з кишені й завис у повітрі. Стрілки закрутилися назад.",
     ch8_1: "Привіт, Капі. Я чекав довго. Дуже довго.",
     ch8_2: "Ти розмовляєш?!",
     ch8_3: "Я Годинник часу. Умію повертати хвилини.",
@@ -2616,10 +2651,10 @@ const translations = {
     skin_hero_party: 'Герої у святкових костюмах', skin_hero_ninja: 'Герої-ніндзя',
     skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_lightning: 'Фіолетові блискавки', skin_capy_wizard: 'Капі-чарівник', skin_capy_chef: 'Капі-шеф', skin_capy_explorer: 'Капі-дослідник', skin_capy_detective: 'Капі-детектив', skin_capy_sailor: 'Капі-моряк', skin_shop_ice: 'Крижаний магазин', skin_shop_wood: 'Дерев’яна хатина', skin_shop_garden: 'Магазин-сад', skin_weather_cottoncloud: 'Цукрові хмари', skin_weather_goldcloud: 'Золоті хмари', skin_weather_starcloud: 'Зоряні хмари', skin_hero_chef: 'Герої-кухарі', skin_hero_wizard: 'Герої-чарівники', skin_hero_royal: 'Герої-королі', skin_capy_santa: 'Капі — Дід Мороз', skin_capy_witch: 'Капі-відьма', skin_capy_flower: 'Капі у квітах', skin_capy_beach: 'Капі на пляжі', skin_capy_autumn: 'Осінній Капі', skin_hero_santa: 'Помічники Діда Мороза', skin_hero_witch: 'Герої-відьмочки', skin_shop_xmas: 'Різдвяний магазин', skin_shop_halloween: 'Магазин на Хелловін', skin_shop_spring: 'Весняний магазин', skin_shop_autumn: 'Осінній магазин', skin_street_snow: 'Сніжна бруківка', skin_street_leaves: 'Бруківка з листям',
     tab_skins: 'Скіни', skinsNote: 'Скін Капі сам змінюється разом з епохою. Захочеш інший — обери його тут, а щоб повернути скін епохи, тапни «Змінити на скін епохи». Стрілки гортають список.', skinBackToEpoch: 'Змінити на скін епохи', skinWornToast: 'Вдягнено: {0}', skinDefaultToast: 'Звичайний вигляд', skinHeroNone: 'Костюм вдягнуть усі звірята: покупці вже в ньому, а герої — щойно приїдуть.', skinCat_capyEpoch: 'Капі по епохах', skinEpoch: 'Капі: {0}', skinOtherEpoch: 'Інша епоха', skinCat_capy: 'Капі', skinCat_shop: 'Магазин', skinCat_weather: 'Погода', skinCat_hero: 'Герої та звірі', skinCat_street: 'Бруківка', skin_street_wood: 'Дерев’яний настил', skin_street_brick: 'Червона цегла',
-    skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}', rainOn: 'Дощ увімкнено 🌧', rainOff: 'Дощ вимкнено', goalTravel: '⏳ Можна в подорож: +{0} 💎', goalCrystal: '⏳ До першого кристала часу: {0}%', goalDept: '🛒 Купи «{0}»: {1}/{2}', goalHire: '🐾 Найми: {0}', goalExpandNow: '🏪 Можна розширити магазин!', goalExpand: '🏪 Розширення магазину: {0}%', goalNext: '🛒 Далі: «{0}» · {1}%',
+    skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}', lootTag: '✨ ЕПІЧНА ЗДОБИЧ ✨', lootWear: 'Вдягнути', lootClose: 'Чудово!', rainOn: 'Дощ увімкнено 🌧', rainOff: 'Дощ вимкнено', goalTravel: '⏳ Можна в подорож: +{0} 💎', goalCrystal: '⏳ До першого кристала часу: {0}%', goalDept: '🛒 Купи «{0}»: {1}/{2}', goalHire: '🐾 Найми: {0}', goalExpandNow: '🏪 Можна розширити магазин!', goalExpand: '🏪 Розширення магазину: {0}%', goalNext: '🛒 Далі: «{0}» · {1}%',
     dailyTitle: '📅 Завдання дня', dailyNote: 'Три цілі щодоби. За кожну — кристал часу, а за всі три ще один.', dailyClaim: 'Забрати 💎', dailyAll: 'Усі три: ще +1 💎', dailyAllDone: 'Усі три виконано: +1 💎 отримано', dailyDoneToast: 'Завдання дня виконано! Забери кристал у вкладці нагород.', dailyGot: 'Кристал часу +{0} 💎',
     daily_taps: 'Натисни на магазин {0} разів', daily_depts: 'Купи відділи: {0} шт.', daily_team: 'Прокачай звірят: {0} раз.', daily_catch: 'Спіймай звірят або привидів: {0}', daily_vip: 'Спіймай золотих покупців: {0}', daily_earn: 'Заробити монет: {0}', daily_wheel: 'Крутни барабан фортуни',
-    vipWish: 'Хочу «{0}»!', vipToast: '🌟 До магазину завітав золотий покупець! Тапни по ньому.', vipThanks: 'Дякую! Ось тобі винагорода.', vipCrystal: 'Золотий покупець подарував кристал часу 💎',
+    vipWish: 'Хочу «{0}»!', vipToast: '🌟 До магазину завітав золотий покупець! Тапни по ньому.', vipThanks: 'Дякую! Ось тобі винагорода.', vipCrystal: 'Золотий покупець подарував кристал часу: +1 💎', vipGold: 'Золотий покупець дав ×5 золота: +{0} 🪙', vipSayCrystal: 'Тримай кристал часу!', vipSayGold: 'Тримай ×5 золота!',
     prize_income: 'Дохід ×{0} на {1} хв!',
     prize_tap: 'Тап ×{0} на {1} хв!',
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
@@ -2891,7 +2926,7 @@ const translations = {
     team_toma_say_3: "Хобот не підведе: усе на своїх місцях. Крім того, що хтось перекладав.", team_toma_say_4: "Пам’ятаю, де лежить кожен гвинтик. І хто його брав.", team_toma_say_5: "Склад як слон: великий, спокійний і краще його не дратувати.",
     capy_say_3: "Вітаю в моєму магазині. Ціни людяні, ілюзії безкоштовні.", capy_say_4: "Квітка на голові приносить удачу. Інакше навіщо вона.", capy_say_5: "Капібари — найспокійніші торговці у світі. Спокій коштує дорого.",
     // Пори року, літо, Хелловін
-    setEpochView: 'Перегляд епох', setEpochViewNote: 'Обери одну з пройдених епох: зміниться вигляд міста, товари й музика. Під назвою видно, скільки монет зароблено в епосі. Нові монети, зокрема поки тебе немає в грі, рахуються в обраній епосі. Нові епохи відкриваються подорожжю в часі.', epochViewing: 'Епоха: {0}', epochBalance: 'Баланс: {0}',
+    setEpochView: 'Перегляд епох', setEpochViewNote: 'Обери одну з пройдених епох: зміниться вигляд міста, товари й музика. Під назвою — скільки монет у цій епосі: у поточній це твій баланс, як у лічильнику, у пройдених — скільки в них зароблено. Нові монети, зокрема поки тебе немає в грі, рахуються в обраній епосі. Нові епохи відкриваються подорожжю в часі.', epochViewing: 'Епоха: {0}', epochBalance: 'Баланс: {0}',
     setSeason: 'Пора року', setSeasonNote: 'Змінює дерева, погоду й настрій вулиці. «Авто» бере пору року з дати на пристрої.',
     season_auto: 'Авто', season_spring: '🌸 Весна', season_summer: '☀️ Літо', season_autumn: '🍂 Осінь', season_winter: '❄️ Зима', season_halloween: '🎃 Хелловін',
     summerSay_0: "Фух, спека. Води — і побільше.", summerSay_1: "Переведу дух і назад до роботи. Хвилинку. Дві.", summerSay_2: "Сонце пече, як податкова: нікуди не дінешся.",
@@ -3074,10 +3109,10 @@ const translations = {
     ch1_2: "Good morning, town. I'm Capy. I came a long way with one coin in my pocket and big ambitions.",
     ch1_3: "The dream is simple: my own shop. And here it is, an old booth on the corner that has seen better days.",
     ch1_4: "A bit shabby, but with an awning. I'll call it \"Everything for a Penny\". I already have a penny. Almost.",
-    ch1_5: "That's how great stories start. And great debts. Tap the shop and earn your first coins.",
+    ch1_5: "That's how great stories start. And great debts. Tap the shop and earn your first coins. The first customer is already standing at the door.",
 
     ch2_title: 'First Friends',
-    ch2_0: "In a few days business picked up. Customers came one after another, and Capy barely had time to sell and count.",
+    ch2_0: "A few days of tapping and the till is already ringing. There are so many customers that Capy barely has time to sell and count. Some help is needed.",
     ch2_1: "Excuse me, any chance of a vacancy? I'm Spike the hedgehog. The résumé is prickly but honest.",
     ch2_2: "You're prickly. Is that a problem for an interview?",
     ch2_3: "It's protection from shady customers. And by the way, I'm great with money.",
@@ -3086,35 +3121,35 @@ const translations = {
     ch2_6: "Tip: open the \"Team\" tab and hire Spike. He boosts your tap power.",
 
     ch3_title: 'Someone Is Stealing!',
-    ch3_0: "The shop grew and the whole town started talking. Together with the customers came someone else.",
+    ch3_0: "With Spike at the till business went even better, and the whole town started talking about the shop. Together with the customers came someone else.",
     ch3_1: "Capy, a pack of cookies vanished from the counter. All I saw was a striped tail.",
     ch3_2: "A striped tail... I think I know who that is.",
     ch3_3: "Nothing personal, just business. I'm Shnyr, the sneakiest raccoon in this town.",
     ch3_4: "You stole my cookies. Give them back right now.",
     ch3_5: "They're already... partially eaten. Call it a tasting. No tag-backs!",
     ch3_6: "Gone. Fine, we'll be ready next time.",
-    ch3_7: "Shnyr is cunning but doesn't seem evil. He'll be back. Keep your eyes open.",
+    ch3_7: "Shnyr is cunning but doesn't seem evil. He'll be back. Keep your eyes open and hide anything valuable.",
 
     ch4_title: 'The Strange Watch',
-    ch4_0: "While sorting out the storeroom, Capy came across something strange.",
+    ch4_0: "Looking for a place to hide valuables from the raccoon, Capy was sorting through the storeroom and came across something strange.",
     ch4_1: "A pocket watch. Old but beautiful. The gold has darkened, the glass is slightly cracked.",
     ch4_2: "It ticks. But the hands go backwards.",
     ch4_3: "Probably broken. Grandpa said: a watch that runs backwards is either broken or magic.",
     ch4_4: "Magic? Highly doubtful. But it's pretty, so I'll keep it.",
-    ch4_5: "The watch ticked quietly in the pocket, as if it smiled.",
+    ch4_5: "The watch ticked quietly in the pocket, as if it smiled. It looked like this was not the last time.",
 
     ch5_title: 'Supermarket',
-    ch5_0: "The shop grew into a proper supermarket. The whole town talks about Capy and \"Everything for a Penny\", and new people joined the team.",
+    ch5_0: "The watch in the pocket ticked ever more confidently, and business kept growing. The shop grew into a proper supermarket. The whole town talks about Capy and \"Everything for a Penny\", and new people joined the team.",
     ch5_1: "Capy, I'm Bodie, the beaver builder. I heard you're expanding. Need planks? I'll send the invoice separately.",
     ch5_2: "I'm Zoya, the saleswoman. Look at those displays... I could sell snow in winter. Twice.",
     ch5_3: "Hoo. I'm Sonia, the accountant. Someone has to count these piles of coins before they vanish on their own.",
     ch5_4: "Tonya. Security. Slow, but principled.",
     ch5_5: "Come in, friends. I don't even know how to thank you.",
     ch5_6: "Thank us? I'm first in line for the bonus.",
-    ch5_7: "The team keeps growing. Hire new staff in the \"Team\" tab.",
+    ch5_7: "The team keeps growing. Hire new staff in the \"Team\" tab. Meanwhile someone unseen is watching your shop from the dark.",
 
     ch6_title: 'Shnyr in Trouble',
-    ch6_0: "One rainy evening Capy heard a strange sound near the back door.",
+    ch6_0: "Late in the evening, when the team had gone home, Capy stayed to count the takings. Rain poured outside, and something stirred by the back door.",
     ch6_1: "Is someone crying? Shnyr, is that you?",
     ch6_2: "I'm not crying. It's the rain. On my face. Only on my face.",
     ch6_3: "Why do you steal, Shnyr? Don't you have a home?",
@@ -3122,10 +3157,10 @@ const translations = {
     ch6_5: "If someone just said \"hi\" to me... But everyone shouts: \"Stop that raccoon!\"",
     ch6_6: "Hi, Shnyr. Just because. Come in, we have hot tea and buns.",
     ch6_7: "Really? Then I won't steal anymore. Well, maybe very rarely. Kidding.",
-    ch6_8: "From then on Shnyr was no longer a thief. He was a friend. Mostly.",
+    ch6_8: "From then on Shnyr was no longer a thief. He was a friend. Mostly. And big things were waiting ahead for them all.",
 
     ch7_title: 'The Shopping Mall',
-    ch7_0: "Time passed. The little shop became a store, then a supermarket, and now...",
+    ch7_0: "Months passed. Shnyr became a favourite of the customers, and the team a real family. The little shop became a store, then a supermarket, and now...",
     ch7_1: "A real shopping mall rose on the street, with a glass roof, a cinema and the smell of fresh pastry.",
     ch7_2: "I did it. The Capy Mall. From a single coin.",
     ch7_3: "You did it, we did it, and I got the bonus. Nice day.",
@@ -3135,7 +3170,7 @@ const translations = {
     ch7_7: "My watch... It came alive?",
 
     ch8_title: 'Finale: The Watch Ticks',
-    ch8_0: "The golden watch slowly rose from the pocket and hung in the air. The hands spun backwards.",
+    ch8_0: "And indeed: the golden watch slowly rose from the pocket and hung in the air. The hands spun backwards.",
     ch8_1: "Hello, Capy. I waited a long time. A very long time.",
     ch8_2: "You can talk?!",
     ch8_3: "I am the Clock of Time. I can turn back minutes.",
@@ -3186,10 +3221,10 @@ const translations = {
     skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',
     skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_lightning: 'Purple lightning', skin_capy_wizard: 'Wizard Capy', skin_capy_chef: 'Chef Capy', skin_capy_explorer: 'Explorer Capy', skin_capy_detective: 'Detective Capy', skin_capy_sailor: 'Sailor Capy', skin_shop_ice: 'Ice shop', skin_shop_wood: 'Wooden cabin', skin_shop_garden: 'Garden shop', skin_weather_cottoncloud: 'Cotton-candy clouds', skin_weather_goldcloud: 'Golden clouds', skin_weather_starcloud: 'Starry clouds', skin_hero_chef: 'Chef heroes', skin_hero_wizard: 'Wizard heroes', skin_hero_royal: 'Royal heroes', skin_capy_santa: 'Santa Capy', skin_capy_witch: 'Witch Capy', skin_capy_flower: 'Flower Capy', skin_capy_beach: 'Beach Capy', skin_capy_autumn: 'Autumn Capy', skin_hero_santa: 'Santa’s helpers', skin_hero_witch: 'Little witches', skin_shop_xmas: 'Christmas shop', skin_shop_halloween: 'Halloween shop', skin_shop_spring: 'Spring shop', skin_shop_autumn: 'Autumn shop', skin_street_snow: 'Snowy cobbles', skin_street_leaves: 'Leafy cobbles',
     tab_skins: 'Skins', skinsNote: 'Capy’s skin changes with the era by itself. Pick another one here, and tap “Switch to era skin” to get the era skin back. Arrows scroll the list.', skinBackToEpoch: 'Switch to era skin', skinWornToast: 'Now wearing: {0}', skinDefaultToast: 'Default look', skinHeroNone: 'Every animal wears it: shoppers already do, and heroes will once they join.', skinCat_capyEpoch: 'Capy by era', skinEpoch: 'Capy: {0}', skinOtherEpoch: 'Other era', skinCat_capy: 'Capy', skinCat_shop: 'Shop', skinCat_weather: 'Weather', skinCat_hero: 'Heroes & animals', skinCat_street: 'Pavement', skin_street_wood: 'Wooden boardwalk', skin_street_brick: 'Red brick',
-    skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}', rainOn: 'Rain is on 🌧', rainOff: 'Rain is off', goalTravel: '⏳ Time travel is ready: +{0} 💎', goalCrystal: '⏳ Toward the first time crystal: {0}%', goalDept: '🛒 Buy “{0}”: {1}/{2}', goalHire: '🐾 Hire: {0}', goalExpandNow: '🏪 You can expand the shop!', goalExpand: '🏪 Shop expansion: {0}%', goalNext: '🛒 Next: “{0}” · {1}%',
+    skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}', lootTag: '✨ EPIC LOOT ✨', lootWear: 'Wear it', lootClose: 'Awesome!', rainOn: 'Rain is on 🌧', rainOff: 'Rain is off', goalTravel: '⏳ Time travel is ready: +{0} 💎', goalCrystal: '⏳ Toward the first time crystal: {0}%', goalDept: '🛒 Buy “{0}”: {1}/{2}', goalHire: '🐾 Hire: {0}', goalExpandNow: '🏪 You can expand the shop!', goalExpand: '🏪 Shop expansion: {0}%', goalNext: '🛒 Next: “{0}” · {1}%',
     dailyTitle: '📅 Daily quests', dailyNote: 'Three goals a day. A time crystal for each, and one more for all three.', dailyClaim: 'Claim 💎', dailyAll: 'All three: +1 💎 more', dailyAllDone: 'All three done: +1 💎 received', dailyDoneToast: 'Daily quest done! Claim the crystal in the awards tab.', dailyGot: 'Time crystal +{0} 💎',
     daily_taps: 'Tap the shop {0} times', daily_depts: 'Buy departments: {0}', daily_team: 'Upgrade animals: {0} times', daily_catch: 'Catch animals or ghosts: {0}', daily_vip: 'Catch golden shoppers: {0}', daily_earn: 'Earn coins: {0}', daily_wheel: 'Spin the fortune drum',
-    vipWish: 'I want “{0}”!', vipToast: '🌟 A golden shopper has arrived! Tap them.', vipThanks: 'Thank you! Here is your reward.', vipCrystal: 'The golden shopper gave a time crystal 💎',
+    vipWish: 'I want “{0}”!', vipToast: '🌟 A golden shopper has arrived! Tap them.', vipThanks: 'Thank you! Here is your reward.', vipCrystal: 'The golden shopper gave a time crystal: +1 💎', vipGold: 'The golden shopper gave ×5 gold: +{0} 🪙', vipSayCrystal: 'Here, a time crystal!', vipSayGold: 'Here, ×5 gold!',
     prize_income: 'Income ×{0} for {1} min!',
     prize_tap: 'Tap ×{0} for {1} min!',
     prize_jackpot: 'JACKPOT! +{0}',
@@ -3458,7 +3493,7 @@ const translations = {
     team_murzyk_say_3: "Charging in the sun. Energy-efficient and suspiciously pleasant.", team_murzyk_say_4: "Mice? No, I only fix computer ones. I pity the others.", team_murzyk_say_5: "Cables are so tasty... I mean tangled.",
     team_toma_say_3: "My trunk won't fail: everything's in place. Except what somebody moved.", team_toma_say_4: "I remember where every screw is. And who took it.", team_toma_say_5: "A warehouse is like an elephant: big, calm, and best not annoyed.",
     capy_say_3: "Welcome to my shop. Prices are human, illusions are free.", capy_say_4: "The flower on my head brings luck. Otherwise, why have it.", capy_say_5: "Capybaras are the calmest traders in the world. Calm is expensive.",
-    setEpochView: 'Epoch viewer', setEpochViewNote: 'Pick one of the epochs you have passed: the look, goods and music change. Under each name you see the coins earned in that epoch. New coins, including offline ones, count in the selected epoch. New epochs unlock with time travel.', epochViewing: 'Epoch: {0}', epochBalance: 'Balance: {0}',
+    setEpochView: 'Epoch viewer', setEpochViewNote: 'Pick one of the epochs you have passed: the look, goods and music change. Under each name: the current epoch shows your balance, as in the counter; passed epochs show what was earned in them. New coins, including offline ones, count in the selected epoch. New epochs unlock with time travel.', epochViewing: 'Epoch: {0}', epochBalance: 'Balance: {0}',
     setSeason: 'Season', setSeasonNote: 'Changes the trees, weather and mood of the street. "Auto" uses the date on your device.',
     season_auto: 'Auto', season_spring: '🌸 Spring', season_summer: '☀️ Summer', season_autumn: '🍂 Autumn', season_winter: '❄️ Winter', season_halloween: '🎃 Halloween',
     summerSay_0: "Phew, the heat. Water, and plenty of it.", summerSay_1: "Just catching my breath, then back to work. One minute. Two.", summerSay_2: "The sun burns like the tax office: no escape.",
@@ -3506,12 +3541,12 @@ const GENDER_TEXTS = {
   m: {
     uk: {
       ch1_2: "Доброго ранку, місто. Я Капі. Приїхав здалеку з однією монетою в кишені й великими амбіціями.",
-      ch2_0: "За кілька днів справи пішли вгору. Покупці йшли один за одним, і Капі ледве встигав то торгувати, то рахувати.",
-      ch4_0: "Розбираючи склад, Капі натрапив на дивну річ.",
+      ch2_0: "Кілька днів тапання — і каса вже дзвенить. Покупців стільки, що Капі ледве встигав то торгувати, то рахувати. Йому потрібна допомога.",
+      ch4_0: "Шукаючи, де сховати цінне від єнота, Капі перебирав склад і натрапив на дивну річ.",
       ch1_1: "На вулицю в’їжджає потертий візок. Звідти обережно визирає капібара з листочками на голові.",
       capy_say_1: "Листочки на голові треба поливати. Так, я знаю, як це звучить.", capy_say_4: "Листочки на голові приносять удачу. Інакше навіщо вони.",
-      ch5_0: "Магазин виріс у справжній супермаркет. Про Капі та його «Усе за копійку» говорить усе місто, і до команди потяглися нові люди.",
-      ch6_0: "Одного дощового вечора Капі почув дивний звук біля чорного входу.",
+      ch5_0: "Годинник у кишені цокав усе впевненіше, а справи йшли вгору. Магазин виріс у справжній супермаркет. Про Капі та його «Усе за копійку» говорить усе місто, і до команди потяглися нові люди.",
+      ch6_0: "Пізно ввечері, коли команда роз’їхалась по домівках, Капі лишився рахувати виручку. Надворі лив дощ, а біля чорного входу щось ворухнулось.",
       ch7_2: "Я це зробив. Торговий центр «Капі». З однієї монети.",
       ch7_3: "Ти зробив, ми зробили, а премію отримав я. Гарний день.",
       ch7_5: "Дякую вам усім. Без вас я б нічого не досяг.",
@@ -3525,7 +3560,7 @@ const GENDER_TEXTS = {
     en: {
       ch1_1: "A battered cart rolls onto the street. A capybara with leaves on his head peeks out carefully.",
       capy_say_1: "I have to water the leaves on my head. Yes, I know how that sounds.", capy_say_4: "The leaves on my head bring luck. Otherwise, why have them.",
-      ch5_0: "The shop grew into a proper supermarket. The whole town talks about Capy and \"Everything for a Penny\", and new people joined the team.",
+      ch5_0: "The watch in the pocket ticked ever more confidently, and business kept growing. The shop grew into a proper supermarket. The whole town talks about Capy and \"Everything for a Penny\", and new people joined the team.",
       achName_puddles: 'Puddle King'
     }
   }
@@ -5447,6 +5482,7 @@ const ui = {
   paneStory: $('pane-story'), storyList: $('storyList'),
   panL: $('panL'), panR: $('panR'), eventBanner: $('eventBanner'), boosts: $('boosts'), wheelOpen: $('wheelOpen'),
   wheelModal: $('wheelModal'), wheelCanvas: $('wheelCanvas'), wheelStreak: $('wheelStreak'), wheelResult: $('wheelResult'),
+  lootModal: $('lootModal'), lootCanvas: $('lootCanvas'), lootName: $('lootName'), lootType: $('lootType'), lootTag: $('lootTag'), lootWear: $('lootWear'), lootClose: $('lootClose'),
   circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
   wheelBtn: $('wheelBtn'), wheelGhostBtn: $('wheelGhostBtn'), wheelGhostNote: $('wheelGhostNote'), wheelClose: $('wheelClose'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
@@ -5543,7 +5579,7 @@ function layoutScene() {
   const availW = ui.stage.clientWidth - padX;
   // на телефоні з відкритим меню сцена займає не більше ~44% висоти, решту віддаємо панелі
   const availH = ui.stage.clientHeight - padY;
-  const EB = (mobile && state.settings.panelOpen) ? 0 : CONFIG.EXTRA_BOTTOM;     // додаткова бруківка знизу
+  const EB = (mobile && !ui.app.classList.contains('sheet-open')) ? 0 : CONFIG.EXTRA_BOTTOM;     // додаткова бруківка знизу (на телефоні — коли відкрито меню: тоді видно більше дороги)
   const needY = shop ? Math.max(0, shop.h + 6 - LAYOUT.curbY) : 0;               // скільки неба над «ядром» потрібно високому магазину
   const H1 = H0 + EB + needY;
   let k, offX, cropW;
@@ -5554,7 +5590,8 @@ function layoutScene() {
     cropW = availW * dpr / k;                                                      // на всю ширину екрана, без смуг по боках
     offX = Math.max(CONFIG.MOBILE_PAD, Math.ceil((cropW - W0) / 2) + 8);
   } else {
-    k = Math.max(1, Math.floor(Math.min(availW * dpr / CONFIG.MIN_VIEW_W, availH * dpr / H1)));
+    const pullBack = state.settings.panelOpen ? CONFIG.OPEN_EXTRA : 0;                // меню відкрите — видно більше неба й дороги
+    k = Math.max(1, Math.floor(Math.min(availW * dpr / CONFIG.MIN_VIEW_W, availH * dpr / (H1 + pullBack))));
     const visW = Math.min(CONFIG.MAX_VIEW_W, availW * dpr / k);                     // скільки пікселів сцени вміщується в ширину (дробове)
     offX = Math.max(0, Math.ceil((visW - W0) / 2), Math.ceil((CONFIG.WORLD_W - W0) / 2));        // вулиця завжди широка, видно лише її частину
     cropW = Math.min(W0 + 2 * offX, visW);
@@ -5743,6 +5780,7 @@ const TABS_PRIMARY = ['shop', 'departments', 'team', 'story'];
 function setSheet(open) {
   ui.app.classList.toggle('sheet-open', open);
   if (!open) ui.app.classList.remove('more-open');
+  if (mobileMQ.matches && layoutReady) layoutScene();               // сцена підлаштовується: над меню видно небо, магазин і дорогу
 }
 function onTabClick(id) {
   if (mobileMQ.matches) {
@@ -6857,12 +6895,13 @@ function hitVip(p) {
     if (!c.vip || c.vipDone) continue;
     if (Math.abs(p.x - c.x) <= 13 && p.y >= c.y - 30 && p.y <= c.y + 5) {
       c.vipDone = true; c.speed = 38; state.stats.vipTaps = (state.stats.vipTaps || 0) + 1;
-      const gain = Math.floor(state.cps * 40 + 200 * levelMult()); state.coins += gain; state.totalEarned += gain;
-      const crystal = Math.random() < 0.12; if (crystal) { state.crystals += 1; state.crystalsTotal += 1; }
+      const crystal = Math.random() < 0.2;                                  // нагорода одна з двох: кристал часу або ×5 золота
+      const gain = crystal ? 0 : Math.floor((state.cps * 40 + 200 * levelMult()) * 5);
+      if (crystal) { state.crystals += 1; state.crystalsTotal += 1; } else { state.coins += gain; state.totalEarned += gain; }
       for (let i = 0; i < 14; i++) { const a = rand(0, Math.PI * 2), sp = rand(30, 80); fx.sparks.push({ x: c.x, y: c.y - 12, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 24, age: 0, life: rand(0.4, 0.7), col: i % 2 ? 'y' : 'h' }); }
-      spawnFloater(c.x, c.y - 24, '+' + fmt(gain)); playSfx('upgrade'); buzz(30);
-      showBubble('vip', t('vipThanks'), c.x, c.y - 26, () => ({ x: c.x, y: c.y - 26 }));
-      if (crystal) showToast(t('vipCrystal'), 'big');
+      spawnFloater(c.x, c.y - 24, crystal ? '+1 💎' : '×5 +' + fmt(gain)); playSfx(crystal ? 'wheelWin' : 'upgrade'); buzz(30);
+      showBubble('vip', t(crystal ? 'vipSayCrystal' : 'vipSayGold'), c.x, c.y - 26, () => ({ x: c.x, y: c.y - 26 }));
+      showToast(crystal ? t('vipCrystal') : t('vipGold', fmt(gain)), 'big');                // спливає, що саме він дав
       updateUI();
       return true;
     }
@@ -7960,7 +7999,7 @@ function updateEpochViewUI() {
     }
   }
   box.querySelectorAll('button').forEach(bt => {   // далі оновлюються лише підписи й стан «вибрано»
-    const e = +bt.dataset.ep, txt = '🪙 ' + fmt(Math.floor(state.epochEarned[e] || 0)), n2 = bt.querySelector('.ev-earned');
+    const e = +bt.dataset.ep, txt = '🪙 ' + fmt(Math.floor(e === state.epoch % EPOCHS.length ? state.coins : (state.epochEarned[e] || 0))), n2 = bt.querySelector('.ev-earned');
     if (n2.textContent !== txt) n2.textContent = txt;
     const on = String(e === cur);
     if (bt.getAttribute('aria-pressed') !== on) bt.setAttribute('aria-pressed', on);
@@ -9715,20 +9754,49 @@ function circusSpin() {
   let roll = Math.random() * total, idx = 0;
   for (; idx < CIRCUS_SECTORS.length - 1; idx++) { roll -= weight(CIRCUS_SECTORS[idx]); if (roll < 0) break; }
   const sec = CIRCUS_SECTORS[idx];
-  let text;
+  let text, skinPick = -1;
   if (sec.kind === 'coins' || sec.kind === 'jackpot') {
     const gain = Math.floor(state.cps * sec.seconds + sec.flat * levelMult()); state.coins += gain; state.totalEarned += gain;
     text = t(sec.kind === 'jackpot' ? 'prize_jackpot' : 'prize_coins', fmt(gain)); if (sec.kind === 'jackpot') state.stats.jackpots++;
   } else if (sec.kind === 'crystal') { const n = sec.amount || 1; state.crystals += n; state.crystalsTotal += n; text = t('prize_crystal', n); }
   else if (sec.kind === 'income') { state.events.incomeBoostUntil = now + sec.minutes * 60000; state.events.incomeBoostMult = sec.mult; text = t('prize_income', sec.mult, sec.minutes); }
   else if (sec.kind === 'tap') { state.events.tapBoostUntil = now + sec.minutes * 60000; state.events.tapBoostMult = sec.mult; text = t('prize_tap', sec.mult, sec.minutes); }
-  else { const free = circusFreeSkins(sec.skin), pick = free[Math.floor(Math.random() * free.length)]; skinGrant(pick); text = t('prize_skin', skinName(pick)); }
+  else { const free = circusFreeSkins(sec.skin), pick = free[Math.floor(Math.random() * free.length)]; skinGrant(pick); skinPick = pick; text = t('prize_skin', skinName(pick)); }
   recalcIncome();
   const step = Math.PI / 6, from = circus.angle % (Math.PI * 2), to = Math.PI * 2 * 5 + (Math.PI * 2 - (idx + 0.5) * step) + rand(-0.35, 0.35) * step;
-  circus.anim = { t: 0, dur: CONFIG.WHEEL_SPIN_SECONDS, from, to, text, again: false };
+  circus.anim = { t: 0, dur: CONFIG.WHEEL_SPIN_SECONDS, from, to, text, again: false, skin: skinPick };
   ui.circusResult.textContent = '…';
   state.circus.spun = 1;
   updateCircusButtons(); updateUI(); saveGame();
+}
+// Епічний лут: окреме святкове вікно з промінням і блиском, коли випав скін
+let lootSkin = -1;
+function openLoot(i) {
+  const id = SKIN_POOL[i], type = id.split('_')[0], name = id.slice(type.length + 1);
+  lootSkin = i;
+  const src = skinPreviewCanvas(type, name), cv = ui.lootCanvas;
+  cv.width = src.width; cv.height = src.height;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, cv.width, cv.height); g.drawImage(src, 0, 0);
+  const scale = Math.max(2, Math.floor(Math.min(300 / src.width, 130 / src.height)));
+  cv.style.width = (src.width * scale) + 'px'; cv.style.height = (src.height * scale) + 'px';
+  ui.lootTag.textContent = t('lootTag');
+  ui.lootName.textContent = (SKIN_SEASON[id] ? SKIN_SEASON[id] + ' ' : '') + skinName(i);
+  ui.lootType.textContent = t('skinCat_' + type);
+  ui.lootWear.textContent = t('lootWear'); ui.lootClose.textContent = t('lootClose');
+  ui.lootModal.querySelectorAll('.loot-spark').forEach(e => e.remove());
+  for (let k = 0; k < 18; k++) {
+    const sp = document.createElement('span'); sp.className = 'loot-spark'; sp.textContent = k % 3 ? '✦' : '✧';
+    sp.style.left = (8 + Math.random() * 84) + '%'; sp.style.top = (28 + Math.random() * 50) + '%';
+    sp.style.animationDelay = (Math.random() * 2.4).toFixed(2) + 's'; sp.style.fontSize = (11 + Math.random() * 14).toFixed(0) + 'px';
+    ui.lootModal.appendChild(sp);
+  }
+  ui.lootModal.hidden = false;
+  playSfx('achievement'); buzz(40);
+}
+function closeLoot(wear) {
+  ui.lootModal.hidden = true;
+  if (wear && lootSkin >= 0) { const id = SKIN_POOL[lootSkin], type = id.split('_')[0]; if (state.skins[type] !== lootSkin) equipSkin(type, lootSkin); }
+  lootSkin = -1;
 }
 function updateCircusSpin(dt) {
   const a = circus.anim; if (!a) return;
@@ -9738,7 +9806,8 @@ function updateCircusSpin(dt) {
   if (Math.floor(circus.angle / (Math.PI / 6)) !== prev && performance.now() - audio.lastTick > 40) { audio.lastTick = performance.now(); playSfx('wheelTick'); }
   if (k >= 1) {
     circus.anim = null; circus.angle = a.to % (Math.PI * 2);
-    ui.circusResult.textContent = a.text; playSfx('wheelWin'); showToast(a.text, 'good');
+    ui.circusResult.textContent = a.text; playSfx('wheelWin');
+    if (a.skin >= 0) setTimeout(() => openLoot(a.skin), 500); else showToast(a.text, 'good');
     ui.circusClose.textContent = t(state.circus.spun ? 'circusDone' : 'wheelClose');
     updateCircusButtons(); updateUI(); saveGame();
   }
@@ -10095,6 +10164,8 @@ function initEvents() {
   ui.wheelClose.addEventListener('click', closeWheel);
   ui.wheelBtn.addEventListener('click', () => spinWheel(false));
   ui.circusBtn.addEventListener('click', circusSpin);
+  ui.lootWear.addEventListener('click', () => closeLoot(true));
+  ui.lootClose.addEventListener('click', () => closeLoot(false));
   ui.circusClose.addEventListener('click', closeCircus);
   ui.circusModal.addEventListener('click', e => { if (e.target === ui.circusModal) closeCircus(); });
   ui.dbgCircus.addEventListener('click', () => { const c = state.circus; if (c.phase === 0 || c.phase === 4) { c.phase = 0; c.next = Date.now() - 1; } showToast('Цирк скоро!', 'good'); });
@@ -10309,12 +10380,6 @@ function updateStoryUI() {
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
-  const tip = document.createElement('div');                 // постійна підказка: навіщо ловити звірів
-  tip.className = 'card story-tip';
-  const th = document.createElement('h2'); th.textContent = t('storyDrumTitle');
-  const tp = document.createElement('p'); tp.className = 'ws-line'; tp.textContent = t('storyDrumText');
-  tip.append(th, tp);
-  ui.storyList.appendChild(tip);
   for (let n = 1; n <= state.story.done; n++) {
     const card = document.createElement('div');
     card.className = 'card chapter-card';
