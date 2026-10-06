@@ -164,6 +164,8 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 #coinIcon { width: 32px; height: 32px; image-rendering: pixelated; image-rendering: crisp-edges; flex: none; }
 #coinCount { font-size: 26px; line-height: 1; white-space: nowrap; }
 #cps { font-size: 12px; color: var(--brown); margin-top: 6px; white-space: nowrap; }
+#gemBox { display: flex; align-items: center; gap: 6px; margin-left: 4px; padding-left: 12px; border-left: 2px solid rgba(74, 50, 40, .28); font-size: 20px; line-height: 1; white-space: nowrap; }
+#gemIcon { font-size: 22px; }
 
 #hudWrap { display: flex; flex-direction: column; gap: 8px; min-width: 0; align-items: flex-start; }
 #boosts { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -460,7 +462,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 /* ===== Бульбашки з фразами ===== */
 #bubbles { position: absolute; inset: 0; pointer-events: none; }
 .bubble {
-  position: absolute;
+  position: absolute; left: 0; top: 0; will-change: translate;
   transform: translate(-50%, -100%);
   max-width: min(max(calc(var(--u) * 46), 124px), 62vw);
   width: max-content;
@@ -476,7 +478,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   animation: bubbleIn .18s steps(3, end);
   z-index: 5;
 }
-.bubble::after { content: ''; position: absolute; left: 50%; top: 100%; width: 6px; height: 6px; margin-left: -3px; background: var(--cream); box-shadow: 2px 2px 0 0 var(--dark); transform: translateY(-3px) rotate(45deg); }
+.bubble::after { content: ''; position: absolute; left: calc(50% + var(--tail, 0px)); top: 100%; width: 6px; height: 6px; margin-left: -3px; background: var(--cream); box-shadow: 2px 2px 0 0 var(--dark); transform: translateY(-3px) rotate(45deg); }
 @keyframes bubbleIn { from { opacity: 0; transform: translate(-50%, -80%); } }
 
 /* ===== Сповіщення (тости) ===== */
@@ -528,6 +530,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #hud { padding: 6px 12px 6px 10px; gap: 8px; }
   #coinIcon { width: 24px; height: 24px; }
   #coinCount { font-size: 20px; }
+  #gemBox { font-size: 16px; padding-left: 8px; gap: 4px; }
+  #gemIcon { font-size: 17px; }
   #cps { font-size: 11px; margin-top: 5px; }
   .lang-btn { padding: 9px 8px; min-width: 44px; font-size: 13px; }
   #stage { padding: 0 0 78px; }
@@ -556,17 +560,24 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #wheelOpen, #soundBtn { padding: 3px 8px; font-size: 16px; }
   #eventBanner { top: 124px; font-size: 11px; padding: 5px 8px; }
 }
-/* ===== Телефон у горизонтальному положенні: гра на весь екран, угорі лише маленький лічильник монет, збоку стрілка меню ===== */
+/* ===== Телефон у горизонтальному положенні: той самий вигляд, що на ПК (сцена зліва, меню справа), лише компактніше ===== */
 @media (orientation: landscape) and (max-height: 520px) {
-  #topbar { padding: 4px 6px; gap: 6px; }
-  #hud { padding: 3px 9px 3px 6px; gap: 6px; }
-  #coinIcon { width: 16px; height: 16px; }
-  #coinCount { font-size: 13px; }
-  #cps, #boosts { display: none; }
-  #wheelOpen:not(.ready) { display: none; }
-  #wheelOpen { padding: 2px 7px; font-size: 14px; }
-  #eventBanner { font-size: 10px; padding: 3px 8px; }
-  #toasts { top: 40px; }
+  #app:not(.panel-closed) { grid-template-columns: minmax(0, 1fr) 300px; }
+  #app:not(.panel-closed) #topbar { right: 300px; }
+  #topbar { padding: 6px 8px; }
+  #hud { padding: 4px 12px 4px 8px; gap: 8px; }
+  #coinIcon { width: 22px; height: 22px; }
+  #coinCount { font-size: 18px; }
+  #cps { margin-top: 3px; font-size: 10px; }
+  #gemBox { font-size: 16px; padding-left: 8px; }
+  #gemIcon { font-size: 17px; }
+  #boosts { gap: 4px; }
+  .chip { font-size: 9px; padding: 3px 5px; }
+  #eventBanner { top: 62px; font-size: 10px; padding: 3px 8px; }
+  #panel { margin: 6px 6px 6px 0; padding: 8px; }
+  #tabs { grid-template-columns: repeat(9, 1fr); gap: 3px; margin-bottom: 8px; }
+  .tab { padding: 6px 0 5px; }
+  .tab .tab-icon { font-size: 17px; }
   #panelToggle { width: 30px; height: 56px; margin-top: -28px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -584,6 +595,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
           <div id="coinCount">0</div>
           <div id="cps"></div>
         </div>
+        <div id="gemBox" aria-live="off"><span id="gemIcon">💎</span><span id="gemCount">0</span></div>
       </div>
       <div id="boosts" aria-live="polite"></div>
     </div>
@@ -1330,7 +1342,7 @@ const WHEEL_SECTORS = [
   { kind: 'tap',     mult: 3, minutes: 3,        weight: 12, color: 'p', icon: 'tap' },
   { kind: 'coins',   seconds: 600,  flat: 1000,  weight: 10, color: 's', icon: 'coin3' },
   { kind: 'income',  mult: 3, minutes: 3,        weight: 8,  color: 'o', icon: 'up' },
-  { kind: 'crystal', weight: 4,                  color: 'u', icon: 'gem' },   // Кристал часу (лише після фіналу)
+  { kind: 'crystal', weight: 8,                  color: 'u', icon: 'gem' },   // Кристал часу: потрібен для купівлі скінів і майстерні часу
   { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3,  color: 'y', icon: 'star' }
 ];
 
@@ -2480,7 +2492,7 @@ const translations = {
     skin_hero_party: 'Герої у святкових костюмах', skin_hero_ninja: 'Герої-ніндзя',
     skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_lightning: 'Фіолетові блискавки', skin_capy_wizard: 'Капі-чарівник', skin_capy_chef: 'Капі-шеф', skin_capy_explorer: 'Капі-дослідник', skin_capy_detective: 'Капі-детектив', skin_capy_sailor: 'Капі-моряк', skin_shop_ice: 'Крижаний магазин', skin_shop_wood: 'Дерев’яна хатина', skin_shop_garden: 'Магазин-сад', skin_weather_cottoncloud: 'Цукрові хмари', skin_weather_goldcloud: 'Золоті хмари', skin_weather_starcloud: 'Зоряні хмари', skin_hero_chef: 'Герої-кухарі', skin_hero_wizard: 'Герої-чарівники', skin_hero_royal: 'Герої-королі',
     tab_skins: 'Скіни', skinsNote: 'Скін Капі сам змінюється разом з епохою. Захочеш інший — обери його тут, а щоб повернути скін епохи, тапни «Змінити на скін епохи». Стрілки гортають список.', skinBackToEpoch: 'Змінити на скін епохи', skinWornToast: 'Вдягнено: {0}', skinDefaultToast: 'Звичайний вигляд', skinHeroNone: 'Костюм вдягнуть усі звірята: покупці вже в ньому, а герої — щойно приїдуть.', skinCat_capyEpoch: 'Капі по епохах', skinEpoch: 'Капі: {0}', skinOtherEpoch: 'Інша епоха', skinCat_capy: 'Капі', skinCat_shop: 'Магазин', skinCat_weather: 'Погода', skinCat_hero: 'Герої та звірі', skinCat_street: 'Бруківка', skin_street_wood: 'Дерев’яний настил', skin_street_brick: 'Червона цегла',
-    skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}',
+    skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}', rainOn: 'Дощ увімкнено 🌧', rainOff: 'Дощ вимкнено',
     prize_income: 'Дохід ×{0} на {1} хв!',
     prize_tap: 'Тап ×{0} на {1} хв!',
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
@@ -3047,7 +3059,7 @@ const translations = {
     skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',
     skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_lightning: 'Purple lightning', skin_capy_wizard: 'Wizard Capy', skin_capy_chef: 'Chef Capy', skin_capy_explorer: 'Explorer Capy', skin_capy_detective: 'Detective Capy', skin_capy_sailor: 'Sailor Capy', skin_shop_ice: 'Ice shop', skin_shop_wood: 'Wooden cabin', skin_shop_garden: 'Garden shop', skin_weather_cottoncloud: 'Cotton-candy clouds', skin_weather_goldcloud: 'Golden clouds', skin_weather_starcloud: 'Starry clouds', skin_hero_chef: 'Chef heroes', skin_hero_wizard: 'Wizard heroes', skin_hero_royal: 'Royal heroes',
     tab_skins: 'Skins', skinsNote: 'Capy’s skin changes with the era by itself. Pick another one here, and tap “Switch to era skin” to get the era skin back. Arrows scroll the list.', skinBackToEpoch: 'Switch to era skin', skinWornToast: 'Now wearing: {0}', skinDefaultToast: 'Default look', skinHeroNone: 'Every animal wears it: shoppers already do, and heroes will once they join.', skinCat_capyEpoch: 'Capy by era', skinEpoch: 'Capy: {0}', skinOtherEpoch: 'Other era', skinCat_capy: 'Capy', skinCat_shop: 'Shop', skinCat_weather: 'Weather', skinCat_hero: 'Heroes & animals', skinCat_street: 'Pavement', skin_street_wood: 'Wooden boardwalk', skin_street_brick: 'Red brick',
-    skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}',
+    skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}', rainOn: 'Rain is on 🌧', rainOff: 'Rain is off',
     prize_income: 'Income ×{0} for {1} min!',
     prize_tap: 'Tap ×{0} for {1} min!',
     prize_jackpot: 'JACKPOT! +{0}',
@@ -3413,7 +3425,7 @@ function createDefaultState() {
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни
     stats: { ghostsCaught: 0, raccoonsCaught: 0, raccoonsLost: 0, wheelSpins: 0, timeTravels: 0, puddlesFixed: 0, deptsBought: 0, milestones: 0, teamMaxLevel: 0, maxLevel: 1, holidaysSeen: 0, jackpots: 0 },
     // звук 0…1; анімації; формат чисел; стать гравця ('f' / 'm'); день і ніч; чи відкрите меню; чи бачив підказку про гортання
-    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
+    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, rain: false, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
     dayPhase: 0.3,                     // час доби 0…1: 0.25 — схід сонця, 0.5 — полудень, 0.75 — захід, 0 — північ
     epochIntroSeen: -1,                // для якої епохи вже показали заставку-анімацію
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
@@ -5230,7 +5242,7 @@ const $ = id => document.getElementById(id);
 const ui = {
   stage: $('stage'), scene: $('scene'), world: $('world'), view: $('view'),
   shopOverlay: $('shopOverlay'), sign: $('sign'), signText: $('signText'), floaters: $('floaters'),
-  coinCount: $('coinCount'), cps: $('cps'), coinIcon: $('coinIcon'),
+  coinCount: $('coinCount'), cps: $('cps'), coinIcon: $('coinIcon'), gemCount: $('gemCount'), gemIcon: $('gemIcon'),
   tabs: $('tabs'),
   paneShop: $('pane-shop'), paneDepts: $('pane-departments'), paneSoon: $('pane-soon'),
   soonTitle: $('soonTitle'), capiPortrait: $('capiPortrait'), saveWarn: $('saveWarn'),
@@ -5269,7 +5281,7 @@ let sceneUnit = 3;             // css-пікселів на піксель сц�
 let viewCrop = { x: 0, w: 320 };   // яку частину вулиці зараз видно (на телефоні — лише середину)
 const landscapePhoneMQ = window.matchMedia('(orientation: landscape) and (max-height: 520px)');
 function collapseOnLandscapePhone() {              // коли телефон перевертають горизонтально — меню згортається, гра відкривається на весь екран
-  if (landscapePhoneMQ.matches && state.settings.panelOpen) { state.settings.panelOpen = false; applyPanel(); }
+  /* горизонтально меню більше не згортається саме: вигляд такий самий, як на ПК */
 }
 const mobileMQ = window.matchMedia('(max-width: 820px) and (orientation: portrait), (max-width: 560px)');
 const deptEls = [];            // елементи карток відділів
@@ -5637,6 +5649,8 @@ function updateSaveWarning() {
 
 // Оновлює лічильник і панель (тільки якщо текст змінився)
 function updateUI() {
+  setText(ui.gemCount, fmt(Math.floor(state.crystals)), 'gems');
+  setText(ui.gemIcon, EPOCH_GEM_EMOJI[viewEpoch() % EPOCH_GEM_EMOJI.length], 'gemi');
   if (previewIdx() !== null) {                       // обрана минула епоха: угорі її заробіток, баланс для витрат — у підписі
     setText(ui.coinCount, fmt(Math.floor(state.epochEarned[previewIdx()] || 0)), 'coins');
     setText(ui.cps, t('perSecond', fmt(state.cps, 1)), 'cps');
@@ -5891,19 +5905,11 @@ const capyAnim = { blinkIn: 3, blinkLeft: 0 };   // кліпання
 const fx = { coins: [], sparks: [], dust: [] };
 const clouds = CLOUDS.map(c => ({ ...c }));
 // Хмаринки розсипаються по всій ширині й висоті неба (на великому екрані їх більше)
-// Погода: восени йде сильний дощ, навесні — короткі легкі дощики (влітку й узимку дощу нема)
+// Погода: дощ вмикається й вимикається крапелькою біля магазину
 const weather = { rain: 0, target: 0, timer: 30 };
 const raindrops = [];
 function updateWeather(dt) {
-  const season = theme.season;
-  if (!animOn() || (season !== 'autumn' && season !== 'spring')) weather.target = 0;
-  else {
-    weather.timer -= dt;
-    if (weather.timer <= 0) {
-      if (weather.target > 0) { weather.target = 0; weather.timer = season === 'autumn' ? rand(90, 200) : rand(160, 320); }
-      else { weather.target = season === 'autumn' ? 1 : 0.5; weather.timer = rand(30, 70); }
-    }
-  }
+  weather.target = (animOn() && state.settings.rain) ? 0.85 : 0;       // дощ іде лише коли гравець увімкнув його крапелькою біля магазину
   weather.rain += (weather.target - weather.rain) * Math.min(1, dt * 0.6);
   if (weather.rain < 0.02) { raindrops.length = 0; return; }
   const want = Math.round(weather.rain * 120 * (view.w * view.h) / (320 * 180));
@@ -5913,6 +5919,29 @@ function updateWeather(dt) {
     d.y += d.vy * dt; d.x -= 20 * dt;
     if (d.y > worldB()) { d.y = -view.offY - rand(0, 20); d.x = rand(worldL(), worldR() + 30); }
   });
+}
+// Крапелька-кнопка на тротуарі праворуч від магазину: тап вмикає або вимикає дощ
+function rainToggleSpot() { return shop ? { x: shop.x + shop.w + 12, y: LAYOUT.curbY - 3 } : null; }
+function drawRainToggle() {
+  const p = rainToggleSpot(); if (!p) return;
+  const on = !!state.settings.rain, x = p.x, y = p.y, bob = on && animOn() && Math.floor(animClock * 3) % 2 ? 1 : 0;
+  ctx.globalAlpha = 0.25; R(ctx, x - 5, y, 11, 2, 'd'); ctx.globalAlpha = 1;
+  R(ctx, x - 1, y - 6, 3, 6, 'd'); R(ctx, x, y - 6, 1, 6, 'e');                                  // стовпчик
+  R(ctx, x - 7, y - 19 - bob, 15, 14, 'd'); R(ctx, x - 6, y - 18 - bob, 13, 12, on ? 'S' : 'w');    // табличка
+  R(ctx, x - 6, y - 18 - bob, 13, 1, 'w');
+  const c = on ? 'n' : 'e';                                                                         // крапелька
+  R(ctx, x, y - 16 - bob, 1, 2, c); R(ctx, x - 1, y - 14 - bob, 3, 2, c); R(ctx, x - 2, y - 12 - bob, 5, 3, c); R(ctx, x - 3, y - 10 - bob, 7, 3, c); R(ctx, x - 2, y - 8 - bob, 5, 1, c);
+  if (on) R(ctx, x - 2, y - 11 - bob, 1, 2, 'w'); else { lineG(ctx, x - 4, y - 8, x + 4, y - 16, 'r'); }
+}
+function hitRainToggle(p) {
+  const s = rainToggleSpot(); if (!s) return false;
+  if (Math.abs(p.x - s.x) <= 9 && p.y >= s.y - 22 && p.y <= s.y + 3) {
+    state.settings.rain = !state.settings.rain;
+    if (state.settings.rain) { weather.rain = Math.max(weather.rain, 0.3); }
+    showToast(t(state.settings.rain ? 'rainOn' : 'rainOff'), 'good'); playSfx('pip'); saveGame();
+    return true;
+  }
+  return false;
 }
 function drawRain() {
   if (!raindrops.length) return;
@@ -6353,14 +6382,15 @@ function placeBubble(el, x, y) {
   const bb = bubbleBounds(), hw = el.offsetWidth / 2 / sceneUnit + 2, hh = el.offsetHeight / sceneUnit + 6;
   const cx = Math.max(bb.il + hw, Math.min(bb.ir - hw, x)), cy = Math.max(bb.it + hh, Math.min(bb.b - 4, y));
   el._cx = cx;
-  el.style.left = pctX(cx) + '%';
-  el.style.top = pctY(cy) + '%';
+  el.style.translate = Math.round((cx + view.offX) * sceneUnit) + 'px ' + Math.round((cy + view.offY) * sceneUnit) + 'px';
+  const lim = Math.max(0, el.offsetWidth / 2 - 9);
+  el.style.setProperty('--tail', Math.max(-lim, Math.min(lim, Math.round((x - cx) * sceneUnit))) + 'px');   // хвостик показує на звірятко, навіть коли бульбашка підсунута від краю кадру
 }
 function dropBubble(key) { const el = bubbleEls[key]; if (el) { clearTimeout(el._timer); el.remove(); delete bubbleEls[key]; } }
 // Бульбашка з фразою над головою (key — щоб у одного персонажа була лише одна). Якщо той, хто говорить, поза видимою частиною вулиці — фраза не з'являється
 function showBubble(key, text, x, y, follow) {
   const bb = bubbleBounds();
-  if (x < bb.l - 2 || x > bb.r + 2) { dropBubble(key); return; }
+  if (x < bb.l + 3 || x > bb.r - 3) { dropBubble(key); return; }
   let el = bubbleEls[key];
   if (!el) {
     el = document.createElement('div');
@@ -6386,9 +6416,9 @@ function updateBubbles() {
   const bb = bubbleBounds();
   Object.keys(bubbleEls).forEach(k => {
     const el = bubbleEls[k];
-    if (!el._follow) { if (el._x < bb.l - 2 || el._x > bb.r + 2) { dropBubble(k); return; } placeBubble(el, el._x, el._y); return; }
+    if (!el._follow) { if (el._x < bb.l + 3 || el._x > bb.r - 3) { dropBubble(k); return; } placeBubble(el, el._x, el._y); return; }
     const p = el._follow();
-    if (p.x < bb.l - 2 || p.x > bb.r + 2) { dropBubble(k); return; }        // звірятко пішло за межі кадру — репліка зникає
+    if (p.x < bb.l + 3 || p.x > bb.r - 3) { dropBubble(k); return; }        // звірятко пішло за межі кадру (або камеру посунули) — репліка зникає
     placeBubble(el, p.x, Math.max(24, p.y));
   });
 }
@@ -9122,7 +9152,7 @@ const CIRCUS_ART = (function () {
 function circusFlagText() { return t('circusFlag'); }
 
 /* ---- логіка ---- */
-function circusStopX() { return mailBoxX() + 40; }   // стоїть на дорозі прямо над поштоматом (так, щоб шатра повністю його закрили) — прив'язаний до дороги, а не до екрана
+function circusStopX() { return mailBoxX() + 150; }   // стоїть на дорозі прямо над поштоматом (так, щоб шатра повністю його закрили) — прив'язаний до дороги, а не до екрана
 function circusStartX() { return circus.sx !== undefined ? circus.sx : Math.max(visR() + 90, circusStopX() + 150); }   // звідки в'їжджає: трохи правіше від того, що видно в момент тапу, далі їде по дорозі
 function bangPos() { return { x: Math.min(visR() - 14, shop.x + shop.w + 13), y: LAYOUT.streetTop + 9 }; }   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
 function circusY() { return mailRoadY() + 2; }
@@ -9252,7 +9282,7 @@ function closeCircus() {
 function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_POOL[i].startsWith('capy_ep') && !(state.skinsMask & (1 << i))); }   // скіни епох у колесі не випадають
 function circusSpin() {
   if (circus.anim || state.circus.spun) return;
-  const now = Date.now(), weight = x => (x.kind === 'crystal' && !state.story.finale ? 0 : (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : x.weight));
+  const now = Date.now(), weight = x => (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : x.weight);
   const total = CIRCUS_SECTORS.reduce((a, x) => a + weight(x), 0);
   let roll = Math.random() * total, idx = 0;
   for (; idx < CIRCUS_SECTORS.length - 1; idx++) { roll -= weight(CIRCUS_SECTORS[idx]); if (roll < 0) break; }
@@ -9366,7 +9396,7 @@ function hitMail(p) {
 const LETTER_SENDERS = ['spike', 'zoya', 'bodya', 'sonia', 'leo', 'pao'];
 function openLetter() {
   const fin = state.story.finale;
-  const kinds = [['income', 30], ['tap', 25], ['coins', 25], ['wheel', 10], ['sale', 8], ['crystal', fin ? 3 : 0]];
+  const kinds = [['income', 30], ['tap', 25], ['coins', 25], ['wheel', 10], ['sale', 8], ['crystal', 4]];
   let roll = Math.random() * kinds.reduce((a, k) => a + k[1], 0), kind = kinds[0][0];
   for (const k of kinds) { roll -= k[1]; if (roll < 0) { kind = k[0]; break; } }
   const sender = LETTER_SENDERS[Math.floor(Math.random() * LETTER_SENDERS.length)];
@@ -9525,7 +9555,7 @@ function spinWheel(extra) {
   if (extra) { if (state.ghosts < CONFIG.GHOST_RESPIN_COST) return; state.ghosts -= CONFIG.GHOST_RESPIN_COST; }   // додатковий оберт за кристали привидів
   else if (!wheelReady(now)) return;
   // вибір сектора за вагами
-  const weight = x => (x.kind === 'crystal' && !state.story.finale ? 0 : x.weight);   // кристали випадають лише після фіналу
+  const weight = x => x.weight;
   const total = WHEEL_SECTORS.reduce((s, x) => s + weight(x), 0);
   let roll = Math.random() * total, idx = 0;
   for (; idx < WHEEL_SECTORS.length - 1; idx++) { roll -= weight(WHEEL_SECTORS[idx]); if (roll < 0) break; }
@@ -9990,6 +10020,7 @@ function setupInput() {
     if (hitGhost(p)) return;                    // привид (Хелловін)
     if (hitCircus(p)) return;                   // червоний «!» або цирк Фортуни
     if (hitMail(p)) return;                     // конверт біля поштової скриньки
+    if (hitRainToggle(p)) return;               // крапелька біля магазину: дощ увімк./вимк.
     const actor = hitActor(p);                  // звірятко підстрибує й каже фразу, а магазин усе одно дає монетку
     if (actor) { actor.hop = 1; actorSay(actor); }
     else { const guest = hitGuest(p); if (guest) guestSay(guest); else if (hitCapy(p)) capySay(); }
@@ -10091,6 +10122,7 @@ function render(time) {
   benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); });
   if (view.extraB >= 30 || state.events.mailPending || mail.state !== 'idle') items.push({ y: mailRoadY() - 1, draw: drawMailBox });
   if (mail.state !== 'idle') items.push({ y: mailRoadY(), draw: drawMailTruck });
+  if (shop) items.push({ y: LAYOUT.curbY, draw: drawRainToggle });
   if (state.circus.phase >= 2) items.push({ y: circusY(), draw: drawCircus });
   if (state.circus.phase === 1) items.push({ y: bangPos().y, draw: drawBang });
   items.push({
