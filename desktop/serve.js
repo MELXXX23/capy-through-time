@@ -10,7 +10,7 @@ const { execFileSync } = require('child_process');
 
 const PREPARE = path.join(__dirname, 'prepare.js');
 function prepare(quiet) {      // оновлюємо копію гри (з локальним шрифтом, щоб усе працювало без Google)
-  try { execFileSync(process.execPath, [PREPARE], { stdio: quiet ? 'ignore' : 'inherit' }); return true; } catch (e) { return false; }
+  try { execFileSync(process.execPath, [PREPARE], { stdio: quiet ? 'ignore' : 'inherit', env: Object.assign({}, process.env, { CAPY_NOGOD: '1' }) }); return true; } catch (e) { return false; }
 }
 prepare(false);
 

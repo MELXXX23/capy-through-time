@@ -171,6 +171,10 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 .sw-row.on .sw-track { background: #3fae5f; }
 .sw-row.on .sw-track i { transform: translateX(24px); background: #f4fff2; }
 .sw-row.on .sw-track::after { content: 'ON'; right: auto; left: 6px; }
+.route-row { display: flex; gap: 8px; padding: 6px 0; border-top: 2px solid rgba(74, 50, 40, .18); font-size: 11px; line-height: 1.5; }
+.route-row .rt { flex: none; width: 16px; text-align: center; color: var(--brown); }
+.route-row.done { color: #2f8a4c; }
+.route-row.done .rt { color: #2f8a4c; }
 .daily-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-top: 2px solid rgba(74, 50, 40, .18); font-size: 11px; line-height: 1.4; }
 .daily-row .dtext { flex: 1; min-width: 0; }
 .daily-row .dtext small { display: block; color: var(--brown); font-size: 10px; }
@@ -427,7 +431,7 @@ body.big-text #panel { zoom: 1.18; }
 #boot .b-title small { display: block; font-size: .5em; color: #fff4dc; letter-spacing: 4px; }
 #boot .b-load { position: absolute; z-index: 4; left: 50%; bottom: 7%; width: min(70vw, 360px); margin-left: calc(min(70vw, 360px) / -2); text-align: center; font-family: 'Press Start 2P', monospace; font-size: 12px; color: #fff4dc; text-shadow: 2px 2px 0 #302418; }
 #boot .b-bar { height: 14px; margin-top: 10px; background: #302418; padding: 2px; box-shadow: 0 0 0 2px #cfc5b8; }
-#boot .b-bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #f2b84b 0 8px, #ffe08a 8px 12px); transform-origin: 0 50%; transform: scaleX(.04); animation: bFill 2.6s cubic-bezier(.2, .7, .3, 1) forwards; }
+#boot .b-bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #f2b84b 0 8px, #ffe08a 8px 12px); transform-origin: 0 50%; transform: scaleX(.04); animation: bFill 3.6s cubic-bezier(.25, .6, .35, 1) forwards; }
 #boot.ready .b-bar i { animation: none; transform: scaleX(1); transition: transform .25s; }
 #boot .b-dots::after { content: ''; animation: bDots 1.2s steps(1, end) infinite; }
 @keyframes bTw { 50% { opacity: .45; } }
@@ -634,7 +638,6 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #hud { padding: 7px 13px 6px 9px; gap: 8px; }
   #coinIcon { width: 22px; height: 22px; }
   #coinCount { font-size: 18px; line-height: 1.2; }
-  #wheelOpen { display: none; }
   #cps { margin-top: 4px; font-size: 10px; }
   #gemBox { font-size: 16px; padding-left: 8px; }
   #gemIcon { font-size: 17px; }
@@ -691,7 +694,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 function bootDone() {
   var el = document.getElementById('boot'); if (!el) return;
   el.classList.add('ready');
-  var wait = Math.max(0, 1300 - performance.now());                    // показуємо принаймні трохи, щоб анімація не миготіла
+  var wait = Math.max(0, 3300 - performance.now());                    // показуємо принаймні трохи, щоб анімація не миготіла
   setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); }, wait + 250);
 }
 </script>
@@ -784,6 +787,7 @@ function bootDone() {
           <p class="ws-line" id="wsInfo"></p>
           <p class="ws-line" id="wsBonus"></p>
         </div>
+        <div class="card" id="routeCard"><h2 id="routeTitle"></h2><p class="ws-line" id="routeNext"></p><div id="routeList"></div></div>
         <div class="card warp-card">
           <h2 data-i18n="warpTitle"></h2>
           <p class="ws-line" data-i18n="warpText"></p>
@@ -2894,6 +2898,7 @@ const translations = {
     warpTitle: '⏳ Подорож у часі',
     warpText: 'Годинник поверне Капі в минуле. Монетки, відділи, рівень магазину й рівні звіряток скинуться, а кристали, досягнення, глави й покращення залишаться. Звірята стануть знайомими — їх наймати дешевше.',
     warpGain: 'Ти отримаєш: 💎 {0}',
+    routeTitle: '🧭 Як перейти в наступну епоху', routeNext: 'Далі: епоха «{0}»', routeLevel: 'Збудуй торговий центр (рівень {0})', routeNights: 'Дочекайся трьох ночей: {0} з 3. Перші дві годинник лише цокає, на третю — оживе й відкриє подорож', routeEarn: 'Зароби за цю епоху: {0} з {1} монет. Від цієї суми Годинник починає давати кристали', routeGo: 'Тапни «Подорож у часі» нижче. Монетки й відділи скинуться, а кристали, друзі й покращення лишаться', routeToast: 'Нова епоха! Щоб рушити далі: зароби в ній від {0} монет і тапни «Подорож у часі» у вкладці «Годинник».',
     warpNone: 'Поки що замало. Зароби ще — кристали дають за корінь із заробленого за цей забіг (від {0}).',
     warpBtn: 'Завести годинник',
     warpConfirmTitle: 'Подорож у часі',
@@ -3463,6 +3468,7 @@ const translations = {
     warpTitle: '⏳ Time Travel',
     warpText: 'The watch will send Capy back in time. Coins, departments, shop level and animal levels reset, but crystals, achievements, chapters and upgrades stay. Animals become familiar — hiring them costs less.',
     warpGain: 'You will get: 💎 {0}',
+    routeTitle: '🧭 How to reach the next era', routeNext: 'Next: the “{0}” era', routeLevel: 'Build the shopping mall (level {0})', routeNights: 'Wait for three nights: {0} of 3. For the first two the watch only ticks, on the third it comes alive and unlocks time travel', routeEarn: 'Earn in this era: {0} of {1} coins. From this amount the Watch starts giving crystals', routeGo: 'Tap “Time travel” below. Coins and departments reset, but crystals, friends and upgrades stay', routeToast: 'A new era! To move on: earn at least {0} coins in it and tap “Time travel” in the “Watch” tab.',
     warpNone: 'Not enough yet. Crystals come from the square root of coins earned this run (from {0}).',
     warpBtn: 'Wind the watch',
     warpConfirmTitle: 'Time travel',
@@ -5517,7 +5523,7 @@ const ui = {
   lootModal: $('lootModal'), lootCanvas: $('lootCanvas'), lootName: $('lootName'), lootType: $('lootType'), lootTag: $('lootTag'), lootWear: $('lootWear'), lootClose: $('lootClose'),
   circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
   wheelBtn: $('wheelBtn'), wheelGhostBtn: $('wheelGhostBtn'), wheelGhostNote: $('wheelGhostNote'), wheelClose: $('wheelClose'),
-  paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
+  paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), routeTitle: $('routeTitle'), routeNext: $('routeNext'), routeList: $('routeList'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
   paneSkins: $('pane-skins'), skinsList: $('skinsList'), paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), statsCard: $('statsCard'),
   app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'), setRain: $('setRain'), setBirds: $('setBirds'), setClouds: $('setClouds'), setSteam: $('setSteam'), setBigText: $('setBigText'), setVibrate: $('setVibrate'), setEvents: $('setEvents'), setEventsNote: $('setEventsNote'),
   paneSettings: $('pane-settings'), setLangBtns: $('setLangBtns'), setNumFmt: $('setNumFmt'), setAnim: $('setAnim'), setSound: $('setSound'),
@@ -6883,8 +6889,8 @@ function hireOrUpgrade(i) {
 
 /* ---------- Покупці ---------- */
 function customerTarget() {
-  if (state.cps <= 0) return 1;
-  return Math.min(CONFIG.MAX_CUSTOMERS, 2 + Math.floor(Math.log10(state.cps + 1) * 1.5));
+  if (state.cps <= 0) return 2;
+  return Math.min(CONFIG.MAX_CUSTOMERS + 4, 4 + Math.floor(Math.log10(state.cps + 1) * 2));      // трохи більше покупців, ніж раніше
 }
 function spawnCustomer() {
   const fromLeft = Math.random() < 0.5;
@@ -6947,7 +6953,7 @@ function updateCustomers(dt) {
   customers.forEach(c => { if (c.vip && !c.said && !c.vipDone && c.x > visL() + 10 && c.x < visR() - 10) { c.said = true; showBubble('vip', t('vipWish', deptName(c.wish)), c.x, c.y - 26, () => ({ x: c.x, y: c.y - 26 })); } });
   customerTimer -= dt;
   if (customerTimer <= 0) {
-    customerTimer = rand(1.2, 3.2);
+    customerTimer = rand(0.9, 2.4);
     if (customers.length < customerTarget()) spawnCustomer();
   }
   for (let i = customers.length - 1; i >= 0; i--) {
@@ -6991,20 +6997,33 @@ function updateCustomers(dt) {
       }
       case 'homeUp':
         c.y -= step * 0.8;
-        if (c.y <= c.homeDoor.y + 1) { c.y = c.homeDoor.y + 1; c.mode = 'homeIn'; c.t = 0; }
+        if (c.y <= c.homeDoor.y + 1) { c.y = c.homeDoor.y + 1; c.mode = 'homeKnock'; c.t = 0; }
         break;
-      case 'homeIn':                                      // двері відчиняються, звірятко зникає всередині
-        c.t += dt; c.alpha = Math.max(0, 1 - c.t / 0.6);
-        if (c.t >= 0.6) { c.mode = 'homeStay'; c.t = 0; c.stay = rand(7, 16); c.inside = true; c.bag = null; }
+      case 'homeKnock':                                   // стукає в двері й чекає
+        c.t += dt;
+        if (c.t >= 0.7) { c.mode = 'homeIn'; c.t = 0; c.said2 = false; }
         break;
+      case 'homeIn': {                                    // двері відчиняються, тепле світло; звірятко заходить усередину (меншає й тане), двері зачиняються
+        c.t += dt;
+        const u = Math.max(0, Math.min(1, (c.t - 0.3) / 0.45));
+        c.alpha = 1 - u * u; c.scale = 1 - 0.45 * u; c.y = c.homeDoor.y + 1 - u * 2;
+        if (u > 0.35) c.bag = null;
+        if (u > 0.5 && !c.said2) { c.said2 = true; homeSparks(c.homeDoor, 4); }
+        if (c.t >= 0.95) { c.mode = 'homeStay'; c.t = 0; c.stay = rand(7, 16); c.inside = true; c.bag = null; c.alpha = 0; c.scale = 1; c.y = c.homeDoor.y + 1; }
+        break;
+      }
       case 'homeStay':
         c.t += dt;
-        if (c.t >= c.stay) { c.mode = 'homeOut'; c.t = 0; c.inside = false; c.alpha = 0; }
+        if (c.t >= c.stay) { c.mode = 'homeOut'; c.t = 0; c.inside = false; c.alpha = 0; c.scale = 0.55; c.said2 = false; }
         break;
-      case 'homeOut':
-        c.t += dt; c.alpha = Math.min(1, c.t / 0.6);
-        if (c.t >= 0.6) { c.mode = 'homeDown'; c.alpha = 1; }
+      case 'homeOut': {                                   // двері відчиняються, звірятко виходить на світло (росте й проявляється), двері зачиняються за ним
+        c.t += dt;
+        const u = Math.max(0, Math.min(1, (c.t - 0.3) / 0.5));
+        c.alpha = u; c.scale = 0.55 + 0.45 * u; c.y = c.homeDoor.y + 1 - (1 - u) * 2;
+        if (u > 0.5 && !c.said2) { c.said2 = true; homeSparks(c.homeDoor, 3); }
+        if (c.t >= 1.1) { c.mode = 'homeDown'; c.alpha = 1; c.scale = 1; c.y = c.homeDoor.y + 1; c.said2 = false; }
         break;
+      }
       case 'homeDown':
         c.y += step * 0.8;
         if (c.y >= c.lane) {
@@ -7121,12 +7140,34 @@ function drawSkinGear(sx, sy, kind, head) {
     R(ctx, cx - 4, sy + 19, 9, 1, 'r'); R(ctx, cx - 4, sy + 17, 9, 2, 'z');
   }
 }
+// Двері будиночка: відчиненість 0…1 залежить від етапу (стук → відчиняються → зачиняються)
+function homeDoorOpen(c) {
+  const t = c.t;
+  if (c.mode === 'homeIn') return t < 0.3 ? t / 0.3 : t < 0.75 ? 1 : Math.max(0, 1 - (t - 0.75) / 0.2);
+  if (c.mode === 'homeOut') return t < 0.3 ? t / 0.3 : t < 0.85 ? 1 : Math.max(0, 1 - (t - 0.85) / 0.25);
+  return 0;
+}
+function drawHomeDoor(c) {
+  const d = c.homeDoor, o = homeDoorOpen(c);
+  if (c.mode === 'homeKnock') {                                      // «тук-тук»: маленькі риски біля дверей
+    const k = Math.floor(c.t * 8) % 2;
+    if (c.t > 0.1 && c.t < 0.55 && k) { R(ctx, d.x + 6, d.y - 10, 1, 2, 'w'); R(ctx, d.x + 8, d.y - 9, 1, 2, 'w'); R(ctx, d.x - 7, d.y - 10, 1, 2, 'w'); }
+    return;
+  }
+  if (!(o > 0.02)) return;
+  const x0 = d.x - 4, w = 8, leaf = Math.max(1, Math.round(w * (1 - o)));          // полотно складається до лівого краю
+  R(ctx, d.x - 5, d.y - 15, 10, 15, 'd');
+  R(ctx, x0, d.y - 14, w, 14, 'h'); R(ctx, x0, d.y - 14, w, 2, 'y'); R(ctx, x0 + 5, d.y - 8, 2, 4, 'w'); R(ctx, x0, d.y - 3, w, 3, 'o');   // тепла кімната: світло, лампа, підлога
+  R(ctx, x0, d.y - 14, leaf, 14, 'b'); R(ctx, x0, d.y - 14, leaf, 1, 'l');
+  ctx.globalAlpha = 0.3 * o; R(ctx, d.x - 5, d.y, 10, 2, 'y'); R(ctx, d.x - 4, d.y + 2, 8, 2, 'y'); R(ctx, d.x - 2, d.y + 4, 4, 1, 'y'); ctx.globalAlpha = 1;      // світло падає на ґанок
+}
+function homeSparks(d, n) { for (let i = 0; i < n; i++) fx.sparks.push({ x: d.x + rand(-4, 4), y: d.y - 12, vx: rand(-12, 12), vy: rand(-34, -16), age: 0, life: rand(0.5, 0.9), col: i % 2 ? 'f' : 'y' }); }
 function drawCustomer(c) {
-  const moving = c.mode === 'inside' ? !!c.moving : true;
+  const moving = c.mode === 'homeKnock' ? false : c.mode === 'inside' ? !!c.moving : true;
   const frame = moving ? Math.floor(c.anim * 6) % 2 : 0;
   const bob = frame ? -1 : 0;
   const sx = Math.round(c.x - 9), sy = Math.round(c.y - 23) + bob;            // спрайт 18×23: ноги внизу, центр по x
-  if ((c.mode === 'homeIn' || c.mode === 'homeOut') && c.homeDoor) { const d = c.homeDoor; R(ctx, d.x - 5, d.y - 15, 10, 15, 'd'); R(ctx, d.x - 4, d.y - 14, 8, 14, 'h'); R(ctx, d.x - 4, d.y - 14, 8, 2, 'y'); }   // двері будиночка відчинені, всередині тепле світло
+  if ((c.mode === 'homeKnock' || c.mode === 'homeIn' || c.mode === 'homeOut') && c.homeDoor) drawHomeDoor(c);
   ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 3, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
   if (c.vip) {
     const pulse = animOn() ? Math.sin(animClock * 5) : 0;
@@ -7134,7 +7175,7 @@ function drawCustomer(c) {
     drawCanvasSprite(ctx, goldCanvas(c.type, frame), sx, sy, { flip: c.dir < 0, alpha: c.alpha });
     for (let k = 0; k < 3; k++) { const a = animClock * 2.2 + k * 2.1, px = Math.round(sx + 9 + Math.cos(a) * 10), py = Math.round(sy + 9 + Math.sin(a * 1.3) * 9); if (Math.floor(animClock * 6 + k) % 2) { R(ctx, px, py - 1, 1, 3, 'y'); R(ctx, px - 1, py, 3, 1, 'y'); } }
     if (!c.vipDone) { const by = sy - 7 + (animOn() ? Math.round(Math.sin(animClock * 4)) : 0); R(ctx, sx + 7, by + 2, 5, 3, 'd'); R(ctx, sx + 8, by + 1, 3, 1, 'd'); R(ctx, sx + 8, by + 2, 3, 2, 'h'); R(ctx, sx + 9, by, 1, 1, 'y'); }
-  } else drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha });
+  } else { const sc = c.scale || 1; drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc, sy: sc }); }
   const hs = skinOn('hero');
   if (hs && c.alpha > 0.9) drawSkinGear(sx, sy, hs, !hasHats());
   if (hasHats() && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(sx + 9, sy + 8, c.hat); }
@@ -7142,7 +7183,7 @@ function drawCustomer(c) {
     const sc = SCARF_COLORS[CUSTOMER_TYPES.indexOf(c.type) % SCARF_COLORS.length], nx = c.dir > 0 ? sx + 10 : sx + 5;
     R(ctx, sx + 4, sy + 16, 10, 2, sc); R(ctx, sx + 4, sy + 17, 10, 1, 'w'); R(ctx, nx, sy + 18, 3, 4, sc);
   }
-  if (c.bag) {   // пакет з покупками в лапці, злегка гойдається
+  if (c.bag && !(c.scale && c.scale < 0.9)) {   // пакет з покупками в лапці, злегка гойдається
     const bc = CHIBI.bag(c.bagKind || 0, c.bag), bx = c.dir > 0 ? sx + 14 : sx - 6;
     drawCanvasSprite(ctx, bc, bx, sy + 11 + (frame ? 1 : 0), { alpha: c.alpha });
   }
@@ -7687,6 +7728,7 @@ function finishEpochIntro() {
   epochIntro.active = false;
   const cb = epochIntro.done; epochIntro.done = null;
   if (cb) cb();
+  if (state.epoch > 0) setTimeout(() => showToast(t('routeToast', fmt(CONFIG.CRYSTAL_DIVISOR)), 'big'), 900);       // нагадування, що робити далі
 }
 // Показує анімацію приходу епохи №epochNo (0 — Відродження); done — що зробити після неї
 function playEpochIntro(epochNo, done) {
@@ -7865,13 +7907,35 @@ function buyWorkshop(i) {
   updateUI();
   saveGame();
 }
+// Умови переходу в наступну епоху: що вже зроблено, що лишилось і яка команда далі
+let routeSig = '';
+function updateRouteCard(gain) {
+  const fin = state.story.finale, run = Math.max(0, state.totalEarned - state.runStartEarned), nights = Math.min(3, state.story.nights || 0);
+  const rows = [];
+  if (!fin) { rows.push([state.shopLevel >= LEVELS.length, t('routeLevel', LEVELS.length)]); rows.push([nights >= 3, t('routeNights', nights)]); }
+  rows.push([gain >= 1, t('routeEarn', fmt(Math.floor(run)), fmt(CONFIG.CRYSTAL_DIVISOR))]);
+  rows.push([false, t('routeGo')]);
+  const next = (state.epoch + 1) % EPOCHS.length;
+  const sig = JSON.stringify(rows) + state.lang + next;
+  if (sig === routeSig) return;
+  routeSig = sig;
+  ui.routeTitle.textContent = t('routeTitle'); ui.routeNext.textContent = t('routeNext', t('epoch_' + next));
+  ui.routeList.innerHTML = '';
+  rows.forEach(([done, text], i) => {
+    const r = document.createElement('div'); r.className = 'route-row' + (done ? ' done' : '');
+    const m = document.createElement('span'); m.className = 'rt'; m.textContent = done ? '✓' : (i === rows.length - 1 ? '👉' : '○');
+    const x = document.createElement('span'); x.textContent = text;
+    r.append(m, x); ui.routeList.appendChild(r);
+  });
+}
 function updateWorkshopUI() {
   if (ui.paneWorkshop.hidden) return;
   setText(ui.wsInfo, t('wsCrystals', fmt(state.crystals)), 'wsInfo');
   setText(ui.wsBonus, t('wsBonus', fmt(state.crystalsTotal), fmt(crystalMult(), 2)), 'wsBonus');
   const gain = prestigeGain();
   setText(ui.warpPreview, gain >= 1 ? t('warpGain', gain) : t('warpNone', fmt(CONFIG.CRYSTAL_DIVISOR)), 'warpPrev');
-  ui.warpBtn.disabled = gain < 1;
+  ui.warpBtn.disabled = gain < 1 || !state.story.finale;
+  updateRouteCard(gain);
   setText(ui.warpBtn, t('warpBtn'), 'warpBtn');
   WORKSHOP.forEach((w, i) => {
     const e = wsEls[i], L = state.ws[i], max = w.costs.length;
@@ -8285,7 +8349,7 @@ function updateSkinsUI() {
 function updateTabsVisibility() {
   ui.tabs.querySelectorAll('.tab').forEach(b => {
     const tab = TABS.find(x => x.id === b.dataset.tab);
-    b.hidden = !!(tab.needs === 'finale' && !state.story.finale);
+    b.hidden = !!(tab.needs === 'finale' && !(state.story.finale || state.story.done >= 7));
   });
 }
 

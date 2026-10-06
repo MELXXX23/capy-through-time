@@ -26,6 +26,14 @@ html = html.replace('</title>', '</title>\n' + fontFace);
 
 if (/googleapis|gstatic/.test(html)) console.warn('Увага: у game.html лишилися посилання на Google Fonts.');
 
+// РЕЖИМ БОГА — лише для версії на ПК (exe та npm start): усі епохи й сезони відкриті, усі скіни безкоштовні, панель налагодження.
+// На сайт (docs/index.html) і в телефонний сервер він НЕ потрапляє: serve.js ставить CAPY_NOGOD=1.
+if (process.env.CAPY_NOGOD !== '1') {
+  const before = html;
+  html = html.replace('const DEV_OPEN_ALL = false;', 'const DEV_OPEN_ALL = true;').replace('const SKINS_FREE = false;', 'const SKINS_FREE = true;');
+  html = html.replace('<body>', '<body>\n<script>window.__debug = true;</script>');
+  console.log(html !== before ? 'Режим бога ввімкнено (лише для ПК).' : 'Увага: режим бога не вставився — перевір назви прапорців у game.html.');
+}
 fs.mkdirSync(dstDir, { recursive: true });
 fs.writeFileSync(dst, html, 'utf8');
 console.log('Готово: app/game.html оновлено (' + Math.round(html.length / 1024) + ' КБ).');

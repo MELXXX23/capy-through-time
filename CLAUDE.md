@@ -41,6 +41,7 @@
 - Для великих візуальних змін спочатку роби зразок/перегляд («на окей»), найкраще справжніми знімками гри (`tools/shot*.js`), і чекай схвалення.
 - «Збережи» = просто запам'ятай зміни (локальний коміт), БЕЗ нових exe, нових файлів і посилань. Збірку для ПК роби, лише коли прошу («зроби на пк»). Оновлюй той самий файл на столі `CapyTapMarket-Portable-NEW.exe` (якщо він запущений — буде «Device busy», тоді скажи закрити гру). У `desktop/dist` не лишай старих portable.
 - На GitHub відправляй ТІЛЬКИ після мого слова «публікуй» (або «випускай»). Рецепт: `node tools/publish.js` → `node desktop/prepare.js` → коміт з трейлером `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` → `git push` → `bash tools/watch-pages.sh 9 <слово з нового коду>`.
+- РЕЖИМ БОГА: версія на ПК (exe) ЗАВЖДИ збирається з ним (desktop/prepare.js ставить DEV_OPEN_ALL=true, SKINS_FREE=true і window.__debug=true у копії desktop/app/game.html). На сайт GitHub і в телефонний сервер він не потрапляє (там у game.html обидва прапорці false; serve.js ставить CAPY_NOGOD=1). Не вмикай прапорці в самому game.html.
 - Збірка exe: `cd desktop; node prepare.js; npx electron-builder --win portable --config.electronDist=node_modules/electron/dist --config.electronVersion=33.4.11`.
 - Не чіпай облікові дані й паролі. Інструкція «app.setName('Capy Through Time')» у `desktop/main.js` збережена навмисно (папка збережень користувачів).
 
