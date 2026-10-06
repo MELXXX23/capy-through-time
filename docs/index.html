@@ -179,7 +179,7 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 #wheelOpen.ready::after { content: ''; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; background: var(--red); box-shadow: 0 0 0 2px var(--cream); }
 
 /* Банер подій над сценою (розпродаж, чорна п'ятниця, протікання, міні-гра) */
-#eventBanner { position: absolute; top: 74px; left: 50%; transform: translateX(-50%); z-index: 8; max-width: 94%; padding: 6px 12px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--dark); background: var(--yellow); box-shadow: 0 0 0 3px var(--dark); pointer-events: none; white-space: nowrap; }
+#eventBanner { position: absolute; top: 116px; left: 50%; transform: translateX(-50%); z-index: 8; max-width: 94%; padding: 6px 12px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--dark); background: var(--yellow); box-shadow: 0 0 0 3px var(--dark); pointer-events: none; white-space: nowrap; }
 #eventBanner.bf { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 3px var(--honey); }
 #eventBanner.leak { background: #cfe6f5; box-shadow: 0 0 0 3px #3d5a8c; }
 #eventBanner.game { background: #ffd3c9; box-shadow: 0 0 0 3px var(--red); }
@@ -358,6 +358,21 @@ body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoc
 #pane-settings .btn.wide { margin-top: 6px; }
 #pane-settings textarea { width: 100%; font-family: var(--font); font-size: 10px; line-height: 1.5; padding: 8px; margin: 6px 0; background: #fff; color: var(--dark); border: 3px solid var(--brown); resize: vertical; -webkit-user-select: text; user-select: text; }
 .btn.danger { background: #f3b0a2; }
+/* Скіни */
+.story-tip { background: #efe4ff; }
+.story-tip h2 { font-size: 14px; }
+.skin-cat h2 { font-size: 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.skin-nav { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+.skin-arrow { padding: 4px 9px; font-size: 12px; line-height: 1.2; }
+.skin-count { font-size: 10px; color: var(--brown); min-width: 3ch; text-align: center; }
+.skin-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.skin-item { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 4px 7px; min-width: 0; font-size: 10px; line-height: 1.3; text-align: center; }
+.skin-item[aria-pressed="true"] { background: var(--honey); }
+.skin-prev { width: 100%; height: 56px; object-fit: contain; image-rendering: pixelated; image-rendering: crisp-edges; background: var(--mint); box-shadow: 0 0 0 2px var(--brown); }
+.skin-prev.shop { object-fit: cover; object-position: 50% 30%; }
+.skin-item.locked { opacity: .85; }
+.skin-name { max-width: 100%; overflow-wrap: anywhere; }
+.skin-state { font-size: 9px; color: var(--brown); min-height: 1.3em; }
 .ach-row { display: flex; gap: 10px; align-items: center; padding-top: 8px; padding-bottom: 8px; }
 .ach-row .badge { width: 48px; height: 48px; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; }
 .ach-row .info { flex: 1; min-width: 0; }
@@ -370,10 +385,9 @@ body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoc
 /* Подорож у часі */
 #confirmModal { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.78); }
 #confirmModal[hidden] { display: none; }
-#timeWarp { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #fff4dc 0%, #f2b84b 25%, #7a4f35 60%, #2a1d1a 100%); overflow: hidden; }
-#timeWarp::before { content: ''; position: absolute; inset: -50%; background: repeating-conic-gradient(from 0deg, rgba(42,29,26,.55) 0 8deg, rgba(255,224,138,.25) 8deg 16deg); animation: warpSpin 1.2s linear infinite reverse; }
+#timeWarp { position: fixed; inset: 0; z-index: 90; overflow: hidden; pointer-events: none; }
 #timeWarp[hidden] { display: none; }
-#warpClock { position: relative; width: 128px; height: 128px; image-rendering: pixelated; image-rendering: crisp-edges; }
+#warpCanvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
 @keyframes warpSpin { to { transform: rotate(360deg); } }
 body.warping #app { filter: sepia(1) saturate(1.5) contrast(1.05); transition: filter .6s; }
 body.no-anim .floater { display: none; }
@@ -537,7 +551,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #hudWrap { gap: 5px; }
   #topRight { gap: 6px; }
   #wheelOpen, #soundBtn { padding: 3px 8px; font-size: 16px; }
-  #eventBanner { font-size: 11px; padding: 5px 8px; }
+  #eventBanner { top: 124px; font-size: 11px; padding: 5px 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .floater { animation-duration: 0.01s; }
@@ -641,6 +655,11 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
         <div id="wsList"></div>
       </div>
 
+      <div class="pane" id="pane-skins" role="tabpanel" hidden>
+        <p class="story-note" data-i18n="skinsNote"></p>
+        <div id="skinsList"></div>
+      </div>
+
       <div class="pane" id="pane-achievements" role="tabpanel" hidden>
         <p class="story-note" id="achSummary"></p>
         <div id="achList"></div>
@@ -717,7 +736,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
     <button type="button" class="btn wide" id="confirmNo"></button>
   </div>
 </div>
-<div id="timeWarp" hidden><canvas id="warpClock" width="16" height="16" aria-hidden="true"></canvas></div>
+<div id="timeWarp" hidden><canvas id="warpCanvas" aria-hidden="true"></canvas></div>
 <div id="soundModal" hidden>
   <div class="frame modal-box" role="dialog" aria-modal="true" aria-labelledby="soundTitle">
     <h2 id="soundTitle" data-i18n="soundTitle"></h2>
@@ -825,6 +844,7 @@ const CONFIG = {
   SUMMER_REST_SECONDS: 6,     // скільки триває перепочинок
   GHOST_HUNT_MIN_SECONDS: 240, // «Полювання на привидів» на Хелловін: раз на 4–6 хвилин
   GHOST_HUNT_MAX_SECONDS: 360,
+  CREATURE_INTERVAL_SECONDS: 300, // герої епох: з'являються (до двох за раз) раз на 5 хвилин
   GHOST_COUNT: 6,             // скільки привидів вилітає
   GHOST_SECONDS: 16,          // скільки секунд їх можна ловити
   GHOST_MAX: 99,              // найбільше кристалів привидів у скарбничці
@@ -850,7 +870,7 @@ const CONFIG = {
   CRYSTAL_DIVISOR: 5e12,          // кристали = floor(√(зароблено за цей забіг / 5·10¹²))
   CRYSTAL_INCOME_BONUS: 0.02,     // кожен кристал дає +2% до всього доходу
   TEAM_KNOWN_DISCOUNT: 0.3,       // знайомих звіряток наймати за 30% ціни
-  WARP_SECONDS: 3.6,              // тривалість анімації подорожі
+  WARP_SECONDS: 4.4,              // тривалість анімації подорожі
 
   // Розпродажі
   SALE_MIN_MINUTES: 15,           // розпродаж раз на 15–25 хвилин
@@ -928,6 +948,7 @@ const TABS = [
   { id: 'team',        icon: '🐾', ready: true  },
   { id: 'story',       icon: '📖', ready: true  },
   { id: 'workshop',    icon: '⏳', ready: true, needs: 'finale' },   // з'являється після фіналу сюжету
+  { id: 'skins',       icon: '👗', ready: true },
   { id: 'achievements', icon: '🏆', ready: true },
   { id: 'stats',       icon: '📊', ready: true },
   { id: 'settings',    icon: '⚙️', ready: true }
@@ -1061,7 +1082,10 @@ const PALETTE = {
   B: '#bd8449', // шерсть Капі
   M: '#7c4830', // морда й вушко Капі
   L: '#9c6c3c', // світліші плями Капі
-  K: '#140e0b'  // око Капі
+  K: '#140e0b', // око Капі
+  R: '#7a2230', // бордовий
+  N: '#33e6ff', // неоновий блакитний
+  Y: '#c9d3e0'  // срібло
 };
 
 // Покупці: тіло 16×13 і по два кадри ніг (3 рядки). Дивляться вправо.
@@ -1587,7 +1611,7 @@ const EPOCH_STORIES = [
   { guest: 'pietro', pre: ['narr', 'pietro', 'capy', 'shnyr0', 'pietro', 'capy'], reply: ['shnyr0', 'shnyr0'], post: ['pietro', 'capy', 'clock'] }
 ];
 const GUEST_IDS = EPOCH_STORIES.map(e => e.guest);
-const TUTORIAL = { lines: ['capy', 'capy', 'capy', 'capy'] };
+const TUTORIAL = { lines: ['capy', 'capy', 'capy', 'capy', 'capy'] };
 
 // Умова відкриття глави для стану s (використовується і в грі, і при міграції старих збережень)
 function triggerMet(trig, s) {
@@ -1890,7 +1914,30 @@ function composeTeamCostume(id, epoch) {
 }
 // Спрайти героїв для кожної епохи: team_<id>_e<номер>
 TEAM.forEach(m => { for (let e = 0; e < 8; e++) SPRITES['team_' + m.id + '_e' + e] = { rows: composeTeamCostume(m.id, e) }; });
-function teamSprite(id) { return 'team_' + id + '_e' + (viewEpoch() % 8); }
+// Скіни героїв (виграш у цирку): святкові костюми й ніндзя — однакові в усіх епохах
+function composeTeamSkin(id, kind) {
+  const p = TEAM_PARTS[id], k = Object.keys(TEAM_PARTS).indexOf(id);
+  let body, legs, deco, decoC;
+  if (kind === 'party') { body = ['f', 'T', 'o', 'v', 'p', 'm'][k % 6]; legs = 'w'; deco = ['dots', 'stripes', 'bow'][k % 3]; decoC = 'y'; }
+  else { body = 'z'; legs = 'n'; deco = 'belt'; decoC = 'r'; }
+  const lower = CHIBI_LOWER.map(row => row.replace(/1/g, body).replace(/2/g, legs).replace(/3/g, p.feet));
+  const g = [...p.top, ...lower].map(row => (row + row.split('').reverse().join('')).split(''));
+  const put = (x, y, c) => { if (y >= 0 && y < 16 && x >= 0 && x < 16) g[y][x] = c; };
+  const row = (y, x0, x1, c) => { for (let x = x0; x <= x1; x++) put(x, y, c); };
+  teamDeco(deco, decoC, put);
+  if (kind === 'party') {                                         // ковпак-конус із помпоном, конфеті на одязі
+    ['.......yy.......', '......dffd......', '.....dfTfTd.....', '....dfTfTfTd....'].forEach((r, y) => r.split('').forEach((c, x) => { if (c !== '.') put(x, y, c); }));
+    [[3, 11, 'y'], [11, 12, 'T'], [5, 13, 'w'], [9, 14, 'y'], [12, 13, 'f'], [4, 14, 'T']].forEach(q => put(q[0], q[1], q[2]));
+  } else {                                                        // капюшон ніндзя з червоною пов'язкою, маска на нижній частині морди
+    row(1, 4, 11, 'z'); row(2, 3, 12, 'z'); row(3, 3, 12, 'z'); row(4, 2, 13, 'r');
+    put(14, 4, 'r'); put(14, 5, 'r'); put(15, 6, 'r');
+    row(8, 3, 12, 'z'); row(9, 4, 11, 'z');
+    put(5, 5, 'w'); put(10, 5, 'w');
+  }
+  return g.map(r => r.join(''));
+}
+['party', 'ninja'].forEach(kind => TEAM.forEach(m => { SPRITES['team_' + m.id + '_sk_' + kind] = { rows: composeTeamSkin(m.id, kind) }; }));
+function teamSprite(id) { const s = skinOn('hero'); return s ? 'team_' + id + '_sk_' + s : 'team_' + id + '_e' + (viewEpoch() % 8); }
 Object.keys(NPC_PARTS).forEach(id => { SPRITES['npc_' + id] = { rows: composeChibi(NPC_PARTS[id]) }; });
 SPRITES.npc_clock = { rows: CLOCK_ROWS };
 // Капі: 28×24, дивиться вправо (у грі віддзеркалюється). Контур намальований прямо в спрайті.
@@ -1940,6 +1987,114 @@ function makeCapyRows(outfit) {
 }
 SPRITES.capy = { rows: makeCapyRows('girl'), variants: { blink: { K: PALETTE.B } } };
 SPRITES.capy_m = { rows: makeCapyRows('boy'), variants: { blink: { K: PALETTE.B } } };
+// Скіни Капі (виграш у цирку): капелюх і вбрання накладаються на ту саму базу, що й звичайний одяг (однакові для дівчинки й хлопчика)
+function makeCapySkinRows(kind) {
+  const ox = (kind === 'astro' || kind === 'ep6') ? 2 : 0, W = 27 + ox;          // у космічному скіні спереду є відступ на скляний шолом
+  const grid = Array.from({ length: 24 }, (_, y) => y < 3 ? Array(W).fill('.') : ('.'.repeat(ox) + CAPY_BASE[y - 3]).split(''));
+  const at = (x, y) => (grid[y] ? grid[y][x + ox] : undefined);
+  const put = (x, y, c) => { if (grid[y] && x + ox >= 0 && x + ox < W) grid[y][x + ox] = c; };
+  const dye = (x0, x1, y0, y1, col) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (at(x, y) === 'B' || at(x, y) === 'L') put(x, y, col); };
+  const rect = (x0, x1, y0, y1, c) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) put(x, y, c); };
+  const around = cells => cells.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { if (at(x + dx, y + dy) === '.') put(x + dx, y + dy, 'O'); }));
+  const cellsOf = (x0, y0, rows) => { const out = []; rows.forEach((r, j) => r.split('').forEach((c, i) => { if (c !== '.') { put(x0 + i, y0 + j, c); out.push([x0 + i, y0 + j]); } })); return out; };
+  if (kind === 'pirate') {                                   // трикутний капелюх з черепом, пов'язка на оці, смугаста тільняшка й червоний пояс
+    dye(12, 21, 10, 16, 'w');
+    [11, 13, 15].forEach(y => { for (let x = 12; x <= 21; x++) if (at(x, y) === 'w') put(x, y, 'n'); });
+    for (let x = 12; x <= 21; x++) if (at(x, 16) === 'w' || at(x, 16) === 'n') put(x, 16, 'r');
+    put(16, 16, 'h'); put(17, 16, 'h');
+    cellsOf(6, 14, ['rrrrr', '.rrr.', '..r..']);              // червона хустка на шиї
+    around(cellsOf(2, 1, [
+      '....kkkkkk....',
+      '..kkkkkkkkkk..',
+      '.kkkkkwwkkkkk.',
+      '.kkkkwkkwkkkk.',
+      'hhhhhhhhhhhhhh'
+    ]));
+    cellsOf(6, 8, ['kkk', 'kkk', 'kkk']);                    // пов'язка на оці (3×3)
+    put(5, 7, 'k'); put(4, 6, 'k'); put(9, 9, 'k');          // зав'язка пов'язки
+    put(14, 5, 'h'); put(14, 6, 'h');                         // золота сережка
+  } else if (kind === 'astro') {                             // білий скафандр, ранець, шолом із блакитним склом
+    dye(12, 25, 9, 17, 'w');
+    for (let x = 12; x <= 25; x++) { if (at(x, 17) === 'w') put(x, 17, 'E'); if (at(x, 16) === 'w') put(x, 16, 'E'); }
+    rect(14, 19, 11, 11, 'o'); rect(14, 19, 12, 12, 'r');     // кольорова смужка на грудях
+    put(21, 11, 'n'); put(22, 11, 'n'); put(21, 12, 'n'); put(22, 12, 'w');   // нашивка
+    put(14, 14, 'a'); put(16, 14, 'o'); put(18, 14, 'r');     // кнопки на панелі
+    cellsOf(5, 14, ['EEEEEE', '.EEEE.']);                     // комір
+    around(cellsOf(17, 5, ['EEEEEE', 'EaEEaE', 'EEEEEE']));  // ранець на спині
+    for (let y = 0; y <= 15; y++) for (let x = -2; x < 25; x++) {   // скляна куля навколо голови
+      const d = Math.pow((x - 7.5) / 9.7, 2) + Math.pow((y - 8.8) / 9.1, 2);
+      if (d >= 0.8 && d <= 1.1 && at(x, y) === '.') put(x, y, d >= 0.95 ? 'O' : 'a');   // скло з темним контуром, як у решти спрайтів
+    }
+    [[5, 1], [6, 1], [3, 2], [2, 3], [1, 4]].forEach(q => put(q[0], q[1], 'w'));   // блик на склі
+    cellsOf(10, 0, ['.d', '.d']);                              // антенка на шоломі
+    put(10, 0, 'r');
+  } else if (kind === 'ep0') {                               // Відродження: бордовий берет із білим пером і брошкою, брижі, бордова накидка із золотою лілією
+    dye(12, 25, 9, 17, 'R');
+    for (let x = 12; x <= 25; x += 2) put(x, 9, 'h');
+    [[19, 12], [19, 13], [19, 14], [18, 13], [20, 13], [19, 11]].forEach(q => put(q[0], q[1], 'h'));
+    for (let y = 9; y <= 17; y++) if (at(25, y) === 'R') put(25, y, 'h');
+    around(cellsOf(3, 1, ['...RRRRRR...', '.RRRRRRRRRR.', 'RRRRRRRRRRRR', 'hhhhhhhhhhhh']));
+    put(9, 3, 'y'); put(8, 3, 'y');                           // брошка
+    around(cellsOf(13, 0, ['.ww', 'www', 'ww.']));            // біле перо
+    cellsOf(12, 10, ['.ww', 'ww.', '.ww', 'ww.', '.ww', 'ww.', '.ww']);   // брижі на шиї (між головою й накидкою)
+  } else if (kind === 'ep1') {                               // Ретро: червоно-біла кепка, синя університетська куртка з літерою «C»
+    dye(12, 25, 9, 17, 'n');
+    for (let x = 12; x <= 25; x++) if (at(x, 9) === 'n') put(x, 9, 'w');
+    cellsOf(15, 11, ['wwww', 'w...', 'w...', 'w...', 'wwww']);
+    for (let y = 9; y <= 17; y++) if (at(12, y) === 'n') put(12, y, 'w');
+    around(cellsOf(3, 2, ['...rrrrrrr...', '..rrrwwwrrr..', '.rrrrwrwrrrr.']));
+    cellsOf(0, 5, ['rrrrrrrr']); put(8, 3, 'r');
+  } else if (kind === 'ep2') {                               // Диско: великі фіолетові окуляри, блискуча срібна куртка, намисто з перлин
+    dye(12, 25, 9, 17, 'E');
+    for (let y = 9; y <= 17; y++) for (let x = 12; x <= 25; x++) { if (at(x, y) !== 'E') continue; const k = (x * 7 + y * 13) % 6; put(x, y, k === 0 ? 'w' : k === 1 ? 'a' : k === 2 ? 'S' : k === 3 ? 'q' : 'E'); }
+    cellsOf(5, 6, ['.uuuu.', 'u....u', 'u....u', 'u....u', 'u....u', '.uuuu.']); put(6, 7, 'f'); cellsOf(11, 8, ['uuu']);
+    put(16, 3, 'w'); put(15, 2, 'q'); put(17, 2, 'a');
+  } else if (kind === 'ep3') {                               // Аркади: чорна кепка з інопланетянином, бірюзові навушники, темна толстовка з геймпадом
+    dye(12, 25, 9, 17, 'z'); for (let x = 12; x <= 25; x++) if (at(x, 9) === 'z') put(x, 9, 'n');
+    cellsOf(16, 12, ['wwwwww', 'wNwwrw', 'wwwwww']);
+    around(cellsOf(3, 2, ['...kkkkkk...', '..kkkkkkkk..', '.kkkkkkkkkk.']));
+    cellsOf(0, 5, ['kkkkkkkk']); cellsOf(6, 3, ['f.f', '.f.', 'f.f']);
+    around(cellsOf(10, 6, ['NN', 'NN', 'NN', 'NN']));
+  } else if (kind === 'ep4') {                               // Інтернет: синя кепка, навушники, біла толстовка, синій рюкзак
+    dye(12, 25, 9, 17, 'w');
+    for (let x = 12; x <= 25; x++) { if (at(x, 13) === 'w') put(x, 13, 'n'); if (at(x, 17) === 'w') put(x, 17, 'n'); }
+    cellsOf(15, 10, ['.nn.', 'n..n', '.nn.']);
+    cellsOf(6, 15, ['n.n']);
+    around(cellsOf(3, 2, ['...nnnnnn...', '..nnnwwnnnn..', '.nnnnwwnnnnn.']));
+    cellsOf(0, 5, ['nnnnnnn']);
+    around(cellsOf(10, 6, ['kk', 'kN', 'kk']));
+    around(cellsOf(18, 5, ['zzzzzz', 'zzzzzz', 'zNNzzz', 'zzzzzz', 'zzzzzz', 'zzzzzz']));
+  } else if (kind === 'ep5') {                               // Еко: солом'яний капелюх із листочками, зелена куртка, рюкзак з листком
+    dye(12, 25, 9, 17, 'g');
+    for (let x = 12; x <= 25; x++) { if (at(x, 17) === 'g') put(x, 17, 'G'); if (at(x, 16) === 'g') put(x, 16, 'G'); }
+    cellsOf(15, 12, ['.m.', 'mmm', 'mGm', '.G.']);
+    around(cellsOf(18, 5, ['GGGGGG', 'GmmmGG', 'GGmGGG', 'GGGGGG', 'GGGGGG', 'GGGGGG']));
+    around(cellsOf(2, 2, ['....cccccc....', '...cccccccc...', '...gggggggg...', '.cccccccccccc.', 'cccccccccccccc']));
+    cellsOf(1, 4, ['gg']); cellsOf(14, 4, ['gg']); put(2, 5, 'G'); put(15, 5, 'G'); put(8, 1, 'g'); put(8, 0, 'm'); put(9, 0, 'g');
+  } else if (kind === 'ep6') {                               // Космос: скляний шолом, білий скафандр з помаранчевими латками, синій ранець
+    dye(12, 25, 9, 17, 'w');
+    for (let x = 12; x <= 25; x++) { if (at(x, 17) === 'w') put(x, 17, 'E'); if (at(x, 16) === 'w') put(x, 16, 'E'); }
+    cellsOf(14, 11, ['oo', 'oo']); cellsOf(21, 12, ['nn', 'nw']); cellsOf(17, 13, ['rrr']);
+    cellsOf(5, 14, ['EEEEEE', '.EEEE.']);
+    around(cellsOf(17, 5, ['nnnnnn', 'nanana', 'nnnnnn']));
+    for (let y = 0; y <= 15; y++) for (let x = -2; x < 25; x++) {
+      const d = Math.pow((x - 7.5) / 9.7, 2) + Math.pow((y - 8.8) / 9.1, 2);
+      if (d >= 0.8 && d <= 1.1 && at(x, y) === '.') put(x, y, d >= 0.95 ? 'O' : 'a');
+    }
+    [[5, 1], [6, 1], [3, 2], [2, 3], [1, 4]].forEach(q => put(q[0], q[1], 'w'));
+  } else if (kind === 'ep7') {                               // Неон: чорний капюшон, бірюзовий візор, рожеві навушники, куртка з неоновими лініями
+    dye(12, 25, 9, 17, 'V');
+    for (let x = 12; x <= 25; x++) { if (at(x, 11) === 'V') put(x, 11, 'f'); if (at(x, 14) === 'V') put(x, 14, 'N'); }
+    for (let y = 9; y <= 17; y++) { if (at(17, y) === 'V') put(17, y, 'N'); if (at(21, y) === 'V') put(21, y, 'f'); }
+    around(cellsOf(2, 2, ['..VVVVVVVV..', '.VVVVVVVVVV.', 'VVVVVVVVVVVV', 'VVVVVVVVVVVV']));
+    cellsOf(3, 7, ['NNNNNNNNN', 'NNwNNNNNN']); cellsOf(12, 7, ['NNN']);
+    around(cellsOf(10, 5, ['ff', 'ff', 'ff', 'ff']));
+  }
+  return grid.map(row => '.' + row.reverse().join(''));
+}
+SPRITES.capy_pirate = { rows: makeCapySkinRows('pirate') };
+SPRITES.capy_astro = { rows: makeCapySkinRows('astro'), variants: { blink: { K: PALETTE.B } } };
+for (let e = 0; e < 8; e++) SPRITES['capy_ep' + e] = { rows: makeCapySkinRows('ep' + e), variants: { blink: { K: PALETTE.B } } };   // по скіну Капі на кожну епоху
 // Привид 11×13 (для «Полювання на привидів») і малий привид 5×7 (блимає у вікнах будинків на Хелловін)
 SPRITES.ghost = { rows: [
   '...ddddd...',
@@ -1979,7 +2134,7 @@ const EPOCH_COIN_COLORS = [['h', 'y'], ['T', 'w'], ['k', 'f'], ['v', 'T'], ['n',
 const EPOCH_GEM_EMOJI = ['💎', '🔮', '🪩', '👾', '💠', '🍀', '🌠', '✨'];     // у текстах значок кристала теж змінюється
 // Яку епоху зараз показуємо: справжню або ту, що користувач переглядає (лише вигляд, прогрес не змінюється)
 // Обрана минула епоха (state.activeEpoch, -1 — поточна). Заробіток, зокрема офлайн, записується в обрану епоху
-function previewIdx() { const a = state.activeEpoch; return (state.epoch >= 1 && a >= 0 && a < EPOCHS.length && a !== state.epoch % EPOCHS.length) ? a : null; }
+function previewIdx() { const a = state.activeEpoch; return ((DEV_OPEN_ALL || state.epoch >= 1) && a >= 0 && a < EPOCHS.length && a !== state.epoch % EPOCHS.length) ? a : null; }
 function viewEpoch() { const p = previewIdx(); return p !== null ? p : state.epoch; }
 // Скільки монет зароблено в кожній епосі: різницю від останньої перевірки додаємо до обраної епохи
 function syncEpochEarned() {
@@ -2263,7 +2418,9 @@ const translations = {
     circusBang: 'Біля магазину щось з’явилось… Тапни на червоний «!»', circusArrived: 'Цирк Фортуни розкрився! Тапни на нього',
     circusAgain: 'Ще одна спроба! Крути знову', prize_skin: 'Новий скін: {0}! Він чекає у вкладці скінів',
     skin_hero_party: 'Герої у святкових костюмах', skin_hero_ninja: 'Герої-ніндзя',
-    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_snowglobe: 'Сніжна куля над містом',
+    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_lightning: 'Фіолетові блискавки',
+    tab_skins: 'Скіни', skinsNote: 'Скін Капі сам змінюється разом з епохою. Захочеш інший — обери його тут, а щоб повернути скін епохи, тапни «Змінити на скін епохи». Стрілки гортають список.', skinBackToEpoch: 'Змінити на скін епохи', skinCat_capyEpoch: 'Капі по епохах', skinEpoch: 'Капі: {0}', skinOtherEpoch: 'Інша епоха', skinCat_capy: 'Капі', skinCat_shop: 'Магазин', skinCat_weather: 'Погода', skinCat_hero: 'Герої',
+    skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.',
     prize_income: 'Дохід ×{0} на {1} хв!',
     prize_tap: 'Тап ×{0} на {1} хв!',
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
@@ -2460,7 +2617,9 @@ const translations = {
     tut1_0: 'Давай я швидко покажу, як тут усе влаштовано! Тапай по магазину — так ти заробляєш монетки.',
     tut1_1: 'Назбирала? Купуй відділи у вкладці «Відділи». Вони приносять монетки самі, навіть коли ти не тапаєш!',
     tut1_2: 'У вкладці «Команда» наймай друзів-звіряток. Кожне допомагає по-своєму, а якщо тапнути по звірятку, воно щось скаже.',
-    tut1_3: 'А щоб магазин ріс, розширюй його: нові відділи, нові друзі й нові глави історії. Вперед!',
+    tut1_3: 'А щоб магазин ріс, розширюй його: нові відділи, нові друзі й нові глави історії.',
+    tut1_4: 'І ще: у кожній епосі до міста навідуються особливі звірі. Лови їх тапом! Кожен упійманий наповнює барабан фортуни, а коли барабан повний, його можна крутити ще раз. Вперед!',
+    storyDrumTitle: '🎡 Барабан фортуни', storyDrumText: 'У кожній епосі в місті час від часу з’являються особливі звірі: сова Мазок, їжак Платівка, броненосець Диско, хом’як Жетон, баг Глюкович, хамелеон Листок, астро-аксолотль і кіт Вивіска. Кожен рухається по-своєму. Лови їх тапом: кожен упійманий — це частинка барабана фортуни. Назбереш 12 — крутитимеш барабан ще раз. На Хелловін замість звірів літають привиди.',
 
 
     wsTitle: 'Майстерня часу',
@@ -2539,11 +2698,13 @@ const translations = {
     summerSay_0: 'Фух, яка спека! Дайте водички.', summerSay_1: 'Перепочину хвилинку... і за роботу!', summerSay_2: 'Ох, сонечко пече. Ковток води — і далі!',
     summerSay_3: 'Холодна водичка — найкраща нагорода.', summerSay_4: 'Тінь і склянка води — ось це життя!',
     banner_ghost: '👻 Лови привидів! {0}/{1} · {2} с',
+    banner_crt: '{0} Лови: {1}! {2}/{3} · {4} с', crtStart: '{0} у місті! Лови тапом: кожен дає частинку барабана фортуни.', crtEnd: 'Упіймано: {0}. До барабана: {1}/{2}', crtEndNone: 'Не встигли! Наступного разу ловіть швидше.',
+    crt_0: 'Сова Мазок', crt_1: 'Їжак Платівка', crt_2: 'Броненосець Диско', crt_3: 'Хом’як Жетон', crt_4: 'Баг Глюкович', crt_5: 'Хамелеон Листок', crt_6: 'Астро Аксолотль', crt_7: 'Кіт Вивіска',
     ghostStart: 'Привиди в місті! Лови їх тапом: кожен дає кристал привида.',
     ghostEnd: 'Привидів упіймано: {0}. Кристалів привидів: {1}',
     ghostEndNone: 'Привиди розтанули. Наступного разу ловіть швидше!',
-    boost_ghosts: 'Привиди: {0}',
-    wheelGhostBtn: '👻 Ще раз · {0}', wheelGhostNote: 'Кристали привидів: {0}. За {1} можна крутити колесо поза чергою.',
+    boost_ghosts: 'Привиди: {0}', boost_drum: 'Барабан фортуни: {0}/{1}',
+    wheelGhostBtn: '🎡 Ще раз · {0}', wheelGhostNote: 'Зібрано для барабана: {0}. За {1} можна крутити колесо поза чергою.',
     stGhosts: 'Привидів упіймано',
     mailArrive: '✉️ Приїхала поштова машина! Забери лист біля дороги.',
     letterTitle: 'Лист від {0}', letterBtn: 'Забрати бонус',
@@ -2824,7 +2985,9 @@ const translations = {
     circusBang: 'Something showed up by the shop... Tap the red "!"', circusArrived: 'The Fortune Circus is open! Tap it',
     circusAgain: 'One more try! Spin again', prize_skin: 'New skin: {0}! It waits in the skins tab',
     skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',
-    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_snowglobe: 'Snow globe over town',
+    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_lightning: 'Purple lightning',
+    tab_skins: 'Skins', skinsNote: 'Capy’s skin changes with the era by itself. Pick another one here, and tap “Switch to era skin” to get the era skin back. Arrows scroll the list.', skinBackToEpoch: 'Switch to era skin', skinCat_capyEpoch: 'Capy by era', skinEpoch: 'Capy: {0}', skinOtherEpoch: 'Other era', skinCat_capy: 'Capy', skinCat_shop: 'Shop', skinCat_weather: 'Weather', skinCat_hero: 'Heroes',
+    skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.',
     prize_income: 'Income ×{0} for {1} min!',
     prize_tap: 'Tap ×{0} for {1} min!',
     prize_jackpot: 'JACKPOT! +{0}',
@@ -3020,7 +3183,9 @@ const translations = {
     tut1_0: "Let me quickly show you around! Tap the shop — that's how you earn coins.",
     tut1_1: 'Saved up some? Buy departments in the "Depts." tab. They earn coins on their own, even when you are not tapping!',
     tut1_2: 'In the "Team" tab, hire animal friends. Each one helps in their own way, and if you tap an animal it will say something.',
-    tut1_3: 'To make the shop grow, expand it: new departments, new friends and new story chapters. Onward!',
+    tut1_3: 'To make the shop grow, expand it: new departments, new friends and new story chapters.',
+    tut1_4: 'One more thing: in every era special animals visit the town. Tap to catch them! Each one fills the fortune drum, and when the drum is full you can spin it once more. Onward!',
+    storyDrumTitle: '🎡 Fortune drum', storyDrumText: 'In every era special animals show up in town from time to time: Mazok the owl, Vinyl the hedgehog, Disco the armadillo, Token the hamster, Glitchy the bug, Leaf the chameleon, Astro Axolotl and Signboard the cat. Each one moves in its own way. Tap to catch them: every catch is a piece of the fortune drum. Collect 12 and you can spin the drum once more. At Halloween ghosts fly instead of the animals.',
 
 
     wsTitle: 'Time Workshop',
@@ -3097,11 +3262,13 @@ const translations = {
     summerSay_0: 'Phew, so hot! Some water, please.', summerSay_1: 'A minute\'s rest... and back to work!', summerSay_2: 'The sun is burning. A sip of water and on we go!',
     summerSay_3: 'Cold water is the best reward.', summerSay_4: 'Shade and a glass of water — that\'s the life!',
     banner_ghost: '👻 Catch the ghosts! {0}/{1} · {2} s',
+    banner_crt: '{0} Catch: {1}! {2}/{3} · {4} s', crtStart: '{0} is in town! Tap to catch: each one fills the fortune drum.', crtEnd: 'Caught: {0}. Fortune drum: {1}/{2}', crtEndNone: 'Too slow! Be faster next time.',
+    crt_0: 'Mazok the Owl', crt_1: 'Vinyl the Hedgehog', crt_2: 'Disco the Armadillo', crt_3: 'Token the Hamster', crt_4: 'Glitchy the Bug', crt_5: 'Leaf the Chameleon', crt_6: 'Astro Axolotl', crt_7: 'Signboard the Cat',
     ghostStart: 'Ghosts in town! Tap them: each one gives a ghost crystal.',
     ghostEnd: 'Ghosts caught: {0}. Ghost crystals: {1}',
     ghostEndNone: 'The ghosts melted away. Be faster next time!',
-    boost_ghosts: 'Ghosts: {0}',
-    wheelGhostBtn: '👻 Once more · {0}', wheelGhostNote: 'Ghost crystals: {0}. {1} buy an extra spin of the wheel.',
+    boost_ghosts: 'Ghosts: {0}', boost_drum: 'Fortune drum: {0}/{1}',
+    wheelGhostBtn: '🎡 Once more · {0}', wheelGhostNote: 'Collected for the drum: {0}. {1} buy an extra spin of the wheel.',
     stGhosts: 'Ghosts caught',
     mailArrive: '✉️ The mail truck is here! Pick up the letter by the road.',
     letterTitle: 'A letter from {0}', letterBtn: 'Claim bonus',
@@ -3194,6 +3361,8 @@ function createDefaultState() {
     crystals: 0, crystalsTotal: 0, epoch: 0, runStartEarned: 0,
     circus: { next: 0, phase: 0, spun: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
     skinsMask: 0,                             // виграні скіни (біти за списком SKIN_POOL)
+    skinsSeen: 0,                             // які з виграних скінів гравець уже бачив у вкладці (для мигаючої точки)
+    skins: { capy: -2, shop: -1, weather: -1, hero: -1 },   // який скін зараз вдягнено в кожній групі (номер у SKIN_POOL, -1 — звичайний вигляд)
     epochEarned: [0, 0, 0, 0, 0, 0, 0, 0],   // зароблено монет у кожній епосі
     epochSeen: -1, activeEpoch: -1,          // до якої суми заробіток уже розписано по епохах; обрана епоха (-1 — поточна)
     ws: WORKSHOP.map(() => 0),
@@ -3452,6 +3621,11 @@ function loadGame() {
     if (!SEASONS.includes(state.settings.season)) state.settings.season = 'auto';
     state.ghosts = Math.max(0, Math.min(CONFIG.GHOST_MAX, Math.floor(state.ghosts)));
     if (!(state.dayPhase >= 0 && state.dayPhase < 1)) state.dayPhase = 0.3;
+    SKIN_TYPES.forEach(ty => {                                       // -1 — звичайний; -2 (лише Капі) — скін епохи, що змінюється разом з епохою; інакше це має бути доступний скін своєї групи
+      const i = state.skins[ty];
+      if (i === -1 || (i === -2 && ty === 'capy')) return;
+      if (!(i >= 0 && SKIN_POOL[i] && SKIN_POOL[i].startsWith(ty + '_') && !SKIN_POOL[i].startsWith('capy_ep') && skinOwned(i))) state.skins[ty] = ty === 'capy' ? -2 : -1;
+    });   // вдягнений лише виграний скін своєї групи
     return true;
   } catch (e) {
     // Пошкоджене збереження: відкладаємо копію вбік і починаємо з нуля
@@ -4356,6 +4530,35 @@ const EPOCH_SHOP = [
 ];
 const FLAT_ROOF = [2, 2, 2, 3, 6, 5];       // який дах у «плоских» епохах для кожного рівня
 function epochShopStyle() { return EPOCH_SHOP[viewEpoch() % EPOCH_SHOP.length]; }
+// Скіни магазину (виграш у цирку): накладаються поверх вигляду епохи — кольори даху, колон, вивіски, навісу й пару своїх прикрас
+const SHOP_SKINS = {
+  candy: { roofPal: { r: 'f', n: 'q' }, trim: 'q', col: ['f', 'w'], frame: ['d', 'q'], glass: 'q', base: 'p', band: ['dots', 'w'], awningCols: ['f', 'w'], signFill: 'f' },
+  gold:  { roofPal: { r: 'h', n: 'y' }, trim: 'h', col: ['h', 'y'], frame: ['h', 'y'], glass: 'y', base: 'h', band: ['checker', 'y'], awningCols: ['r', 'h'], signFill: 'k' }
+};
+function lollipopG(g, x, yb, c1, c2) {                // льодяник: паличка й закручений диск, yb — низ палички
+  R(g, x, yb - 6, 1, 6, 'w');
+  const cy = yb - 10;
+  disc(g, x, cy, 4, 'd'); disc(g, x, cy, 3, c1);
+  R(g, x - 3, cy, 7, 1, c2); R(g, x, cy - 3, 1, 7, c2); R(g, x - 2, cy - 2, 1, 1, c2); R(g, x + 2, cy + 2, 1, 1, c2); R(g, x + 2, cy - 2, 1, 1, 'w');
+}
+function goldCoinG(g, x, yb) {                        // велика золота монета на підставці
+  R(g, x - 3, yb - 2, 7, 2, 'd'); R(g, x - 2, yb - 2, 5, 1, 'h');
+  disc(g, x, yb - 8, 5, 'd'); disc(g, x, yb - 8, 4, 'h'); disc(g, x, yb - 8, 2, 'y');
+  R(g, x - 3, yb - 10, 1, 2, 'y'); R(g, x, yb - 10, 1, 4, 'h');
+}
+function skinShopDeco(g, skin, w, h, look, yG, door) {
+  const top = look.top, rb = top + 3;
+  if (skin === 'candy') {
+    lollipopG(g, Math.round(w * 0.30), rb, 'f', 'w'); lollipopG(g, Math.round(w * 0.70), rb, 'm', 'w');
+    const colTop = top + 8;
+    [4, w - 8].forEach(cx => { for (let yy = colTop + 2; yy < h - 8; yy += 5) R(g, cx, yy, 3, 2, 'w'); });      // колони — цукерові палички
+    R(g, door.x - 3, yG + 10, door.w + 6, 1, 'w');
+    for (let x = 6; x < w - 6; x += 9) { R(g, x, top + 8, 3, 1, 'w'); R(g, x + 1, top + 9, 1, 2, 'w'); }        // глазур на верху вивіски
+  } else if (skin === 'gold') {
+    goldCoinG(g, Math.round(w * 0.30), rb); goldCoinG(g, Math.round(w * 0.70), rb);
+    R(g, door.x - 3, yG + 10, door.w + 6, 1, 'y'); R(g, door.x - 2, yG + 11, 1, 22, 'h'); R(g, door.x + door.w + 1, yG + 11, 1, 22, 'h');   // позолочена рамка дверей
+  }
+}
 function withPal(map, fn) {                   // тимчасово підміняє кольори палітри на час малювання
   if (!map) { fn(); return; }
   const sv = {}; Object.keys(map).forEach(k => { sv[k] = PALETTE[k]; PALETTE[k] = PALETTE[map[k]]; });
@@ -4687,7 +4890,8 @@ function snowCap(c, maxY) {
 function boxG(g, x, y, c1, c2) { R(g, x, y, 14, 4, 'd'); R(g, x + 1, y + 1, 12, 3, 'b'); for (let k = 0; k < 6; k++) { R(g, x + 1 + k * 2, y - 2 + (k % 2), 1, 2, [c1, c2, 'y'][k % 3]); R(g, x + 2 + k * 2, y - 1, 1, 1, 'g'); } }
 function buildShopCanvas(level, tiers) {
   glassRects = [];
-  const es = epochShopStyle(), look0 = SHOP_LOOK[level - 1];
+  const shelfLights = [];            // де стоять прилавки (вночі над ними м'яке тепле світло)
+  const skinShop = SHOP_SKINS[skinOn('shop')] || null, es = Object.assign({}, epochShopStyle(), skinShop || {}), look0 = SHOP_LOOK[level - 1];
   const look = Object.assign({}, look0, { trim: es.trim || look0.trim, roof: es.flat ? FLAT_ROOF[level - 1] : (es.roofs ? es.roofs[level - 1] : look0.roof), inner: es.inner || look0.inner });
   const w = look.w, trim = look.trim, F = look.floors.length, up = F - 1;
   const yB = look.top + 25;          // тут закінчується вивіска
@@ -4744,7 +4948,7 @@ function buildShopCanvas(level, tiers) {
     for (let x = innerX + 14; x < innerX + innerW - 8; x += 26) { R(b, x, fl.top + 3, 6, 1, 'd'); R(b, x + 1, fl.top + 4, 4, 1, 'y'); }   // лампи
     R(b, innerX, fl.fy, innerW, 3, 'e'); R(b, innerX, fl.fy, innerW, 1, 'E');                                                              // перекриття
     R(b, innerX + 1, fl.fy - 1, innerW - 2, 1, 'r'); for (let x = innerX + 3; x < innerX + innerW - 3; x += 4) R(b, x, fl.fy - 1, 1, 1, 'h');   // килимова доріжка
-    fl.xs.forEach(x => drawShelf(b, x, fl.fy - 20, bayNo++, tiers));
+    fl.xs.forEach(x => { drawShelf(b, x, fl.fy - 20, bayNo++, tiers); shelfLights.push([x, fl.fy - 20]); });
     // плакати й рослини у вільних місцях
     const seg = fl.seg, free = [];
     if (fl.xs[0] - seg[0] >= 14) free.push((seg[0] + fl.xs[0]) / 2);
@@ -4776,7 +4980,7 @@ function buildShopCanvas(level, tiers) {
   // вивіска (текст накладається HTML-елементом, щоб був чіткий шрифт)
   R(g, 5, look.top + 8, w - 10, 17, es.frame[0]);
   R(g, 6, look.top + 9, w - 12, 15, es.frame[1]);
-  R(g, 7, look.top + 10, w - 14, 13, currentEpoch().signFill || look.signFill);
+  R(g, 7, look.top + 10, w - 14, 13, (skinShop && skinShop.signFill) || currentEpoch().signFill || look.signFill);
   R(g, 5, look.top + 8, 2, 2, 'y'); R(g, w - 7, look.top + 8, 2, 2, 'y'); R(g, 5, look.top + 23, 2, 2, 'y'); R(g, w - 7, look.top + 23, 2, 2, 'y');
   if (level >= 3) for (let x = 12; x < w - 12; x += 6) R(g, x, look.top + 9, 1, 1, 'y');
   if (level === 2) buntingG(g, 8, w - 9, yB + 1);
@@ -4803,7 +5007,7 @@ function buildShopCanvas(level, tiers) {
   });
 
   // навіс у смужку з зубчиками
-  const [a1, a2] = currentEpoch().awning || look.awning;
+  const [a1, a2] = (skinShop && skinShop.awningCols) || currentEpoch().awning || look.awning;
   for (let x = 0; x < w; x++) R(g, x, yG, 1, 8, (Math.floor(x / 6) % 2) ? a2 : a1);
   R(g, 0, yG, w, 1, 'd');
   if (es.awning === 'flat') {                                  // сучасний прямий навіс зі світлодіодною стрічкою
@@ -4836,6 +5040,7 @@ function buildShopCanvas(level, tiers) {
   epochFacadeFx(g, es, w, h, look, level, floors, yG);
   roofProp(g, es, w, look.top, level, Math.round(w * 0.16)); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, Math.round(w * 0.84));       // примітні деталі на даху по боках від вивіски
   epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
+  if (skinShop) skinShopDeco(g, skinOn('shop'), w, h, look, yG, door);
 
   if (seasonNow() === 'winter') snowCap(front, look.top + 4);      // взимку на даху лежить сніг
 
@@ -4848,8 +5053,16 @@ function buildShopCanvas(level, tiers) {
   lit.width = w; lit.height = h;
   const lg = lit.getContext('2d');
   glassRects.forEach(r => {
-    if (r[2] > 30) { lg.globalAlpha = 0.3; R(lg, r[0], r[1], r[2], r[3], 'y'); lg.globalAlpha = 1; }       // інтер'єр: лише легке тепле світіння, щоб крізь скло було видно звірят
+    if (r[2] > 30) { lg.globalAlpha = 0.4; R(lg, r[0], r[1], r[2], r[3], 'y'); lg.globalAlpha = 1; }       // інтер'єр: лише легке тепле світіння, щоб крізь скло було видно звірят
     else { R(lg, r[0], r[1], r[2], r[3], 'y'); R(lg, r[0], r[1] + r[3] - 3, r[2], 3, 'h'); }                 // ліхтарики й дрібні вікна світяться яскраво
+  });
+  lg.clearRect(door.x - 3, door.y - 3, door.w + 6, door.h + 3);                                                                  // двері лишаються без підсвітки — вночі їх чітко видно
+  lg.globalAlpha = 0.5; R(lg, door.x - 3, door.y - 4, door.w + 6, 1, 'h'); lg.globalAlpha = 1;                                 // тонка лампа над дверима
+  shelfLights.forEach(([x, y]) => {                                                                                               // вночі прилавки підсвічені теплим жовтим світлом (не надто яскравим)
+    lg.globalAlpha = 0.28; R(lg, x - 4, y - 7, 44, 31, 'y');
+    lg.globalAlpha = 0.4; R(lg, x - 1, y - 2, 36, 21, 'y');
+    lg.globalAlpha = 0.85; R(lg, x + 1, y - 4, 32, 2, 'h'); R(lg, x + 2, y - 3, 30, 1, 'y');
+    lg.globalAlpha = 1;
   });
   if (lastRoofSign) { lg.globalAlpha = 0.7; R(lg, lastRoofSign.x + 1, lastRoofSign.y + 1, lastRoofSign.w - 2, lastRoofSign.h - 2, 'y'); lg.globalAlpha = 1; }          // вивіска «CAPYTAP» світиться вночі
   lg.globalAlpha = 0.28; R(lg, 7, look.top + 10, w - 14, 13, 'y'); lg.globalAlpha = 1;                                                                                       // і назва магазину теж
@@ -4885,13 +5098,13 @@ const ui = {
   circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
   wheelBtn: $('wheelBtn'), wheelGhostBtn: $('wheelGhostBtn'), wheelGhostNote: $('wheelGhostNote'), wheelClose: $('wheelClose'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
-  paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), paneStats: $('pane-stats'), statsCard: $('statsCard'),
+  paneSkins: $('pane-skins'), skinsList: $('skinsList'), paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), paneStats: $('pane-stats'), statsCard: $('statsCard'),
   app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'),
   paneSettings: $('pane-settings'), setLangBtns: $('setLangBtns'), setNumFmt: $('setNumFmt'), setAnim: $('setAnim'), setSound: $('setSound'),
   exportBox: $('exportBox'), importBox: $('importBox'), exportInfo: $('exportInfo'), shareBtn: $('shareBtn'), exportBtn: $('exportBtn'), copyBtn: $('copyBtn'), importBtn: $('importBtn'), resetBtn: $('resetBtn'),
   debugCard: $('debugCard'), dbgHour: $('dbgHour'), dbgX100: $('dbgX100'), statEpoch: $('statEpoch'),
   confirmModal: $('confirmModal'), confirmTitle: $('confirmTitle'), confirmText: $('confirmText'), confirmYes: $('confirmYes'), confirmNo: $('confirmNo'),
-  timeWarp: $('timeWarp'), warpClock: $('warpClock'),
+  timeWarp: $('timeWarp'), warpCanvas: $('warpCanvas'),
   letterModal: $('letterModal'), letterTitle: $('letterTitle'), letterText: $('letterText'), letterBoost: $('letterBoost'), letterBtn: $('letterBtn'),
   epochIntro: $('epochIntro'), eiEmblem: $('eiEmblem'), eiNum: $('eiNum'), eiTitle: $('eiTitle'), eiSub: $('eiSub'), eiSparks: $('eiSparks'),
   soundModal: $('soundModal'), musicVol: $('musicVol'), musicStyleRow: $('musicStyleRow'), sfxVol: $('sfxVol'), muteBtn: $('muteBtn'), soundClose: $('soundClose'),
@@ -4920,7 +5133,7 @@ let deptLockedEl = null;       // картка «нові відділи від�
 // Перебудовує спрайт магазину, якщо змінився рівень або наповненість вітрин
 function rebuildShop(force) {
   const tiers = state.depts.map(tierOf);
-  const sig = state.shopLevel + '|' + tiers.slice(0, state.shopLevel * 2).join('') + '|' + seasonNow() + '|' + (viewEpoch() % EPOCH_SHOP.length);
+  const sig = state.shopLevel + '|' + tiers.slice(0, state.shopLevel * 2).join('') + '|' + seasonNow() + '|' + (viewEpoch() % EPOCH_SHOP.length) + '|' + (skinOn('shop') || '');
   if (!force && shop && shop.sig === sig) return false;
   const levelChanged = !shop || shop.level !== state.shopLevel;
   if (levelChanged && shop) ejectInside();
@@ -4947,9 +5160,10 @@ function placeShopOverlay() {
   o.width = (shop.w / view.w * 100) + '%';
   o.height = (shop.h / view.h * 100) + '%';
   const sg = ui.sign.style;
-  sg.left = (shop.sign.x / shop.w * 100) + '%';
+  const SIGN_PAD = 12;                                           // з боків вивіски стоять прикраси епохи (щити, кулі, прибульці…) — текст їх не чіпає
+  sg.left = ((shop.sign.x + SIGN_PAD) / shop.w * 100) + '%';
   sg.top = (shop.sign.y / shop.h * 100) + '%';
-  sg.width = (shop.sign.w / shop.w * 100) + '%';
+  sg.width = ((shop.sign.w - SIGN_PAD * 2) / shop.w * 100) + '%';
   sg.height = (shop.sign.h / shop.h * 100) + '%';
 }
 
@@ -5556,19 +5770,59 @@ function drawRain() {
   ctx.globalAlpha = 1;
 }
 
-// Птахи: зграї-«клини» і поодинокі вдень (вночі їх нема; на Хелловін замість них кажани)
-const BIRDS_BY_SEASON = { spring: 9, summer: 6, autumn: 10, winter: 4, halloween: 0 };
+// Птахи: зграї-«клини» і поодинокі вдень (вночі їх нема; на Хелловін замість них кажани).
+// Кожен птах — окремий вид (горобець, ластівка, чайка, голуб, ворона, синиця) із власним малюнком: тіло з об'ємом, голова з оком і дзьобом, хвіст, два крила, що змахують у 6 кадрах
+const BIRDS_BY_SEASON = { spring: 7, summer: 5, autumn: 8, winter: 4, halloween: 0 };
+const BIRD_SPECIES = [
+  { back: '#7a5a3c', wing: '#5a3f28', tip: '#3a281a', belly: '#e8d9bd', head: '#8a6a48', beak: '#f2b84b', cap: '#9a4a2a', size: 0.9 },     // горобець
+  { back: '#1f2f5a', wing: '#16224a', tip: '#0d1530', belly: '#f4efe6', head: '#1f2f5a', beak: '#2a1d1a', cap: '#c4553d', size: 0.95, fork: 1 },   // ластівка
+  { back: '#e9eef2', wing: '#c9d2da', tip: '#3a4452', belly: '#ffffff', head: '#ffffff', beak: '#f2b84b', cap: null, size: 1.25 },            // чайка
+  { back: '#9aa3b2', wing: '#7e8898', tip: '#556070', belly: '#c7ccd6', head: '#8f98a8', beak: '#d9a679', cap: '#8bb7a2', size: 1.1 },         // голуб
+  { back: '#26262e', wing: '#1a1a22', tip: '#0d0d12', belly: '#32323c', head: '#26262e', beak: '#3a3a44', cap: null, size: 1.25 },            // ворона
+  { back: '#4f9ad6', wing: '#3b7ab3', tip: '#27567f', belly: '#ffe08a', head: '#f4f0e0', beak: '#2a1d1a', cap: '#2f6fb0', size: 0.85 }          // синиця
+];
+const BIRD_FRAMES = 6, birdFrameCache = {};
+function birdFrame(sp, f) {                                   // кадр f (0…5) птаха виду sp: дивиться вправо, canvas 30×26
+  const key = sp + '|' + f;
+  if (birdFrameCache[key]) return birdFrameCache[key];
+  const S = BIRD_SPECIES[sp], c = document.createElement('canvas'); c.width = 30; c.height = 26;
+  const g = c.getContext('2d');
+  const px = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(Math.round(x), Math.round(y), w, h); };
+  const ang = [64, 42, 10, -26, -52, -18][f] * Math.PI / 180;      // кут крила: вгору → вниз
+  const cx = 14, cy = 13;                                          // центр тіла
+  const wing = (ox, oy, col, tip, len, wd) => {                    // крило-«лопать»: від плеча до кінчика, тоншає, на кінці довгі махові пера
+    for (let k = 0; k <= len; k++) {
+      const t = k / len, bend = Math.sin(t * 1.4) * 0.35 * (ang > 0 ? 1 : -0.6);
+      const x = ox - Math.cos(ang + bend) * k * -0.9 - k * 0.15, y = oy - Math.sin(ang + bend) * k;
+      const th = Math.max(1, Math.round(wd * (1 - t * 0.7)));
+      px(x - 1, y - (ang > 0 ? th - 1 : 0), 3, th, t > 0.72 ? tip : col);
+    }
+  };
+  wing(cx - 1, cy - 1, S.wing, S.tip, 12, 4);                      // дальнє крило (темніше, трохи зміщене)
+  px(cx - 10, cy - 1, 5, 2, S.wing); px(cx - 12, cy, 3, S.fork ? 1 : 2, S.tip);   // хвіст
+  if (S.fork) { px(cx - 13, cy - 1, 2, 1, S.tip); px(cx - 13, cy + 2, 2, 1, S.tip); }
+  for (let y = -3; y <= 3; y++) for (let x = -7; x <= 6; x++) if ((x * x) / 52 + (y * y) / 10 <= 1) px(cx + x, cy + y, 1, 1, y >= 1 ? S.belly : S.back);   // тіло: спинка, живіт
+  px(cx - 5, cy - 1, 7, 1, S.wing);                                // темніша смуга вздовж спини
+  for (let y = -3; y <= 3; y++) for (let x = -3; x <= 3; x++) if (x * x + y * y <= 9) px(cx + 8 + x, cy - 2 + y, 1, 1, y > 1 ? S.belly : S.head);   // голова
+  if (S.cap) px(cx + 6, cy - 5, 4, 1, S.cap);
+  px(cx + 10, cy - 3, 2, 2, '#ffffff'); px(cx + 11, cy - 3, 1, 2, '#111111');   // око
+  px(cx + 12, cy - 2, 3, 1, S.beak); px(cx + 12, cy - 1, 2, 1, S.beak);         // дзьоб
+  px(cx - 1, cy + 3, 1, 2, '#3a2a1a'); px(cx + 2, cy + 3, 1, 2, '#3a2a1a');     // лапки підібрані
+  wing(cx + 1, cy - 2, S.back, S.tip, 13, 5);                      // ближнє крило поверх тіла
+  px(cx - 2, cy - 2, 4, 1, S.back);
+  return (birdFrameCache[key] = c);
+}
 const birds = [];
 function seedBirds() {
   birds.length = 0;
-  const total = Math.round((BIRDS_BY_SEASON[theme.season] !== undefined ? BIRDS_BY_SEASON[theme.season] : 6) * Math.max(1, view.w / 320));
-  const offs = [[0, 0], [-7, 3], [-7, -3], [-14, 6], [-14, -6], [-21, 9]];
+  const total = Math.round((BIRDS_BY_SEASON[theme.season] !== undefined ? BIRDS_BY_SEASON[theme.season] : 5) * Math.max(1, view.w / 320));
+  const offs = [[0, 0], [-12, 4], [-12, -4], [-24, 8], [-24, -8]];
   let made = 0;
   while (made < total) {
-    const size = Math.min(total - made, 1 + Math.floor(rand(0, 6)));
-    const dir = Math.random() < 0.5 ? -1 : 1, vx = rand(16, 30) * dir;
-    const fx = rand(worldL(), worldR()), fy = rand(8 - view.offY, 64);
-    for (let k = 0; k < size; k++) birds.push({ x: fx + offs[k][0] * -dir, y: fy + offs[k][1], vx, ph: rand(0, 6.3), bob: rand(0, 6.3), wing: rand(5, 7.5) });
+    const size = Math.min(total - made, 1 + Math.floor(rand(0, 4))), sp = Math.floor(rand(0, BIRD_SPECIES.length));
+    const dir = Math.random() < 0.5 ? -1 : 1, vx = rand(14, 26) * dir;
+    const fx = rand(worldL(), worldR()), fy = rand(10 - view.offY, 62);
+    for (let k = 0; k < size; k++) birds.push({ x: fx + offs[k][0] * -dir, y: fy + offs[k][1], vx: vx * rand(0.94, 1.06), sp, ph: rand(0, 6.3), bob: rand(0, 6.3), wing: rand(5.5, 7.5) * (1.3 - BIRD_SPECIES[sp].size * 0.35) });
     made += size;
   }
 }
@@ -5576,57 +5830,55 @@ function updateBirds(dt) {
   if (!animOn()) return;
   birds.forEach(b => {
     b.x += b.vx * dt;
-    if (b.vx > 0 && b.x > worldR() + 24) b.x = worldL() - 24;
-    else if (b.vx < 0 && b.x < worldL() - 24) b.x = worldR() + 24;
+    if (b.vx > 0 && b.x > worldR() + 40) b.x = worldL() - 40;
+    else if (b.vx < 0 && b.x < worldL() - 40) b.x = worldR() + 40;
   });
 }
 function drawBirds() {
   const vis = 1 - Math.min(1, sky.night * 1.5);
   if (vis <= 0.05 || !birds.length) return;
-  ctx.globalAlpha = vis;
   birds.forEach(b => {
-    const dir = b.vx > 0 ? 1 : -1, x = Math.round(b.x), y = Math.round(b.y + Math.sin(animClock * 1.3 + b.bob) * 2);
-    const ph = animOn() ? Math.floor(animClock * b.wing + b.ph) % 4 : 0;           // 4 кадри помаху крилами
-    ctx.globalAlpha = 0.18 * vis; R(ctx, x - 3, y + 9, 7, 1, 'd'); ctx.globalAlpha = vis;       // легка тінь знизу
-    // тіло з об'ємом: темна спинка, світлий живіт
-    R(ctx, x - 3 * dir - (dir > 0 ? 0 : 1), y, 6, 2, 'd'); R(ctx, x - 2 * dir - (dir > 0 ? 0 : 1), y + 2, 4, 1, 'd');
-    R(ctx, x - 1 * dir - (dir > 0 ? 0 : 1), y + 1, 3, 1, 'e'); R(ctx, x - 1 * dir - (dir > 0 ? 0 : 1), y + 2, 2, 1, 'E');
-    R(ctx, x + 3 * dir - (dir > 0 ? 0 : 1), y - 1, 2, 3, 'd'); R(ctx, x + 3 * dir - (dir > 0 ? 0 : 1), y, 1, 1, 'w');                // голова й око
-    R(ctx, x + 5 * dir - (dir > 0 ? 0 : 0), y, 1, 1, 'h');                                                                       // дзьоб
-    R(ctx, x - 4 * dir - (dir > 0 ? 0 : 1), y, 2, 1, 'd'); R(ctx, x - 5 * dir - (dir > 0 ? 0 : 1), y + 1, 1, 1, 'd');           // хвіст
-    // крила: широкі, з пір'ям і світлішим низом
-    const up = ph === 0 ? 3 : ph === 1 ? 1 : ph === 2 ? -1 : 1;                   // підйом кінчика крила
-    for (let side = -1; side <= 1; side += 2) {
-      for (let k = 1; k <= 5; k++) {
-        const wx = x + side * k, wy = y - 1 - Math.round(up * k / 6 * 2);
-        R(ctx, wx, wy, 1, 2 + (k < 4 ? 1 : 0), k < 5 ? 'd' : 'e');
-        if (k > 1 && k < 5) R(ctx, wx, wy + 2 + (k < 4 ? 1 : 0), 1, 1, 'e');
-      }
-      R(ctx, x + side * 5, y - 1 - Math.round(up), 1, 1, 'd');
-    }
+    const S = BIRD_SPECIES[b.sp], f = animOn() ? Math.floor(animClock * b.wing + b.ph) % BIRD_FRAMES : 2;
+    const cv = birdFrame(b.sp, f), dir = b.vx > 0 ? 1 : -1;
+    const y = Math.round(b.y + Math.sin(animClock * 1.3 + b.bob) * 2 + (f === 0 || f === 5 ? 1 : f === 3 ? -1 : 0));
+    ctx.globalAlpha = vis;
+    drawCanvasSprite(ctx, cv, Math.round(b.x) - 15, y - 13, { flip: dir < 0, sx: S.size * 0.6, sy: S.size * 0.6 });
   });
   ctx.globalAlpha = 1;
 }
 
-// Хмара-канвас: купчаста / середня / довга, з світлим верхом, тінню знизу й м'яким краєм
+// Хмара-канвас: купчаста / середня / довга. Темніші, з об'ємом: світла кромка зверху-ліворуч, борозенки між «бульбашками», важка тінь знизу
 const cloudCache = {};
 function cloudCanvas(kind, tint) {
   const key = kind + '|' + tint;
   if (cloudCache[key]) return cloudCache[key];
-  const T = { '': ['#ffffff', '#f1f4f8', '#d3dde9', '#b3c3d6'], light: ['#f7f9fc', '#e4eaf1', '#c6d1df', '#a8b7cb'], grey: ['#dde1e8', '#bec5d0', '#9ca5b3', '#7e8898'], dark: ['#928fae', '#706d8e', '#55536f', '#3f3d57'] }[tint] || ['#ffffff', '#f1f4f8', '#d3dde9', '#b3c3d6'];
-  const puffs = [[[10, 12, 7], [20, 9, 9], [31, 11, 7], [38, 13, 5], [16, 14, 7], [26, 14, 8]], [[8, 9, 6], [16, 7, 7], [24, 9, 6], [12, 10, 6], [20, 11, 5]], [[8, 6, 5], [16, 5, 6], [26, 6, 6], [36, 6, 5], [44, 7, 4], [20, 7, 6], [32, 7, 5]]][kind % 3];
-  const W = [46, 32, 52][kind % 3], H = [22, 16, 13][kind % 3], c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
-  const inCl = (x, y) => puffs.some(p => (x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]) * 1.15 <= p[2] * p[2]) && y <= H - 3;
+  const T = {
+    '': ['#f4f7fb', '#d6dfec', '#adbacd', '#8795ad', '#66748e'],
+    light: ['#eaf0f7', '#c9d4e4', '#a2b0c6', '#7d8ca6', '#5d6c88'],
+    grey: ['#c2c9d4', '#a1abbb', '#808b9e', '#626d82', '#464f63'],
+    dark: ['#7d7a9c', '#615f84', '#4a4870', '#37355a', '#25243f']
+  }[tint] || ['#f4f7fb', '#d6dfec', '#adbacd', '#8795ad', '#66748e'];
+  const puffs = [
+    [[14, 19, 10], [27, 13, 13], [42, 16, 11], [53, 20, 8], [22, 21, 10], [36, 21, 11], [47, 22, 8]],
+    [[11, 14, 9], [22, 10, 10], [33, 13, 9], [17, 16, 9], [27, 16, 8]],
+    [[11, 11, 8], [22, 9, 9], [35, 10, 9], [48, 11, 8], [58, 12, 6], [28, 12, 8], [41, 12, 8]]
+  ][kind % 3];
+  const W = [64, 44, 68][kind % 3], H = [34, 26, 22][kind % 3], c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  const inP = (p, x, y) => (x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]) * 1.2 <= p[2] * p[2];
+  const inCl = (x, y) => y <= H - 3 && puffs.some(p => inP(p, x, y));
   let top = H, bot = 0;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (inCl(x, y)) { top = Math.min(top, y); bot = Math.max(bot, y); }
   for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) {
     if (!inCl(x, y)) continue;
-    const v = (y - top) / Math.max(1, bot - top), n = ((x * 7 + y * 13) % 5 === 0) ? 0.08 : 0, lit = ((x * 3 + y * 5) & 1) ? 0.05 : 0;
-    const t = v + n - lit * (1 - v) - (inCl(x - 2, y - 2) ? 0 : 0.18);
-    g.fillStyle = t < 0.18 ? T[0] : t < 0.52 ? T[1] : t < 0.8 ? T[2] : T[3];
+    const v = (y - top) / Math.max(1, bot - top);
+    let sh = v * 0.62 + ((x * 3 + y * 7) % 5 === 0 ? 0.07 : 0) + ((x + y) & 1 ? 0.03 : 0);
+    sh -= inCl(x - 2, y - 2) ? 0 : 0.34;                                   // світла кромка зверху-ліворуч
+    sh += inCl(x + 2, y + 2) ? 0 : 0.2;                                    // тінь на нижньо-правому краї
+    puffs.forEach(p => { const d = Math.hypot(x - p[0], (y - p[1]) * 1.1); if (d > p[2] - 1.6 && d <= p[2] && y > p[1] && inCl(x, y + 3)) sh += 0.17; });   // борозенки між «бульбашками»
+    g.fillStyle = sh < 0.1 ? T[0] : sh < 0.3 ? T[1] : sh < 0.5 ? T[2] : sh < 0.72 ? T[3] : T[4];
     g.fillRect(x, y, 1, 1);
   }
-  for (let x = 0; x < W; x++) { const yb = bot; if (inCl(x, yb) && x % 2) { g.fillStyle = T[3]; g.fillRect(x, yb + 1, 1, 1); } }       // розмитий нижній край
+  for (let x = 0; x < W; x++) if (inCl(x, bot) && x % 2) { g.fillStyle = T[4]; g.fillRect(x, bot + 1, 1, 1); }     // розмитий нижній край
   return (cloudCache[key] = c);
 }
 // Хмар по сезонах: влітку мало, навесні помірно, восени й узимку багато й сірі, на Хелловін темні
@@ -5649,6 +5901,14 @@ let customerTimer = 1;
 function rand(a, b) { return a + Math.random() * (b - a); }
 
 // Масштаб магазину для поточного стискання (використовується і в canvas, і для вивіски)
+function withShopScale(sc, fn) {                 // малює у координатах магазину так, ніби він стискається разом зі спрайтом (вивіски й світло не відстають від підстрибування)
+  const dw = Math.max(1, Math.round(shop.w * sc.sx)), dh = Math.max(1, Math.round(shop.h * sc.sy));
+  ctx.save();
+  ctx.translate(Math.round(shop.x + (shop.w - dw) / 2), Math.round(shop.y + (shop.h - dh)));
+  ctx.scale(dw / shop.w, dh / shop.h); ctx.translate(-shop.x, -shop.y);
+  fn();
+  ctx.restore();
+}
 function getShopScale() {
   const sq = Math.max(-0.5, Math.min(0.5, shopAnim.squash));
   const sx = 1 + 0.14 * sq, sy = 1 - 0.24 * sq;
@@ -6627,16 +6887,26 @@ const statRows = {};             // рядки статистики
 function animOn() { return state.settings.animations; }
 function dayNightOn() { return state.settings.dayNight; }
 // Скін Капі залежить від статі гравця: дівчина — квіточка, хлопець — листочки
-function capySprite() { return state.settings.gender === 'm' ? 'capy_m' : 'capy'; }
+function capySprite() { const s = skinOn('capy'); return s ? 'capy_' + s : (state.settings.gender === 'm' ? 'capy_m' : 'capy'); }
+// Скіни: яку назву скіна вдягнено в групі type ('capy' | 'shop' | 'weather' | 'hero') — 'pirate', 'candy' тощо, або null
+const skinPreview = {};          // тимчасово «приміряє» скін на час малювання зразка у вкладці
+function skinOn(type) {
+  if (skinPreview[type] !== undefined) return skinPreview[type];
+  const i = state.skins[type];
+  if (type === 'capy' && i === -2) return 'ep' + (viewEpoch() % EPOCHS.length);          // скін епохи: сам змінюється, коли перемикається епоха
+  return (i >= 0 && skinOwned(i)) ? SKIN_POOL[i].slice(type.length + 1) : null;
+}
 function drawCapiPortrait() {
+  const c = getSpriteCanvas(capySprite());
+  ui.capiPortrait.width = 30; ui.capiPortrait.height = 30;              // скіни Капі можуть бути трохи ширшими за звичайний вигляд
   const g = ui.capiPortrait.getContext('2d');
   g.imageSmoothingEnabled = false;
-  g.clearRect(0, 0, ui.capiPortrait.width, ui.capiPortrait.height);
-  g.drawImage(getSpriteCanvas(capySprite()), 0, 4);
+  g.drawImage(c, (30 - c.width) >> 1, 5);
 }
 // Яка зараз пора року: з налаштувань або (в режимі «Авто») за датою пристрою; Хелловін — за датою свята
 // Вибір пори року й Хелловіну відкривається після проходження 2 епохи (поки що діє «Авто»)
-function themesUnlocked() { return state.epoch >= 2; }
+const DEV_OPEN_ALL = true;      // НА ЧАС ПРАВОК: відкриті всі сезони й усі 8 епох для перегляду (перед випуском поставити false)
+function themesUnlocked() { return DEV_OPEN_ALL || state.epoch >= 2; }
 function seasonNow() {
   const s = state.settings.season;
   if (s !== 'auto' && SEASONS.includes(s) && themesUnlocked()) return s;
@@ -6662,7 +6932,8 @@ function rebuildEpochLayers() {
   theme.key = null;              // змусити updateTheme перерахувати прикраси
   seedEpochFx();
   updateTheme();
-  document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => { const c2 = cv.getContext('2d'); c2.clearRect(0, 0, 16, 16); c2.drawImage(getSpriteCanvas(teamSprite(cv.dataset.tid)), 0, 0); });
+  refreshTeamPortraits();
+  drawCapiPortrait();             // скін Капі залежить від епохи
   if (shop) rebuildShop(true);
 }
 function resetEpochFx() {
@@ -6779,24 +7050,58 @@ function askTimeTravel() {
 }
 function startWarp() {
   if (warp) return;
-  warp = { t: 0, applied: false };
+  const cv = ui.warpCanvas, W = 200, H = Math.max(80, Math.round(W * window.innerHeight / Math.max(1, window.innerWidth)));
+  cv.width = W; cv.height = H;
+  const snap = document.createElement('canvas'); snap.width = W; snap.height = H;
+  const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
+  warp = { t: 0, applied: false, W, H, snap };
   ui.timeWarp.hidden = false;
-  ui.timeWarp.style.opacity = '0';
-  document.body.classList.add('warping');
   closeWheel();
   playSfx('warp');
+}
+// Перехід «Вир часу»: сцена закручується → тунель із годинником і значками епох → спалах → нова епоха розкривається колом
+const WARP_ICONS = EPOCH_GOODS_ICONS.map(a => a[0]);
+function drawWarpFrame(k) {
+  const cv = ui.warpCanvas, g = cv.getContext('2d'), W = warp.W, H = warp.H, cx = W / 2, cy = H / 2, sc = W / 160, diag = Math.hypot(cx, cy);
+  const seg = (a, b) => Math.max(0, Math.min(1, (k - a) / (b - a))), ez = x => x * x * (3 - 2 * x);
+  const k1 = seg(0, 0.18), k2 = seg(0.18, 0.78), k3 = seg(0.78, 1);
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
+  g.save(); g.translate(cx, cy); g.rotate(ez(k1) * 0.5); const sS = 1 - ez(k1) * 0.15; g.scale(sS, sS); g.translate(-cx, -cy); g.drawImage(warp.snap, 0, 0); g.restore();
+  g.globalAlpha = Math.min(1, k1 * 1.4); g.fillStyle = '#1a0f33'; g.fillRect(0, 0, W, H);
+  const a1 = Math.min(1, k1 * 2), n = 16;
+  for (let i = n; i >= 0; i--) {
+    const f = ((i + k * 14) % n) / n, r = Math.pow(f, 1.8) * 120 * sc * 1.1, ang = i * 0.6 + k * 6;
+    g.strokeStyle = i % 2 ? '#7a5cc9' : '#f2b84b'; g.lineWidth = (1 + f * 5) * sc; g.globalAlpha = a1 * (0.25 + f * 0.7);
+    g.beginPath(); g.ellipse(cx, cy, r * 1.2, r * 0.7, ang * 0.2, 0, Math.PI * 2); g.stroke();
+  }
+  g.globalAlpha = a1; g.lineWidth = sc;
+  for (let i = 0; i < 24; i++) { const an = i / 24 * Math.PI * 2 + k * 5; g.strokeStyle = i % 2 ? '#ffe08a' : '#ff5fa2'; g.beginPath(); g.moveTo(cx + Math.cos(an) * 8 * sc, cy + Math.sin(an) * 5 * sc); g.lineTo(cx + Math.cos(an) * 100 * sc, cy + Math.sin(an) * 62 * sc); g.stroke(); }
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  WARP_ICONS.forEach((ic, i) => {                                         // значки всіх епох летять назустріч
+    const f = (k * 1.6 + i / WARP_ICONS.length) % 1, r = f * 85 * sc, an = i * 0.8 + k * 3;
+    g.globalAlpha = Math.sin(f * Math.PI) * Math.min(1, k2 * 3); g.font = Math.round((6 + f * 22) * sc) + 'px sans-serif';
+    g.fillText(ic, cx + Math.cos(an) * r * 1.3, cy + Math.sin(an) * r * 0.75);
+  });
+  g.globalAlpha = a1;                                                       // годинник у центрі: стрілки крутяться назад
+  g.save(); g.translate(cx, cy); g.fillStyle = '#fff4dc'; g.beginPath(); g.arc(0, 0, 13 * sc, 0, 7); g.fill(); g.strokeStyle = '#4a3228'; g.lineWidth = 2 * sc; g.stroke();
+  g.rotate(-k * 40); g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -10 * sc); g.stroke(); g.rotate(k * 10); g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -7 * sc); g.stroke(); g.restore();
+  g.globalAlpha = 1;
+  if (k3 > 0) {                                                             // нова епоха розкривається колом, тут вирізаємо «дірку» й видно справжню сцену
+    const r = ez(k3) * diag * 1.05;
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fill(); g.restore();
+    g.strokeStyle = '#fff'; g.lineWidth = 3 * sc * (1 - k3); g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke();
+    g.globalAlpha = Math.sin(k3 * Math.PI) * 0.55; g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+  }
 }
 function updateWarp(dt) {
   if (!warp) return;
   warp.t += dt;
-  const k = warp.t / CONFIG.WARP_SECONDS;
-  ui.timeWarp.style.opacity = String(k < 0.25 ? k / 0.25 : k < 0.75 ? 1 : Math.max(0, (1 - k) / 0.25));
-  ui.warpClock.style.transform = 'rotate(' + (-k * 1260) + 'deg) scale(' + (1 + Math.sin(k * Math.PI) * 1.2) + ')';
+  const k = Math.min(1, warp.t / CONFIG.WARP_SECONDS);
+  drawWarpFrame(k);
   if (!warp.applied && k >= 0.5) { warp.applied = true; applyTimeTravel(); }
   if (k >= 1) {
     warp = null;
     ui.timeWarp.hidden = true;
-    document.body.classList.remove('warping');
     // новий сюжетний фрагмент епохи
     const storyNo = ((state.epoch - 1) % EPOCHS.length) + 1, label = (state.epoch % EPOCHS.length) + 1;
     playEpochIntro(state.epoch, () => { if (!state.story.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); });      // історія — лише вперше, далі тільки заставка
@@ -7029,20 +7334,26 @@ function updateEpochViewUI() {
   const card = $('epochViewCard');
   if (!card) return;
   card.hidden = false;                              // картка видна завжди; поки пройдено лише одну епоху — одна кнопка
-  if (state.epoch < 1 && state.activeEpoch >= 0) { state.activeEpoch = -1; rebuildEpochLayers(); }
-  const box = ui.setEpochView, top = Math.min(state.epoch, EPOCHS.length - 1), cur = viewEpoch() % EPOCHS.length, sig = state.lang + '|' + top + '|' + cur + '|' + state.epochEarned.map(v => fmt(Math.floor(v))).join(',');
-  if (box._sig === sig) return;
-  box._sig = sig; box.innerHTML = '';
-  for (let e = 0; e <= top; e++) {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'btn lang-pick';
-    const n1 = document.createElement('span'); n1.textContent = t('epoch_' + e);
-    const n2 = document.createElement('span'); n2.className = 'ev-earned'; n2.textContent = '🪙 ' + fmt(Math.floor(state.epochEarned[e] || 0));
-    b.append(n1, n2);
-    b.setAttribute('aria-pressed', String(e === cur));
-    b.addEventListener('click', () => { setEpochPreview(e); });
-    box.appendChild(b);
+  if (!DEV_OPEN_ALL && state.epoch < 1 && state.activeEpoch >= 0) { state.activeEpoch = -1; rebuildEpochLayers(); }
+  const box = ui.setEpochView, top = DEV_OPEN_ALL ? EPOCHS.length - 1 : Math.min(state.epoch, EPOCHS.length - 1), cur = viewEpoch() % EPOCHS.length, sig = state.lang + '|' + top;
+  if (box._sig !== sig) {                          // кнопки створюються ОДИН раз (інакше клік губиться, коли вони перемальовуються між натисканням і відпусканням)
+    box._sig = sig; box.innerHTML = '';
+    for (let e = 0; e <= top; e++) {
+      const bt = document.createElement('button');
+      bt.type = 'button'; bt.className = 'btn lang-pick'; bt.dataset.ep = String(e);
+      const n1 = document.createElement('span'); n1.textContent = t('epoch_' + e);
+      const n2 = document.createElement('span'); n2.className = 'ev-earned';
+      bt.append(n1, n2);
+      bt.addEventListener('click', () => { setEpochPreview(e); });
+      box.appendChild(bt);
+    }
   }
+  box.querySelectorAll('button').forEach(bt => {   // далі оновлюються лише підписи й стан «вибрано»
+    const e = +bt.dataset.ep, txt = '🪙 ' + fmt(Math.floor(state.epochEarned[e] || 0)), n2 = bt.querySelector('.ev-earned');
+    if (n2.textContent !== txt) n2.textContent = txt;
+    const on = String(e === cur);
+    if (bt.getAttribute('aria-pressed') !== on) bt.setAttribute('aria-pressed', on);
+  });
 }
 // Маленький піксельний замочок для закритих тем
 let lockUrl = '';
@@ -7144,6 +7455,116 @@ function debugX100() {
   updateUI();
 }
 
+/* =====================================================================
+   ВКЛАДКА «СКІНИ»: виграні в цирку наряди для Капі, магазину, погоди й героїв. Тап — вдягнути, ще раз — зняти.
+   ===================================================================== */
+const SKIN_ICONS = { capy: '🎩', shop: '🏪', weather: '🌈', hero: '🐾' };
+let skinsSig = '';
+const skinPage = {};                 // яку «сторінку» (по 3 скіни) показано в кожній групі
+function refreshTeamPortraits() {
+  document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => { const c2 = cv.getContext('2d'); c2.clearRect(0, 0, 16, 16); c2.drawImage(getSpriteCanvas(teamSprite(cv.dataset.tid)), 0, 0); });
+}
+function equipSkin(type, i) {
+  if (i >= 0 && !skinOwned(i)) { showToast(t('skinLockedToast'), 'bad'); return; }
+  setSkin(type, i >= 0 && state.skins[type] === i ? (type === 'capy' ? -2 : -1) : i);   // повторний тап знімає скін (Капі тоді повертається до скіна епохи)
+}
+function setSkin(type, i) {
+  state.skins[type] = i;
+  if (type === 'capy') drawCapiPortrait();
+  else if (type === 'hero') refreshTeamPortraits();
+  else if (type === 'shop') rebuildShop(true);
+  playSfx('upgrade');
+  skinsSig = '';
+  updateSkinsUI();
+  saveGame();
+}
+// Малює зразок скіна (name — 'pirate' тощо; null — звичайний вигляд) на новому canvas; на час малювання скін «приміряється»
+function skinPreviewCanvas(type, name) {
+  const cv = document.createElement('canvas');
+  skinPreview[type] = name;
+  const saveSign = lastRoofSign;
+  try {
+    let g;
+    if (type === 'capy') {
+      const c = getSpriteCanvas(capySprite());
+      cv.width = 30; cv.height = 24; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+      g.drawImage(c, (30 - c.width) >> 1, 0);
+    } else if (type === 'hero') {
+      cv.width = 38; cv.height = 18; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+      [TEAM[0].id, TEAM[2].id].forEach((id, k) => g.drawImage(getOutlinedCanvas(teamSprite(id)), 1 + k * 19, 0));
+    } else if (type === 'shop') {
+      const geo = buildShopCanvas(state.shopLevel, state.depts.map(tierOf));
+      cv.width = geo.w; cv.height = geo.h; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+      g.drawImage(geo.canvas, 0, 0);
+    } else {
+      cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+      for (let y = 0; y < 40; y++) { g.fillStyle = y < 14 ? '#8fd3ea' : y < 28 ? '#b8e3f5' : '#dff3fa'; g.fillRect(0, y, 64, 1); }
+      R(g, 0, 34, 64, 6, 'g'); R(g, 0, 34, 64, 1, 'm');
+      R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
+      if (name === 'rainbow') {
+        for (let y = 0; y < 34; y++) for (let x = 0; x < 64; x++) { const d = Math.hypot(x - 32, y - 34), band = Math.floor((30 - d) / 2); if (d <= 30 && band >= 0 && band < 7) { g.fillStyle = RAINBOW_COLORS[band]; g.fillRect(x, y, 1, 1); } }
+        R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
+      } else if (name === 'lightning') {
+        g.fillStyle = '#2a1650'; g.fillRect(0, 0, 64, 40); g.fillStyle = '#3d2275'; g.fillRect(0, 0, 64, 18);
+        R(g, 0, 34, 64, 6, 'G'); R(g, 26, 22, 12, 12, 'e'); R(g, 25, 20, 14, 3, 'd'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 'y');
+        const bolt = (pts, w) => { g.fillStyle = '#8b3bd6'; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], w + 2); g.fillStyle = '#d9b8ff'; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], w - 1 || 1); };
+        bolt([[18, 0], [22, 7], [17, 12], [23, 19], [19, 26]], 2); bolt([[46, 0], [43, 6], [48, 11], [44, 17]], 2);
+      } else {
+        R(g, 8, 8, 12, 4, 'w'); R(g, 11, 6, 8, 3, 'w'); R(g, 44, 14, 12, 4, 'w'); R(g, 47, 12, 8, 3, 'w');
+      }
+    }
+  } finally { delete skinPreview[type]; lastRoofSign = saveSign; }
+  return cv;
+}
+function updateSkinsUI() {
+  const tabEl = ui.tabs.querySelector('[data-tab="skins"]');
+  if (tabEl) tabEl.classList.toggle('alert', (state.skinsMask & ~state.skinsSeen) !== 0 && state.tab !== 'skins');
+  if (ui.paneSkins.hidden) return;
+  state.skinsSeen = state.skinsMask;
+  const sig = [state.skinsMask, SKIN_TYPES.map(ty => state.skins[ty]).join(), JSON.stringify(skinPage), state.lang, state.shopLevel, viewEpoch(), state.settings.gender, seasonNow()].join('|');
+  if (sig === skinsSig) return;
+  skinsSig = sig;
+  ui.skinsList.innerHTML = '';
+  [['capy', false], ['shop', false], ['weather', false], ['hero', false]].forEach(([type, epochGroup]) => {
+    const card = document.createElement('div');
+    card.className = 'card skin-cat';
+    const gkey = type + (epochGroup ? 'E' : '');
+    card.innerHTML = '<h2><span class="skin-title">' + (epochGroup ? '⏳ ' + t('skinCat_capyEpoch') : SKIN_ICONS[type] + ' ' + t('skinCat_' + type)) + '</span></h2><div class="skin-grid"></div>';
+    const grid = card.querySelector('.skin-grid');
+    const items = (type === 'capy' ? [{ i: -2, name: 'ep' + (viewEpoch() % EPOCHS.length) }] : []).concat(epochGroup ? [] : [{ i: -1, name: null }]).concat(SKIN_POOL.map((id, i) => ({ i, id })).filter(o => o.id.startsWith(type + '_') && !o.id.startsWith('capy_ep')).map(o => ({ i: o.i, name: o.id.slice(type.length + 1) })));
+    const pages = Math.ceil(items.length / 3);
+    if (skinPage[gkey] === undefined) skinPage[gkey] = epochGroup ? Math.floor((viewEpoch() % EPOCHS.length) / 3) : 0;
+    skinPage[gkey] = Math.max(0, Math.min(pages - 1, skinPage[gkey]));
+    if (pages > 1) {                                           // стрілки гортання: показано по 3 скіни
+      const nav = document.createElement('span'); nav.className = 'skin-nav';
+      const mk = (txt, d) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn skin-arrow'; b.textContent = txt; b.disabled = skinPage[gkey] + d < 0 || skinPage[gkey] + d >= pages; b.addEventListener('click', () => { skinPage[gkey] += d; skinsSig = ''; updateSkinsUI(); }); return b; };
+      const cnt = document.createElement('span'); cnt.className = 'skin-count'; cnt.textContent = (skinPage[gkey] + 1) + '/' + pages;
+      nav.append(mk('◀', -1), cnt, mk('▶', 1));
+      card.querySelector('h2').appendChild(nav);
+    }
+    items.slice(skinPage[gkey] * 3, skinPage[gkey] * 3 + 3).forEach(o => {
+      const owned = o.i < 0 || skinOwned(o.i);
+      const worn = state.skins[type] === o.i;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn skin-item' + (owned ? '' : ' locked');
+      b.setAttribute('aria-pressed', String(worn));
+      const cv = skinPreviewCanvas(type, o.name);
+      if (!owned) { const cg = cv.getContext('2d'); cg.globalCompositeOperation = 'source-atop'; cg.fillStyle = 'rgba(42,29,26,0.78)'; cg.fillRect(0, 0, cv.width, cv.height); }   // закритий скін — темний силует
+      cv.className = 'skin-prev ' + type;
+      b.appendChild(cv);
+      const nm = document.createElement('span'); nm.className = 'skin-name';
+      nm.textContent = o.i === -2 ? t('skinEpoch', t('epoch_' + (viewEpoch() % EPOCHS.length))) : o.i < 0 ? t('skinDefault') : (owned || epochGroup) ? skinName(o.i) : '???';
+      const st = document.createElement('span'); st.className = 'skin-state';
+      st.textContent = o.i === -2 ? (worn ? '✓ ' + t('skinWorn') : '↩ ' + t('skinBackToEpoch')) : o.i < 0 ? (worn ? '✓ ' + t('skinWorn') : '') : !owned ? (epochGroup ? '🔒 ' + t('skinOtherEpoch') : '🎪 ' + t('skinLocked')) : worn ? '✓ ' + t('skinWorn') : t('skinWear');
+      b.append(nm, st);
+      b.addEventListener('click', () => equipSkin(type, o.i));
+      grid.appendChild(b);
+    });
+    ui.skinsList.appendChild(card);
+  });
+}
+
 /* ---------- Вкладки: показ / сховання ---------- */
 function updateTabsVisibility() {
   ui.tabs.querySelectorAll('.tab').forEach(b => {
@@ -7158,6 +7579,7 @@ function updateProgressionUI() {
   updateAchUI();
   updateStatsUI();
   updateSettingsUI();
+  updateSkinsUI();
   setText(ui.statEpoch, t('epoch_' + (state.epoch % EPOCHS.length)), 'statEpoch');
 }
 
@@ -7219,9 +7641,6 @@ function setupProgression() {
   ui.dbgHour.addEventListener('click', debugHour);
   ui.dbgX100.addEventListener('click', debugX100);
   document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length);
-  const wc = ui.warpClock.getContext('2d');
-  wc.imageSmoothingEnabled = false;
-  wc.drawImage(getSpriteCanvas('npc_clock'), 0, 0);      // великий годинник у центрі анімації подорожі
   applyViewSettings();
 }
 
@@ -7319,14 +7738,15 @@ function updateBoostsUI() {
     items.push({ icon: h.icon, text: t('holiday_' + h.id) + ': ' + bonus });
   }
   // під рахунком завжди: перша рамка — баланс, біля неї — епоха
-  items.unshift({ cls: 'quiet', icon: '🪙', text: t('epochBalance', fmt(Math.floor(state.coins))) }, { cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
+  items.unshift({ cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
   if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
-  if (state.ghosts > 0) items.push({ cls: 'dark', icon: '👻', text: t('boost_ghosts', state.ghosts) });
+  if (state.ghosts > 0) items.push({ cls: 'dark', icon: '🎡', text: t('boost_drum', Math.min(state.ghosts, CONFIG.GHOST_RESPIN_COST), CONFIG.GHOST_RESPIN_COST) + (state.ghosts >= CONFIG.GHOST_RESPIN_COST ? ' ✓' : '') });   // скільки зібрано до додаткового оберту барабана (самі привиди й кристали лишаються)
   if (trouble && trouble.type === 'leak') items.push({ cls: 'bad', icon: '💧', text: t('boost_leak', Math.round(CONFIG.LEAK_INCOME_PENALTY * 100)) });
   const sig = items.map(i => i.icon + i.text).join('|');
   if (uiCache.boostSig === sig) return;
   uiCache.boostSig = sig;
+  uiCache.bannerSig = null;                                     // рамки змінились — банер підлаштується під них
   ui.boosts.innerHTML = '';
   items.forEach(it => {
     const chip = document.createElement('span');
@@ -7341,7 +7761,7 @@ function updateBanner() {
   const now = Date.now(), power = eventPowerMult(), ev = state.events;
   let kind = '', text = '';
   if (ghostHunt) {
-    kind = 'game'; text = t('banner_ghost', ghostHunt.caught, ghostHunt.total, Math.max(0, Math.ceil(ghostHunt.dur - ghostHunt.t)));
+    kind = 'game'; text = ghostHunt.crt < 0 ? t('banner_ghost', ghostHunt.caught, ghostHunt.total, Math.max(0, Math.ceil(ghostHunt.dur - ghostHunt.t))) : t('banner_crt', EPOCH_CREATURES[ghostHunt.crt].icon, t('crt_' + ghostHunt.crt), ghostHunt.caught, ghostHunt.total, Math.max(0, Math.ceil(ghostHunt.dur - ghostHunt.t)));
   } else if (trouble && trouble.type === 'thief' && trouble.state === 'run') {
     kind = 'game'; text = t('banner_thief', trouble.hits, CONFIG.RACCOON_HITS, Math.max(0, Math.ceil(CONFIG.RACCOON_SECONDS - trouble.t)));
   } else if (trouble && trouble.type === 'leak') {
@@ -7357,6 +7777,12 @@ function updateBanner() {
   ui.eventBanner.hidden = !kind;
   ui.eventBanner.className = kind;
   ui.eventBanner.textContent = text;
+  if (kind) placeBanner();
+}
+function placeBanner() {                                       // банер стоїть просто під рамками з балансом і бустами (на телефоні їх може бути кілька рядків)
+  const p = ui.eventBanner.offsetParent;
+  if (!p) return;
+  ui.eventBanner.style.top = Math.max(60, Math.round(ui.boosts.getBoundingClientRect().bottom - p.getBoundingClientRect().top + 8)) + 'px';
 }
 
 /* ---------- Розпродажі ---------- */
@@ -7669,7 +8095,83 @@ function drawSnow() {
     R(ctx, x, Math.round(f.y), f.big ? 2 : 1, f.big ? 2 : 1, 'w');
   });
 }
+/* ---------- Скіни погоди (виграш у цирку): веселка над містом і сніжна куля ---------- */
+const RAINBOW_COLORS = ['#e0524a', '#f29a45', '#ffe36a', '#6fcf7a', '#5fb4f0', '#6b6fd6', '#b07be0'];
+function skyArcSize() {
+  const cy = LAYOUT.curbY + 14, top = -view.offY + 8;           // вище верху видимого неба не піднімаємо
+  const w = (shop ? shop.w : 130), h = (shop ? shop.h : 100);
+  return { cy, rx: w / 2 + 44, ry: Math.min(cy - top, Math.max(h + 22, w / 2 + 44)) };
+}
+let rainbowCv = null, rainbowKey = '';
+function rainbowCanvas(R0) {                                    // півколо з 7 смуг по 4 пікселі; перемальовується лише коли змінюється розмір магазину
+  if (rainbowCv && rainbowKey === R0) return rainbowCv;
+  const c = document.createElement('canvas'); c.width = R0 * 2 + 2; c.height = R0 + 2;
+  const g = c.getContext('2d');
+  for (let y = 0; y <= R0; y++) for (let x = 0; x <= R0 * 2; x++) {
+    const d = Math.hypot(x - R0, y - R0), band = Math.floor((R0 - d) / 4);
+    if (d <= R0 && band >= 0 && band < 7) { g.fillStyle = RAINBOW_COLORS[band]; g.fillRect(x, y, 1, 1); }
+  }
+  rainbowKey = R0;
+  return (rainbowCv = c);
+}
+function drawRainbowSkin() {                                  // малюється ПОЗАДУ магазину, тож його не закриває
+  const a = (1 - sky.night) * (1 - weather.rain * 0.7);
+  if (a < 0.03) return;
+  const s = skyArcSize(), R0 = Math.round(Math.max(s.rx, s.ry));
+  ctx.globalAlpha = 0.6 * a;
+  ctx.drawImage(rainbowCanvas(R0), Math.round(LAYOUT.centerX - R0), s.cy - R0);
+  ctx.globalAlpha = 1;
+}
+/* ---------- Скін погоди «Фіолетові блискавки»: грозові спалахи високо над містом (за будинками й магазином) ---------- */
+const bolts = [];                                              // блискавки, що зараз видно
+let boltTimer = 1.2, skyFlash = 0;
+function makeBolt() {
+  const x0 = rand(visL() + 10, visR() - 10), top = -view.offY - 4, yEnd = rand(76, 112), pts = [[Math.round(x0), top]];
+  let x = x0, y = top;
+  while (y < yEnd) { y += rand(7, 13); x += rand(-9, 9); pts.push([Math.round(x), Math.round(y)]); }
+  const branches = [];
+  for (let i = 2; i < pts.length - 1; i++) if (Math.random() < 0.4) {
+    let bx = pts[i][0], by = pts[i][1]; const dir = Math.random() < 0.5 ? -1 : 1, bp = [[bx, by]];
+    for (let k = 0; k < 3; k++) { bx += dir * rand(5, 10); by += rand(5, 9); bp.push([Math.round(bx), Math.round(by)]); }
+    branches.push(bp);
+  }
+  return { pts, branches, t: 0, dur: rand(0.3, 0.45) };
+}
+function updateLightning(dt) {
+  if (skinOn('weather') !== 'lightning') { bolts.length = 0; skyFlash = 0; return; }
+  if (!animOn()) return;
+  boltTimer -= dt;
+  if (boltTimer <= 0) { boltTimer = rand(1.4, 3.6); bolts.push(makeBolt()); if (Math.random() < 0.35) bolts.push(makeBolt()); skyFlash = 1; }
+  skyFlash = Math.max(0, skyFlash - dt * 3.2);
+  for (let i = bolts.length - 1; i >= 0; i--) { bolts[i].t += dt; if (bolts[i].t >= bolts[i].dur) bolts.splice(i, 1); }
+}
+function boltLine(g, a, b, w) {
+  const n = Math.max(1, Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1]));
+  for (let i = 0; i <= n; i++) g.fillRect(Math.round(a[0] + (b[0] - a[0]) * i / n) - (w >> 1), Math.round(a[1] + (b[1] - a[1]) * i / n), w, 1);
+}
+function drawBoltShape(g, pts, glow, main, core, thin) {
+  g.globalAlpha *= 1;
+  g.fillStyle = glow; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], thin ? 4 : 7);
+  g.fillStyle = main; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], thin ? 2 : 3);
+  g.fillStyle = core; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], 1);
+}
+function drawLightningBack() {                                 // у небі: темно-фіолетовий відтінок і самі блискавки
+  if (!bolts.length && skyFlash <= 0) { ctx.globalAlpha = 0.1; ctx.fillStyle = '#3a1a6a'; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1; return; }
+  ctx.globalAlpha = 0.12 + 0.14 * skyFlash; ctx.fillStyle = '#4a1f8a'; ctx.fillRect(worldL(), -view.offY, view.w, view.h);
+  bolts.forEach(bt => {
+    const flick = bt.t < bt.dur * 0.35 ? 1 : (Math.floor(bt.t * 40) % 2 ? 0.55 : 1), fade = 1 - bt.t / bt.dur;
+    ctx.globalAlpha = 0.28 * fade * flick; drawBoltShape(ctx, bt.pts, '#8b3bd6', '#8b3bd6', '#8b3bd6', false);
+    ctx.globalAlpha = fade * flick; drawBoltShape(ctx, bt.pts, 'rgba(0,0,0,0)', '#b07be0', '#f3e6ff', false);
+    bt.branches.forEach(bp => { ctx.globalAlpha = 0.85 * fade * flick; drawBoltShape(ctx, bp, 'rgba(0,0,0,0)', '#9a5fe0', '#e6d2ff', true); });
+  });
+  ctx.globalAlpha = 1;
+}
+function drawLightningFront() {                                // спалах освітлює все місто фіолетовим
+  if (skinOn('weather') !== 'lightning' || skyFlash <= 0.02) return;
+  ctx.globalAlpha = 0.2 * skyFlash; ctx.fillStyle = '#c9a0ff'; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1;
+}
 function updateDecorFx(dt) {
+  updateLightning(dt);
   if (!animOn()) return;
   snow.forEach(f => { f.y += f.vy * dt; if (f.y > worldB()) { f.y = -view.offY - 2; f.x = rand(worldL(), worldR()); } });
   bats.forEach(b => {
@@ -7948,6 +8450,21 @@ function drawStreetGarlandGlow(L) {
   });
   ctx.globalAlpha = 1;
 }
+const litTmp = document.createElement('canvas');
+function drawShopLitMasked(sc, alpha) {                         // світло магазину малюється окремо, а силует Капі з нього вирізається — підсвітка її не перекриває
+  const pad = 12, w = shop.w + pad * 2, h = shop.h + pad * 2;
+  if (litTmp.width !== w || litTmp.height !== h) { litTmp.width = w; litTmp.height = h; }
+  const g = litTmp.getContext('2d'); g.imageSmoothingEnabled = false;
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, w, h);
+  drawCanvasSprite(g, shop.lit, pad, pad, { sx: sc.sx, sy: sc.sy, alpha });
+  const cp = LAYOUT.capy, bx = cp.x - shop.x + pad, by = cp.footY - 24 - shop.y + pad;
+  if (bx < w && bx + 32 > 0 && by < h && by + 26 > 0) {
+    g.globalCompositeOperation = 'destination-out';
+    drawSprite(g, capySprite(), bx, by, { flip: cp.flip, sy: 1 + 0.045 * (Math.sin(animClock * 2.2) + 1) / 2 });
+    g.globalCompositeOperation = 'source-over';
+  }
+  ctx.drawImage(litTmp, shop.x - pad, shop.y - pad);
+}
 // Світло поверх затемнення: вікна будинків і магазину, ліхтарі з ореолом і плямою на тротуарі
 function drawNightLights() {
   const L = sky.lamp;
@@ -7958,7 +8475,8 @@ function drawNightLights() {
   ctx.globalAlpha = 1;
   if (!build && shop.lit) {
     const sc = getShopScale();
-    drawCanvasSprite(ctx, shop.lit, shop.x, shop.y, { sx: sc.sx, sy: sc.sy, alpha: L * 0.55 });
+    drawShopLitMasked(sc, L * 0.8);
+    withShopScale(sc, () => {
     const rs = shop.roofSign, pulse = 0.85 + 0.15 * Math.sin(animClock * 2.2);        // м'яке сяйво навколо вивісок
     if (rs) {                                                   // «CAPYTAP» світиться іншим кольором, ніж назва магазину
       const gc = ROOF_GLOW[viewEpoch() % ROOF_GLOW.length];
@@ -7969,6 +8487,7 @@ function drawNightLights() {
     }
     const sg = shop.sign; [[5, 0.06], [2, 0.1]].forEach(([pad, al]) => { ctx.globalAlpha = L * al; R(ctx, shop.x + sg.x - pad, shop.y + sg.y - pad, sg.w + pad * 2, sg.h + pad * 2, 'y'); });
     ctx.globalAlpha = 1;
+    });
   }
   lampXs.forEach(x => {
     ctx.globalAlpha = L * 0.2;
@@ -7994,28 +8513,138 @@ function drawNightLights() {
   drawEpochGlow(animClock);
 }
 
-/* ---------- Хелловін: привиди ---------- */
-let ghostHunt = null;            // триває полювання: { t, dur, caught, total, ghosts }
+/* ---------- Хелловін: привиди; в усі інші часи — герої епох (сова, їжак, броненосець…), яких так само ловлять тапом ---------- */
+let ghostHunt = null;            // триває полювання: { t, dur, caught, total, ghosts, crt } (crt — номер епохи героя; -1 — привиди на Хелловін)
 let nextGhostAt = 0;             // коли почнеться наступне полювання (мс); 0 — ще не заплановано
 const windowGhosts = [];         // привиди, що на мить блимають у вікнах будинків
 let windowGhostTimer = 3;
 
+// Герої епох: кожен рухається по-своєму (move) — летить хвилею, котиться, ходить «місячною ходою», шмигає по сітці, глючить, маскується, пливе в невагомості, стрибає
+const EPOCH_CREATURES = [
+  { icon: '🦉', move: 'glide' }, { icon: '🦔', move: 'roll' }, { icon: '🪩', move: 'moonwalk' }, { icon: '🐹', move: 'dash' },
+  { icon: '🐛', move: 'glitch' }, { icon: '🦎', move: 'camo' }, { icon: '🪐', move: 'float' }, { icon: '🐱', move: 'leap' }
+];
+function makeCreatureCanvas(i) {                              // 18×16, дивиться вправо; малюється кодом
+  const c = document.createElement('canvas'); c.width = 18; c.height = 16;
+  const g = c.getContext('2d');
+  const P = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+  const inD = (cx, cy, r) => (x, y) => (x + 0.5 - cx) * (x + 0.5 - cx) + (y + 0.5 - cy) * (y + 0.5 - cy) <= r * r;
+  const inE = (cx, cy, rx, ry) => (x, y) => ((x + 0.5 - cx) / rx) * ((x + 0.5 - cx) / rx) + ((y + 0.5 - cy) / ry) * ((y + 0.5 - cy) / ry) <= 1;
+  const fill = (test, col) => { for (let y = 0; y < 16; y++) for (let x = 0; x < 18; x++) if (test(x, y)) P(x, y, 1, 1, col); };
+  const D = (cx, cy, r, col) => fill(inD(cx, cy, r), col);
+  if (i === 0) {                                              // Сова Мазок: бордовий берет, кремовий живіт, великі очі
+    D(9, 9, 5.2, '#a8703f'); P(3, 8, 3, 5, '#7a4f35'); D(10, 11, 3, '#f0dcb4');
+    D(9, 6, 4.3, '#a8703f'); P(5, 2, 2, 3, '#7a4f35'); P(12, 2, 2, 3, '#7a4f35');
+    D(7.5, 6, 1.7, '#ffffff'); D(11.5, 6, 1.7, '#ffffff'); P(8, 6, 1, 2, '#111111'); P(12, 6, 1, 2, '#111111');
+    P(9, 8, 2, 2, '#f2b84b'); P(6, 12, 1, 1, '#c8a878'); P(8, 13, 1, 1, '#c8a878');
+    P(5, 2, 9, 2, '#8a2a3a'); P(6, 1, 7, 1, '#8a2a3a'); P(9, 0, 1, 1, '#c4553d'); P(11, 3, 2, 1, '#f2b84b');
+    P(7, 14, 2, 1, '#f2b84b'); P(11, 14, 2, 1, '#f2b84b');
+  } else if (i === 1) {                                       // Їжак Платівка: колючки-платівка з червоною наліпкою
+    for (let a = 10; a < 360; a += 17) { const r = a * Math.PI / 180; P(Math.round(8 + Math.cos(r) * 6.8), Math.round(8.5 - Math.sin(r) * 6.8), 1, 1, '#2a1d1a'); }
+    D(8, 8.5, 6, '#2a1d1a'); D(8, 8.5, 5, '#3c3c46'); D(8, 8.5, 4, '#24242c'); D(8, 8.5, 3, '#3c3c46'); D(8, 8.5, 2, '#d62f2f'); P(8, 8, 1, 1, '#ffffff');
+    D(14, 11, 3, '#d9a679'); P(16, 11, 1, 1, '#2a1d1a'); P(14, 10, 1, 1, '#111111'); P(5, 14, 2, 2, '#7a4f35'); P(10, 14, 2, 2, '#7a4f35');
+  } else if (i === 2) {                                       // Броненосець Диско: панцир — дзеркальна куля, блискітки
+    fill((x, y) => inD(8, 9, 5.6)(x, y) && y <= 11, '#9fb8e8');
+    fill((x, y) => inD(8, 9, 5.6)(x, y) && y <= 11 && (x + y) % 2 === 0, '#e6f4ff');
+    P(5, 5, 2, 1, '#ffffff'); P(10, 6, 1, 1, '#ffffff');
+    D(14, 11, 2.6, '#d9a0b0'); P(13, 8, 2, 2, '#c98a9a'); P(16, 11, 1, 1, '#2a1d1a'); P(14, 10, 1, 1, '#111111');
+    P(5, 12, 2, 3, '#9a8a9a'); P(10, 12, 2, 3, '#9a8a9a'); P(1, 12, 4, 1, '#9a8a9a');
+    P(1, 2, 1, 3, '#ffe08a'); P(0, 3, 3, 1, '#ffe08a'); P(15, 2, 1, 3, '#ff9ed1'); P(14, 3, 3, 1, '#ff9ed1');
+  } else if (i === 3) {                                       // Хом'як Жетон: рудий, за щокою золота монета
+    D(8, 9, 5.6, '#e8863c'); D(9, 11, 3, '#fff4dc'); P(11, 3, 2, 2, '#e8863c'); P(12, 4, 1, 1, '#ef8fa3');
+    D(13, 11, 2.3, '#f2b84b'); P(12, 10, 1, 2, '#ffe08a'); P(12, 8, 1, 2, '#111111'); P(15, 10, 1, 1, '#ef8fa3');
+    P(6, 14, 2, 1, '#ef8fa3'); P(10, 14, 2, 1, '#ef8fa3');
+  } else if (i === 4) {                                       // Баг Глюкович: зелений жук з антенами й «глітч»-смужками
+    fill((x, y) => inD(8, 10, 6)(x, y) && y <= 11, '#4f9a63'); P(5, 6, 3, 1, '#8ed4a6'); P(9, 8, 2, 2, '#2f6b48'); P(6, 10, 2, 1, '#2f6b48');
+    D(14, 10, 2.5, '#2f6b48'); P(15, 9, 1, 1, '#ffffff'); P(14, 4, 1, 4, '#111111'); P(16, 4, 1, 4, '#111111'); P(14, 3, 1, 1, '#ff5fa2'); P(16, 3, 1, 1, '#33e6ff');
+    [4, 7, 10].forEach(x => { P(x, 12, 1, 3, '#111111'); }); P(12, 12, 1, 3, '#111111');
+    P(10, 5, 4, 1, '#33e6ff'); P(12, 7, 3, 1, '#ff5fa2'); P(2, 9, 2, 1, '#33e6ff');
+  } else if (i === 5) {                                       // Хамелеон Листок: зелений, очі-башточки, закручений хвіст, листочок на голові
+    fill(inE(8, 10, 6.2, 3.6), '#4f9a63'); P(5, 8, 3, 1, '#8ed4a6'); P(9, 8, 2, 1, '#8ed4a6'); P(6, 12, 5, 1, '#e8f0a0');
+    D(14, 9, 3, '#4f9a63'); D(14, 7, 1.6, '#3f8a53'); P(14, 7, 1, 1, '#111111'); P(16, 10, 1, 1, '#2f6b48'); P(11, 5, 3, 2, '#2f6b48');
+    for (let a = 0; a < 360; a += 30) { const r = a * Math.PI / 180; P(Math.round(3 + Math.cos(r) * 2.6), Math.round(10 + Math.sin(r) * 2.6), 1, 1, '#4f9a63'); }
+    P(5, 13, 2, 3, '#4f9a63'); P(10, 13, 2, 3, '#4f9a63');
+  } else if (i === 6) {                                       // Астро Аксолотль: рожевий у скляному шоломі, зовнішні зябра, ранець
+    fill(inE(9, 10.5, 6, 3), '#ef8fa3'); P(0, 9, 4, 3, '#ffc9d4'); P(5, 6, 3, 3, '#9c9087'); P(5, 7, 1, 1, '#c4ebf5');
+    D(13, 9, 3, '#ef8fa3'); P(10, 4, 1, 3, '#ff5fa2'); P(11, 3, 1, 3, '#ff5fa2'); P(10, 11, 1, 2, '#ff5fa2'); P(14, 8, 1, 1, '#111111'); P(14, 11, 2, 1, '#b04a6a');
+    P(8, 13, 2, 2, '#ef8fa3'); P(11, 13, 2, 2, '#ef8fa3');
+    for (let a = 0; a < 360; a += 8) { const r = a * Math.PI / 180; P(Math.round(13 + Math.cos(r) * 5.4), Math.round(8.5 + Math.sin(r) * 5.4), 1, 1, '#b8e3ff'); }
+    P(10, 4, 2, 1, '#ffffff'); P(9, 6, 1, 1, '#ffffff');
+  } else {                                                    // Кіт Вивіска: неоновий контур рожевим, темна заливка, блакитні очі
+    const body = inE(8, 10, 6.2, 3.6), head = inD(14, 8, 3), ear1 = (x, y) => x >= 12 && x <= 13 && y >= 3 && y <= 5 - (x - 12), ear2 = (x, y) => x >= 15 && x <= 16 && y >= 3 && y <= 4 + (x - 15) * 0,
+      legs = (x, y) => y >= 13 && y <= 15 && (x === 4 || x === 5 || x === 10 || x === 11), tail = (x, y) => (x >= 0 && x <= 2 && y >= 5 && y <= 11 && (x === 1 || (x === 2 && y >= 10) || (x === 0 && y <= 6)));
+    const inAll = (x, y) => body(x, y) || head(x, y) || ear1(x, y) || ear2(x, y) || legs(x, y) || tail(x, y);
+    for (let y = 0; y < 16; y++) for (let x = 0; x < 18; x++) if (inAll(x, y)) {
+      const edge = !inAll(x - 1, y) || !inAll(x + 1, y) || !inAll(x, y - 1) || !inAll(x, y + 1);
+      P(x, y, 1, 1, edge ? '#ff5fa2' : '#2b1a4f');
+    }
+    P(14, 7, 2, 1, '#33e6ff'); P(12, 7, 1, 1, '#33e6ff'); P(16, 10, 1, 1, '#ff5fa2'); P(6, 8, 4, 1, '#7a5cc9'); P(6, 10, 4, 1, '#7a5cc9');
+  }
+  return c;
+}
+for (let i = 0; i < 8; i++) SPRITES['npc_crt' + i] = { canvas: makeCreatureCanvas(i) };
+
+function huntLimits() { return { l: visL() + 12, r: visR() - 12, yMin: 138, yMax: worldB() - 8 }; }
 function startGhostHunt() {
-  const l = visL() + 16, r = visR() - 16;
-  ghostHunt = { t: 0, dur: CONFIG.GHOST_SECONDS, caught: 0, total: CONFIG.GHOST_COUNT, ghosts: [] };
-  for (let i = 0; i < CONFIG.GHOST_COUNT; i++) {
-    ghostHunt.ghosts.push({ x: rand(l, r), y: rand(132, worldB() - 8), vx: rand(12, 26) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6.3), alive: true, born: i * 0.9 });
+  const L = huntLimits(), halloween = theme.season === 'halloween', ep = viewEpoch() % EPOCH_CREATURES.length;
+  const cnt = halloween ? CONFIG.GHOST_COUNT : 2;                // герої епох — не більше двох за раз
+  ghostHunt = { t: 0, dur: CONFIG.GHOST_SECONDS, caught: 0, total: cnt, ghosts: [], crt: halloween ? -1 : ep };
+  const mv = halloween ? 'ghost' : EPOCH_CREATURES[ep].move;
+  for (let i = 0; i < cnt; i++) {
+    const sg = Math.random() < 0.5 ? -1 : 1, g = { x: rand(L.l, L.r), y: rand(L.yMin - 6, L.yMax), vx: rand(12, 26) * sg, vy: 0, ph: rand(0, 6.3), alive: true, born: i * 0.9, tm: rand(0.2, 1), rot: 0, alpha: 1, glitch: 0, jt: 0, air: false, flip: sg < 0 };
+    if (mv === 'glide') { g.y0 = rand(66, 116); g.vx = rand(30, 44) * sg; }
+    else if (mv === 'roll') { g.rolling = true; g.vx = rand(56, 76) * sg; }
+    else if (mv === 'moonwalk') g.vx = rand(14, 20) * sg;
+    else if (mv === 'camo') g.vx = rand(8, 13) * sg;
+    else if (mv === 'float') { g.y = rand(56, 118); g.vx = rand(-10, 10) || 6; g.vy = rand(-8, 8); }
+    else if (mv === 'leap') { g.vx = rand(40, 52) * sg; g.tm = rand(0.1, 0.6); }
+    ghostHunt.ghosts.push(g);
   }
   playSfx('raccoon');
-  showToast(t('ghostStart'), 'big');
+  showToast(halloween ? t('ghostStart') : t('crtStart', EPOCH_CREATURES[ep].icon + ' ' + t('crt_' + ep)), 'big');
 }
 function endGhostHunt() {
   const h = ghostHunt;
   ghostHunt = null;
-  nextGhostAt = Date.now() + rand(CONFIG.GHOST_HUNT_MIN_SECONDS, CONFIG.GHOST_HUNT_MAX_SECONDS) * 1000;
-  showToast(h.caught ? t('ghostEnd', h.caught, state.ghosts) : t('ghostEndNone'), h.caught ? 'good' : 'bad');
+  nextGhostAt = Date.now() + (h.crt < 0 ? rand(CONFIG.GHOST_HUNT_MIN_SECONDS, CONFIG.GHOST_HUNT_MAX_SECONDS) : CONFIG.CREATURE_INTERVAL_SECONDS) * 1000;   // герої епох — рівно раз на 5 хвилин
+  if (h.crt < 0) showToast(h.caught ? t('ghostEnd', h.caught, state.ghosts) : t('ghostEndNone'), h.caught ? 'good' : 'bad');
+  else showToast(h.caught ? t('crtEnd', h.caught, Math.min(state.ghosts, CONFIG.GHOST_RESPIN_COST), CONFIG.GHOST_RESPIN_COST) : t('crtEndNone'), h.caught ? 'good' : 'bad');
   saveGame();
   updateUI();
+}
+function stepCreature(g, dt, L, mv) {                          // рух одного героя епохи (g.x — центр, g.sy — де стоять «ноги» на екрані)
+  g.tm -= dt; g.ph += dt * 2.2;
+  const bounceX = () => { if (g.x < L.l) { g.x = L.l; g.vx = Math.abs(g.vx); } else if (g.x > L.r) { g.x = L.r; g.vx = -Math.abs(g.vx); } };
+  switch (mv) {
+    case 'glide':                                              // сова летить хвилею поперек вулиці
+      g.x += g.vx * dt; bounceX(); g.sy = g.y0 + Math.sin(g.ph * 1.1) * 15; break;
+    case 'roll':                                               // їжак котиться короткими ривками й зупиняється
+      if (g.tm <= 0) { g.rolling = !g.rolling; g.tm = g.rolling ? rand(1, 1.6) : rand(0.6, 1); if (g.rolling) g.vx = rand(56, 76) * (Math.random() < 0.5 ? -1 : 1); }
+      if (g.rolling) { g.x += g.vx * dt; g.rot += g.vx * dt / 6; bounceX(); }
+      g.sy = g.y; break;
+    case 'moonwalk': {                                         // броненосець — крок уперед, ковзання назад
+      const k = Math.sin(g.ph * 1.2);
+      g.x += g.vx * (k > 0.15 ? 2.4 : -1.1) * dt; bounceX(); g.sy = g.y - Math.max(0, Math.sin(g.ph * 2.4)) * 3; break;
+    }
+    case 'dash':                                               // хом'як шмигає по сітці: вліво, вправо, вгору, вниз
+      if (g.tm <= 0) { g.tm = rand(0.4, 0.85); const d = Math.floor(rand(0, 4)); g.vx = d === 0 ? 70 : d === 1 ? -70 : 0; g.vy = d === 2 ? 36 : d === 3 ? -36 : 0; if (g.vx) g.flip = g.vx < 0; }
+      g.x += g.vx * dt; g.y += g.vy * dt; if (g.y < L.yMin) { g.y = L.yMin; g.vy = 0; } if (g.y > L.yMax) { g.y = L.yMax; g.vy = 0; }
+      if (g.x < L.l) { g.x = L.l; g.vx = 70; g.flip = false; } else if (g.x > L.r) { g.x = L.r; g.vx = -70; g.flip = true; }
+      g.sy = g.y; break;
+    case 'glitch':                                             // баг стоїть, мерехтить і раптом «телепортується»
+      if (g.tm <= 0) { g.tm = rand(0.9, 1.5); g.glitch = 0.28; g.x = rand(L.l, L.r); g.y = rand(L.yMin, L.yMax); g.flip = Math.random() < 0.5; }
+      g.glitch = Math.max(0, g.glitch - dt); g.sy = g.y; break;
+    case 'camo':                                               // хамелеон повільно йде й зникає в кольорі фону
+      g.x += g.vx * dt; bounceX(); g.alpha = 0.28 + 0.72 * (0.5 + 0.5 * Math.sin(g.ph * 0.55)); g.sy = g.y; break;
+    case 'float':                                              // аксолотль пливе в невагомості по всьому небу над вулицею
+      g.x += g.vx * dt; g.y += g.vy * dt; bounceX(); if (g.y < 50) { g.y = 50; g.vy = Math.abs(g.vy); } else if (g.y > 122) { g.y = 122; g.vy = -Math.abs(g.vy); }
+      g.rot = Math.sin(g.ph * 0.6) * 0.35; g.sy = g.y + Math.sin(g.ph) * 3; break;
+    case 'leap': {                                             // кіт стрибає дугами через вулицю
+      if (!g.air) { g.sy = g.y; if (g.tm <= 0) { g.air = true; g.jt = 0; if (g.x < L.l + 40) g.vx = Math.abs(g.vx); else if (g.x > L.r - 40) g.vx = -Math.abs(g.vx); g.flip = g.vx < 0; } }
+      else { g.jt += dt / 0.75; g.x += g.vx * dt; bounceX(); g.sy = g.y - 22 * 4 * g.jt * (1 - g.jt); if (g.jt >= 1) { g.air = false; g.tm = rand(0.4, 0.8); g.sy = g.y; } }
+      break;
+    }
+  }
 }
 function updateGhostHunt(dt) {
   // привиди, що блимають у вікнах (лише на Хелловін)
@@ -8030,31 +8659,35 @@ function updateGhostHunt(dt) {
     for (let i = windowGhosts.length - 1; i >= 0; i--) { windowGhosts[i].t += dt; if (windowGhosts[i].t >= windowGhosts[i].dur) windowGhosts.splice(i, 1); }
   }
   if (!ghostHunt) return;
-  const h = ghostHunt;
+  const h = ghostHunt, L = huntLimits(), mv = h.crt < 0 ? 'ghost' : EPOCH_CREATURES[h.crt].move;
   h.t += dt;
-  const l = visL() + 10, r = visR() - 10;
   h.ghosts.forEach(g => {
     if (!g.alive || h.t < g.born) return;
-    g.x += g.vx * dt; g.ph += dt * 2.2;
-    if (g.x < l) { g.x = l; g.vx = Math.abs(g.vx); } else if (g.x > r) { g.x = r; g.vx = -Math.abs(g.vx); }
+    if (mv === 'ghost') {
+      g.x += g.vx * dt; g.ph += dt * 2.2;
+      if (g.x < L.l) { g.x = L.l; g.vx = Math.abs(g.vx); } else if (g.x > L.r) { g.x = L.r; g.vx = -Math.abs(g.vx); }
+      g.sy = g.y + Math.sin(g.ph) * 6; g.flip = g.vx < 0;
+    } else {
+      stepCreature(g, dt, L, mv);
+      if (mv !== 'dash' && mv !== 'glitch' && mv !== 'leap' && g.vx) g.flip = g.vx < 0;
+    }
+    g.sx = g.x;
   });
   if (h.t >= h.dur || h.ghosts.every(g => !g.alive)) endGhostHunt();
 }
-function ghostY(g) { return g.y + Math.sin(g.ph) * 6; }
-// Тап по привидові: ловимо його (повертає true, якщо влучили)
+// Тап по привидові чи герою: ловимо його (повертає true, якщо влучили)
 function hitGhost(p) {
   if (!ghostHunt) return false;
   const h = ghostHunt;
   for (const g of h.ghosts) {
-    if (!g.alive || h.t < g.born) continue;
-    const gy = ghostY(g);
-    if (Math.abs(p.x - g.x) <= 9 && p.y >= gy - 16 && p.y <= gy + 4) {
+    if (!g.alive || h.t < g.born || g.sy === undefined) continue;
+    if (Math.abs(p.x - g.x) <= 10 && p.y >= g.sy - 17 && p.y <= g.sy + 5) {
       g.alive = false;
       h.caught++;
       state.ghosts = Math.min(CONFIG.GHOST_MAX, state.ghosts + 1);
       state.stats.ghostsCaught++;
-      for (let i = 0; i < 8; i++) { const a = rand(0, Math.PI * 2), sp = rand(30, 70); fx.sparks.push({ x: g.x, y: gy - 6, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.3, 0.5), col: i % 2 ? 'w' : 'S' }); }
-      spawnFloater(g.x, gy - 14, '+1');
+      for (let i = 0; i < 8; i++) { const a = rand(0, Math.PI * 2), sp = rand(30, 70); fx.sparks.push({ x: g.x, y: g.sy - 6, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.3, 0.5), col: i % 2 ? 'w' : (h.crt < 0 ? 'S' : 'y') }); }
+      spawnFloater(g.x, g.sy - 14, '+1');
       playSfx('upgrade');
       updateUI();
       return true;
@@ -8064,13 +8697,28 @@ function hitGhost(p) {
 }
 function drawGhostHunt() {
   if (ghostHunt) {
-    const h = ghostHunt, fade = Math.min(1, (h.dur - h.t) / 2);     // в кінці полювання привиди тануть
+    const h = ghostHunt, fade = Math.min(1, (h.dur - h.t) / 2);     // в кінці полювання вони тануть
     h.ghosts.forEach(g => {
-      if (!g.alive || h.t < g.born) return;
-      const x = Math.round(g.x), y = Math.round(ghostY(g));
-      ctx.globalAlpha = 0.18 * fade; R(ctx, x - 5, y + 4, 11, 2, 'd');
-      ctx.globalAlpha = (0.8 + 0.15 * Math.sin(g.ph * 1.7)) * fade;
-      drawSprite(ctx, 'ghost', x - 6, y - 13, { flip: g.vx < 0 });
+      if (!g.alive || h.t < g.born || g.sy === undefined) return;
+      const x = Math.round(g.x), y = Math.round(g.sy);
+      if (h.crt < 0) {
+        ctx.globalAlpha = 0.18 * fade; R(ctx, x - 5, y + 4, 11, 2, 'd');
+        ctx.globalAlpha = (0.8 + 0.15 * Math.sin(g.ph * 1.7)) * fade;
+        drawSprite(ctx, 'ghost', x - 6, y - 13, { flip: g.flip });
+        return;
+      }
+      const mv = EPOCH_CREATURES[h.crt].move, c = getOutlinedCanvas('npc_crt' + h.crt), airborne = mv === 'glide' || mv === 'float' || g.air;
+      const gy = (mv === 'leap' ? g.y : y);                              // тінь лишається на землі
+      if (!(mv === 'glide' || mv === 'float')) { ctx.globalAlpha = 0.2 * fade * (g.alpha || 1); R(ctx, x - 6, Math.round(gy) + 1, 13, 2, 'd'); }
+      ctx.globalAlpha = fade * g.alpha;
+      if (mv === 'glitch' && g.glitch > 0) {                              // «глітч»: кольорові зміщені копії
+        ctx.globalAlpha = 0.55 * fade; drawCanvasSprite(ctx, c, x - 12, y - 17, { flip: g.flip }); drawCanvasSprite(ctx, c, x - 8, y - 17, { flip: g.flip });
+        ctx.globalAlpha = fade; R(ctx, x - 10, y - 9, 20, 1, 'T'); R(ctx, x - 6, y - 5, 14, 1, 'f');
+      }
+      if (g.rot) { ctx.save(); ctx.translate(x, y - 8); ctx.rotate(g.rot * (g.flip ? -1 : 1)); ctx.drawImage(c, -10, -9); ctx.restore(); }
+      else if (mv === 'camo' || mv === 'glitch' || mv === 'leap' || mv === 'dash' || mv === 'moonwalk' || mv === 'glide') drawCanvasSprite(ctx, c, x - 10, y - 17, { flip: g.flip, sy: airborne && mv === 'glide' ? 1 + 0.08 * Math.sin(g.ph * 5) : 1 });
+      else drawCanvasSprite(ctx, c, x - 10, y - 17, { flip: g.flip });
+      if (mv === 'moonwalk' && animOn() && Math.floor(g.ph * 3) % 2) { ctx.globalAlpha = fade; R(ctx, x - 12, y - 14, 1, 1, 'y'); R(ctx, x + 11, y - 12, 1, 1, 'f'); }
     });
     ctx.globalAlpha = 1;
   }
@@ -8092,7 +8740,15 @@ const CIRCUS_SECTORS = (function () {
   const W = WHEEL_SECTORS, sk = (type, color, icon) => ({ kind: 'skin', skin: type, weight: 7, color, icon });
   return [W[0], sk('capy', 'c', 'hat'), W[1], W[2], sk('shop', 'q', 'house'), W[3], W[4], sk('weather', 'S', 'cloud'), W[5], W[6], sk('hero', 'w', 'paw'), W[7]];
 })();
-const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_snowglobe', 'hero_party', 'hero_ninja'];   // номер у списку = біт у state.skinsMask; перша частина — тип скіна
+const SKIN_TYPES = ['capy', 'shop', 'weather', 'hero'];   // групи скінів: Капі, магазин, погода, герої
+const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_lightning', 'hero_party', 'hero_ninja', 'capy_ep0', 'capy_ep1', 'capy_ep2', 'capy_ep3', 'capy_ep4', 'capy_ep5', 'capy_ep6', 'capy_ep7'];
+const SKINS_FREE = true;           // поки що всі скіни можна обирати без виграшу й купівлі (потім вимкнемо й додамо купівлю)
+function skinOwned(i) {
+  const m = /^capy_ep(\d)$/.exec(SKIN_POOL[i]);
+  if (m) return +m[1] === viewEpoch() % EPOCHS.length;      // скін епохи можна вдягнути лише в його власній епосі
+  return SKINS_FREE || !!(state.skinsMask & (1 << i));
+}
+function skinName(i) { const id = SKIN_POOL[i], m = /^capy_ep(\d)$/.exec(id); return m ? t('skinEpoch', t('epoch_' + m[1])) : t('skin_' + id); }   // номер у списку = біт у state.skinsMask; перша частина — тип скіна
 const circus = { x: 0, drive: 0, t: 0, bangT: 0, anim: null, angle: 0, tex: null, setup: 1, setupT: 0 };
 
 /* ---- малюнок: шатро-причіп із колесом та клоуном (кольорові коди, окремий canvas 120×80) ---- */
@@ -8268,8 +8924,8 @@ const CIRCUS_ART = (function () {
 function circusFlagText() { return t('circusFlag'); }
 
 /* ---- логіка ---- */
-function circusStopX() { return Math.min(mailBoxX() + 40, Math.max(visL() + 72, mailBoxX())); }   // стає так, щоб шатра повністю закрили поштомат
-function circusStartX() { return visR() + 90; }
+function circusStopX() { return mailBoxX() + 40; }   // стоїть на дорозі прямо над поштоматом (так, щоб шатра повністю його закрили) — прив'язаний до дороги, а не до екрана
+function circusStartX() { return circus.sx !== undefined ? circus.sx : Math.max(visR() + 90, circusStopX() + 150); }   // звідки в'їжджає: трохи правіше від того, що видно в момент тапу, далі їде по дорозі
 function bangPos() { return { x: Math.min(visR() - 14, shop.x + shop.w + 13), y: LAYOUT.streetTop + 9 }; }   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
 function circusY() { return mailRoadY() + 2; }
 function circusQuiet() { return !dialog.active && !epochIntro.active && !build && !trouble && !ghostHunt && ui.modal.hidden && ui.wheelModal.hidden && ui.letterModal.hidden && ui.circusModal.hidden; }
@@ -8336,7 +8992,7 @@ function hitCircus(p) {
   const c = state.circus;
   if (c.phase === 1) {
     const b = bangPos();
-    if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) { c.phase = 2.5; circus.drive = 0; circus.x = circusStartX(); playSfx('build'); saveGame(); return true; }
+    if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) { c.phase = 2.5; circus.drive = 0; circus.sx = undefined; circus.sx = circusStartX(); circus.x = circus.sx; playSfx('build'); saveGame(); return true; }
   } else if (c.phase === 3) {
     const y = circusY();
     if (p.x >= circus.x - 80 && p.x <= circus.x + 80 && p.y >= y - 80 && p.y <= y) { openCircus(); return true; }
@@ -8395,7 +9051,7 @@ function closeCircus() {
   ui.circusModal.hidden = true;
   if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
 }
-function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !(state.skinsMask & (1 << i))); }
+function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_POOL[i].startsWith('capy_ep') && !(state.skinsMask & (1 << i))); }   // скіни епох у колесі не випадають
 function circusSpin() {
   if (circus.anim || state.circus.spun) return;
   const now = Date.now(), weight = x => (x.kind === 'crystal' && !state.story.finale ? 0 : (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : x.weight));
@@ -8410,7 +9066,7 @@ function circusSpin() {
   } else if (sec.kind === 'crystal') { state.crystals += 1; state.crystalsTotal += 1; text = t('prize_crystal', 1); }
   else if (sec.kind === 'income') { state.events.incomeBoostUntil = now + sec.minutes * 60000; state.events.incomeBoostMult = sec.mult; text = t('prize_income', sec.mult, sec.minutes); }
   else if (sec.kind === 'tap') { state.events.tapBoostUntil = now + sec.minutes * 60000; state.events.tapBoostMult = sec.mult; text = t('prize_tap', sec.mult, sec.minutes); }
-  else { const free = circusFreeSkins(sec.skin), pick = free[Math.floor(Math.random() * free.length)]; state.skinsMask |= (1 << pick); text = t('prize_skin', t('skin_' + SKIN_POOL[pick])); }
+  else { const free = circusFreeSkins(sec.skin), pick = free[Math.floor(Math.random() * free.length)]; state.skinsMask |= (1 << pick); text = t('prize_skin', skinName(pick)); }
   recalcIncome();
   const step = Math.PI / 6, from = circus.angle % (Math.PI * 2), to = Math.PI * 2 * 5 + (Math.PI * 2 - (idx + 0.5) * step) + rand(-0.35, 0.35) * step;
   circus.anim = { t: 0, dur: CONFIG.WHEEL_SPIN_SECONDS, from, to, text, again: false };
@@ -8611,12 +9267,14 @@ function buildWheelTexture() {
 }
 // Барабан фортуни: вертикальний барабан із 8 комірок-призів; обертається вгору, призова комірка зупиняється між двома червоними стрілками
 let drumCells = null;
+const DRUM_CELL_H = 38, DRUM_R = 50;          // висота клітинки й радіус барабана: проміжок між призами ~2–3 пікселі
 function buildDrumCells() {
+  const H = DRUM_CELL_H;
   return WHEEL_SECTORS.map(sec => {
-    const c = document.createElement('canvas'); c.width = 96; c.height = 30; const g = c.getContext('2d');
-    R(g, 0, 0, 96, 30, 'd'); R(g, 2, 2, 92, 26, sec.color); R(g, 2, 2, 92, 3, 'w'); R(g, 2, 25, 92, 3, 'd'); g.globalAlpha = 0.25; R(g, 2, 25, 92, 3, 'd'); g.globalAlpha = 1;
-    drawWheelIcon(g, sec.icon, 26, 15); drawWheelIcon(g, sec.icon, 70, 15);
-    R(g, 47, 6, 2, 18, 'd'); R(g, 46, 4, 4, 2, 'w'); R(g, 46, 24, 4, 2, 'w');
+    const c = document.createElement('canvas'); c.width = 96; c.height = H; const g = c.getContext('2d');
+    R(g, 0, 0, 96, H, 'd'); R(g, 2, 2, 92, H - 4, sec.color); R(g, 2, 2, 92, 3, 'w'); R(g, 2, H - 5, 92, 3, 'd'); g.globalAlpha = 0.25; R(g, 2, H - 5, 92, 3, 'd'); g.globalAlpha = 1;
+    drawWheelIcon(g, sec.icon, 26, H >> 1); drawWheelIcon(g, sec.icon, 70, H >> 1);
+    R(g, 47, 6, 2, H - 12, 'd'); R(g, 46, 4, 4, 2, 'w'); R(g, 46, H - 6, 4, 2, 'w');
     return c;
   });
 }
@@ -8627,10 +9285,10 @@ function drawWheel() {
   if (!drumCells) drumCells = buildDrumCells();
   R(g, 12, 18, 104, 116, 'd'); R(g, 14, 20, 100, 112, 'k');                                  // корпус барабана
   const step = Math.PI / 4, order = [];
-  for (let i = 0; i < 8; i++) { const ang = (i + 0.5) * step + wheelAngle, c = Math.cos(ang); if (c > 0.05) order.push({ i, c, y: 76 - Math.sin(ang) * 52 }); }
+  for (let i = 0; i < 8; i++) { const ang = (i + 0.5) * step + wheelAngle, c = Math.cos(ang); if (c > 0.05) order.push({ i, c, y: 76 - Math.sin(ang) * DRUM_R }); }
   order.sort((p, q) => p.c - q.c).forEach(o => {
-    const h = Math.max(2, Math.round(30 * o.c)), y = Math.round(o.y - h / 2);
-    g.drawImage(drumCells[o.i], 0, 0, 96, 30, 16, y, 96, h);
+    const h = Math.max(2, Math.round(DRUM_CELL_H * o.c)), y = Math.round(o.y - h / 2);
+    g.drawImage(drumCells[o.i], 0, 0, 96, DRUM_CELL_H, 16, y, 96, h);
     if (o.c < 0.95) { g.globalAlpha = 0.55 * (1 - o.c); R(g, 16, y, 96, h, 'k'); g.globalAlpha = 1; }
   });
   g.globalAlpha = 0.28; R(g, 16, 22, 96, 18, 'k'); R(g, 16, 112, 96, 18, 'k'); g.globalAlpha = 1;   // затемнення зверху й знизу — об'єм
@@ -8752,8 +9410,7 @@ function updateEvents(dt) {
   if (changed) recalcIncome();
   if (!theme.blackFriday && now >= state.events.nextSale) startSale(now);
   const quiet = !trouble && !ghostHunt && !dialog.active && !epochIntro.active && !build && ui.modal.hidden && ui.wheelModal.hidden;
-  if (theme.season !== 'halloween') nextGhostAt = 0;
-  else if (quiet && state.story.done >= 2) {          // на Хелловін раз на кілька хвилин вилітають привиди
+  if (quiet && state.story.done >= 2) {                // раз на кілька хвилин вилітають привиди (Хелловін) або герої поточної епохи
     if (!nextGhostAt) nextGhostAt = now + rand(25, 50) * 1000;
     else if (now >= nextGhostAt) startGhostHunt();
   }
@@ -8997,6 +9654,12 @@ function updateStoryUI() {
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
+  const tip = document.createElement('div');                 // постійна підказка: навіщо ловити звірів
+  tip.className = 'card story-tip';
+  const th = document.createElement('h2'); th.textContent = t('storyDrumTitle');
+  const tp = document.createElement('p'); tp.className = 'ws-line'; tp.textContent = t('storyDrumText');
+  tip.append(th, tp);
+  ui.storyList.appendChild(tip);
   for (let n = 1; n <= state.story.done; n++) {
     const card = document.createElement('div');
     card.className = 'card chapter-card';
@@ -9195,6 +9858,8 @@ function render(time) {
   ctx.translate(view.offX, view.offY);          // далі все малюється в координатах «ядра» сцени
   drawEpochBack();
   drawDecorBack();
+  if (skinOn('weather') === 'rainbow') drawRainbowSkin();     // веселка — позаду будинків і магазину, вища за магазин
+  else if (skinOn('weather') === 'lightning') drawLightningBack();
   clouds.forEach(c => { const cv = cloudCanvas(c.kind || 0, c.v || ''); drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), { sx: c.big ? 1.5 : 1, sy: c.big ? 1.5 : 1 }); });
   drawBirds();
   drawEpochSky(time);
@@ -9240,8 +9905,9 @@ function render(time) {
         sy: 1 + 0.045 * breath,
         variant: capyAnim.blinkLeft > 0 ? 'blink' : ''
       });
-      if (hasHats()) drawHat(cp.x + 6, cp.footY - 20, 9);
-      if (hasScarves()) {                    // шарфик Капі
+      const capySkin = skinOn('capy');       // у скіні вже є свій капелюх і вбрання — сезонні не потрібні
+      if (hasHats() && !capySkin) drawHat(cp.x + 6, cp.footY - 20, 9);
+      if (hasScarves() && !capySkin) {       // шарфик Капі
         R(ctx, cp.x + 6, cp.footY - 14, 9, 3, 'r'); R(ctx, cp.x + 6, cp.footY - 13, 9, 1, 'w');
         R(ctx, cp.x + 9, cp.footY - 11, 3, 5, 'r'); R(ctx, cp.x + 9, cp.footY - 9, 3, 1, 'w');
       }
@@ -9275,6 +9941,7 @@ function render(time) {
   });
   ctx.globalAlpha = 1;
   drawSnow();
+  drawLightningFront();
   drawEpochFront();
   ctx.restore();
 }
@@ -9296,6 +9963,13 @@ function drawShopLayered(sc) {
   ctx.translate(dx, dy); ctx.scale(dw / w, dh / h);
   drawDoorLeaves(ctx, shop.door, shop.doorOpen || 0);
   ctx.restore();
+  if (skinOn('shop') === 'gold' && animOn()) {               // золотий магазин мерехтить: чотири зірочки по черзі спалахують
+    withShopScale(sc, () => [[0.12, 0.3], [0.88, 0.26], [0.5, 0.12], [0.33, 0.62], [0.7, 0.5]].forEach((p, i) => {
+      if (Math.sin(animClock * 2.2 + i * 2.1) < 0.7) return;
+      const x = Math.round(shop.x + shop.w * p[0]), y = Math.round(shop.y + shop.h * p[1]);
+      R(ctx, x - 2, y, 5, 1, 'w'); R(ctx, x, y - 2, 1, 5, 'w'); R(ctx, x - 1, y - 1, 3, 3, 'y'); R(ctx, x, y, 1, 1, 'w');
+    }));
+  }
 }
 function renderBuild() {
   const p = build.t / build.dur;
