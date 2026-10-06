@@ -966,16 +966,16 @@ const LEVELS = [
 // bay = вітрина з двома відділами, win = звичайне вікно. Решта — кольори й стиль.
 // Магазин — «відкритий розріз»: крізь скляний фасад видно поверхи, стелажі відділів, ескалатори й покупців-звірят.
 // floors — скільки стелажів (по 2 відділи) на кожному поверсі, знизу вгору; торговий центр — 3 поверхи, решта — не більше 2.
-const FLOOR_H = 30;               // висота верхнього поверху (пікселів)
+const FLOOR_H = 34;               // висота верхнього поверху (пікселів)
 const SHOP_LOOK = [
-  { w: 104, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 130, top: 24, floors: [2], inner: ['y'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 158, top: 16, floors: [2, 1], inner: ['S', 'm'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
-  { w: 188, top: 22, floors: [2, 2], inner: ['m', 'q'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
-  { w: 216, top: 28, floors: [2, 3], inner: ['q', 'S'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
-  { w: 244, top: 30, floors: [2, 2, 2], inner: ['m', 'q', 'S'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
+  { w: 130, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 164, top: 24, floors: [2], inner: ['y'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 198, top: 16, floors: [2, 1], inner: ['S', 'm'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
+  { w: 234, top: 22, floors: [2, 2], inner: ['m', 'q'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
+  { w: 270, top: 28, floors: [2, 3], inner: ['q', 'S'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
+  { w: 306, top: 30, floors: [2, 2, 2], inner: ['m', 'q', 'S'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
 ];
-const DOOR_WIDTHS = [22, 22, 28, 30, 36];
+const DOOR_WIDTHS = [26, 26, 32, 36, 42];
 
 // Типи покупців (звірятка). Спрайти складаються з тіла і двох кадрів ніг (див. SPRITES)
 const CUSTOMER_TYPES = ['bunny', 'mouse', 'duck', 'dog', 'cat', 'pig', 'sheep', 'cow', 'squirrel', 'deer', 'raccoon', 'hedgehog', 'penguin', 'koala', 'tiger', 'monkey', 'hamster', 'chick', 'frog', 'foxcub'];
@@ -1727,7 +1727,8 @@ const CHIBI = (function () {
   const BAGS = {};
   const BAG_COL = { p: ['#ef8fa3', '#d4537e'], h: ['#f2b84b', '#c98a1e'], g: ['#4f9a63', '#2f7a4a'], n: ['#3d5a8c', '#2d467a'], u: ['#8b6bb0', '#6a4a94'] };
   function bag(kind, color) {
-    const key = kind + color;
+    const ep = (typeof viewEpoch === 'function') ? viewEpoch() % 8 : 1;
+    const key = kind + color + '_' + ep;
     if (BAGS[key]) return BAGS[key];
     const S = mk(10, 13), col = (BAG_COL[color] || BAG_COL.p)[0], sh = (BAG_COL[color] || BAG_COL.p)[1];
     if (kind === 0) { rect(S, 4, 0, 2, 5, '#e8b060'); px(S, 4, 0, '#f6d28a'); px(S, 5, 2, '#c98a3a'); px(S, 5, 4, '#c98a3a'); rect(S, 6, 2, 1, 3, '#4f9a63'); }
@@ -1738,6 +1739,14 @@ const CHIBI = (function () {
     if (kind === 1) { rect(S, 4, 8, 2, 1, '#e0604a'); px(S, 4, 7, '#e0604a'); px(S, 5, 7, '#e0604a'); }
     if (kind === 2) { px(S, 4, 8, sh); px(S, 5, 9, sh); px(S, 6, 8, sh); }
     rect(S, 2, 3, 1, 3, '#fff4dc'); rect(S, 7, 3, 1, 3, '#fff4dc');
+    // покупки залежать від епохи: кошик, блискучий пакет, коробка гри, посилка, сітка з овочами, капсула, неонова торба
+    if (ep === 0) { rect(S, 1, 6, 8, 7, '#c98a3a'); for (let y = 6; y < 13; y++) for (let x = 1; x < 9; x++) if ((x + y) % 2) px(S, x, y, '#a8703f'); rect(S, 1, 6, 8, 1, '#8a5a2a'); rect(S, 2, 2, 1, 4, '#8a5a2a'); rect(S, 7, 2, 1, 4, '#8a5a2a'); rect(S, 2, 2, 6, 1, '#8a5a2a'); rect(S, 3, 3, 2, 3, '#e8b060'); rect(S, 5, 4, 2, 2, '#4f9a63'); }
+    else if (ep === 2) { for (let k = 0; k < 6; k++) px(S, 2 + (k * 3) % 7, 6 + (k * 5) % 6, k % 2 ? '#ffffff' : '#ffe08a'); rect(S, 1, 9, 8, 1, '#ff5fa2'); }
+    else if (ep === 3) { rect(S, 1, 5, 8, 8, '#2a1d1a'); rect(S, 1, 5, 8, 1, '#7a5cc9'); rect(S, 2, 7, 6, 2, '#3fa7a0'); rect(S, 3, 10, 1, 1, '#ffe08a'); rect(S, 5, 10, 2, 1, '#ff5fa2'); px(S, 3, 8, '#ffffff'); rect(S, 4, 1, 2, 4, '#c26b4a'); }
+    else if (ep === 4) { rect(S, 1, 5, 8, 8, '#d9a066'); rect(S, 1, 5, 8, 1, '#e8b87a'); rect(S, 4, 5, 2, 8, '#fff4dc'); rect(S, 1, 10, 3, 2, '#ffffff'); px(S, 2, 11, '#4a3228'); px(S, 7, 8, '#3d5a8c'); rect(S, 2, 3, 1, 2, '#4a3228'); rect(S, 7, 3, 1, 2, '#4a3228'); }
+    else if (ep === 5) { rect(S, 1, 5, 8, 8, '#4f9a63'); for (let y = 5; y < 13; y++) for (let x = 1; x < 9; x++) if ((x + y) % 2) px(S, x, y, '#2f6b48'); rect(S, 2, 7, 2, 2, '#e8863c'); rect(S, 5, 8, 3, 3, '#c4553d'); rect(S, 3, 10, 2, 2, '#ffe08a'); rect(S, 6, 5, 1, 3, '#8ed4a6'); rect(S, 2, 3, 1, 2, '#8ed4a6'); rect(S, 7, 3, 1, 2, '#8ed4a6'); }
+    else if (ep === 6) { rect(S, 2, 5, 6, 8, '#9c9087'); rect(S, 1, 6, 8, 6, '#cfc5b8'); rect(S, 3, 7, 4, 2, '#86cfe8'); rect(S, 2, 10, 6, 1, '#4a3228'); rect(S, 4, 12, 2, 1, '#ffe08a'); rect(S, 4, 2, 2, 3, '#9c9087'); px(S, 4, 1, '#c4553d'); }
+    else if (ep === 7) { rect(S, 1, 5, 8, 8, '#1b1230'); for (let x = 1; x < 9; x++) { px(S, x, 5, '#ff5fa2'); px(S, x, 12, '#3fa7a0'); } for (let y = 5; y < 13; y++) { px(S, 1, y, '#ff5fa2'); px(S, 8, y, '#3fa7a0'); } rect(S, 3, 8, 4, 1, '#3fa7a0'); px(S, 4, 7, '#ff5fa2'); px(S, 5, 9, '#ffffff'); }
     return (BAGS[key] = outline(S, '#4a3228'));
   }
   return { make, bag };
@@ -3605,6 +3614,7 @@ function hash2(x, y) { return (((x * 73856093) ^ (y * 19349663)) >>> 0); }
 // ще вулиця з боків (offX) і небо зверху (offY). Усе, що малюється в шарах, — у координатах «ядра».
 const view = { offX: 0, offY: 0, extraB: 0, w: 320, h: 180 };
 let glassRects = null;           // вікна магазину (для нічного світла)
+let houseDoors = [];            // двері будиночків (центр по x, низ по y): сюди заходять покупці зі своїми пакетами
 let houseGlass = null;           // вікна будинків на задньому плані
 let houseLit = null;             // шар з освітленими вікнами будинків
 let buildSeason = 'spring';      // для якої пори року зараз малюється земля
@@ -3707,12 +3717,40 @@ function drawHouse(g, spec, lamps) {
     }
   }
   if (doorOk) {                              // двері з козирком і сходинкою
+    houseDoors.push({ x: doorX + 5, y: base });
     R(g, doorX, base - 15, doorW, 15, 'd'); R(g, doorX + 1, base - 14, doorW - 2, 14, 'b');
     R(g, doorX + 2, base - 12, 3, 5, 'l'); R(g, doorX + 5, base - 12, 3, 5, 'l'); R(g, doorX + 2, base - 6, 6, 5, 'l'); R(g, doorX + doorW - 3, base - 7, 1, 1, 'h');
     const aw = ['r', 'n', 'g', 'u'][(hs >>> 2) % 4];
     R(g, doorX - 2, base - 19, doorW + 4, 3, aw); for (let k = doorX - 2; k < doorX + doorW + 2; k += 3) R(g, k, base - 19, 1, 3, 'w');
     R(g, doorX - 2, base - 16, doorW + 4, 1, 'd');
     R(g, doorX - 1, base - 1, doorW + 2, 1, 'E');
+  }
+  epochHouseDeco(g, spec, top, base, floors, hs, doorOk ? doorX : -9999);
+}
+// Деталі будиночків на фоні під епоху: балки, лампочки, неон, ліани, труби, антени
+function epochHouseDeco(g, spec, top, base, floors, hs, doorX) {
+  const { x, w, h } = spec, fx = currentEpoch().id;
+  switch (fx) {
+    case 'renaissance':
+      g.globalAlpha = 0.8; R(g, x + 1, top + 1, 2, h - 1, 'b'); R(g, x + w - 3, top + 1, 2, h - 1, 'b');
+      for (let f = 1; f < floors; f++) R(g, x + 1, base - 6 - f * 19 + 1, w - 2, 1, 'b');
+      g.globalAlpha = 1; if (doorX > 0) { R(g, doorX + 12, base - 13, 1, 3, 'd'); R(g, doorX + 12, base - 10, 5, 4, 'd'); R(g, doorX + 13, base - 9, 3, 2, 'h'); } break;
+    case 'retro':
+      if (doorX > 0) { R(g, doorX - 4, base - 12, 3, 5, 'd'); R(g, doorX - 3, base - 11, 1, 3, 'f'); }
+      for (let k = x + 3; k < x + w - 3; k += 6) R(g, k, top + 3, 3, 1, (k >> 1) % 2 ? 'q' : 'w'); break;
+    case 'disco':
+      for (let k = x + 2; k < x + w - 2; k += 4) R(g, k, top - 1, 2, 2, ((k >> 2) + hs) % 3 === 0 ? 'f' : ((k >> 2) + hs) % 3 === 1 ? 'y' : 'T'); break;
+    case 'arcade':
+      R(g, x + 1, top + 2, w - 2, 1, 'T'); R(g, x + 1, top + 4, w - 2, 1, 'f'); break;
+    case 'internet':
+      if (hs % 2) { for (let a = -4; a <= 4; a++) { const hh = Math.round(Math.sqrt(16 - a * a) * 0.8); R(g, x + w - 8 + a, top + 8 - hh, 1, hh + 1, 'E'); } R(g, x + w - 8, top + 4, 1, 6, 'd'); }
+      else { R(g, x + 4, top + 5, 7, 4, 'd'); R(g, x + 5, top + 6, 5, 2, 'E'); } break;
+    case 'eco':
+      R(g, x + 1, top + 2, 1, Math.min(h - 12, 30), 'G'); for (let k = 0; k < 6; k++) { R(g, x + 2, top + 4 + k * 5, 2, 2, k % 2 ? 'g' : 'm'); } R(g, x + w - 5, top - 2, 4, 3, 'b'); R(g, x + w - 5, top - 4, 4, 2, 'g'); R(g, x + w - 4, top - 5, 1, 1, 'p'); break;
+    case 'space':
+      R(g, x + 2, top + 2, 1, h - 10, 'e'); R(g, x + w - 3, top + 2, 1, h - 10, 'e'); R(g, x + (w >> 1), top - 16, 1, 10, 'd'); R(g, x + (w >> 1), top - 17, 1, 1, 'r'); break;
+    case 'neon':
+      R(g, x + w - 4, top + 3, 1, h - 10, hs % 2 ? 'f' : 'T'); R(g, x + 3, top + 3, 1, h - 10, hs % 2 ? 'T' : 'f'); R(g, x + 1, top + 1, w - 2, 1, 'f'); break;
   }
 }
 
@@ -3730,16 +3768,20 @@ function seedBenches() {
 
   actors.forEach(a => { if (a.mode === 'toBench' || a.mode === 'sit') { a.mode = 'idle'; a.wait = 1; a.bench = null; if (a.y < LAYOUT.streetTop + 6) a.y = LAYOUT.streetTop + 8; } });
 }
+const BENCH_PAL = { renaissance: ['E', 'w', 'e'], retro: ['p', 'q', 'f'], disco: ['P', 'f', 'u'], arcade: ['v', 'T', 'V'], internet: ['e', 'E', 'n'], eco: ['b', 'g', 'G'], space: ['E', 'S', 'n'], neon: ['k', 'T', 'f'] };
+function benchColors() { return BENCH_PAL[currentEpoch().id] || ['b', 'l', 'c']; }
 function drawBenchBack(b) {        // спинка й сидіння (малюється ПЕРЕД тим, хто сидить)
-  const x = b.x, y = b.y;
-  R(ctx, x - 16, y - 18, 32, 2, 'b'); R(ctx, x - 16, y - 18, 32, 1, 'l'); R(ctx, x - 16, y - 14, 32, 2, 'b');
+  const x = b.x, y = b.y, [bb, bl, bc] = benchColors();
+  R(ctx, x - 16, y - 18, 32, 2, bb); R(ctx, x - 16, y - 18, 32, 1, bl); R(ctx, x - 16, y - 14, 32, 2, bb);
   R(ctx, x - 16, y - 19, 2, 12, 'd'); R(ctx, x + 14, y - 19, 2, 12, 'd');
-  R(ctx, x - 16, y - 9, 32, 2, 'l'); R(ctx, x - 16, y - 9, 32, 1, 'c');
+  R(ctx, x - 16, y - 9, 32, 2, bl); R(ctx, x - 16, y - 9, 32, 1, bc);
+  if (currentEpoch().id === 'neon') { R(ctx, x - 14, y - 16, 28, 1, 'f'); R(ctx, x - 14, y - 8, 28, 1, 'T'); }
 }
 function drawBenchFront(b) {       // передня планка й ніжки (малюється ПІСЛЯ того, хто сидить — ніби він сидить на лавці)
   const x = b.x, y = b.y;
   ctx.globalAlpha = 0.2; R(ctx, x - 16, y, 32, 2, 'd'); ctx.globalAlpha = 1;
-  R(ctx, x - 16, y - 7, 32, 3, 'b'); R(ctx, x - 16, y - 7, 32, 1, 'l'); R(ctx, x - 16, y - 5, 32, 1, 'd');
+  const [fb, fl] = benchColors();
+  R(ctx, x - 16, y - 7, 32, 3, fb); R(ctx, x - 16, y - 7, 32, 1, fl); R(ctx, x - 16, y - 5, 32, 1, 'd');
   R(ctx, x - 15, y - 4, 3, 4, 'd'); R(ctx, x + 12, y - 4, 3, 4, 'd');
 }
 
@@ -3782,11 +3824,31 @@ function drawBush(g, x, y) {
 }
 
 /* ---------- Земля: пагорби, будинки, тротуар, бруківка (статичний шар) ---------- */
+// Далекий обрій за будинками: силует міста епохи (вежі, хмарочоси, купола, неонові вежі)
+function farSkyline(g, x0, W) {
+  const ep = currentEpoch().id, base = 112, col = { renaissance: 'e', retro: 'S', disco: 'P', arcade: 'V', internet: 'n', eco: 'G', space: 'n', neon: 'V' }[ep] || 'e';
+  g.globalAlpha = 0.5;
+  for (let x = x0; x < x0 + W; ) {
+    const hs = hash2(x + 31, 7), bw = 12 + hs % 14, bh = 14 + (hs >>> 4) % 28;
+    switch (ep) {
+      case 'renaissance': R(g, x, base - bh, bw, bh, col); R(g, x + (bw >> 1) - 1, base - bh - 8, 3, 8, col); for (let k = 0; k < bw; k += 3) R(g, x + k, base - bh - 2, 2, 2, col); break;
+      case 'retro': R(g, x, base - bh / 2, bw, bh / 2, col); if (hs % 3 === 0) { R(g, x + 2, base - bh / 2 - 7, bw - 4, 7, col); R(g, x + 4, base - bh / 2 - 10, 2, 3, col); } break;
+      case 'disco': R(g, x, base - bh, bw, bh, col); for (let yy = base - bh + 3; yy < base - 3; yy += 5) for (let k = 2; k < bw - 2; k += 4) R(g, x + k, yy, 2, 2, hash2(k + x, yy) % 3 ? col : 'y'); break;
+      case 'arcade': for (let k = 0; k < bh; k++) R(g, x + Math.round(k * bw / (2 * bh)), base - k, Math.max(1, bw - Math.round(k * bw / bh)), 1, col); break;
+      case 'internet': R(g, x, base - bh - 10, bw - 3, bh + 10, col); R(g, x + (bw >> 2), base - bh - 16, 1, 6, col); for (let yy = base - bh - 6; yy < base - 3; yy += 6) R(g, x + 2, yy, bw - 7, 2, 'a'); break;
+      case 'eco': disc(g, x + (bw >> 1), base - 6, 9 + hs % 5, col); R(g, x + (bw >> 1), base - 3, 1, 3, 'd'); break;
+      case 'space': for (let a = -bw; a <= bw; a++) { const hh = Math.round(Math.sqrt(Math.max(0, bw * bw - a * a)) * 0.9); R(g, x + bw + a, base - hh, 1, hh, col); } if (hs % 3 === 0) R(g, x + bw, base - bh - 10, 1, 10, col); break;
+      case 'neon': R(g, x, base - bh - 14, bw - 4, bh + 14, col); for (let yy = base - bh - 10; yy < base - 3; yy += 5) R(g, x + 2, yy, bw - 8, 1, hash2(yy, x) % 2 ? 'f' : 'T'); break;
+    }
+    x += (ep === 'space' ? bw * 2 : bw) + 2 + hs % 6;
+  }
+  g.globalAlpha = 1;
+}
 function buildGroundLayer() {
   const { c, g } = newLayer();
   const H = worldB();
   const x0 = -view.offX, W = view.w;      // ліва межа й повна ширина полотна (у координатах «ядра»)
-  houseGlass = [];
+  houseGlass = []; houseDoors = [];
   buildSeason = seasonNow();
   const lamps = lampPositions();
 
@@ -3796,6 +3858,7 @@ function buildGroundLayer() {
     R(g, x, top, 1, LAYOUT.horizonY - top, 'm');
     if (top + 1 < LAYOUT.horizonY) R(g, x, top, 1, 1, 'g');
   }
+  farSkyline(g, x0, W);
   // будиночки
   const eh = currentEpoch().houses;      // у деяких епохах будинки мають інші кольори
   HOUSES.concat(extraHouses()).forEach((h, i) => {
@@ -3947,6 +4010,7 @@ function lineG(g, x0, y0, x1, y1, c) {      // лінія з пікселів (�
 function drawStreetTree(g, x, v, season) {
   const base = LAYOUT.horizonY + 8;
   if (season === 'winter') { drawBareTree(g, x, v, season); return; }
+  if (hash2(x, 91) % 4 === 0 && season !== 'spring') { drawPine(g, x, season); return; }       // кожне четверте дерево — ялина
   // кольори: [основа, тінь, світло, контур, цяточки]
   const pal = {
     spring: ['q', 'p', 'w', 'b', ['p', 'p', 'w', 'q', 'm']],
@@ -3983,11 +4047,29 @@ function drawStreetTree(g, x, v, season) {
     R(g, px, py, season === 'spring' ? 2 : 1, season === 'spring' ? 2 : 1, c);
   }
   if (season === 'halloween') treeHalloweenDecor(g, x, cy);
+  else treeEpochDecor(g, x, cy, inside);
   // на землі: пелюстки навесні, опале листя восени
   if (season === 'spring' || season === 'autumn') {
     const gp = season === 'spring' ? ['q', 'p', 'w'] : ['o', 'h', 'r'];
     for (let k = 0; k < 14; k++) R(g, x - 14 + (hash2(k, x) % 28), base + 1 + (hash2(x, k) % 2), 2, 1, gp[k % 3]);
   }
+}
+// Ялина: три яруси хвої на стовбурі
+function drawPine(g, x, season) {
+  const base = LAYOUT.horizonY + 8, dark = season === 'autumn' ? 'b' : 'G', mid = season === 'autumn' ? 'r' : 'g', light = season === 'autumn' ? 'o' : 'm';
+  R(g, x - 2, base - 12, 5, 12, 'd'); R(g, x - 1, base - 12, 3, 12, 'b'); R(g, x - 5, base - 2, 11, 3, 'd'); R(g, x - 4, base - 2, 9, 2, 'b');
+  [[0, 12], [9, 10], [17, 8]].forEach(([off, hw], i) => {
+    const y0 = base - 14 - off - 12;
+    for (let k = 0; k < 14; k++) { const w2 = Math.max(1, Math.round(hw * (k + 1) / 14)); R(g, x - w2 - 1, y0 + k, 1, 1, 'd'); R(g, x + w2 + 1, y0 + k, 1, 1, 'd'); R(g, x - w2, y0 + k, w2 * 2 + 1, 1, k % 3 === 0 ? light : k % 3 === 1 ? mid : dark); }
+  });
+  if (season === 'halloween') { R(g, x - 3, base - 38, 1, 1, 'o'); R(g, x + 3, base - 30, 1, 1, 'y'); }
+}
+// Акценти на кроні під епоху: яблука, лампочки, неонові вогники…
+function treeEpochDecor(g, x, cy, inside) {
+  const ep = currentEpoch().id, pals = { renaissance: ['r', 'r', 'y'], retro: ['q', 'w', 'f'], disco: ['f', 'y', 'T'], arcade: ['T', 'f', 'y'], internet: ['a', 'w', 'S'], eco: ['y', 'o', 'p'], space: ['s', 'S', 'w'], neon: ['f', 'T', 'w'] }[ep];
+  if (!pals) return;
+  for (let k = 0; k < 14; k++) { const a = (hash2(x + k, 17) % 628) / 100, rr = 3 + hash2(k, x + 5) % 11, px = x + Math.round(Math.cos(a) * rr * 1.2), py = cy + 2 + Math.round(Math.sin(a) * rr); if (inside(px, py)) R(g, px, py, 2, 2, pals[k % pals.length]); }
+  if (ep === 'eco') { R(g, x + 12, cy + 4, 5, 6, 'b'); R(g, x + 13, cy + 6, 2, 2, 'd'); R(g, x + 11, cy + 3, 7, 1, 'd'); }
 }
 // Хелловін: на дереві висять гарбузи-ліхтарики, привиди й гірлянда з вогників
 function treeHalloweenDecor(g, x, cy) {
@@ -4237,9 +4319,9 @@ function corniceG(g, w, y, trim) {                  // карниз під да�
 // trim — колір карнизу; col — [колона, відблиск]; frame — [рамка, кільце] вивіски; glass — колір скла; base — цоколь; band — візерунок карниза;
 // awning — 'scallop' (зубчики) чи 'flat' (пряма стрічка з підсвіткою); fx — особливий декор епохи
 const EPOCH_SHOP = [
-  { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance' },
-  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro' },
-  { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco' },
+  { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance', roofs: [0, 1, 1, 4, 4, 4] },
+  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 6] },
+  { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco', roofs: [2, 2, 3, 3, 6, 6] },
   { flat: true, roofPal: { r: 'v', n: 'V' }, trim: 'V', col: ['V', 'v'], frame: ['k', 'T'], glass: 'v', base: 'V', band: ['checker', 'v'], awning: 'flat', inner: ['V', 'P', 'v'], fx: 'arcade' },
   { flat: true, roofPal: { r: 'n', n: 'e' }, trim: 'a', col: ['e', 'E'], frame: ['n', 'a'], glass: 'a', base: 'e', band: ['dots', 'n'], awning: 'flat', inner: ['a', 'w', 'S'], fx: 'internet' },
   { flat: true, roofPal: { r: 'g', n: 'G' }, trim: 'g', col: ['b', 'c'], frame: ['G', 'm'], glass: 'm', base: 'b', band: ['leaf', 'G'], awning: 'flat', inner: ['m', 'c', 'y'], fx: 'eco' },
@@ -4270,6 +4352,164 @@ function neonLine(g, x, y, w, h, c) {         // неонова трубка: я
   g.globalAlpha = 0.28; R(g, x - 1, y - 1, w + 2, h + 2, c); g.globalAlpha = 1; R(g, x, y, w, h, c);
 }
 // Рисочки епохи на фасаді (виконуються після основного фасаду)
+/* ---------- Деталізація фасаду під кожну епоху: таверна, закусочна, диско-клуб, аркада, інтернет-магазин, еко-ринок, космостанція, неон ---------- */
+function barrelG(g, x, yb) {                       // діжка: 9×11
+  R(g, x, yb - 11, 9, 11, 'd'); R(g, x + 1, yb - 10, 7, 9, 'b'); R(g, x + 1, yb - 10, 2, 9, 'l');
+  R(g, x, yb - 8, 9, 1, 'd'); R(g, x, yb - 3, 9, 1, 'd'); R(g, x + 3, yb - 6, 3, 2, 'h');
+}
+function crateG(g, x, yb, c) { R(g, x, yb - 8, 10, 8, 'd'); R(g, x + 1, yb - 7, 8, 6, c); R(g, x + 1, yb - 7, 8, 1, 'w'); R(g, x + 4, yb - 7, 2, 6, 'd'); }
+function speakerG(g, x, yb) {                       // колонка: 10×16 із двома динаміками
+  R(g, x, yb - 16, 10, 16, 'k'); R(g, x + 1, yb - 15, 8, 14, 'z'); disc(g, x + 5, yb - 11, 3, 'k'); disc(g, x + 5, yb - 11, 1, 'e'); disc(g, x + 5, yb - 5, 2, 'k'); disc(g, x + 5, yb - 5, 1, 'e');
+}
+function cabinetG(g, x, yb, c) {                    // ігровий автомат: 13×22
+  R(g, x, yb - 22, 13, 22, 'k'); R(g, x + 1, yb - 21, 11, 20, c); R(g, x + 2, yb - 19, 9, 8, 'k'); R(g, x + 3, yb - 18, 7, 6, 's'); R(g, x + 4, yb - 17, 2, 2, 'y'); R(g, x + 7, yb - 15, 2, 2, 'r');
+  R(g, x + 2, yb - 9, 9, 3, 'd'); R(g, x + 4, yb - 8, 1, 1, 'r'); R(g, x + 7, yb - 8, 2, 1, 'y'); R(g, x + 1, yb - 3, 11, 3, 'd');
+}
+function lockerG(g, x, yb) {                        // посилкові комірки: 18×18
+  R(g, x, yb - 18, 18, 18, 'd'); for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) { R(g, x + 1 + i * 6, yb - 17 + j * 6, 5, 5, [['T', 'S', 'y'], ['p', 'T', 'S'], ['S', 'y', 'p']][j][i]); R(g, x + 4 + i * 6, yb - 15 + j * 6, 1, 1, 'd'); }
+}
+function bannerHang(g, x, y, c1, c2, n) { for (let i = 0; i < n; i++) { R(g, x + i * 6, y, 5, 1, 'd'); for (let k = 0; k < 4; k++) R(g, x + i * 6 + k, y + 1 + k, 5 - k - (k > 2 ? 1 : 0), 1, i % 2 ? c1 : c2); } }
+function solarG(g, x, y, n) { for (let i = 0; i < n; i++) { R(g, x + i * 10, y, 9, 4, 'd'); R(g, x + i * 10 + 1, y + 1, 7, 2, 'n'); R(g, x + i * 10 + 4, y + 1, 1, 2, 'a'); R(g, x + i * 10 + 3, y + 4, 3, 2, 'd'); } }
+function dishG(g, x, y) { for (let a = -5; a <= 5; a++) { const hh = Math.round(Math.sqrt(25 - a * a) * 0.8); R(g, x + a, y - hh, 1, hh + 1, 'E'); } R(g, x, y - 5, 1, 7, 'd'); R(g, x - 3, y + 2, 7, 1, 'd'); R(g, x + 1, y - 6, 1, 1, 'r'); }
+function hologram(g, x, y, w, h, c) { g.globalAlpha = 0.35; R(g, x, y, w, h, c); g.globalAlpha = 1; for (let k = 2; k < h; k += 3) { g.globalAlpha = 0.6; R(g, x, y + k, w, 1, 'w'); g.globalAlpha = 1; } R(g, x, y, w, 1, c); R(g, x, y + h - 1, w, 1, c); R(g, x, y, 1, h, c); R(g, x + w - 1, y, 1, h, c); }
+function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
+  const top = look.top, f0 = floors[0], yb = h - 7, big = level >= 4;
+  const L0 = 11, L1 = door.x - 6, R0 = door.x + door.w + 6, R1 = w - 12;           // вільні місця біля дверей на нижньому поверсі
+  const slotsL = Math.max(1, Math.floor((L1 - L0) / 13)), slotsR = Math.max(1, Math.floor((R1 - R0) / 13));
+  const flat = es.flat;
+  switch (es.fx) {
+    case 'renaissance': {                              // таверна: дерев'яні балки, діжки, вивіска з кухлем
+      for (let x = 10; x < w - 10; x += 26) { R(g, x, top + 4, 2, 4, 'd'); }
+      floors.forEach(fl => { for (let x = 14; x < w - 14; x += 30) { R(g, x, fl.top - 3, 2, 3, 'd'); R(g, x + 1, fl.top - 3, 1, 3, 'b'); } });
+      for (let i = 0; i < slotsL; i++) barrelG(g, L0 + i * 13, yb);
+      if (slotsR > 1) for (let i = 0; i < slotsR - 1; i++) barrelG(g, R1 - 9 - i * 13, yb); else barrelG(g, R1 - 9, yb);
+      const bx = w - 38, by = yG + 12;                 // кронштейн і дошка-вивіска «кухоль»
+      R(g, bx, by, 18, 2, 'd'); R(g, bx + 17, by - 4, 2, 6, 'd'); R(g, bx + 2, by + 2, 1, 4, 'd'); R(g, bx + 14, by + 2, 1, 4, 'd');
+      R(g, bx, by + 6, 17, 13, 'd'); R(g, bx + 1, by + 7, 15, 11, 'l'); R(g, bx + 1, by + 7, 15, 1, 'c');
+      R(g, bx + 5, by + 9, 6, 7, 'w'); R(g, bx + 5, by + 9, 6, 2, 'y'); R(g, bx + 11, by + 10, 2, 4, 'w'); R(g, bx + 6, by + 15, 4, 1, 'd');
+      [[11, yG + 14], [w - 15, yG + 14]].forEach(p => lanternG(g, p[0], p[1]));
+      break;
+    }
+    case 'retro': {                                    // закусочна 50-х: хромова смужка, неонова стрілка, джюкбокс
+      for (let x = 4; x < w - 4; x++) R(g, x, yB, 1, 1, (x >> 1) % 2 ? 'w' : 'E');
+      R(g, 4, yB + 1, w - 8, 1, 'e');
+      for (let x = 8; x < w - 20; x += 5) R(g, x, top + 7, 1, 1, 'q');
+      const jx = L0 + 4; R(g, jx, yb - 20, 14, 20, 'd'); R(g, jx + 1, yb - 19, 12, 18, 'p'); R(g, jx + 3, yb - 16, 8, 8, 'd'); R(g, jx + 4, yb - 15, 6, 6, 'y'); R(g, jx + 6, yb - 14, 2, 4, 'r'); R(g, jx + 2, yb - 6, 10, 3, 'd'); R(g, jx + 3, yb - 5, 8, 1, 'q'); R(g, jx + 3, yb - 20, 8, 1, 'f');
+      const sx = R0 + 3; R(g, sx, yb - 13, 9, 13, 'd'); R(g, sx + 1, yb - 12, 7, 11, 'w'); R(g, sx + 2, yb - 11, 5, 3, 'r'); R(g, sx + 2, yb - 7, 5, 5, 'S'); R(g, sx + 3, yb - 4, 3, 1, 'p'); R(g, sx + 4, yb - 14, 1, 1, 'r');   // молочний коктейль
+      [[w - 20, top + 12], [10, top + 12]].forEach(p => { R(g, p[0], p[1], 1, 4, 'f'); R(g, p[0] - 1, p[1] + 1, 3, 1, 'f'); });
+      break;
+    }
+    case 'disco': {                                    // диско-клуб: дзеркальна куля, колонки, промені
+      const bx = (w >> 1) - 40; R(g, bx, yG + 8, 1, 5, 'd'); disc(g, bx, yG + 18, 6, 'd'); disc(g, bx, yG + 18, 5, 'E');
+      for (let a = -5; a <= 5; a += 2) for (let b = -5; b <= 5; b += 2) if (a * a + b * b < 24) R(g, bx + a, yG + 18 + b, 1, 1, ((a + b) / 2) & 1 ? 'w' : 'S'); R(g, bx - 2, yG + 15, 2, 1, 'w');
+      g.globalAlpha = 0.18; for (let i = 0; i < 4; i++) for (let k = 0; k < 24; k++) R(g, bx - 18 + i * 12 + (k >> 1) * (i - 1.5) * 0.7, yG + 20 + k, 3, 1, ['f', 'T', 'y', 'p'][i]); g.globalAlpha = 1;
+      for (let i = 0; i < slotsL; i++) speakerG(g, L0 + 1 + i * 13, yb);
+      for (let i = 0; i < slotsR; i++) speakerG(g, R1 - 10 - i * 13, yb);
+      for (let x = 6; x < w - 6; x += 5) { R(g, x, yB - 1, 2, 2, ((x / 5) | 0) % 3 === 0 ? 'f' : ((x / 5) | 0) % 3 === 1 ? 'y' : 'T'); }
+      break;
+    }
+    case 'arcade': {                                   // зал ігрових автоматів
+      for (let i = 0; i < slotsL; i++) cabinetG(g, L0 + i * 14, yb, ['v', 'f', 'T'][i % 3]);
+      for (let i = 0; i < slotsR; i++) cabinetG(g, R1 - 13 - i * 14, yb, ['T', 'f', 'v'][i % 3]);
+      ['.#.#.', '#####', '##.##', '#####', '.#.#.'].forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') { R(g, 8 + rx, yG - 12 + ry, 1, 1, 'T'); R(g, w - 14 + rx, yG - 12 + ry, 1, 1, 'f'); } });   // піксельні прибульці на стіні
+      for (let x = 8; x < w - 8; x += 3) R(g, x, yB + 1, 2, 1, (x / 3 | 0) % 2 ? 'f' : 'T');
+      R(g, door.x + (door.w >> 1) - 1, yG - 14, 2, 12, 'd'); disc(g, door.x + (door.w >> 1), yG - 15, 3, 'r');         // великий джойстик над входом
+      break;
+    }
+    case 'internet': {                                 // інтернет-магазин: Wi-Fi, поштомати-комірки, антена, стрічка новин
+      for (let a = 1; a <= 3; a++) for (let t2 = -a * 2; t2 <= a * 2; t2++) { const yy = Math.round(Math.sqrt(Math.max(0, a * a * 6 - t2 * t2)) * 0.6); if (yy > 0) R(g, 12 + t2 + 6, yB - yy - 2, 1, 1, 'a'); }
+      R(g, 17, yB - 1, 2, 2, 'a');
+      for (let i = 0; i < Math.min(2, slotsL); i++) lockerG(g, L0 + i * 20, yb);
+      for (let i = 0; i < Math.min(2, slotsR); i++) { const rx = R1 - 18 - i * 20; R(g, rx, yb - 18, 18, 18, 'd'); R(g, rx + 1, yb - 17, 16, 16, 'k'); for (let k = 0; k < 4; k++) R(g, rx + 2, yb - 15 + k * 4, 14 - (k * 3) % 5, 2, k % 2 ? 'a' : 'T'); }
+      if (flat) { dishG(g, w - 22, 10); dishG(g, 24, 12); }
+      for (let x = 8; x < w - 8; x += 4) R(g, x, yB + 2, 3, 1, (x / 4 | 0) % 3 === 0 ? 'T' : 'e');
+      break;
+    }
+    case 'eco': {                                      // еко-ринок: дерев'яні рейки, кадки з деревами, сонячні панелі
+      for (let x = 5; x < w - 5; x += 3) { R(g, x, top + 10, 1, 14, 'b'); }
+      for (let i = 0; i < slotsL; i++) { const px = L0 + 2 + i * 13; R(g, px, yb - 6, 9, 6, 'b'); R(g, px, yb - 6, 9, 1, 'l'); disc(g, px + 4, yb - 12, 5, 'G'); disc(g, px + 4, yb - 12, 4, 'g'); R(g, px + 3, yb - 8, 3, 3, 'b'); R(g, px + 2, yb - 14, 2, 2, 'm'); }
+      for (let i = 0; i < slotsR; i++) { const px = R1 - 12 - i * 13; R(g, px, yb - 6, 9, 6, 'b'); R(g, px, yb - 6, 9, 1, 'l'); R(g, px + 1, yb - 12, 7, 6, 'g'); R(g, px + 2, yb - 14, 2, 2, 'p'); R(g, px + 5, yb - 13, 2, 2, 'y'); R(g, px + 3, yb - 11, 3, 5, 'G'); }
+      if (flat) { solarG(g, 14, 0, Math.min(5, Math.floor((w - 70) / 10))); R(g, w - 24, 0, 1, 1, 'd'); }
+      for (let x = 12; x < w - 12; x += 16) { R(g, x, yG + 8, 1, 4 + (x % 3), 'g'); R(g, x - 1, yG + 11 + (x % 3), 3, 1, 'm'); }
+      break;
+    }
+    case 'space': {                                    // космічна станція: шви обшивки, попереджувальні смуги, антени
+      for (let x = 6; x < w - 6; x += 8) { R(g, x, top + 9, 1, 1, 'E'); R(g, x, top + 23, 1, 1, 'E'); R(g, x + 4, top + 16, 1, 1, 'e'); }
+      floors.forEach(fl => { for (let x = 6; x < w - 6; x += 10) R(g, x, fl.top - 2, 1, 1, 'E'); });
+      for (let i = 0; i < 8; i++) { R(g, door.x - 12 + i * 3, yG + 8, 2, 2, i % 2 ? 'y' : 'd'); R(g, door.x + 4 + door.w - 12 + i * 3 - 12 + 12, yG + 8, 0, 0, 'd'); }
+      for (let x = door.x - 4; x < door.x + door.w + 4; x += 4) R(g, x, yG + 8, 2, 2, ((x - door.x) / 4 | 0) % 2 ? 'y' : 'k');
+      for (let i = 0; i < slotsL; i++) { const px = L0 + i * 13; R(g, px, yb - 14, 10, 14, 'd'); R(g, px + 1, yb - 13, 8, 12, 'e'); disc(g, px + 5, yb - 8, 3, 'n'); disc(g, px + 5, yb - 8, 2, 's'); R(g, px + 4, yb - 9, 1, 1, 'w'); }
+      for (let i = 0; i < slotsR; i++) { const px = R1 - 11 - i * 13; R(g, px, yb - 12, 9, 12, 'd'); R(g, px + 1, yb - 11, 7, 10, 'z'); R(g, px + 2, yb - 9, 5, 1, 'T'); R(g, px + 2, yb - 7, 3, 1, 'T'); R(g, px + 2, yb - 5, 4, 1, 'f'); }
+      if (flat) { R(g, 18, 0, 1, 8, 'd'); R(g, 15, 2, 7, 1, 'd'); R(g, 16, 4, 5, 1, 'd'); R(g, 18, 0, 1, 1, 'r'); R(g, w - 36, 2, 1, 6, 'd'); R(g, w - 38, 2, 5, 1, 'e'); }
+      break;
+    }
+    case 'neon': {                                     // неонове місто: голографічна реклама, світні стовпи, дрон
+      if (flat) { hologram(g, 10, 1, 34, 12, 'T'); R(g, 14, 4, 14, 1, 'w'); R(g, 14, 7, 20, 1, 'f'); hologram(g, w - 46, 0, 34, 14, 'f'); R(g, w - 42, 4, 18, 1, 'w'); R(g, w - 42, 8, 10, 1, 'T'); }
+      for (let i = 0; i < slotsL; i++) { const px = L0 + 3 + i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'f' : 'T'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'T' : 'f'); }
+      for (let i = 0; i < slotsR; i++) { const px = R1 - 6 - i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'T' : 'f'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'f' : 'T'); }
+      neonLine(g, door.x - 2, yG + 10, 1, 24, 'T'); neonLine(g, door.x + door.w + 1, yG + 10, 1, 24, 'f');
+      break;
+    }
+  }
+}
+
+/* ---------- Вивіска й дах: окремий вигляд під кожну епоху ---------- */
+// Прикраси по краях вивіски (текст лежить посередині, тож малюємо ліворуч і праворуч) та рамка в стилі епохи
+function signMotif(g, es, w, top) {
+  const y0 = top + 8, y1 = top + 24, mx = [10, w - 10];                       // межі вивіски й центри лівої/правої прикраси
+  switch (es.fx) {
+    case 'renaissance':                                                        // дерев'яна дошка з гербовими щитами та ланцюгами
+      mx.forEach(x => { R(g, x - 5, y0 + 3, 11, 11, 'd'); R(g, x - 4, y0 + 4, 9, 9, 'r'); R(g, x - 4, y0 + 4, 9, 2, 'y'); R(g, x - 1, y0 + 6, 3, 7, 'w'); R(g, x - 3, y0 + 8, 7, 2, 'w'); R(g, x - 4, y0 + 13, 9, 1, 'd'); });
+      for (let x = 22; x < w - 22; x += 14) { R(g, x, y0 + 1, 1, 1, 'y'); R(g, x + 7, y1 - 1, 1, 1, 'y'); }
+      R(g, 26, y0 - 6, 1, 6, 'd'); R(g, w - 27, y0 - 6, 1, 6, 'd');
+      break;
+    case 'retro':                                                              // хром, ромби й зірки
+      for (let x = 6; x < w - 6; x++) { R(g, x, y0 + 1, 1, 1, (x >> 1) % 2 ? 'w' : 'E'); R(g, x, y1 - 1, 1, 1, (x >> 1) % 2 ? 'E' : 'w'); }
+      mx.forEach(x => { ['..#..', '.###.', '#####', '.###.', '..#..'].forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') R(g, x - 2 + rx, y0 + 5 + ry, 1, 1, 'f'); }); R(g, x - 1, y0 + 6, 3, 1, 'q'); });
+      break;
+    case 'disco':                                                              // маркізні лампочки і дзеркальні кулі
+      for (let x = 7; x < w - 7; x += 4) { R(g, x, y0, 2, 2, (x >> 2) % 2 ? 'y' : 'f'); R(g, x, y1 - 1, 2, 2, (x >> 2) % 2 ? 'f' : 'y'); }
+      mx.forEach(x => { disc(g, x, y0 + 8, 5, 'd'); disc(g, x, y0 + 8, 4, 'E'); [[-2, -2], [1, -1], [-1, 1], [2, 2], [0, -3]].forEach(p => R(g, x + p[0], y0 + 8 + p[1], 1, 1, 'w')); R(g, x, y0 + 2, 1, 2, 'd'); });
+      break;
+    case 'arcade':                                                             // піксельні прибульці та сітка
+      mx.forEach((x, i) => { ['.#.....#.', '..#...#..', '.#######.', '##.###.##', '#########', '#.#####.#', '#.#...#.#', '...##.##.'].forEach((row, ry) => { for (let rx = 0; rx < 9; rx++) if (row[rx] === '#') R(g, x - 4 + rx, y0 + 4 + ry, 1, 1, i ? 'f' : 'T'); }); });
+      for (let x = 24; x < w - 24; x += 6) R(g, x, y1 - 1, 3, 1, (x / 6 | 0) % 2 ? 'f' : 'T');
+      break;
+    case 'internet':                                                           // вікно браузера: кнопки, адресний рядок
+      R(g, 7, y0 + 1, w - 14, 4, 'e'); R(g, 7, y0 + 1, w - 14, 1, 'E'); R(g, 9, y0 + 2, 2, 2, 'r'); R(g, 13, y0 + 2, 2, 2, 'y'); R(g, 17, y0 + 2, 2, 2, 'g');
+      R(g, 24, y0 + 2, w - 48, 2, 'w'); R(g, w - 20, y0 + 2, 10, 2, 'a');
+      [w - 9].forEach(x => { disc(g, x, y0 + 10, 3, 'a'); R(g, x - 1, y0 + 9, 3, 2, 'n'); });
+      R(g, 9, y0 + 8, 6, 5, 'a'); R(g, 10, y0 + 9, 4, 3, 'n'); R(g, 11, y0 + 12, 2, 1, 'a');
+      break;
+    case 'eco':                                                                // вінки з листя й ліани
+      mx.forEach(x => { for (let a = 0; a < 12; a++) { const ang = a / 12 * Math.PI * 2; R(g, Math.round(x + Math.cos(ang) * 5), Math.round(y0 + 9 + Math.sin(ang) * 5), 2, 2, a % 3 ? 'g' : 'm'); } R(g, x - 1, y0 + 8, 2, 2, 'p'); R(g, x + 1, y0 + 10, 2, 2, 'y'); });
+      for (let x = 20; x < w - 20; x += 9) { R(g, x, y0, 1, 2 + (x % 3), 'g'); R(g, x - 1, y0 + 2 + (x % 3), 3, 1, 'm'); }
+      break;
+    case 'space':                                                              // металева панель із болтами й попереджувальними смугами
+      mx.forEach((x, i) => { for (let k = 0; k < 11; k++) { R(g, x - 6 + k, y0 + 2 + (k % 4), 1, 2, 'y'); } for (let k = 0; k < 11; k++) { R(g, x - 6 + k, y0 + 11 + (k % 4) % 3, 1, 2, 'k'); } R(g, x - 6, y0 + 2, 12, 1, 'd'); R(g, x - 6, y0 + 14, 12, 1, 'd'); });
+      for (let x = 24; x < w - 24; x += 10) { R(g, x, y0 + 1, 1, 1, 'E'); R(g, x, y1 - 1, 1, 1, 'E'); }
+      break;
+    case 'neon':                                                               // неонова трубка по контуру та стрілки
+      neonLine(g, 7, y0 + 1, w - 14, 1, 'f'); neonLine(g, 7, y1 - 1, w - 14, 1, 'T'); neonLine(g, 7, y0 + 1, 1, 15, 'T'); neonLine(g, w - 8, y0 + 1, 1, 15, 'f');
+      mx.forEach((x, i) => { for (let k = 0; k < 4; k++) { R(g, x - 3 + k, y0 + 4 + k, 1, 1, i ? 'T' : 'f'); R(g, x - 3 + k, y0 + 12 - k, 1, 1, i ? 'T' : 'f'); R(g, x + 1 + k, y0 + 4 + k, 1, 1, i ? 'f' : 'T'); R(g, x + 1 + k, y0 + 12 - k, 1, 1, i ? 'f' : 'T'); } });
+      break;
+  }
+}
+// Велика примітна деталь на даху в центрі: те, що одразу видно здалеку
+function roofProp(g, es, w, top, level, cx) {
+  cx = cx || (w >> 1); const y = Math.max(0, top - 8);
+  switch (es.fx) {
+    case 'renaissance': R(g, cx - 1, y - 2, 2, 12, 'd'); R(g, cx - 5, y + 2, 10, 1, 'd'); [[-5, 0], [4, 0]].forEach(p => R(g, cx + p[0], y + p[1] + 1, 2, 2, 'd')); R(g, cx, y - 3, 6, 3, 'r'); R(g, cx + 5, y - 2, 2, 1, 'y'); break;   // флюгер-півник
+    case 'retro': R(g, cx - 1, y - 3, 3, 14, 'd'); for (let a = -2; a <= 2; a++) R(g, cx - 6 + Math.abs(a), y - 2 + a + 2, 12 - 2 * Math.abs(a), 1, a % 2 ? 'f' : 'p'); R(g, cx - 6, y + 3, 12, 1, 'd'); break;                          // пілон-зірка
+    case 'disco': disc(g, cx, y + 4, 7, 'd'); disc(g, cx, y + 4, 6, 'E'); for (let a = -6; a <= 6; a += 2) for (let b = -6; b <= 6; b += 2) if (a * a + b * b < 30) R(g, cx + a, y + 4 + b, 1, 1, ((a + b) / 2) & 1 ? 'w' : 'S'); R(g, cx - 3, y + 1, 2, 1, 'w'); R(g, cx, y - 4, 1, 3, 'd'); break;
+    case 'arcade': disc(g, cx, y + 4, 8, 'd'); disc(g, cx, y + 4, 7, 'y'); R(g, cx + 1, y + 3, 8, 3, 'd'); R(g, cx + 1, y + 4, 7, 1, 'd'); R(g, cx - 2, y + 0, 2, 2, 'd'); [[11, 4], [14, 4]].forEach(p => R(g, cx + p[0], y + p[1], 2, 2, 'y')); break;                                    // піксельний «Пакман» із крапками
+    case 'internet': for (let a = 1; a <= 3; a++) for (let t2 = -a * 3; t2 <= a * 3; t2++) { const yy = Math.round(Math.sqrt(Math.max(0, a * a * 11 - t2 * t2)) * 0.7); if (yy > 0) R(g, cx + t2, y + 10 - yy, 1, 1, 'a'); } disc(g, cx, y + 10, 2, 'a'); R(g, cx - 1, y + 10, 3, 1, 'n'); break;
+    case 'eco': R(g, cx - 1, y + 2, 2, 12, 'w'); for (let k = 0; k < 3; k++) { const a = k * 2.09 + 0.5; for (let i = 1; i < 8; i++) R(g, cx + Math.cos(a) * i, y + 2 + Math.sin(a) * i, 1, 1, 'w'); } R(g, cx - 1, y + 1, 3, 3, 'g'); break;                                       // вітряк
+    case 'space': R(g, cx - 2, y + 2, 5, 11, 'w'); R(g, cx - 2, y + 2, 5, 1, 'd'); R(g, cx - 1, y - 2, 3, 4, 'r'); R(g, cx, y - 4, 1, 2, 'r'); R(g, cx - 5, y + 9, 3, 4, 'r'); R(g, cx + 3, y + 9, 3, 4, 'r'); R(g, cx - 1, y + 5, 3, 3, 's'); break;                     // ракета
+    case 'neon': hologram(g, cx - 18, y - 2, 36, 12, 'T'); R(g, cx - 14, y + 1, 18, 1, 'w'); R(g, cx - 14, y + 4, 28, 1, 'f'); R(g, cx - 14, y + 7, 12, 1, 'T'); break;
+  }
+}
+
 function epochFacadeFx(g, es, w, h, look, level, floors, yG) {
   const top = look.top, flatTop = es.flat && level <= 3;
   switch (es.fx) {
@@ -4431,7 +4671,7 @@ function boxG(g, x, y, c1, c2) { R(g, x, y, 14, 4, 'd'); R(g, x + 1, y + 1, 12, 
 function buildShopCanvas(level, tiers) {
   glassRects = [];
   const es = epochShopStyle(), look0 = SHOP_LOOK[level - 1];
-  const look = Object.assign({}, look0, { trim: es.trim || look0.trim, roof: es.flat ? FLAT_ROOF[level - 1] : look0.roof, inner: es.inner || look0.inner });
+  const look = Object.assign({}, look0, { trim: es.trim || look0.trim, roof: es.flat ? FLAT_ROOF[level - 1] : (es.roofs ? es.roofs[level - 1] : look0.roof), inner: es.inner || look0.inner });
   const w = look.w, trim = look.trim, F = look.floors.length, up = F - 1;
   const yB = look.top + 25;          // тут закінчується вивіска
   const yG = yB + FLOOR_H * up;      // тут починається нижній поверх (навіс)
@@ -4523,6 +4763,7 @@ function buildShopCanvas(level, tiers) {
   R(g, 5, look.top + 8, 2, 2, 'y'); R(g, w - 7, look.top + 8, 2, 2, 'y'); R(g, 5, look.top + 23, 2, 2, 'y'); R(g, w - 7, look.top + 23, 2, 2, 'y');
   if (level >= 3) for (let x = 12; x < w - 12; x += 6) R(g, x, look.top + 9, 1, 1, 'y');
   if (level === 2) buntingG(g, 8, w - 9, yB + 1);
+  signMotif(g, es, w, look.top);
 
   floors.forEach(fl => {
     const hF = fl.fy - fl.top;
@@ -4576,6 +4817,8 @@ function buildShopCanvas(level, tiers) {
   if (level === 3) { acG(g, w - 22, floors[1].top + 4); }
 
   epochFacadeFx(g, es, w, h, look, level, floors, yG);
+  roofProp(g, es, w, look.top, level, Math.round(w * 0.16)); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, Math.round(w * 0.84));       // примітні деталі на даху по боках від вивіски
+  epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
 
   if (seasonNow() === 'winter') snowCap(front, look.top + 4);      // взимку на даху лежить сніг
 
@@ -5760,7 +6003,37 @@ function updateCustomers(dt) {
       case 'exiting':
         c.y += step * 0.8;
         if (c.y >= LAYOUT.curbY + 1) c.inside = false;
-        if (c.y >= c.lane) { c.y = c.lane; c.mode = 'pass'; c.alpha = 1; c.inside = false; }
+        if (c.y >= c.lane) { c.y = c.lane; c.mode = c.homeDoor ? 'toHome' : 'pass'; c.alpha = 1; c.inside = false; }
+        break;
+      case 'toHome': {                                    // несе покупки додому: йде до дверей будиночка
+        const dx = c.homeDoor.x - c.x;
+        if (Math.abs(dx) <= step) { c.x = c.homeDoor.x; c.mode = 'homeUp'; }
+        else { c.dir = Math.sign(dx); c.x += c.dir * step; }
+        break;
+      }
+      case 'homeUp':
+        c.y -= step * 0.8;
+        if (c.y <= c.homeDoor.y + 1) { c.y = c.homeDoor.y + 1; c.mode = 'homeIn'; c.t = 0; }
+        break;
+      case 'homeIn':                                      // двері відчиняються, звірятко зникає всередині
+        c.t += dt; c.alpha = Math.max(0, 1 - c.t / 0.6);
+        if (c.t >= 0.6) { c.mode = 'homeStay'; c.t = 0; c.stay = rand(7, 16); c.inside = true; c.bag = null; }
+        break;
+      case 'homeStay':
+        c.t += dt;
+        if (c.t >= c.stay) { c.mode = 'homeOut'; c.t = 0; c.inside = false; c.alpha = 0; }
+        break;
+      case 'homeOut':
+        c.t += dt; c.alpha = Math.min(1, c.t / 0.6);
+        if (c.t >= 0.6) { c.mode = 'homeDown'; c.alpha = 1; }
+        break;
+      case 'homeDown':
+        c.y += step * 0.8;
+        if (c.y >= c.lane) {
+          c.y = c.lane; c.homeDoor = null; c.dir = c.x < shop.x + shop.w / 2 ? 1 : -1;
+          if (Math.random() < 0.5) { c.mode = 'toDoor'; c.doorX = shop.x + shop.door.x + shop.door.w / 2 + rand(-4, 4); }
+          else { c.mode = 'pass'; c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16; }
+        }
         break;
     }
   }
@@ -5819,10 +6092,18 @@ function updateInside(c, dt) {
     c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)]; c.bagKind = Math.floor(Math.random() * 3);
     c.dir = Math.random() < 0.5 ? 1 : -1;
     c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16;
+    c.homeDoor = pickHome(c);                                   // частина покупців іде зі своїми пакетами додому
     return;
   }
   c.dwell += dt;
   if (c.dwell >= stop.t) { c.plan.shift(); c.dwell = 0; }
+}
+// Чи піде покупець додому: обираємо двері будиночка недалеко від магазину (не за самим магазином)
+function pickHome(c) {
+  if (!houseDoors.length || Math.random() > 0.55) return null;
+  const cx = shop.x + shop.w / 2;
+  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8 && Math.abs(d.x - c.x) < 340);
+  return cand.length ? cand[Math.floor(Math.random() * cand.length)] : null;
 }
 // Коли магазин перебудовується, усі, хто всередині, виходять надвір
 function ejectInside() {
@@ -5841,6 +6122,7 @@ function drawCustomer(c) {
   const frame = moving ? Math.floor(c.anim * 6) % 2 : 0;
   const bob = frame ? -1 : 0;
   const sx = Math.round(c.x - 9), sy = Math.round(c.y - 23) + bob;            // спрайт 18×23: ноги внизу, центр по x
+  if ((c.mode === 'homeIn' || c.mode === 'homeOut') && c.homeDoor) { const d = c.homeDoor; R(ctx, d.x - 5, d.y - 15, 10, 15, 'd'); R(ctx, d.x - 4, d.y - 14, 8, 14, 'h'); R(ctx, d.x - 4, d.y - 14, 8, 2, 'y'); }   // двері будиночка відчинені, всередині тепле світло
   ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 3, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
   drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha });
   if (hasHats() && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(sx + 9, sy + 8, c.hat); }
