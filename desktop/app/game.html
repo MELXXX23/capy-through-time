@@ -163,6 +163,14 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 #coinCount { font-size: 26px; line-height: 1; white-space: nowrap; }
 #cps { font-size: 12px; color: var(--brown); margin-top: 6px; white-space: nowrap; }
 #goalLine { max-width: 100%; white-space: normal; font-size: 10px; line-height: 1.4; }
+.btn.wide.sw-row { display: flex; padding: 10px 12px; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 12px; text-align: left; }
+.sw-row .sw-label { display: block; flex: 1; min-width: 0; }
+.sw-row .sw-track { display: block; flex: none; position: relative; width: 50px; height: 26px; background: #a39a92; box-shadow: inset 0 0 0 3px var(--dark); transition: background .15s; }
+.sw-row .sw-track i { display: block; position: absolute; top: 4px; left: 4px; width: 18px; height: 18px; background: var(--cream); box-shadow: 0 0 0 2px var(--dark); transition: transform .15s; }
+.sw-row .sw-track::after { content: 'OFF'; position: absolute; right: 5px; top: 7px; font-size: 7px; line-height: 12px; color: var(--cream); }
+.sw-row.on .sw-track { background: #3fae5f; }
+.sw-row.on .sw-track i { transform: translateX(24px); background: #f4fff2; }
+.sw-row.on .sw-track::after { content: 'ON'; right: auto; left: 6px; }
 .daily-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-top: 2px solid rgba(74, 50, 40, .18); font-size: 11px; line-height: 1.4; }
 .daily-row .dtext { flex: 1; min-width: 0; }
 .daily-row .dtext small { display: block; color: var(--brown); font-size: 10px; }
@@ -822,13 +830,14 @@ function bootDone() {
         <div class="card">
           <h2 data-i18n="setView"></h2>
           <button type="button" class="btn wide" id="setSound" data-i18n="setSound"></button>
-          <button type="button" class="btn wide" id="setAnim"></button>
-          <button type="button" class="btn wide" id="setDayNight"></button>
-          <button type="button" class="btn wide" id="setBirds"></button>
-          <button type="button" class="btn wide" id="setClouds"></button>
-          <button type="button" class="btn wide" id="setSteam"></button>
-          <button type="button" class="btn wide" id="setBigText"></button>
-          <button type="button" class="btn wide" id="setVibrate"></button>
+          <button type="button" class="btn wide sw-row" id="setAnim" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setDayNight" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setBirds" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setClouds" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setSteam" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setRain" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setBigText" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setVibrate" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
           <button type="button" class="btn wide" id="setEvents"></button>
           <p class="ws-line" id="setEventsNote"></p>
           <p class="ws-line" data-i18n="setNumFmt"></p>
@@ -2127,6 +2136,18 @@ const CAPY_BASE = [
   '........OOOMMO....OOOMMO...',
   '..........OOO.......OOO....'
 ];
+// Одяг на все тулуб: фарбує кожен піксель шерсті від шиї до крупа (голова й ноги лишаються).
+// paint(x, y, f) повертає колір; f — чи піксель на верхньому / нижньому / лівому / правому краю одягу
+function paintBody(grid, off, paint) {
+  const fur = (x, y) => { const c = grid[y] && grid[y][x + off]; return c === 'B' || c === 'L'; };
+  const cells = new Set();
+  for (let y = 9; y <= 20; y++) for (let x = 0; x < 27; x++) if (fur(x, y) && (x >= 12 || (y >= 15 && x >= 7))) cells.add(x + ',' + y);
+  const on = (x, y) => cells.has(x + ',' + y);
+  [...cells].map(k => k.split(',').map(Number)).forEach(([x, y]) => {
+    const c = paint(x, y, { top: !on(x, y - 1), bottom: !on(x, y + 1), left: !on(x - 1, y), right: !on(x + 1, y) });
+    if (c) grid[y][x + off] = c;
+  });
+}
 function makeCapyRows(outfit) {
   const W = 27, grid = Array.from({ length: 24 }, (_, y) => y < 3 ? Array(W).fill('.') : CAPY_BASE[y - 3].split(''));
   const put = (x, y, c) => { if (grid[y] && x >= 0 && x < W) grid[y][x] = c; };
@@ -2134,13 +2155,22 @@ function makeCapyRows(outfit) {
   const box = (x, y, w, h, fill) => { for (let j = -1; j <= h; j++) for (let i = -1; i <= w; i++) put(x + i, y + j, (i < 0 || j < 0 || i >= w || j >= h) ? 'O' : fill); };   // прямокутник із контуром
   const around = cells => cells.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { if (grid[y + dy] && grid[y + dy][x + dx] === '.') grid[y + dy][x + dx] = 'O'; }));   // контур навколо прикраси
   if (outfit === 'girl') {                                 // рожева квіточка на голові + рожева сукня в горошок
-    dye(12, 21, 10, 16, 'p');
-    for (let x = 12; x <= 21; x++) if (grid[16][x] === 'p') put(x, 16, x % 2 ? 'w' : 'q');
-    [[14, 12], [17, 14], [20, 12], [15, 15], [19, 10]].forEach(p => { if (grid[p[1]][p[0]] === 'p') put(p[0], p[1], 'w'); });
+    paintBody(grid, 0, (x, y, f) => {                      // рожева сукня на все тіло: комірець, горошок, оборка внизу
+      if (f.bottom) return x % 2 ? 'w' : 'q';
+      if ((x === 12 || x === 13) && y <= 14) return y % 2 ? 'w' : 'q';
+      if (f.top) return 'q';
+      if ((x * 2 + y * 3) % 7 === 0) return 'w';
+      return y >= 17 ? 'J' : (y >= 15 ? 'f' : 'p');
+    });
     const fl = [[7, 1, 'p'], [6, 2, 'p'], [7, 2, 'y'], [8, 2, 'p'], [7, 3, 'p']];
     fl.forEach(([x, y, c]) => put(x, y, c)); around(fl);
   } else if (outfit === 'boy') {                           // зелений листочок на голові + синя футболка в смужку
-    dye(12, 21, 10, 16, 'n'); for (let x = 12; x <= 21; x++) { if (grid[12][x] === 'n') put(x, 12, 'w'); if (grid[15][x] === 'n') put(x, 15, 'w'); }
+    paintBody(grid, 0, (x, y, f) => {                      // синя футболка на все тіло: білі смужки, комірець, темний низ
+      if ((x === 12 || x === 13) && y <= 14) return 'w';
+      if (f.bottom) return 'z';
+      if (f.top) return 's';
+      return y % 3 === 0 ? 'w' : 'n';
+    });
     const lf = [[6, 1, 'g'], [5, 2, 'g'], [6, 2, 'g'], [8, 1, 'g'], [8, 2, 'g'], [9, 2, 'g'], [7, 2, 'G'], [7, 3, 'G']];
     lf.forEach(([x, y, c]) => put(x, y, c)); around(lf);
   }
@@ -2159,10 +2189,14 @@ function makeCapySkinRows(kind) {
   const around = cells => cells.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { if (at(x + dx, y + dy) === '.') put(x + dx, y + dy, 'O'); }));
   const cellsOf = (x0, y0, rows) => { const out = []; rows.forEach((r, j) => r.split('').forEach((c, i) => { if (c !== '.') { put(x0 + i, y0 + j, c); out.push([x0 + i, y0 + j]); } })); return out; };
   if (kind === 'pirate') {                                   // трикутний капелюх з черепом, пов'язка на оці, смугаста тільняшка й червоний пояс
-    dye(12, 21, 10, 16, 'w');
-    [11, 13, 15].forEach(y => { for (let x = 12; x <= 21; x++) if (at(x, y) === 'w') put(x, y, 'n'); });
-    for (let x = 12; x <= 21; x++) if (at(x, 16) === 'w' || at(x, 16) === 'n') put(x, 16, 'r');
-    put(16, 16, 'h'); put(17, 16, 'h');
+    paintBody(grid, ox, (x, y, f) => {                     // бордова піратська куртка на все тіло: золота облямівка, ґудзики, чорний пояс із пряжкою, біле жабо
+      if ((x === 12 || x === 13) && y <= 15) return y % 2 ? 'w' : 'E';
+      if (f.bottom) return 'h';
+      if (x === 19 || x === 20) return (y === 14 || y === 15) ? 'h' : 'k';
+      if (f.top) return 'r';
+      if (x === 15 && y % 3 === 0) return 'h';
+      return y <= 11 ? 'r' : (y >= 17 ? 'P' : 'R');
+    });
     cellsOf(6, 14, ['rrrrr', '.rrr.', '..r..']);              // червона хустка на шиї
     around(cellsOf(2, 1, [
       '....kkkkkk....',
@@ -2907,7 +2941,7 @@ const translations = {
     panelHide: 'Сховати меню', panelShow: 'Відкрити меню',
     setGender: 'Хто ти?', setGenderNote: 'Гра звертатиметься до тебе так, як обереш.',
     gender_f: 'Дівчина', gender_m: 'Хлопець',
-    setDayNightOn: 'День і ніч: УВІМК.', setDayNightOff: 'День і ніч: ВИМК.', setBirdsOn: 'Птахи: УВІМК.', setBirdsOff: 'Птахи: ВИМК.', setCloudsOn: 'Хмари: УВІМК.', setCloudsOff: 'Хмари: ВИМК.', setSteamOn: 'Пара з люків: УВІМК.', setSteamOff: 'Пара з люків: ВИМК.', setBigOn: 'Великий текст: УВІМК.', setBigOff: 'Великий текст: ВИМК.', setVibOn: 'Вібрація: УВІМК.', setVibOff: 'Вібрація: ВИМК.', setEvents0: 'Події: звичайно', setEvents1: 'Події: рідше', setEvents2: 'Події: мінімум', setEventsNote: 'Події — це цирк, звірята-герої, привиди, розпродажі й неприємності. «Рідше» — у 2,5 раза рідше, «мінімум» — у 5 разів.',
+    setDayNightOn: 'День і ніч: УВІМК.', setDayNightOff: 'День і ніч: ВИМК.', swAnim: 'Анімації', swDayNight: 'День і ніч', swBirds: 'Птахи', swClouds: 'Хмари', swSteam: 'Пара з люків', swRain: 'Дощ', swBig: 'Великий текст', swVib: 'Вібрація', setBirdsOn: 'Птахи: УВІМК.', setBirdsOff: 'Птахи: ВИМК.', setCloudsOn: 'Хмари: УВІМК.', setCloudsOff: 'Хмари: ВИМК.', setSteamOn: 'Пара з люків: УВІМК.', setSteamOff: 'Пара з люків: ВИМК.', setBigOn: 'Великий текст: УВІМК.', setBigOff: 'Великий текст: ВИМК.', setVibOn: 'Вібрація: УВІМК.', setVibOff: 'Вібрація: ВИМК.', setEvents0: 'Події: звичайно', setEvents1: 'Події: рідше', setEvents2: 'Події: мінімум', setEventsNote: 'Події — це цирк, звірята-герої, привиди, розпродажі й неприємності. «Рідше» — у 2,5 раза рідше, «мінімум» — у 5 разів.',
     panHint: "Проведи пальцем вліво чи вправо, щоб побачити всю вулицю.",
     // Нові репліки (етап оновлень): ще по три в кожного звірятка
     team_spike_say_3: "Решту дам копійками. Усіма-усіма. Рахуй.", team_spike_say_4: "Голок не торкайся. Торкайся каси, бажано з готівкою.", team_spike_say_5: "Чек? Тільки з моїм підписом і докором.",
@@ -3476,7 +3510,7 @@ const translations = {
     panelHide: 'Hide menu', panelShow: 'Show menu',
     setGender: 'Who are you?', setGenderNote: 'The game will talk to you the way you choose.',
     gender_f: 'Girl', gender_m: 'Boy',
-    setDayNightOn: 'Day & night: ON', setDayNightOff: 'Day & night: OFF', setBirdsOn: 'Birds: ON', setBirdsOff: 'Birds: OFF', setCloudsOn: 'Clouds: ON', setCloudsOff: 'Clouds: OFF', setSteamOn: 'Manhole steam: ON', setSteamOff: 'Manhole steam: OFF', setBigOn: 'Large text: ON', setBigOff: 'Large text: OFF', setVibOn: 'Vibration: ON', setVibOff: 'Vibration: OFF', setEvents0: 'Events: normal', setEvents1: 'Events: rarer', setEvents2: 'Events: minimal', setEventsNote: 'Events are the circus, era animals, ghosts, sales and mishaps. “Rarer” is 2.5 times less often, “minimal” is 5 times.',
+    setDayNightOn: 'Day & night: ON', setDayNightOff: 'Day & night: OFF', swAnim: 'Animations', swDayNight: 'Day & night', swBirds: 'Birds', swClouds: 'Clouds', swSteam: 'Manhole steam', swRain: 'Rain', swBig: 'Large text', swVib: 'Vibration', setBirdsOn: 'Birds: ON', setBirdsOff: 'Birds: OFF', setCloudsOn: 'Clouds: ON', setCloudsOff: 'Clouds: OFF', setSteamOn: 'Manhole steam: ON', setSteamOff: 'Manhole steam: OFF', setBigOn: 'Large text: ON', setBigOff: 'Large text: OFF', setVibOn: 'Vibration: ON', setVibOff: 'Vibration: OFF', setEvents0: 'Events: normal', setEvents1: 'Events: rarer', setEvents2: 'Events: minimal', setEventsNote: 'Events are the circus, era animals, ghosts, sales and mishaps. “Rarer” is 2.5 times less often, “minimal” is 5 times.',
     panHint: "Swipe left or right to see the whole street.",
     team_spike_say_3: "I'll give your change in pennies. All of them. Count.", team_spike_say_4: "Don't touch the spines. Touch the register, preferably with cash.", team_spike_say_5: "A receipt? Only with my signature and a reproach.",
     team_bodya_say_3: "Solid house, solid nerves. I rent out the nerves.", team_bodya_say_4: "Half a plank, half the job. We'll see the rest on Monday.", team_bodya_say_5: "Whoever built a dam can handle a mall. It's only a question of price.",
@@ -5485,7 +5519,7 @@ const ui = {
   wheelBtn: $('wheelBtn'), wheelGhostBtn: $('wheelGhostBtn'), wheelGhostNote: $('wheelGhostNote'), wheelClose: $('wheelClose'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
   paneSkins: $('pane-skins'), skinsList: $('skinsList'), paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), statsCard: $('statsCard'),
-  app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'), setBirds: $('setBirds'), setClouds: $('setClouds'), setSteam: $('setSteam'), setBigText: $('setBigText'), setVibrate: $('setVibrate'), setEvents: $('setEvents'), setEventsNote: $('setEventsNote'),
+  app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'), setRain: $('setRain'), setBirds: $('setBirds'), setClouds: $('setClouds'), setSteam: $('setSteam'), setBigText: $('setBigText'), setVibrate: $('setVibrate'), setEvents: $('setEvents'), setEventsNote: $('setEventsNote'),
   paneSettings: $('pane-settings'), setLangBtns: $('setLangBtns'), setNumFmt: $('setNumFmt'), setAnim: $('setAnim'), setSound: $('setSound'),
   exportBox: $('exportBox'), importBox: $('importBox'), exportInfo: $('exportInfo'), shareBtn: $('shareBtn'), exportBtn: $('exportBtn'), copyBtn: $('copyBtn'), importBtn: $('importBtn'), resetBtn: $('resetBtn'),
   debugCard: $('debugCard'), dbgHour: $('dbgHour'), dbgX100: $('dbgX100'), statEpoch: $('statEpoch'),
@@ -5588,8 +5622,9 @@ function layoutScene() {
     cropW = availW * dpr / k;                                                      // на всю ширину екрана, без смуг по боках
     offX = Math.max(CONFIG.MOBILE_PAD, Math.ceil((cropW - W0) / 2) + 8);
   } else {
-    const pullBack = state.settings.panelOpen ? CONFIG.OPEN_EXTRA : 0;                // меню відкрите — видно більше неба й дороги
-    k = Math.max(1, Math.floor(Math.min(availW * dpr / CONFIG.MIN_VIEW_W, availH * dpr / (H1 + pullBack))));
+    let kH = Math.floor(availH * dpr / H1);
+    if (state.settings.panelOpen) kH = Math.min(kH, Math.max(Math.ceil(1.6 * dpr), Math.round(kH * 0.55)));      // меню відкрите: камера відїжджає майже вдвічі — видно набагато більше неба й дороги (не дрібніше за ~1,6 px на піксель сцени)
+    k = Math.max(1, Math.min(Math.floor(availW * dpr / CONFIG.MIN_VIEW_W), kH));
     const visW = Math.min(CONFIG.MAX_VIEW_W, availW * dpr / k);                     // скільки пікселів сцени вміщується в ширину (дробове)
     offX = Math.max(0, Math.ceil((visW - W0) / 2), Math.ceil((CONFIG.WORLD_W - W0) / 2));        // вулиця завжди широка, видно лише її частину
     cropW = Math.min(W0 + 2 * offX, visW);
@@ -8013,17 +8048,22 @@ function lockIconUrl() {
   px(0, 4, 8, 6, '#4a3228'); px(1, 5, 6, 4, '#f2b84b'); px(1, 5, 6, 1, '#ffe08a'); px(3, 6, 2, 2, '#4a3228');
   return (lockUrl = cv.toDataURL());
 }
+function setSwitch(el, label, on) {
+  const lb = el.querySelector('.sw-label'); if (lb.textContent !== label) lb.textContent = label;
+  el.classList.toggle('on', !!on); el.setAttribute('aria-checked', String(!!on));
+}
 function updateSettingsUI() {
   if (ui.paneSettings.hidden) return;
   updateEpochViewUI();
-  setText(ui.setAnim, t(animOn() ? 'setAnimOn' : 'setAnimOff'), 'setAnim');
-  setText(ui.setDayNight, t(dayNightOn() ? 'setDayNightOn' : 'setDayNightOff'), 'setDayNight');
+  setSwitch(ui.setAnim, t('swAnim'), animOn());
+  setSwitch(ui.setDayNight, t('swDayNight'), dayNightOn());
   const S = state.settings;
-  setText(ui.setBirds, t(S.birds ? 'setBirdsOn' : 'setBirdsOff'), 'setBirds');
-  setText(ui.setClouds, t(S.clouds ? 'setCloudsOn' : 'setCloudsOff'), 'setClouds');
-  setText(ui.setSteam, t(S.steam ? 'setSteamOn' : 'setSteamOff'), 'setSteam');
-  setText(ui.setBigText, t(S.bigText ? 'setBigOn' : 'setBigOff'), 'setBigText');
-  setText(ui.setVibrate, t(S.vibrate ? 'setVibOn' : 'setVibOff'), 'setVibrate');
+  setSwitch(ui.setBirds, t('swBirds'), S.birds);
+  setSwitch(ui.setClouds, t('swClouds'), S.clouds);
+  setSwitch(ui.setSteam, t('swSteam'), S.steam);
+  setSwitch(ui.setRain, t('swRain'), S.rain);
+  setSwitch(ui.setBigText, t('swBig'), S.bigText);
+  setSwitch(ui.setVibrate, t('swVib'), S.vibrate);
   setText(ui.setEvents, t('setEvents' + (S.events | 0)), 'setEvents');
   setText(ui.setEventsNote, t('setEventsNote'), 'setEventsNote');
   ui.setTime.querySelectorAll('button').forEach(b => { b.textContent = t('time_' + b.dataset.time); });
@@ -8175,7 +8215,7 @@ function skinPreviewCanvas(type, name) {
       R(g, 0, 34, 64, 6, 'g'); R(g, 0, 34, 64, 1, 'm');
       R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
       if (name === 'rainbow') {
-        for (let y = 0; y < 34; y++) for (let x = 0; x < 64; x++) { const d = Math.hypot(x - 32, y - 34), band = Math.floor((30 - d) / 2); if (d <= 30 && band >= 0 && band < 7) { g.fillStyle = RAINBOW_COLORS[band]; g.fillRect(x, y, 1, 1); } }
+        g.drawImage(buildRainbow(30, 3.4, 3, false), -1, 1);
         R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
       } else if (CLOUD_SKIN_TINT[name]) {
         R(g, 0, 34, 64, 6, 'g'); R(g, 0, 34, 64, 1, 'm'); R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
@@ -8183,8 +8223,9 @@ function skinPreviewCanvas(type, name) {
       } else if (name === 'lightning') {
         g.fillStyle = '#2a1650'; g.fillRect(0, 0, 64, 40); g.fillStyle = '#3d2275'; g.fillRect(0, 0, 64, 18);
         R(g, 0, 34, 64, 6, 'G'); R(g, 26, 22, 12, 12, 'e'); R(g, 25, 20, 14, 3, 'd'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 'y');
-        const bolt = (pts, w) => { g.fillStyle = '#8b3bd6'; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], w + 2); g.fillStyle = '#d9b8ff'; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], w - 1 || 1); };
-        bolt([[18, 0], [22, 7], [17, 12], [23, 19], [19, 26]], 2); bolt([[46, 0], [43, 6], [48, 11], [44, 17]], 2);
+        const p1 = [[18, 0], [22, 6], [17, 11], [23, 17], [19, 22], [22, 27]], p2 = [[46, 0], [43, 5], [48, 10], [44, 16]];
+        strokeBolt(g, p1, BOLT_MAIN, 1); strokeBolt(g, [[22, 6], [28, 10], [31, 15]], BOLT_BRANCH, 1); strokeBolt(g, [[17, 11], [11, 15], [9, 19]], BOLT_BRANCH, 1);
+        strokeBolt(g, p2, BOLT_MAIN, 1); strokeBolt(g, [[48, 10], [54, 14]], BOLT_BRANCH, 1);
       } else {
         R(g, 8, 8, 12, 4, 'w'); R(g, 11, 6, 8, 3, 'w'); R(g, 44, 14, 12, 4, 'w'); R(g, 47, 12, 8, 3, 'w');
       }
@@ -8304,6 +8345,7 @@ function setupProgression() {
   });
   ui.setDayNight.addEventListener('click', () => { state.settings.dayNight = !dayNightOn(); updateUI(); saveGame(); });
   [['setBirds', 'birds'], ['setClouds', 'clouds'], ['setSteam', 'steam'], ['setVibrate', 'vibrate']].forEach(([id, key]) => ui[id].addEventListener('click', () => { state.settings[key] = !state.settings[key]; if (key === 'vibrate') buzz(30); updateUI(); saveGame(); }));
+  ui.setRain.addEventListener('click', () => { state.settings.rain = !state.settings.rain; if (state.settings.rain) weather.rain = Math.max(weather.rain, 0.3); updateUI(); saveGame(); });
   ui.setBigText.addEventListener('click', () => { state.settings.bigText = !state.settings.bigText; applyViewSettings(); updateUI(); saveGame(); });
   ui.setEvents.addEventListener('click', () => { state.settings.events = ((state.settings.events | 0) + 1) % 3; rescheduleEvents(); updateUI(); saveGame(); });
   ui.setSound.addEventListener('click', () => { ui.soundModal.hidden = false; updateSoundUI(); });
@@ -8788,72 +8830,112 @@ function skyArcSize() {
   return { cy, rx: w / 2 + 44, ry: Math.min(cy - top, Math.max(h + 22, w / 2 + 44)) };
 }
 let rainbowCv = null, rainbowKey = '';
-function rainbowCanvas(R0) {                                    // півколо з 7 смуг по 4 пікселі; перемальовується лише коли змінюється розмір магазину
-  if (rainbowCv && rainbowKey === R0) return rainbowCv;
-  const c = document.createElement('canvas'); c.width = R0 * 2 + 2; c.height = R0 + 2;
-  const g = c.getContext('2d');
-  for (let y = 0; y <= R0; y++) for (let x = 0; x <= R0 * 2; x++) {
-    const d = Math.hypot(x - R0, y - R0), band = Math.floor((R0 - d) / 4);
-    if (d <= R0 && band >= 0 && band < 7) { g.fillStyle = RAINBOW_COLORS[band]; g.fillRect(x, y, 1, 1); }
+// Веселка: 7 смуг із м'якими переходами (шаховий дізеринг), світле сяйво по краях і слабка друга веселка в зворотному порядку
+function buildRainbow(R0, bw, M, secondary) {
+  const c = document.createElement('canvas'); c.width = 2 * (R0 + M); c.height = R0 + M + 2;
+  const g = c.getContext('2d'), cx = R0 + M, cy = R0 + M, n = RAINBOW_COLORS.length;
+  const col = i => RAINBOW_COLORS[Math.max(0, Math.min(n - 1, i))];
+  for (let y = 0; y <= cy; y++) for (let x = 0; x < c.width; x++) {
+    const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy), t = (R0 - d) / bw, chk = (x + y) % 2 === 0;
+    if (t < -1.6 || t > n + 2.2) {
+      if (secondary) { const t2 = (d - (R0 + bw * 3.2)) / (bw * 0.75); if (t2 >= 0 && t2 < n) { g.globalAlpha = 0.26; g.fillStyle = RAINBOW_COLORS[n - 1 - Math.floor(t2)]; g.fillRect(x, y, 1, 1); g.globalAlpha = 1; } }
+      continue;
+    }
+    if (t < 0) { g.globalAlpha = 0.28 * (1 + t / 1.6); g.fillStyle = '#ffffff'; g.fillRect(x, y, 1, 1); g.globalAlpha = 1; continue; }     // зовнішнє сяйво
+    if (t >= n) { g.globalAlpha = 0.2 * (1 - (t - n) / 2.2); g.fillStyle = '#ffffff'; g.fillRect(x, y, 1, 1); g.globalAlpha = 1; continue; }     // внутрішнє сяйво
+    const idx = Math.floor(t), fr = t - idx;
+    let k = idx;
+    if (fr < 0.22 && idx > 0 && chk) k = idx - 1; else if (fr > 0.78 && idx < n - 1 && chk) k = idx + 1;
+    g.fillStyle = col(k); g.fillRect(x, y, 1, 1);
+    if (idx === 0 && fr < 0.34) { g.globalAlpha = 0.45; g.fillStyle = '#ffffff'; g.fillRect(x, y, 1, 1); g.globalAlpha = 1; }          // світла кромка зверху
   }
+  return c;
+}
+const RAINBOW_M = 56;
+function rainbowCanvas(R0) {                                    // перемальовується лише коли змінюється розмір магазину
+  if (rainbowCv && rainbowKey === R0) return rainbowCv;
   rainbowKey = R0;
-  return (rainbowCv = c);
+  return (rainbowCv = buildRainbow(R0, 4, RAINBOW_M, true));
 }
 function drawRainbowSkin() {                                  // малюється ПОЗАДУ магазину, тож його не закриває
   const a = (1 - sky.night) * (1 - weather.rain * 0.7);
   if (a < 0.03) return;
-  const s = skyArcSize(), R0 = Math.round(Math.max(s.rx, s.ry));
-  ctx.globalAlpha = 0.6 * a;
-  ctx.drawImage(rainbowCanvas(R0), Math.round(LAYOUT.centerX - R0), s.cy - R0);
+  const s = skyArcSize(), R0 = Math.round(Math.max(s.rx, s.ry)), px = LAYOUT.centerX, shimmer = animOn() ? Math.sin(animClock * 1.3) : 0;
+  ctx.globalAlpha = Math.min(1, (0.74 + 0.06 * shimmer) * a);
+  ctx.drawImage(rainbowCanvas(R0), Math.round(px - R0 - RAINBOW_M), Math.round(s.cy - R0 - RAINBOW_M));
+  if (animOn()) {                                              // блискітки, що пливуть по веселці
+    for (let k = 0; k < 6; k++) {
+      const ph = (animClock * 0.07 + k / 6) % 1, th = ph * Math.PI, r = R0 - 3 - ((k * 5) % 24), sx = Math.round(px - Math.cos(th) * r), sy = Math.round(s.cy - Math.sin(th) * r);
+      if (Math.sin(animClock * 4 + k * 2.3) > 0.1) { ctx.globalAlpha = 0.9 * a; R(ctx, sx, sy - 1, 1, 3, 'w'); R(ctx, sx - 1, sy, 3, 1, 'w'); }
+    }
+  }
+  [[-R0 - 8, 0], [R0 - 20, 1]].forEach(([dx, kind]) => {       // пухнасті хмаринки біля основ веселки
+    ctx.globalAlpha = 0.95 * a; const cv = cloudCanvas(kind, ''); ctx.drawImage(cv, Math.round(px + dx), Math.round(s.cy - 16));
+  });
   ctx.globalAlpha = 1;
 }
 /* ---------- Скін погоди «Фіолетові блискавки»: грозові спалахи високо над містом (за будинками й магазином) ---------- */
 const bolts = [];                                              // блискавки, що зараз видно
 let boltTimer = 1.2, skyFlash = 0;
 function makeBolt() {
-  const x0 = rand(visL() + 10, visR() - 10), top = -view.offY - 4, yEnd = rand(76, 112), pts = [[Math.round(x0), top]];
-  let x = x0, y = top;
-  while (y < yEnd) { y += rand(7, 13); x += rand(-9, 9); pts.push([Math.round(x), Math.round(y)]); }
+  const x0 = rand(visL() + 10, visR() - 10), top = -view.offY - 6, yEnd = rand(92, 132), pts = [[Math.round(x0), top]];
+  let x = x0, y = top, drift = rand(-1, 1);
+  while (y < yEnd) { y += rand(4, 9); drift = drift * 0.6 + rand(-1.6, 1.6); x += drift * rand(2, 5); pts.push([Math.round(x), Math.round(y)]); }
   const branches = [];
-  for (let i = 2; i < pts.length - 1; i++) if (Math.random() < 0.4) {
-    let bx = pts[i][0], by = pts[i][1]; const dir = Math.random() < 0.5 ? -1 : 1, bp = [[bx, by]];
-    for (let k = 0; k < 3; k++) { bx += dir * rand(5, 10); by += rand(5, 9); bp.push([Math.round(bx), Math.round(by)]); }
-    branches.push(bp);
-  }
-  return { pts, branches, t: 0, dur: rand(0.3, 0.45) };
+  const branchFrom = (sx, sy, dir, len, depth) => {           // гілка від основної блискавки (можуть бути й дрібні гілочки на гілці)
+    const bp = [[sx, sy]]; let bx = sx, by = sy;
+    for (let k = 0; k < len; k++) { bx += dir * rand(3, 8); by += rand(3, 7); bp.push([Math.round(bx), Math.round(by)]); if (depth === 0 && k >= 1 && Math.random() < 0.22) branchFrom(Math.round(bx), Math.round(by), -dir, 2 + Math.floor(rand(0, 2)), 1); }
+    branches.push({ pts: bp, depth });
+  };
+  for (let i = 3; i < pts.length - 2; i++) if (Math.random() < 0.45) branchFrom(pts[i][0], pts[i][1], Math.random() < 0.5 ? -1 : 1, 3 + Math.floor(rand(0, 3)), 0);
+  return { pts, branches, t: 0, dur: rand(0.5, 0.75), seed: Math.random() * 100 };
 }
 function updateLightning(dt) {
   if (skinOn('weather') !== 'lightning') { bolts.length = 0; skyFlash = 0; return; }
   if (!animOn()) return;
   boltTimer -= dt;
-  if (boltTimer <= 0) { boltTimer = rand(1.4, 3.6); bolts.push(makeBolt()); if (Math.random() < 0.35) bolts.push(makeBolt()); skyFlash = 1; }
-  skyFlash = Math.max(0, skyFlash - dt * 3.2);
+  if (boltTimer <= 0) {                                          // грозові спалахи частішають: майже щосекунди, іноді серія з кількох блискавок
+    boltTimer = rand(0.8, 2.4);
+    bolts.push(makeBolt());
+    if (Math.random() < 0.5) bolts.push(makeBolt());
+    if (Math.random() < 0.18) { bolts.push(makeBolt()); boltTimer = rand(0.3, 0.7); }
+    skyFlash = 1;
+  }
+  skyFlash = Math.max(0, skyFlash - dt * 2.2);
   for (let i = bolts.length - 1; i >= 0; i--) { bolts[i].t += dt; if (bolts[i].t >= bolts[i].dur) bolts.splice(i, 1); }
 }
 function boltLine(g, a, b, w) {
   const n = Math.max(1, Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1]));
   for (let i = 0; i <= n; i++) g.fillRect(Math.round(a[0] + (b[0] - a[0]) * i / n) - (w >> 1), Math.round(a[1] + (b[1] - a[1]) * i / n), w, 1);
 }
-function drawBoltShape(g, pts, glow, main, core, thin) {
-  g.globalAlpha *= 1;
-  g.fillStyle = glow; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], thin ? 4 : 7);
-  g.fillStyle = main; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], thin ? 2 : 3);
-  g.fillStyle = core; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], 1);
+// шари блискавки: [товщина, колір, прозорість] — широке фіолетове сяйво, яскраве тіло, біле ядро
+const BOLT_MAIN = [[9, '#7a2fd0', 0.18], [5, '#a56ae8', 0.5], [3, '#d9b8ff', 1], [1, '#ffffff', 1]];
+const BOLT_BRANCH = [[5, '#7a2fd0', 0.2], [3, '#a56ae8', 0.65], [1, '#f0e0ff', 1]];
+const BOLT_TWIG = [[3, '#a56ae8', 0.5], [1, '#e6d2ff', 0.9]];
+function strokeBolt(g, pts, layers, I) {
+  layers.forEach(([w, c, al]) => { g.globalAlpha = al * I; g.fillStyle = c; for (let i = 0; i + 1 < pts.length; i++) boltLine(g, pts[i], pts[i + 1], w); });
+  g.globalAlpha = 1;
 }
-function drawLightningBack() {                                 // у небі: темно-фіолетовий відтінок і самі блискавки
-  if (!bolts.length && skyFlash <= 0) { ctx.globalAlpha = 0.1; ctx.fillStyle = '#3a1a6a'; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1; return; }
-  ctx.globalAlpha = 0.12 + 0.14 * skyFlash; ctx.fillStyle = '#4a1f8a'; ctx.fillRect(worldL(), -view.offY, view.w, view.h);
+function boltFlick(ph) {                                         // спалах, коротка пауза й другий, сильніший удар
+  if (ph < 0.14) return 1; if (ph < 0.24) return 0.2; if (ph < 0.42) return 1; if (ph < 0.52) return 0.35; if (ph < 0.62) return 0.8;
+  return Math.max(0, 0.6 * (1 - ph) / 0.38);
+}
+function drawLightningBack() {                                 // у небі: грозовий відтінок, світіння хмар і самі блискавки
+  ctx.globalAlpha = bolts.length || skyFlash > 0 ? 0.16 + 0.2 * skyFlash : 0.12; ctx.fillStyle = '#3b1470'; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1;
   bolts.forEach(bt => {
-    const flick = bt.t < bt.dur * 0.35 ? 1 : (Math.floor(bt.t * 40) % 2 ? 0.55 : 1), fade = 1 - bt.t / bt.dur;
-    ctx.globalAlpha = 0.28 * fade * flick; drawBoltShape(ctx, bt.pts, '#8b3bd6', '#8b3bd6', '#8b3bd6', false);
-    ctx.globalAlpha = fade * flick; drawBoltShape(ctx, bt.pts, 'rgba(0,0,0,0)', '#b07be0', '#f3e6ff', false);
-    bt.branches.forEach(bp => { ctx.globalAlpha = 0.85 * fade * flick; drawBoltShape(ctx, bp, 'rgba(0,0,0,0)', '#9a5fe0', '#e6d2ff', true); });
+    const I = boltFlick(bt.t / bt.dur); if (I <= 0.02) return;
+    const [tx, ty] = bt.pts[0], [ex, ey] = bt.pts[bt.pts.length - 1];
+    ctx.globalAlpha = 0.2 * I; disc(ctx, tx, ty + 8, 18, 'v'); ctx.globalAlpha = 0.26 * I; disc(ctx, tx, ty + 5, 9, 'a');      // хмара світиться зсередини
+    strokeBolt(ctx, bt.pts, BOLT_MAIN, I);
+    bt.branches.forEach(b => strokeBolt(ctx, b.pts, b.depth ? BOLT_TWIG : BOLT_BRANCH, I));
+    ctx.globalAlpha = 0.28 * I; disc(ctx, ex, ey, 9, 'v'); ctx.globalAlpha = 0.5 * I; disc(ctx, ex, ey, 4, 'u'); ctx.globalAlpha = I; disc(ctx, ex, ey, 2, 'w');   // вогник у місці удару
+    for (let k = 0; k < 5; k++) { const a = bt.seed + k * 1.7 + bt.t * 9, r = 3 + (bt.t * 22 + k * 3) % 12; ctx.globalAlpha = 0.9 * I * (1 - bt.t / bt.dur); R(ctx, Math.round(ex + Math.cos(a) * r), Math.round(ey + Math.sin(a) * r * 0.6 - 2), 1, 1, k % 2 ? 'w' : 'a'); }   // іскри
   });
   ctx.globalAlpha = 1;
 }
 function drawLightningFront() {                                // спалах освітлює все місто фіолетовим
   if (skinOn('weather') !== 'lightning' || skyFlash <= 0.02) return;
-  ctx.globalAlpha = 0.2 * skyFlash; ctx.fillStyle = '#c9a0ff'; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.26 * skyFlash; ctx.fillStyle = '#c9a0ff'; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1;
 }
 function updateDecorFx(dt) {
   updateLightning(dt);
@@ -10480,7 +10562,22 @@ function drawCameo(c) {
    ТАП ПО МАГАЗИНУ
    ===================================================================== */
 
-function buzz(ms) { try { if (state.settings.vibrate && navigator.vibrate) navigator.vibrate(ms || 12); } catch (e) {} }
+let hapticSwitch = null;
+// Вібрація: Android — стандартна navigator.vibrate; iPhone її не має, тому там легкий «клік» через прихований перемикач <input switch> (Safari 17.4+)
+function buzz(ms) {
+  if (!state.settings.vibrate) return;
+  try {
+    if (navigator.vibrate) { navigator.vibrate(ms || 12); return; }
+    if (!hapticSwitch) {
+      const l = document.createElement('label'); l.setAttribute('aria-hidden', 'true');
+      l.style.cssText = 'position:fixed;left:-80px;top:-80px;width:44px;height:24px;opacity:.01;pointer-events:none';
+      const i = document.createElement('input'); i.type = 'checkbox'; i.setAttribute('switch', ''); i.tabIndex = -1;
+      l.appendChild(i); document.body.appendChild(l); hapticSwitch = i;
+    }
+    hapticSwitch.click();
+    if ((ms || 12) >= 25) setTimeout(() => { try { hapticSwitch.click(); } catch (e) {} }, 70);
+  } catch (e) {}
+}
 function evMult() { return [1, 2.5, 5][state.settings.events | 0] || 1; }       // наскільки рідше йдуть події (цирк, герої, привиди, розпродажі, неприємності)
 function doTap(x, y) {
   buzz(8);
