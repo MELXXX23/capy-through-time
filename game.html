@@ -459,8 +459,14 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .vol input[type="range"] { width: 100%; height: 26px; accent-color: var(--green); cursor: pointer; }
 #soundBtn { padding: 5px 10px; font-size: 18px; line-height: 1.3; background: var(--panel); }
 #soundBtn.muted { opacity: .6; }
-#modal, #wheelModal, #letterModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
-#modal[hidden], #wheelModal[hidden], #letterModal[hidden] { display: none; }
+#modal, #wheelModal, #letterModal, #circusModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
+#modal[hidden], #wheelModal[hidden], #letterModal[hidden], #circusModal[hidden] { display: none; }
+#circusWheel { width: min(64vw, 256px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+.clown-win { width: min(76vw, 288px); margin: 0 auto 6px; box-shadow: 0 0 0 3px var(--brown); }
+#clownCanvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+#circusSub { font-size: 11px; line-height: 1.6; margin: 4px 0 6px; }
+#circusResult { min-height: 22px; font-size: 15px !important; }
+#circusClose { margin-top: 6px; }
 .wheel-box { max-height: 96vh; overflow-y: auto; padding-top: 22px; }
 .wheel-wrap { display: flex; justify-content: center; margin: 4px 0 8px; }
 #wheelCanvas { width: min(64vw, 256px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
@@ -665,6 +671,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
         <div class="card" id="debugCard" hidden>
           <h2>🛠 DEBUG</h2>
           <button type="button" class="btn wide" id="dbgHour" data-i18n="dbgHour"></button>
+          <button type="button" class="btn wide" id="dbgCircus" data-i18n="dbgCircus"></button>
           <button type="button" class="btn wide" id="dbgX100" data-i18n="dbgX100"></button>
         </div>
       </div>
@@ -711,6 +718,17 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
     <p id="wheelGhostNote" hidden></p>
     <button type="button" class="btn wide" id="wheelGhostBtn" hidden></button>
     <button type="button" class="btn wide" id="wheelClose" data-i18n="wheelClose"></button>
+  </div>
+</div>
+<div id="circusModal" hidden>
+  <div class="frame modal-box wheel-box" role="dialog" aria-modal="true" aria-labelledby="circusTitle">
+    <div class="clown-win"><canvas id="clownCanvas" width="72" height="40" aria-hidden="true"></canvas></div>
+    <h2 id="circusTitle"></h2>
+    <p id="circusSub"></p>
+    <div class="wheel-wrap"><canvas id="circusWheel" width="128" height="140" aria-hidden="true"></canvas></div>
+    <span class="big" id="circusResult"></span>
+    <button type="button" class="btn wide go" id="circusBtn"></button>
+    <button type="button" class="btn wide" id="circusClose"></button>
   </div>
 </div>
 <div id="letterModal" hidden>
@@ -772,6 +790,10 @@ const CONFIG = {
   MAX_OFF_Y: 400,             // скільки додаткового неба можна додати зверху на високому екрані
   MOBILE_PAD: 96,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
   DAY_SECONDS: 300,           // скільки секунд триває повна доба (день + ніч)
+  CIRCUS_FIRST_MINUTES: 4,     // перший «!» цирку з'являється через 4 хвилини гри
+  CIRCUS_HOURS: 24,            // потім раз на 24 години
+  CIRCUS_DRIVE_SECONDS: 5,     // скільки їде цирк справа наліво
+  CIRCUS_SETUP_SECONDS: 5,     // скільки розкладається шатро
   MAIL_MINUTES: 40,           // поштова машина приїздить раз на 40 хвилин
   MAIL_FIRST_SECONDS: 90,     // перша — через 90 секунд після початку гри
   SUMMER_REST_MIN: 20,        // влітку звірятка раз на 20–38 секунд зупиняються перепочити й попити водички
@@ -2202,6 +2224,10 @@ const translations = {
     wheelClose: 'Закрити',
     wheelReady: 'Колесо фортуни готове! 🎡',
     prize_coins: 'Монети: +{0}',
+    circusFlag: 'ЦИРК ФОРТУНИ', circusTitle: 'Цирк Фортуни', circusSub: 'Клоун Бубон: «Крути — не помилишся!»', circusSpin: 'Крутити!', circusDone: 'Дякую, цирку!',
+    circusBang: 'Біля магазину щось з’явилось… Тапни на червоний «!»', circusArrived: 'Цирк Фортуни розкрився! Тапни на нього',
+    circusAgain: 'Ще одна спроба! Крути знову', prize_skin: 'Новий скін: {0}! Він чекає у вкладці скінів',
+    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_snowglobe: 'Сніжна куля над містом',
     prize_income: 'Дохід ×{0} на {1} хв!',
     prize_tap: 'Тап ×{0} на {1} хв!',
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
@@ -2448,7 +2474,7 @@ const translations = {
     importTitle: 'Завантажити збереження?', importText: 'Поточний прогрес на цьому пристрої буде замінено.', importYes: 'Так, завантажити',
     importFail: 'Код не підійшов. Перевір, що скопіювала його повністю.', importNoStorage: 'Не вдалося зберегти: сховище браузера недоступне.',
     resetBtn: 'Скинути весь прогрес', resetTitle: 'Скинути прогрес?', resetText: 'Усе буде видалено назавжди: монетки, звірята, глави, нагороди й кристали. Це неможливо скасувати!', resetYes: 'Так, видалити все',
-    dbgHour: '+1 година часу', dbgX100: '×100 монеток',
+    dbgHour: '+1 година часу', dbgX100: '×100 монеток', dbgCircus: 'Цирк зараз',
     shareBtn: 'Надіслати',
     saveSummary: 'У збереженні: «{0}», відділів куплено: {1}, звірят: {2}, кристалів: {3}, зароблено: {4}',
     panelHide: 'Сховати меню', panelShow: 'Відкрити меню',
@@ -2757,6 +2783,10 @@ const translations = {
     wheelClose: 'Close',
     wheelReady: 'The Wheel of Fortune is ready! 🎡',
     prize_coins: 'Coins: +{0}',
+    circusFlag: 'LUCKY CIRCUS', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Spin it, you cannot lose!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
+    circusBang: 'Something showed up by the shop... Tap the red "!"', circusArrived: 'The Fortune Circus is open! Tap it',
+    circusAgain: 'One more try! Spin again', prize_skin: 'New skin: {0}! It waits in the skins tab',
+    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_snowglobe: 'Snow globe over town',
     prize_income: 'Income ×{0} for {1} min!',
     prize_tap: 'Tap ×{0} for {1} min!',
     prize_jackpot: 'JACKPOT! +{0}',
@@ -3002,7 +3032,7 @@ const translations = {
     importTitle: 'Load this save?', importText: 'Your current progress on this device will be replaced.', importYes: 'Yes, load it',
     importFail: "That code didn't work. Make sure you copied all of it.", importNoStorage: "Couldn't save: browser storage is unavailable.",
     resetBtn: 'Reset all progress', resetTitle: 'Reset progress?', resetText: 'Everything will be deleted forever: coins, animals, chapters, awards and crystals. This cannot be undone!', resetYes: 'Yes, delete everything',
-    dbgHour: '+1 hour of time', dbgX100: '×100 coins',
+    dbgHour: '+1 hour of time', dbgX100: '×100 coins', dbgCircus: 'Circus now',
     shareBtn: 'Share',
     saveSummary: 'Save contains: "{0}", departments bought: {1}, animals: {2}, crystals: {3}, earned: {4}',
     panelHide: 'Hide menu', panelShow: 'Show menu',
@@ -3124,6 +3154,8 @@ function createDefaultState() {
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
     // Подорож у часі: кристали, епоха, покращення майстерні, знайомі звірята
     crystals: 0, crystalsTotal: 0, epoch: 0, runStartEarned: 0,
+    circus: { next: 0, phase: 0, spun: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
+    skinsMask: 0,                             // виграні скіни (біти за списком SKIN_POOL)
     epochEarned: [0, 0, 0, 0, 0, 0, 0, 0],   // зароблено монет у кожній епосі
     epochSeen: -1, activeEpoch: -1,          // до якої суми заробіток уже розписано по епохах; обрана епоха (-1 — поточна)
     ws: WORKSHOP.map(() => 0),
@@ -4565,6 +4597,7 @@ const ui = {
   paneStory: $('pane-story'), storyList: $('storyList'),
   eventBanner: $('eventBanner'), boosts: $('boosts'), wheelOpen: $('wheelOpen'),
   wheelModal: $('wheelModal'), wheelCanvas: $('wheelCanvas'), wheelStreak: $('wheelStreak'), wheelResult: $('wheelResult'),
+  circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
   wheelBtn: $('wheelBtn'), wheelGhostBtn: $('wheelGhostBtn'), wheelGhostNote: $('wheelGhostNote'), wheelClose: $('wheelClose'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
   paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), paneStats: $('pane-stats'), statsCard: $('statsCard'),
@@ -6068,6 +6101,17 @@ const SFX = {
   hire()      { melody('square', [['E5', 0.07], ['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.2]], 0.22); },
   upgrade()   { melody('square', [['G5', 0.06], ['B5', 0.06], ['D6', 0.14]], 0.22); },
   milestone() { melody('triangle', [['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.25]], 0.4); },
+  circusMarch() {   // восьмитактний цирковий марш: мелодія на квадраті, бас «ум-па»
+    const ac = audio.ctx, beat = 60 / 150, t0 = ac.currentTime + 0.05;
+    const MEL = [[['C5', .5], ['E5', .5], ['G5', 1], ['E5', .5], ['C5', .5], ['G4', 1]], [['F5', .5], ['A5', .5], ['C6', 1], ['A5', .5], ['F5', .5], ['C5', 1]], [['G5', .5], ['B5', .5], ['D6', 1], ['B5', .5], ['G5', .5], ['D5', 1]], [['E5', 1], ['C5', 1], ['G4', 1], ['C5', 1]], [['C5', .5], ['E5', .5], ['G5', 1], ['C6', 1], ['G5', 1]], [['A5', .5], ['G5', .5], ['F5', 1], ['A5', .5], ['C6', .5], ['A5', 1]], [['B5', .5], ['A5', .5], ['G5', 1], ['F5', .5], ['D5', .5], ['G5', 1]], [['E5', .5], ['D5', .5], ['C5', 1], ['C5', 2]]];
+    const BASS = [['C3', 'G3', 'E3'], ['F2', 'C3', 'A2'], ['G2', 'D3', 'B2'], ['C3', 'G3', 'E3'], ['C3', 'G3', 'E3'], ['F2', 'C3', 'A2'], ['G2', 'D3', 'B2'], ['C3', 'G3', 'E3']];
+    MEL.forEach((bar, bi) => {
+      const t = t0 + bi * 4 * beat; let b = 0;
+      bar.forEach(([n, len]) => { tone(audio.sfxGain, 'square', noteFreq(n), t + b * beat, len * beat * 0.9, 0.16); b += len; });
+      const [root, fifth, third] = BASS[bi];
+      for (let k = 0; k < 4; k++) { if (k % 2 === 0) tone(audio.sfxGain, 'triangle', noteFreq(root), t + k * beat, beat * 0.8, 0.3); else { tone(audio.sfxGain, 'square', noteFreq(third) * 2, t + k * beat, beat * 0.4, 0.08); tone(audio.sfxGain, 'square', noteFreq(fifth) * 2, t + k * beat, beat * 0.4, 0.08); } }
+    });
+  },
   sale()      { melody('square', [['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.07], ['E6', 0.07], ['G6', 0.25]], 0.2); },
   build() {   // стукіт молотків під час будівництва
     const ac = audio.ctx, t0 = ac.currentTime + 0.05;
@@ -7620,6 +7664,360 @@ function drawGhostHunt() {
   ctx.globalAlpha = 1;
 }
 
+
+/* =====================================================================
+   ЦИРК ФОРТУНИ: раз на 24 години в правому куті з'являється червоний «!», який мигає й грає марш.
+   Тап по ньому → цирк-причіп їде справа наліво ~5 с → тап по цирку → вікно з колесом на 12 секторів і клоуном Бубоном.
+   ===================================================================== */
+const CIRCUS_SECTORS = [
+  { kind: 'coins',  seconds: 300,  flat: 150,  weight: 14, color: 'r', icon: 'coin1' },
+  { kind: 'coins',  seconds: 1800, flat: 800,  weight: 7,  color: 'h', icon: 'bag' },
+  { kind: 'income', mult: 2, minutes: 5,       weight: 12, color: 'm', icon: 'up' },
+  { kind: 'income', mult: 3, minutes: 2,       weight: 8,  color: 'p', icon: 'up' },
+  { kind: 'tap',    mult: 5, minutes: 5,       weight: 12, color: 's', icon: 'tap' },
+  { kind: 'crystal', weight: 4,                color: 'u', icon: 'gem' },
+  { kind: 'skin',   weight: 5,                 color: 'y', icon: 'hat' },
+  { kind: 'coins',  seconds: 900,  flat: 400,  weight: 12, color: 'o', icon: 'coin2' },
+  { kind: 'income', mult: 2, minutes: 10,      weight: 8,  color: 'g', icon: 'up' },
+  { kind: 'again',  weight: 5,                 color: 'q', icon: 'gift' },
+  { kind: 'income', mult: 1.5, minutes: 10,    weight: 8,  color: 'n', icon: 'clover' },
+  { kind: 'tap',    mult: 10, minutes: 1,      weight: 8,  color: 'f', icon: 'tap' }
+];
+const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_snowglobe'];   // номер у списку = біт у state.skinsMask
+const circus = { x: 0, drive: 0, t: 0, bangT: 0, anim: null, angle: 0, tex: null, setup: 1, setupT: 0 };
+
+/* ---- малюнок: шатро-причіп із колесом та клоуном (кольорові коди, окремий canvas 120×80) ---- */
+const CIRCUS_ART = (function () {
+  const D = '#4a3228', DD = '#2a1d1a', RED = '#c4553d', CR = '#fff4dc', YEL = '#ffe08a', GLD = '#f2b84b', BR = '#7a4f35', OUT = '#3a1f1a';
+  const SEG = ['#c4553d', '#ffe08a', '#4f9a63', '#3d5a8c', '#ef8fa3', '#e8863c', '#8b6bb0', '#8ed4a6', '#f2b84b', '#86cfe8', '#ffc9d4', '#ff5fa2'];
+  const rr = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+  const dsc = (g, cx, cy, r, c) => { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r + r * 0.4) rr(g, cx + x, cy + y, 1, 1, c); };
+  const GL = {
+    'Ц': ['#..#.', '#..#.', '#..#.', '#####', '....#'], 'И': ['#...#', '#..##', '#.#.#', '##..#', '#...#'], 'Р': ['####.', '#...#', '####.', '#....', '#....'],
+    'К': ['#...#', '#..#.', '###..', '#..#.', '#...#'], 'Ф': ['..#..', '.###.', '#.#.#', '.###.', '..#..'], 'О': ['.###.', '#...#', '#...#', '#...#', '.###.'],
+    'Т': ['#####', '..#..', '..#..', '..#..', '..#..'], 'У': ['#...#', '#...#', '.####', '....#', '.###.'], 'Н': ['#...#', '#...#', '#####', '#...#', '#...#'],
+    'L': ['#....', '#....', '#....', '#....', '#####'], 'U': ['#...#', '#...#', '#...#', '#...#', '.###.'], 'C': ['.####', '#....', '#....', '#....', '.####'],
+    'K': ['#...#', '#..#.', '###..', '#..#.', '#...#'], 'Y': ['#...#', '.#.#.', '..#..', '..#..', '..#..'], 'I': ['#####', '..#..', '..#..', '..#..', '#####'],
+    'R': ['####.', '#...#', '####.', '#..#.', '#...#'], 'S': ['.####', '#....', '.###.', '....#', '####.']
+  };
+  // довгий прапор-стрічка з назвою; кожен стовпчик іде хвилею
+  function flag(g, x0, y0, len, t, fill, ink, text) {
+    const pix = {}; let cx = 3;
+    for (const ch of text) { if (ch === ' ') { cx += 3; continue; } const gl = GL[ch]; if (!gl) continue; gl.forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') (pix[cx + rx] = pix[cx + rx] || []).push(ry); }); cx += 6; }
+    for (let i = 0; i < len; i++) {
+      const amp = 0.4 + 1.8 * (i / len), off = Math.round(Math.sin(i * 0.32 - t * 5) * amp), top = y0 + off, h = 9;
+      const notch = i > len - 6 ? i - (len - 6) : 0;
+      for (let y = 0; y < h; y++) { if (notch && Math.abs(y - 4) < Math.min(notch, 4) && i > len - notch) continue; rr(g, x0 + i, top + y, 1, 1, (y === 0 || y === h - 1) ? CR : fill); }
+      (pix[i] || []).forEach(ry => rr(g, x0 + i, top + 2 + ry, 1, 1, ink));
+    }
+  }
+  function wheelF(g, cx, cy, rad, t) {
+    const rot = t * 0.4;
+    for (let y = -rad - 2; y <= rad + 2; y++) for (let x = -rad - 2; x <= rad + 2; x++) {
+      const r = Math.sqrt(x * x + y * y); if (r > rad + 1.6) continue; let col;
+      if (r > rad - 0.6) col = D;
+      else if (r > rad - 2.4) { const a = Math.atan2(y, x) + rot; col = (Math.floor(a / 0.4488) + Math.floor(t * 3)) % 2 ? YEL : CR; }
+      else if (r < 2.4) col = r < 1.4 ? GLD : D;
+      else { const a = Math.atan2(y, x) + rot + Math.PI * 2, k = Math.floor(a / (Math.PI * 2 / 12)) % 12; col = SEG[k]; const fr = (a / (Math.PI * 2 / 12)) % 1; if (fr < 0.1 || fr > 0.93) col = D; }
+      rr(g, cx + x, cy + y, 1, 1, col);
+    }
+    rr(g, cx - 2, cy - rad - 3, 5, 1, GLD); rr(g, cx - 2, cy - rad - 2, 5, 1, D); rr(g, cx - 1, cy - rad - 1, 3, 1, RED); rr(g, cx, cy - rad, 1, 2, RED);
+  }
+  function clown(g, ox, by, t) {
+    const arm = Math.floor(t * 3) % 2;
+    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, RED); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 7, by - 2, 3, 1, RED);
+    rr(g, ox + 1, by - 7, 3, 5, '#4f9a63'); rr(g, ox + 7, by - 7, 3, 5, YEL);
+    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, '#8b6bb0');
+    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, YEL));
+    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, CR); rr(g, ox + 4, by - 14, 3, 1, '#ef8fa3');
+    if (arm) { rr(g, ox - 2, by - 13, 3, 2, D); rr(g, ox - 3, by - 17, 2, 5, D); rr(g, ox - 2, by - 16, 1, 4, '#8b6bb0'); rr(g, ox - 4, by - 18, 2, 2, CR); rr(g, ox + 9, by - 12, 3, 5, D); rr(g, ox + 10, by - 11, 1, 4, '#8b6bb0'); }
+    else { rr(g, ox - 2, by - 12, 3, 5, D); rr(g, ox - 1, by - 11, 1, 4, '#8b6bb0'); rr(g, ox + 9, by - 13, 3, 2, D); rr(g, ox + 11, by - 17, 2, 5, D); rr(g, ox + 11, by - 16, 1, 4, '#8b6bb0'); rr(g, ox + 12, by - 18, 2, 2, CR); }
+    dsc(g, ox + 5, by - 20, 5, D); dsc(g, ox + 5, by - 20, 4, CR);
+    dsc(g, ox - 1, by - 21, 2, D); dsc(g, ox - 1, by - 21, 1, '#e8863c'); dsc(g, ox + 11, by - 21, 2, D); dsc(g, ox + 11, by - 21, 1, '#e8863c');
+    rr(g, ox + 3, by - 21, 1, 2, DD); rr(g, ox + 7, by - 21, 1, 2, DD);
+    rr(g, ox + 4, by - 19, 3, 2, RED); rr(g, ox + 5, by - 20, 1, 1, '#ff8a7a');
+    rr(g, ox + 3, by - 17, 5, 1, RED); rr(g, ox + 2, by - 18, 1, 1, RED); rr(g, ox + 8, by - 18, 1, 1, RED);
+    rr(g, ox + 3, by - 28, 5, 1, D); rr(g, ox + 4, by - 27, 3, 2, '#3d5a8c'); rr(g, ox + 3, by - 25, 5, 1, '#3d5a8c'); rr(g, ox + 2, by - 24, 7, 1, D); rr(g, ox + 5, by - 29, 1, 1, YEL);
+  }
+  // шатро: гострий верх, смуги віялом, фестончасті стінки, темний вхід (кожне малюється один раз)
+  function makeTent(o) {
+    const W = o.w, H = o.h, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    const cx = o.cx, ay = o.ay, roofB = o.roofB, floor = o.floor, scallop = o.scallop, c1 = o.c1, c2 = o.c2, cap = '#7a2f2f', shade = '#c9bfb0', fan = o.fan;
+    const hwRoof = y => 3 + (o.hw - 3) * Math.pow((y - ay) / (roofB - ay), 1.7);
+    const edge = x => roofB + 2 - Math.round(o.sc * Math.sin(Math.PI * ((((x - cx + 600) % scallop) / scallop))));
+    for (let y = ay; y <= floor; y++) {
+      const inRoof = y <= roofB + 2;
+      const hw = inRoof ? Math.round(hwRoof(Math.min(y, roofB))) : o.hw + 3 - Math.round(2 * Math.sin((y - roofB) / (floor - roofB) * Math.PI));
+      for (let x = cx - hw; x <= cx + hw; x++) {
+        const e = edge(x); let col;
+        if (y < e) { if (y < ay + o.capH && Math.abs(x - cx) < 4 + (y - ay) * 0.2) col = cap; else col = Math.floor(((x - cx) / Math.max(2, y - ay + 2)) * fan + 200) % 2 ? c1 : c2; }
+        else { col = Math.floor((x - cx + 200) / o.stripe) % 2 ? c1 : c2; if (y > e + 1 && y < e + 3 && (x + y) % 2) col = shade; }
+        rr(g, x, y, 1, 1, col);
+      }
+    }
+    [[cx - 2, ay + 6], [cx + 1, ay + 8], [cx - 1, ay + 4]].forEach(p => rr(g, p[0], p[1], 1, 1, CR));
+    if (o.door) {
+      for (let y = 48; y <= floor; y++) { const hw = y < 52 ? 3 + (y - 48) * 1.5 : 9; for (let x = Math.round(cx - hw); x <= Math.round(cx + hw); x++) rr(g, x, y, 1, 1, '#1d1410'); }
+      for (let y = 50; y <= floor; y++) { rr(g, cx - 10 - Math.floor((y - 50) / 8), y, 2, 1, CR); rr(g, cx + 9 + Math.floor((y - 50) / 8), y, 2, 1, CR); }
+    } else {
+      for (let y = floor - 9; y <= floor; y++) { const hw = y < floor - 6 ? 2 : 4; for (let x = cx - hw; x <= cx + hw; x++) rr(g, x, y, 1, 1, '#1d1410'); }
+    }
+    const d = g.getImageData(0, 0, W, H).data, has = (x, y) => x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 0;
+    const out = document.createElement('canvas'); out.width = W; out.height = H; const og = out.getContext('2d'); og.fillStyle = OUT;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!has(x, y) && (has(x - 1, y) || has(x + 1, y) || has(x, y - 1) || has(x, y + 1))) og.fillRect(x, y, 1, 1);
+    og.drawImage(cv, 0, 0);
+    return out;
+  }
+  let tents = null;
+  const clamp01 = v => Math.max(0, Math.min(1, v)), eo = k => 1 - (1 - k) * (1 - k), back = k => { const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
+  const lerp = (a, b, k) => a + (b - a) * k;
+  // s: 0 — їде причіпом, 1 — розкладений: платформа й колеса зникли, шатро сіло на землю, виросли два малі шатра, клоун вийшов і махає
+  function draw(g, t, s, moving) {
+    if (!tents) tents = {
+      main: makeTent({ w: 160, h: 84, cx: 80, ay: 14, roofB: 44, floor: 62, hw: 31, scallop: 12, sc: 3, fan: 5, stripe: 6, capH: 12, c1: RED, c2: CR, door: true }),
+      side: makeTent({ w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: RED, c2: CR, door: false }),
+      side2: makeTent({ w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: CR, c2: RED, door: false })
+    };
+    g.clearRect(0, 0, 160, 84);
+    const e = (a, b) => clamp01((s - a) / (b - a)), GY = 76;
+    const bob = moving ? Math.floor(t * 6) % 2 : 0, sink = 14 * eo(e(0.10, 0.45)), platA = 1 - eo(e(0.0, 0.30));
+    // малі шатра виростають із землі (з відскоком) і здіймають пил
+    [[tents.side, 30, e(0.30, 0.58)], [tents.side2, 130, e(0.45, 0.72)]].forEach(([cv, cx, k]) => {
+      if (k <= 0) return;
+      const sc = Math.max(0.05, back(k)), sx = 0.6 + 0.4 * Math.min(1, sc);
+      g.save(); g.translate(cx, GY); g.scale(sx, sc); g.drawImage(cv, -24, -38); g.restore();
+      if (k < 0.95) for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI, r = 2 + 6 * k + i % 2; g.globalAlpha = 0.6 * (1 - k); dsc(g, Math.round(cx + Math.cos(a) * (14 + 10 * k) * (i % 2 ? 1 : -1)), GY - 1 - Math.round(Math.sin(a) * 3 * k), 2, CR); }
+      g.globalAlpha = 1;
+    });
+    // головне шатро (разом зі щоглою й прапором) осідає на землю
+    g.save(); g.translate(0, bob + sink);
+    g.drawImage(tents.main, 0, 0);
+    rr(g, 80, 3, 1, 12, OUT); flag(g, 81, 3, 70, t, RED, CR, circusFlagText());
+    g.restore();
+    // платформа й колеса візка зникають
+    if (platA > 0.02) {
+      g.save(); g.globalAlpha = platA; g.translate(0, bob + (1 - platA) * 10);
+      rr(g, 38, 62, 84, 6, D); rr(g, 39, 63, 82, 4, BR); rr(g, 39, 63, 82, 1, '#a8703f'); rr(g, 39, 67, 82, 1, '#5a3a28');
+      for (let x = 42; x < 122; x += 6) rr(g, x, 65, 2, 1, YEL);
+      rr(g, 34, 65, 5, 2, D); rr(g, 34, 64, 2, 1, GLD);
+      for (let x = 40; x <= 124; x += 4) rr(g, x, 61, 2, 1, (Math.floor(t * 3) + (x - 40) / 4) % 2 ? YEL : '#4f9a63');
+      g.restore();
+      g.save(); g.globalAlpha = platA; g.translate(0, (1 - platA) * 12);
+      [48, 110].forEach(wx => { const wy = 71; dsc(g, wx, wy, 5, DD); dsc(g, wx, wy, 4, '#6a5a50'); dsc(g, wx, wy, 1, GLD); for (let k = 0; k < 4; k++) { const a = t * 6 * platA + k * Math.PI / 2; for (let i = 1; i < 4; i++) rr(g, wx + Math.cos(a) * i, wy + Math.sin(a) * i, 1, 1, CR); } });
+      g.restore();
+      g.globalAlpha = 1;
+    }
+    // колесо фортуни їде з платформи на землю, ближче до малого шатра
+    const wk = eo(e(0.10, 0.60)), wx = lerp(50, 108, wk), wy = lerp(52 + bob, 64, wk);
+    if (wy + 10 < GY) rr(g, wx - 1, wy + 10, 3, GY - wy - 10, D);
+    wheelF(g, Math.round(wx), Math.round(wy), 11, t);
+    // клоун: стоїть на платформі → заходить у шатро → виходить на землю й махає рукою
+    const walkIn = e(0.12, 0.30), walkOut = e(0.62, 0.84);
+    let cxp = 96, vis = 1;
+    if (s < 0.30) cxp = lerp(96, 75, eo(walkIn));
+    else if (s < 0.62) { cxp = 75; vis = 0; }
+    else cxp = lerp(75, 52, eo(walkOut));
+    if (s > 0.26 && s <= 0.34) vis = 1 - e(0.26, 0.34); else if (s >= 0.56 && s < 0.64) vis = e(0.56, 0.64);
+    if (vis > 0.02) { g.globalAlpha = vis; clown(g, Math.round(cxp), Math.round(62 + sink + bob * (s < 0.3 ? 1 : 0)), t); g.globalAlpha = 1; }
+  }
+  // клоун у вікні колеса: жонглює, підстрибує, моргає (canvas 72×40)
+  function clownWindow(g, t) {
+    g.clearRect(0, 0, 72, 40); rr(g, 0, 0, 72, 40, '#c4ebf5');
+    for (let x = 0; x < 72; x += 6) { g.globalAlpha = 0.25; rr(g, x, 0, 3, 40, '#ffffff'); g.globalAlpha = 1; }
+    rr(g, 0, 34, 72, 6, RED); rr(g, 0, 34, 72, 1, CR);
+    for (let i = 0; i < 12; i++) rr(g, i * 6 + 1, 36, 2, 2, i % 2 ? YEL : CR);
+    const hop = Math.abs(Math.sin(t * 3)) * 3, by = 33 - hop, ox = 30;
+    ['#c4553d', YEL, '#4f9a63'].forEach((c, k) => { const a = t * 4 + k * 2.09, bx = ox + 5 + Math.cos(a) * 16, byb = by - 28 - Math.sin(a) * 10; dsc(g, bx, byb, 2, D); dsc(g, bx, byb, 1, c); });
+    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, RED); rr(g, ox + 7, by - 2, 3, 1, RED);
+    rr(g, ox + 1, by - 7, 3, 5, '#4f9a63'); rr(g, ox + 7, by - 7, 3, 5, YEL);
+    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, '#8b6bb0');
+    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, YEL));
+    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, CR); rr(g, ox + 4, by - 14, 3, 1, '#ef8fa3');
+    const up = Math.floor(t * 4) % 2;
+    rr(g, ox - 2, by - (up ? 17 : 12), 3, 5, D); rr(g, ox - 1, by - (up ? 16 : 11), 1, 4, '#8b6bb0');
+    rr(g, ox + 10, by - (up ? 12 : 17), 3, 5, D); rr(g, ox + 11, by - (up ? 11 : 16), 1, 4, '#8b6bb0');
+    const hy = by - 20;
+    dsc(g, ox + 5, hy, 5, D); dsc(g, ox + 5, hy, 4, CR);
+    dsc(g, ox - 1, hy - 1, 2, D); dsc(g, ox - 1, hy - 1, 1, '#e8863c'); dsc(g, ox + 11, hy - 1, 2, D); dsc(g, ox + 11, hy - 1, 1, '#e8863c');
+    if ((t % 2.4) > 2.25) { rr(g, ox + 3, hy - 1, 2, 1, DD); rr(g, ox + 7, hy - 1, 2, 1, DD); } else { rr(g, ox + 3, hy - 1, 1, 2, DD); rr(g, ox + 7, hy - 1, 1, 2, DD); }
+    rr(g, ox + 4, hy + 1, 3, 2, RED); rr(g, ox + 5, hy, 1, 1, '#ff8a7a');
+    const sm = Math.floor(t * 2) % 2; rr(g, ox + 3, hy + 3 + sm, 5, 1, RED); rr(g, ox + 2, hy + 2 + sm, 1, 1, RED); rr(g, ox + 8, hy + 2 + sm, 1, 1, RED);
+    rr(g, ox + 3, hy - 8, 5, 1, D); rr(g, ox + 4, hy - 7, 3, 2, '#3d5a8c'); rr(g, ox + 3, hy - 5, 5, 1, '#3d5a8c'); rr(g, ox + 2, hy - 4, 7, 1, D); rr(g, ox + 5, hy - 9, 1, 1, YEL);
+    for (let i = 0; i < 8; i++) { const x = (i * 9 + t * 8) % 72, y = (i * 7 + t * 14) % 34; rr(g, x, y, 1, 1, ['#ef8fa3', YEL, '#4f9a63', '#3d5a8c'][i % 4]); }
+  }
+  // червоний «!» (12×26)
+  let bang = null;
+  function bangSprite() {
+    if (bang) return bang;
+    bang = document.createElement('canvas'); bang.width = 12; bang.height = 26; const g = bang.getContext('2d');
+    for (let y = 0; y < 18; y++) { const w = Math.round(10 - y * 0.32), x0 = 6 - (w >> 1); rr(g, x0, y, w, 1, '#d62f2f'); rr(g, x0 + w - 2, y, 2, 1, '#a82020'); rr(g, x0, y, 1, 1, '#ef5a4f'); }
+    dsc(g, 6, 22, 3, '#d62f2f'); rr(g, 7, 22, 3, 2, '#a82020'); rr(g, 4, 20, 1, 1, '#ef5a4f');
+    return bang;
+  }
+  return { draw, clownWindow, bangSprite };
+})();
+function circusFlagText() { return t('circusFlag'); }
+
+/* ---- логіка ---- */
+function circusStopX() { return visL() + 92; }
+function circusStartX() { return visR() + 90; }
+function bangPos() { return { x: Math.min(visR() - 14, shop.x + shop.w + 13), y: LAYOUT.streetTop + 9 }; }   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
+function circusY() { return mailRoadY() + 2; }
+function circusQuiet() { return !dialog.active && !epochIntro.active && !build && !trouble && !ghostHunt && ui.modal.hidden && ui.wheelModal.hidden && ui.letterModal.hidden && ui.circusModal.hidden; }
+function updateCircus(dt) {
+  const c = state.circus, now = Date.now();
+  circus.t += dt;
+  if (!c.next) c.next = now + CONFIG.CIRCUS_FIRST_MINUTES * 60000;
+  if (!circus.inited) {                           // після перезапуску цирк уже стоїть розкладений (або від'їжджає)
+    circus.inited = true;
+    if (c.phase === 2 || c.phase === 2.5 || c.phase === 2.7) { c.phase = 3; circus.setup = 1; }
+    else if (c.phase === 3.5) c.phase = 4;
+    if (c.phase === 3) circus.setup = 1;
+  }
+  if (c.phase === 0) {
+    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.phase = 1; c.spun = 0; circus.bangT = 0; playSfx('circusMarch'); showToast(t('circusBang'), 'good'); saveGame(); }
+  } else if (c.phase === 1) {
+    circus.bangT += dt;
+  } else if (c.phase === 2.5) {                    // їде справа наліво
+    circus.drive += dt;
+    const k = Math.min(1, circus.drive / CONFIG.CIRCUS_DRIVE_SECONDS);
+    circus.x = circusStartX() + (circusStopX() - circusStartX()) * k;
+    circus.setup = 0;
+    if (k >= 1) { c.phase = 2.7; circus.x = circusStopX(); circus.setupT = 0; playSfx('build'); }
+  } else if (c.phase === 2.7) {                    // шатро розкладається: колеса й платформа зникають, вилазять три куполи, виходить клоун
+    circus.setupT += dt; circus.x = circusStopX();
+    circus.setup = Math.min(1, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
+    if (circus.setup >= 1) { c.phase = 3; showToast(t('circusArrived'), 'good'); playSfx('wheelWin'); saveGame(); }
+  } else if (c.phase === 3) {
+    circus.x = circusStopX(); circus.setup = 1;
+  } else if (c.phase === 3.5) {                    // збирається назад
+    circus.setupT -= dt; circus.x = circusStopX();
+    circus.setup = Math.max(0, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
+    if (circus.setup <= 0) { c.phase = 4; playSfx('pip'); }
+  } else if (c.phase === 4) {                      // від'їжджає ліворуч
+    circus.x -= 60 * dt;
+    if (circus.x < worldL() - 140) { c.phase = 0; c.next = now + CONFIG.CIRCUS_HOURS * 3600000; saveGame(); }
+  }
+  updateCircusSpin(dt);
+  if (!ui.circusModal.hidden) { drawCircusWheel(); const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; CIRCUS_ART.clownWindow(g, circus.t); }
+}
+const circusCanvas = document.createElement('canvas'); circusCanvas.width = 160; circusCanvas.height = 84;
+function drawCircus() {
+  const c = state.circus; if (c.phase < 2) return;
+  const s = circus.setup === undefined ? 0 : circus.setup, moving = c.phase === 2.5 || c.phase === 4;
+  const g = circusCanvas.getContext('2d'); CIRCUS_ART.draw(g, circus.t, s, moving);
+  const x = Math.round(circus.x) - 80, y = circusY();
+  ctx.globalAlpha = 0.25; R(ctx, x + 6 + Math.round(8 * s), y - 2, 128 - Math.round(8 * s) * 2 + (s < 0.5 ? -30 + Math.round(60 * s) : 0), 3, 'd'); ctx.globalAlpha = 1;
+  ctx.drawImage(circusCanvas, x, y - 76);
+  if (c.phase === 3 && !c.spun && Math.floor(circus.t * 2) % 2) {        // мерехтливі іскри — «тапни на мене»
+    R(ctx, x + 26, y - 78, 1, 3, 'y'); R(ctx, x + 25, y - 77, 3, 1, 'y'); R(ctx, x + 136, y - 56, 1, 3, 'y'); R(ctx, x + 135, y - 55, 3, 1, 'y'); R(ctx, x + 70, y - 90, 1, 3, 'y'); R(ctx, x + 69, y - 89, 3, 1, 'y');
+  }
+}
+function drawBang() {
+  const c = state.circus; if (c.phase !== 1) return;
+  const p = bangPos(), steps = [1, 1.15, 1.3, 1.15], k = steps[Math.floor(circus.bangT * 4) % 4], spr = CIRCUS_ART.bangSprite();
+  const w = Math.round(12 * k), h = Math.round(26 * k);
+  ctx.globalAlpha = 0.25; R(ctx, p.x - 5, p.y - 1, 11, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.drawImage(spr, Math.round(p.x - w / 2), p.y - h, w, h);
+}
+function hitCircus(p) {
+  const c = state.circus;
+  if (c.phase === 1) {
+    const b = bangPos();
+    if (Math.abs(p.x - b.x) <= 14 && p.y >= b.y - 38 && p.y <= b.y + 6) { c.phase = 2.5; circus.drive = 0; circus.x = circusStartX(); playSfx('build'); saveGame(); return true; }
+  } else if (c.phase === 3) {
+    const y = circusY();
+    if (p.x >= circus.x - 80 && p.x <= circus.x + 80 && p.y >= y - 80 && p.y <= y) { openCircus(); return true; }
+  }
+  return false;
+}
+
+/* ---- вікно колеса ---- */
+function drawCircusIcon(g, icon, cx, cy) {
+  switch (icon) {
+    case 'bag': R(g, cx - 4, cy - 2, 9, 8, 'd'); R(g, cx - 3, cy - 1, 7, 6, 'h'); R(g, cx - 2, cy - 5, 5, 3, 'd'); R(g, cx - 1, cy - 4, 3, 1, 'h'); R(g, cx, cy, 1, 3, 'd'); break;
+    case 'hat': R(g, cx - 6, cy + 2, 13, 3, 'd'); R(g, cx - 5, cy + 3, 11, 1, 'u'); R(g, cx - 3, cy - 6, 7, 9, 'd'); R(g, cx - 2, cy - 5, 5, 7, 'u'); R(g, cx - 2, cy, 5, 2, 'y'); R(g, cx, cy - 3, 1, 1, 'w'); break;
+    case 'gift': R(g, cx - 5, cy - 1, 11, 8, 'd'); R(g, cx - 4, cy, 9, 6, 'r'); R(g, cx - 1, cy - 1, 3, 8, 'y'); R(g, cx - 5, cy + 2, 11, 1, 'y'); R(g, cx - 4, cy - 4, 4, 3, 'd'); R(g, cx - 3, cy - 3, 2, 1, 'y'); R(g, cx + 1, cy - 4, 4, 3, 'd'); R(g, cx + 2, cy - 3, 2, 1, 'y'); break;
+    case 'clover': disc(g, cx - 3, cy - 2, 3, 'd'); disc(g, cx + 3, cy - 2, 3, 'd'); disc(g, cx - 3, cy + 3, 3, 'd'); disc(g, cx + 3, cy + 3, 3, 'd'); disc(g, cx - 3, cy - 2, 2, 'g'); disc(g, cx + 3, cy - 2, 2, 'g'); disc(g, cx - 3, cy + 3, 2, 'g'); disc(g, cx + 3, cy + 3, 2, 'g'); R(g, cx, cy, 1, 7, 'G'); break;
+    default: drawWheelIcon(g, icon, cx, cy);
+  }
+}
+function buildCircusWheelTexture() {
+  const S = 128, cv = document.createElement('canvas'); cv.width = S; cv.height = S; const g = cv.getContext('2d');
+  const cx = 64, cy = 64, step = Math.PI / 6;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const dx = x + 0.5 - cx, dy = y + 0.5 - cy, r = Math.sqrt(dx * dx + dy * dy);
+    if (r > 62) continue;
+    let col;
+    if (r >= 59) col = 'd';
+    else if (r < 9) col = r >= 7 ? 'd' : 'h';
+    else { let a = Math.atan2(dx, -dy); if (a < 0) a += Math.PI * 2; const sec = Math.floor(a / step), frac = a / step - sec, edge = Math.min(frac, 1 - frac) * step * r; col = edge < 0.9 ? 'd' : (r >= 55.5 && r < 57 ? ((Math.floor(a / step * 3) % 2) ? 'w' : 'y') : CIRCUS_SECTORS[sec].color); }
+    R(g, x, y, 1, 1, col);
+  }
+  CIRCUS_SECTORS.forEach((s, i) => { const a = (i + 0.5) * step; drawCircusIcon(g, s.icon, Math.round(cx + Math.sin(a) * 38), Math.round(cy - Math.cos(a) * 38)); });
+  return cv;
+}
+function drawCircusWheel() {
+  const g = ui.circusWheel.getContext('2d'); g.imageSmoothingEnabled = false;
+  if (!circus.tex) circus.tex = buildCircusWheelTexture();
+  g.clearRect(0, 0, 128, 140); g.save(); g.translate(64, 76); g.rotate(circus.angle); g.drawImage(circus.tex, -64, -64); g.restore();
+  for (let i = 0; i < 12; i++) { R(g, 64 - (12 - i), 2 + i, (12 - i) * 2, 1, 'd'); if (i > 1) R(g, 64 - (12 - i) + 2, 2 + i, (12 - i) * 2 - 4, 1, 'r'); }
+}
+function openCircus() {
+  if (dialog.active) return;
+  ui.circusModal.hidden = false;
+  ui.circusTitle.textContent = t('circusTitle'); ui.circusSub.textContent = t('circusSub');
+  ui.circusClose.textContent = t(state.circus.spun ? 'circusDone' : 'wheelClose');
+  ui.circusResult.textContent = '';
+  updateCircusButtons();
+}
+function updateCircusButtons() {
+  ui.circusBtn.textContent = t('circusSpin');
+  ui.circusBtn.disabled = !!circus.anim || !!state.circus.spun;
+}
+function closeCircus() {
+  if (circus.anim) return;
+  ui.circusModal.hidden = true;
+  if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
+}
+function circusSpin() {
+  if (circus.anim || state.circus.spun) return;
+  const now = Date.now(), weight = s => (s.kind === 'crystal' && !state.story.finale ? 0 : (s.kind === 'skin' && state.skinsMask >= (1 << SKIN_POOL.length) - 1 ? 0 : s.weight));
+  const total = CIRCUS_SECTORS.reduce((a, s) => a + weight(s), 0);
+  let roll = Math.random() * total, idx = 0;
+  for (; idx < CIRCUS_SECTORS.length - 1; idx++) { roll -= weight(CIRCUS_SECTORS[idx]); if (roll < 0) break; }
+  const s = CIRCUS_SECTORS[idx];
+  let text, again = false;
+  if (s.kind === 'coins') { const gain = Math.floor(state.cps * s.seconds + s.flat * levelMult()); state.coins += gain; state.totalEarned += gain; text = t('prize_coins', fmt(gain)); }
+  else if (s.kind === 'crystal') { state.crystals += 1; state.crystalsTotal += 1; text = t('prize_crystal', 1); }
+  else if (s.kind === 'income') { state.events.incomeBoostUntil = now + s.minutes * 60000; state.events.incomeBoostMult = s.mult; text = t('prize_income', fmt(s.mult, 1), s.minutes); }
+  else if (s.kind === 'tap') { state.events.tapBoostUntil = now + s.minutes * 60000; state.events.tapBoostMult = s.mult; text = t('prize_tap', s.mult, s.minutes); }
+  else if (s.kind === 'skin') {
+    const free = SKIN_POOL.map((id, i) => i).filter(i => !(state.skinsMask & (1 << i))), pick = free[Math.floor(Math.random() * free.length)];
+    state.skinsMask |= (1 << pick); text = t('prize_skin', t('skin_' + SKIN_POOL[pick]));
+  } else { again = true; text = t('circusAgain'); }
+  recalcIncome();
+  const step = Math.PI / 6, from = circus.angle % (Math.PI * 2), to = Math.PI * 2 * 5 + (Math.PI * 2 - (idx + 0.5) * step) + rand(-0.35, 0.35) * step;
+  circus.anim = { t: 0, dur: CONFIG.WHEEL_SPIN_SECONDS, from, to, text, again };
+  ui.circusResult.textContent = '…';
+  if (!again) state.circus.spun = 1;
+  updateCircusButtons(); updateUI(); saveGame();
+}
+function updateCircusSpin(dt) {
+  const a = circus.anim; if (!a) return;
+  a.t += dt;
+  const k = Math.min(1, a.t / a.dur), e = 1 - Math.pow(1 - k, 3), prev = Math.floor(circus.angle / (Math.PI / 6));
+  circus.angle = a.from + (a.to - a.from) * e;
+  if (Math.floor(circus.angle / (Math.PI / 6)) !== prev && performance.now() - audio.lastTick > 40) { audio.lastTick = performance.now(); playSfx('wheelTick'); }
+  if (k >= 1) {
+    circus.anim = null; circus.angle = a.to % (Math.PI * 2);
+    ui.circusResult.textContent = a.text; playSfx('wheelWin'); showToast(a.text, 'good');
+    ui.circusClose.textContent = t(state.circus.spun ? 'circusDone' : 'wheelClose');
+    updateCircusButtons(); updateUI(); saveGame();
+  }
+}
+
+
 /* ---------- Поштова машина: раз на 40 хвилин привозить лист із випадковим бонусом ---------- */
 const mail = { state: 'idle', x: 0, t: 0, letter: null };
 function mailRoadY() { return worldB() - 7; }                 // де стоять колеса на дорозі
@@ -7902,6 +8300,7 @@ function updateEvents(dt) {
   updateGhostHunt(dt);
   updateWeather(dt);
   updateMail(dt);
+  updateCircus(dt);
   updateBirds(dt);
   updateEpochFeatures(dt);
   updateShootingStar(dt);
@@ -7950,6 +8349,10 @@ function initEvents() {
   ui.wheelOpen.addEventListener('click', openWheel);
   ui.wheelClose.addEventListener('click', closeWheel);
   ui.wheelBtn.addEventListener('click', () => spinWheel(false));
+  ui.circusBtn.addEventListener('click', circusSpin);
+  ui.circusClose.addEventListener('click', closeCircus);
+  ui.circusModal.addEventListener('click', e => { if (e.target === ui.circusModal) closeCircus(); });
+  ui.dbgCircus.addEventListener('click', () => { const c = state.circus; if (c.phase === 0 || c.phase === 4) { c.phase = 0; c.next = Date.now() - 1; } showToast('Цирк скоро!', 'good'); });
   ui.letterBtn.addEventListener('click', claimLetter);
   ui.wheelGhostBtn.addEventListener('click', () => spinWheel(true));
   ui.wheelModal.addEventListener('click', e => { if (e.target === ui.wheelModal) closeWheel(); });
@@ -8292,6 +8695,7 @@ function setupInput() {
     const p = toScenePoint(e.clientX, e.clientY);
     if (handleEventTap(p)) return;              // калюжа або єнот
     if (hitGhost(p)) return;                    // привид (Хелловін)
+    if (hitCircus(p)) return;                   // червоний «!» або цирк Фортуни
     if (hitMail(p)) return;                     // конверт біля поштової скриньки
     const actor = hitActor(p);                  // звірятка стоять попереду магазину — тап по ним каже фразу
     if (actor) { actor.hop = 1; actorSay(actor); if (hitShop(p)) doTap(p.x, p.y); return; }   // і тап по магазину теж рахується
@@ -8389,6 +8793,8 @@ function render(time) {
   benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); });
   if (view.extraB >= 30 || state.events.mailPending || mail.state !== 'idle') items.push({ y: mailRoadY() - 1, draw: drawMailBox });
   if (mail.state !== 'idle') items.push({ y: mailRoadY(), draw: drawMailTruck });
+  if (state.circus.phase >= 2) items.push({ y: circusY(), draw: drawCircus });
+  if (state.circus.phase === 1) items.push({ y: bangPos().y, draw: drawBang });
   items.push({
     y: cp.footY,
     draw: () => {
