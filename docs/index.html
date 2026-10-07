@@ -180,10 +180,10 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 .daily-row .dtext small { display: block; color: var(--brown); font-size: 10px; }
 .daily-row .btn { padding: 7px 9px; font-size: 10px; white-space: nowrap; }
 .daily-row.claimed { opacity: .6; }
-#shardBox { display: flex; align-items: center; gap: 6px; margin-left: 4px; padding-left: 12px; border-left: 2px solid rgba(74, 50, 40, .28); font-size: 20px; line-height: 1; white-space: nowrap; }
-#shardBox[hidden] { display: none; }
-#shardBox .shard { width: 20px; height: 20px; margin: 0; vertical-align: 0; }
-#gemBox { display: flex; align-items: center; gap: 6px; margin-left: 4px; padding-left: 12px; border-left: 2px solid rgba(74, 50, 40, .28); font-size: 20px; line-height: 1; white-space: nowrap; }
+#gems { display: flex; flex-direction: row; align-items: center; gap: 10px; margin-left: 4px; padding-left: 12px; border-left: 2px solid rgba(74, 50, 40, .28); }
+#shardBox { display: flex; align-items: center; gap: 6px; font-size: 18px; line-height: 1; white-space: nowrap; }
+#shardBox .shard { width: 18px; height: 18px; margin: 0; vertical-align: 0; }
+#gemBox { display: flex; align-items: center; gap: 6px; font-size: 18px; line-height: 1; white-space: nowrap; }
 #gemIcon { font-size: 22px; }
 
 #hudWrap { display: flex; flex-direction: column; gap: 8px; min-width: 0; align-items: flex-start; }
@@ -715,9 +715,11 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #hud { padding: 6px 12px 6px 10px; gap: 8px; }
   #coinIcon { width: 24px; height: 24px; }
   #coinCount { font-size: 20px; }
-  #gemBox, #shardBox { font-size: 16px; padding-left: 8px; gap: 4px; }
-  #shardBox .shard { width: 16px; height: 16px; }
-  #gemIcon { font-size: 17px; }
+  #gems { padding-left: 7px; gap: 7px; }
+  @media (max-width: 380px) { #coinIcon { width: 16px; height: 16px; } #coinCount { font-size: 16px; } #hud { gap: 6px; padding: 6px 8px 6px 8px; } #gemBox, #shardBox { font-size: 11px; } #shardBox .shard { width: 11px; height: 11px; } #gems { gap: 5px; padding-left: 5px; } }
+  #gemBox, #shardBox { font-size: 13px; gap: 3px; }
+  #shardBox .shard { width: 13px; height: 13px; }
+  #gemIcon { font-size: 14px; }
   #cps { font-size: 11px; margin-top: 5px; }
   .lang-btn { padding: 9px 8px; min-width: 44px; font-size: 13px; }
   #stage { padding: 0 0 calc(50px + env(safe-area-inset-bottom, 0px)); }
@@ -759,7 +761,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #coinIcon { width: 22px; height: 22px; }
   #coinCount { font-size: 18px; line-height: 1.2; }
   #cps { margin-top: 4px; font-size: 10px; }
-  #gemBox { font-size: 16px; padding-left: 8px; }
+  #gems { padding-left: 8px; }
+  #gemBox, #shardBox { font-size: 15px; }
   #gemIcon { font-size: 17px; }
   #boosts { gap: 4px; }
   .chip { font-size: 9px; padding: 3px 5px; }
@@ -894,7 +897,7 @@ function bootDone() {
           <div id="coinCount">0</div>
           <div id="cps"></div>
         </div>
-        <div id="gemBox" aria-live="off"><span id="gemIcon">💎</span><span id="gemCount">0</span></div><div id="shardBox" aria-live="off" hidden><span class="shard"></span><span id="shardCount">0</span></div>
+        <div id="gems"><div id="gemBox" aria-live="off"><span id="gemIcon">💎</span><span id="gemCount">0</span></div><div id="shardBox" aria-live="off"><span class="shard"></span><span id="shardCount">0</span></div></div>
       </div>
       <div id="goalLine" class="chip dark" hidden></div>
       <div id="boosts" aria-live="polite"></div>
@@ -6564,7 +6567,7 @@ function updateDaily() {
 }
 function updateUI() {
   setText(ui.gemCount, fmt(Math.floor(state.crystals)), 'gems');
-  setText(ui.shardCount, fmt(Math.floor(state.shards)), 'shards'); ui.shardBox.hidden = !(state.shards > 0 || state.shardsTotal > 0);
+  setText(ui.shardCount, fmt(Math.floor(state.shards)), 'shards'); ui.shardBox.hidden = false;
   setText(ui.gemIcon, EPOCH_GEM_EMOJI[viewEpoch() % EPOCH_GEM_EMOJI.length], 'gemi');
   updateGoal(); updateDaily();
   if (previewIdx() !== null) {                       // обрана минула епоха: угорі її заробіток, баланс для витрат — у підписі
