@@ -70,7 +70,7 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 }
 .frame {
   background: var(--panel);
-  box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 6px var(--cream), inset 0 -10px 0 6px rgba(74,50,40,.12);
+  box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 6px var(--cream), inset 0 0 0 8px var(--dark), inset 0 -10px 0 8px rgba(74,50,40,.12);
 }
 .card {
   --notch: 3px;
@@ -180,6 +180,9 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 .daily-row .dtext small { display: block; color: var(--brown); font-size: 10px; }
 .daily-row .btn { padding: 7px 9px; font-size: 10px; white-space: nowrap; }
 .daily-row.claimed { opacity: .6; }
+#shardBox { display: flex; align-items: center; gap: 6px; margin-left: 4px; padding-left: 12px; border-left: 2px solid rgba(74, 50, 40, .28); font-size: 20px; line-height: 1; white-space: nowrap; }
+#shardBox[hidden] { display: none; }
+#shardBox .shard { width: 20px; height: 20px; margin: 0; vertical-align: 0; }
 #gemBox { display: flex; align-items: center; gap: 6px; margin-left: 4px; padding-left: 12px; border-left: 2px solid rgba(74, 50, 40, .28); font-size: 20px; line-height: 1; white-space: nowrap; }
 #gemIcon { font-size: 22px; }
 
@@ -288,10 +291,10 @@ body[data-epoch="1"] { --glow: #ff8fb3; } body[data-epoch="2"] { --glow: #ff5fa2
 .tab .tab-icon { font-size: 20px; line-height: 1; display: flex; }
 .tab .tab-icon canvas { width: calc(var(--icw) * var(--icn, 1)); height: calc(var(--icw) * var(--icn, 1)); image-rendering: pixelated; image-rendering: crisp-edges; }
 .tab .tab-name { display: none; }
-.tab.secondary .tab-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 8px; }
+.tab.secondary .tab-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 8px; padding: 0 1px; }
 .tab[aria-selected="true"] { background: var(--honey); }
 .tab.soon:not([aria-selected="true"]) { opacity: .6; }
-.tab-lock { position: absolute; right: 3px; bottom: 2px; width: 14px; height: 16px; image-rendering: pixelated; image-rendering: crisp-edges; display: none; pointer-events: none; }
+.tab-lock { position: absolute; right: 3px; top: 2px; width: 14px; height: 16px; image-rendering: pixelated; image-rendering: crisp-edges; display: none; pointer-events: none; }
 .tab.locked .tab-lock { display: block; }
 .tab.locked .tab-icon canvas { filter: grayscale(.9) brightness(.8); opacity: .75; }
 .tab.alert::after { content: ''; position: absolute; top: 5px; right: 6px; width: 6px; height: 6px; background: var(--red); box-shadow: 0 0 0 2px var(--cream); animation: blink 1s steps(2, jump-none) infinite; }
@@ -429,59 +432,60 @@ body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoc
 @keyframes warpSpin { to { transform: rotate(360deg); } }
 body.big-text #panel { zoom: 1.18; }
 
-/* ===== Екран завантаження: Капі йде вулицею ===== */
-#boot { position: fixed; inset: 0; z-index: 99999; overflow: hidden; background: linear-gradient(#2b1f3d 0%, #7b4a6b 46%, #f2a56b 78%, #ffd98a 100%); transition: opacity .55s ease; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+/* ===== Екран завантаження: нічне місто, Капі біжить, підказки внизу ===== */
+#boot { position: fixed; inset: 0; z-index: 99999; overflow: hidden; background: linear-gradient(#150b2e 0%, #2f1860 38%, #6b2f90 68%, #c25fb5 92%, #ffb0c8 100%); transition: opacity .55s ease; font-family: 'Press Start 2P', monospace; }
 #boot.done { opacity: 0; pointer-events: none; }
-#boot .b-stars, #boot .b-city { position: absolute; left: 0; width: 100%; }
-#boot .b-stars { top: 0; height: 40%; background-image: radial-gradient(#fff4dc 1px, transparent 1.5px), radial-gradient(#ffe08a 1px, transparent 1.5px); background-size: 61px 47px, 83px 71px; background-position: 7px 11px, 31px 29px; opacity: .8; animation: bTw 2.4s steps(2, jump-none) infinite; }
-#boot .b-sun { position: absolute; left: 50%; bottom: 31%; width: min(46vw, 260px); height: min(46vw, 260px); margin-left: calc(min(46vw, 260px) / -2); border-radius: 50%; background: radial-gradient(#ffe9a8 0 55%, rgba(255, 217, 138, .0) 72%); transform: translateY(26%); }
-#boot .b-city { bottom: 24%; height: 26%; }
-#boot .b-city svg { width: 100%; height: 100%; display: block; }
-#boot .b-ground { position: absolute; left: 0; bottom: 0; width: 100%; height: 25%; background: #6b5a4e; border-top: 4px solid #cfc5b8; overflow: hidden; }
-#boot .b-road { position: absolute; left: 0; top: 0; width: calc(100% + 96px); height: 100%; background-image: repeating-linear-gradient(90deg, rgba(42, 29, 26, .35) 0 3px, transparent 3px 48px), repeating-linear-gradient(0deg, rgba(42, 29, 26, .3) 0 3px, transparent 3px 24px); animation: bRoad .8s linear infinite; }
-#boot .b-capy { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 16px); transform-origin: 50% 100%; animation: bWaddle .5s steps(2, jump-none) infinite; }
-#boot .b-capy svg { display: block; }
-#boot .b-shadow { position: absolute; left: 50%; bottom: calc(25% - 22px); width: 120px; height: 12px; margin-left: -60px; border-radius: 50%; background: rgba(42, 29, 26, .35); z-index: 1; }
-#boot .b-coin { position: absolute; z-index: 3; left: 50%; bottom: calc(25% + 150px); width: 26px; height: 26px; margin-left: 30px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff2b0 0 20%, #f2b84b 22% 70%, #c98a1d 72%); box-shadow: 0 0 0 3px #302418; animation: bCoin 1s ease-in-out infinite; }
-#boot .b-title { position: absolute; z-index: 4; top: 12%; left: 0; width: 100%; text-align: center; font-family: 'Press Start 2P', monospace; font-size: clamp(16px, 5vw, 34px); color: #ffe08a; text-shadow: 3px 3px 0 #302418, -2px 0 0 #302418, 2px 0 0 #302418, 0 -2px 0 #302418; letter-spacing: 2px; line-height: 1.5; }
-#boot .b-title small { display: block; font-size: .5em; color: #fff4dc; letter-spacing: 4px; }
-#boot .b-load { position: absolute; z-index: 4; left: 50%; bottom: 7%; width: min(70vw, 360px); margin-left: calc(min(70vw, 360px) / -2); text-align: center; font-family: 'Press Start 2P', monospace; font-size: 12px; color: #fff4dc; text-shadow: 2px 2px 0 #302418; }
-#boot .b-bar { height: 14px; margin-top: 10px; background: #302418; padding: 2px; box-shadow: 0 0 0 2px #cfc5b8; }
-#boot .b-bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #f2b84b 0 8px, #ffe08a 8px 12px); transform-origin: 0 50%; transform: scaleX(.04); animation: bFill 3.6s cubic-bezier(.25, .6, .35, 1) forwards; }
-#boot.ready .b-bar i { animation: none; transform: scaleX(1); transition: transform .25s; }
-#boot .b-dots::after { content: ''; animation: bDots 1.2s steps(1, end) infinite; }
-@keyframes bTw { 50% { opacity: .45; } }
-@keyframes bRoad { to { transform: translateX(-96px); } }
-@keyframes bWaddle { 0% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-6px) rotate(1.5deg); } }
-@keyframes bCoin { 0%, 100% { transform: translateY(0) scaleX(1); } 25% { transform: translateY(-10px) scaleX(.2); } 50% { transform: translateY(-16px) scaleX(1); } 75% { transform: translateY(-8px) scaleX(.2); } }
-@keyframes bFill { to { transform: scaleX(.9); } }
-@keyframes bDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
-@media (prefers-reduced-motion: reduce) { #boot .b-road, #boot .b-capy, #boot .b-coin, #boot .b-stars { animation: none; } }
-#boot { background: linear-gradient(#150b2e 0%, #2f1860 38%, #6b2f90 68%, #c25fb5 92%, #ffb0c8 100%); }
-#boot .b-sun { background: radial-gradient(#fff4ff 0 52%, rgba(255, 220, 255, 0) 72%); }
-#boot .b-ground { background: #3a2a55; border-top-color: #b99be0; }
-#boot .b-stars { opacity: .95; }
-/* два шари міста пливуть із різною швидкістю, Капі біжить плавно, повз летять піксельні монетки */
-#boot .b-city { width: 200%; display: flex; animation: bPar 15s linear infinite; }
-#boot .b-city svg { width: 50%; flex: none; }
-#boot .b-city.far { bottom: 29%; height: 20%; opacity: .45; animation-duration: 38s; }
-#boot .b-road { animation-duration: .5s; animation-timing-function: linear; }
-#boot .b-capy { animation: bRun .6s ease-in-out infinite; }
+#boot .b-stars { position: absolute; left: 0; top: 0; width: 100%; height: 42%; background-image: radial-gradient(#fff4dc 1px, transparent 1.5px), radial-gradient(#ffe08a 1px, transparent 1.5px); background-size: 61px 47px, 83px 71px; background-position: 7px 11px, 31px 29px; opacity: .95; animation: bTw 2.4s steps(2, jump-none) infinite; }
+#boot .b-sun { position: absolute; left: 50%; bottom: 31%; width: min(46vw, 260px); height: min(46vw, 260px); margin-left: calc(min(46vw, 260px) / -2); border-radius: 50%; background: radial-gradient(#fff4ff 0 52%, rgba(255, 220, 255, 0) 72%); transform: translateY(26%); }
+#boot .b-city { position: absolute; left: 0; bottom: 24%; width: 200%; height: 26%; display: flex; animation: bPar 22s linear infinite; }
+#boot .b-city svg { width: 50%; height: 100%; flex: none; display: block; }
+#boot .b-city.far { bottom: 29%; height: 20%; opacity: .5; animation-duration: 52s; }
+#boot .bw { animation: bWin var(--bd, 4s) steps(1, end) infinite; }
+#boot .b-ground { position: absolute; left: 0; bottom: 0; width: 100%; height: 25%; background: #3a2a55; border-top: 4px solid #b99be0; overflow: hidden; }
+#boot .b-road { position: absolute; left: 0; top: 0; width: calc(100% + 96px); height: 100%; background-image: repeating-linear-gradient(90deg, rgba(21, 11, 46, .4) 0 3px, transparent 3px 48px), repeating-linear-gradient(0deg, rgba(21, 11, 46, .35) 0 3px, transparent 3px 24px); animation: bRoad .5s linear infinite; }
+#boot .b-street { position: absolute; left: 0; bottom: 25%; height: 0; z-index: 1; animation: bStreet var(--sd) linear infinite; }
+#boot .b-street > * { position: absolute; bottom: 0; }
+#boot .b-capy { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 16px); animation: bRun .6s ease-in-out infinite; }
 #boot .b-capy .pa, #boot .b-capy .pb { display: block; }
 #boot .b-capy .pb { position: absolute; left: 0; top: 0; opacity: 0; }
 #boot .b-capy .pa { animation: bLegA .3s steps(1, end) infinite; }
 #boot .b-capy .pb { animation: bLegB .3s steps(1, end) infinite; }
-#boot .b-shadow { animation: bShadow .6s ease-in-out infinite; }
-#boot .b-coin { display: none; }
-#boot .b-cg { position: absolute; left: 0; z-index: 3; height: 0; animation: bFlyX var(--d) linear infinite; animation-delay: var(--w); }
-#boot .b-px { position: absolute; bottom: 0; width: var(--cw); height: var(--cw); background-image: var(--coin); background-size: 400% 100%; image-rendering: pixelated; animation: bPx .56s steps(4, jump-none) infinite; animation-delay: var(--pd); }
+#boot .b-shadow { position: absolute; left: 50%; bottom: calc(25% - 22px); width: 120px; height: 12px; margin-left: -60px; border-radius: 50%; background: rgba(21, 11, 46, .4); z-index: 1; animation: bShadow .6s ease-in-out infinite; }
+#boot .b-fly { position: absolute; left: 0; z-index: 1; animation: var(--an) var(--d) linear infinite; animation-delay: var(--w, 0s); }
+#boot .b-fly > * { display: block; }
+#boot .b-car { position: absolute; left: 0; z-index: 1; animation: var(--an) var(--d) linear infinite; animation-delay: var(--w, 0s); }
+#boot .b-car.l > span { display: block; transform: scaleX(-1); }
+#boot .b-bird .f2 { position: absolute; left: 0; top: 0; opacity: 0; }
+#boot .b-bird .f1 { animation: bLegA .5s steps(1, end) infinite; }
+#boot .b-bird .f2 { animation: bLegB .5s steps(1, end) infinite; }
+#boot .b-title { position: absolute; z-index: 4; top: 9%; left: 0; width: 100%; text-align: center; font-size: clamp(16px, 5vw, 34px); color: #ffe08a; text-shadow: 3px 3px 0 #302418, -2px 0 0 #302418, 2px 0 0 #302418, 0 -2px 0 #302418; letter-spacing: 2px; line-height: 1.5; }
+#boot .b-title small { display: block; font-size: .5em; color: #fff4dc; letter-spacing: 4px; }
+#boot .b-load { position: absolute; z-index: 4; left: 50%; bottom: 17%; width: min(70vw, 360px); margin-left: calc(min(70vw, 360px) / -2); text-align: center; font-size: 12px; color: #fff4dc; text-shadow: 2px 2px 0 #302418; }
+#boot .b-bar { height: 14px; margin-top: 10px; background: #302418; padding: 2px; box-shadow: 0 0 0 2px #cfc5b8; }
+#boot .b-bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #f2b84b 0 8px, #ffe08a 8px 12px); transform-origin: 0 50%; transform: scaleX(.04); animation: bFill 6.4s cubic-bezier(.25, .6, .35, 1) forwards; }
+#boot.ready .b-bar i { animation: none; transform: scaleX(1); transition: transform .25s; }
+#boot .b-dots::after { content: ''; animation: bDots 1.2s steps(1, end) infinite; }
+#boot .b-tip { position: absolute; z-index: 5; left: 50%; bottom: 3%; width: min(90vw, 430px); margin-left: calc(min(90vw, 430px) / -2); min-height: 78px; padding: 10px 12px 8px; background: rgba(21, 11, 46, .78); box-shadow: 0 0 0 2px #cfc5b8, 0 0 0 4px #302418; color: #fff4dc; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: center; gap: 7px; }
+#boot .b-tip b { display: block; font-size: 10px; line-height: 1.7; font-weight: normal; }
+#boot .b-tip small { display: block; font-size: 7px; color: #cfa8ef; }
+#boot .b-tip.pop b { animation: bPop .35s steps(4, end); }
+@keyframes bTw { 50% { opacity: .45; } }
+@keyframes bRoad { to { transform: translateX(-96px); } }
+@keyframes bFill { to { transform: scaleX(.92); } }
+@keyframes bDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 @keyframes bPar { to { transform: translateX(-50%); } }
-@keyframes bFlyX { from { transform: translateX(105vw); } to { transform: translateX(-260px); } }
+@keyframes bStreet { to { transform: translateX(calc(var(--p) * -1)); } }
 @keyframes bRun { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
 @keyframes bShadow { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.82); opacity: .7; } }
 @keyframes bLegA { 0% { opacity: 1; } 50% { opacity: 0; } }
 @keyframes bLegB { 0% { opacity: 0; } 50% { opacity: 1; } }
-@keyframes bPx { from { background-position: 0 0; } to { background-position: 100% 0; } }
+@keyframes bWin { 0% { opacity: .95; } 40% { opacity: .95; } 46% { opacity: .1; } 60% { opacity: .1; } 66% { opacity: .95; } }
+@keyframes bFlyR { from { transform: translateX(-160px); } to { transform: translateX(calc(100vw + 40px)); } }
+@keyframes bFlyL { from { transform: translateX(calc(100vw + 40px)); } to { transform: translateX(-200px); } }
+@keyframes bBusL { 0% { transform: translateX(calc(100vw + 40px)); } 36% { transform: translateX(-200px); } 100% { transform: translateX(-200px); } }
+@keyframes bCarR { 0% { transform: translateX(-160px); } 55% { transform: translateX(calc(100vw + 40px)); } 100% { transform: translateX(calc(100vw + 40px)); } }
+@keyframes bPop { 0% { transform: scale(.94); opacity: .3; } 100% { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { #boot .b-road, #boot .b-capy, #boot .b-stars, #boot .b-city, #boot .b-street, #boot .b-fly, #boot .b-car { animation: none; } }
 body.warping #app { filter: sepia(1) saturate(1.5) contrast(1.05); transition: filter .6s; }
 body.no-anim .floater { display: none; }
 
@@ -607,18 +611,67 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @keyframes lootBob { 50% { transform: translateY(-6px); } }
 @keyframes lootRise { 0% { transform: translateY(20px) scale(.5); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(-90px) scale(1.2); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .loot-rays, .loot-card::after, .loot-spark, .loot-stage canvas, .loot-tag { animation: none; } }
-#modal, #wheelModal, #letterModal, #circusModal, #seasonIntroModal, #newsModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
-#modal[hidden], #wheelModal[hidden], #letterModal[hidden], #circusModal[hidden], #seasonIntroModal[hidden], #newsModal[hidden] { display: none; }
-.news-box { width: min(92vw, 440px); max-width: 440px; text-align: left; }
-.news-head { margin: -2px -4px 8px; padding: 10px 12px 8px; background: #c4553d; border: 3px solid var(--dark); text-align: center; box-shadow: inset 0 -4px 0 rgba(0,0,0,.18); }
-.news-head h2 { margin: 0; font-size: 14px; line-height: 1.4; color: #fff4dc; text-shadow: 2px 2px 0 #4a3228; }
-.news-head small { display: block; margin-top: 4px; font-size: 9px; color: #ffd9c9; }
-#newsBody { max-height: 50dvh; overflow-y: auto; font-size: 11px; line-height: 1.6; padding: 2px 4px 8px; }
-#newsBody p { margin: 4px 0 8px; }
-.news-item { display: flex; gap: 8px; padding: 6px 0; border-top: 2px solid rgba(74, 50, 40, .18); }
-.news-item .ni { flex: none; width: 22px; text-align: center; font-size: 16px; }
-.news-item b { color: #b0412a; }
-.news-sign { margin-top: 8px; color: var(--brown); font-size: 10px; }
+#modal, #wheelModal, #letterModal, #circusModal, #seasonIntroModal, #newsModal, #feedbackModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
+#modal[hidden], #wheelModal[hidden], #letterModal[hidden], #circusModal[hidden], #seasonIntroModal[hidden], #newsModal[hidden], #feedbackModal[hidden] { display: none; }
+#newsModal .np-wrap { width: min(94vw, 520px); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#newsTitle { margin: 0; font-size: 15px; line-height: 1.5; color: #fff4dc; text-align: center; text-shadow: -2px 0 #2a1d1a, 2px 0 #2a1d1a, 0 -2px #2a1d1a, 0 2px #2a1d1a, -2px -2px #2a1d1a, 2px -2px #2a1d1a, -2px 2px #2a1d1a, 2px 2px #2a1d1a, 3px 3px 0 #2a1d1a; }
+#feedbackModal { z-index: 70; }
+#feedbackModal .modal-box { text-align: left; }
+#feedbackModal h2 { text-align: center; }
+#feedbackModal p { font-size: 10px; line-height: 1.7; margin: 0 0 8px; }
+#fbText, #fbContact { width: 100%; background: #fff; color: var(--dark); border: 3px solid var(--brown); font-family: var(--font); font-size: 10px; line-height: 1.6; padding: 8px; margin: 0 0 8px; resize: none; -webkit-user-select: text; user-select: text; }
+#fbText { height: 28dvh; min-height: 110px; }
+#fbCount { display: block; text-align: right; font-size: 8px; color: var(--brown); margin: -4px 0 8px; }
+#fbRow { display: flex; gap: 8px; }
+#fbRow .btn { flex: 1; padding: 11px 6px; }
+.np-btns { display: flex; gap: 8px; width: 100%; }
+.np-btns .btn { flex: 1; padding: 11px 4px; font-size: 10px; }
+#npWrite { background: #ffe08a; }
+.shard { display: inline-block; width: 1.1em; height: 1.1em; background: var(--shard) center / contain no-repeat; image-rendering: pixelated; vertical-align: -0.2em; margin: 0 .1em; }
+.np-tabs { display: flex; gap: 6px; width: 100%; justify-content: center; flex-wrap: wrap; }
+.np-tab { padding: 8px 10px 7px; background: #cdb98d; color: #1b1210; border: 3px solid #2a1d1a; border-bottom-width: 5px; font: 10px/1 var(--font); letter-spacing: 0; }
+.np-tab.on { background: #fff4dc; transform: translateY(-3px); box-shadow: 0 3px 0 #fff4dc; }
+.np-paper { position: relative; width: 100%; height: min(68dvh, 620px); perspective: 1500px; font-family: var(--font); color: #2a1d1a; filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .35)); transform-origin: 50% 100%; }
+#newsModal.open #newsTitle, #newsModal.open .np-tabs, #newsModal.open #npWrite, #newsModal.open #newsClose { animation: npFade .6s .7s both; }
+#npReveal { position: absolute; left: 0; top: 0; width: 100%; height: calc(100% - 36px); z-index: 6; pointer-events: none; image-rendering: pixelated; }
+#newsModal.open { animation: npDim .4s both; }
+.np-spark { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; z-index: 5; pointer-events: none; animation: npSpark .9s ease-out both; }
+@keyframes npDim { from { background: rgba(42, 29, 26, 0); } to { background: rgba(42, 29, 26, .72); } }
+@keyframes npFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes npSpark { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0; } }
+@keyframes npFly { 0% { transform: translate(48vw, 58vh) rotate(-640deg) scale(.1, .1); opacity: 0; } 14% { opacity: 1; } 46% { transform: translate(0, -4vh) rotate(8deg) scale(.5, .1); } 58% { transform: translate(0, 0) rotate(-3deg) scale(.62, .12); } 66% { transform: scale(.62, .12) rotate(0deg); } 84% { transform: scale(1.03, 1.05); } 92% { transform: scale(.99, .99); } 100% { transform: none; opacity: 1; } }
+.np-pages { position: absolute; inset: 0 0 36px 0; transform-style: preserve-3d; }
+.np-page { position: absolute; inset: 0; background: #f6edd2; border: 4px solid #2a1d1a; box-shadow: inset 0 0 0 3px #efe4c6, inset 0 0 0 5px #8a6b47; transform-origin: left center; backface-visibility: hidden; transition: transform .8s cubic-bezier(.5, .1, .3, 1), opacity .12s, box-shadow .8s; overflow: hidden; clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
+.np-page.flipped { transform: rotateY(-115deg); opacity: 0; pointer-events: none; transition: transform .8s cubic-bezier(.5, .1, .3, 1), opacity .25s .5s; }
+.np-in { height: 100%; overflow-y: auto; padding: 14px 15px 12px; font-size: 11px; line-height: 1.9; color: #1b1210; -webkit-overflow-scrolling: touch; }
+.np-in h3 { margin: 0 0 9px; padding-bottom: 8px; font: 13px/1.5 var(--font); color: #7a2230; border-bottom: 4px double #2a1d1a; }
+.np-in p { margin: 0 0 8px; text-align: left; }
+.np-in article + article { margin-top: 12px; padding-top: 10px; border-top: 3px double #2a1d1a; }
+.np-fig { margin: 6px 0 8px; border: 3px solid #2a1d1a; background: #cdb98d; box-shadow: 3px 3px 0 rgba(42, 29, 26, .35); }
+.np-fig canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; filter: sepia(.4) contrast(1.05); }
+.np-fig figcaption { font: 9px/1.6 var(--font); padding: 3px 6px; background: rgba(0, 0, 0, .08); border-top: 2px solid #2a1d1a; }
+.np-mast { text-align: center; padding-bottom: 8px; border-bottom: 4px double #2a1d1a; margin-bottom: 8px; }
+.np-mast .row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.np-mast .who { display: flex; flex-direction: column; align-items: center; gap: 3px; font: 9px/1.3 var(--font); }
+.np-mast .who canvas { width: 56px; height: 56px; image-rendering: pixelated; border: 3px solid #2a1d1a; background: #cdb98d; }
+.np-mast b { display: block; font: 18px/1.25 var(--font); color: #2a1d1a; text-shadow: 2px 2px 0 #c4553d; }
+.np-mast b i { font-style: normal; color: #3d5a8c; text-shadow: 2px 2px 0 #ffc9d4; }
+.np-mast small { display: block; margin-top: 7px; font: 8px/1.6 var(--font); color: #7a2230; }
+.np-lead { font: 13px/1.5 var(--font); text-align: center; margin: 8px 0 6px; color: #7a2230; }
+.np-toc { margin: 6px 0 0; padding: 6px 0 0 18px; border-top: 3px double #2a1d1a; font-size: 9px; line-height: 1.8; columns: 1; column-gap: 16px; }
+.np-cover .np-fig { width: 50%; margin-left: auto; margin-right: auto; }
+.np-cover p { font-size: 10px; margin-bottom: 6px; }
+.np-toc li { margin-bottom: 3px; }
+.np-sign { text-align: right; margin-top: 10px; font-size: 10px; }
+.np-nav { position: absolute; left: 0; right: 0; bottom: 0; height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+.np-nav button { width: 54px; height: 30px; background: #efe4c6; border: 3px solid #2a1d1a; border-bottom-width: 5px; color: #2a1d1a; font: 12px var(--font); }
+.np-nav button:disabled { opacity: .35; }
+.np-nav span { color: #fff4dc; font: 9px var(--font); text-shadow: -1px 0 #2a1d1a, 1px 0 #2a1d1a, 0 -1px #2a1d1a, 0 1px #2a1d1a, 2px 2px 0 #2a1d1a; }
+@keyframes npTurn { 0% { transform: rotateY(-70deg) scale(.92); opacity: .2; } 100% { transform: none; opacity: 1; } }
+#newsModal.open .np-paper.turn { animation: npTurn .45s cubic-bezier(.2, .8, .3, 1); transform-origin: left center; }
+@keyframes npUnfold { 0% { transform: perspective(1000px) translateY(140px) rotateX(78deg) scale(.45); opacity: 0; } 45% { opacity: 1; transform: perspective(1000px) translateY(20px) rotateX(24deg) scale(.88); } 75% { transform: perspective(1000px) rotateX(-7deg) scale(1.02); } 100% { transform: none; } }
+@media (max-width: 560px) { .np-btns .btn { font-size: 8px; padding: 10px 2px; } .np-in { font-size: 10px; padding: 12px 11px; } .np-in h3 { font-size: 11px; } .np-cover p { font-size: 9px; } .np-toc { font-size: 8px; } .np-mast b { font-size: 15px; } .np-mast .who canvas { width: 44px; height: 44px; } .np-tab { font-size: 8px; padding: 7px 7px 6px; } }
+@media (prefers-reduced-motion: reduce) { .np-page, #newsModal.open .np-paper, #newsModal.open #newsTitle, #newsModal.open .np-tabs, #newsModal.open #npWrite, #newsModal.open #newsClose { transition: none; animation: none; } }
 #siIcon { width: 96px; height: 96px; display: block; margin: 0 auto 8px; image-rendering: pixelated; image-rendering: crisp-edges; }
 #seasonIntroModal .btn + .btn { margin-top: 8px; }
 #seasonFx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 55; pointer-events: none; image-rendering: pixelated; image-rendering: crisp-edges; }
@@ -662,7 +715,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #hud { padding: 6px 12px 6px 10px; gap: 8px; }
   #coinIcon { width: 24px; height: 24px; }
   #coinCount { font-size: 20px; }
-  #gemBox { font-size: 16px; padding-left: 8px; gap: 4px; }
+  #gemBox, #shardBox { font-size: 16px; padding-left: 8px; gap: 4px; }
+  #shardBox .shard { width: 16px; height: 16px; }
   #gemIcon { font-size: 17px; }
   #cps { font-size: 11px; margin-top: 5px; }
   .lang-btn { padding: 9px 8px; min-width: 44px; font-size: 13px; }
@@ -670,14 +724,16 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #app.panel-closed { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
   #panelToggle { display: none; }
   /* Мінімалістичне меню: внизу тонка смужка з іконками; торкнувся — вміст виїжджає над нею, торкнувся ще раз чи сцени — ховається */
-  #panel, #app.panel-closed #panel { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0 6px calc(3px + env(safe-area-inset-bottom, 0px)); padding: 4px; flex-direction: column-reverse; max-height: 82dvh; box-shadow: inset 0 0 0 3px var(--dark), inset 0 0 0 4px var(--cream); }
+  #panel, #app.panel-closed #panel { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0 6px calc(3px + env(safe-area-inset-bottom, 0px)); padding: 7px; flex-direction: column-reverse; max-height: 82dvh; overflow: hidden; box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 6px var(--cream), inset 0 0 0 8px var(--dark); }
   #tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+  #panel, #app.panel-closed #panel { margin: 0; padding: 11px 8px calc(7px + env(safe-area-inset-bottom, 0px)); clip-path: none; box-shadow: inset 0 4px 0 var(--dark); }          /* на телефоні меню на всю ширину й до самого низу, як у програмі: без рамок по краях і порожніх смуг */
+  #app.sheet-open .card { box-shadow: inset 0 0 0 2px var(--panel-dark); }
   .tab, .tabmore { flex: 1 1 18%; padding: 5px 2px; --icw: 24px; }
   .tab .tab-icon { font-size: 22px; }
   .tab .tab-name { display: none; }
   .tab.secondary { display: none; flex: 1 1 17%; min-width: 0; order: 0; padding: 4px 2px 3px; gap: 2px; }
   .tab.secondary .tab-icon { font-size: 18px; }
-  .tab.secondary .tab-name { display: block; }
+  .tab.secondary .tab-name { display: block; font-size: 7px; letter-spacing: -.3px; }
   #app.more-open .tab.secondary:not([hidden]) { display: flex; }
   .tab.primary, .tabmore { order: 1; flex: 1 1 18%; }
   .tabmore { display: flex; align-items: center; justify-content: center; font-size: 22px; line-height: 1; }
@@ -722,13 +778,16 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 <body>
 <div id="boot" aria-hidden="true">
   <div class="b-stars"></div><div class="b-sun"></div>
+  <div id="bootSky"></div>
   <div class="b-city far" id="bootCityFar"></div><div class="b-city" id="bootCity"></div>
   <div class="b-title">CAPYTAP<small>MARKET</small></div>
   <div class="b-ground"><div class="b-road"></div></div>
+  <div class="b-street" id="bootStreet"></div>
+  <div id="bootCars"></div>
   <div class="b-shadow"></div>
   <div class="b-capy" id="bootCapy"></div>
-  <div class="b-coin"></div>
   <div class="b-load"><span id="bootText">Loading</span><span class="b-dots"></span><div class="b-bar"><i></i></div></div>
+  <div class="b-tip" id="bootTip"><b id="bootTipText"></b><small id="bootTipHint"></small></div>
 </div>
 <script>
 (function () {
@@ -738,60 +797,91 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
     for (var y = 0; y < rows.length; y++) { var x = 0; while (x < w) { var c = rows[y][x]; if (c === '.') { x++; continue; } var x2 = x; while (x2 < w && rows[y][x2] === c) x2++; h += '<rect x="' + x + '" y="' + y + '" width="' + (x2 - x) + '" height="1" fill="' + pal[c] + '"/>'; x = x2; } }
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + rows.length + '" width="' + w * sc + '" height="' + rows.length * sc + '" shape-rendering="crispEdges">' + h + '</svg>';
   }
-  var sc = Math.max(3, Math.min(6, Math.floor(Math.min(innerWidth, innerHeight) / 110)));
-  var cp = document.getElementById('bootCapy'); cp.innerHTML = svg(rows, pal, sc); cp.style.marginLeft = (-rows[0].length * sc / 2) + 'px';
-  var coin = document.querySelector('#boot .b-coin'); coin.style.bottom = 'calc(25% + ' + (rows.length * sc - 12 + 12) + 'px)'; coin.style.marginLeft = (sc * 4) + 'px';
-  var q = location.search, bootEl = document.getElementById('boot');
-  // друга поза Капі: задні й передні лапи «схрещуються», кадри змінюються під час бігу
-  var legRows = rows.slice(); (function () {
-    for (var r = 21; r <= 23; r++) {
-      var src = rows[r].split(''), out = src.slice(), c;
-      for (c = 4; c <= 9; c++) out[c] = '.'; for (c = 14; c <= 19; c++) out[c] = '.';
-      for (c = 4; c <= 9; c++) if (src[c] !== '.') out[c + 2] = src[c]; for (c = 14; c <= 19; c++) if (src[c] !== '.') out[c - 2] = src[c];
-      legRows[r] = out.join('');
-    }
-  })();
-  cp.innerHTML = '<span class="pa">' + svg(rows, pal, sc) + '</span><span class="pb">' + svg(legRows, pal, sc) + '</span>';
-  cp.firstChild.style.display = 'block'; cp.lastChild.style.cssText = 'position:absolute;left:0;top:0;display:block';
-  // піксельні монетки: аркуш із 4 кадрів обертання 8×8 (як справжня монета в грі)
-  var cs = Math.max(3, sc - 1), sheet = document.createElement('canvas'); sheet.width = 32; sheet.height = 8; var sg = sheet.getContext('2d');
-  [3.5, 2.4, 0.9, 2.4].forEach(function (rx, f) {
-    var inside = function (x, y) { var dx = (x - 3.5) / rx, dy = (y - 3.5) / 3.6; return dx * dx + dy * dy <= 1.02; };
-    for (var py = 0; py < 8; py++) for (var px = 0; px < 8; px++) {
-      if (!inside(px, py)) continue;
-      var edge = !inside(px - 1, py) || !inside(px + 1, py) || !inside(px, py - 1) || !inside(px, py + 1);
-      if (rx < 1.5) edge = py === 0 || py === 7;
-      sg.fillStyle = edge ? '#302418' : (px < 3.5 - rx * 0.25 && py < 4 ? '#fff6c8' : (px > 3.5 + rx * 0.3 && py > 3 ? '#c98a1d' : (Math.abs(px - 3.5) < rx * 0.35 && rx > 2 ? '#ffe08a' : '#f2b84b')));
-      sg.fillRect(f * 8 + px, py, 1, 1);
-    }
-  });
-  bootEl.style.setProperty('--coin', 'url(' + sheet.toDataURL() + ')'); bootEl.style.setProperty('--cw', (8 * cs) + 'px');
-  var groups = [[4, 40, 0], [3, 120, 1.7], [5, 70, 3.2], [4, 150, 4.6], [3, 30, 6], [5, 100, 7.5]];     // [скільки монет, висота над землею, затримка]
-  groups.forEach(function (gp, gi) {
-    var el = document.createElement('div'); el.className = 'b-cg'; el.style.setProperty('--d', (5.2 + (gi % 3) * 0.7) + 's'); el.style.setProperty('--w', (-gp[2]) + 's');
-    el.style.bottom = 'calc(25% + ' + (gp[1] * cs / 3) + 'px)';
-    for (var ci = 0; ci < gp[0]; ci++) { var px = document.createElement('i'); px.className = 'b-px'; px.style.left = (ci * 10 * cs) + 'px'; px.style.bottom = (Math.round(Math.sin(ci / Math.max(1, gp[0] - 1) * Math.PI) * 4 * cs)) + 'px'; px.style.setProperty('--pd', (-ci * 0.14) + 's'); el.appendChild(px); }
-    bootEl.appendChild(el);
-  });
-  var b = '', x = 0, i = 0;                                            // силует міста з вікнами, що мерехтять
-                                            // силует міста з вікнами, що мерехтять
-  while (x < 330) {
-    var hh = ((i * 37 + 11) % 5) * 9 + 36, ww = 18 + ((i * 13) % 4) * 5, col = i % 2 ? '#2a1747' : '#35205a';
-    b += '<rect x="' + x + '" y="' + (100 - hh) + '" width="' + ww + '" height="' + hh + '" fill="' + col + '"/>';
-    for (var wy = 100 - hh + 5; wy < 94; wy += 9) for (var wx = x + 4; wx < x + ww - 5; wx += 7) if (((wx * 7 + wy * 3) % 5) < 3) b += '<rect x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + (((wx * 3 + wy) % 4 === 0) ? '#ff9ad0' : '#ffd98a') + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
-    x += ww; i++;
+  var q = location.search, bootEl = document.getElementById('boot'), VW = innerWidth, VH = innerHeight;
+  var sc = Math.max(3, Math.min(6, Math.floor(Math.min(VW, VH) / 110))), cs = Math.max(2, sc - 1);
+  var cp = document.getElementById('bootCapy');
+  var legRows = rows.slice();                                              // друга поза Капі: лапи «схрещуються» під час бігу
+  for (var r = 21; r <= 23; r++) {
+    var src = rows[r].split(''), out = src.slice(), c;
+    for (c = 4; c <= 9; c++) out[c] = '.'; for (c = 14; c <= 19; c++) out[c] = '.';
+    for (c = 4; c <= 9; c++) if (src[c] !== '.') out[c + 2] = src[c]; for (c = 14; c <= 19; c++) if (src[c] !== '.') out[c - 2] = src[c];
+    legRows[r] = out.join('');
   }
-  var citySvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">' + b + '</svg>';
-  document.getElementById('bootCity').innerHTML = citySvg + citySvg; document.getElementById('bootCityFar').innerHTML = citySvg.replace(/fill="#[0-9a-f]{6}"/g, 'fill="#4a2a78"') + citySvg.replace(/fill="#[0-9a-f]{6}"/g, 'fill="#4a2a78"');
-  var lang = (navigator.language || 'en').toLowerCase();
-  document.getElementById('bootText').textContent = lang.indexOf('uk') === 0 ? 'Завантаження' : 'Loading';
-  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); } }, 12000);   // страховка
+  cp.innerHTML = '<span class="pa">' + svg(rows, pal, sc) + '</span><span class="pb">' + svg(legRows, pal, sc) + '</span>';
+  cp.style.marginLeft = (-rows[0].length * sc / 2) + 'px';
+  function pad(a) { var w = 0; a.forEach(function (x) { w = Math.max(w, x.length); }); return a.map(function (x) { while (x.length < w) x += '.'; return x; }); }
+  function sp(a, p, k) { return svg(pad(a), p, k); }
+  var P = { O: '#302418', w: '#fff4dc', r: '#ef8fa3', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', b: '#7a4f35', s: '#9fd8f0', K: '#1b1224', Y: '#ffd98a', o: '#e8863c', u: '#8b6bb0', n: '#3d5a8c', e: '#9c9087', f: '#ff5fa2' };
+  // ---- місто: два шари з вікнами, що блимають
+  function city(dark) {
+    var b = '', x = 0, i = 0;
+    while (x < 330) {
+      var hh = ((i * 37 + 11) % 5) * 9 + 36, ww = 18 + ((i * 13) % 4) * 5, col = dark ? '#4a2a78' : (i % 2 ? '#2a1747' : '#35205a');
+      b += '<rect x="' + x + '" y="' + (100 - hh) + '" width="' + ww + '" height="' + hh + '" fill="' + col + '"/>';
+      if (!dark && i % 4 === 1) b += '<rect x="' + (x + (ww >> 1) - 1) + '" y="' + (100 - hh - 8) + '" width="2" height="8" fill="' + col + '"/><rect x="' + (x + (ww >> 1) - 2) + '" y="' + (100 - hh - 8) + '" width="4" height="1" fill="#ff5fa2"/>';
+      for (var wy = 100 - hh + 5; wy < 94; wy += 9) for (var wx = x + 4; wx < x + ww - 5; wx += 7) {
+        var hsh = (wx * 7 + wy * 3);
+        if ((hsh % 5) < 3) b += '<rect class="' + (!dark && hsh % 3 === 0 ? 'bw' : '') + '" style="--bd:' + (3 + (hsh % 5)) + 's;animation-delay:-' + (hsh % 7) + 's" x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + (dark ? '#8a60c0' : (((wx * 3 + wy) % 4 === 0) ? '#ff9ad0' : '#ffd98a')) + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
+      }
+      x += ww; i++;
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">' + b + '</svg>';
+  }
+  document.getElementById('bootCity').innerHTML = city(false) + city(false);
+  document.getElementById('bootCityFar').innerHTML = city(true) + city(true);
+  // ---- вулиця: ліхтарі, дерева, поштова скринька їдуть із тією ж швидкістю, що й дорога
+  var LAMP = ['..OOOO..', '.OyyyyO.', '.OyyyyO.', '..OOOO..', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '..OOOO..', '.OOOOOO.'];
+  var TREE = ['....OOOOOO......', '..OOggggggOO....', '.OggggGgggggO...', 'OggGgggggggggO..', 'OgggggggGgggggO.', 'OggggGgggggggGO.', '.OggggggGgggOO..', '..OOggggggOO....', '....OOOOOO......', '......ObO.......', '......ObO.......', '......ObO.......', '.....OObOO......'];
+  var BOX = ['.OOOOOO.', 'OnnnnnnO', 'OnwwwwnO', 'OnnnnnnO', '.OOOOOO.', '...ObO..', '...ObO..', '...ObO..'];
+  var per = Math.max(VW, 520), st = document.getElementById('bootStreet'), html = '';
+  [[0.08, LAMP, sc], [0.27, TREE, sc], [0.5, LAMP, sc], [0.68, BOX, sc], [0.84, TREE, sc]].forEach(function (it) {
+    [0, 1].forEach(function (k) { html += '<span style="left:' + Math.round(it[0] * per + k * per) + 'px">' + sp(it[1], P, it[2]) + '</span>'; });
+  });
+  st.innerHTML = html; st.style.width = (per * 2) + 'px'; st.style.setProperty('--p', per + 'px'); st.style.setProperty('--sd', (per / 192) + 's');
+  // ---- небо: дирижабль, птахи, хмарки
+  var BLIMP = ['....OOOOOOOOOOOO....', '..OOwwwwwwwwwwwwOO..', '.OwwwwrrrwwwwwrrwwO.', 'OwwwwwrrrwwwwwrrwwwO', '.OwwwwrrrwwwwwrrwwO.', '..OOwwwwwwwwwwwwOO..', '....OOOOOOOOOOOO....', '.......OyyyyO.......', '.......OOOOOO.......'];
+  var CLOUD = ['....OOOO........', '..OOwwwwOO..OO..', '.OwwwwwwwwOOwwO.', 'OwwwwwwwwwwwwwwO', '.OOOOOOOOOOOOOO.'];
+  var B1 = ['O...O', '.O.O.', '..O..'], B2 = ['..O..', '.OOO.', 'O...O'];
+  var sky = '';
+  sky += '<div class="b-fly" style="top:19%;--an:bFlyL;--d:' + ((VW + 300) / 17) + 's;--w:-3s">' + sp(BLIMP, P, sc) + '</div>';
+  [[27, 0, 70], [33, 1, 52], [14, 2, 62]].forEach(function (c, i) { sky += '<div class="b-fly" style="top:' + c[0] + '%;--an:bFlyL;--d:' + ((VW + 300) / (9 + i * 3)) + 's;--w:-' + (i * 6) + 's;opacity:.55">' + sp(CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, sc + 1) + '</div>'; });
+  for (var bi = 0; bi < 4; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs) + '</span></div>';
+  document.getElementById('bootSky').innerHTML = sky;
+  // ---- машини на дорозі
+  var CAR = ['.....OOOOOOOO', '....OsssOsssO', '...OsssssOssssO', '.OOOBBBBBBBBBBOOO', 'OBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOO', '..OKKO......OKKO', '...OO........OO'];
+  var BUS = ['OOOOOOOOOOOOOOOOOOOOOOOO', 'OsssOsssOsssOsssOsssOssO', 'OsssOsssOsssOsssOsssOssO', 'OBBBBBBBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOOOOOOOO', '..OKKO..........OKKO..', '...OO............OO...'];
+  function pal2(B) { var p = {}; for (var k in P) p[k] = P[k]; p.B = B; return p; }
+  var cars = '';
+  cars += '<div class="b-car" style="bottom:calc(25% + 2px);--an:bCarR;--d:15s;--w:-1s"><span>' + sp(CAR, pal2('#e8863c'), sc) + '</span></div>';
+  cars += '<div class="b-car" style="bottom:calc(25% + 2px);--an:bCarR;--d:15s;--w:-9s"><span>' + sp(CAR, pal2('#4f9a63'), sc) + '</span></div>';
+  cars += '<div class="b-car l" style="bottom:calc(25% + 12px);--an:bBusL;--d:11s;--w:-2s"><span>' + sp(BUS, pal2('#f2b84b'), sc) + '</span></div>';
+  cars += '<div class="b-car l" style="bottom:calc(25% + 12px);--an:bBusL;--d:11s;--w:-7s"><span>' + sp(CAR, pal2('#ef5fa2'), sc) + '</span></div>';
+  document.getElementById('bootCars').innerHTML = cars;
+  // ---- підказки до гри (тап — наступна)
+  var TIPS = {
+    uk: ['Тапни 5 разів по єноту-злодію, щоб він нічого не вкрав.', 'Золотий покупець дає більше за всіх. Встигни його тапнути!', 'Червоний «!» біля магазину — це цирк. Там можна виграти скін чи кристал.', 'Біля дороги дві скриньки: синя для листів, червона для новин від розробників.', 'Кристали часу дає подорож у часі. Витрачай їх у Магазині часу.', 'Скін коштує 50 кристалів, а в цирку його можна виграти.', 'Осколки часу дає подорож у часі, а витрачаються вони в Магазині часу.', 'Пори року відкриються після другої епохи: сезон, Хелловін і час доби.', 'Щодня крутни Барабан фортуни, поки не охолов.', 'Щоб піти в нову епоху, збудуй торговий центр і дочекайся трьох ночей.', 'Завдання дня дає кристал. Заглядай до нього.', 'Дощ вмикає крапелька біля вивіски магазину.', 'Тапни по звірятку: підстрибне й щось скаже.', 'Люки димлять не від пожежі, а для затишку.', 'Телефон гріється? У налаштуваннях можна вимкнути хмари, пару й анімації.', 'Новий маркет будує Бодя: на старий кладуть біле полотно, а далі глянь сам.', 'Чим більше тапів, тим більше монет. Простіше нікуди.'],
+    en: ['Tap the thief raccoon 5 times so he steals nothing.', 'The golden shopper pays the most. Tap them in time!', 'The red "!" by the shop is the circus. You can win a skin or a crystal there.', 'Two boxes by the road: blue for letters, red for the developers\' news.', 'Time travel gives time shards. Spend them in the Time shop.', 'A skin costs 50 crystals, and you can win one at the circus.', 'Seasons unlock after the second era: season, Halloween and time of day.', 'Spin the Wheel of Fortune every day while it is ready.', 'To enter a new era, build the mall and wait three nights.', 'The daily task gives a crystal. Check on it.', 'The little drop by the shop sign turns rain on.', 'Tap an animal: it hops and says something.', 'Manholes steam for coziness, not because of a fire.', 'Phone getting warm? Turn off clouds, steam and animations in settings.', 'Bodya builds the new market: a white tarp goes over the old one, then see for yourself.', 'More taps, more coins. It could not be simpler.']
+  };
+  var lang = 'en';
+  try { var sv = JSON.parse(localStorage.getItem('capyThroughTime_save') || 'null'); lang = sv && (sv.lang === 'uk' || sv.lang === 'en') ? sv.lang : (/^uk/.test((navigator.language || 'en').toLowerCase()) ? 'uk' : 'en'); } catch (e) { lang = /^uk/.test((navigator.language || 'en').toLowerCase()) ? 'uk' : 'en'; }
+  document.getElementById('bootText').textContent = lang === 'uk' ? 'Завантаження' : 'Loading';
+  var arr = TIPS[lang], ti = Math.floor(Math.random() * arr.length), tipEl = document.getElementById('bootTip'), tipTxt = document.getElementById('bootTipText'), auto = null;
+  document.getElementById('bootTipHint').textContent = lang === 'uk' ? '👆 тапни, щоб побачити іншу підказку' : '👆 tap for another tip';
+  function showTip(first) {
+    if (!first) ti = (ti + 1) % arr.length;
+    tipTxt.textContent = (lang === 'uk' ? 'Підказка: ' : 'Tip: ') + arr[ti];
+    tipEl.classList.remove('pop'); void tipEl.offsetWidth; tipEl.classList.add('pop');
+  }
+  function restart() { clearInterval(auto); auto = setInterval(function () { if (!document.getElementById('boot')) clearInterval(auto); else showTip(); }, 6000); }
+  showTip(true); restart();
+  bootEl.addEventListener('pointerdown', function () { showTip(); restart(); });
+  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); } }, 18000);   // страховка
 })();
 function bootDone() {
   var el = document.getElementById('boot'); if (!el) return;
   el.classList.add('ready');
   if (/[?&]hold=1/.test(location.search)) return;
-  var wait = Math.max(0, 3300 - performance.now());                    // показуємо принаймні трохи, щоб анімація не миготіла
+  var wait = Math.max(0, 6600 - performance.now());                    // показуємо кілька секунд, щоб устигнути прочитати підказку
   setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); }, wait + 250);
 }
 </script>
@@ -804,7 +894,7 @@ function bootDone() {
           <div id="coinCount">0</div>
           <div id="cps"></div>
         </div>
-        <div id="gemBox" aria-live="off"><span id="gemIcon">💎</span><span id="gemCount">0</span></div>
+        <div id="gemBox" aria-live="off"><span id="gemIcon">💎</span><span id="gemCount">0</span></div><div id="shardBox" aria-live="off" hidden><span class="shard"></span><span id="shardCount">0</span></div>
       </div>
       <div id="goalLine" class="chip dark" hidden></div>
       <div id="boosts" aria-live="polite"></div>
@@ -1044,10 +1134,24 @@ function bootDone() {
   </div>
 </div>
 <div id="newsModal" hidden>
-  <div class="frame modal-box news-box" role="dialog" aria-modal="true" aria-labelledby="newsTitle">
-    <div class="news-head"><h2 id="newsTitle"></h2><small id="newsSub"></small></div>
-    <div id="newsBody"></div>
-    <button type="button" class="btn wide go" id="newsClose"></button>
+  <div class="np-wrap" role="dialog" aria-modal="true" aria-labelledby="newsTitle">
+    <h2 id="newsTitle"></h2><small id="newsSub" hidden></small>
+    <div class="np-tabs" id="npTabs"></div>
+    <div class="np-paper" id="npPaper">
+      <div class="np-pages" id="newsBody"></div>
+      <div class="np-nav"><button type="button" id="npPrev" aria-label="Назад">◀</button><span id="npNum"></span><button type="button" id="npNext" aria-label="Далі">▶</button></div>
+    </div>
+    <div class="np-btns"><button type="button" class="btn" id="npWrite"></button><button type="button" class="btn go" id="newsClose"></button></div>
+  </div>
+</div>
+<div id="feedbackModal" hidden>
+  <div class="frame modal-box" role="dialog" aria-modal="true" aria-labelledby="fbTitle">
+    <h2 id="fbTitle"></h2>
+    <p id="fbHint"></p>
+    <textarea id="fbText" maxlength="800"></textarea>
+    <span id="fbCount"></span>
+    <input id="fbContact" type="text" maxlength="80" autocomplete="off">
+    <div id="fbRow"><button type="button" class="btn" id="fbCancel"></button><button type="button" class="btn go" id="fbSend"></button></div>
   </div>
 </div>
 <div id="letterModal" hidden>
@@ -1107,7 +1211,7 @@ const CONFIG = {
   EXTRA_BOTTOM: 36,           // скільки рядків бруківки додається знизу, щоб було більше видно й де гуляти
   MAX_VIEW_W: 2600,            // найширша сцена на великому екрані (пікселів сцени)
   MIN_VIEW_W: 296,            // на вузькому вікні масштаб збільшується, а краї «ядра» (до 12 пікселів) можуть не поміститися
-  MAX_OFF_Y: 400,             // скільки додаткового неба можна додати зверху на високому екрані
+  MAX_OFF_Y: 700,             // скільки додаткового неба можна додати зверху на високому екрані
   WORLD_W: 1400,              // ширина всієї вулиці на ПК (пікселів сцени): її можна гортати стрілками ◀ ▶
   MOBILE_PAD: 360,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
   DAY_SECONDS: 300,           // скільки секунд триває повна доба (день + ніч)
@@ -1777,18 +1881,18 @@ function trackDef(key) {
 // Покращення за Кристали часу. costs — ціна кожного рівня (довжина = максимум рівнів).
 // Що саме робить кожне — див. функції wsEffect… нижче.
 const WORKSHOP = [
-  { id: 'headStart',    icon: '🏗️', costs: [5, 20, 60] },               // старт одразу з вищого рівня магазину
-  { id: 'autoTap',      icon: '🤖', costs: [5, 12, 30, 70, 160] },      // автотапи: +1 тап на секунду за рівень
-  { id: 'offlineHours', icon: '🌙', costs: [6, 16, 40] },               // офлайн довше: +4 години за рівень
-  { id: 'offlineRate',  icon: '💤', costs: [6, 16, 40, 90] },           // офлайн щедріший: +10% за рівень
-  { id: 'salesFreq',    icon: '🏷️', costs: [8, 20, 50, 110] },          // розпродажі частіші: −10% до проміжку
-  { id: 'saleLength',   icon: '⏱️', costs: [6, 15, 35, 80] },           // розпродаж довший: +30 с
-  { id: 'wheelFast',    icon: '🎡', costs: [10, 40] },                  // колесо двічі на день, потім тричі
-  { id: 'thiefLess',    icon: '🦝', costs: [5, 12, 28, 60] },           // єнот краде менше й рідше
-  { id: 'cheaperDepts', icon: '🛒', costs: [8, 18, 40, 90, 200] },      // відділи дешевші на 3%
-  { id: 'cheaperTeam',  icon: '🐾', costs: [8, 18, 40, 90, 200] },      // звірята дешевші на 5%
-  { id: 'tapPower',     icon: '👆', costs: [6, 14, 32, 70, 150] },      // тап сильніший: +50%
-  { id: 'crystalGain',  icon: '💎', costs: [12, 30, 70, 150, 320] }     // більше кристалів за подорож: +10%
+  { id: 'headStart',    icon: '🏗️', costs: [1, 2, 3] },               // старт одразу з вищого рівня магазину
+  { id: 'autoTap',      icon: '🤖', costs: [1, 1, 2, 2, 3] },      // автотапи: +1 тап на секунду за рівень
+  { id: 'offlineHours', icon: '🌙', costs: [1, 1, 2] },               // офлайн довше: +4 години за рівень
+  { id: 'offlineRate',  icon: '💤', costs: [1, 1, 2, 2] },           // офлайн щедріший: +10% за рівень
+  { id: 'salesFreq',    icon: '🏷️', costs: [1, 1, 2, 2] },          // розпродажі частіші: −10% до проміжку
+  { id: 'saleLength',   icon: '⏱️', costs: [1, 1, 1, 2] },           // розпродаж довший: +30 с
+  { id: 'wheelFast',    icon: '🎡', costs: [2, 3] },                  // колесо двічі на день, потім тричі
+  { id: 'thiefLess',    icon: '🦝', costs: [1, 1, 2, 2] },           // єнот краде менше й рідше
+  { id: 'cheaperDepts', icon: '🛒', costs: [1, 2, 2, 3, 4] },      // відділи дешевші на 3%
+  { id: 'cheaperTeam',  icon: '🐾', costs: [1, 2, 2, 3, 4] },      // звірята дешевші на 5%
+  { id: 'tapPower',     icon: '👆', costs: [1, 2, 2, 3, 4] },      // тап сильніший: +50%
+  { id: 'crystalGain',  icon: '💎', costs: [2, 2, 3, 4, 5] }     // більше кристалів за подорож: +10%
 ];
 const WHEEL_HOURS_BY_LEVEL = [24, 12, 8];
 
@@ -1871,6 +1975,7 @@ const GLYPHS = {
   wheel:    ['..dddd..', '.dhrrhd.', 'dhrrrrhd', 'drrddrrd', 'drrddrrd', 'dhrrrrhd', '.dhrrhd.', '..dddd..'],
   clock:    ['..dddd..', '.dwwwwd.', 'dwwwdwwd', 'dwwwdwwd', 'dwwwddwd', 'dwwwwwwd', '.dwwwwd.', '..dddd..'],
   gem:      ['..dddd..', '.dSSwSd.', 'dSwSSSSd', 'dsSSSSsd', '.dsSSsd.', '..dssd..', '...dd...', '........'],
+  shard:    ['...VV...', '..VwuV..', '.VwuvvV.', '.VuvvvV.', 'VuvvvPV.', '.VvvPPV.', '..VvPV..', '...VV...'],       // осколок часу
   book:     ['dddddddd', 'dwwwdwwd', 'dwewdwed', 'dwwwdwwd', 'dwewdwed', 'dwwwdwwd', 'dddddddd', '........'],
   calendar: ['dddddddd', 'drrrrrrd', 'dwwwwwwd', 'dwdwdwwd', 'dwwwwwwd', 'dwdwwwwd', 'dwwwwwwd', 'dddddddd']
 };
@@ -2169,12 +2274,14 @@ const TEAM_COSTUMES = [
    outfits: [ {b:'k',l:'z',d:'stripes',c:'f'}, {b:'z',l:'T',d:'buttons',c:'f'}, {b:'u',l:'k',d:'belt',c:'T'}, {b:'f',l:'k',d:'collar',c:'T'}, {b:'T',l:'z',d:'dots',c:'w'}, {b:'v',l:'k',d:'pocket',c:'f'} ],
    glasses: ['visor'] }
 ];
+function teamEyes(g, base) { for (let y = 4; y <= 7; y++) for (let x = 0; x < 16; x++) { const c = base[y][x]; if (c === 'X' || c === 'x') g[y][x] = c; } }       // костюм не закриває очі
 // Костюм героя в епосі: тулуб, капелюх і прикраси (кожен герой одягнений по-своєму)
 function composeTeamCostume(id, epoch) {
   const p = TEAM_PARTS[id], k = Object.keys(TEAM_PARTS).indexOf(id), cs = TEAM_COSTUMES[epoch % TEAM_COSTUMES.length];
   const o = cs.outfits[(k * 5 + 1) % cs.outfits.length], hat = cs.hats[(k * 2 + (k >> 2)) % cs.hats.length];
   const lower = CHIBI_LOWER.map(row => row.replace(/1/g, o.b).replace(/2/g, o.l).replace(/3/g, p.feet));
   const g = [...p.top, ...lower].map(row => (row + row.split('').reverse().join('')).split(''));
+  const base0 = g.map(r => r.slice());
   const put = (x, y, c) => { if (y >= 0 && y < 16 && x >= 0 && x < 16) g[y][x] = c; };
   teamDeco(o.d, o.c, put);
   if (Array.isArray(hat)) hat.forEach((row, i) => row.split('').forEach((c, x) => { if (c !== '.') put(x, i, c); }));
@@ -2189,6 +2296,7 @@ function composeTeamCostume(id, epoch) {
     for (let x = 3; x <= 12; x++) if (g[10][x] !== '.' && g[10][x] !== 'd') g[10][x] = 'e';
   }
   if (cs.glasses && k % 5 === 3) TEAM_GLASSES(put, cs.glasses[0]);
+  teamEyes(g, base0);
   return g.map(row => row.join(''));
 }
 // Спрайти героїв для кожної епохи: team_<id>_e<номер>
@@ -2206,6 +2314,7 @@ function composeTeamSkin(id, kind) {
   else { body = 'z'; legs = 'n'; deco = 'belt'; decoC = 'r'; }
   const lower = CHIBI_LOWER.map(row => row.replace(/1/g, body).replace(/2/g, legs).replace(/3/g, p.feet));
   const g = [...p.top, ...lower].map(row => (row + row.split('').reverse().join('')).split(''));
+  const base0 = g.map(r => r.slice());
   const put = (x, y, c) => { if (y >= 0 && y < 16 && x >= 0 && x < 16) g[y][x] = c; };
   const row = (y, x0, x1, c) => { for (let x = x0; x <= x1; x++) put(x, y, c); };
   const hat = rows => rows.forEach((r, y) => r.split('').forEach((c, x) => { if (c !== '.') put(x, y, c); }));
@@ -2229,6 +2338,7 @@ function composeTeamSkin(id, kind) {
     row(8, 3, 12, 'z'); row(9, 4, 11, 'z');
     put(5, 5, 'w'); put(10, 5, 'w');
   }
+  teamEyes(g, base0);
   return g.map(r => r.join(''));
 }
 ['party', 'ninja', 'chef', 'wizard', 'royal', 'santa', 'witch'].forEach(kind => TEAM.forEach(m => { SPRITES['team_' + m.id + '_sk_' + kind] = { rows: composeTeamSkin(m.id, kind) }; }));
@@ -2469,6 +2579,25 @@ function makeCapySkinRows(kind) {
     cellsOf(10, 9, ['bb', 'bw']); cellsOf(7, 14, ['cc.', 'ccc']);
     around(cellsOf(3, 2, ['..bbbbbbbb..', '.bbbbbbbbbb.', '.dddddddddd.']));
     cellsOf(1, 5, ['bbbbbbbbbbbbbb']);
+  } else if (kind === 'mel' || kind === 'nika') {            // скіни розробників: MEL — лисиця, NIKA — зайка
+    const fox = kind === 'mel';
+    for (let y = 0; y < 24; y++) for (let x = 0; x < 27; x++) {
+      const c = at(x, y); if (c !== 'B' && c !== 'L' && c !== 'M') continue;
+      if (fox) put(x, y, c === 'B' ? 'o' : c === 'L' ? 'w' : (y >= 20 ? 'd' : (x <= 6 && y >= 10 ? 'w' : 'r')));
+      else put(x, y, c === 'B' ? 'w' : c === 'L' ? 'q' : (y >= 20 ? 'q' : 'p'));
+    }
+    if (fox) {
+      for (let y = 9; y <= 16; y++) for (let x = 0; x < 10; x++) if (at(x, y) === 'o' && (x < 5 || (y > 12 && x < 8))) put(x, y, 'w');                  // біла мордочка
+      put(1, 8, 'k'); put(2, 8, 'k');
+      around(cellsOf(4, -1 + 1, ['.oo.', 'oord'.replace('d', 'o'), 'orro', 'oooo'])); around(cellsOf(9, 0, ['..oo', '.oro', 'orro', 'oooo']));       // гострі вушка
+      around(cellsOf(20, 1, ['....ww', '...wwo', '..wooo', '.ooooo', '.ooooo', '.oooo.', '..ooo.']));                                              // пухнастий хвіст із білим кінчиком
+      cellsOf(12, 15, ['w', 'ww']); for (let x = 12; x <= 24; x++) { if (at(x, 15) === 'o') put(x, 15, 'w'); }                                       // біле черевце
+    } else {
+      around(cellsOf(4, 0, ['.ww.', 'wppw', 'wppw', 'wppw', 'wwww'])); around(cellsOf(9, 0, ['.ww.', 'wppw', 'wppw', 'wppw', 'wwww']));                       // довгі вушка
+      around(cellsOf(21, 11, ['.ww', 'www', 'www', '.ww']));                                                                                       // хвостик-помпон
+      cellsOf(6, 14, ['pp.pp', '.ppp.', 'pp.pp']); put(8, 14, 'f');                                                                                 // рожевий бант
+      put(4, 10, 'q'); put(5, 10, 'q');
+    }
   } else if (kind === 'sailor') {                            // моряк: біла матроска з синім коміром, шапка з якорем, червона хустка
     dye(12, 25, 9, 17, 'w');
     for (let x = 12; x <= 25; x++) { if (at(x, 9) === 'w') put(x, 9, 'n'); if (at(x, 10) === 'w') put(x, 10, 'n'); if (at(x, 16) === 'w') put(x, 16, 'n'); }
@@ -2482,6 +2611,7 @@ function makeCapySkinRows(kind) {
 SPRITES.capy_pirate = { rows: makeCapySkinRows('pirate') };
 SPRITES.capy_astro = { rows: makeCapySkinRows('astro'), variants: { blink: { K: PALETTE.B } } };
 ['wizard', 'chef', 'explorer', 'detective', 'sailor', 'santa', 'witch', 'flower', 'beach', 'autumn'].forEach(k => { SPRITES['capy_' + k] = { rows: makeCapySkinRows(k), variants: { blink: { K: PALETTE.B } } }; });   // незалежні від епохи скіни Капі
+SPRITES.capy_mel = { canvas: SPRITES.foxcub_0.canvas }; SPRITES.capy_nika = { canvas: SPRITES.bunny_0.canvas };      // скіни розробників: лисеня (MEL) і зайчик (NIKA) з гри
 for (let e = 0; e < 8; e++) SPRITES['capy_ep' + e] = { rows: makeCapySkinRows('ep' + e), variants: { blink: { K: PALETTE.B } } };   // по скіну Капі на кожну епоху
 // Привид 11×13 (для «Полювання на привидів») і малий привид 5×7 (блимає у вікнах будинків на Хелловін)
 SPRITES.ghost = { rows: [
@@ -2518,8 +2648,27 @@ const EPOCH_COIN_COLORS = [['h', 'y'], ['T', 'w'], ['k', 'f'], ['v', 'T'], ['n',
 [{ S: 'p', s: 'r', w: 'w' }, { S: 'T', s: 'n', w: 'w' }, { S: 'f', s: 'P', w: 'y' }, { S: 'v', s: 'V', w: 'T' },
  { S: 'a', s: 'n', w: 'w' }, { S: 'm', s: 'g', w: 'w' }, { S: 'S', s: 'u', w: 'y' }, { S: 'T', s: 'f', w: 'w' }].forEach((map, i) => {
   SPRITES['gem_' + i] = { rows: GLYPHS.gem.map(row => row.replace(/[A-Za-z]/g, ch => map[ch] || ch)) };
+  SPRITES.shard = { rows: GLYPHS.shard.slice() };
 });
-const EPOCH_GEM_EMOJI = ['💎', '🔮', '🪩', '👾', '💠', '🍀', '🌠', '✨'];     // у текстах значок кристала теж змінюється
+const SHARD_CH = '';                                                          // у текстах осколок позначається цим символом, а на екрані замінюється піксельним малюнком
+const EPOCH_GEM_EMOJI = ['💎', '🔮', '🪩', '👾', '💠', '🍀', '🌠', '✨'];     // кристали (скіни): значок міняється з епохою
+(function shardIcons() {
+  const c = document.createElement('canvas'); c.width = 8; c.height = 8; const g = c.getContext('2d');
+  GLYPHS.shard.forEach((row, y) => { for (let x = 0; x < 8; x++) if (row[x] !== '.') { g.fillStyle = PALETTE[row[x]]; g.fillRect(x, y, 1, 1); } });
+  document.documentElement.style.setProperty('--shard', 'url(' + c.toDataURL() + ')');
+  const RE = //;
+  const fix = node => {
+    if (node.nodeType === 3) {
+      if (!RE.test(node.data)) return;
+      const parts = node.data.split(//), frag = document.createDocumentFragment();
+      parts.forEach((p, i) => { if (i) { const sp = document.createElement('span'); sp.className = 'shard'; frag.appendChild(sp); } if (p) frag.appendChild(document.createTextNode(p)); });
+      if (node.parentNode) node.parentNode.replaceChild(frag, node);
+    } else if (node.nodeType === 1 && node.tagName !== 'TEXTAREA' && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE') { [...node.childNodes].forEach(fix); }
+  };
+  window.__shardFix = () => fix(document.body);
+  new MutationObserver(muts => muts.forEach(m => { if (m.type === 'characterData') fix(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, { childList: true, characterData: true, subtree: true });
+  fix(document.body);
+})();
 // Яку епоху зараз показуємо: справжню або ту, що користувач переглядає (лише вигляд, прогрес не змінюється)
 // Обрана минула епоха (state.activeEpoch, -1 — поточна). Заробіток, зокрема офлайн, записується в обрану епоху
 function previewIdx() { const a = state.activeEpoch; return ((DEV_OPEN_ALL || state.epoch >= 1) && a >= 0 && a < EPOCHS.length && a !== state.epoch % EPOCHS.length) ? a : null; }
@@ -2802,33 +2951,36 @@ const translations = {
     wheelReady: 'Колесо фортуни готове! 🎡',
     prize_coins: 'Монети: +{0}',
     themeLocked: 'Необхідно пройти 2 епоху',
+    fbBtn: '✉ Написати розробникам', fbTitle: 'Напиши нам', fbHint: 'Що тобі подобається, що зламалося, чого не вистачає? Читаємо кожне повідомлення.', fbContact: 'Контакт (не обов’язково)', fbSend: 'Надіслати', fbCancel: 'Скасувати', fbThanks: 'Дякуємо! Повідомлення відправлено 💌', fbFail: 'Не вдалося відправити. Спробуй пізніше.', fbCopied: 'Адреса ще не налаштована. Текст скопійовано, надішли його розробникам.', fbEmpty: 'Спершу напиши кілька слів.',
     newsTitle: '📮 Пошта від розробників', newsSub: 'Свіжі новини CapyTap',
-    newsIntro: 'Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.',
-    newsH0: 'Баба Яга на Хелловін.', newsT0: 'Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки».',
-    newsH1: 'Темніший Хелловін.', newsT1: 'Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі.',
-    newsH2: 'Нова пошта.', newsT2: 'Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання.',
-    newsH3: 'Нова будівля під полотном.', newsT3: 'Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає.',
-    newsH4: 'Ширша вулиця.', newsT4: 'Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів.',
-    newsH5: 'Пелюстки навесні.', newsT5: 'Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало.',
-    newsH6: 'Магазин часу.', newsT6: 'У майстерні часу список покращень за кристали тепер так і називається.',
-    newsH7: 'Завантаження.', newsT7: 'На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки.',
-    newsH8: 'Вікна й пара.', newsT8: 'У всіх будинків є вікна, а пара з люків стала лагіднішою.',
+    newsIntro: 'Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!',
+    newsH0: 'Газета замість листа.', newsT0: 'Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше.',
+    newsH1: 'Годинникова вежа.', newsT1: 'На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху.',
+    newsH2: 'Нове завантаження.', newsT2: 'Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну.',
+    newsH3: 'Нова відьма.', newsT3: 'Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф.',
+    newsH4: 'Більші маркети.', newsT4: 'На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли.',
+    newsH5: 'Надкусані хмари.', newsT5: 'У скіні «Цукрові хмари» частину хмар ніби надкусили.',
+    newsH6: 'Крапля дощу.', newsT6: 'Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину.',
+    newsH7: 'Чіткі рамки.', newsT7: 'Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком.',
+    newsH8: 'Капі вночі.', newsT8: 'У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят.',
     newsSign: 'Дякуємо, що граєш! Пиши, що хочеш побачити далі. — Команда CapyTap', newsClose: 'Зрозуміло!',
     fear0: 'Ой-ой-ой!', fear1: 'Мамо!', fear2: 'Моя булочка!', fear3: 'Я тут просто гуляв!', fear4: 'Куди їдеш?!', fear5: 'Тікаємо!',
     seasonIntroTitle: 'Пори року відкрито!', seasonIntroText: 'Дві епохи позаду, і тепер можна самому обирати пору року: весну, літо, осінь, зиму чи моторошний Хелловін. Кожна змінює дерева, погоду й настрій вулиці. Шукай нову кнопку з колесом у меню!', seasonIntroGo: '🌸 До пір року', seasonIntroLater: 'Пізніше',
     mailSay0: 'Пошта! Розпишіться тут!', mailSay1: 'Вам лист! Швидше за голуба!', mailSay2: 'Доставка-експрес. Кепка при мені!', mailSay3: 'Лист принесено, лапку на серце.',
     gfear0: 'Привид!!! Мамо!', gfear1: 'Бу-у-у… ой, це ж він!', gfear2: 'Я нічого не бачив!', gfear3: 'У вікні хтось є!', gfear4: 'Тікаймо, він без квитка!', gfear5: 'Це ж просто простирадло? НІ!',
-    hagBang: '🧙 Над містом летить Баба Яга! Тапни на «!»', hagArrived: '🏚️ Хатка на курячих лапках прийшла! Тапни її', hagTitle: 'Хатка Баби Яги',
-    hagSub: 'Баба Яга: «Три казанки, три сюрпризи! Запам’ятай, де найкращий, і вгадай!»', hagStart: 'Зазирнути!', hagWatch: 'Дивись уважно, що де лежить…', hagShuffle: 'Перемішую!', hagPick: 'Вибирай казанок!',
-    hagGood: 'Влучив у головний приз!', hagMiss: 'Ой, не той! Та кристал твій.', hagDone: 'Дякую, бабусю!',
+    hagBang: '🧙 Над містом летить відьма! Тапни на «!»', hagArrived: '🏚️ Хатка на курячих лапках прийшла! Тапни її', hagTitle: 'Хатка відьми',
+    hagSub: 'Відьма: «Три казанки, три сюрпризи! Запам’ятай, де найкращий, і вгадай!»', hagStart: 'Зазирнути!', hagWatch: 'Дивись уважно, що де лежить…', hagShuffle: 'Перемішую!', hagPick: 'Вибирай казанок!',
+    hagGood: 'Влучив у головний приз!', hagMiss: 'Ой, не той! Та кристал твій.', hagDone: 'Дякую, відьмочко!',
+    clockWait: 'Годинник цокає… Збудуй торговий центр і дочекайся трьох ночей. Тоді він відвезе вас у нову епоху.', clockNoGain: "Ще зарано: заробляй далі, і годинник заплатить осколками за подорож.", clockWarn: 'Ніч третя. Годинник б’є тричі: час вирушати! Тапни по ньому або відкрий Годинник у меню.',
+    npMast: 'ВІСТІ З ВУЛИЦІ КАПІ', npCoverHead: 'Свіжий випуск!', npIn: 'У номері:', npCap1: 'Годинникова вежа торгового центру опівночі.', npCap2: 'Нічне місто на екрані завантаження.', npCap3: 'Нова відьма облітає місто.',
     seasonFx_winter: 'Пухнастий сніг лягає на дахи', seasonFx_spring: 'Прокидаються квіти й пелюстки', seasonFx_summer: 'Сонце гріє на повну', seasonFx_autumn: 'Вітер несе золоте листя', seasonFx_halloween: 'Тссс… у місті щось шарудить',
     circusFlag: 'ЦИРК ФОРТУНИ', circusTitle: 'Цирк Фортуни', circusSub: 'Клоун Бубон: «Скіни й кристали часу — тільки в мене!»', circusSpin: 'Крутити!', circusDone: 'Дякую, цирку!',
     circusBang: 'Біля магазину щось з’явилось… Тапни на червоний «!»', circusArrived: 'Цирк Фортуни розкрився! Тапни на нього',
     circusAgain: 'Ще одна спроба! Крути знову', prize_skin: 'Новий скін: {0}! Він чекає у вкладці скінів',
     skin_hero_party: 'Герої у святкових костюмах', skin_hero_ninja: 'Герої-ніндзя',
-    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_lightning: 'Фіолетові блискавки', skin_capy_wizard: 'Капі-чарівник', skin_capy_chef: 'Капі-шеф', skin_capy_explorer: 'Капі-дослідник', skin_capy_detective: 'Капі-детектив', skin_capy_sailor: 'Капі-моряк', skin_shop_ice: 'Крижаний магазин', skin_shop_wood: 'Дерев’яна хатина', skin_shop_garden: 'Магазин-сад', skin_weather_cottoncloud: 'Цукрові хмари', skin_weather_goldcloud: 'Золоті хмари', skin_weather_starcloud: 'Зоряні хмари', skin_hero_chef: 'Герої-кухарі', skin_hero_wizard: 'Герої-чарівники', skin_hero_royal: 'Герої-королі', skin_capy_santa: 'Капі — Дід Мороз', skin_capy_witch: 'Капі-відьма', skin_capy_flower: 'Капі у квітах', skin_capy_beach: 'Капі на пляжі', skin_capy_autumn: 'Осінній Капі', skin_hero_santa: 'Помічники Діда Мороза', skin_hero_witch: 'Герої-відьмочки', skin_shop_xmas: 'Різдвяний магазин', skin_shop_halloween: 'Магазин на Хелловін', skin_shop_spring: 'Весняний магазин', skin_shop_autumn: 'Осінній магазин', skin_street_snow: 'Сніжна бруківка', skin_street_leaves: 'Бруківка з листям',
+    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_lightning: 'Фіолетові блискавки', skin_capy_wizard: 'Капі-чарівник', skin_capy_chef: 'Капі-шеф', skin_capy_explorer: 'Капі-дослідник', skin_capy_detective: 'Капі-детектив', skin_capy_sailor: 'Капі-моряк', skin_shop_ice: 'Крижаний магазин', skin_shop_wood: 'Дерев’яна хатина', skin_shop_garden: 'Магазин-сад', skin_weather_cottoncloud: 'Цукрові хмари', skin_weather_goldcloud: 'Золоті хмари', skin_weather_starcloud: 'Зоряні хмари', skin_hero_chef: 'Герої-кухарі', skin_hero_wizard: 'Герої-чарівники', skin_hero_royal: 'Герої-королі', skin_capy_santa: 'Капі — Дід Мороз', skin_capy_witch: 'Капі-відьма', skin_capy_flower: 'Капі у квітах', skin_capy_beach: 'Капі на пляжі', skin_capy_autumn: 'Осінній Капі', skin_hero_santa: 'Помічники Діда Мороза', skin_hero_witch: 'Герої-відьмочки', skin_shop_xmas: 'Різдвяний магазин', skin_shop_halloween: 'Магазин на Хелловін', skin_shop_spring: 'Весняний магазин', skin_shop_autumn: 'Осінній магазин', skin_street_snow: 'Сніжна бруківка', skin_street_leaves: 'Бруківка з листям', skin_capy_mel: 'Капі-лисиця Мел', skin_capy_nika: 'Капі-зайка Ніка', skinSay_capy_mel: 'Я Мел, лисиця. Хитра лише в ціні: ціна чесна, а знижка — секрет.', skinSay_capy_nika: 'Я Ніка, зайка. Стрибаю до каси швидше за чергу!', skinSay_capy_pirate: "Йо-хо-хо! Кожна монета — скарб, а крамниця — мій корабель!", skinSay_capy_astro: "Х’юстоне, у нас розпродаж! Орбіта цін уже тут.", skinSay_shop_candy: "Тут пахне карамеллю. Я не облизую стіни. Майже.", skinSay_shop_gold: "Золотий магазин сяє так, що касир ходить в окулярах.", skinSay_weather_rainbow: "Веселка над містом. Де горщик із золотом? О, це ж каса!", skinSay_weather_lightning: "Фіолетова блискавка? Це не гроза, це акція!", skinSay_hero_party: "Свято щодня! Помічники в конфеті, а ціни серйозні.", skinSay_hero_ninja: "Помічники-ніндзя вже тут. Ви їх не бачили. І не побачите.", skinSay_capy_ep0: "Я майже Леонардо. Тільки дешевший.", skinSay_capy_ep1: "Ретро — це коли все круто і ніхто не пояснює чому.", skinSay_capy_ep2: "Диско-куля крутиться, виручка теж!", skinSay_capy_ep3: "Нова гра: «Касир проти черги». Рівень складний.", skinSay_capy_ep4: "Інтернет вигадали, щоб продавати. Ну, і котиків.", skinSay_capy_ep5: "Еко-торгівля: пакет багаторазовий, прибуток теж.", skinSay_capy_ep6: "У космосі ніхто не почує касу. Але ми почуємо.", skinSay_capy_ep7: "Неон блимає, ціни ні. Принцип!", skinSay_capy_wizard: "Абракадабра! І товар на полиці. Ну, його привезли.", skinSay_capy_chef: "Я не готую, я комплектую. Але ковпак серйозний.", skinSay_capy_explorer: "Мапа каже, що скарб десь біля каси.", skinSay_capy_detective: "Хто обрахував покупця? Елементарно: ціна на ціннику.", skinSay_capy_sailor: "Штиль у торгівлі? Піднімаю вітрила, тобто ціни.", skinSay_shop_ice: "Крижаний магазин: знижки тут не розтануть.", skinSay_shop_wood: "Дерев’яна хатина пахне смолою й чесним бізнесом.", skinSay_shop_garden: "У магазині-саду росте все, крім цін. Майже.", skinSay_weather_cottoncloud: "Хмарки з цукрової вати. Хто надкусив? Я нічого не кажу.", skinSay_weather_goldcloud: "Золоті хмари: небо теж вирішило заробляти.", skinSay_weather_starcloud: "Зоряні хмари. Загадай бажання: щедрий покупець!", skinSay_hero_chef: "Помічники-кухарі! Смачно пахне, але товар не їсти.", skinSay_hero_wizard: "Помічники-чарівники: хто казав, що чергу не вдасться зменшити?", skinSay_hero_royal: "Королівська команда! Ваша величносте, каса праворуч.", skinSay_street_wood: "Дерев’яна доріжка скрипить. Отже, торгівля йде.", skinSay_street_brick: "Цегляна бруківка: чіткий шлях до каси.", skinSay_capy_santa: "Хо-хо-хо! Подарунки зі знижкою, а мішок із запасом.", skinSay_capy_witch: "Я не відьма, я менеджер із мітлою. Але капелюх ношу.", skinSay_capy_flower: "Квіти на мені. Бджоли теж у черзі, як усі.", skinSay_capy_beach: "Пляж у центрі міста. Ціни як відпустка!", skinSay_capy_autumn: "Осінь: листя падає, а виручка навпаки.", skinSay_hero_santa: "Помічники Діда Мороза пакують подарунки без черги.", skinSay_hero_witch: "Відьмочки-помічники: чарівно швидко обслуговуємо.", skinSay_shop_xmas: "Різдвяний магазин: вогники блимають, ціни ні.", skinSay_shop_halloween: "Магазин на Хелловін: цукерки або знижка!", skinSay_shop_spring: "Весняний магазин: ціни квітнуть. Ніжно, без паніки.", skinSay_shop_autumn: "Осінній магазин: тепло, затишно, листя на даху.", skinSay_street_snow: "Сніжна бруківка. Не їсти сніг! Я себе теж зупиняю.", skinSay_street_leaves: "Листя на бруківці: хрум-хрум, мій улюблений звук.",
     tab_skins: 'Скіни', skinsNote: 'Скін Капі сам змінюється разом з епохою. Захочеш інший — обери його тут, а щоб повернути скін епохи, тапни «Змінити на скін епохи». Стрілки гортають список.', skinBackToEpoch: 'Змінити на скін епохи', skinWornToast: 'Вдягнено: {0}', skinDefaultToast: 'Звичайний вигляд', skinHeroNone: 'Костюм вдягнуть усі звірята: покупці вже в ньому, а герої — щойно приїдуть.', skinCat_capyEpoch: 'Капі по епохах', skinEpoch: 'Капі: {0}', skinOtherEpoch: 'Інша епоха', skinCat_capy: 'Капі', skinCat_shop: 'Магазин', skinCat_weather: 'Погода', skinCat_hero: 'Герої та звірі', skinCat_street: 'Бруківка', skin_street_wood: 'Дерев’яний настил', skin_street_brick: 'Червона цегла',
-    skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}', lootTag: '✨ ЕПІЧНА ЗДОБИЧ ✨', lootWear: 'Вдягнути', lootClose: 'Чудово!', rainOn: 'Дощ увімкнено 🌧', rainOff: 'Дощ вимкнено', goalTravel: '⏳ Можна в подорож: +{0} 💎', goalCrystal: '⏳ До першого кристала часу: {0}%', goalDept: '🛒 Купи «{0}»: {1}/{2}', goalHire: '🐾 Найми: {0}', goalExpandNow: '🏪 Можна розширити магазин!', goalExpand: '🏪 Розширення магазину: {0}%', goalNext: '🛒 Далі: «{0}» · {1}%',
+    skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}', lootTag: '✨ ЕПІЧНА ЗДОБИЧ ✨', lootWear: 'Вдягнути', lootClose: 'Чудово!', rainOn: 'Дощ увімкнено 🌧', rainOff: 'Дощ вимкнено', goalTravel: '⏳ Можна в подорож: +{0} 💎', goalCrystal: "⏳ До першого осколка часу: {0}%", goalDept: '🛒 Купи «{0}»: {1}/{2}', goalHire: '🐾 Найми: {0}', goalExpandNow: '🏪 Можна розширити магазин!', goalExpand: '🏪 Розширення магазину: {0}%', goalNext: '🛒 Далі: «{0}» · {1}%',
     dailyRemind: '📅 Завдання дня: виконано {0} із 3. Загляни у вкладку нагород!', dailyRemindClaim: '📅 Завдання дня виконано. Забери кристал у вкладці нагород!', dailyTitle: '📅 Завдання дня', dailyNote: 'Три цілі щодоби. За кожну — кристал часу, а за всі три ще один.', dailyClaim: 'Забрати 💎', dailyAll: 'Усі три: ще +1 💎', dailyAllDone: 'Усі три виконано: +1 💎 отримано', dailyDoneToast: 'Завдання дня виконано! Забери кристал у вкладці нагород.', dailyGot: 'Кристал часу +{0} 💎',
     daily_taps: 'Натисни на магазин {0} разів', daily_depts: 'Купи відділи: {0} шт.', daily_team: 'Прокачай звірят: {0} раз.', daily_catch: 'Спіймай звірят або привидів: {0}', daily_vip: 'Спіймай золотих покупців: {0}', daily_earn: 'Заробити монет: {0}', daily_wheel: 'Крутни барабан фортуни',
     vipWish: 'Хочу «{0}»!', vipToast: '🌟 До магазину завітав золотий покупець! Тапни по ньому.', vipThanks: 'Дякую! Ось тобі винагорода.', vipCrystal: 'Золотий покупець подарував кристал часу: +1 💎', vipGold: 'Золотий покупець дав ×5 золота: +{0} 🪙', vipSayCrystal: 'Тримай кристал часу!', vipSayGold: 'Тримай ×5 золота!',
@@ -3034,26 +3186,26 @@ const translations = {
 
 
     wsTitle: 'Майстерня часу', wsShopTitle: '🛒 Магазин часу',
-    wsCrystals: 'Кристали часу: 💎 {0}',
-    wsBonus: 'Усього здобуто: {0}. Кожен дає +2% до доходу — зараз ×{1}',
+    wsCrystals: "Осколки часу: \ {0}",
+    wsBonus: "Усього осколків: {0} (кожен +2% до доходу, зараз ×{1}). Подорожі: ×{2} до тапів і доходу",
     warpTitle: '⏳ Подорож у часі',
-    warpText: 'Годинник поверне Капі в минуле. Монетки, відділи, рівень магазину й рівні звіряток скинуться, а кристали, досягнення, глави й покращення залишаться. Звірята стануть знайомими — їх наймати дешевше.',
-    warpGain: 'Ти отримаєш: 💎 {0}',
-    routeTitle: '🧭 Як перейти в наступну епоху', routeNext: 'Далі: епоха «{0}»', routeLevel: 'Збудуй торговий центр (рівень {0})', routeNights: 'Дочекайся трьох ночей: {0} з 3. Перші дві годинник лише цокає, на третю — оживе й відкриє подорож', routeEarn: 'Зароби за цю епоху: {0} з {1} монет. Від цієї суми Годинник починає давати кристали', routeGo: 'Тапни «Подорож у часі» нижче. Монетки й відділи скинуться, а кристали, друзі й покращення лишаться', routeToast: 'Нова епоха! Щоб рушити далі: зароби в ній від {0} монет і тапни «Подорож у часі» у вкладці «Годинник».',
-    warpNone: 'Ще зарано: Годинник платить кристалами за корінь із заробленого в цій епосі (від {0}). Тапай, купуй і повертайся!',
+    warpText: "Годинник поверне Капі в минуле. Монетки, відділи, рівень магазину й рівні звіряток скинуться, а осколки, кристали, досягнення, глави й покращення залишаться. Звірята стануть знайомими — їх наймати дешевше.",
+    warpGain: "Ти отримаєш:  {0} і назавжди ×{1} до тапів та доходу",
+    routeTitle: '🧭 Як перейти в наступну епоху', routeNext: 'Далі: епоха «{0}»', routeLevel: 'Збудуй торговий центр (рівень {0})', routeNights: 'Дочекайся трьох ночей: {0} з 3. Перші дві годинник лише цокає, на третю — оживе й відкриє подорож', routeEarn: "Зароби за цю епоху: {0} з {1} монет. Від цієї суми Годинник починає давати осколки", routeGo: 'Тапни «Подорож у часі» нижче. Монетки й відділи скинуться, а кристали, друзі й покращення лишаться', routeToast: 'Нова епоха! Щоб рушити далі: зароби в ній від {0} монет і тапни «Подорож у часі» у вкладці «Годинник».',
+    warpNone: "Ще зарано: Годинник дає кілька осколків, коли в цій епосі зароблено від {0}. Тапай, купуй і повертайся!",
     warpBtn: 'Завести годинник',
     warpConfirmTitle: 'Подорож у часі',
-    warpConfirmText: 'Ти отримаєш 💎 {0}, а прогрес забігу почнеться з початку. Продовжити?',
+    warpConfirmText: "Ти отримаєш  {0} і назавжди ×{1} до тапів та доходу, а прогрес забігу почнеться з початку. Продовжити?",
     warpConfirmYes: 'Так, поїхали!',
     confirmNo: 'Скасувати',
-    wsBuy: 'Покращити · 💎 {0}',
+    wsBuy: "Покращити · \ {0}",
     ws_headStart: 'Швидкий старт', ws_autoTap: 'Автотап', ws_offlineHours: 'Довгий сон магазину', ws_offlineRate: 'Щедрий сон',
     ws_salesFreq: 'Часті розпродажі', ws_saleLength: 'Довгі розпродажі', ws_wheelFast: 'Колесо частіше', ws_thiefLess: 'Охорона від єнота',
     ws_cheaperDepts: 'Оптові ціни', ws_cheaperTeam: 'Знижка для друзів', ws_tapPower: 'Сильна лапка', ws_crystalGain: 'Жадібний годинник',
     wsEff_headStart: 'старт з рівня «{0}»', wsEff_autoTap: '{0} автотапів за секунду', wsEff_offlineHours: 'офлайн до {0} год',
     wsEff_offlineRate: 'офлайн: {0}% доходу', wsEff_salesFreq: 'розпродажі частіші на {0}%', wsEff_saleLength: 'розпродаж триває {0} с',
     wsEff_wheelFast: 'колесо фортуни раз на {0} год', wsEff_thiefLess: 'єнот краде менше на {0}%', wsEff_cheaperDepts: 'відділи дешевші на {0}%',
-    wsEff_cheaperTeam: 'звірята дешевші на {0}%', wsEff_tapPower: 'сила тапу ×{0}', wsEff_crystalGain: 'кристалів за подорож +{0}%',
+    wsEff_cheaperTeam: 'звірята дешевші на {0}%', wsEff_tapPower: 'сила тапу ×{0}', wsEff_crystalGain: "осколків за подорож +{0}%",
 
     achSummary: 'Отримано нагород: {0} / {1}',
     achGot: 'Нове досягнення!',
@@ -3068,7 +3220,7 @@ const translations = {
     achDesc_chapters: 'Прочитай глав історії: {0}', achDesc_holidays: 'Побачи свят у місті: {0}', achDesc_hours: 'Пограй годин: {0}',
 
     stEpoch: 'Епоха', stPlay: 'Час у грі', stEarned: 'Зароблено за весь час', stRun: 'Зароблено в цьому забігу', stCps: 'Дохід',
-    stTap: 'Монеток за тап', stTaps: 'Тапів', stDepts: 'Куплено відділів', stCrystals: 'Кристали (зараз / усього)', stTravels: 'Подорожей у часі',
+    stTap: 'Монеток за тап', stTaps: 'Тапів', stDepts: 'Куплено відділів', stCrystals: 'Кристали (зараз / усього)', stShards: 'Осколки часу (зараз / усього)', stTravels: 'Подорожей у часі',
     stRaccoons: 'Єнотів упіймано / втрачено', stPuddles: 'Калюж прибрано', stWheel: 'Обертів барабана', stAch: 'Нагород', stChapters: 'Глав прочитано',
     durationFmt: '{0} д {1} год {2} хв',
 
@@ -3393,33 +3545,36 @@ const translations = {
     wheelReady: 'The Wheel of Fortune is ready! 🎡',
     prize_coins: 'Coins: +{0}',
     themeLocked: 'Finish epoch 2 first',
+    fbBtn: '✉ Write to the developers', fbTitle: 'Write to us', fbHint: 'What do you like, what broke, what is missing? We read every message.', fbContact: 'Contact (optional)', fbSend: 'Send', fbCancel: 'Cancel', fbThanks: 'Thank you! Your message was sent 💌', fbFail: 'Could not send. Please try again later.', fbCopied: 'The address is not set up yet. The text was copied, please send it to the developers.', fbEmpty: 'Write a few words first.',
     newsTitle: '📮 Mail from the developers', newsSub: 'Fresh CapyTap news',
-    newsIntro: 'Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done.',
-    newsH0: 'Baba Yaga for Halloween.', newsT0: 'Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game.',
-    newsH1: 'A darker Halloween.', newsT1: 'The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom.',
-    newsH2: 'New mail.', newsT2: 'A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye.',
-    newsH3: 'A new build under a tarp.', newsT3: 'When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears.',
-    newsH4: 'A wider street.', newsT4: 'The town got wider: scroll further left and right, there are more houses, trees and lamps.',
-    newsH5: 'Spring petals.', newsT5: 'In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn.',
-    newsH6: 'Time shop.', newsT6: 'In the Time Workshop the crystal upgrade list is now called just that.',
-    newsH7: 'Loading screen.', newsT7: 'On the loading screen Capy smoothly runs through the night city and pixel coins.',
-    newsH8: 'Windows and steam.', newsT8: 'All houses have windows, and the manhole steam is gentler.',
+    newsIntro: 'Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!',
+    newsH0: 'A newspaper instead of a letter.', newsT0: 'The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows.',
+    newsH1: 'The clock tower.', newsT1: 'A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era.',
+    newsH2: 'New loading screen.', newsT2: 'A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one.',
+    newsH3: 'A new witch.', newsT3: 'The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars.',
+    newsH4: 'Bigger markets.', newsT4: 'On a vertical phone markets of every level are bigger and the brown strips at the edges are gone.',
+    newsH5: 'Bitten clouds.', newsT5: 'In the Cotton Clouds skin some of the clouds look as if somebody took a bite.',
+    newsH6: 'The rain drop.', newsT6: 'The little drop that turns the rain on now hangs on the right by the shop sign.',
+    newsH7: 'Crisp frames.', newsT7: 'Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock.',
+    newsH8: 'Capy at night.', newsT8: 'In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals.',
     newsSign: 'Thanks for playing! Tell us what you want to see next. — The CapyTap team', newsClose: 'Got it!',
     fear0: 'Eek!', fear1: 'Mommy!', fear2: 'My bun!', fear3: 'I was just strolling!', fear4: 'Where are you going?!', fear5: 'Run!',
     seasonIntroTitle: 'Seasons unlocked!', seasonIntroText: 'Two eras down, and now you can pick the season yourself: spring, summer, autumn, winter or spooky Halloween. Each one changes the trees, the weather and the mood of the street. Look for the new wheel button in the menu!', seasonIntroGo: '🌸 To the seasons', seasonIntroLater: 'Later',
     mailSay0: 'Mail! Sign right here!', mailSay1: 'A letter for you! Faster than a pigeon!', mailSay2: 'Express delivery. The cap is official!', mailSay3: 'Letter delivered, paw on heart.',
     gfear0: 'A ghost!!! Mommy!', gfear1: 'Boo-- oh, it is him!', gfear2: 'I saw nothing!', gfear3: 'Someone is in the window!', gfear4: 'Run, he has no ticket!', gfear5: 'It is just a sheet, right? NO!',
-    hagBang: '🧙 Baba Yaga is flying over town! Tap the "!"', hagArrived: '🏚️ The hut on chicken legs has arrived! Tap it', hagTitle: "Baba Yaga's Hut",
-    hagSub: 'Baba Yaga: "Three cauldrons, three surprises! Remember the best one, then guess!"', hagStart: 'Take a peek!', hagWatch: 'Watch closely what is where...', hagShuffle: 'Shuffling!', hagPick: 'Pick a cauldron!',
-    hagGood: 'You found the main prize!', hagMiss: 'Oops, wrong one! The crystal is yours anyway.', hagDone: 'Thanks, granny!',
+    hagBang: '🧙 A witch is flying over town! Tap the "!"', hagArrived: '🏚️ The hut on chicken legs has arrived! Tap it', hagTitle: "The Witch's Hut",
+    hagSub: 'Witch: "Three cauldrons, three surprises! Remember the best one, then guess!"', hagStart: 'Take a peek!', hagWatch: 'Watch closely what is where...', hagShuffle: 'Shuffling!', hagPick: 'Pick a cauldron!',
+    hagGood: 'You found the main prize!', hagMiss: 'Oops, wrong one! The crystal is yours anyway.', hagDone: 'Thanks, witch!',
+    clockWait: 'The clock is ticking... Build the mall and wait three nights. Then it will take you to a new era.', clockNoGain: "Too early: keep earning and the clock will pay shards for the trip.", clockWarn: 'Night three. The clock strikes three times: time to go! Tap it or open the Clock in the menu.',
+    npMast: 'THE CAPY STREET NEWS', npCoverHead: 'Fresh edition!', npIn: 'In this issue:', npCap1: 'The mall clock tower at midnight.', npCap2: 'The night city on the loading screen.', npCap3: 'The new witch circles the town.',
     seasonFx_winter: 'Fluffy snow settles on the roofs', seasonFx_spring: 'Flowers and petals wake up', seasonFx_summer: 'The sun shines at full power', seasonFx_autumn: 'The wind carries golden leaves', seasonFx_halloween: 'Shh… something rustles in town',
     circusFlag: 'LUCKY CIRCUS', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Skins and time crystals, only here!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
     circusBang: 'Something showed up by the shop... Tap the red "!"', circusArrived: 'The Fortune Circus is open! Tap it',
     circusAgain: 'One more try! Spin again', prize_skin: 'New skin: {0}! It waits in the skins tab',
     skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',
-    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_lightning: 'Purple lightning', skin_capy_wizard: 'Wizard Capy', skin_capy_chef: 'Chef Capy', skin_capy_explorer: 'Explorer Capy', skin_capy_detective: 'Detective Capy', skin_capy_sailor: 'Sailor Capy', skin_shop_ice: 'Ice shop', skin_shop_wood: 'Wooden cabin', skin_shop_garden: 'Garden shop', skin_weather_cottoncloud: 'Cotton-candy clouds', skin_weather_goldcloud: 'Golden clouds', skin_weather_starcloud: 'Starry clouds', skin_hero_chef: 'Chef heroes', skin_hero_wizard: 'Wizard heroes', skin_hero_royal: 'Royal heroes', skin_capy_santa: 'Santa Capy', skin_capy_witch: 'Witch Capy', skin_capy_flower: 'Flower Capy', skin_capy_beach: 'Beach Capy', skin_capy_autumn: 'Autumn Capy', skin_hero_santa: 'Santa’s helpers', skin_hero_witch: 'Little witches', skin_shop_xmas: 'Christmas shop', skin_shop_halloween: 'Halloween shop', skin_shop_spring: 'Spring shop', skin_shop_autumn: 'Autumn shop', skin_street_snow: 'Snowy cobbles', skin_street_leaves: 'Leafy cobbles',
+    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_lightning: 'Purple lightning', skin_capy_wizard: 'Wizard Capy', skin_capy_chef: 'Chef Capy', skin_capy_explorer: 'Explorer Capy', skin_capy_detective: 'Detective Capy', skin_capy_sailor: 'Sailor Capy', skin_shop_ice: 'Ice shop', skin_shop_wood: 'Wooden cabin', skin_shop_garden: 'Garden shop', skin_weather_cottoncloud: 'Cotton-candy clouds', skin_weather_goldcloud: 'Golden clouds', skin_weather_starcloud: 'Starry clouds', skin_hero_chef: 'Chef heroes', skin_hero_wizard: 'Wizard heroes', skin_hero_royal: 'Royal heroes', skin_capy_santa: 'Santa Capy', skin_capy_witch: 'Witch Capy', skin_capy_flower: 'Flower Capy', skin_capy_beach: 'Beach Capy', skin_capy_autumn: 'Autumn Capy', skin_hero_santa: 'Santa’s helpers', skin_hero_witch: 'Little witches', skin_shop_xmas: 'Christmas shop', skin_shop_halloween: 'Halloween shop', skin_shop_spring: 'Spring shop', skin_shop_autumn: 'Autumn shop', skin_street_snow: 'Snowy cobbles', skin_street_leaves: 'Leafy cobbles', skin_capy_mel: 'Capy the fox Mel', skin_capy_nika: 'Capy the bunny Nika', skinSay_capy_mel: 'I am Mel the fox. Sly only about the price: the price is fair, the discount is a secret.', skinSay_capy_nika: 'I am Nika the bunny. I hop to the till faster than the queue!', skinSay_capy_pirate: "Yo-ho-ho! Every coin is treasure, and the shop is my ship!", skinSay_capy_astro: "Houston, we have a sale! The orbit of prices is here.", skinSay_shop_candy: "It smells of caramel in here. I do not lick the walls. Almost.", skinSay_shop_gold: "The golden shop shines so bright the cashier wears sunglasses.", skinSay_weather_rainbow: "A rainbow over town. Where is the pot of gold? Oh, that is the till!", skinSay_weather_lightning: "Purple lightning? That is not a storm, that is a promo!", skinSay_hero_party: "A party every day! Confetti helpers, serious prices.", skinSay_hero_ninja: "Ninja helpers are here. You have not seen them. And you will not.", skinSay_capy_ep0: "I am almost Leonardo. Just cheaper.", skinSay_capy_ep1: "Retro is when everything is cool and nobody explains why.", skinSay_capy_ep2: "The disco ball spins, and so does the revenue!", skinSay_capy_ep3: "New game: \"Cashier vs. the Queue\". Hard level.", skinSay_capy_ep4: "The internet was invented to sell things. And cats, too.", skinSay_capy_ep5: "Eco trade: the bag is reusable, so is the profit.", skinSay_capy_ep6: "In space nobody hears the till. But we do.", skinSay_capy_ep7: "Neon blinks, prices do not. Principle!", skinSay_capy_wizard: "Abracadabra! And the goods are on the shelf. Well, they were delivered.", skinSay_capy_chef: "I do not cook, I stock up. But the hat is serious.", skinSay_capy_explorer: "The map says the treasure is somewhere near the till.", skinSay_capy_detective: "Who overcharged the customer? Elementary: the price tag.", skinSay_capy_sailor: "Calm in trade? Hoisting the sails, I mean the prices.", skinSay_shop_ice: "The ice shop: discounts do not melt here.", skinSay_shop_wood: "A wooden cabin smells of resin and honest business.", skinSay_shop_garden: "In the garden shop everything grows except prices. Almost.", skinSay_weather_cottoncloud: "Cotton candy clouds. Who took a bite? I am not saying anything.", skinSay_weather_goldcloud: "Golden clouds: even the sky decided to earn.", skinSay_weather_starcloud: "Starry clouds. Make a wish: a generous shopper!", skinSay_hero_chef: "Chef helpers! It smells tasty, but do not eat the goods.", skinSay_hero_wizard: "Wizard helpers: who said the queue cannot get shorter?", skinSay_hero_royal: "A royal team! Your Majesty, the till is on the right.", skinSay_street_wood: "The wooden path creaks. So trade is going well.", skinSay_street_brick: "Brick pavement: a clear road to the till.", skinSay_capy_santa: "Ho-ho-ho! Gifts at a discount, and the sack has plenty of room.", skinSay_capy_witch: "I am not a witch, I am a manager with a broom. But I wear the hat.", skinSay_capy_flower: "Flowers on me. Bees queue up, like everyone else.", skinSay_capy_beach: "A beach in the middle of town. Prices like a vacation!", skinSay_capy_autumn: "Autumn: the leaves fall, the revenue does not.", skinSay_hero_santa: "Santa’s helpers wrap gifts without a queue.", skinSay_hero_witch: "Little witch helpers: magically fast service.", skinSay_shop_xmas: "Christmas shop: the lights blink, the prices do not.", skinSay_shop_halloween: "Halloween shop: sweets or a discount!", skinSay_shop_spring: "Spring shop: prices are blooming. Gently, no panic.", skinSay_shop_autumn: "Autumn shop: warm, cozy, leaves on the roof.", skinSay_street_snow: "Snowy cobbles. Do not eat the snow! I stop myself too.", skinSay_street_leaves: "Leaves on the pavement: crunch-crunch, my favorite sound.",
     tab_skins: 'Skins', skinsNote: 'Capy’s skin changes with the era by itself. Pick another one here, and tap “Switch to era skin” to get the era skin back. Arrows scroll the list.', skinBackToEpoch: 'Switch to era skin', skinWornToast: 'Now wearing: {0}', skinDefaultToast: 'Default look', skinHeroNone: 'Every animal wears it: shoppers already do, and heroes will once they join.', skinCat_capyEpoch: 'Capy by era', skinEpoch: 'Capy: {0}', skinOtherEpoch: 'Other era', skinCat_capy: 'Capy', skinCat_shop: 'Shop', skinCat_weather: 'Weather', skinCat_hero: 'Heroes & animals', skinCat_street: 'Pavement', skin_street_wood: 'Wooden boardwalk', skin_street_brick: 'Red brick',
-    skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}', lootTag: '✨ EPIC LOOT ✨', lootWear: 'Wear it', lootClose: 'Awesome!', rainOn: 'Rain is on 🌧', rainOff: 'Rain is off', goalTravel: '⏳ Time travel is ready: +{0} 💎', goalCrystal: '⏳ Toward the first time crystal: {0}%', goalDept: '🛒 Buy “{0}”: {1}/{2}', goalHire: '🐾 Hire: {0}', goalExpandNow: '🏪 You can expand the shop!', goalExpand: '🏪 Shop expansion: {0}%', goalNext: '🛒 Next: “{0}” · {1}%',
+    skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}', lootTag: '✨ EPIC LOOT ✨', lootWear: 'Wear it', lootClose: 'Awesome!', rainOn: 'Rain is on 🌧', rainOff: 'Rain is off', goalTravel: '⏳ Time travel is ready: +{0} 💎', goalCrystal: "⏳ Toward the first time shard: {0}%", goalDept: '🛒 Buy “{0}”: {1}/{2}', goalHire: '🐾 Hire: {0}', goalExpandNow: '🏪 You can expand the shop!', goalExpand: '🏪 Shop expansion: {0}%', goalNext: '🛒 Next: “{0}” · {1}%',
     dailyRemind: '📅 Daily quests: {0} of 3 done. Check the awards tab!', dailyRemindClaim: '📅 A daily quest is done. Claim your crystal in the awards tab!', dailyTitle: '📅 Daily quests', dailyNote: 'Three goals a day. A time crystal for each, and one more for all three.', dailyClaim: 'Claim 💎', dailyAll: 'All three: +1 💎 more', dailyAllDone: 'All three done: +1 💎 received', dailyDoneToast: 'Daily quest done! Claim the crystal in the awards tab.', dailyGot: 'Time crystal +{0} 💎',
     daily_taps: 'Tap the shop {0} times', daily_depts: 'Buy departments: {0}', daily_team: 'Upgrade animals: {0} times', daily_catch: 'Catch animals or ghosts: {0}', daily_vip: 'Catch golden shoppers: {0}', daily_earn: 'Earn coins: {0}', daily_wheel: 'Spin the fortune drum',
     vipWish: 'I want “{0}”!', vipToast: '🌟 A golden shopper has arrived! Tap them.', vipThanks: 'Thank you! Here is your reward.', vipCrystal: 'The golden shopper gave a time crystal: +1 💎', vipGold: 'The golden shopper gave ×5 gold: +{0} 🪙', vipSayCrystal: 'Here, a time crystal!', vipSayGold: 'Here, ×5 gold!',
@@ -3624,26 +3779,26 @@ const translations = {
 
 
     wsTitle: 'Time Workshop', wsShopTitle: '🛒 Time shop',
-    wsCrystals: 'Time Crystals: 💎 {0}',
-    wsBonus: 'Earned in total: {0}. Each gives +2% income — now ×{1}',
+    wsCrystals: "Time Shards: \ {0}",
+    wsBonus: "Shards in total: {0} (each +2% income, now ×{1}). Time trips: ×{2} to taps and income",
     warpTitle: '⏳ Time Travel',
-    warpText: 'The watch will send Capy back in time. Coins, departments, shop level and animal levels reset, but crystals, achievements, chapters and upgrades stay. Animals become familiar — hiring them costs less.',
-    warpGain: 'You will get: 💎 {0}',
-    routeTitle: '🧭 How to reach the next era', routeNext: 'Next: the “{0}” era', routeLevel: 'Build the shopping mall (level {0})', routeNights: 'Wait for three nights: {0} of 3. For the first two the watch only ticks, on the third it comes alive and unlocks time travel', routeEarn: 'Earn in this era: {0} of {1} coins. From this amount the Watch starts giving crystals', routeGo: 'Tap “Time travel” below. Coins and departments reset, but crystals, friends and upgrades stay', routeToast: 'A new era! To move on: earn at least {0} coins in it and tap “Time travel” in the “Watch” tab.',
-    warpNone: 'Too early: the Watch pays crystals from the square root of what you earn in this era (from {0}). Tap, shop and come back!',
+    warpText: "The watch will send Capy back in time. Coins, departments, shop level and animal levels reset, but shards, crystals, achievements, chapters and upgrades stay. Animals become familiar — hiring them costs less.",
+    warpGain: "You will get:  {0} and a permanent ×{1} to taps and income",
+    routeTitle: '🧭 How to reach the next era', routeNext: 'Next: the “{0}” era', routeLevel: 'Build the shopping mall (level {0})', routeNights: 'Wait for three nights: {0} of 3. For the first two the watch only ticks, on the third it comes alive and unlocks time travel', routeEarn: "Earn in this era: {0} of {1} coins. From this amount the Watch starts giving shards", routeGo: 'Tap “Time travel” below. Coins and departments reset, but crystals, friends and upgrades stay', routeToast: 'A new era! To move on: earn at least {0} coins in it and tap “Time travel” in the “Watch” tab.',
+    warpNone: "Too early: the Watch gives a few shards once you earn {0} in this era. Tap, shop and come back!",
     warpBtn: 'Wind the watch',
     warpConfirmTitle: 'Time travel',
-    warpConfirmText: 'You will get 💎 {0}, and this run starts over. Continue?',
+    warpConfirmText: "You will get  {0} and a permanent ×{1} to taps and income, and this run starts over. Continue?",
     warpConfirmYes: "Yes, let's go!",
     confirmNo: 'Cancel',
-    wsBuy: 'Upgrade · 💎 {0}',
+    wsBuy: "Upgrade · \ {0}",
     ws_headStart: 'Head Start', ws_autoTap: 'Auto-tap', ws_offlineHours: 'Long Nap', ws_offlineRate: 'Generous Nap',
     ws_salesFreq: 'Frequent Sales', ws_saleLength: 'Long Sales', ws_wheelFast: 'Faster Wheel', ws_thiefLess: 'Raccoon Guard',
     ws_cheaperDepts: 'Wholesale Prices', ws_cheaperTeam: 'Friends Discount', ws_tapPower: 'Mighty Paw', ws_crystalGain: 'Greedy Watch',
     wsEff_headStart: 'start at level "{0}"', wsEff_autoTap: '{0} auto-taps per second', wsEff_offlineHours: 'offline up to {0} h',
     wsEff_offlineRate: 'offline: {0}% income', wsEff_salesFreq: 'sales {0}% more frequent', wsEff_saleLength: 'sale lasts {0} s',
     wsEff_wheelFast: 'wheel every {0} h', wsEff_thiefLess: 'raccoon steals {0}% less', wsEff_cheaperDepts: 'departments {0}% cheaper',
-    wsEff_cheaperTeam: 'animals {0}% cheaper', wsEff_tapPower: 'tap power ×{0}', wsEff_crystalGain: 'crystals per trip +{0}%',
+    wsEff_cheaperTeam: 'animals {0}% cheaper', wsEff_tapPower: 'tap power ×{0}', wsEff_crystalGain: "shards per trip +{0}%",
 
     achSummary: 'Awards earned: {0} / {1}',
     achGot: 'New achievement!',
@@ -3658,7 +3813,7 @@ const translations = {
     achDesc_chapters: 'Read story chapters: {0}', achDesc_holidays: 'See holidays in town: {0}', achDesc_hours: 'Play hours: {0}',
 
     stEpoch: 'Epoch', stPlay: 'Play time', stEarned: 'Earned all time', stRun: 'Earned this run', stCps: 'Income',
-    stTap: 'Coins per tap', stTaps: 'Taps', stDepts: 'Departments bought', stCrystals: 'Crystals (now / total)', stTravels: 'Time travels',
+    stTap: 'Coins per tap', stTaps: 'Taps', stDepts: 'Departments bought', stCrystals: 'Crystals (now / total)', stShards: 'Time shards (now / total)', stTravels: 'Time travels',
     stRaccoons: 'Raccoons caught / lost', stPuddles: 'Puddles cleaned', stWheel: 'Drum spins', stAch: 'Awards', stChapters: 'Chapters read',
     durationFmt: '{0} d {1} h {2} m',
 
@@ -3783,7 +3938,7 @@ function createDefaultState() {
     epochIntroSeen: -1,                // для якої епохи вже показали заставку-анімацію
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
     // Подорож у часі: кристали, епоха, покращення майстерні, знайомі звірята
-    crystals: 0, crystalsTotal: 0, epoch: 0, runStartEarned: 0,
+    crystals: 0, crystalsTotal: 0, shards: 0, shardsTotal: 0, shardsInit: 0, epoch: 0, runStartEarned: 0,
     circus: { next: 0, phase: 0, spun: 0, hag: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
     daily: { day: '', k: [0, 0, 0], b: [0, 0, 0], t: [1, 1, 1], c: [0, 0, 0], bonus: 0, seen: '' },     // завдання дня: який вид, з якого значення рахуємо, ціль, забрано чи ні
     skinsMask: 0,                             // виграні скіни (біти за списком SKIN_POOL)
@@ -3848,7 +4003,9 @@ function teamDeptMult(i) {
 function teamGlobalMult() { return 1 + teamBonus('global'); }
 // Рівень покращення майстерні (за кристали)
 function wsLevel(id) { const i = WORKSHOP.findIndex(w => w.id === id); return i < 0 ? 0 : state.ws[i]; }
-function crystalMult() { return 1 + CONFIG.CRYSTAL_INCOME_BONUS * state.crystalsTotal; }
+function eraStep(n) { return n < 8 ? 2 : 1.5; }                                         // у скільки разів росте дохід і тап за подорож номер n+1
+function eraMult() { const n = (state.stats && state.stats.timeTravels) || 0; let m = 1; for (let i = 0; i < n; i++) m *= eraStep(i); return m; }
+function crystalMult() { return 1 + CONFIG.CRYSTAL_INCOME_BONUS * state.shardsTotal; }       // кожен осколок часу, здобутий за подорожі, дає +2% до доходу
 function costMult() { return (1 - teamBonus('deptCost')) * (1 - 0.03 * wsLevel('cheaperDepts')); }              // Тома: відділи дешевші
 function expandCostMult() { return 1 - teamBonus('expandCost'); }       // Бодя: розширення дешевші
 function offlineRate() { return Math.min(1, CONFIG.OFFLINE_RATE + teamBonus('offline', 'rate') + 0.1 * wsLevel('offlineRate')); }          // Соня
@@ -3880,12 +4037,12 @@ function tapBoostMult() { return state.events.tapBoostUntil > Date.now() ? state
 function recalcIncome() {
   let sum = 0;
   DEPARTMENTS.forEach((d, i) => { sum += state.depts[i] * deptIncomeEach(i); });
-  state.cps = sum * teamGlobalMult() * tempIncomeMult() * crystalMult();
+  state.cps = sum * teamGlobalMult() * tempIncomeMult() * crystalMult() * eraMult();
 }
 // Скільки монеток дає один тап: база × рівень магазину + частка доходу за секунду, ще × бонус Голки.
 // Тож тап росте разом з доходом: 1 → десятки → сотні → тисячі → мільйони…
 function tapValue() {
-  const base = state.tapPower * levelMult() + state.cps * CONFIG.TAP_CPS_SHARE;
+  const base = state.tapPower * levelMult() * eraMult() + state.cps * CONFIG.TAP_CPS_SHARE;
   return base * (1 + teamBonus('tap')) * (1 + 0.5 * wsLevel('tapPower')) * tapBoostMult();
 }
 function isDeptUnlocked(i) {
@@ -4049,7 +4206,9 @@ function loadGame() {
     state.shopLevel = Math.max(1, Math.min(LEVELS.length, Math.floor(state.shopLevel)));
     if (state.settings.gender !== 'm') state.settings.gender = 'f';
     if (!SEASONS.includes(state.settings.season)) state.settings.season = 'auto';
+    state.story.done = Math.min(state.story.done | 0, CHAPTERS.length);
     state.ghosts = Math.max(0, Math.min(CONFIG.GHOST_MAX, Math.floor(state.ghosts)));
+  if (!state.shardsInit) { state.shardsInit = 1; if (!(state.shards > 0)) { state.shards = state.crystals; state.shardsTotal = state.crystalsTotal; } }       // одноразово: старі збереження отримують осколки, рівні кристалам (раніше валюта була одна)
   if (state.ghosts > 0) { const conv = Math.floor(state.ghosts / 2); state.crystals += conv; state.crystalsTotal += conv; state.ghosts = 0; }       // кристали привидів більше не існують
     if (!(state.dayPhase >= 0 && state.dayPhase < 1)) state.dayPhase = 0.3;
     SKIN_TYPES.forEach(ty => {                                       // -1 — звичайний; -2 (лише Капі) — скін епохи, що змінюється разом з епохою; інакше це має бути доступний скін своєї групи
@@ -5148,9 +5307,9 @@ function corniceG(g, w, y, trim) {                  // карниз під да�
 // trim — колір карнизу; col — [колона, відблиск]; frame — [рамка, кільце] вивіски; glass — колір скла; base — цоколь; band — візерунок карниза;
 // awning — 'scallop' (зубчики) чи 'flat' (пряма стрічка з підсвіткою); fx — особливий декор епохи
 const EPOCH_SHOP = [
-  { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance', roofs: [0, 1, 1, 4, 4, 4] },
-  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 6] },
-  { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco', roofs: [2, 2, 3, 3, 6, 6] },
+  { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance', roofs: [0, 1, 1, 4, 4, 1] },
+  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 3] },
+  { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco', roofs: [2, 2, 3, 3, 6, 3] },
   { flat: true, roofPal: { r: 'v', n: 'V' }, trim: 'V', col: ['V', 'v'], frame: ['k', 'T'], glass: 'v', base: 'V', band: ['checker', 'v'], awning: 'flat', inner: ['V', 'P', 'v'], fx: 'arcade' },
   { flat: true, roofPal: { r: 'n', n: 'e' }, trim: 'a', col: ['e', 'E'], frame: ['n', 'a'], glass: 'a', base: 'e', band: ['dots', 'n'], awning: 'flat', inner: ['a', 'w', 'S'], fx: 'internet' },
   { flat: true, roofPal: { r: 'g', n: 'G' }, trim: 'g', col: ['b', 'c'], frame: ['G', 'm'], glass: 'm', base: 'b', band: ['leaf', 'G'], awning: 'flat', inner: ['m', 'c', 'y'], fx: 'eco' },
@@ -5784,7 +5943,7 @@ const ui = {
   stage: $('stage'), scene: $('scene'), world: $('world'), view: $('view'),
   shopOverlay: $('shopOverlay'), sign: $('sign'), signText: $('signText'), floaters: $('floaters'),
   goalLine: $('goalLine'), dailyCard: $('dailyCard'),
-  coinCount: $('coinCount'), cps: $('cps'), coinIcon: $('coinIcon'), gemCount: $('gemCount'), gemIcon: $('gemIcon'),
+  coinCount: $('coinCount'), cps: $('cps'), coinIcon: $('coinIcon'), gemCount: $('gemCount'), shardBox: $('shardBox'), shardCount: $('shardCount'), gemIcon: $('gemIcon'),
   tabs: $('tabs'),
   paneShop: $('pane-shop'), paneDepts: $('pane-departments'), paneSoon: $('pane-soon'),
   soonTitle: $('soonTitle'), capiPortrait: $('capiPortrait'), saveWarn: $('saveWarn'),
@@ -5807,7 +5966,7 @@ const ui = {
   debugCard: $('debugCard'), dbgHour: $('dbgHour'), dbgX100: $('dbgX100'), statEpoch: $('statEpoch'),
   confirmModal: $('confirmModal'), confirmTitle: $('confirmTitle'), confirmText: $('confirmText'), confirmYes: $('confirmYes'), confirmNo: $('confirmNo'),
   timeWarp: $('timeWarp'), warpCanvas: $('warpCanvas'),
-  seasonFx: $('seasonFx'), seasonBanner: $('seasonBanner'), sbTitle: $('sbTitle'), sbSub: $('sbSub'), newsModal: $('newsModal'), newsTitle: $('newsTitle'), newsSub: $('newsSub'), newsBody: $('newsBody'), newsClose: $('newsClose'), siModal: $('seasonIntroModal'), siIcon: $('siIcon'), siTitle: $('siTitle'), siText: $('siText'), siGo: $('siGo'), siLater: $('siLater'),
+  seasonFx: $('seasonFx'), seasonBanner: $('seasonBanner'), sbTitle: $('sbTitle'), sbSub: $('sbSub'), panel: $('panel'), fbModal: $('feedbackModal'), fbTitle: $('fbTitle'), fbHint: $('fbHint'), fbText: $('fbText'), fbCount: $('fbCount'), fbContact: $('fbContact'), fbSend: $('fbSend'), fbCancel: $('fbCancel'), npWrite: $('npWrite'), newsModal: $('newsModal'), npTabs: $('npTabs'), npPaper: $('npPaper'), npPrev: $('npPrev'), npNext: $('npNext'), npNum: $('npNum'), newsTitle: $('newsTitle'), newsSub: $('newsSub'), newsBody: $('newsBody'), newsClose: $('newsClose'), siModal: $('seasonIntroModal'), siIcon: $('siIcon'), siTitle: $('siTitle'), siText: $('siText'), siGo: $('siGo'), siLater: $('siLater'),
   letterModal: $('letterModal'), letterTitle: $('letterTitle'), letterText: $('letterText'), letterBoost: $('letterBoost'), letterBtn: $('letterBtn'),
   epochIntro: $('epochIntro'), eiEmblem: $('eiEmblem'), eiNum: $('eiNum'), eiTitle: $('eiTitle'), eiSub: $('eiSub'), eiSparks: $('eiSparks'),
   soundModal: $('soundModal'), musicVol: $('musicVol'), musicStyleRow: $('musicStyleRow'), sfxVol: $('sfxVol'), muteBtn: $('muteBtn'), soundClose: $('soundClose'),
@@ -5884,7 +6043,15 @@ function updateSignText() {
 // Телефон: сцена «наближена» до магазину (так вивіска читається), а вся вулиця ширша за екран — її можна гортати пальцем.
 const cam = { pan: 0, goal: 0 };                // зсув камери на телефоні (пікселів сцени) відносно центру вулиці
 let layoutReady = false;
+// Телефон: сцена закінчується рівно над меню (одна смужка іконок, дві смужки, чи з відкритою вкладкою), нічого не залазить на дорогу й цирк
+function syncPanelPad() {
+  if (!mobileMQ.matches || !ui.panel) { if (ui.stage.style.paddingBottom) ui.stage.style.paddingBottom = ''; return; }
+  const r = ui.panel.getBoundingClientRect(); if (!r.height) return;
+  const need = Math.ceil(window.innerHeight - r.top) + 4;
+  if (Math.abs((parseFloat(ui.stage.style.paddingBottom) || 0) - need) > 1) ui.stage.style.paddingBottom = need + 'px';
+}
 function layoutScene() {
+  syncPanelPad();
   const W0 = CONFIG.SCENE_W, H0 = CONFIG.SCENE_H;
   const dpr = window.devicePixelRatio || 1;
   const mobile = mobileMQ.matches;
@@ -5895,26 +6062,26 @@ function layoutScene() {
   // на телефоні з відкритим меню сцена займає не більше ~44% висоти, решту віддаємо панелі
   const availH = ui.stage.clientHeight - padY;
   const EB = (mobile && !ui.app.classList.contains('sheet-open')) ? 0 : CONFIG.EXTRA_BOTTOM;     // додаткова бруківка знизу (на телефоні — коли відкрито меню: тоді видно більше дороги)
-  const needY = shop ? Math.max(0, shop.h + 6 - LAYOUT.curbY) : 0;               // скільки неба над «ядром» потрібно високому магазину
+  const needY = shop ? Math.max(0, shop.h + 6 + (shop.level >= 6 ? CLOCK_H : 0) - LAYOUT.curbY) : 0;               // скільки неба над «ядром» потрібно високому магазину
   const H1 = H0 + EB + needY;
-  let k, offX, cropW;
+  let k, offX, cropW, kz = 0;
   if (mobile) {
     offX = CONFIG.MOBILE_PAD;
     const want = shop ? Math.min(W0, Math.max(176, (shop.w + 40) & ~1)) : W0;      // скільки вулиці хочемо показати
     k = Math.max(1, Math.floor(Math.min(availW * dpr / (want * 0.9), availH * dpr / H1)));   // можна обрізати до 10%, щоб збільшити масштаб
-    if (window.matchMedia('(orientation: portrait)').matches && !ui.app.classList.contains('sheet-open') && k >= 4) k -= 1;      // вертикально: камера трохи далі — видно більше неба й вулиці
     cropW = availW * dpr / k;                                                      // на всю ширину екрана, без смуг по боках
     offX = Math.max(CONFIG.MOBILE_PAD, Math.ceil((cropW - W0) / 2) + 8);
   } else {
     let kH = Math.floor(availH * dpr / H1);
     if (state.settings.panelOpen) kH = Math.min(kH, Math.max(Math.ceil(1.6 * dpr), Math.round(kH * 0.55)));      // меню відкрите: камера відїжджає майже вдвічі — видно набагато більше неба й дороги (не дрібніше за ~1,6 px на піксель сцени)
     k = Math.max(1, Math.min(Math.floor(availW * dpr / CONFIG.MIN_VIEW_W), kH));
-    const visW = Math.min(CONFIG.MAX_VIEW_W, availW * dpr / k);                     // скільки пікселів сцени вміщується в ширину (дробове)
+    kz = k * (1 - Math.min(0.1, 0.02 * Math.max(0, (shop ? shop.level : 1) - 1)));        // ПК: що більший маркет, то трохи далі камера (до −10%), щоб усе вміщалося зручно
+    const visW = Math.min(CONFIG.MAX_VIEW_W, availW * dpr / kz);                     // скільки пікселів сцени вміщується в ширину (дробове)
     offX = Math.max(0, Math.ceil((visW - W0) / 2), Math.ceil((CONFIG.WORLD_W - W0) / 2));        // вулиця завжди широка, видно лише її частину
     cropW = Math.min(W0 + 2 * offX, visW);
   }
   // Усю висоту займає сцена: зайві рядки діляться між небом зверху (більшість) і бруківкою знизу
-  const unit = k / dpr;
+  const unit = (kz || k) / dpr;
   const E = Math.max(0, Math.ceil(availH / unit) - H1);
   const botExtra = Math.min(Math.round(E * 0.4), 70);
   const offY = Math.min(CONFIG.MAX_OFF_Y, E - botExtra) + needY;
@@ -5956,7 +6123,17 @@ function panBy(dx) {
   const base = view.offX + (CONFIG.SCENE_W - viewCrop.w) / 2, lo = -base, hi = view.w - viewCrop.w - base;
   cam.goal = Math.max(lo, Math.min(hi, cam.goal + dx));
 }
+let edgeT = 0;
+function updateStageEdges(dt) {
+  edgeT -= dt; if (edgeT > 0 || !layoutReady) return; edgeT = 0.7;
+  try {
+    const g = ui.view.getContext('2d'), a = g.getImageData(Math.max(0, Math.floor(view.w / 2)), 0, 1, 1).data, b = g.getImageData(Math.max(0, Math.floor(view.w / 2)), Math.max(0, view.h - 1), 1, 1).data;
+    const bg = 'linear-gradient(rgb(' + a[0] + ',' + a[1] + ',' + a[2] + ') 0 50%, rgb(' + b[0] + ',' + b[1] + ',' + b[2] + ') 50% 100%)';
+    ui.stage.style.background = bg; document.documentElement.style.background = bg; document.body.style.background = bg;       // навіть під рядком стану й жестовою смужкою колір сцени
+  } catch (e) { /* без цього теж працює */ }
+}
 function updateCamera(dt) {
+  updateStageEdges(dt);
   if (Math.abs(cam.goal - cam.pan) < 0.2) { if (cam.goal !== cam.pan && !camDragging) { cam.pan = cam.goal; applyCamera(); } return; }
   if (camDragging) { cam.goal = cam.pan; return; }
   cam.pan += (cam.goal - cam.pan) * Math.min(1, dt * 9);
@@ -6387,6 +6564,7 @@ function updateDaily() {
 }
 function updateUI() {
   setText(ui.gemCount, fmt(Math.floor(state.crystals)), 'gems');
+  setText(ui.shardCount, fmt(Math.floor(state.shards)), 'shards'); ui.shardBox.hidden = !(state.shards > 0 || state.shardsTotal > 0);
   setText(ui.gemIcon, EPOCH_GEM_EMOJI[viewEpoch() % EPOCH_GEM_EMOJI.length], 'gemi');
   updateGoal(); updateDaily();
   if (previewIdx() !== null) {                       // обрана минула епоха: угорі її заробіток, баланс для витрат — у підписі
@@ -6662,12 +6840,9 @@ function updateWeather(dt) {
 let rainSpotCache = { key: '', x: 0 };
 function rainToggleSpot() {
   if (!shop) return null;
-  const key = view.offX + '|' + view.w + '|' + shop.x + '|' + shop.w;
-  if (rainSpotCache.key !== key) {
-    const tr = treeSpots(-view.offX, view.w).filter(t2 => t2.x > shop.x + shop.w + 10).sort((a, b) => a.x - b.x)[0];
-    rainSpotCache = { key, x: tr ? tr.x + 19 : shop.x + shop.w + 70 };
-  }
-  return { x: rainSpotCache.x, y: LAYOUT.curbY - 3 };
+  const cy = shop.y + shop.sign.y + (shop.sign.h >> 1) + 1;
+  const x = Math.min(shop.x + shop.w + 16, visR() - 14);                       // праворуч від вивіски; на вузькому екрані — скраю кадру
+  return { x: Math.round(x), cy };
 }
 // Крапелька: загострений кінчик угорі, округле дно, світла грань, тінь і відблиск
 function dropG(g, cx, top, body, light, edge, hi) {
@@ -6682,11 +6857,9 @@ function dropG(g, cx, top, body, light, edge, hi) {
 }
 function drawRainToggle() {
   const p = rainToggleSpot(); if (!p) return;
-  const on = !!state.settings.rain, x = p.x, y = p.y, anim = on && animOn(), bob = anim && Math.floor(animClock * 3) % 2 ? 1 : 0;
-  ctx.globalAlpha = 0.25; R(ctx, x - 6, y, 13, 2, 'd'); ctx.globalAlpha = 1;
-  R(ctx, x - 4, y - 2, 9, 3, 'd'); R(ctx, x - 3, y - 2, 7, 2, 'e'); R(ctx, x - 3, y - 2, 7, 1, 'E');           // підставка
-  R(ctx, x - 1, y - 28, 3, 27, 'd'); R(ctx, x, y - 28, 1, 27, 'e'); R(ctx, x + 1, y - 26, 1, 24, 'E');        // високий стовпчик
-  const cy = y - 40 - bob;                                                                                 // круглий знак
+  const on = !!state.settings.rain, x = p.x, anim = on && animOn(), bob = anim && Math.floor(animClock * 3) % 2 ? 1 : 0;
+  const cy = p.cy - bob;                                                                                   // круглий знак висить у повітрі біля вивіски
+  ctx.globalAlpha = 0.18; disc(ctx, x + 1, cy + 2, 12, 'd'); ctx.globalAlpha = 1;
   disc(ctx, x, cy, 12, 'd');
   disc(ctx, x, cy, 11, on ? 'n' : 'e');
   disc(ctx, x, cy, 10, on ? 'a' : 'E');
@@ -6701,7 +6874,7 @@ function drawRainToggle() {
 }
 function hitRainToggle(p) {
   const s = rainToggleSpot(); if (!s) return false;
-  if (Math.abs(p.x - s.x) <= 13 && p.y >= s.y - 54 && p.y <= s.y - 26) {
+  if (Math.abs(p.x - s.x) <= 14 && Math.abs(p.y - s.cy) <= 14) {
     state.settings.rain = !state.settings.rain;
     if (state.settings.rain) { weather.rain = Math.max(weather.rain, 0.3); }
     showToast(t(state.settings.rain ? 'rainOn' : 'rainOff'), 'good'); playSfx('pip'); saveGame();
@@ -6816,7 +6989,8 @@ function cloudCanvas(kind, tint) {
   ][kind % 3];
   const W = [64, 44, 68][kind % 3], H = [34, 26, 22][kind % 3], c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
   const inP = (p, x, y) => (x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]) * 1.2 <= p[2] * p[2];
-  const inCl = (x, y) => y <= H - 3 && puffs.some(p => inP(p, x, y));
+  const BITES = tint === 'cotton' ? [[[45, 9, 6.3], [51, 12, 4.6], [57, 16, 3.8]], null, [[35, 3, 6.5], [41, 5, 4.6], [29, 5, 3.8]]][kind % 3] : null;      // сліди зубів: хмари 0 і 2 надкушені, хмара 1 цілa
+  const inCl = (x, y) => y <= H - 3 && puffs.some(p => inP(p, x, y)) && !(BITES && BITES.some(b => (x - b[0]) * (x - b[0]) + (y - b[1]) * (y - b[1]) <= b[2] * b[2]));
   let top = H, bot = 0;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (inCl(x, y)) { top = Math.min(top, y); bot = Math.max(bot, y); }
   for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) {
@@ -7236,9 +7410,19 @@ function actorSay(a) {
   const m = TEAM[a.i];
   showBubble('t' + a.i, t('team_' + m.id + '_say_' + Math.floor(Math.random() * TEAM_PHRASES)), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 }));
 }
-function capySay() {
-  const c = LAYOUT.capy;
-  showBubble('capy', t('capy_say_' + Math.floor(Math.random() * CAPY_PHRASES)), c.x + 14, c.footY - 32);
+function wornSkinIds() {                                                       // ідентифікатори скінів, які зараз вдягнено (для реплік)
+  const ids = [];
+  SKIN_TYPES.forEach(ty => { const sk = skinOn(ty); if (sk) ids.push(ty + '_' + sk); });
+  return ids;
+}
+function capySay(forceId) {
+  const c = LAYOUT.capy, worn = wornSkinIds();
+  let id = forceId || null;
+  if (!id && worn.length && Math.random() < 0.65) { const cs = worn.find(w => w.startsWith('capy_')); id = (cs && Math.random() < 0.6) ? cs : worn[Math.floor(Math.random() * worn.length)]; }
+  const key = id ? 'skinSay_' + id : '';
+  let pi = Math.floor(Math.random() * CAPY_PHRASES); if (skinOn('capy')) { const ok = [...Array(CAPY_PHRASES).keys()].filter(n => n !== 1 && n !== 4); pi = ok[Math.floor(Math.random() * ok.length)]; }       // у скіні Капі не жартує про квіточку на голові
+  const txt = key && t(key) !== key ? t(key) : t('capy_say_' + pi);
+  showBubble('capy', txt, c.x + 14, c.footY - 32);
 }
 
 // Найняти або прокачати звірятко
@@ -7646,6 +7830,7 @@ function drawCustomer(c) {
   }
   const gx = sx + (c.dir < 0 ? -1 : 0);                                       // у дзеркальному вигляді тіло зсунуте на піксель, одяг іде слідом
   const hs = skinOn('hero');
+  if (c.vip) return;                                                           // золотий покупець: без скінів, капелюхів і шарфів
   if (hs && c.alpha > 0.9) drawSkinGear(gx, sy, hs, !hasHats());
   if (hasHats() && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(gx + 9, sy + 8, c.hat); }
   if (hasScarves() && c.alpha > 0.9) {       // шарфик на шиї покупця
@@ -7683,6 +7868,7 @@ function updateAnimations(dt) {
   });
 
   if (build) updateBuild(dt);
+  updateClockFx(dt);
   updateCustomers(dt);
   updateActors(dt);
   updateCameos(dt);
@@ -7963,6 +8149,12 @@ const SFX = {
       for (let k = 0; k < 4; k++) { if (k % 2 === 0) tone(audio.sfxGain, 'triangle', noteFreq(ROOTS[bi]), t + k * beat, beat * 0.7, 0.3); else tone(audio.sfxGain, 'square', noteFreq(ROOTS[bi]) * 3, t + k * beat, beat * 0.25, 0.07); }
     });
   },
+  clockBong() {    // глибокий удар дзвону: основний тон і обертони з довгим згасанням
+    const ac = audio.ctx, t0 = ac.currentTime + 0.01;
+    [[110, 0.5], [220, 0.28], [330, 0.17], [440, 0.09]].forEach(([f, v]) => tone(audio.sfxGain, 'sine', f, t0, 1.8, v));
+    tone(audio.sfxGain, 'triangle', 165, t0, 1.2, 0.12); noiseHit(audio.sfxGain, t0, 0.05, 0.3, 'bandpass', 1800);
+  },
+  paper() { const ac = audio.ctx, t0 = ac.currentTime + 0.01; noiseHit(audio.sfxGain, t0, 0.14, 0.32, 'bandpass', 3200); noiseHit(audio.sfxGain, t0 + 0.08, 0.1, 0.22, 'highpass', 5200); },
   buildTheme() {   // бадьорий будівельний марш (≈8 с): мелодія на квадраті, бас і стукіт молотків
     const ac = audio.ctx, beat = 0.5, t0 = ac.currentTime + 0.05;
     const MEL = [[['G4', .5], ['C5', .5], ['E5', .5], ['C5', .5], ['G4', .5], ['E5', .5], ['G5', 1]], [['F4', .5], ['A4', .5], ['C5', .5], ['A4', .5], ['F5', .5], ['E5', .5], ['D5', 1]], [['E5', .5], ['G5', .5], ['E5', .5], ['C5', .5], ['D5', .5], ['E5', .5], ['G5', 1]], [['G5', .5], ['E5', .5], ['D5', .5], ['B4', .5], ['C5', 2]]];
@@ -8259,17 +8451,19 @@ function playEpochIntro(epochNo, done) {
 }
 
 /* ---------- Кристали і подорож ---------- */
-// Кристали за подорож: floor(√(зароблено за цей забіг / X)), плюс бонус майстерні
+// Осколки за подорож: 4 + 2,5·lg(зароблено за забіг / X), плюс бонус майстерні (мало, щоб не купити все одразу)
 function prestigeGain() {
   const run = Math.max(0, state.totalEarned - state.runStartEarned);
-  return Math.floor(Math.sqrt(run / CONFIG.CRYSTAL_DIVISOR) * (1 + 0.1 * wsLevel('crystalGain')));
+  if (run < CONFIG.CRYSTAL_DIVISOR) return 0;
+  const n = (state.stats && state.stats.timeTravels) || 0;                               // 5 осколків за першу подорож, далі +2 за кожну (до 23): до кінця 8-ї епохи вистачає на всі покращення
+  return Math.max(1, Math.floor((5 + 2 * Math.min(n, 9)) * (1 + 0.1 * wsLevel('crystalGain'))));
 }
 function startLevel() { return Math.min(LEVELS.length, 1 + wsLevel('headStart')); }
 
 function askTimeTravel() {
   const gain = prestigeGain();
   if (!state.story.finale || gain < 1) return;
-  askConfirm(t('warpConfirmTitle'), t('warpConfirmText', gain), t('warpConfirmYes'), startWarp);
+  askConfirm(t('warpConfirmTitle'), t('warpConfirmText', gain, eraStep((state.stats && state.stats.timeTravels) || 0)), t('warpConfirmYes'), startWarp);
 }
 function startWarp(view) {
   if (warp) return;
@@ -8278,7 +8472,9 @@ function startWarp(view) {
   const snap = document.createElement('canvas'); snap.width = W; snap.height = H;
   const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
   const target = (view === undefined ? state.epoch + 1 : view) % EPOCHS.length;
-  warp = { t: 0, applied: false, W, H, snap, view, dur: view === undefined ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
+  const [fx, fy] = clockFaceFrac();
+  clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('clockBong');
+  warp = { t: 0, applied: false, fx, fy, W, H, snap, view, dur: view === undefined ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
   ui.timeWarp.hidden = false;
   closeWheel();
   playSfx('warp');
@@ -8286,7 +8482,7 @@ function startWarp(view) {
 // Перехід «Вир часу»: сцена закручується → тунель із годинником і значками епох → спалах → нова епоха розкривається колом
 const WARP_ICONS = EPOCH_GOODS_ICONS.map(a => a[0]);
 function drawWarpFrame(k) {
-  const cv = ui.warpCanvas, g = cv.getContext('2d'), W = warp.W, H = warp.H, cx = W / 2, cy = H / 2, sc = W / 160, diag = Math.hypot(cx, cy);
+  const cv = ui.warpCanvas, g = cv.getContext('2d'), W = warp.W, H = warp.H, cx = W * (warp.fx || 0.5), cy = H * (warp.fy || 0.5), sc = W / 160, diag = Math.max(Math.hypot(cx, cy), Math.hypot(W - cx, cy), Math.hypot(cx, H - cy), Math.hypot(W - cx, H - cy));
   const seg = (a, b) => Math.max(0, Math.min(1, (k - a) / (b - a))), ez = x => x * x * (3 - 2 * x);
   const k1 = seg(0, 0.18), k2 = seg(0.18, 0.78), k3 = seg(0.78, 1);
   g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
@@ -8298,6 +8494,7 @@ function drawWarpFrame(k) {
     g.strokeStyle = i % 2 ? '#7a5cc9' : '#f2b84b'; g.lineWidth = (1 + f * 5) * sc; g.globalAlpha = a1 * (0.25 + f * 0.7);
     g.beginPath(); g.ellipse(cx, cy, r * 1.2, r * 0.7, ang * 0.2, 0, Math.PI * 2); g.stroke();
   }
+  if (k < 0.3) { const f = k / 0.3; g.globalAlpha = (1 - f) * 0.9; g.strokeStyle = '#ffe08a'; g.lineWidth = 3 * sc * (1 - f * 0.6); g.beginPath(); g.arc(cx, cy, 6 * sc + f * 70 * sc, 0, 7); g.stroke(); g.beginPath(); g.arc(cx, cy, 3 * sc + f * 40 * sc, 0, 7); g.stroke(); }     // кільця дзвону розходяться від годинника
   g.globalAlpha = a1; g.lineWidth = sc;
   for (let i = 0; i < 24; i++) { const an = i / 24 * Math.PI * 2 + k * 5; g.strokeStyle = i % 2 ? '#ffe08a' : '#ff5fa2'; g.beginPath(); g.moveTo(cx + Math.cos(an) * 8 * sc, cy + Math.sin(an) * 5 * sc); g.lineTo(cx + Math.cos(an) * 100 * sc, cy + Math.sin(an) * 62 * sc); g.stroke(); }
   g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -8337,8 +8534,8 @@ function updateWarp(dt) {
 function applyTimeTravel() {
   syncEpochEarned();
   const gain = prestigeGain();
-  state.crystals += gain;
-  state.crystalsTotal += gain;
+  state.shards += gain;
+  state.shardsTotal += gain;
   state.stats.timeTravels++;
   state.stats.maxLevel = Math.max(state.stats.maxLevel, state.shopLevel);
   state.epoch++;
@@ -8400,8 +8597,8 @@ function buildWorkshop() {
 }
 function buyWorkshop(i) {
   const w = WORKSHOP[i], L = state.ws[i];
-  if (L >= w.costs.length || state.crystals < w.costs[L]) return;
-  state.crystals -= w.costs[L];
+  if (L >= w.costs.length || state.shards < w.costs[L]) return;
+  state.shards -= w.costs[L];
   state.ws[i]++;
   recalcIncome();
   playSfx('upgrade');
@@ -8432,10 +8629,10 @@ function updateRouteCard(gain) {
 }
 function updateWorkshopUI() {
   if (ui.paneWorkshop.hidden) return;
-  setText(ui.wsInfo, t('wsCrystals', fmt(state.crystals)), 'wsInfo');
-  setText(ui.wsBonus, t('wsBonus', fmt(state.crystalsTotal), fmt(crystalMult(), 2)), 'wsBonus');
+  setText(ui.wsInfo, t('wsCrystals', fmt(state.shards)), 'wsInfo');
+  setText(ui.wsBonus, t('wsBonus', fmt(state.shardsTotal), fmt(crystalMult(), 2), fmt(eraMult(), 2)), 'wsBonus');
   const gain = prestigeGain();
-  setText(ui.warpPreview, gain >= 1 ? t('warpGain', gain) : t('warpNone', fmt(CONFIG.CRYSTAL_DIVISOR)), 'warpPrev');
+  setText(ui.warpPreview, gain >= 1 ? t('warpGain', gain, eraStep((state.stats && state.stats.timeTravels) || 0)) : t('warpNone', fmt(CONFIG.CRYSTAL_DIVISOR)), 'warpPrev');
   ui.warpBtn.disabled = gain < 1 || !state.story.finale;
   updateRouteCard(gain);
   setText(ui.warpBtn, t('warpBtn'), 'warpBtn');
@@ -8446,7 +8643,7 @@ function updateWorkshopUI() {
     setText(e.now, t('teamNow', wsEffectText(w.id, L)), 'wnow' + i + '_' + L);
     setText(e.next, L < max ? t('teamNext', wsEffectText(w.id, L + 1)) : '', 'wnext' + i + '_' + L);
     if (L >= max) { setText(e.btn, t('teamMax'), 'wb' + i); e.btn.disabled = true; }
-    else { setText(e.btn, t('wsBuy', w.costs[L]), 'wb' + i + '_' + L); e.btn.disabled = state.crystals < w.costs[L]; }
+    else { setText(e.btn, t('wsBuy', w.costs[L]), 'wb' + i + '_' + L); e.btn.disabled = state.shards < w.costs[L]; }
   });
 }
 
@@ -8516,7 +8713,7 @@ function fmtDuration(sec) {
 }
 function buildStats() {
   ui.statsCard.innerHTML = '';
-  const rows = ['stEpoch', 'stPlay', 'stEarned', 'stRun', 'stCps', 'stTap', 'stTaps', 'stDepts', 'stCrystals', 'stTravels', 'stRaccoons', 'stPuddles', 'stGhosts', 'stWheel', 'stAch', 'stChapters'];
+  const rows = ['stEpoch', 'stPlay', 'stEarned', 'stRun', 'stCps', 'stTap', 'stTaps', 'stDepts', 'stCrystals', 'stShards', 'stTravels', 'stRaccoons', 'stPuddles', 'stGhosts', 'stWheel', 'stAch', 'stChapters'];
   rows.forEach(k => {
     const row = document.createElement('div');
     row.className = 'stat';
@@ -8538,6 +8735,7 @@ function updateStatsUI() {
     stTaps: fmt(s.taps),
     stDepts: fmt(st.deptsBought),
     stCrystals: EPOCH_GEM_EMOJI[viewEpoch() % EPOCH_GEM_EMOJI.length] + ' ' + fmt(s.crystals) + ' / ' + fmt(s.crystalsTotal),
+    stShards: SHARD_CH + ' ' + fmt(s.shards || 0) + ' / ' + fmt(s.shardsTotal || 0),
     stTravels: fmt(st.timeTravels),
     stRaccoons: st.raccoonsCaught + ' / ' + st.raccoonsLost,
     stPuddles: fmt(st.puddlesFixed),
@@ -8752,6 +8950,7 @@ function equipSkin(type, i) {
 }
 function setSkin(type, i) {
   state.skins[type] = i;
+  if (i !== -1) { const nm = skinOn(type); if (nm) setTimeout(() => capySay(type + '_' + nm), 350); }       // Капі коментує новий скін
   if (type === 'capy') drawCapiPortrait();
   else if (type === 'hero') refreshTeamPortraits();
   else if (type === 'shop') rebuildShop(true);
@@ -8930,7 +9129,19 @@ function setupProgression() {
   ui.importBtn.addEventListener('click', importSave);
   ui.resetBtn.addEventListener('click', () => askConfirm(t('resetTitle'), t('resetText'), t('resetYes'), hardReset));
   ui.warpBtn.addEventListener('click', askTimeTravel);
-  ui.newsClose.addEventListener('click', () => { ui.newsModal.hidden = true; });
+  ui.newsClose.addEventListener('click', closeNews);
+  ui.npWrite.addEventListener('click', openFeedback); ui.fbCancel.addEventListener('click', closeFeedback); ui.fbSend.addEventListener('click', sendFeedback);
+  ui.fbModal.addEventListener('click', e => { if (e.target === ui.fbModal) closeFeedback(); });
+  ui.fbText.addEventListener('input', () => { ui.fbCount.textContent = ui.fbText.value.length + ' / 800'; try { localStorage.setItem('capyFeedbackDraft', ui.fbText.value); } catch (e) { /* ok */ } });
+  ui.newsModal.addEventListener('click', e => { if (e.target === ui.newsModal || e.target.classList.contains('np-wrap')) closeNews(); });
+  ui.npPrev.addEventListener('click', () => npGo(-1)); ui.npNext.addEventListener('click', () => npGo(1));
+  ui.npPaper.addEventListener('pointerdown', e => { npDrag = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+  ui.npPaper.addEventListener('pointerup', e => {                                  // свайп гортає сторінку; короткий тап: правий бік — далі, лівий — назад
+    if (!npDrag) return; const dx = e.clientX - npDrag.x, dy = e.clientY - npDrag.y; npDrag = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) npGo(dx < 0 ? 1 : -1);
+    else if (Math.abs(dx) < 8 && Math.abs(dy) < 8 && !e.target.closest('button')) { const r = ui.npPaper.getBoundingClientRect(); npGo(e.clientX > r.left + r.width * 0.5 ? 1 : -1); }
+  });
+  document.addEventListener('keydown', e => { if (ui.newsModal.hidden || !ui.fbModal.hidden || e.target.closest('input,textarea')) return; if (e.key === 'ArrowRight') npGo(1); else if (e.key === 'ArrowLeft') npGo(-1); else if (e.key === 'Escape') closeNews(); });
   ui.siLater.addEventListener('click', () => { ui.siModal.hidden = true; });
   ui.siGo.addEventListener('click', () => { ui.siModal.hidden = true; onTabClick('seasons'); });
   ui.confirmYes.addEventListener('click', () => { ui.confirmModal.hidden = true; const cb = confirmCb; confirmCb = null; if (cb) cb(); });
@@ -10236,6 +10447,8 @@ function updateHalloweenAir(dt) {
   if (!fogWisps.length) for (let i = 0; i < 16; i++) fogWisps.push({ x: rand(worldL(), worldR()), y: rand(LAYOUT.curbY - 2, worldB() - 28), w: rand(34, 70), vx: rand(2, 6), a: rand(0.07, 0.14) });
   fogWisps.forEach(f => { f.x += f.vx * dt; if (f.x - f.w > worldR()) f.x = worldL() - f.w; });
   if (!hwitch.on) {
+    hwitch.timer = 99;
+    return;
     hwitch.timer -= dt;
     if (hwitch.timer <= 0) { hwitch.on = true; hwitch.t = 0; hwitch.dir = Math.random() < 0.5 ? -1 : 1; hwitch.x = hwitch.dir < 0 ? visR() + 40 : visL() - 40; hwitch.y = hallowSkyY() + rand(-8, 14); playSfx('hagCackle'); }
   } else {
@@ -10243,7 +10456,24 @@ function updateHalloweenAir(dt) {
     if (hwitch.x < visL() - 70 || hwitch.x > visR() + 70) { hwitch.on = false; hwitch.timer = rand(18, 40); }
   }
 }
-function drawWitchSprite(x, y, dir, t) {                                                           // відьма на мітлі (летить уліво при dir < 0)
+let witchCv = null;
+function buildWitchCanvas() {                                                              // відьма 26×22 «великих пікселів» (кожен 2×2), дивиться вправо
+  const MAP = ["..........kk..............",".........kVVk............","..........kVVk...........","..........kVvVk..........","...........kVvVk.........","...........kVVVVk........","..........kPPyyPPk.......","........kkVVVVVVVVkk.....",".......kVVVVVVVVVVVVk....","........kkkkkkkkkkkkk....",".......kfffkWWWWWWk......","......kffJfkWkWWqWWk.....","......kfJffkWWWWWWk......","......kffffkWWrrWk.......",".......kfJfkkkkkkk.......","....kkk.kffkVVVVVkk......","...khyhkkfkVvVVVVPkWk....","..khyyhkkkkVVVPPPkWWk....","..kyohhoooooooooooooookk.","..khohhkkdkPPPPPPkk.....","...kkkk...kPkk.kPk......","..........kkk..kkkk....."];
+  const c = document.createElement('canvas'); c.width = 52; c.height = 44; const g = c.getContext('2d');
+  MAP.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] !== '.') R(g, i * 2, j * 2, 2, 2, r[i]); });
+  return c;
+}
+function drawWitchSprite(x, y, dir, t) {
+  if (!witchCv) witchCv = buildWitchCanvas();
+  const bob = Math.round(Math.sin(t * 6) * 1);
+  drawCanvasSprite(ctx, witchCv, x - 26, y - 22 + bob, { flip: dir < 0 });
+  for (let k = 0; k < 7; k++) {                                                              // зоряний шлейф за віником
+    const a = (1 - k / 7) * 0.8, px = 28 + k * 5, py = 14 + Math.round(Math.sin(t * 5 + k) * 2) + (k % 2 ? -2 : 2);
+    ctx.globalAlpha = a; R(ctx, dir < 0 ? x + px : x - px, y + py, 1, 1, ['y', 'o', 'u', 'w'][k % 4]); if (k % 3 === 0) R(ctx, dir < 0 ? x + px - 1 : x - px + 1, y + py, 3, 1, 'y');
+    ctx.globalAlpha = 1;
+  }
+}
+function drawWitchSpriteOld(x, y, dir, t) {                                                           // відьма на мітлі (летить уліво при dir < 0)
   const P = (dx, dy, w, h, c) => R(ctx, dir < 0 ? x + dx : x - dx - w + 1, y + dy, w, h, c);
   const fl = Math.floor(t * 8) % 2;
   P(-9, 0, 24, 1, 'd'); P(-9, 0, 24, 1, 'b'); P(-9, -1, 24, 1, 'd');                          // держак
@@ -10258,10 +10488,29 @@ function drawWitchSprite(x, y, dir, t) {                                        
     ctx.globalAlpha = 1;
   }
 }
-function drawHalloweenAir() {
+const capyRimCache = {};
+function drawCapyBody(breath) {
+  const cp = LAYOUT.capy;
+  drawSprite(ctx, capySprite(), cp.x, cp.footY - 24, { flip: cp.flip, sx: 1.2, sy: 1.2 * (1 + 0.045 * breath), variant: capyAnim.blinkLeft > 0 ? 'blink' : '' });
+}
+function drawCapyRim(x, y, flip) {                                              // тонкий теплий контур: Капі вночі не зливається з темною вулицею
+  const name = capySprite(), src = getSpriteCanvas(name);
+  let rim = capyRimCache[name];
+  if (!rim) {
+    rim = document.createElement('canvas'); rim.width = src.width; rim.height = src.height;
+    const g = rim.getContext('2d'); g.drawImage(src, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = '#ffe9b0'; g.fillRect(0, 0, rim.width, rim.height);
+    capyRimCache[name] = rim;
+  }
+  const a = Math.min(0.85, 0.35 + sky.night * 0.7);
+  [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([dx, dy]) => drawCanvasSprite(ctx, rim, x + dx, y + dy, { flip, alpha: a, sx: 1.2, sy: 1.2 }));
+}
+function drawHalloweenFog() {
   if (theme.season !== 'halloween') return;
   fogWisps.forEach(f => { if (f.x + f.w < visL() || f.x - f.w > visR()) return; ctx.globalAlpha = f.a; for (let dy = -3; dy <= 3; dy++) { const half = Math.round(f.w * 0.5 * Math.sqrt(1 - (dy * dy) / 12)); R(ctx, Math.round(f.x) - half, Math.round(f.y) + dy, half * 2, 1, 'w'); } });
   ctx.globalAlpha = 1;
+}
+function drawHalloweenAir() {
+  if (theme.season !== 'halloween') return;
   if (hwitch.on) drawWitchSprite(Math.round(hwitch.x), Math.round(hwitch.y + Math.sin(hwitch.t * 1.8) * 6), hwitch.dir, hwitch.t);
 }
 function updateGhostHunt(dt) {
@@ -10371,13 +10620,14 @@ const CIRCUS_SECTORS = (function () {
   return [cr(1, 14, 'u'), sk('capy', 'c', 'hat'), cr(2, 9, 'v'), sk('shop', 'q', 'house'), cr(1, 14, 'u'), sk('weather', 'S', 'cloud'), cr(3, 5, 'P'), sk('street', 'E', 'brick'), cr(1, 14, 'u'), sk('hero', 'w', 'paw'), cr(2, 9, 'v'), sk('capy', 'c', 'hat')];
 })();
 const SKIN_TYPES = ['capy', 'shop', 'weather', 'street', 'hero'];   // групи скінів: Капі, магазин, погода, герої
-const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_lightning', 'hero_party', 'hero_ninja', 'capy_ep0', 'capy_ep1', 'capy_ep2', 'capy_ep3', 'capy_ep4', 'capy_ep5', 'capy_ep6', 'capy_ep7', 'capy_wizard', 'capy_chef', 'capy_explorer', 'capy_detective', 'capy_sailor', 'shop_ice', 'shop_wood', 'shop_garden', 'weather_cottoncloud', 'weather_goldcloud', 'weather_starcloud', 'hero_chef', 'hero_wizard', 'hero_royal', 'street_wood', 'street_brick', 'capy_santa', 'capy_witch', 'capy_flower', 'capy_beach', 'capy_autumn', 'hero_santa', 'hero_witch', 'shop_xmas', 'shop_halloween', 'shop_spring', 'shop_autumn', 'street_snow', 'street_leaves'];
+const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_lightning', 'hero_party', 'hero_ninja', 'capy_ep0', 'capy_ep1', 'capy_ep2', 'capy_ep3', 'capy_ep4', 'capy_ep5', 'capy_ep6', 'capy_ep7', 'capy_wizard', 'capy_chef', 'capy_explorer', 'capy_detective', 'capy_sailor', 'shop_ice', 'shop_wood', 'shop_garden', 'weather_cottoncloud', 'weather_goldcloud', 'weather_starcloud', 'hero_chef', 'hero_wizard', 'hero_royal', 'street_wood', 'street_brick', 'capy_santa', 'capy_witch', 'capy_flower', 'capy_beach', 'capy_autumn', 'hero_santa', 'hero_witch', 'shop_xmas', 'shop_halloween', 'shop_spring', 'shop_autumn', 'street_snow', 'street_leaves', 'capy_mel', 'capy_nika'];
 const SKIN_SEASON = { capy_santa: '🎄', capy_witch: '🎃', capy_flower: '🌸', capy_beach: '🏖️', capy_autumn: '🍂', hero_santa: '🎄', hero_witch: '🎃', shop_xmas: '🎄', shop_halloween: '🎃', shop_spring: '🌸', shop_autumn: '🍂', street_snow: '❄️', street_leaves: '🍂' };   // сезонні скіни
 function skinHas(i) { return i < 32 ? !!(state.skinsMask & (1 << i)) : !!(state.skinsMask2 & (1 << (i - 32))); }       // перші 32 скіни — у skinsMask, решта — у skinsMask2
 function skinGrant(i) { if (i < 32) state.skinsMask |= (1 << i); else state.skinsMask2 |= (1 << (i - 32)); }
 const SKINS_FREE = false;          // скіни відкриваються виграшем у цирку або купівлею
 const SKIN_PRICE = 50;             // символічна ціна скіна в кристалах часу
 function skinOwned(i) {
+  if (SKIN_POOL[i] === 'capy_mel' || SKIN_POOL[i] === 'capy_nika') return true;                  // скіни розробників MEL і NIKA — подарунок усім
   const m = /^capy_ep(\d)$/.exec(SKIN_POOL[i]);
   if (m) return +m[1] === viewEpoch() % EPOCHS.length;      // скін епохи можна вдягнути лише в його власній епосі
   return SKINS_FREE || skinHas(i);
@@ -10625,13 +10875,15 @@ function hagCauldron(g, x, y, lid, t, dim, jump) {
   R(g, x - 9, cy - 4, 3, 7, 'z'); R(g, x - 8, cy - 3, 1, 4, 'e');
   R(g, x - 14, cy - 11, 29, 4, 'd'); R(g, x - 13, cy - 10, 27, 2, 'e'); R(g, x - 13, cy - 10, 27, 1, 'Y');
   R(g, x - 12, cy - 11, 25, 2, 'm'); R(g, x - 10, cy - 11, 6, 1, 'S');                 // зілля
+  R(g, x + 6, cy - 6, 3, 8, 'e'); R(g, x + 7, cy - 4, 1, 4, 'Y'); R(g, x - 15, cy - 4, 3, 3, 'e'); R(g, x + 13, cy - 4, 3, 3, 'e');       // відблиск і вушка казана
   if (lid < 0.99) for (let k = 0; k < 3; k++) { const ph = (t * 0.8 + k / 3) % 1; g.globalAlpha = (1 - ph) * 0.9; disc(g, x - 6 + k * 6 + Math.round(Math.sin(t * 3 + k) * 2), Math.round(cy - 12 - ph * 12), 1 + (k % 2), 'S'); }
   g.globalAlpha = 1;
-  // гарбуз-кришка: коли відкрито, підіймається вгору й вбік
+  // кришка — капелюх відьми: коли відкрито, підіймається вгору й вбік
   if (lid > 0.02) {
-    const up = Math.round((1 - lid) * 20), sx = Math.round((1 - lid) * 8), lx = x + sx, ly = cy - 11 - up;
-    R(g, lx - 13, ly - 8, 27, 9, 'd'); R(g, lx - 12, ly - 7, 25, 7, 'o'); R(g, lx - 12, ly - 7, 8, 7, 'h'); R(g, lx - 3, ly - 7, 1, 7, 'r'); R(g, lx + 4, ly - 7, 1, 7, 'r'); R(g, lx - 6, ly - 4, 2, 2, 'k'); R(g, lx + 2, ly - 4, 2, 2, 'k');
-    R(g, lx - 1, ly - 11, 3, 3, 'd'); R(g, lx, ly - 10, 2, 2, 'g');
+    const up = Math.round((1 - lid) * 22), sx = Math.round((1 - lid) * 8), lx = x + sx, ly = cy - 10 - up;
+    R(g, lx - 15, ly - 3, 31, 4, 'k'); R(g, lx - 14, ly - 3, 29, 3, 'P'); R(g, lx - 14, ly - 3, 29, 1, 'v');
+    for (let r = 0; r < 15; r++) { const half = Math.round(11 * (1 - r / 15)) + 2, off = -Math.round(r * 0.25); R(g, lx + off - half - 1, ly - 4 - r, half * 2 + 3, 1, 'k'); R(g, lx + off - half, ly - 4 - r, half * 2 + 1, 1, r < 4 ? 'V' : 'P'); R(g, lx + off - half, ly - 4 - r, 2, 1, 'v'); }
+    R(g, lx - 9, ly - 8, 19, 3, 'V'); R(g, lx - 3, ly - 8, 6, 3, 'y'); R(g, lx - 1, ly - 7, 2, 1, 'k');
   }
   if (dim) { g.globalAlpha = 0.35; R(g, x - 14, cy - 12, 29, 25, 'V'); g.globalAlpha = 1; }
 }
@@ -10718,50 +10970,45 @@ function updateHagFly(dt) {
   hagFly.t += dt; hagFly.x += hagFly.dir * (hagFly.fast ? 150 : 38) * dt;
   if (hagFly.x < visL() - 100) { hagFly.on = false; hagFly.fast = false; hagFly.wait = rand(2.5, 5); }
 }
-function drawHagFlyer() {
+function drawHagFlyer() {                                           // єдина відьма: летить на мітлі замість цирку (лише на Хелловін)
   if (!hagFly.on) return;
-  const x = Math.round(hagFly.x), y = Math.round(hagFly.y + Math.sin(hagFly.t * 2.2) * 5), dir = hagFly.dir, t = hagFly.t, fast = hagFly.fast;
-  const P = (dx, dy, w, h, c) => R(ctx, dir < 0 ? x + dx : x - dx - w + 1, y + dy, w, h, c);
-  for (let k = 0; k < 8; k++) { ctx.globalAlpha = (1 - k / 8) * 0.5; P(14 + k * 7, 5 + Math.round(Math.sin(t * 4 + k) * 2), 3 - (k > 4 ? 1 : 0), 3 - (k > 4 ? 1 : 0), k % 2 ? 'E' : 'w'); }       // дим із ступи
-  ctx.globalAlpha = 1;
-  for (let i = 0; i <= 9; i++) P(8 + Math.round(i * 1.6), -3 + i, 2, 1, 'd');                                              // мітла позаду
-  for (let i = 0; i <= 8; i++) P(8 + Math.round(i * 1.6), -3 + i, 1, 1, 'b');
-  P(20, 5, 7, 6, 'd'); P(21, 6, 5, 4, 'h'); P(21, 7, 6, 1, 'o'); P(21, 9, 6, 1, 'o');
-  for (let r = 0; r < 9; r++) { const half = 11 - Math.round(r * 0.55); P(-half, 4 + r, half * 2, 1, r === 8 ? 'd' : 'e'); P(-half, 4 + r, 1, 1, 'd'); P(half - 1, 4 + r, 1, 1, 'd'); if (r > 1 && r < 8) P(half - 4, 4 + r, 3, 1, 'Y'); }       // ступа
-  P(-12, 1, 25, 3, 'd'); P(-11, 2, 23, 1, 'E');
-  P(-5, -9, 10, 11, 'd'); P(-4, -8, 8, 10, 'P'); P(-4, -8, 2, 10, 'v'); P(0, -3, 4, 4, 'W');                           // тулуб і фартух
-  P(-8, -19, 10, 4, 'd'); P(-7, -18, 8, 3, 'r'); P(-4, -18, 1, 1, 'y'); P(-1, -17, 1, 1, 'y'); P(-6, -15, 9, 7, 'd'); P(-5, -14, 7, 6, 'm');                       // хустка й обличчя
-  P(-9, -12, 4, 3, 'd'); P(-8, -12, 3, 2, 'm'); P(-9, -10, 2, 1, 'g'); P(-4, -13, 1, 1, 'y'); P(-6, -9, 4, 1, 'd'); P(1, -16, 2, 7, 'Y');         // ніс, око, пасма
-  for (let i = 0; i <= 10; i++) P(-6 - Math.round(i * 1.3), -2 + i, 2, 1, 'b');                                           // товкач
-  P(-21, 8, 5, 5, 'd'); P(-20, 9, 3, 3, 'e');
-  if (fast) { ctx.globalAlpha = 0.7; P(26, -2, 10, 1, 'w'); P(30, 3, 12, 1, 'w'); P(24, 8, 8, 1, 'w'); ctx.globalAlpha = 1; }
+  const x = Math.round(hagFly.x), y = Math.round(hagFly.y + Math.sin(hagFly.t * 2.2) * 5), dir = hagFly.dir;
+  drawWitchSprite(x, y, dir, hagFly.t);
+  if (hagFly.fast) { ctx.globalAlpha = 0.7; const P = (dx, dy, w) => R(ctx, dir < 0 ? x + dx : x - dx - w + 1, y + dy, w, 1, 'w'); P(30, -8, 10); P(36, 0, 12); P(28, 8, 8); ctx.globalAlpha = 1; }
 }
 
 const HAG_ART = (function () {
-  function leg(g, x, hipY, footY, lift) {                       // куряча лапа: пір'яста гомілка, жовта п'ятка й три пальці з кігтями
-    R(g, x - 5, hipY, 10, 9, 'd'); R(g, x - 4, hipY + 1, 8, 7, 'w'); R(g, x - 4, hipY + 1, 2, 7, 'W'); R(g, x + 1, hipY + 3, 3, 1, 'E'); R(g, x - 2, hipY + 6, 4, 1, 'E');
-    const sy = hipY + 9, ey = footY - 2 - lift;
-    if (ey > sy) { R(g, x - 2, sy, 4, ey - sy, 'd'); R(g, x - 1, sy, 2, ey - sy, 'h'); for (let y = sy + 2; y < ey; y += 4) R(g, x - 1, y, 2, 1, 'o'); }
-    const fy = footY - lift;
-    R(g, x - 10, fy - 2, 14, 3, 'd'); R(g, x - 9, fy - 1, 12, 2, 'h'); R(g, x - 11, fy - 1, 2, 2, 'o'); R(g, x - 8, fy + 1, 4, 1, 'o'); R(g, x + 4, fy - 1, 2, 1, 'o');
+  function leg(g, x, hipY, footY, lift, sw) {                   // куряча лапа спереду: пухнасте «галіфе», гомілка нахиляється разом із кроком, пальці віялом із кігтями
+    const fy = footY - lift, ax = x + sw, ay = fy - 6, y0 = hipY + 8;
+    for (let d = -3; d <= 3; d++) lineG(g, x + d, y0, ax + d, ay, 'd');
+    for (let d = -2; d <= 2; d++) lineG(g, x + d, y0, ax + d, ay, 'h');
+    for (let d = -2; d <= -1; d++) lineG(g, x + d, y0, ax + d, ay, 'y');
+    for (let k = 1; k < 5; k++) { const px = Math.round(x + (ax - x) * k / 5), py = Math.round(y0 + (ay - y0) * k / 5); R(g, px - 1, py, 4, 1, 'o'); }
+    R(g, x - 8, hipY, 17, 7, 'd'); R(g, x - 7, hipY + 1, 15, 5, 'w'); R(g, x - 7, hipY + 1, 4, 5, 'W');
+    [-8, -4, 0, 4, 7].forEach((dx, i) => { R(g, x + dx, hipY + 7, 3, 2 + (i % 2), 'd'); R(g, x + dx + 1, hipY + 7, 1, 1 + (i % 2), 'w'); });
+    R(g, ax - 5, ay - 1, 10, 3, 'd'); R(g, ax - 4, ay, 8, 1, 'h');
+    for (let d = 0; d < 3; d++) { lineG(g, ax - 1 + d, ay + 1, ax - 9 + d, fy, 'd'); lineG(g, ax - 1 + d, ay + 2, ax - 9 + d, fy, 'd'); lineG(g, ax + d + 1, ay + 1, ax + 9 + d, fy, 'd'); lineG(g, ax + d + 1, ay + 2, ax + 9 + d, fy, 'd'); }
+    R(g, ax - 2, ay + 1, 4, fy - ay, 'd');
+    lineG(g, ax - 1, ay + 1, ax - 9, fy, 'h'); lineG(g, ax + 2, ay + 1, ax + 10, fy, 'h'); R(g, ax - 1, ay + 1, 2, fy - ay, 'h');
+    R(g, ax - 12, fy - 1, 4, 2, 'k'); R(g, ax + 10, fy - 1, 4, 2, 'k'); R(g, ax - 2, fy, 4, 1, 'k');
   }
-  function face(g, cx, top, k, t) {                              // обличчя Баби Яги: хустка, пасма, довгий ніс, ікло й бородавка
+  function face(g, cx, top, k, t) {                              // обличчя відьми: капелюх, рожеве волосся, блідий лик і усмішка
     const Rk = (dx, dy, w, h, c) => R(g, cx + dx * k, top + dy * k, w * k, h * k, c);
     const blink = (t % 3.2) > 3.05;
-    Rk(-6, 2, 2, 9, 'd'); Rk(-5, 2, 1, 9, 'Y'); Rk(5, 2, 2, 9, 'd'); Rk(5, 2, 1, 9, 'w');
-    Rk(-6, -2, 13, 5, 'd'); Rk(-5, -1, 11, 4, 'r'); Rk(4, 0, 3, 3, 'r'); Rk(-3, 0, 1, 1, 'y'); Rk(0, 1, 1, 1, 'y'); Rk(2, 0, 1, 1, 'y');
-    Rk(-5, 3, 11, 9, 'd'); Rk(-4, 3, 9, 8, 'm'); Rk(-4, 3, 9, 1, 'g');
-    if (blink) { Rk(-3, 6, 2, 1, 'g'); Rk(1, 6, 2, 1, 'g'); } else { Rk(-3, 5, 2, 2, 'y'); Rk(1, 5, 2, 2, 'y'); Rk(-2, 6, 1, 1, 'k'); Rk(2, 6, 1, 1, 'k'); }
-    Rk(-1, 7, 3, 2, 'm'); Rk(0, 9, 2, 2, 'g'); Rk(-1, 7, 1, 2, 'g');
-    Rk(-3, 11, 7, 1, 'd'); Rk(-2, 10, 1, 1, 'w'); Rk(2, 10, 1, 1, 'w'); Rk(0, 12, 1, 1, 'g');
+    Rk(-1, -2, 3, 1, 'V'); Rk(-2, -1, 5, 1, 'V'); Rk(-3, 0, 7, 1, 'V'); Rk(-1, 0, 3, 1, 'y'); Rk(-6, 1, 13, 2, 'V'); Rk(-6, 1, 2, 1, 'v');
+    Rk(-6, 3, 3, 8, 'f'); Rk(-6, 3, 1, 8, 'J'); Rk(4, 3, 3, 6, 'f'); Rk(6, 3, 1, 6, 'J');
+    Rk(-3, 3, 7, 8, 'W'); Rk(-3, 3, 7, 1, 'f'); Rk(-3, 3, 2, 2, 'f');
+    if (blink) { Rk(-2, 7, 2, 1, 'k'); Rk(2, 7, 2, 1, 'k'); } else { Rk(-2, 6, 1, 2, 'k'); Rk(2, 6, 1, 2, 'k'); }
+    Rk(-3, 8, 2, 1, 'q'); Rk(2, 8, 2, 1, 'q'); Rk(0, 9, 2, 1, 'r'); Rk(-2, 11, 5, 1, 'W');
   }
   function draw(g, t, s, moving) {
     g.clearRect(0, 0, 160, 84);
     const ss = s * s * (3 - 2 * s), walk = moving ? t * 5.2 : 0;
     const bob = moving ? Math.round(Math.abs(Math.sin(walk)) * 1.6) : 0, hipY = 56 + Math.round(ss * 18) - bob;
     const cabB = hipY + 3, cabH = 32, cabT = cabB - cabH, x0 = 44, x1 = 116, W = x1 - x0, groundY = 83;
-    leg(g, 66, hipY, groundY, moving ? Math.round(Math.max(0, Math.sin(walk)) * 9) : 0);
-    leg(g, 96, hipY, groundY, moving ? Math.round(Math.max(0, Math.sin(walk + Math.PI)) * 9) : 0);
+    const stA = moving ? Math.sin(walk) : 0, stB = moving ? Math.sin(walk + Math.PI) : 0;
+    leg(g, 66, hipY, groundY, Math.round(Math.max(0, stA) * 8), Math.round(stA * 3));
+    leg(g, 96, hipY, groundY, Math.round(Math.max(0, stB) * 8), Math.round(stB * 3));
     // кістяний паркан й гарбузи, коли хатка присіла
     if (ss > 0.5) {
       const a = Math.min(1, (ss - 0.5) * 2); g.globalAlpha = a;
@@ -10776,7 +11023,15 @@ const HAG_ART = (function () {
     for (let y = cabT + 4; y < cabB - 2; y += 6) { R(g, x0 - 2, y - 2, 4, 5, 'd'); R(g, x0 - 1, y - 1, 2, 3, 'c'); R(g, x1 - 2, y - 2, 4, 5, 'd'); R(g, x1 - 1, y - 1, 2, 3, 'c'); }
     // вікна: тепле світло, фіранка
     const wf = Math.floor(t * 6) % 7 === 0 ? 'h' : 'y';
-    [[50, 0], [98, 1]].forEach(([wx, right]) => { const wy = cabT + 8; R(g, wx - 1, wy - 1, 14, 14, 'd'); R(g, wx, wy, 12, 12, wf); R(g, wx + 5, wy, 2, 12, 'd'); R(g, wx, wy + 5, 12, 2, 'd'); R(g, wx, wy, 12, 2, 'o'); R(g, right ? wx + 7 : wx, wy, 5, 4, 'r'); R(g, wx - 2, wy + 12, 16, 2, 'b'); });
+    [50, 98].forEach(wx => {
+      const wy = cabT + 8;
+      R(g, wx - 5, wy, 4, 13, 'k'); R(g, wx - 4, wy + 1, 2, 11, 'G'); R(g, wx - 4, wy + 1, 1, 11, 'g'); R(g, wx + 13, wy, 4, 13, 'k'); R(g, wx + 14, wy + 1, 2, 11, 'G'); R(g, wx + 15, wy + 1, 1, 11, 'g');   // віконниці
+      R(g, wx - 1, wy - 1, 14, 14, 'k');
+      [[0, 0], [7, 0], [0, 7], [7, 7]].forEach(([dx, dy]) => { R(g, wx + dx, wy + dy, 5, 5, wf); R(g, wx + dx, wy + dy, 2, 1, 'w'); R(g, wx + dx, wy + dy + 4, 5, 1, 'h'); });
+      R(g, wx + 5, wy, 2, 12, 'd'); R(g, wx, wy + 5, 12, 2, 'd');
+      R(g, wx, wy, 4, 2, 'r'); R(g, wx + 8, wy, 4, 2, 'r'); R(g, wx, wy + 2, 2, 1, 'r'); R(g, wx + 10, wy + 2, 2, 1, 'r');
+      R(g, wx - 2, wy + 13, 16, 2, 'k'); R(g, wx - 2, wy + 13, 16, 1, 'l');
+    });
     // двері: відчиняються, всередині тепло й видно Бабу Ягу
     const open = Math.max(0, Math.min(1, (s - 0.6) / 0.3));
     R(g, 72, cabB - 24, 17, 24, 'd'); R(g, 73, cabB - 23, 15, 23, open > 0.05 ? 'k' : 'P');
@@ -10803,15 +11058,18 @@ const HAG_ART = (function () {
     R(g, 58, apex + 14, 4, 3, 'd'); R(g, 59, apex + 14, 2, 1, 'k'); R(g, 56, apex + 16, 2, 1, 'k'); R(g, 62, apex + 15, 2, 1, 'k'); R(g, 58, apex + 15, 1, 1, 'y');        // ворона на даху
     R(g, 52, cabT + 1, 1, 5, 'd'); R(g, 50, cabT + 6, 5, 7, 'd'); R(g, 51, cabT + 7, 3, 5, wf === 'h' ? 'h' : 'o'); R(g, 52, cabT + 8, 1, 2, 'y');                     // ліхтарик
   }
-  function window_(g, t) {                                       // портрет Баби Яги у вікні хатки на тлі місяця (72×40)
+  const BUST = ['........kk........', '.......kPPk.......', '......kPvPPk......', '.....kPvPPPPk.....', '....kPPvPPPPPk....', '....kPPPPPPPPPk...', '...kPPyyyyyPPPPk..', '.kkkPPPPPPPPPPkkk.', 'kPPPPPPPPPPPPPPPPk', '.kJfkWWWWWWWWkfJk.', 'kfffkWWWWWWWWkfffk', 'kfffkWWkWWkWWkfffk', 'kfffkWqWWWWqWkfffk', 'kJffkWWWrrWWWkffJk', '.kffkkWWWWWWkkffk.', '..kffkkVVVVkkffk..', '.kPPPPPPPPPPPPPPk.', 'kPPPPPuuPPuuPPPPPk'];
+  function window_(g, t) {                                       // портрет відьми у вікні хатки на тлі місяця (72×40)
     g.clearRect(0, 0, 72, 40);
-    R(g, 0, 0, 72, 40, 'V'); for (let i = 0; i < 14; i++) { R(g, (i * 29 + 7) % 72, (i * 13 + 3) % 22, 1, 1, i % 3 ? 'w' : 'y'); }
-    disc(g, 12, 11, 7, 'd'); disc(g, 12, 11, 6, 'o'); disc(g, 10, 9, 4, 'h'); R(g, 14, 12, 3, 2, 'o');
-    const bx = Math.round(48 + Math.sin(t * 0.7) * 14), by = Math.round(7 + Math.sin(t * 1.9) * 2), fl = Math.floor(t * 8) % 2;
+    R(g, 0, 0, 72, 40, 'v'); R(g, 0, 20, 72, 20, 'u'); R(g, 0, 32, 72, 8, 'P');
+    for (let i = 0; i < 14; i++) if (Math.sin(t * 2 + i) > -0.6) R(g, (i * 29 + 7) % 72, (i * 13 + 3) % 22, 1, 1, i % 3 ? 'w' : 'y');
+    disc(g, 10, 11, 7, 'd'); disc(g, 10, 11, 6, 'o'); disc(g, 8, 9, 4, 'h'); R(g, 12, 12, 3, 2, 'o');
+    const bx = Math.round(56 + Math.sin(t * 0.7) * 9), by = Math.round(7 + Math.sin(t * 1.9) * 2), fl = Math.floor(t * 8) % 2;
     R(g, bx - 1, by, 3, 2, 'k'); R(g, bx - 5, by - (fl ? 2 : 0), 4, 1, 'k'); R(g, bx + 2, by - (fl ? 2 : 0), 4, 1, 'k');
-    R(g, 0, 28, 72, 12, 'z'); face(g, 36, 6, 2, t);
-    R(g, 0, 33, 72, 7, 'd'); R(g, 0, 34, 72, 1, 'b');
-    for (let i = 0; i < 5; i++) { R(g, 6 + i * 14, 30, 1, 4, 'w'); R(g, 5 + i * 14, 29, 3, 2, 'w'); }
+    const bob = Math.round(Math.sin(t * 2) * 1), blink = (t % 3.2) > 3.05;
+    BUST.forEach((r, j) => { for (let i = 0; i < r.length; i++) { let c = r[i]; if (c === '.') continue; if (blink && j === 11 && c === 'k' && (i === 7 || i === 10)) c = 'W'; R(g, 18 + i * 2, 1 + bob + j * 2, 2, 2, c); } });
+    R(g, 0, 36, 72, 4, 'd'); R(g, 0, 36, 72, 1, 'b');
+    for (let i = 0; i < 5; i++) { R(g, 6 + i * 14, 33, 1, 4, 'w'); R(g, 5 + i * 14, 32, 3, 2, 'w'); }
   }
   return { draw, window: window_ };
 })();
@@ -10911,7 +11169,7 @@ function closeCircus() {
   ui.circusModal.hidden = true;
   if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
 }
-function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_POOL[i].startsWith('capy_ep') && !skinHas(i)); }   // скіни епох у колесі не випадають
+function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
 // Один випадковий сектор (з урахуванням скінів, що вже є) і його дія
 function rollCircusSector(noSmall) {
   const weight = x => (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : (noSmall && x.kind === 'crystal' && (x.amount || 1) === 1 ? 0 : x.weight));
@@ -11102,7 +11360,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 3;
+const NEWS_VERSION = 5;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -11129,17 +11387,171 @@ function hitNews(p) {
   if (Math.abs(p.x - x) <= 14 && p.y >= y - 38 && p.y <= y + 3) { openNews(); return true; }
   return false;
 }
-const NEWS_ITEMS = ['🧙', '👻', '📮', '🏗️', '🗺️', '🌸', '🛒', '⏳', '🪟'];
+// Випуски газети (новий — першим). Картинки лише до найбільших змін; тексти двома мовами. Для нового випуску: додай запис угору й підніми NEWS_VERSION.
+const NEWS_ISSUES = [{"ver":5,"uk":[["Осколки часу й кристали.","Тепер дві валюти. Осколки часу (фіолетові) дає подорож у часі, і за них купуються покращення в Магазині часу. Кристали випадають з бустів, цирку й золотих покупців, і за них купуються скіни. Кожна подорож у часі ще й назавжди дає ×2 до тапів і доходу."],["Одна відьма.","Відьми більше не літають просто так. На Хелловін замість цирку прилітає лише одна відьма на мітлі. Потім вона запрошує зіграти в «Три казанки». Зелену бабусю прибрали."],["Нові лапки для хатки.","Хатка відьми тепер стоїть на справжніх курячих лапках: з коліньми, лусочками, пальцями й кігтями. Сама відьма стала піксельнішою."],["Скіни говорять.","У кожного скіна є своя репліка: пірат кричить по-піратськи, астронавт просить орбіту цін. Одягни скін і тапни по Капі. А ще з’явилися два скіни розробників: лисиця Мел і зайка Ніка. Вони безкоштовні."],["Золоті покупці.","Золоті звірята тепер просто золоті. Скіни, капелюхи й шарфи на них не вдягаються."],["Очі на місці.","Костюми героїв більше не закривають звірятам очі. А в Капі прибрали підсвітку, що відставала від скіна."],["Газета MEL & NIKA.","Газета тепер піксельна, з іменами редакторів і вкладками. У вкладках можна перечитати попередні випуски, а кнопка «Написати розробникам» надішле нам твою думку."],["Більший маркет на ПК.","Коли магазин росте, на комп’ютері картинка трохи віддаляється, щоб усе вміщалося зручно."],["Меню на телефоні.","Меню на вертикальному телефоні більше не залазить на цирк і дорогу: сцена тепер закінчується над панеллю."]],"en":[["Time shards and crystals.","There are now two currencies. Time shards (purple) come from time travel and buy upgrades in the Time shop. Crystals drop from boosts, the circus and golden shoppers, and buy skins. And every time trip permanently gives ×2 to taps and income."],["Just one witch.","Witches no longer fly around for no reason. On Halloween, instead of the circus, a single witch on a broom arrives. Then she invites you to play \"Three cauldrons\". The green granny is gone."],["New legs for the hut.","The witch’s hut now stands on real chicken legs: knees, scales, toes and claws. The witch herself got more pixelated."],["Skins talk.","Every skin has its own line: the pirate shouts like a pirate, the astronaut asks for the orbit of prices. Wear a skin and tap Capy. Two developer skins are new: Mel the fox and Nika the bunny. They are free."],["Golden shoppers.","Golden animals are now just golden. Skins, hats and scarves do not go on them."],["Eyes in place.","Hero costumes no longer cover the animals’ eyes. And the glow around Capy, which lagged behind the skin, is gone."],["The MEL & NIKA paper.","The paper is now pixel-style, with the editors’ names and tabs. Use the tabs to reread earlier issues, and the “Write to the developers” button sends us your thoughts."],["A bigger market on PC.","When the shop grows, the picture on a computer zooms out a little so everything fits comfortably."],["The phone menu.","On a vertical phone the menu no longer covers the circus and the road: the scene now ends above the panel."]],"intro":{"uk":"Привіт, друже! У цьому номері: дві валюти (осколки й кристали), одна справжня відьма й хатка на курячих лапках, а ще скіни навчилися говорити. Гортай сторінки!","en":"Hi, friend! In this issue: two currencies (shards and crystals), one real witch and a hut on chicken legs, and skins have learned to talk. Turn the pages!"},"pics":{"0":"shards","1":"hut","2":"witch"},"caps":{"uk":{"0":"Осколок часу й кристал.","1":"Хатка відьми на новеньких лапках.","2":"Єдина відьма Хелловіну."},"en":{"0":"A time shard and a crystal.","1":"The witch’s hut on brand-new legs.","2":"The one witch of Halloween."}}},{"ver":4,"uk":[["Газета замість листа.","Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше."],["Годинникова вежа.","На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху."],["Нове завантаження.","Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну."],["Нова відьма.","Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф."],["Більші маркети.","На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли."],["Надкусані хмари.","У скіні «Цукрові хмари» частину хмар ніби надкусили."],["Крапля дощу.","Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину."],["Чіткі рамки.","Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком."],["Капі вночі.","У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят."]],"en":[["A newspaper instead of a letter.","The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows."],["The clock tower.","A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era."],["New loading screen.","A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one."],["A new witch.","The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars."],["Bigger markets.","On a vertical phone markets of every level are bigger and the brown strips at the edges are gone."],["Bitten clouds.","In the Cotton Clouds skin some of the clouds look as if somebody took a bite."],["The rain drop.","The little drop that turns the rain on now hangs on the right by the shop sign."],["Crisp frames.","Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock."],["Capy at night.","In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals."]],"intro":{"uk":"Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!","en":"Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!"},"pics":{"1":"clock","2":"city","3":"witch"},"caps":{"uk":{"1":"Годинникова вежа торгового центру опівночі.","2":"Нічне місто на екрані завантаження.","3":"Нова відьма облітає місто."},"en":{"1":"The mall clock tower at midnight.","2":"The night city on the loading screen.","3":"The new witch circles the town."}}},{"ver":3,"uk":[["Баба Яга на Хелловін.","Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки»."],["Темніший Хелловін.","Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі."],["Нова пошта.","Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання."],["Нова будівля під полотном.","Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає."],["Ширша вулиця.","Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів."],["Пелюстки навесні.","Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало."],["Магазин часу.","У майстерні часу список покращень за кристали тепер так і називається."],["Завантаження.","На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки."],["Вікна й пара.","У всіх будинків є вікна, а пара з люків стала лагіднішою."]],"en":[["Baba Yaga for Halloween.","Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game."],["A darker Halloween.","The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom."],["New mail.","A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye."],["A new build under a tarp.","When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears."],["A wider street.","The town got wider: scroll further left and right, there are more houses, trees and lamps."],["Spring petals.","In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn."],["Time shop.","In the Time Workshop the crystal upgrade list is now called just that."],["Loading screen.","On the loading screen Capy smoothly runs through the night city and pixel coins."],["Windows and steam.","All houses have windows, and the manhole steam is gentler."]],"intro":{"uk":"Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.","en":"Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done."},"pics":{"0":"hut","1":"witch","2":"van","3":"tent"},"caps":{"uk":{"0":"Хатка на курячих лапках прийшла.","1":"Відьма на мітлі над дахами.","2":"Пошта привозить новини.","3":"Нове будівництво під білим полотном."},"en":{"0":"The hut on chicken legs has arrived.","1":"A witch on a broom over the roofs.","2":"The mail van brings the news.","3":"New building work under a white tarp."}}},{"ver":2,"uk":[["Місто ожило.","Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла."],["Золоті покупці й завдання дня.","Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами."],["Цирк і барабан — окремо.","Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати."],["Скіни для всіх.","Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку."],["Пори року.","Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою."],["Нова погода.","Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку)."],["Бодя будує.","Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют."],["І ця скринька.","Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає."],["Свіже.","Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший."]],"en":[["The town came alive.","More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out."],["Golden shoppers and daily tasks.","Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards."],["Circus and drum, separate.","Both can give crystals, but events are a little rarer now, so waiting is more fun."],["Skins for everyone.","Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus."],["Seasons.","A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show."],["New weather.","Smooth purple lightning and a huge rainbow over the town (you can win them at the circus)."],["Bodie builds.","A new shop level now takes a long, epic build: hammer, crane, dust, fireworks."],["And this mailbox.","It is red because it carries hot news only. Check it when the flag blinks."],["Fresh.","The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer."]],"intro":{"uk":"Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.","en":"Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done."},"pics":{},"caps":{"uk":{},"en":{}}}];
+let newsIssue = 0, newsBusy = false;
+function picCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; return { c, g }; }
+function newsPic(kind) {
+  const { c, g } = picCanvas(160, 84);
+  if (kind === 'hut') {
+    R(g, 0, 0, 160, 84, 'V'); R(g, 0, 40, 160, 44, 'P'); for (let i = 0; i < 14; i++) R(g, (i * 29 + 5) % 160, (i * 13 + 3) % 40, 1, 1, 'w'); disc(g, 138, 16, 9, 'o'); disc(g, 136, 14, 6, 'h');
+    R(g, 0, 78, 160, 6, 'z'); const hc = document.createElement('canvas'); hc.width = 160; hc.height = 84; HAG_ART.draw(hc.getContext('2d'), 1.2, 1, false); g.drawImage(hc, 0, 0);
+  } else if (kind === 'clock') {
+    for (let y = 0; y < 84; y += 6) R(g, 0, y, 160, 6, y < 30 ? 'z' : 'V'); for (let i = 0; i < 18; i++) R(g, (i * 29 + 9) % 160, (i * 13 + 4) % 50, 1, 1, i % 3 ? 'w' : 'y'); disc(g, 28, 18, 9, 'w'); disc(g, 31, 16, 8, 'z');
+    R(g, 0, 66, 160, 18, 'z'); for (let x = 0; x < 160; x += 13) { const hh = 8 + (x * 5) % 12; R(g, x, 66 - hh + 8, 13, hh, 'k'); }
+    const cx = 80; R(g, cx - 14, 54, 28, 14, 'd'); R(g, cx - 13, 54, 26, 14, 'c');
+    R(g, cx - 17, 24, 34, 32, 'd'); R(g, cx - 16, 25, 32, 30, 'W'); R(g, cx - 16, 25, 4, 30, 'E'); R(g, cx + 12, 25, 4, 30, 'c');
+    disc(g, cx, 40, 14, 'y'); g.globalAlpha = 0; g.globalAlpha = 1; disc(g, cx, 40, 13, 'd'); disc(g, cx, 40, 12, 'h'); disc(g, cx, 40, 10, 'd'); disc(g, cx, 40, 9, 'w');
+    for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; R(g, Math.round(cx + Math.sin(a) * 7.5), Math.round(40 - Math.cos(a) * 7.5), i % 3 ? 1 : 2, i % 3 ? 1 : 2, 'd'); }
+    lineG(g, cx, 40, cx, 34, 'd'); lineG(g, cx, 40, cx + 5, 43, 'd'); R(g, cx - 1, 39, 2, 2, 'h');
+    R(g, cx - 12, 14, 24, 10, 'd'); R(g, cx - 11, 15, 22, 9, 'k'); [-6, 6].forEach(bx => { R(g, cx + bx - 2, 17, 5, 4, 'h'); R(g, cx + bx - 3, 21, 7, 2, 'h'); });
+    for (let r = 0; r < 14; r++) { const half = 16 - r; R(g, cx - half, 13 - r, half * 2, 1, 'r'); R(g, cx - half, 13 - r, 2, 1, 'd'); R(g, cx + half - 2, 13 - r, 2, 1, 'd'); }
+    R(g, cx, 0, 1, 3, 'd'); [18, 28, 38].forEach(rr => { for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2; if (rr === 28) R(g, Math.round(cx + Math.cos(a) * (rr + 8)), Math.round(40 + Math.sin(a) * (rr + 8) * 0.8), 1, 1, 'y'); } });
+  } else if (kind === 'city') {
+    for (let y = 0; y < 84; y += 6) R(g, 0, y, 160, 6, y < 24 ? 'z' : y < 48 ? 'V' : 'P'); for (let i = 0; i < 14; i++) R(g, (i * 31 + 7) % 160, (i * 11 + 2) % 30, 1, 1, 'w'); disc(g, 124, 22, 9, 'w');
+    for (let x = 0; x < 160; ) { const w = 14 + (x * 3) % 9, h = 20 + (x * 7) % 30; R(g, x, 66 - h, w, h, x % 2 ? 'V' : 'z'); for (let wy = 66 - h + 4; wy < 62; wy += 7) for (let wx = x + 3; wx < x + w - 3; wx += 6) if ((wx + wy) % 3) R(g, wx, wy, 3, 4, (wx * 3 + wy) % 4 ? 'y' : 'f'); x += w; }
+    R(g, 0, 66, 160, 18, 'z'); R(g, 0, 66, 160, 2, 'u'); for (let x = 0; x < 160; x += 18) R(g, x, 76, 9, 1, 'h');
+    R(g, 20, 46, 2, 22, 'd'); R(g, 17, 43, 8, 4, 'y');
+    const cs = getSpriteCanvas('capy'); g.drawImage(cs, 0, 0, cs.width, cs.height, 70, 80 - cs.height * 1.6, cs.width * 1.6, cs.height * 1.6);
+  } else if (kind === 'witch') {
+    for (let y = 0; y < 84; y += 6) R(g, 0, y, 160, 6, y < 24 ? 'z' : y < 54 ? 'V' : 'P'); for (let i = 0; i < 16; i++) R(g, (i * 31 + 7) % 160, (i * 11 + 2) % 50, 1, 1, i % 3 ? 'w' : 'y');
+    disc(g, 112, 30, 18, 'd'); disc(g, 112, 30, 17, 'o'); disc(g, 109, 27, 13, 'h'); disc(g, 107, 25, 8, 'y');
+    for (let x = 0; x < 160; x += 14) { const hh = 10 + (x * 7) % 14; R(g, x, 84 - hh, 14, hh, 'k'); R(g, x + 3, 84 - hh + 3, 2, 2, 'y'); }
+    if (!witchCv) witchCv = buildWitchCanvas(); g.drawImage(witchCv, 42, 14); [[18, 14], [30, 30], [140, 52]].forEach(([bx, by]) => { R(g, bx, by, 3, 1, 'k'); R(g, bx - 3, by - 1, 3, 1, 'k'); R(g, bx + 3, by - 1, 3, 1, 'k'); });
+  } else if (kind === 'shards') {
+    for (let y = 0; y < 84; y += 6) R(g, 0, y, 160, 6, y < 30 ? 'z' : y < 60 ? 'V' : 'P'); for (let i = 0; i < 20; i++) R(g, (i * 29 + 9) % 160, (i * 13 + 4) % 60, 1, 1, i % 3 ? 'w' : 'y');
+    R(g, 0, 70, 160, 14, 'd'); R(g, 0, 70, 160, 2, 'b');
+    const gem = (cx, cy, hh, hw, a, b) => { for (let r = -hh; r <= hh; r++) { const half = Math.round(hw * (1 - Math.abs(r) / hh)); R(g, cx - half, cy + r, half * 2 + 1, 1, r < -hh * 0.2 ? a : b); R(g, cx - half, cy + r, 1, 1, 'k'); R(g, cx + half, cy + r, 1, 1, 'k'); } R(g, cx - 1, cy - hh + 1, 3, 3, 'w'); R(g, cx - hw + 3, cy - 2, 2, 5, 'w'); };
+    gem(80, 38, 26, 16, 'S', 's'); gem(38, 52, 14, 9, 'q', 'p'); gem(122, 54, 16, 10, 'm', 'T');
+    [[60, 14], [100, 20], [24, 32], [136, 36]].forEach(([sx, sy]) => { R(g, sx, sy - 2, 1, 5, 'y'); R(g, sx - 2, sy, 5, 1, 'y'); });
+  } else if (kind === 'van') {
+    R(g, 0, 0, 160, 50, 'S'); R(g, 0, 50, 160, 34, 'E'); R(g, 0, 62, 160, 22, 'e'); for (let x = 0; x < 160; x += 24) R(g, x, 73, 12, 2, 'y'); disc(g, 130, 16, 8, 'y');
+    const Rs = (x, y, w, h, col) => R(g, 24 + x * 3, 40 + y * 3, w * 3, h * 3, col), D = (cx, cy, r, col) => disc(g, 24 + cx * 3, 40 + cy * 3, r * 3, col);
+    Rs(0, -16, 35, 15, 'd'); Rs(16, -15, 17, 12, 'n'); Rs(16, -15, 17, 1, 'v'); Rs(20, -13, 9, 6, 'w'); Rs(16, -5, 17, 1, 'h'); Rs(1, -11, 13, 8, 'n'); Rs(2, -10, 5, 4, 's'); Rs(10, -10, 3, 3, 'h'); Rs(-1, -8, 3, 5, 'n');
+    [7, 27].forEach(wx => { D(wx, -2, 3, 'd'); D(wx, -2, 1, 'e'); }); Rs(23, -11, 3, 1, 'r'); R(g, 40, 22, 8, 6, 'r'); R(g, 41, 23, 6, 4, 'p');
+  } else if (kind === 'tent') {
+    R(g, 0, 0, 160, 60, 'S'); R(g, 0, 60, 160, 24, 'E'); R(g, 0, 60, 160, 2, 'e');
+    R(g, 28, 22, 104, 40, 'c'); R(g, 28, 22, 104, 2, 'd'); for (let x = 36; x < 124; x += 20) { R(g, x, 32, 12, 12, 's'); R(g, x, 32, 12, 1, 'd'); }
+    for (let r = 0; r < 22; r++) { const half = 3 + Math.round(r * 2.6); R(g, 80 - half, 2 + r, half * 2, 1, r % 5 === 4 ? 'E' : 'w'); R(g, 80 - half, 2 + r, 1, 1, 'd'); R(g, 80 + half - 1, 2 + r, 1, 1, 'd'); }
+    R(g, 24, 24, 112, 38, 'w'); for (let x = 24; x < 136; x += 6) R(g, x, 24, 1, 38, 'E'); R(g, 23, 24, 1, 38, 'd'); R(g, 136, 24, 1, 38, 'd'); R(g, 24, 24, 112, 1, 'd');
+    for (let x = 20; x <= 140; x += 24) R(g, x, 14, 2, 50, 'b'); [18, 40, 62].forEach(y => R(g, 18, y, 124, 2, 'l')); R(g, 74, 38, 12, 4, 'e'); R(g, 78, 42, 4, 14, 'b');
+    R(g, 0, 58, 160, 4, 'h'); for (let x = 0; x < 160; x += 8) R(g, x, 58, 4, 4, 'k');
+  } else {                                                                         // обкладинка: Капі на тлі променів
+    for (let i = 0; i < 24; i++) { const a0 = i / 24 * Math.PI * 2; g.fillStyle = i % 2 ? PALETTE.y : PALETTE.h; g.beginPath(); g.moveTo(80, 60); g.arc(80, 60, 120, a0, a0 + Math.PI / 24 * 2); g.closePath(); g.fill(); }
+    const cs = getSpriteCanvas('capy'); g.drawImage(cs, 0, 0, cs.width, cs.height, 80 - cs.width * 1.5, 82 - cs.height * 3, cs.width * 3, cs.height * 3);
+  }
+  return c;
+}
+let npI = 0, npN = 0, npDrag = null;
+function newsPortrait(spr, bg) {                                                 // маленький піксельний портрет редактора
+  const { c, g } = picCanvas(32, 32); R(g, 0, 0, 32, 32, bg); R(g, 0, 26, 32, 6, 'b');
+  const sc = getSpriteCanvas(spr); g.drawImage(sc, 0, 0, sc.width, sc.height, (32 - sc.width) >> 1, 31 - sc.height, sc.width, sc.height);
+  return c;
+}
+function buildNewsPages() {
+  const L = state.lang === 'uk' ? 'uk' : 'en', is = NEWS_ISSUES[newsIssue], items = is[L], pics = is.pics || {}, caps = (is.caps && is.caps[L]) || {};
+  const pages = [];
+  const cover = document.createElement('div'); cover.className = 'np-in np-cover';
+  const mast = document.createElement('div'); mast.className = 'np-mast';
+  mast.innerHTML = '<div class="row"><div class="who" id="npWhoA"></div><b>MEL<br><i>&amp;</i> NIKA</b><div class="who" id="npWhoB"></div></div><small>' + (L === 'uk' ? 'ГАЗЕТА ВІД РОЗРОБНИКІВ · ВИПУСК №' : 'NEWS FROM THE DEVELOPERS · ISSUE #') + is.ver + '</small>';
+  const wa = mast.querySelector('#npWhoA'), wb = mast.querySelector('#npWhoB');
+  wa.appendChild(newsPortrait('capy_mel', '#cdb98d')); wa.insertAdjacentHTML('beforeend', '<span>MEL</span>');
+  wb.appendChild(newsPortrait('capy_nika', '#e7c6c0')); wb.insertAdjacentHTML('beforeend', '<span>NIKA</span>');
+  mast.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+  cover.appendChild(mast);
+  cover.insertAdjacentHTML('beforeend', '<div class="np-lead">' + (newsIssue === 0 ? t('npCoverHead') : (L === 'uk' ? 'З архіву' : 'From the archive')) + '</div>');
+  cover.insertAdjacentHTML('beforeend', '<p>' + is.intro[L] + '</p><b>' + t('npIn') + '</b><ol class="np-toc">' + items.map(it => '<li>' + it[0] + '</li>').join('') + '</ol>');
+  pages.push(cover);
+  const groups = []; for (let i = 0; i < items.length; ) { if (!pics[i] && i + 1 < items.length && !pics[i + 1]) { groups.push([i, i + 1]); i += 2; } else { groups.push([i]); i++; } }       // стаття з картинкою — на окремій сторінці
+  groups.forEach((grp, gi) => {
+    const pg = document.createElement('div'); pg.className = 'np-in';
+    grp.forEach(k => {
+      const a = document.createElement('article'); a.innerHTML = '<h3>' + items[k][0] + '</h3>';
+      if (pics[k]) { const f = document.createElement('figure'); f.className = 'np-fig'; f.appendChild(newsPic(pics[k])); if (caps[k]) f.insertAdjacentHTML('beforeend', '<figcaption>' + caps[k] + '</figcaption>'); a.appendChild(f); }
+      a.insertAdjacentHTML('beforeend', '<p>' + items[k][1] + '</p>'); pg.appendChild(a);
+    });
+    if (gi === groups.length - 1) pg.insertAdjacentHTML('beforeend', '<p class="np-sign">' + t('newsSign') + '</p>');
+    pages.push(pg);
+  });
+  return pages;
+}
+function npShow(first) {
+  const els = ui.newsBody.children;
+  [...els].forEach((el, i) => { el.classList.toggle('flipped', i < npI); el.style.zIndex = String(npN - i); if (i === npI) { const sc = el.querySelector('.np-in'); if (sc) sc.scrollTop = 0; } });
+  ui.npNum.textContent = (npI + 1) + ' / ' + npN; ui.npPrev.disabled = npI === 0; ui.npNext.disabled = npI === npN - 1;
+}
+function npGo(d) { const n = Math.max(0, Math.min(npN - 1, npI + d)); if (n === npI) return; npI = n; npShow(); playSfx('paper'); }
+function newsFill() {                                                           // сторінки обраного випуску й вкладки
+  ui.newsBody.innerHTML = '';
+  buildNewsPages().forEach(inner => { const pg = document.createElement('div'); pg.className = 'np-page'; pg.appendChild(inner); ui.newsBody.appendChild(pg); });
+  npI = 0; npN = ui.newsBody.children.length; npShow(true);
+  ui.npTabs.innerHTML = '';
+  NEWS_ISSUES.forEach((is, k) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'np-tab' + (k === newsIssue ? ' on' : ''); b.textContent = (k === 0 ? (state.lang === 'uk' ? 'Свіжий №' : 'New #') : '№') + is.ver; b.addEventListener('click', e => { e.stopPropagation(); if (k === newsIssue || newsBusy) return; const dir = k > newsIssue ? 1 : -1; newsBusy = true; newsIssue = k; playSfx('paper'); const pg = ui.newsBody; const out = pg.animate([{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-dir * 36) + 'px) scale(.97)' }], { duration: 200, easing: 'ease-in', fill: 'forwards' }); out.onfinish = () => { newsFill(); out.cancel(); pg.animate([{ opacity: 0, transform: 'translateX(' + (dir * 36) + 'px) scale(.97)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: 320, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => { newsBusy = false; }; }; }); ui.npTabs.appendChild(b); });
+}
 function openNews() {
   ui.newsTitle.textContent = t('newsTitle'); ui.newsSub.textContent = t('newsSub');
-  let h = '<p>' + t('newsIntro') + '</p>';
-  NEWS_ITEMS.forEach((ic, i) => { h += '<div class="news-item"><span class="ni">' + ic + '</span><span><b>' + t('newsH' + i) + '</b> ' + t('newsT' + i) + '</span></div>'; });
-  h += '<p class="news-sign">' + t('newsSign') + '</p>';
-  ui.newsBody.innerHTML = h; ui.newsBody.scrollTop = 0;
-  ui.newsClose.textContent = t('newsClose');
-  ui.newsModal.hidden = false; playSfx('wheelWin');
+  newsIssue = 0; newsBusy = false; newsFill();
+  ui.newsClose.textContent = t('newsClose'); ui.npWrite.textContent = t('fbBtn');
+  ui.newsModal.classList.remove('open'); void ui.newsModal.offsetWidth; ui.newsModal.classList.add('open');
+  ui.newsModal.hidden = false; newsReveal(); playSfx('paper'); setTimeout(() => playSfx('wheelWin'), 650); setTimeout(() => playSfx('paper'), 900);
   if (newsUnread()) { state.newsSeen = NEWS_VERSION; saveGame(); }
 }
+// Куди надходять повідомлення гравців (заповнює розробник; усе порожнє = текст лише копіюється):
+//   url   — адреса форми/сервісу, що приймає POST із JSON (Formspree, Google Apps Script тощо) і пересилає листом розробникам;
+//   email — запасний варіант: відкриє поштову програму гравця з готовим листом.
+const FEEDBACK = { url: '', email: '' };
+function openFeedback() {
+  ui.fbTitle.textContent = t('fbTitle'); ui.fbHint.textContent = t('fbHint'); ui.fbText.placeholder = '…'; ui.fbContact.placeholder = t('fbContact');
+  ui.fbSend.textContent = t('fbSend'); ui.fbCancel.textContent = t('fbCancel');
+  let draft = ''; try { draft = localStorage.getItem('capyFeedbackDraft') || ''; } catch (e) { /* без чернетки теж працює */ }
+  ui.fbText.value = draft; ui.fbCount.textContent = draft.length + ' / 800';
+  ui.fbModal.hidden = false; setTimeout(() => { try { ui.fbText.focus(); } catch (e) { /* ok */ } }, 50);
+}
+function closeFeedback() { ui.fbModal.hidden = true; }
+async function sendFeedback() {
+  const msg = ui.fbText.value.trim(), contact = ui.fbContact.value.trim();
+  if (msg.length < 3) { showToast(t('fbEmpty'), 'bad'); return; }
+  const info = { message: msg, contact, game: 'CapyTap: Market', lang: state.lang, epoch: state.epoch, shopLevel: state.shopLevel, travels: (state.stats && state.stats.timeTravels) || 0, ua: (navigator.userAgent || '').slice(0, 120) };
+  const done = () => { try { localStorage.removeItem('capyFeedbackDraft'); } catch (e) { /* ok */ } ui.fbText.value = ''; closeFeedback(); };
+  if (FEEDBACK.url) {
+    ui.fbSend.disabled = true;
+    try { const r = await fetch(FEEDBACK.url, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(info) }); if (!r.ok) throw new Error('http'); done(); showToast(t('fbThanks'), 'good'); playSfx('wheelWin'); }
+    catch (e) { showToast(t('fbFail'), 'bad'); }
+    ui.fbSend.disabled = false; return;
+  }
+  const body = msg + '\n\n— ' + (contact || '') + '\n(' + info.game + ', ' + info.lang + ', epoch ' + info.epoch + ', level ' + info.shopLevel + ')';
+  if (FEEDBACK.email) { window.location.href = 'mailto:' + FEEDBACK.email + '?subject=' + encodeURIComponent('CapyTap: Market') + '&body=' + encodeURIComponent(body); done(); return; }
+  try { await navigator.clipboard.writeText(body); } catch (e) { /* буфер недоступний */ }
+  showToast(t('fbCopied'), 'good'); done();
+}
+let npRevealRaf = 0;
+function newsReveal() {                                                         // з центру розходяться пікселі, заповнюються папером і переростають у газету
+  const host = ui.npPaper; let cv = document.getElementById('npReveal'); if (cv) cv.remove();
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { host.style.opacity = ''; return; }
+  const W = host.clientWidth, H = host.clientHeight - 36; if (W < 40 || H < 40) return;
+  const B = 12, cols = Math.ceil(W / B), rows = Math.ceil(H / B);
+  cv = document.createElement('canvas'); cv.id = 'npReveal'; cv.width = cols; cv.height = rows; host.appendChild(cv);
+  const g = cv.getContext('2d'), noise = new Float32Array(cols * rows).map((_, i) => ((i * 2654435761) >>> 8) % 100 / 100);
+  const pages = ui.newsBody; pages.style.opacity = '0';
+  const t0 = performance.now(), D = 950, maxD = Math.hypot(cols / 2 * (H / W), rows / 2) + 1;
+  cancelAnimationFrame(npRevealRaf);
+  const frame = now => {
+    const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 2.2), rad = e * (maxD + 3);
+    const fill = (x, y) => { if (x < 0 || y < 0 || x >= cols || y >= rows) return false; const dx = (x + .5 - cols / 2) * (H / W), dy = y + .5 - rows / 2; return Math.hypot(dx, dy) + noise[y * cols + x] * 1.6 <= rad; };
+    g.clearRect(0, 0, cols, rows);
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      if (!fill(x, y)) continue;
+      const edge = !(fill(x - 1, y) && fill(x + 1, y) && fill(x, y - 1) && fill(x, y + 1));
+      g.fillStyle = edge ? '#2a1d1a' : '#f6edd2'; g.fillRect(x, y, 1, 1);
+    }
+    const a = Math.max(0, (k - 0.45) / 0.55); pages.style.opacity = String(a * a * (3 - 2 * a));
+    cv.style.opacity = k < 0.8 ? '1' : String(Math.max(0, 1 - (k - 0.8) / 0.2));
+    if (k < 1 && !ui.newsModal.hidden) npRevealRaf = requestAnimationFrame(frame); else { pages.style.opacity = ''; cv.remove(); }
+  };
+  npRevealRaf = requestAnimationFrame(frame);
+}
+function closeNews() {
+  cancelAnimationFrame(npRevealRaf); ui.newsBody.style.opacity = ''; const rv = document.getElementById('npReveal'); if (rv) rv.remove(); ui.newsModal.hidden = true; ui.newsModal.classList.remove('open'); }
 function hitMail(p) {
   if (!state.events.mailPending) return false;
   const x = mailBoxX(), y = mailRoadY();
@@ -11606,6 +12018,66 @@ function refreshDialogLanguage() {
 }
 
 // Чи настав час для наступної глави
+const CLOCK_H = 58;                                                        // на скільки вежа піднімається над дахом торгового центру
+const CLOCK_ROOF = ['r', 'n', 'P', 'V', 'n', 'G', 'u', 'f'];
+const clockFx = { chime: 0, rings: [], hint: 0 };
+function clockReady() { return !!state.story.finale && prestigeGain() >= 1; }
+function clockTowerGeom() { const cx = shop.x + (shop.w >> 1); return { cx, faceY: shop.y - 17, top: shop.y - CLOCK_H, bottom: shop.y + 6 }; }
+function clockFaceFrac() {                                                // де на екрані циферблат (частки ширини й висоти): звідти починається перехід
+  if (!shop || shop.level < 6) return [0.5, 0.5];
+  const G = clockTowerGeom(), r = ui.view.getBoundingClientRect();
+  return [Math.max(0.1, Math.min(0.9, (r.left + (G.cx + view.offX) * sceneUnit) / window.innerWidth)), Math.max(0.1, Math.min(0.9, (r.top + (G.faceY + view.offY) * sceneUnit) / window.innerHeight))];
+}
+function clockChime(n) {                                                   // n ударів: перша ніч — один, друга — два, третя — три
+  for (let i = 0; i < n; i++) setTimeout(() => { playSfx('clockBong'); clockFx.chime = 1; clockFx.rings.push({ t: 0 }); buzz(30); }, 700 + i * 1300);
+}
+function updateClockFx(dt) {
+  clockFx.chime = Math.max(0, clockFx.chime - dt * 1.3);
+  for (let i = clockFx.rings.length - 1; i >= 0; i--) { clockFx.rings[i].t += dt; if (clockFx.rings[i].t > 1.4) clockFx.rings.splice(i, 1); }
+  clockFx.hint = Math.max(0, clockFx.hint - dt);
+}
+function drawClockTower() {
+  if (!shop || shop.level < 6 || build) return;
+  const G = clockTowerGeom(), cx = G.cx, y0 = shop.y, ep = viewEpoch() % 8, night = sky.night, ready = clockReady(), ch = clockFx.chime;
+  const ox = animOn() ? Math.round(Math.sin(animClock * 55) * ch * 1.3) : 0, roof = CLOCK_ROOF[ep];
+  const x = cx + ox;
+  // стовбур вежі за куполом
+  R(ctx, x - 13, y0 - 6, 26, 16, 'd'); R(ctx, x - 12, y0 - 6, 24, 16, 'c'); R(ctx, x - 12, y0 - 6, 3, 16, 'E'); R(ctx, x + 9, y0 - 6, 3, 16, 'l');
+  for (let yy = y0 - 4; yy < y0 + 8; yy += 5) R(ctx, x - 12, yy, 24, 1, 'b');
+  // годинниковий блок: рамка, пілястри, гзимс
+  R(ctx, x - 16, y0 - 33, 32, 29, 'd'); R(ctx, x - 15, y0 - 32, 30, 27, 'W'); R(ctx, x - 15, y0 - 32, 4, 27, 'E'); R(ctx, x + 11, y0 - 32, 4, 27, 'c');
+  R(ctx, x - 17, y0 - 34, 34, 3, 'd'); R(ctx, x - 16, y0 - 33, 32, 1, 'w'); R(ctx, x - 17, y0 - 6, 34, 3, 'd'); R(ctx, x - 16, y0 - 5, 32, 1, 'c');
+  // циферблат
+  const fy = G.faceY, lit = night > 0.25 || ready;
+  if (lit) { ctx.globalAlpha = Math.min(0.5, 0.18 + night * 0.3) + (ready ? 0.12 * Math.sin(animClock * 4) : 0); disc(ctx, x, fy, 17, 'y'); ctx.globalAlpha = 0.14; disc(ctx, x, fy, 22, 'y'); ctx.globalAlpha = 1; }
+  disc(ctx, x, fy, 13, 'd'); disc(ctx, x, fy, 12, 'h'); disc(ctx, x, fy, 10, 'd'); disc(ctx, x, fy, 9, lit ? 'y' : 'w'); disc(ctx, x - 2, fy - 2, 6, lit ? 'w' : 'W');
+  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2, big = i % 3 === 0, rr = big ? 7.2 : 7.8; R(ctx, Math.round(x + Math.sin(a) * rr), Math.round(fy - Math.cos(a) * rr), big ? 2 : 1, big ? 2 : 1, 'd'); }
+  const hrs = (state.dayPhase * 24) % 12, mins = (state.dayPhase * 24 * 60) % 60, ha = hrs / 12 * Math.PI * 2, ma = mins / 60 * Math.PI * 2, sa = (animClock * 1.0 % 60) / 60 * Math.PI * 2 * 6;
+  lineG(ctx, x, fy, Math.round(x + Math.sin(ha) * 5), Math.round(fy - Math.cos(ha) * 5), 'd'); lineG(ctx, x + 1, fy, Math.round(x + 1 + Math.sin(ha) * 5), Math.round(fy - Math.cos(ha) * 5), 'd');
+  lineG(ctx, x, fy, Math.round(x + Math.sin(ma) * 8), Math.round(fy - Math.cos(ma) * 8), 'd');
+  lineG(ctx, x, fy, Math.round(x + Math.sin(sa) * 8), Math.round(fy - Math.cos(sa) * 8), 'r'); R(ctx, x - 1, fy - 1, 2, 2, 'h');
+  // дзвіниця з дзвоном, що гойдається при ударах
+  R(ctx, x - 12, y0 - 43, 24, 10, 'd'); R(ctx, x - 11, y0 - 42, 22, 9, 'k'); R(ctx, x - 12, y0 - 43, 3, 10, 'c'); R(ctx, x + 9, y0 - 43, 3, 10, 'c'); R(ctx, x - 1, y0 - 43, 2, 10, 'c');
+  const sw = Math.round(Math.sin(animClock * 30) * ch * 3);
+  [-6, 6].forEach(bx => { R(ctx, x + bx - 1 + sw, y0 - 41, 3, 1, 'd'); R(ctx, x + bx - 2 + sw, y0 - 40, 5, 4, 'h'); R(ctx, x + bx - 3 + sw, y0 - 36, 7, 2, 'h'); R(ctx, x + bx + sw, y0 - 34, 1, 1, 'd'); R(ctx, x + bx - 2 + sw, y0 - 40, 1, 4, 'y'); });
+  // дах-піраміда й флюгер
+  for (let r = 0; r < 15; r++) { const half = 17 - r; R(ctx, x - half, y0 - 44 - r, half * 2, 1, roof); R(ctx, x - half, y0 - 44 - r, 2, 1, 'd'); R(ctx, x + half - 2, y0 - 44 - r, 2, 1, 'd'); if (r % 4 === 3) R(ctx, x - half + 2, y0 - 44 - r, half * 2 - 4, 1, 'd'); R(ctx, x - half + 2, y0 - 44 - r, Math.max(1, Math.floor(half / 3)), 1, 'w'); }
+  R(ctx, x - 18, y0 - 45, 36, 2, 'd');
+  R(ctx, x, y0 - 63, 1, 8, 'd'); disc(ctx, x, y0 - 61, 2, 'h'); const wv = Math.round(Math.sin(animClock * 5)); R(ctx, x + 1, y0 - 64 + wv, 6, 3, 'r'); R(ctx, x + 1, y0 - 64 + wv, 6, 1, 'J');
+  // кільця звуку від ударів і іскри, коли можна вирушати
+  clockFx.rings.forEach(rg => { const rr = 12 + rg.t * 40; ctx.globalAlpha = Math.max(0, 0.8 - rg.t * 0.6); for (let k = 0; k < 40; k++) { const a = k / 40 * Math.PI * 2; R(ctx, Math.round(x + Math.cos(a) * rr), Math.round(fy + Math.sin(a) * rr * 0.9), 2, 2, 'y'); } ctx.globalAlpha = 1; });
+  if (ready && animOn()) for (let k = 0; k < 5; k++) { const ph = (animClock * 0.7 + k / 5) % 1, a = k * 1.9 + animClock * 0.8; ctx.globalAlpha = Math.sin(ph * Math.PI); R(ctx, Math.round(x + Math.cos(a) * (14 + ph * 10)), Math.round(fy + Math.sin(a) * (14 + ph * 10)), 1, 3, 'y'); R(ctx, Math.round(x + Math.cos(a) * (14 + ph * 10)) - 1, Math.round(fy + Math.sin(a) * (14 + ph * 10)) + 1, 3, 1, 'y'); ctx.globalAlpha = 1; }
+}
+function hitClock(p) {
+  if (!shop || shop.level < 6 || build || warp) return false;
+  const G = clockTowerGeom();
+  if (p.x < G.cx - 17 || p.x > G.cx + 17 || p.y < G.top - 4 || p.y > G.bottom) return false;
+  clockFx.chime = Math.max(clockFx.chime, 0.6); clockFx.rings.push({ t: 0 }); playSfx('clockBong');
+  if (!state.story.finale) showToast(t('clockWait'), 'good');
+  else if (prestigeGain() < 1) showToast(t('clockNoGain'), 'good');
+  else askTimeTravel();
+  return true;
+}
 // Лічильник ночей після торгового центру: на третю ніч годинник «оживає» (глава 8)
 let nightAcc = 0;
 function countNights(dt, prevPhase) {
@@ -11615,7 +12087,8 @@ function countNights(dt, prevPhase) {
   else { nightAcc += dt; if (nightAcc >= CONFIG.DAY_SECONDS) { nightAcc = 0; passed = true; } }    // без зміни дня й ночі — раз на 5 хвилин
   if (!passed) return;
   state.story.nights++;
-  if (state.story.nights < 3) showToast(t('nightHint_' + state.story.nights), 'big');
+  clockChime(state.story.nights);                                          // годинник б'є: 1, 2, а на третю ніч — тричі (попередження)
+  if (state.story.nights < 3) showToast(t('nightHint_' + state.story.nights), 'big'); else showToast(t('clockWarn'), 'big');
   saveGame();
 }
 function checkStory(dt) {
@@ -11638,7 +12111,7 @@ function updateStoryUI() {
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
-  for (let n = 1; n <= state.story.done; n++) {
+  for (let n = 1; n <= Math.min(state.story.done, CHAPTERS.length); n++) {
     const card = document.createElement('div');
     card.className = 'card chapter-card';
     const num = document.createElement('div'); num.className = 'num'; num.textContent = n;
@@ -11787,6 +12260,7 @@ function setupInput() {
     const p = toScenePoint(e.clientX, e.clientY);
     if (handleEventTap(p)) return;              // калюжа або єнот
     if (hitGhost(p)) return;                    // привид (Хелловін)
+    if (hitClock(p)) return;                    // годинникова вежа торгового центру
     if (hitCircus(p)) return;                   // червоний «!» або цирк Фортуни
     if (hitMail(p)) return;                     // конверт біля поштової скриньки
     if (hitNews(p)) return;                     // червона скринька з новинами
@@ -11867,6 +12341,7 @@ function render(time) {
   ctx.drawImage(propsLayer, -view.offX, -view.offY);
   drawEpochMid(time);
 
+  drawClockTower();
   // магазин: тінь + спрайт зі стисканням (або будівництво)
   ctx.globalAlpha = 0.22; R(ctx, shop.x - 2, LAYOUT.curbY + 1, shop.w + 4, 3, 'd'); ctx.globalAlpha = 1;
   if (build) {
@@ -11880,6 +12355,7 @@ function render(time) {
 
   drawManholeSteam();
   drawDecorGround();
+  drawHalloweenFog();
   puddles.forEach(drawPuddle);
   if (sackDrop) drawSackDrop();
 
@@ -11902,12 +12378,7 @@ function render(time) {
     draw: () => {
       const breath = (Math.sin(time * 2.2) + 1) / 2;
       ctx.globalAlpha = 0.22; R(ctx, cp.x, cp.footY, 28, 2, 'd'); ctx.globalAlpha = 1;
-      drawSprite(ctx, capySprite(), cp.x, cp.footY - 24, {
-        flip: cp.flip,
-        sx: 1.2,
-        sy: 1.2 * (1 + 0.045 * breath),
-        variant: capyAnim.blinkLeft > 0 ? 'blink' : ''
-      });
+      drawCapyBody(breath);
       const capySkin = skinOn('capy');       // у скіні вже є свій капелюх і вбрання — сезонні не потрібні
       if (hasHats() && !capySkin) drawHat(cp.x + 4, cp.footY - 24, 9);
       if (hasScarves() && !capySkin) {       // шарфик Капі
@@ -11928,6 +12399,7 @@ function render(time) {
 
   drawRain();
   drawNightShade();
+  if (sky.night > 0.2 && !build) { ctx.globalAlpha = Math.min(0.4, sky.night * 0.45); drawCapyBody((Math.sin(time * 2.2) + 1) / 2); ctx.globalAlpha = 1; }       // вночі Капі не тьмяніє разом із вулицею
   drawNightLights();
   drawHalloweenAir();
   drawHagFlyer();
@@ -12222,7 +12694,7 @@ function init() {
   if (mobileMQ.matches && !state.settings.panHintSeen) { state.settings.panHintSeen = true; showToast(t('panHint'), 'good'); }
 
   // масштаб і шрифт
-  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(layoutScene).observe(ui.stage);
+  if (typeof ResizeObserver !== 'undefined') { new ResizeObserver(layoutScene).observe(ui.stage); if (ui.panel) new ResizeObserver(() => { if (mobileMQ.matches) layoutScene(); }).observe(ui.panel); }
   window.addEventListener('resize', layoutScene);
   if (mobileMQ.addEventListener) mobileMQ.addEventListener('change', layoutScene);
   if (document.fonts) {
