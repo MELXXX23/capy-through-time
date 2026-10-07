@@ -156,7 +156,7 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 18px 8px 14px;
+  padding: 13px 18px 11px 16px;
   min-width: 0;
 }
 #coinIcon { width: 32px; height: 32px; image-rendering: pixelated; image-rendering: crisp-edges; flex: none; }
@@ -712,11 +712,11 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   }
   #topbar, #app.panel-closed #topbar { right: 0; }
   #topbar { padding: 6px 8px; gap: 8px; }
-  #hud { padding: 6px 12px 6px 10px; gap: 8px; }
+  #hud { padding: 12px 12px 10px 12px; gap: 8px; }
   #coinIcon { width: 24px; height: 24px; }
   #coinCount { font-size: 20px; }
   #gems { padding-left: 7px; gap: 7px; }
-  @media (max-width: 380px) { #coinIcon { width: 16px; height: 16px; } #coinCount { font-size: 16px; } #hud { gap: 6px; padding: 6px 8px 6px 8px; } #gemBox, #shardBox { font-size: 11px; } #shardBox .shard { width: 11px; height: 11px; } #gems { gap: 5px; padding-left: 5px; } }
+  @media (max-width: 380px) { .tab.secondary .tab-name { font-size: 6px; letter-spacing: -.4px; } #coinIcon { width: 16px; height: 16px; } #coinCount { font-size: 16px; } #hud { gap: 6px; padding: 11px 8px 9px 9px; } #gemBox, #shardBox { font-size: 11px; } #shardBox .shard { width: 11px; height: 11px; } #gems { gap: 5px; padding-left: 5px; } }
   #gemBox, #shardBox { font-size: 13px; gap: 3px; }
   #shardBox .shard { width: 13px; height: 13px; }
   #gemIcon { font-size: 14px; }
@@ -757,7 +757,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #app:not(.panel-closed) { grid-template-columns: minmax(0, 1fr) 300px; }
   #app:not(.panel-closed) #topbar { right: 300px; }
   #topbar { padding: 4px 8px 6px; }
-  #hud { padding: 7px 13px 6px 9px; gap: 8px; }
+  #hud { padding: 12px 13px 10px 11px; gap: 8px; }
   #coinIcon { width: 22px; height: 22px; }
   #coinCount { font-size: 18px; line-height: 1.2; }
   #cps { margin-top: 4px; font-size: 10px; }
@@ -6053,6 +6053,7 @@ function syncPanelPad() {
   const need = Math.ceil(window.innerHeight - r.top) + 4;
   if (Math.abs((parseFloat(ui.stage.style.paddingBottom) || 0) - need) > 1) ui.stage.style.paddingBottom = need + 'px';
 }
+function snapK(k) { const r = Math.round(k); return (r >= 1 && Math.abs(k - r) < 0.13) ? r : k; }       // масштаб ціле число, якщо майже ціле (чіткі пікселі), інакше дробовий: картинка завжди на всю ширину
 function layoutScene() {
   syncPanelPad();
   const W0 = CONFIG.SCENE_W, H0 = CONFIG.SCENE_H;
@@ -6070,14 +6071,14 @@ function layoutScene() {
   let k, offX, cropW, kz = 0;
   if (mobile) {
     offX = CONFIG.MOBILE_PAD;
-    const want = shop ? Math.min(W0, Math.max(176, (shop.w + 40) & ~1)) : W0;      // скільки вулиці хочемо показати
-    k = Math.max(1, Math.floor(Math.min(availW * dpr / (want * 0.9), availH * dpr / H1)));   // можна обрізати до 10%, щоб збільшити масштаб
+    const want = shop ? Math.min(W0, Math.max(150, (shop.w + 40) & ~1)) : W0;      // скільки вулиці хочемо показати (малі маркети — крупніше)
+    k = snapK(Math.max(1, Math.min(availW * dpr / (want * 0.9), availH * dpr / H1)));   // можна обрізати до 10%; масштаб дробовий, щоб маркет займав усю ширину й неба було менше
     cropW = availW * dpr / k;                                                      // на всю ширину екрана, без смуг по боках
     offX = Math.max(CONFIG.MOBILE_PAD, Math.ceil((cropW - W0) / 2) + 8);
   } else {
-    let kH = Math.floor(availH * dpr / H1);
-    if (state.settings.panelOpen) kH = Math.min(kH, Math.max(Math.ceil(1.6 * dpr), Math.round(kH * 0.55)));      // меню відкрите: камера відїжджає майже вдвічі — видно набагато більше неба й дороги (не дрібніше за ~1,6 px на піксель сцени)
-    k = Math.max(1, Math.min(Math.floor(availW * dpr / CONFIG.MIN_VIEW_W), kH));
+    let kH = availH * dpr / H1;
+    if (state.settings.panelOpen) kH = Math.min(kH, Math.max(1.6 * dpr, kH * 0.55));      // меню відкрите: камера відїжджає майже вдвічі — видно набагато більше неба й дороги (не дрібніше за ~1,6 px на піксель сцени)
+    k = snapK(Math.max(1, Math.min(availW * dpr / CONFIG.MIN_VIEW_W, kH)));
     kz = k * (1 - Math.min(0.1, 0.02 * Math.max(0, (shop ? shop.level : 1) - 1)));        // ПК: що більший маркет, то трохи далі камера (до −10%), щоб усе вміщалося зручно
     const visW = Math.min(CONFIG.MAX_VIEW_W, availW * dpr / kz);                     // скільки пікселів сцени вміщується в ширину (дробове)
     offX = Math.max(0, Math.ceil((visW - W0) / 2), Math.ceil((CONFIG.WORLD_W - W0) / 2));        // вулиця завжди широка, видно лише її частину
