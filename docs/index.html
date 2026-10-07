@@ -367,6 +367,7 @@ body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoc
 .team-card .btn.wide { margin-top: 8px; }
 
 /* ===== Майстерня часу, досягнення, налаштування ===== */
+.ws-shop-title { font-size: 16px; line-height: 1.3; margin: 6px 2px 8px; color: var(--brown); }
 .ws-line { font-size: 11px; line-height: 1.8; color: var(--brown); margin-bottom: 6px; }
 .ws-gain { font-size: 13px; line-height: 1.7; color: var(--red); margin: 6px 0 4px; }
 .warp-card { background: #efe4ff; }
@@ -456,31 +457,31 @@ body.big-text #panel { zoom: 1.18; }
 @keyframes bFill { to { transform: scaleX(.9); } }
 @keyframes bDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 @media (prefers-reduced-motion: reduce) { #boot .b-road, #boot .b-capy, #boot .b-coin, #boot .b-stars { animation: none; } }
-#boot.v1, #boot.v2, #boot.v3 { background: linear-gradient(#150b2e 0%, #2f1860 38%, #6b2f90 68%, #c25fb5 92%, #ffb0c8 100%); }
-#boot.v1 .b-sun, #boot.v2 .b-sun, #boot.v3 .b-sun { background: radial-gradient(#fff4ff 0 52%, rgba(255, 220, 255, 0) 72%); }
-#boot.v1 .b-ground, #boot.v2 .b-ground, #boot.v3 .b-ground { background: #3a2a55; border-top-color: #b99be0; }
-#boot.v1 .b-stars, #boot.v2 .b-stars, #boot.v3 .b-stars { opacity: .95; }
-#boot .b-spot, #boot .b-bigcoin, #boot .b-rain, #boot .b-fc { display: none; }
-/* 2: Капі біжить крізь нічне місто, повз летять монети */
-#boot.v2 .b-city { width: 200%; display: flex; animation: bPar 11s linear infinite; }
-#boot.v2 .b-city svg { width: 50%; flex: none; }
-#boot.v2 .b-road { animation-duration: .38s; }
-#boot.v2 .b-capy { animation-duration: .26s; }
-#boot.v2 .b-coin { display: none; }
-#boot.v2 .b-fc { display: block; position: absolute; left: 0; width: 22px; height: 22px; z-index: 3; animation: bFlyX var(--d) linear infinite; }
-#boot.v2 .b-fc i { display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff2b0 0 20%, #f2b84b 22% 70%, #c98a1d 72%); box-shadow: 0 0 0 3px #302418; animation: bCoin .7s ease-in-out infinite; }
+#boot { background: linear-gradient(#150b2e 0%, #2f1860 38%, #6b2f90 68%, #c25fb5 92%, #ffb0c8 100%); }
+#boot .b-sun { background: radial-gradient(#fff4ff 0 52%, rgba(255, 220, 255, 0) 72%); }
+#boot .b-ground { background: #3a2a55; border-top-color: #b99be0; }
+#boot .b-stars { opacity: .95; }
+/* два шари міста пливуть із різною швидкістю, Капі біжить плавно, повз летять піксельні монетки */
+#boot .b-city { width: 200%; display: flex; animation: bPar 15s linear infinite; }
+#boot .b-city svg { width: 50%; flex: none; }
+#boot .b-city.far { bottom: 29%; height: 20%; opacity: .45; animation-duration: 38s; }
+#boot .b-road { animation-duration: .5s; animation-timing-function: linear; }
+#boot .b-capy { animation: bRun .6s ease-in-out infinite; }
+#boot .b-capy .pa, #boot .b-capy .pb { display: block; }
+#boot .b-capy .pb { position: absolute; left: 0; top: 0; opacity: 0; }
+#boot .b-capy .pa { animation: bLegA .3s steps(1, end) infinite; }
+#boot .b-capy .pb { animation: bLegB .3s steps(1, end) infinite; }
+#boot .b-shadow { animation: bShadow .6s ease-in-out infinite; }
+#boot .b-coin { display: none; }
+#boot .b-cg { position: absolute; left: 0; z-index: 3; height: 0; animation: bFlyX var(--d) linear infinite; animation-delay: var(--w); }
+#boot .b-px { position: absolute; bottom: 0; width: var(--cw); height: var(--cw); background-image: var(--coin); background-size: 400% 100%; image-rendering: pixelated; animation: bPx .56s steps(4, jump-none) infinite; animation-delay: var(--pd); }
 @keyframes bPar { to { transform: translateX(-50%); } }
-@keyframes bFlyX { from { transform: translateX(105vw); } to { transform: translateX(-60px); } }
-/* 3: Капі-магнат під прожектором із великою монетою й дощем із монет */
-#boot.v3 .b-spot { display: block; position: absolute; left: 50%; top: 0; width: 160%; height: 100%; margin-left: -80%; background: radial-gradient(ellipse at 50% 62%, rgba(255, 190, 255, .42) 0%, rgba(160, 90, 220, .22) 32%, rgba(0, 0, 0, 0) 62%); z-index: 1; animation: bSpot 3s ease-in-out infinite; }
-#boot.v3 .b-bigcoin { display: block; position: absolute; z-index: 2; left: 50%; top: 27%; width: min(30vw, 130px); height: min(30vw, 130px); margin-left: calc(min(30vw, 130px) / -2); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6c0 0 14%, #f7c04a 16% 60%, #d9922a 62% 78%, #a8651a 80%); box-shadow: 0 0 0 5px #302418, 0 0 40px 10px rgba(255, 200, 80, .55); animation: bSpin 2.2s steps(14, jump-none) infinite; }
-#boot.v3 .b-bigcoin::after { content: '¢'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 900 clamp(34px, 11vw, 64px) 'Press Start 2P', monospace; color: #a8651a; text-shadow: 3px 3px 0 #fff0a0; }
-#boot.v3 .b-rain { display: block; position: absolute; z-index: 3; top: -30px; width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff2b0 0 20%, #f2b84b 22% 70%, #c98a1d 72%); box-shadow: 0 0 0 2px #302418; animation: bRain var(--d) linear infinite; animation-delay: var(--w); }
-#boot.v3 .b-coin { display: none; }
-#boot.v3 .b-city { opacity: .55; }
-@keyframes bSpin { 0%, 100% { transform: scaleX(1); } 25% { transform: scaleX(.1); } 50% { transform: scaleX(-1); } 75% { transform: scaleX(.1); } }
-@keyframes bRain { from { transform: translateY(0) rotate(0); } to { transform: translateY(112vh) rotate(360deg); } }
-@keyframes bSpot { 50% { opacity: .65; } }
+@keyframes bFlyX { from { transform: translateX(105vw); } to { transform: translateX(-260px); } }
+@keyframes bRun { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes bShadow { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.82); opacity: .7; } }
+@keyframes bLegA { 0% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes bLegB { 0% { opacity: 0; } 50% { opacity: 1; } }
+@keyframes bPx { from { background-position: 0 0; } to { background-position: 100% 0; } }
 body.warping #app { filter: sepia(1) saturate(1.5) contrast(1.05); transition: filter .6s; }
 body.no-anim .floater { display: none; }
 
@@ -634,6 +635,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 #clownCanvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
 #circusSub { font-size: 11px; line-height: 1.6; margin: 4px 0 6px; }
 #circusResult { min-height: 22px; font-size: 15px !important; }
+#circusModal.hag #circusWheel { width: min(84vw, 372px); cursor: pointer; }
+#circusModal.hag #circusResult { min-height: 44px; font-size: 12px !important; line-height: 1.5; }
 #circusClose { margin-top: 6px; }
 .wheel-box { max-height: 96vh; overflow-y: auto; padding-top: 22px; }
 .wheel-wrap { display: flex; justify-content: center; margin: 4px 0 8px; }
@@ -719,7 +722,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 <body>
 <div id="boot" aria-hidden="true">
   <div class="b-stars"></div><div class="b-sun"></div>
-  <div class="b-city" id="bootCity"></div>
+  <div class="b-city far" id="bootCityFar"></div><div class="b-city" id="bootCity"></div>
   <div class="b-title">CAPYTAP<small>MARKET</small></div>
   <div class="b-ground"><div class="b-road"></div></div>
   <div class="b-shadow"></div>
@@ -738,11 +741,40 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   var sc = Math.max(3, Math.min(6, Math.floor(Math.min(innerWidth, innerHeight) / 110)));
   var cp = document.getElementById('bootCapy'); cp.innerHTML = svg(rows, pal, sc); cp.style.marginLeft = (-rows[0].length * sc / 2) + 'px';
   var coin = document.querySelector('#boot .b-coin'); coin.style.bottom = 'calc(25% + ' + (rows.length * sc - 12 + 12) + 'px)'; coin.style.marginLeft = (sc * 4) + 'px';
-  var q = location.search, bv = /[?&]boot=([123])/.exec(q); bv = bv ? bv[1] : '1';
-  var bootEl = document.getElementById('boot'); bootEl.className = 'v' + bv;
-  if (bv === '2') { for (var fi = 0; fi < 6; fi++) { var fc = document.createElement('div'); fc.className = 'b-fc'; fc.style.setProperty('--d', (2.4 + (fi % 3) * 0.9) + 's'); fc.style.bottom = 'calc(25% + ' + (30 + ((fi * 47) % 150)) + 'px)'; fc.style.animationDelay = (-fi * 0.8) + 's'; fc.innerHTML = '<i></i>'; bootEl.appendChild(fc); } }
-  if (bv === '3') { var sp = document.createElement('div'); sp.className = 'b-spot'; bootEl.appendChild(sp); var bc = document.createElement('div'); bc.className = 'b-bigcoin'; bootEl.appendChild(bc); for (var ri = 0; ri < 16; ri++) { var rc = document.createElement('div'); rc.className = 'b-rain'; rc.style.left = ((ri * 37 + 5) % 96) + '%'; rc.style.setProperty('--d', (2.2 + (ri % 5) * 0.6) + 's'); rc.style.setProperty('--w', (-ri * 0.45) + 's'); bootEl.appendChild(rc); } }
+  var q = location.search, bootEl = document.getElementById('boot');
+  // друга поза Капі: задні й передні лапи «схрещуються», кадри змінюються під час бігу
+  var legRows = rows.slice(); (function () {
+    for (var r = 21; r <= 23; r++) {
+      var src = rows[r].split(''), out = src.slice(), c;
+      for (c = 4; c <= 9; c++) out[c] = '.'; for (c = 14; c <= 19; c++) out[c] = '.';
+      for (c = 4; c <= 9; c++) if (src[c] !== '.') out[c + 2] = src[c]; for (c = 14; c <= 19; c++) if (src[c] !== '.') out[c - 2] = src[c];
+      legRows[r] = out.join('');
+    }
+  })();
+  cp.innerHTML = '<span class="pa">' + svg(rows, pal, sc) + '</span><span class="pb">' + svg(legRows, pal, sc) + '</span>';
+  cp.firstChild.style.display = 'block'; cp.lastChild.style.cssText = 'position:absolute;left:0;top:0;display:block';
+  // піксельні монетки: аркуш із 4 кадрів обертання 8×8 (як справжня монета в грі)
+  var cs = Math.max(3, sc - 1), sheet = document.createElement('canvas'); sheet.width = 32; sheet.height = 8; var sg = sheet.getContext('2d');
+  [3.5, 2.4, 0.9, 2.4].forEach(function (rx, f) {
+    var inside = function (x, y) { var dx = (x - 3.5) / rx, dy = (y - 3.5) / 3.6; return dx * dx + dy * dy <= 1.02; };
+    for (var py = 0; py < 8; py++) for (var px = 0; px < 8; px++) {
+      if (!inside(px, py)) continue;
+      var edge = !inside(px - 1, py) || !inside(px + 1, py) || !inside(px, py - 1) || !inside(px, py + 1);
+      if (rx < 1.5) edge = py === 0 || py === 7;
+      sg.fillStyle = edge ? '#302418' : (px < 3.5 - rx * 0.25 && py < 4 ? '#fff6c8' : (px > 3.5 + rx * 0.3 && py > 3 ? '#c98a1d' : (Math.abs(px - 3.5) < rx * 0.35 && rx > 2 ? '#ffe08a' : '#f2b84b')));
+      sg.fillRect(f * 8 + px, py, 1, 1);
+    }
+  });
+  bootEl.style.setProperty('--coin', 'url(' + sheet.toDataURL() + ')'); bootEl.style.setProperty('--cw', (8 * cs) + 'px');
+  var groups = [[4, 40, 0], [3, 120, 1.7], [5, 70, 3.2], [4, 150, 4.6], [3, 30, 6], [5, 100, 7.5]];     // [скільки монет, висота над землею, затримка]
+  groups.forEach(function (gp, gi) {
+    var el = document.createElement('div'); el.className = 'b-cg'; el.style.setProperty('--d', (5.2 + (gi % 3) * 0.7) + 's'); el.style.setProperty('--w', (-gp[2]) + 's');
+    el.style.bottom = 'calc(25% + ' + (gp[1] * cs / 3) + 'px)';
+    for (var ci = 0; ci < gp[0]; ci++) { var px = document.createElement('i'); px.className = 'b-px'; px.style.left = (ci * 10 * cs) + 'px'; px.style.bottom = (Math.round(Math.sin(ci / Math.max(1, gp[0] - 1) * Math.PI) * 4 * cs)) + 'px'; px.style.setProperty('--pd', (-ci * 0.14) + 's'); el.appendChild(px); }
+    bootEl.appendChild(el);
+  });
   var b = '', x = 0, i = 0;                                            // силует міста з вікнами, що мерехтять
+                                            // силует міста з вікнами, що мерехтять
   while (x < 330) {
     var hh = ((i * 37 + 11) % 5) * 9 + 36, ww = 18 + ((i * 13) % 4) * 5, col = i % 2 ? '#2a1747' : '#35205a';
     b += '<rect x="' + x + '" y="' + (100 - hh) + '" width="' + ww + '" height="' + hh + '" fill="' + col + '"/>';
@@ -750,7 +782,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
     x += ww; i++;
   }
   var citySvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">' + b + '</svg>';
-  document.getElementById('bootCity').innerHTML = bv === '2' ? citySvg + citySvg : citySvg;
+  document.getElementById('bootCity').innerHTML = citySvg + citySvg; document.getElementById('bootCityFar').innerHTML = citySvg.replace(/fill="#[0-9a-f]{6}"/g, 'fill="#4a2a78"') + citySvg.replace(/fill="#[0-9a-f]{6}"/g, 'fill="#4a2a78"');
   var lang = (navigator.language || 'en').toLowerCase();
   document.getElementById('bootText').textContent = lang.indexOf('uk') === 0 ? 'Завантаження' : 'Loading';
   if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); } }, 12000);   // страховка
@@ -859,6 +891,7 @@ function bootDone() {
           <p class="ws-gain" id="warpPreview"></p>
           <button type="button" class="btn wide go" id="warpBtn"></button>
         </div>
+        <h2 class="ws-shop-title" data-i18n="wsShopTitle"></h2>
         <div id="wsList"></div>
       </div>
 
@@ -1075,8 +1108,8 @@ const CONFIG = {
   MAX_VIEW_W: 2600,            // найширша сцена на великому екрані (пікселів сцени)
   MIN_VIEW_W: 296,            // на вузькому вікні масштаб збільшується, а краї «ядра» (до 12 пікселів) можуть не поміститися
   MAX_OFF_Y: 400,             // скільки додаткового неба можна додати зверху на високому екрані
-  WORLD_W: 1000,              // ширина всієї вулиці на ПК (пікселів сцени): її можна гортати стрілками ◀ ▶
-  MOBILE_PAD: 220,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
+  WORLD_W: 1400,              // ширина всієї вулиці на ПК (пікселів сцени): її можна гортати стрілками ◀ ▶
+  MOBILE_PAD: 360,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
   DAY_SECONDS: 300,           // скільки секунд триває повна доба (день + ніч)
   CIRCUS_FIRST_MINUTES: 9,     // перший «!» цирку з'являється через 4 хвилини гри
   CIRCUS_HOURS: 24,            // раз на 24 ігрові години, тобто щодоби гри (CONFIG.DAY_SECONDS)
@@ -1545,7 +1578,7 @@ const HOLIDAYS = [
     decor: ['snow', 'garlands', 'tree', 'hats'], skyTint: null, lights: ['r', 'y', 'g', 'n', 'p'],
     music: 'newyear', bonus: { global: 0.25 } },
   { id: 'halloween', icon: '🎃', from: [10, 20], to: [11, 2],
-    decor: ['pumpkins', 'bats', 'witchhats'], skyTint: { color: 'n', alpha: 0.5 }, lights: ['o', 'u'],
+    decor: ['pumpkins', 'bats', 'witchhats'], skyTint: { color: 'V', alpha: 0.5 }, lights: ['o', 'u'],
     music: 'halloween', bonus: { depts: { 1: 1.0 } } }     // солодощі: +100%
 ];
 // Чорна п'ятниця — остання п'ятниця листопада (за реальною датою)
@@ -2770,19 +2803,24 @@ const translations = {
     prize_coins: 'Монети: +{0}',
     themeLocked: 'Необхідно пройти 2 епоху',
     newsTitle: '📮 Пошта від розробників', newsSub: 'Свіжі новини CapyTap',
-    newsIntro: 'Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.',
-    newsH0: 'Місто ожило.', newsT0: 'Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла.',
-    newsH1: 'Золоті покупці й завдання дня.', newsT1: 'Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами.',
-    newsH2: 'Цирк і барабан — окремо.', newsT2: 'Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати.',
-    newsH3: 'Скіни для всіх.', newsT3: 'Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку.',
-    newsH4: 'Пори року.', newsT4: 'Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою.',
-    newsH5: 'Нова погода.', newsT5: 'Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку).',
-    newsH6: 'Бодя будує.', newsT6: 'Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют.',
-    newsH7: 'І ця скринька.', newsT7: 'Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає.',
-    newsH8: 'Свіже.', newsT8: 'Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший.',
+    newsIntro: 'Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.',
+    newsH0: 'Баба Яга на Хелловін.', newsT0: 'Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки».',
+    newsH1: 'Темніший Хелловін.', newsT1: 'Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі.',
+    newsH2: 'Нова пошта.', newsT2: 'Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання.',
+    newsH3: 'Нова будівля під полотном.', newsT3: 'Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає.',
+    newsH4: 'Ширша вулиця.', newsT4: 'Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів.',
+    newsH5: 'Пелюстки навесні.', newsT5: 'Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало.',
+    newsH6: 'Магазин часу.', newsT6: 'У майстерні часу список покращень за кристали тепер так і називається.',
+    newsH7: 'Завантаження.', newsT7: 'На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки.',
+    newsH8: 'Вікна й пара.', newsT8: 'У всіх будинків є вікна, а пара з люків стала лагіднішою.',
     newsSign: 'Дякуємо, що граєш! Пиши, що хочеш побачити далі. — Команда CapyTap', newsClose: 'Зрозуміло!',
     fear0: 'Ой-ой-ой!', fear1: 'Мамо!', fear2: 'Моя булочка!', fear3: 'Я тут просто гуляв!', fear4: 'Куди їдеш?!', fear5: 'Тікаємо!',
     seasonIntroTitle: 'Пори року відкрито!', seasonIntroText: 'Дві епохи позаду, і тепер можна самому обирати пору року: весну, літо, осінь, зиму чи моторошний Хелловін. Кожна змінює дерева, погоду й настрій вулиці. Шукай нову кнопку з колесом у меню!', seasonIntroGo: '🌸 До пір року', seasonIntroLater: 'Пізніше',
+    mailSay0: 'Пошта! Розпишіться тут!', mailSay1: 'Вам лист! Швидше за голуба!', mailSay2: 'Доставка-експрес. Кепка при мені!', mailSay3: 'Лист принесено, лапку на серце.',
+    gfear0: 'Привид!!! Мамо!', gfear1: 'Бу-у-у… ой, це ж він!', gfear2: 'Я нічого не бачив!', gfear3: 'У вікні хтось є!', gfear4: 'Тікаймо, він без квитка!', gfear5: 'Це ж просто простирадло? НІ!',
+    hagBang: '🧙 Над містом летить Баба Яга! Тапни на «!»', hagArrived: '🏚️ Хатка на курячих лапках прийшла! Тапни її', hagTitle: 'Хатка Баби Яги',
+    hagSub: 'Баба Яга: «Три казанки, три сюрпризи! Запам’ятай, де найкращий, і вгадай!»', hagStart: 'Зазирнути!', hagWatch: 'Дивись уважно, що де лежить…', hagShuffle: 'Перемішую!', hagPick: 'Вибирай казанок!',
+    hagGood: 'Влучив у головний приз!', hagMiss: 'Ой, не той! Та кристал твій.', hagDone: 'Дякую, бабусю!',
     seasonFx_winter: 'Пухнастий сніг лягає на дахи', seasonFx_spring: 'Прокидаються квіти й пелюстки', seasonFx_summer: 'Сонце гріє на повну', seasonFx_autumn: 'Вітер несе золоте листя', seasonFx_halloween: 'Тссс… у місті щось шарудить',
     circusFlag: 'ЦИРК ФОРТУНИ', circusTitle: 'Цирк Фортуни', circusSub: 'Клоун Бубон: «Скіни й кристали часу — тільки в мене!»', circusSpin: 'Крутити!', circusDone: 'Дякую, цирку!',
     circusBang: 'Біля магазину щось з’явилось… Тапни на червоний «!»', circusArrived: 'Цирк Фортуни розкрився! Тапни на нього',
@@ -2995,7 +3033,7 @@ const translations = {
     storyDrumTitle: '🎡 Барабан фортуни', storyDrumText: "У кожній епосі в місті час від часу з’являються особливі звірі: сова Мазок, їжак Платівка, броненосець Диско, хом’як Жетон, баг Глюкович, хамелеон Листок, астро-аксолотль і кіт Вивіска. Кожен рухається по-своєму. Лови їх тапом: за кожного отримаєш монети, а якщо зловив обох — кристал часу. На Хелловін замість звірів літають привиди. Барабан фортуни тепер дає монети й бусти раз на добу, а скіни й кристали виграють у цирку.",
 
 
-    wsTitle: 'Майстерня часу',
+    wsTitle: 'Майстерня часу', wsShopTitle: '🛒 Магазин часу',
     wsCrystals: 'Кристали часу: 💎 {0}',
     wsBonus: 'Усього здобуто: {0}. Кожен дає +2% до доходу — зараз ×{1}',
     warpTitle: '⏳ Подорож у часі',
@@ -3356,19 +3394,24 @@ const translations = {
     prize_coins: 'Coins: +{0}',
     themeLocked: 'Finish epoch 2 first',
     newsTitle: '📮 Mail from the developers', newsSub: 'Fresh CapyTap news',
-    newsIntro: 'Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done.',
-    newsH0: 'The town came alive.', newsT0: 'More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out.',
-    newsH1: 'Golden shoppers and daily tasks.', newsT1: 'Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards.',
-    newsH2: 'Circus and drum, separate.', newsT2: 'Both can give crystals, but events are a little rarer now, so waiting is more fun.',
-    newsH3: 'Skins for everyone.', newsT3: 'Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus.',
-    newsH4: 'Seasons.', newsT4: 'A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show.',
-    newsH5: 'New weather.', newsT5: 'Smooth purple lightning and a huge rainbow over the town (you can win them at the circus).',
-    newsH6: 'Bodie builds.', newsT6: 'A new shop level now takes a long, epic build: hammer, crane, dust, fireworks.',
-    newsH7: 'And this mailbox.', newsT7: 'It is red because it carries hot news only. Check it when the flag blinks.',
-    newsH8: 'Fresh.', newsT8: 'The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer.',
+    newsIntro: 'Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done.',
+    newsH0: 'Baba Yaga for Halloween.', newsT0: 'Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game.',
+    newsH1: 'A darker Halloween.', newsT1: 'The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom.',
+    newsH2: 'New mail.', newsT2: 'A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye.',
+    newsH3: 'A new build under a tarp.', newsT3: 'When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears.',
+    newsH4: 'A wider street.', newsT4: 'The town got wider: scroll further left and right, there are more houses, trees and lamps.',
+    newsH5: 'Spring petals.', newsT5: 'In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn.',
+    newsH6: 'Time shop.', newsT6: 'In the Time Workshop the crystal upgrade list is now called just that.',
+    newsH7: 'Loading screen.', newsT7: 'On the loading screen Capy smoothly runs through the night city and pixel coins.',
+    newsH8: 'Windows and steam.', newsT8: 'All houses have windows, and the manhole steam is gentler.',
     newsSign: 'Thanks for playing! Tell us what you want to see next. — The CapyTap team', newsClose: 'Got it!',
     fear0: 'Eek!', fear1: 'Mommy!', fear2: 'My bun!', fear3: 'I was just strolling!', fear4: 'Where are you going?!', fear5: 'Run!',
     seasonIntroTitle: 'Seasons unlocked!', seasonIntroText: 'Two eras down, and now you can pick the season yourself: spring, summer, autumn, winter or spooky Halloween. Each one changes the trees, the weather and the mood of the street. Look for the new wheel button in the menu!', seasonIntroGo: '🌸 To the seasons', seasonIntroLater: 'Later',
+    mailSay0: 'Mail! Sign right here!', mailSay1: 'A letter for you! Faster than a pigeon!', mailSay2: 'Express delivery. The cap is official!', mailSay3: 'Letter delivered, paw on heart.',
+    gfear0: 'A ghost!!! Mommy!', gfear1: 'Boo-- oh, it is him!', gfear2: 'I saw nothing!', gfear3: 'Someone is in the window!', gfear4: 'Run, he has no ticket!', gfear5: 'It is just a sheet, right? NO!',
+    hagBang: '🧙 Baba Yaga is flying over town! Tap the "!"', hagArrived: '🏚️ The hut on chicken legs has arrived! Tap it', hagTitle: "Baba Yaga's Hut",
+    hagSub: 'Baba Yaga: "Three cauldrons, three surprises! Remember the best one, then guess!"', hagStart: 'Take a peek!', hagWatch: 'Watch closely what is where...', hagShuffle: 'Shuffling!', hagPick: 'Pick a cauldron!',
+    hagGood: 'You found the main prize!', hagMiss: 'Oops, wrong one! The crystal is yours anyway.', hagDone: 'Thanks, granny!',
     seasonFx_winter: 'Fluffy snow settles on the roofs', seasonFx_spring: 'Flowers and petals wake up', seasonFx_summer: 'The sun shines at full power', seasonFx_autumn: 'The wind carries golden leaves', seasonFx_halloween: 'Shh… something rustles in town',
     circusFlag: 'LUCKY CIRCUS', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Skins and time crystals, only here!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
     circusBang: 'Something showed up by the shop... Tap the red "!"', circusArrived: 'The Fortune Circus is open! Tap it',
@@ -3580,7 +3623,7 @@ const translations = {
     storyDrumTitle: '🎡 Fortune drum', storyDrumText: "In every era special animals show up in town from time to time: Mazok the owl, Vinyl the hedgehog, Disco the armadillo, Token the hamster, Glitchy the bug, Leaf the chameleon, Astro Axolotl and Signboard the cat. Each one moves in its own way. Tap to catch them: each gives coins, and catching both gives a time crystal. At Halloween ghosts fly instead. The fortune drum now gives coins and boosts once a day, while skins and crystals are won at the circus.",
 
 
-    wsTitle: 'Time Workshop',
+    wsTitle: 'Time Workshop', wsShopTitle: '🛒 Time shop',
     wsCrystals: 'Time Crystals: 💎 {0}',
     wsBonus: 'Earned in total: {0}. Each gives +2% income — now ×{1}',
     warpTitle: '⏳ Time Travel',
@@ -3741,7 +3784,7 @@ function createDefaultState() {
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
     // Подорож у часі: кристали, епоха, покращення майстерні, знайомі звірята
     crystals: 0, crystalsTotal: 0, epoch: 0, runStartEarned: 0,
-    circus: { next: 0, phase: 0, spun: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
+    circus: { next: 0, phase: 0, spun: 0, hag: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
     daily: { day: '', k: [0, 0, 0], b: [0, 0, 0], t: [1, 1, 1], c: [0, 0, 0], bonus: 0, seen: '' },     // завдання дня: який вид, з якого значення рахуємо, ціль, забрано чи ні
     skinsMask: 0,                             // виграні скіни (біти за списком SKIN_POOL)
     skinsMask2: 0,                            // виграні скіни з номерами 32 і далі
@@ -4325,7 +4368,6 @@ function drawHouse(g, spec, lamps) {
     for (let c = 0; c < cols; c++) {
       const wx = Math.round(x + 2 + c * space + (space - 8) / 2), wy = y0;
       if (f === floors - 1 && wx + 9 >= doorLeft - 2 && wx <= doorLeft + doorW + 2) continue;      // тут двері
-      if (nearLamp(wx - 2, wx + 10, lamps)) continue;                                              // тут ліхтар — вікно не малюємо
       if (hs % 2) { R(g, wx - 3, wy, 2, 11, 'b'); R(g, wx + 9, wy, 2, 11, 'b'); R(g, wx - 3, wy, 2, 1, 'd'); R(g, wx + 9, wy, 2, 1, 'd'); }   // віконниці
       R(g, wx, wy, 8, 11, 'd');
       R(g, wx + 1, wy + 1, 6, 9, ((c + f + x) % 4 === 0) ? 'y' : 's');
@@ -4582,9 +4624,9 @@ function buildGroundLayer() {
   paintCobble(g, x0, LAYOUT.streetTop + 1, W, H - LAYOUT.streetTop - 1, skinOn('street') || 'stone');
   manholeSpots.length = 0;
   const my = Math.min(H - 48, 188);                                   // люки: один ряд уздовж дороги, не часто
-  for (let mx = Math.floor(x0 / 260) * 260 + 100; mx < x0 + W - 8; mx += 260) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
+  for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
   if (view.extraB >= 30) drawRoadG(g, x0, W, H);
-  if (buildSeason === 'autumn') autumnGroundLeaves(g, x0, W, H, treeSpots(x0, W));
+  if (buildSeason === 'autumn' || buildSeason === 'spring') autumnGroundLeaves(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
   g.globalAlpha = 0.1; R(g, x0, H - 20, W, 20, 'd'); g.globalAlpha = 1;
   const trees = treeSpots(x0, W);
   houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 22));      // двері, закриті деревом, не використовуються: звірята туди не заходять
@@ -4593,17 +4635,17 @@ function buildGroundLayer() {
   return c;
 }
 // Осіннє листя: купи під деревами, розсип по тротуару, бруківці й дорозі
-function autumnGroundLeaves(g, x0, W, H, trees) {
-  const cols = ['#c4553d', '#e8863c', '#f2b84b', '#a8703f', '#d9a679', '#b5471f', '#e3a02e'];
+function autumnGroundLeaves(g, x0, W, H, trees, spring) {
+  const cols = spring ? ['#ef8fa3', '#ffc9d4', '#f7b6c8', '#ffd9e2', '#e9738f', '#ffb3c6', '#fff0f4'] : ['#c4553d', '#e8863c', '#f2b84b', '#a8703f', '#d9a679', '#b5471f', '#e3a02e'], k = spring ? 0.8 : 1;
   const leaf = (x, y, h) => {
     const c = cols[h % cols.length], f = (h >>> 4) % 3;
     g.fillStyle = c;
     if (f === 0) g.fillRect(x, y, 3, 2); else if (f === 1) g.fillRect(x, y, 2, 3); else { g.fillRect(x, y, 4, 2); g.fillRect(x + 1, y - 1, 2, 1); }
-    g.fillStyle = '#ffd98a'; g.fillRect(x, y, 1, 1); g.fillStyle = '#7a4f35'; g.fillRect(x + (f === 1 ? 1 : 2), y + (f === 1 ? 2 : 1), 1, 1);
+    g.fillStyle = spring ? '#fff6f8' : '#ffd98a'; g.fillRect(x, y, 1, 1); g.fillStyle = spring ? '#c8587a' : '#7a4f35'; g.fillRect(x + (f === 1 ? 1 : 2), y + (f === 1 ? 2 : 1), 1, 1);
   };
   const base = LAYOUT.horizonY + 8, roadTop = view.extraB >= 30 ? H - 36 : H;
   trees.forEach(tr => {                                                         // купа під кожним деревом
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < Math.round(90 * k); i++) {
       const hs = hash2(tr.x * 7 + i, 41 + i), r1 = ((hs >>> 3) % 1000) / 1000, r2 = ((hs >>> 13) % 1000) / 1000;
       const dx = (r1 + r2 - 1) * 30, dy = (((hs >>> 21) % 100) / 100) * 22 - 4;
       leaf(Math.round(tr.x + dx), Math.round(base + dy), hs);
@@ -4612,13 +4654,13 @@ function autumnGroundLeaves(g, x0, W, H, trees) {
     for (let i = 0; i < 14; i++) { const hs = hash2(tr.x + i * 5, 77); leaf(tr.x - 9 + (hs % 18), base + 1 + (hs >>> 5) % 4, hs); }      // щільний горбок
   });
   for (let gy = LAYOUT.horizonY + 2; gy < LAYOUT.curbY - 1; gy += 5) for (let gx = Math.floor(x0 / 9) * 9; gx < x0 + W; gx += 9) {      // тротуар
-    const hs = hash2(gx + 3, gy + 7); if (hs % 100 < 30) leaf(gx + (hs >>> 8) % 8, gy + (hs >>> 12) % 4, hs);
+    const hs = hash2(gx + 3, gy + 7); if (hs % 100 < 22 * k) leaf(gx + (hs >>> 8) % 8, gy + (hs >>> 12) % 4, hs);
   }
   for (let gy = LAYOUT.streetTop + 2; gy < roadTop - 3; gy += 6) for (let gx = Math.floor(x0 / 7) * 7; gx < x0 + W; gx += 7) {              // бруківка
-    const hs = hash2(gx + 11, gy + 13); if (hs % 100 < 46) leaf(gx + (hs >>> 8) % 6, gy + (hs >>> 12) % 5, hs);
+    const hs = hash2(gx + 11, gy + 13); if (hs % 100 < 30 * k) leaf(gx + (hs >>> 8) % 6, gy + (hs >>> 12) % 5, hs);
   }
   if (view.extraB >= 30) for (let gy = roadTop + 8; gy < H - 4; gy += 8) for (let gx = Math.floor(x0 / 13) * 13; gx < x0 + W; gx += 13) {      // дорога
-    const hs = hash2(gx + 19, gy + 23); if (hs % 100 < 24) leaf(gx + (hs >>> 8) % 11, gy + (hs >>> 12) % 6, hs);
+    const hs = hash2(gx + 19, gy + 23); if (hs % 100 < 8 * k) leaf(gx + (hs >>> 8) % 11, gy + (hs >>> 12) % 6, hs);
   }
 }
 // Смуга дороги знизу сцени: бордюр із каменю, асфальт із зерном, тріщинами й латками, розмітка, затока для поштової машини й острівець для поштомата
@@ -4669,11 +4711,11 @@ function drawManholeSteam() {
   if (!manholeSpots.length || !state.settings.steam) return;
   manholeSpots.forEach((m, mi) => {
     if (m.x < visL() - 16 || m.x > visR() + 16) return;
-    for (let i = 0; i < 7; i++) {
-      const ph = ((animOn() ? animClock * 0.42 : 0) + i / 7 + mi * 0.37) % 1, yy = m.y - 3 - ph * 36;
-      const xx = m.x + (animOn() ? Math.sin(animClock * 1.3 + i * 2 + mi) : 0) * (2 + ph * 7), r = 2 + ph * 4.5, a = Math.sin(ph * Math.PI);
-      ctx.globalAlpha = a * 0.5; disc(ctx, Math.round(xx), Math.round(yy), Math.round(r) + 1, 'E');       // м'який край клубочка
-      ctx.globalAlpha = a * 0.72; disc(ctx, Math.round(xx) - 1, Math.round(yy) - 1, Math.round(r), 'w');
+    for (let i = 0; i < 4; i++) {
+      const ph = ((animOn() ? animClock * 0.34 : 0) + i / 4 + mi * 0.37) % 1, yy = m.y - 3 - ph * 24;
+      const xx = m.x + (animOn() ? Math.sin(animClock * 1.3 + i * 2 + mi) : 0) * (1.5 + ph * 5), r = 1.5 + ph * 3, a = Math.sin(ph * Math.PI);
+      ctx.globalAlpha = a * 0.28; disc(ctx, Math.round(xx), Math.round(yy), Math.round(r) + 1, 'E');       // м'який край клубочка
+      ctx.globalAlpha = a * 0.46; disc(ctx, Math.round(xx) - 1, Math.round(yy) - 1, Math.round(r), 'w');
     }
   });
   ctx.globalAlpha = 1;
@@ -4859,29 +4901,58 @@ function drawBareTree(g, x, v, season) {
 }
 
 /* ---------- Хелловін: гірлянда й скелет на будинку ---------- */
-function skeletonG(g, sx, sy, c, dx, dy) {
-  const X = sx + dx, Y = sy + dy;
-  R(g, X + 2, Y - 3, 1, 3, c);                        // мотузка
-  R(g, X + 1, Y, 3, 1, c); R(g, X, Y + 1, 5, 2, c); R(g, X + 1, Y + 3, 3, 1, c);       // череп
-  R(g, X + 2, Y + 4, 1, 6, c);                        // хребет
-  R(g, X + 1, Y + 5, 3, 1, c); R(g, X + 1, Y + 7, 3, 1, c);                            // ребра
-  R(g, X, Y + 5, 1, 3, c); R(g, X + 4, Y + 5, 1, 3, c);                                // руки
-  R(g, X + 1, Y + 10, 1, 4, c); R(g, X + 3, Y + 10, 1, 4, c);                          // ноги
+const SKEL_ROWS = [
+  '..wwwww..',
+  '.wwwwwww.',
+  '.wkkwkkw.',
+  '.wwwkwww.',
+  '..wwwww..',
+  '..wkwkw..',
+  '....w....',
+  '.wwwwwww.',
+  'w.wkwkw.w',
+  'w.wwwww.w',
+  'w.wkwkw.w',
+  '.w..w..w.',
+  '..wwwww..',
+  '..ww.ww..',
+  '..w...w..',
+  '..w...w..',
+  '.ww...ww.'];
+function skelFig(g, x, y, rows) {                                                    // скелет із чорним контуром, кістки світліють зліва
+  const on = (c, r) => !!(rows[r] && rows[r][c] && rows[r][c] !== '.');
+  for (let r = -1; r <= rows.length; r++) for (let c = -1; c <= 9; c++) { if (on(c, r)) continue; if (on(c - 1, r) || on(c + 1, r) || on(c, r - 1) || on(c, r + 1)) R(g, x + c, y + r, 1, 1, 'd'); }
+  rows.forEach((row, r) => { for (let c = 0; c < row.length; c++) { const ch = row[c]; if (ch !== '.') R(g, x + c, y + r, 1, 1, ch === 'k' ? 'k' : (c >= 6 ? 'E' : 'w')); } });
+}
+function webG(g, x, y, dirX) {                                                       // павутиння в кутку: промені й дужки
+  g.globalAlpha = 0.85;
+  const L = (x1, y1, x2, y2) => lineG(g, x + dirX * x1, y + y1, x + dirX * x2, y + y2, 'w');
+  L(0, 0, 14, 0); L(0, 0, 0, 14); L(0, 0, 10, 10);
+  [4, 7, 10].forEach(r => { const d = Math.round(r * 0.7); L(r, 0, d, d); L(d, d, 0, r); });
+  g.globalAlpha = 1;
 }
 function drawHalloweenHouse(g, spec) {
-  const { x, w } = spec, top = LAYOUT.horizonY - spec.h;
+  const { x, w } = spec, top = LAYOUT.horizonY - spec.h, hs = hash2(x + 3, 9), kind = hs % 5;
   // гірлянда з помаранчевих і фіолетових вогників під дахом
   for (let gx = x + 1; gx < x + w - 1; gx++) {
     const sag = Math.round(2 * Math.sin((gx - x) / (w - 2) * Math.PI));
     R(g, gx, top + 1 + sag, 1, 1, 'd');
     if ((gx - x) % 4 === 2) R(g, gx, top + 2 + sag, 2, 2, ['o', 'u', 'y'][((gx - x) >> 2) % 3]);
   }
-  // скелет, що висить на мотузці (не на кожному будинку)
-  if (hash2(x + 3, 9) % 2 === 0 && spec.h >= 40) {
-    const sx = x + w - 7, sy = top + 6;
-    [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(o => skeletonG(g, sx, sy, 'd', o[0], o[1]));
-    skeletonG(g, sx, sy, 'w', 0, 0);
-    R(g, sx + 1, sy + 1, 1, 1, 'k'); R(g, sx + 3, sy + 1, 1, 1, 'k');            // очі
+  const roomy = spec.h >= 40 && w >= 36;
+  if ((kind === 0 || kind === 4) && roomy) {                                         // скелет висить на мотузці з карниза
+    const sx = x + w - 13, sy = top + 7;
+    R(g, sx + 4, sy - 7, 1, 7, 'd'); skelFig(g, sx, sy, SKEL_ROWS);
+  } else if (kind === 1 && roomy) {                                                  // скелет сидить на краю даху, ноги звисають
+    const sx = x + 6; skelFig(g, sx, top - 13, SKEL_ROWS);
+    R(g, sx + 10, top - 7, 5, 4, 'd'); R(g, sx + 11, top - 6, 3, 2, 'o'); R(g, sx + 12, top - 8, 1, 1, 'g');         // гарбуз поруч
+  }
+  if (kind === 2 || kind === 4) {                                                    // павутиння в кутку й павучок на нитці
+    webG(g, x + 1, top + 3, 1);
+    const spx = x + 9; R(g, spx, top + 4, 1, 9, 'w'); R(g, spx - 1, top + 13, 3, 2, 'k'); R(g, spx - 2, top + 14, 1, 1, 'k'); R(g, spx + 2, top + 14, 1, 1, 'k'); R(g, spx - 1, top + 12, 1, 1, 'r'); R(g, spx + 1, top + 12, 1, 1, 'r');
+  }
+  if (kind === 3 || (kind === 0 && !roomy)) {                                        // кажани висять догори ногами під карнизом
+    [x + 8, x + (w >> 1), x + w - 12].forEach((bx, i) => { if (i === 1 && w < 44) return; R(g, bx, top + 3, 1, 2, 'd'); R(g, bx - 1, top + 5, 3, 3, 'k'); R(g, bx - 2, top + 6, 1, 2, 'k'); R(g, bx + 2, top + 6, 1, 2, 'k'); R(g, bx - 1, top + 6, 1, 1, 'r'); R(g, bx + 1, top + 6, 1, 1, 'r'); });
   }
 }
 
@@ -5064,7 +5135,7 @@ function roofSignG(g, cx, y, big) {
   const [fill, ink] = EPOCH_ROOF_SIGN[viewEpoch() % EPOCH_ROOF_SIGN.length];
   const pw = big ? 70 : 62, ph = big ? 17 : 14, x = cx - (pw >> 1), ty = y + ((ph - 8) >> 1);
   lastRoofSign = { x, y, w: pw, h: ph, tx: cx - 24, ty };
-  R(g, x, y, pw, ph, 'd'); R(g, x + 1, y + 1, pw - 2, ph - 2, fill); R(g, x + 1, y + 1, pw - 2, 1, ink); R(g, x + 1, y + ph - 2, pw - 2, 1, 'd');
+  R(g, x, y, pw, ph, 'd'); R(g, x + 1, y + 1, pw - 2, ph - 2, fill);
   [[-1, 0], [1, 0], [0, -1], [0, 1], [1, 1], [-1, 1]].forEach(([dx, dy]) => wordBig(g, cx - 24 + dx, ty + dy, 'CAPYTAP', 'd'));       // темне обведення літер
   wordBig(g, cx - 24, ty, 'CAPYTAP', ink);
   if (big) { R(g, x + 2, y + 2, 1, 1, ink); R(g, x + pw - 3, y + 2, 1, 1, ink); R(g, x + 2, y + ph - 3, 1, 1, ink); R(g, x + pw - 3, y + ph - 3, 1, 1, ink); }
@@ -6835,8 +6906,7 @@ function updateBuild(dt) {
   let tx = cx, ty = LAYOUT.curbY + 4, run = false;
   if (p < BUILD_A) {                                           // Боді вибігає зліва в касці, старий магазин хитається й розсипається
     b.r = 0; run = true; tx = o.x - 30 + (cx - 20 - (o.x - 30)) * smooth01(p / BUILD_A); b.bx = tx;
-    if (p > 0.1 && Math.random() < dt * 24) spawnDust(o.x + rand(0, o.w), o.y + rand(0, o.h), 1);
-    if (p > 0.12 && !b.crumbled) { b.crumbled = true; b.shake = 1; playSfx('build'); for (let i = 0; i < 16; i++) spawnDust(o.x + (i / 15) * o.w, LAYOUT.curbY, 1); }
+    if (p > 0.115 && !b.crumbled) { b.crumbled = true; b.shake = 0.9; playSfx('build'); for (let i = 0; i < 16; i++) spawnDust(o.x - 6 + (i / 15) * (o.w + 12), LAYOUT.curbY + 2, 1); buildSparks(o.x + o.w / 2, o.y + 8, 6, ['w', 'E']); }      // полотно лягло на магазин
   } else if (p < BUILD_C) {
     const u = (p - BUILD_A) / (BUILD_C - BUILD_A);
     if (sty === 0) {                                            // молоток: Боді піднімається на риштування й б'є в край новобудови
@@ -6863,7 +6933,11 @@ function updateBuild(dt) {
   } else {                                                      // фінал: риштування падають, салют, Боді підстрибує від радості
     b.r = 1; tx = cx; ty = LAYOUT.curbY + 5;
     if (!b.fin) { b.fin = true; b.shake = 1; playSfx('buildDone'); for (let i = 0; i < 18; i++) spawnDust(shop.x + (i / 17) * shop.w, LAYOUT.curbY, 1); }
-    if (!b.cut && (p - BUILD_C) / (1 - BUILD_C) >= 0.3) { b.cut = true; const dr = doorWorld(); for (let i = 0; i < 12; i++) fx.sparks.push({ x: dr.cx + rand(-4, 4), y: shop.y + shop.door.y + 14, vx: rand(-40, 40), vy: rand(-50, -10), age: 0, life: 0.6, col: ['y', 'w', 'r', 'f'][i % 4] }); playSfx('pip'); }
+    if (!b.cut && (p - BUILD_C) / (1 - BUILD_C) >= 0.5) { b.cut = true; const dr = doorWorld(); for (let i = 0; i < 12; i++) fx.sparks.push({ x: dr.cx + rand(-4, 4), y: shop.y + shop.door.y + 14, vx: rand(-40, 40), vy: rand(-50, -10), age: 0, life: 0.6, col: ['y', 'w', 'r', 'f'][i % 4] }); playSfx('pip'); }
+    if (!b.vanish && p >= BUILD_C + 0.1) {                                                       // усі будівельні матеріали зникають у хмарках пилу
+      b.vanish = true; playSfx('pip');
+      [shop.x + shop.w - 20, shop.x + 38, shop.x + 12, shop.x + shop.w * 0.5].forEach(vx => { spawnDust(vx, LAYOUT.curbY + 8, 3); buildSparks(vx, LAYOUT.curbY + 2, 5, ['y', 'w']); });
+    }
     b.fwT -= dt;
     if (b.fwT <= 0 && b.t < b.dur - 0.5) {
       b.fwT = 0.24; const pairs = [['y', 'h'], ['f', 'p'], ['s', 'a'], ['g', 'm'], ['r', 'o']], cols = pairs[b.fw++ % 5];
@@ -7153,6 +7227,7 @@ function updateBubbles() {
     const el = bubbleEls[k];
     if (!el._follow) { if (el._x < bb.l + 3 || el._x > bb.r - 3) { dropBubble(k); return; } placeBubble(el, el._x, el._y); return; }
     const p = el._follow();
+    if (!p) { dropBubble(k); return; }
     if (p.x < bb.l + 3 || p.x > bb.r - 3) { dropBubble(k); return; }        // звірятко пішло за межі кадру (або камеру посунули) — репліка зникає
     placeBubble(el, p.x, Math.max(24, p.y));
   });
@@ -7198,20 +7273,22 @@ function customerTarget() {
   if (state.cps <= 0) return 2;
   return Math.min(CONFIG.MAX_CUSTOMERS + 4, 4 + Math.floor(Math.log10(state.cps + 1) * 2));      // трохи більше покупців, ніж раніше
 }
+// Куди йде звіреня, що покидає сцену: трохи за краєм того, що видно (світ широкий, тож до його краю йти надто довго)
+function passEdge(dir) { return dir > 0 ? Math.min(worldR() + 16, visR() + 30 + rand(0, 120)) : Math.max(worldL() - 16, visL() - 30 - rand(0, 120)); }
 function spawnCustomer() {
   const fromLeft = Math.random() < 0.5;
   const lane = rand(LAYOUT.lane.min, Math.max(LAYOUT.lane.min + 4, roadFloor()));
   const goesShopping = Math.random() < 0.7;
   const c = {
     type: CUSTOMER_TYPES[Math.floor(Math.random() * CUSTOMER_TYPES.length)],
-    x: fromLeft ? worldL() - 14 : worldR() + 14,
+    x: fromLeft ? Math.max(worldL() - 14, visL() - 20 - rand(0, 110)) : Math.min(worldR() + 14, visR() + 20 + rand(0, 110)),
     y: lane, lane,
     dir: fromLeft ? 1 : -1,
     speed: rand(16, 26),
     anim: rand(0, 2),
     mode: goesShopping ? 'toDoor' : 'pass',
     doorX: shop.x + shop.door.x + shop.door.w / 2 + rand(-4, 4),
-    passTo: fromLeft ? worldR() + 16 : worldL() - 16,
+    passTo: fromLeft ? Math.min(worldR() + 16, visR() + 30 + rand(0, 160)) : Math.max(worldL() - 16, visL() - 30 - rand(0, 160)),
     alpha: 1, t: 0, stay: 0,
     bag: null
   };
@@ -7271,8 +7348,28 @@ function startFear(c, hz) {
   c.fear = { t: 0, stage: 0, ty: mailRoadY() - 27 - rand(0, 6), fy: 0, sx: 0, origDir: c.dir, away: c.x < hz.x ? -1 : 1, said: false, wait: 0 };
   playSfx('pip'); buzz(10);
 }
+function scareNear(gx, gy) {
+  let n = 0;
+  customers.forEach(c => {
+    if (n >= 2 || c.fear || c.inside || c.alpha < 0.9 || !animOn() || !(c.mode === 'pass' || c.mode === 'toDoor' || c.mode === 'toHome')) return;
+    if (Math.abs(c.x - gx) > 56 || c.x < visL() + 4 || c.x > visR() - 4) return;
+    n++; c.fear = { ghost: true, t: 0, stage: 0, ty: c.y, fy: 0, sx: 0, origDir: c.dir, away: c.x < gx ? -1 : 1, said: false, wait: 0, run: 0 }; playSfx('pip'); buzz(10);
+  });
+}
 function updateFear(c, dt) {
   const f = c.fear; f.t += dt;
+  if (f.ghost) {                                                             // привид! підскочив, закричав і втік убік
+    if (f.stage === 0) {
+      f.fy = -Math.abs(Math.sin(Math.min(1, f.t / 0.5) * Math.PI)) * 7; f.sx = Math.round(Math.sin(f.t * 55));
+      if (!f.said) { f.said = true; fearSay(c, true); }
+      if (f.t >= 0.5) { f.stage = 1; f.fy = 0; f.sx = 0; c.dir = f.away; }
+    } else {
+      f.run += dt; c.x += f.away * 78 * dt; f.fy = -(Math.floor(c.anim * 14) % 2);
+      if (Math.random() < dt * 22) spawnDust(c.x, c.y + 1, 1);
+      if (f.run >= 1.1) { c.dir = f.origDir; c.fear = null; }
+    }
+    return;
+  }
   if (f.stage === 0) {                                                       // завмер, підскочив і витріщився: «!» над головою
     f.fy = -Math.abs(Math.sin(Math.min(1, f.t / 0.5) * Math.PI)) * 7; f.sx = Math.round(Math.sin(f.t * 55));
     if (!f.said) { f.said = true; fearSay(c); }
@@ -7286,9 +7383,9 @@ function updateFear(c, dt) {
     if (f.wait > 0.9 && (!hazardNearX(c, roadHazards()) || f.wait > 5)) { if (c.lane > c.y) c.lane = c.y; c.dir = f.origDir; c.fear = null; }
   }
 }
-function fearSay(c) {
+function fearSay(c, ghost) {
   const now = performance.now(); if (now - lastFearSay < 1800) return; lastFearSay = now;
-  showBubble('fear', t('fear' + Math.floor(Math.random() * FEAR_LINES)), c.x, c.y - 26, () => ({ x: c.x, y: c.y - 26 + (c.fear ? c.fear.fy : 0) }));
+  showBubble('fear', t((ghost ? 'gfear' : 'fear') + Math.floor(Math.random() * FEAR_LINES)), c.x, c.y - 26, () => ({ x: c.x, y: c.y - 26 + (c.fear ? c.fear.fy : 0) }));
 }
 // Бордюр біля магазину: звірятко легко переступає його невеликою дугою, а не ковзає крізь нього
 function curbLift(y) { const a = LAYOUT.curbY - 5, b = LAYOUT.curbY + 9; return y > a && y < b ? Math.sin((y - a) / (b - a) * Math.PI) * 3.4 : 0; }
@@ -7384,7 +7481,7 @@ function updateCustomers(dt) {
         if (c.y >= c.lane) {
           c.y = c.lane; c.homeDoor = null; c.dir = c.x < shop.x + shop.w / 2 ? 1 : -1;
           if (Math.random() < 0.5) { c.mode = 'toDoor'; c.doorX = shop.x + shop.door.x + shop.door.w / 2 + rand(-4, 4); }
-          else { c.mode = 'pass'; c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16; }
+          else { c.mode = 'pass'; c.passTo = passEdge(c.dir); }
         }
         break;
     }
@@ -7443,7 +7540,7 @@ function updateInside(c, dt) {
     c.mode = 'exiting'; c.t = 0;
     c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)]; c.bagKind = Math.floor(Math.random() * 3);
     c.dir = Math.random() < 0.5 ? 1 : -1;
-    c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16;
+    c.passTo = passEdge(c.dir);
     c.homeDoor = pickHome(c);                                   // частина покупців іде зі своїми пакетами додому
     return;
   }
@@ -7466,7 +7563,7 @@ function ejectInside() {
     c.inside = false; c.mode = 'exiting'; c.x = dr.cx; c.y = LAYOUT.curbY + 2; c.alpha = 1; c.esc = null;
     c.bag = BAG_COLORS[Math.floor(Math.random() * BAG_COLORS.length)]; c.bagKind = Math.floor(Math.random() * 3);
     c.dir = Math.random() < 0.5 ? 1 : -1;
-    c.passTo = c.dir > 0 ? worldR() + 16 : worldL() - 16;
+    c.passTo = passEdge(c.dir);
   });
 }
 // Скін героїв надягається й на звірят-покупців: головний убір + деталь на тулубі (кожен скін той самий, що на героях)
@@ -7853,6 +7950,17 @@ const SFX = {
       bar.forEach(([n, len]) => { tone(audio.sfxGain, 'square', noteFreq(n), t + b * beat, len * beat * 0.9, 0.16); b += len; });
       const [root, fifth, third] = BASS[bi];
       for (let k = 0; k < 4; k++) { if (k % 2 === 0) tone(audio.sfxGain, 'triangle', noteFreq(root), t + k * beat, beat * 0.8, 0.3); else { tone(audio.sfxGain, 'square', noteFreq(third) * 2, t + k * beat, beat * 0.4, 0.08); tone(audio.sfxGain, 'square', noteFreq(fifth) * 2, t + k * beat, beat * 0.4, 0.08); } }
+    });
+  },
+  hagCackle() { melody('sawtooth', [['E6', .07], ['C6', .07], ['E6', .07], ['C6', .07], ['E6', .07], ['A5', .07], ['E6', .07], ['A5', .22]], 0.1); },
+  hagTheme() {     // моторошний менует: мелодія в мінорі, бас-піцикато
+    const ac = audio.ctx, beat = 60 / 112, t0 = ac.currentTime + 0.05;
+    const MEL = [[['A4', .5], ['C5', .5], ['E5', 1], ['D#5', .5], ['E5', .5], ['C5', 1]], [['B4', .5], ['D5', .5], ['F5', 1], ['E5', .5], ['D5', .5], ['B4', 1]], [['A4', .5], ['C5', .5], ['E5', 1], ['A5', 1], ['G#5', 1]], [['A5', .5], ['E5', .5], ['C5', .5], ['A4', .5], ['E4', 2]]];
+    const ROOTS = ['A2', 'G2', 'A2', 'E2'];
+    MEL.forEach((bar, bi) => {
+      const t = t0 + bi * 4 * beat; let b = 0;
+      bar.forEach(([n, len]) => { tone(audio.sfxGain, 'square', noteFreq(n), t + b * beat, len * beat * 0.8, 0.12); b += len; });
+      for (let k = 0; k < 4; k++) { if (k % 2 === 0) tone(audio.sfxGain, 'triangle', noteFreq(ROOTS[bi]), t + k * beat, beat * 0.7, 0.3); else tone(audio.sfxGain, 'square', noteFreq(ROOTS[bi]) * 3, t + k * beat, beat * 0.25, 0.07); }
     });
   },
   buildTheme() {   // бадьорий будівельний марш (≈8 с): мелодія на квадраті, бас і стукіт молотків
@@ -8995,7 +9103,7 @@ function updateTheme() {
   // прикраси свята за датою малюємо лише в режимі «Авто»; якщо пору року обрано вручну — діють її прикраси
   const seasonDecor = { winter: ['snow'], halloween: ['pumpkins', 'bats', 'witchhats'], autumn: ['autumnleaves'], spring: ['petals'], summer: ['heat'] }[season] || [];
   theme.decor = new Set([...(auto && holiday ? holiday.decor : []), ...seasonDecor, ...(bf ? BLACK_FRIDAY.decor : [])]);
-  theme.skyTint = bf ? BLACK_FRIDAY.skyTint : (auto && holiday && holiday.skyTint) || (season === 'halloween' ? { color: 'n', alpha: 0.5 } : currentEpoch().tint);
+  theme.skyTint = bf ? BLACK_FRIDAY.skyTint : (auto && holiday && holiday.skyTint) || (season === 'halloween' ? { color: 'V', alpha: 0.5 } : currentEpoch().tint);
   theme.lights = bf ? BLACK_FRIDAY.lights : ((holiday && auto && holiday.lights) || (season === 'halloween' ? ['o', 'u'] : ['r', 'y', 'g', 'n', 'p']));
   theme.season = season;
   if (theme.layerSeason !== season) {
@@ -9336,8 +9444,9 @@ function drawDecorBack() {
 // Легке затемнення над будинками та землею (щоб вечірня тема була цілісною)
 function drawDecorDusk() {
   if (!theme.skyTint) return;
+  const y0 = theme.skyTint.alpha > 0.3 ? -view.offY : 40;                // сильна тема (Хелловін, Чорна п'ятниця) затемнює й верх неба — без різкої смуги
   ctx.globalAlpha = theme.skyTint.alpha * 0.55;
-  R(ctx, worldL(), 40, view.w, worldB() - 40, theme.skyTint.color);
+  R(ctx, worldL(), y0, view.w, worldB() - y0, theme.skyTint.color);
   ctx.globalAlpha = 1;
 }
 
@@ -9782,13 +9891,15 @@ function buildSkyStars() {
   }
 }
 function updateSkyState() {
-  if (!dayNightOn()) { sky.night = 0; sky.dusk = 0; sky.lamp = 0; sky.h = 0.9; return; }
+  const hal = theme.season === 'halloween';
+  if (!dayNightOn()) { sky.night = hal ? 0.6 : 0; sky.dusk = 0; sky.lamp = hal ? 0.85 : 0; sky.h = hal ? -0.4 : 0.9; return; }
   const h = Math.sin((state.dayPhase - 0.25) * Math.PI * 2);      // висота сонця: 1 — полудень, −1 — північ
   const n = Math.max(0, Math.min(1, 0.3 - h * 1.5));
   sky.night = n * n * (3 - 2 * n);
   sky.dusk = Math.max(0, 1 - Math.abs(h - 0.05) / 0.3);          // сутінки: схід і захід
   sky.lamp = Math.max(0, Math.min(1, (sky.night - 0.25) / 0.4));  // ліхтарі вмикаються, коли вже темно
   sky.h = h;
+  if (hal) { sky.night = Math.max(sky.night, 0.6); sky.lamp = Math.max(sky.lamp, 0.85); sky.dusk = 0; }
 }
 function updateShootingStar(dt) {
   if (!animOn() || sky.night < 0.6) { shootingStar = null; return; }
@@ -9808,6 +9919,10 @@ function drawSkyBody(kind, x, y) {
     ctx.globalAlpha = 0.45; disc(ctx, x, y, 13, low ? 'o' : 'w');
     ctx.globalAlpha = 1;
     disc(ctx, x, y, 9, low ? 'o' : 'y'); disc(ctx, x, y, 6, low ? 'h' : 'w');
+  } else if (kind === 'hmoon') {                      // хелловінський місяць: великий, помаранчевий, з кратерами
+    ctx.globalAlpha = 0.1; disc(ctx, x, y, 27, 'o'); ctx.globalAlpha = 0.16; disc(ctx, x, y, 22, 'o'); ctx.globalAlpha = 0.28; disc(ctx, x, y, 18, 'h'); ctx.globalAlpha = 1;
+    disc(ctx, x, y, 14, 'd'); disc(ctx, x, y, 13, 'o'); disc(ctx, x - 2, y - 2, 11, 'h'); disc(ctx, x - 3, y - 3, 7, 'y');
+    ctx.globalAlpha = 0.5; R(ctx, x - 8, y - 3, 4, 3, 'o'); R(ctx, x + 2, y - 8, 5, 3, 'o'); R(ctx, x + 4, y + 2, 4, 4, 'o'); R(ctx, x - 7, y + 4, 3, 3, 'o'); R(ctx, x - 1, y + 6, 3, 2, 'o'); ctx.globalAlpha = 1;
   } else {                                           // місяць: ореол, освітлений бік, тінь, кратери й моря
     ctx.globalAlpha = 0.09; disc(ctx, x, y, 20, 'w');
     ctx.globalAlpha = 0.14; disc(ctx, x, y, 16, 'w');
@@ -9854,6 +9969,7 @@ function drawSkyScreen(time) {
     }
     ctx.globalAlpha = 1;
   }
+  if (theme.season === 'halloween') { drawSkyBody('hmoon', Math.round(viewCrop.x + viewCrop.w * 0.2 - (viewCrop.x - (view.w - viewCrop.w) / 2) * 0.1), Math.max(32, hor - 96)); return; }
   // сонце вдень, місяць уночі: рухаються дугою зліва направо
   const a = dayNightOn() ? (state.dayPhase - 0.25) * Math.PI * 2 : Math.PI * 0.42;
   const arcH = Math.min(hor - 26, 190), rx = W * 0.44;
@@ -10112,17 +10228,58 @@ function stepCreature(g, dt, L, mv) {                          // рух одн�
     }
   }
 }
+const hwitch = { on: false, x: 0, y: 0, dir: -1, t: 0, timer: 6 };                              // відьма на мітлі прилітає час від часу
+const fogWisps = [];
+function hallowSkyY() { return Math.round(34 - view.offY * 0.45); }
+function updateHalloweenAir(dt) {
+  if (theme.season !== 'halloween' || !animOn()) { hwitch.on = false; fogWisps.length = 0; return; }
+  if (!fogWisps.length) for (let i = 0; i < 16; i++) fogWisps.push({ x: rand(worldL(), worldR()), y: rand(LAYOUT.curbY - 2, worldB() - 28), w: rand(34, 70), vx: rand(2, 6), a: rand(0.07, 0.14) });
+  fogWisps.forEach(f => { f.x += f.vx * dt; if (f.x - f.w > worldR()) f.x = worldL() - f.w; });
+  if (!hwitch.on) {
+    hwitch.timer -= dt;
+    if (hwitch.timer <= 0) { hwitch.on = true; hwitch.t = 0; hwitch.dir = Math.random() < 0.5 ? -1 : 1; hwitch.x = hwitch.dir < 0 ? visR() + 40 : visL() - 40; hwitch.y = hallowSkyY() + rand(-8, 14); playSfx('hagCackle'); }
+  } else {
+    hwitch.t += dt; hwitch.x += hwitch.dir * 42 * dt;
+    if (hwitch.x < visL() - 70 || hwitch.x > visR() + 70) { hwitch.on = false; hwitch.timer = rand(18, 40); }
+  }
+}
+function drawWitchSprite(x, y, dir, t) {                                                           // відьма на мітлі (летить уліво при dir < 0)
+  const P = (dx, dy, w, h, c) => R(ctx, dir < 0 ? x + dx : x - dx - w + 1, y + dy, w, h, c);
+  const fl = Math.floor(t * 8) % 2;
+  P(-9, 0, 24, 1, 'd'); P(-9, 0, 24, 1, 'b'); P(-9, -1, 24, 1, 'd');                          // держак
+  P(14, -2, 7, 5, 'h'); P(15, -1, 6, 1, 'o'); P(15, 1, 6, 1, 'o'); P(21, -1, 2, 1, 'h'); P(21, 1, 2, 1, 'h'); P(14, -3, 7, 1, 'd'); P(14, 3, 7, 1, 'd');         // віник
+  P(-2, -8, 7, 8, 'd'); P(-1, -7, 5, 7, 'V'); P(-1, -7, 1, 7, 'u'); P(1 + fl, -3, 3, 3, 'V');   // мантія
+  P(-1, 0, 2, 5 + fl, 'V'); P(-2, 4 + fl, 3, 2, 'k');                                          // нога з чобітком
+  P(-7, -12, 6, 5, 'd'); P(-6, -11, 4, 4, 'm'); P(-8, -9, 2, 2, 'm'); P(-8, -9, 1, 1, 'g'); P(-5, -10, 1, 1, 'y');   // обличчя з носом і оком
+  P(-9, -13, 11, 2, 'd'); P(-8, -13, 9, 1, 'k'); P(-6, -17, 5, 4, 'd'); P(-5, -17, 3, 4, 'k'); P(-4, -20, 3, 3, 'd'); P(-3, -20, 1, 3, 'k'); P(-6, -14, 7, 1, 'o');   // капелюх
+  for (let k = 0; k < 7; k++) {                                                                // зоряний шлейф
+    const a = (1 - k / 7) * 0.8, px = 22 + k * 5, py = Math.round(Math.sin(t * 5 + k) * 2) + (k % 2 ? -2 : 2);
+    ctx.globalAlpha = a; R(ctx, dir < 0 ? x + px : x - px, y + py, 1, 1, ['y', 'o', 'u', 'w'][k % 4]); if (k % 3 === 0) R(ctx, dir < 0 ? x + px - 1 : x - px + 1, y + py, 3, 1, 'y');
+    ctx.globalAlpha = 1;
+  }
+}
+function drawHalloweenAir() {
+  if (theme.season !== 'halloween') return;
+  fogWisps.forEach(f => { if (f.x + f.w < visL() || f.x - f.w > visR()) return; ctx.globalAlpha = f.a; for (let dy = -3; dy <= 3; dy++) { const half = Math.round(f.w * 0.5 * Math.sqrt(1 - (dy * dy) / 12)); R(ctx, Math.round(f.x) - half, Math.round(f.y) + dy, half * 2, 1, 'w'); } });
+  ctx.globalAlpha = 1;
+  if (hwitch.on) drawWitchSprite(Math.round(hwitch.x), Math.round(hwitch.y + Math.sin(hwitch.t * 1.8) * 6), hwitch.dir, hwitch.t);
+}
 function updateGhostHunt(dt) {
+  updateHalloweenAir(dt);
   // привиди, що блимають у вікнах (лише на Хелловін)
   if (theme.season !== 'halloween' || !houseGlass || !houseGlass.length || !animOn()) windowGhosts.length = 0;
   else {
     windowGhostTimer -= dt;
     if (windowGhostTimer <= 0) {
-      windowGhostTimer = rand(2.5, 6);
+      windowGhostTimer = rand(1.0, 2.8);
       const seen = houseGlass.filter(r => r[0] > visL() && r[0] < visR());
-      if (seen.length) { const r = seen[Math.floor(Math.random() * seen.length)]; windowGhosts.push({ x: r[0], y: r[1], t: 0, dur: rand(0.6, 1.1) }); }
+      if (seen.length && windowGhosts.length < 5) { const r = seen[Math.floor(Math.random() * seen.length)]; windowGhosts.push({ x: r[0], y: r[1], t: 0, dur: rand(2.0, 2.8), dx: Math.random() < 0.5 ? -1 : 1, ph: rand(0, 6.3), scared: false }); }
     }
-    for (let i = windowGhosts.length - 1; i >= 0; i--) { windowGhosts[i].t += dt; if (windowGhosts[i].t >= windowGhosts[i].dur) windowGhosts.splice(i, 1); }
+    for (let i = windowGhosts.length - 1; i >= 0; i--) {
+      const w = windowGhosts[i]; w.t += dt;
+      if (!w.scared && w.t > w.dur * 0.22) { w.scared = true; scareNear(w.x + 3, w.y + 4); }                       // вилетів — найближчі звірята лякаються
+      if (w.t >= w.dur) windowGhosts.splice(i, 1);
+    }
   }
   if (!ghostHunt) return;
   const h = ghostHunt, L = huntLimits(), mv = h.crt < 0 ? 'ghost' : EPOCH_CREATURES[h.crt].move;
@@ -10189,9 +10346,16 @@ function drawGhostHunt() {
     ctx.globalAlpha = 1;
   }
   windowGhosts.forEach(w => {
-    const a = Math.sin(Math.PI * w.t / w.dur);
-    ctx.globalAlpha = 0.55 * a; R(ctx, w.x - 1, w.y - 1, 7, 9, 'o');
-    ctx.globalAlpha = a; drawSprite(ctx, 'ghost_s', w.x, w.y);
+    const k = w.t / w.dur;
+    if (k < 0.22) {                                                                // зблиск у вікні
+      const a = Math.min(1, k / 0.1);
+      ctx.globalAlpha = 0.55 * a; R(ctx, w.x - 1, w.y - 1, 7, 9, 'o');
+      ctx.globalAlpha = a; drawSprite(ctx, 'ghost_s', w.x, w.y);
+    } else {                                                                       // вилітає з вікна, звивається вгору й вбік і тане
+      const u = (k - 0.22) / 0.78, gx = Math.round(w.x + 3 + w.dx * u * 40 + Math.sin(u * 8 + w.ph) * 3), gy = Math.round(w.y + 6 - u * 30 - u * u * 10), sc = 0.7 + 0.45 * u;
+      ctx.globalAlpha = 0.16 * (1 - u); disc(ctx, gx, gy - 6, 11, 'S');
+      ctx.globalAlpha = Math.min(0.9, (1 - Math.pow(u, 1.6)) * 1.1); drawSprite(ctx, 'ghost', gx - Math.round(6 * sc), gy - Math.round(13 * sc), { flip: w.dx < 0, sx: sc, sy: sc });
+    }
   });
   ctx.globalAlpha = 1;
 }
@@ -10392,6 +10556,106 @@ const CIRCUS_ART = (function () {
   return { draw, clownWindow, bangSprite };
 })();
 function circusFlagText() { return t('circusFlag'); }
+/* ---- гра Баби Яги: у трьох казанках лежать призи, їх показують, накривають гарбузами-кришками й перемішують; треба вказати казанок з головним призом ---- */
+const HAG_X = [34, 96, 158], HAG_CY = 104;
+const hagGame = { phase: 'idle', t: 0, c: [], si: 0, st: 0, swaps: [], pairs: [], rt: 0, pick: -1, top: 0 };
+function hagReset() {
+  const main = rollCircusSector(true).sec, dec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u' }, top = Math.floor(Math.random() * 3);
+  hagGame.c = [0, 1, 2].map(i => ({ slot: i, lid: 1, prize: i === top ? main : dec, main: i === top, dim: false }));
+  hagGame.phase = 'idle'; hagGame.t = 0; hagGame.pick = -1; hagGame.top = top; hagGame.si = 0; hagGame.st = 0; hagGame.rt = 0;
+  hagGame.swaps = [0.55, 0.5, 0.46, 0.42, 0.38, 0.35, 0.32];
+  hagGame.pairs = hagGame.swaps.map((d, i) => { let a = Math.floor(Math.random() * 3), b = (a + 1 + Math.floor(Math.random() * 2)) % 3; return [a, b]; });
+}
+function hagStart() {
+  if (circusBusy() || state.circus.spun) return;
+  state.circus.spun = 1; hagReset(); hagGame.phase = 'show'; hagGame.t = 0;
+  ui.circusResult.textContent = t('hagWatch'); updateCircusButtons(); saveGame(); playSfx('hagCackle');
+}
+function updateHagGame(dt) {
+  const G = hagGame; G.t += dt;
+  if (G.phase === 'show') {
+    G.c.forEach(c => { c.lid = G.t < 0.35 ? 1 - G.t / 0.35 : G.t < 2.5 ? 0 : Math.min(1, (G.t - 2.5) / 0.4); });
+    if (G.t >= 2.9) { G.phase = 'shuffle'; G.si = 0; G.st = 0; ui.circusResult.textContent = t('hagShuffle'); }
+  } else if (G.phase === 'shuffle') {
+    G.st += dt; const dur = G.swaps[G.si];
+    if (G.st >= dur) {
+      const [a, b] = G.pairs[G.si], ca = G.c.find(c => c.slot === a), cb = G.c.find(c => c.slot === b);
+      if (ca && cb) { ca.slot = b; cb.slot = a; }
+      G.si++; G.st = 0; if (G.si % 2 === 0) playSfx('wheelTick');
+      if (G.si >= G.swaps.length) { G.phase = 'pick'; ui.circusResult.textContent = t('hagPick'); }
+    }
+  } else if (G.phase === 'reveal') {
+    G.rt += dt; const ch = G.c[G.pick];
+    ch.lid = Math.max(0, 1 - G.rt / 0.4);
+    if (G.rt > 1.0) G.c.forEach((c, i) => { if (i !== G.pick) { c.lid = Math.max(0, 1 - (G.rt - 1.0) / 0.4); c.dim = true; } });
+    if (G.rt > 2.4) { G.phase = 'done'; updateCircusButtons(); ui.circusClose.textContent = t('hagDone'); }
+  }
+}
+function hagPos(c) {                                          // де зараз казанок (під час обміну двох — дугою один спереду, другий позаду)
+  const G = hagGame; let x = HAG_X[c.slot], y = HAG_CY;
+  if (G.phase === 'shuffle' && G.si < G.swaps.length) {
+    const [a, b] = G.pairs[G.si], u0 = Math.min(1, G.st / G.swaps[G.si]), u = u0 * u0 * (3 - 2 * u0);
+    if (c.slot === a) { x = HAG_X[a] + (HAG_X[b] - HAG_X[a]) * u; y += Math.sin(u * Math.PI) * 13; }
+    else if (c.slot === b) { x = HAG_X[b] + (HAG_X[a] - HAG_X[b]) * u; y -= Math.sin(u * Math.PI) * 9; }
+  }
+  return { x: Math.round(x), y: Math.round(y) };
+}
+function hagClick(e) {
+  const G = hagGame; if (G.phase !== 'pick') return;
+  const cv = ui.circusWheel, r = cv.getBoundingClientRect(), lx = (e.clientX - r.left) * cv.width / r.width, ly = (e.clientY - r.top) * cv.height / r.height;
+  let best = -1, bd = 1e9; G.c.forEach((c, i) => { const p = hagPos(c), d = Math.abs(lx - p.x); if (d < 21 && ly > 40 && d < bd) { bd = d; best = i; } });
+  if (best < 0) return;
+  G.pick = best; G.phase = 'reveal'; G.rt = 0;
+  const c = G.c[best], pr = applyCircusSector(c.prize, Date.now());
+  ui.circusResult.textContent = t(c.main ? 'hagGood' : 'hagMiss') + ' ' + pr.text;
+  playSfx(c.main ? 'wheelWin' : 'pip'); buzz(25);
+  if (pr.skin >= 0) setTimeout(() => openLoot(pr.skin), 1500); else showToast(pr.text, 'good');
+  updateUI(); saveGame(); updateCircusButtons();
+}
+function hagCauldron(g, x, y, lid, t, dim, jump) {
+  // вогонь під казанком
+  const fy = y + 1;
+  for (let k = -9; k <= 9; k += 3) { const h = 4 + Math.round(Math.abs(Math.sin(t * 9 + k)) * 5); R(g, x + k, fy - h, 3, h, 'o'); R(g, x + k, fy - Math.max(2, h - 3), 3, Math.max(2, h - 3), 'y'); }
+  R(g, x - 13, fy, 27, 3, 'd'); R(g, x - 11, fy - 1, 5, 2, 'b'); R(g, x + 5, fy - 1, 5, 2, 'b');
+  // чавунний казан
+  const cy = y - 12;
+  R(g, x - 10, y - 4, 3, 5, 'd'); R(g, x + 8, y - 4, 3, 5, 'd');
+  for (let dy = -11; dy <= 10; dy++) { const half = Math.round(Math.sqrt(Math.max(0, 1 - (dy / 11.5) * (dy / 11.5))) * 13.5); R(g, x - half, cy + dy, half * 2 + 1, 1, 'd'); }
+  for (let dy = -10; dy <= 9; dy++) { const half = Math.round(Math.sqrt(Math.max(0, 1 - (dy / 11) * (dy / 11))) * 12.5); R(g, x - half, cy + dy, half * 2 + 1, 1, 'k'); }
+  R(g, x - 9, cy - 4, 3, 7, 'z'); R(g, x - 8, cy - 3, 1, 4, 'e');
+  R(g, x - 14, cy - 11, 29, 4, 'd'); R(g, x - 13, cy - 10, 27, 2, 'e'); R(g, x - 13, cy - 10, 27, 1, 'Y');
+  R(g, x - 12, cy - 11, 25, 2, 'm'); R(g, x - 10, cy - 11, 6, 1, 'S');                 // зілля
+  if (lid < 0.99) for (let k = 0; k < 3; k++) { const ph = (t * 0.8 + k / 3) % 1; g.globalAlpha = (1 - ph) * 0.9; disc(g, x - 6 + k * 6 + Math.round(Math.sin(t * 3 + k) * 2), Math.round(cy - 12 - ph * 12), 1 + (k % 2), 'S'); }
+  g.globalAlpha = 1;
+  // гарбуз-кришка: коли відкрито, підіймається вгору й вбік
+  if (lid > 0.02) {
+    const up = Math.round((1 - lid) * 20), sx = Math.round((1 - lid) * 8), lx = x + sx, ly = cy - 11 - up;
+    R(g, lx - 13, ly - 8, 27, 9, 'd'); R(g, lx - 12, ly - 7, 25, 7, 'o'); R(g, lx - 12, ly - 7, 8, 7, 'h'); R(g, lx - 3, ly - 7, 1, 7, 'r'); R(g, lx + 4, ly - 7, 1, 7, 'r'); R(g, lx - 6, ly - 4, 2, 2, 'k'); R(g, lx + 2, ly - 4, 2, 2, 'k');
+    R(g, lx - 1, ly - 11, 3, 3, 'd'); R(g, lx, ly - 10, 2, 2, 'g');
+  }
+  if (dim) { g.globalAlpha = 0.35; R(g, x - 14, cy - 12, 29, 25, 'V'); g.globalAlpha = 1; }
+}
+function drawHagGame() {
+  const cv = ui.circusWheel; if (cv.width !== 192) return;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+  const G = hagGame, tt = G.t, W = 192, H = 120;
+  g.clearRect(0, 0, W, H);
+  R(g, 0, 0, W, 40, 'z'); R(g, 0, 40, W, 40, 'V'); R(g, 0, 80, W, 40, 'P');
+  for (let i = 0; i < 18; i++) if (Math.sin(tt * 2 + i) > -0.5) R(g, (i * 53 + 11) % W, (i * 17 + 5) % 52, 1, 1, i % 3 ? 'w' : 'y');
+  disc(g, 168, 18, 9, 'd'); disc(g, 168, 18, 8, 'o'); disc(g, 166, 16, 5, 'h');
+  R(g, 0, 93, W, 27, 'z'); R(g, 0, 93, W, 1, 'u'); for (let x = 0; x < W; x += 12) R(g, x, 100 + ((x / 12) % 2) * 6, 7, 1, 'P');
+  const list = G.c.map((c, i) => ({ c, i, p: hagPos(c) })).sort((a, b) => a.p.y - b.p.y);
+  list.forEach(({ c, i, p }) => {
+    hagCauldron(g, p.x, p.y, c.lid, tt, c.dim, 0);
+    if (c.lid < 0.6) {                                            // приз плаває над казанком у золотому сяйві
+      const bob = Math.round(Math.sin(tt * 3 + i) * 2), a = Math.min(1, (0.6 - c.lid) / 0.4);
+      g.globalAlpha = 0.3 * a; disc(g, p.x, p.y - 40 + bob, 16, 'w'); g.globalAlpha = 0.45 * a; disc(g, p.x, p.y - 40 + bob, 12, 'y'); g.globalAlpha = a;
+      drawCircusIcon(g, c.prize.icon || 'gem', p.x, p.y - 40 + bob); g.globalAlpha = 1;
+      if (G.phase === 'reveal' && i === G.pick && Math.floor(tt * 6) % 2) { R(g, p.x - 18, p.y - 52, 1, 3, 'y'); R(g, p.x - 19, p.y - 51, 3, 1, 'y'); R(g, p.x + 18, p.y - 46, 1, 3, 'y'); R(g, p.x + 17, p.y - 45, 3, 1, 'y'); }
+    }
+  });
+  if (G.phase === 'pick' && Math.floor(tt * 3) % 2) { list.forEach(({ p }) => { R(g, p.x - 1, p.y - 52, 3, 2, 'y'); R(g, p.x, p.y - 50, 1, 2, 'y'); }); }
+}
 
 /* ---- логіка ---- */
 function circusStopX() { return mailBoxX() + 150; }   // стоїть на дорозі прямо над поштоматом (так, щоб шатра повністю його закрили) — прив'язаний до дороги, а не до екрана
@@ -10411,20 +10675,24 @@ function updateCircus(dt) {
     if (c.phase === 3) circus.setup = 1;
   }
   if (c.phase === 0) {
-    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * evMult() * (2 + Math.random()); c.phase = 1; c.spun = 0; circus.bangT = 0; playSfx('circusMarch'); showToast(t('circusBang'), 'good'); saveGame(); }
+    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * evMult() * (2 + Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : 'circusBang'), 'good'); saveGame(); }
   } else if (c.phase === 1) {                      // «!» чекає на тап, а з часом зникає (гравець сам вирішує, чи тикати)
     circus.bangT += dt;
     if (circus.bangT > CONFIG.CIRCUS_BANG_SECONDS) { c.phase = 0; saveGame(); }
   } else if (c.phase === 2.5) {                    // їде справа наліво
-    circus.drive += dt;
-    const k = Math.min(1, circus.drive / CONFIG.CIRCUS_DRIVE_SECONDS);
+    if (c.hag && circus.hold) {                    // спершу Баба Яга пролітає, потім хатка виходить на дорогу
+      circus.holdT += dt; circus.x = circusStartX(); circus.drive = 0; circus.setup = 0;
+      if (!hagFly.on || hagFly.x < (visL() + visR()) / 2 || circus.holdT > 7) circus.hold = false;
+    }
+    if (!(c.hag && circus.hold)) circus.drive += dt;
+    const k = Math.min(1, circus.drive / (c.hag ? 6 : CONFIG.CIRCUS_DRIVE_SECONDS));
     circus.x = circusStartX() + (circusStopX() - circusStartX()) * k;
     circus.setup = 0;
-    if (k >= 1) { c.phase = 2.7; circus.x = circusStopX(); circus.setupT = 0; playSfx('build'); }
+    if (k >= 1 && !(c.hag && circus.hold)) { c.phase = 2.7; circus.x = circusStopX(); circus.setupT = 0; playSfx(c.hag ? 'hagCackle' : 'build'); if (c.hag) spawnDust(circus.x, circusY(), 6); }
   } else if (c.phase === 2.7) {                    // шатро розкладається: колеса й платформа зникають, вилазять три куполи, виходить клоун
     circus.setupT += dt; circus.x = circusStopX();
     circus.setup = Math.min(1, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
-    if (circus.setup >= 1) { c.phase = 3; showToast(t('circusArrived'), 'good'); playSfx('wheelWin'); saveGame(); }
+    if (circus.setup >= 1) { c.phase = 3; showToast(t(c.hag ? 'hagArrived' : 'circusArrived'), 'good'); playSfx('wheelWin'); saveGame(); }
   } else if (c.phase === 3) {
     circus.x = circusStopX(); circus.setup = 1;
   } else if (c.phase === 3.5) {                    // збирається назад
@@ -10432,17 +10700,126 @@ function updateCircus(dt) {
     circus.setup = Math.max(0, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
     if (circus.setup <= 0) { c.phase = 4; playSfx('pip'); }
   } else if (c.phase === 4) {                      // від'їжджає ліворуч
-    circus.x -= 60 * dt;
+    circus.x -= (c.hag ? 48 : 60) * dt;
     if (circus.x < worldL() - 140) { c.phase = 0; if (c.next < now + 6 * 60000) c.next = now + 6 * 60000; saveGame(); }
   }
+  updateHagFly(dt);
   updateCircusSpin(dt);
-  if (!ui.circusModal.hidden) { drawCircusWheel(); const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; CIRCUS_ART.clownWindow(g, circus.t); }
+  if (c.hag) updateHagGame(dt);
+  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
 }
+/* ---- Баба Яга ---- */
+const hagFly = { on: false, x: 0, y: 0, dir: -1, t: 0, wait: 0, fast: false };            // Баба Яга в ступі летить небом
+function hagStartFlight() { hagFly.on = true; hagFly.dir = -1; hagFly.x = visR() + 60; hagFly.y = hallowSkyY() + rand(-4, 12); hagFly.t = 0; playSfx('hagCackle'); }
+function updateHagFly(dt) {
+  const c = state.circus;
+  if (!(c.hag && (c.phase === 1 || (c.phase === 2.5 && (hagFly.on || hagFly.fast))))) { hagFly.on = false; hagFly.fast = false; return; }
+  if (!hagFly.on) { if (c.phase !== 1) return; hagFly.wait -= dt; if (hagFly.wait <= 0) hagStartFlight(); return; }
+  hagFly.t += dt; hagFly.x += hagFly.dir * (hagFly.fast ? 150 : 38) * dt;
+  if (hagFly.x < visL() - 100) { hagFly.on = false; hagFly.fast = false; hagFly.wait = rand(2.5, 5); }
+}
+function drawHagFlyer() {
+  if (!hagFly.on) return;
+  const x = Math.round(hagFly.x), y = Math.round(hagFly.y + Math.sin(hagFly.t * 2.2) * 5), dir = hagFly.dir, t = hagFly.t, fast = hagFly.fast;
+  const P = (dx, dy, w, h, c) => R(ctx, dir < 0 ? x + dx : x - dx - w + 1, y + dy, w, h, c);
+  for (let k = 0; k < 8; k++) { ctx.globalAlpha = (1 - k / 8) * 0.5; P(14 + k * 7, 5 + Math.round(Math.sin(t * 4 + k) * 2), 3 - (k > 4 ? 1 : 0), 3 - (k > 4 ? 1 : 0), k % 2 ? 'E' : 'w'); }       // дим із ступи
+  ctx.globalAlpha = 1;
+  for (let i = 0; i <= 9; i++) P(8 + Math.round(i * 1.6), -3 + i, 2, 1, 'd');                                              // мітла позаду
+  for (let i = 0; i <= 8; i++) P(8 + Math.round(i * 1.6), -3 + i, 1, 1, 'b');
+  P(20, 5, 7, 6, 'd'); P(21, 6, 5, 4, 'h'); P(21, 7, 6, 1, 'o'); P(21, 9, 6, 1, 'o');
+  for (let r = 0; r < 9; r++) { const half = 11 - Math.round(r * 0.55); P(-half, 4 + r, half * 2, 1, r === 8 ? 'd' : 'e'); P(-half, 4 + r, 1, 1, 'd'); P(half - 1, 4 + r, 1, 1, 'd'); if (r > 1 && r < 8) P(half - 4, 4 + r, 3, 1, 'Y'); }       // ступа
+  P(-12, 1, 25, 3, 'd'); P(-11, 2, 23, 1, 'E');
+  P(-5, -9, 10, 11, 'd'); P(-4, -8, 8, 10, 'P'); P(-4, -8, 2, 10, 'v'); P(0, -3, 4, 4, 'W');                           // тулуб і фартух
+  P(-8, -19, 10, 4, 'd'); P(-7, -18, 8, 3, 'r'); P(-4, -18, 1, 1, 'y'); P(-1, -17, 1, 1, 'y'); P(-6, -15, 9, 7, 'd'); P(-5, -14, 7, 6, 'm');                       // хустка й обличчя
+  P(-9, -12, 4, 3, 'd'); P(-8, -12, 3, 2, 'm'); P(-9, -10, 2, 1, 'g'); P(-4, -13, 1, 1, 'y'); P(-6, -9, 4, 1, 'd'); P(1, -16, 2, 7, 'Y');         // ніс, око, пасма
+  for (let i = 0; i <= 10; i++) P(-6 - Math.round(i * 1.3), -2 + i, 2, 1, 'b');                                           // товкач
+  P(-21, 8, 5, 5, 'd'); P(-20, 9, 3, 3, 'e');
+  if (fast) { ctx.globalAlpha = 0.7; P(26, -2, 10, 1, 'w'); P(30, 3, 12, 1, 'w'); P(24, 8, 8, 1, 'w'); ctx.globalAlpha = 1; }
+}
+
+const HAG_ART = (function () {
+  function leg(g, x, hipY, footY, lift) {                       // куряча лапа: пір'яста гомілка, жовта п'ятка й три пальці з кігтями
+    R(g, x - 5, hipY, 10, 9, 'd'); R(g, x - 4, hipY + 1, 8, 7, 'w'); R(g, x - 4, hipY + 1, 2, 7, 'W'); R(g, x + 1, hipY + 3, 3, 1, 'E'); R(g, x - 2, hipY + 6, 4, 1, 'E');
+    const sy = hipY + 9, ey = footY - 2 - lift;
+    if (ey > sy) { R(g, x - 2, sy, 4, ey - sy, 'd'); R(g, x - 1, sy, 2, ey - sy, 'h'); for (let y = sy + 2; y < ey; y += 4) R(g, x - 1, y, 2, 1, 'o'); }
+    const fy = footY - lift;
+    R(g, x - 10, fy - 2, 14, 3, 'd'); R(g, x - 9, fy - 1, 12, 2, 'h'); R(g, x - 11, fy - 1, 2, 2, 'o'); R(g, x - 8, fy + 1, 4, 1, 'o'); R(g, x + 4, fy - 1, 2, 1, 'o');
+  }
+  function face(g, cx, top, k, t) {                              // обличчя Баби Яги: хустка, пасма, довгий ніс, ікло й бородавка
+    const Rk = (dx, dy, w, h, c) => R(g, cx + dx * k, top + dy * k, w * k, h * k, c);
+    const blink = (t % 3.2) > 3.05;
+    Rk(-6, 2, 2, 9, 'd'); Rk(-5, 2, 1, 9, 'Y'); Rk(5, 2, 2, 9, 'd'); Rk(5, 2, 1, 9, 'w');
+    Rk(-6, -2, 13, 5, 'd'); Rk(-5, -1, 11, 4, 'r'); Rk(4, 0, 3, 3, 'r'); Rk(-3, 0, 1, 1, 'y'); Rk(0, 1, 1, 1, 'y'); Rk(2, 0, 1, 1, 'y');
+    Rk(-5, 3, 11, 9, 'd'); Rk(-4, 3, 9, 8, 'm'); Rk(-4, 3, 9, 1, 'g');
+    if (blink) { Rk(-3, 6, 2, 1, 'g'); Rk(1, 6, 2, 1, 'g'); } else { Rk(-3, 5, 2, 2, 'y'); Rk(1, 5, 2, 2, 'y'); Rk(-2, 6, 1, 1, 'k'); Rk(2, 6, 1, 1, 'k'); }
+    Rk(-1, 7, 3, 2, 'm'); Rk(0, 9, 2, 2, 'g'); Rk(-1, 7, 1, 2, 'g');
+    Rk(-3, 11, 7, 1, 'd'); Rk(-2, 10, 1, 1, 'w'); Rk(2, 10, 1, 1, 'w'); Rk(0, 12, 1, 1, 'g');
+  }
+  function draw(g, t, s, moving) {
+    g.clearRect(0, 0, 160, 84);
+    const ss = s * s * (3 - 2 * s), walk = moving ? t * 5.2 : 0;
+    const bob = moving ? Math.round(Math.abs(Math.sin(walk)) * 1.6) : 0, hipY = 56 + Math.round(ss * 18) - bob;
+    const cabB = hipY + 3, cabH = 32, cabT = cabB - cabH, x0 = 44, x1 = 116, W = x1 - x0, groundY = 83;
+    leg(g, 66, hipY, groundY, moving ? Math.round(Math.max(0, Math.sin(walk)) * 9) : 0);
+    leg(g, 96, hipY, groundY, moving ? Math.round(Math.max(0, Math.sin(walk + Math.PI)) * 9) : 0);
+    // кістяний паркан й гарбузи, коли хатка присіла
+    if (ss > 0.5) {
+      const a = Math.min(1, (ss - 0.5) * 2); g.globalAlpha = a;
+      [[16, 0], [28, 1], [132, 1], [144, 0]].forEach(([fx, tall]) => { R(g, fx, 70 + tall * 2, 2, 12 - tall * 2, 'd'); R(g, fx, 71 + tall * 2, 1, 11 - tall * 2, 'w'); R(g, fx - 2, 66 + tall * 2, 6, 5, 'd'); R(g, fx - 1, 67 + tall * 2, 4, 3, 'w'); R(g, fx - 1, 68 + tall * 2, 1, 1, 'k'); R(g, fx + 2, 68 + tall * 2, 1, 1, 'k'); });
+      R(g, 28, 76, 104, 1, 'd');
+      [[56, 80], [104, 80]].forEach(([px, py]) => { R(g, px - 5, py - 6, 11, 7, 'd'); R(g, px - 4, py - 5, 9, 5, 'o'); R(g, px - 4, py - 5, 3, 5, 'h'); R(g, px - 2, py - 4, 1, 1, 'k'); R(g, px + 2, py - 4, 1, 1, 'k'); R(g, px - 1, py - 2, 3, 1, 'k'); R(g, px, py - 8, 2, 2, 'g'); });
+      g.globalAlpha = 1;
+    }
+    // стіни з колод
+    R(g, x0, cabT, W, cabH, 'd'); R(g, x0 + 1, cabT + 1, W - 2, cabH - 2, 'b');
+    for (let y = cabT + 6; y < cabB - 1; y += 6) { R(g, x0 + 1, y, W - 2, 1, 'd'); R(g, x0 + 1, y - 5, W - 2, 1, 'l'); }
+    for (let y = cabT + 4; y < cabB - 2; y += 6) { R(g, x0 - 2, y - 2, 4, 5, 'd'); R(g, x0 - 1, y - 1, 2, 3, 'c'); R(g, x1 - 2, y - 2, 4, 5, 'd'); R(g, x1 - 1, y - 1, 2, 3, 'c'); }
+    // вікна: тепле світло, фіранка
+    const wf = Math.floor(t * 6) % 7 === 0 ? 'h' : 'y';
+    [[50, 0], [98, 1]].forEach(([wx, right]) => { const wy = cabT + 8; R(g, wx - 1, wy - 1, 14, 14, 'd'); R(g, wx, wy, 12, 12, wf); R(g, wx + 5, wy, 2, 12, 'd'); R(g, wx, wy + 5, 12, 2, 'd'); R(g, wx, wy, 12, 2, 'o'); R(g, right ? wx + 7 : wx, wy, 5, 4, 'r'); R(g, wx - 2, wy + 12, 16, 2, 'b'); });
+    // двері: відчиняються, всередині тепло й видно Бабу Ягу
+    const open = Math.max(0, Math.min(1, (s - 0.6) / 0.3));
+    R(g, 72, cabB - 24, 17, 24, 'd'); R(g, 73, cabB - 23, 15, 23, open > 0.05 ? 'k' : 'P');
+    if (open > 0.05) {
+      R(g, 74, cabB - 22, 13, 22, 'o'); R(g, 74, cabB - 22, 13, 8, 'h');
+      if (s > 0.85) { const wv = Math.floor(t * 2.5) % 2; face(g, 80, cabB - 21, 1, t); R(g, 76, cabB - 8, 9, 8, 'd'); R(g, 77, cabB - 8, 7, 8, 'P'); R(g, wv ? 85 : 86, cabB - 12 - wv * 2, 2, 5, 'm'); }
+      R(g, 73, cabB - 23, Math.max(1, Math.round(3 * (1 - open))), 23, 'P');
+    } else { R(g, 74, cabB - 22, 3, 22, 'u'); R(g, 78, cabB - 16, 1, 1, 'h'); R(g, 80, cabB - 17, 5, 4, 'd'); R(g, 81, cabB - 16, 3, 2, 'w'); R(g, 81, cabB - 16, 1, 1, 'k'); R(g, 83, cabB - 16, 1, 1, 'k'); }
+    R(g, 74, cabB, 14, 2, 'e'); R(g, 74, cabB, 14, 1, 'E');
+    // дах із черепиці й моху
+    const apex = cabT - 25, ov = 8, half0 = W / 2 + ov;
+    for (let r = 0; r < 25; r++) {
+      const half = Math.round(half0 * (r + 1) / 25), y = apex + r;
+      R(g, 80 - half, y, half * 2, 1, r % 4 === 3 ? 'd' : (r % 2 ? 'r' : 't'));
+      R(g, 80 - half, y, 1, 1, 'd'); R(g, 80 + half - 1, y, 1, 1, 'd');
+      for (let k = (r % 2) * 3; k < half * 2; k += 6) if (r % 4 !== 3) R(g, 80 - half + k, y, 1, 1, 'd');
+      if ((r * 7) % 11 < 3) R(g, 80 - half + 6 + (r * 5) % 20, y, 5, 1, 'g');
+    }
+    R(g, 80 - half0, cabT - 2, half0 * 2, 3, 'd'); R(g, 80 - half0, cabT - 2, half0 * 2, 1, 'b');
+    R(g, 78, apex - 1, 4, 2, 'd');
+    R(g, 100, apex + 3, 9, 15, 'd'); R(g, 101, apex + 4, 7, 14, 'e'); R(g, 99, apex + 2, 11, 3, 'd'); R(g, 100, apex + 3, 9, 1, 'E');                       // димар
+    for (let k = 0; k < 4; k++) { const ph = (t * 0.5 + k / 4) % 1; g.globalAlpha = Math.sin(ph * Math.PI) * 0.6; R(g, 103 + Math.round(Math.sin(t + k) * 3) + Math.round(ph * 8), apex - Math.round(ph * 22), 4 - Math.round(ph * 2) + 1, 3, k % 2 ? 'E' : 'w'); }
+    g.globalAlpha = 1;
+    R(g, 58, apex + 14, 4, 3, 'd'); R(g, 59, apex + 14, 2, 1, 'k'); R(g, 56, apex + 16, 2, 1, 'k'); R(g, 62, apex + 15, 2, 1, 'k'); R(g, 58, apex + 15, 1, 1, 'y');        // ворона на даху
+    R(g, 52, cabT + 1, 1, 5, 'd'); R(g, 50, cabT + 6, 5, 7, 'd'); R(g, 51, cabT + 7, 3, 5, wf === 'h' ? 'h' : 'o'); R(g, 52, cabT + 8, 1, 2, 'y');                     // ліхтарик
+  }
+  function window_(g, t) {                                       // портрет Баби Яги у вікні хатки на тлі місяця (72×40)
+    g.clearRect(0, 0, 72, 40);
+    R(g, 0, 0, 72, 40, 'V'); for (let i = 0; i < 14; i++) { R(g, (i * 29 + 7) % 72, (i * 13 + 3) % 22, 1, 1, i % 3 ? 'w' : 'y'); }
+    disc(g, 12, 11, 7, 'd'); disc(g, 12, 11, 6, 'o'); disc(g, 10, 9, 4, 'h'); R(g, 14, 12, 3, 2, 'o');
+    const bx = Math.round(48 + Math.sin(t * 0.7) * 14), by = Math.round(7 + Math.sin(t * 1.9) * 2), fl = Math.floor(t * 8) % 2;
+    R(g, bx - 1, by, 3, 2, 'k'); R(g, bx - 5, by - (fl ? 2 : 0), 4, 1, 'k'); R(g, bx + 2, by - (fl ? 2 : 0), 4, 1, 'k');
+    R(g, 0, 28, 72, 12, 'z'); face(g, 36, 6, 2, t);
+    R(g, 0, 33, 72, 7, 'd'); R(g, 0, 34, 72, 1, 'b');
+    for (let i = 0; i < 5; i++) { R(g, 6 + i * 14, 30, 1, 4, 'w'); R(g, 5 + i * 14, 29, 3, 2, 'w'); }
+  }
+  return { draw, window: window_ };
+})();
 const circusCanvas = document.createElement('canvas'); circusCanvas.width = 160; circusCanvas.height = 84;
 function drawCircus() {
   const c = state.circus; if (c.phase < 2) return;
   const s = circus.setup === undefined ? 0 : circus.setup, moving = c.phase === 2.5 || c.phase === 4;
-  const g = circusCanvas.getContext('2d'); CIRCUS_ART.draw(g, circus.t, s, moving);
+  const g = circusCanvas.getContext('2d'); if (c.hag) HAG_ART.draw(g, circus.t, s, moving); else CIRCUS_ART.draw(g, circus.t, s, moving);
   const x = Math.round(circus.x) - 80, y = circusY();
   ctx.globalAlpha = 0.25; R(ctx, x + 6 + Math.round(8 * s), y - 2, 128 - Math.round(8 * s) * 2 + (s < 0.5 ? -30 + Math.round(60 * s) : 0), 3, 'd'); ctx.globalAlpha = 1;
   ctx.drawImage(circusCanvas, x, y - 76);
@@ -10462,7 +10839,11 @@ function hitCircus(p) {
   const c = state.circus;
   if (c.phase === 1) {
     const b = bangPos();
-    if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) { c.phase = 2.5; circus.drive = 0; circus.sx = undefined; circus.sx = circusStartX(); circus.x = circus.sx; playSfx('build'); saveGame(); return true; }
+    if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) {
+      c.phase = 2.5; circus.drive = 0; circus.sx = undefined; circus.sx = circusStartX(); circus.x = circus.sx; saveGame();
+      if (c.hag) { circus.hold = true; circus.holdT = 0; hagFly.fast = true; if (!hagFly.on) hagStartFlight(); playSfx('hagCackle'); } else playSfx('build');
+      return true;
+    }
   } else if (c.phase === 3) {
     const y = circusY();
     if (p.x >= circus.x - 80 && p.x <= circus.x + 80 && p.y >= y - 80 && p.y <= y) { openCircus(); return true; }
@@ -10507,31 +10888,39 @@ function drawCircusWheel() {
   g.clearRect(0, 0, 128, 140); g.save(); g.translate(64, 76); g.rotate(circus.angle); g.drawImage(circus.tex, -64, -64); g.restore();
   for (let i = 0; i < 12; i++) { R(g, 64 - (12 - i), 2 + i, (12 - i) * 2, 1, 'd'); if (i > 1) R(g, 64 - (12 - i) + 2, 2 + i, (12 - i) * 2 - 4, 1, 'r'); }
 }
+function circusBusy() { return !!circus.anim || (!!state.circus.hag && ['show', 'shuffle', 'pick', 'reveal'].includes(hagGame.phase)); }
 function openCircus() {
   if (dialog.active) return;
+  const hag = !!state.circus.hag;
+  ui.circusModal.classList.toggle('hag', hag);
+  if (hag) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
+  else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
   ui.circusModal.hidden = false;
-  ui.circusTitle.textContent = t('circusTitle'); ui.circusSub.textContent = t('circusSub');
-  ui.circusClose.textContent = t(state.circus.spun ? 'circusDone' : 'wheelClose');
+  ui.circusTitle.textContent = t(hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(hag ? 'hagSub' : 'circusSub');
+  ui.circusClose.textContent = t(state.circus.spun ? (hag ? 'hagDone' : 'circusDone') : 'wheelClose');
   ui.circusResult.textContent = '';
   updateCircusButtons();
 }
 function updateCircusButtons() {
-  ui.circusBtn.textContent = t('circusSpin');
-  ui.circusBtn.disabled = !!circus.anim || !!state.circus.spun;
+  const hag = !!state.circus.hag;
+  ui.circusBtn.textContent = t(hag ? 'hagStart' : 'circusSpin');
+  ui.circusBtn.disabled = circusBusy() || !!state.circus.spun;
 }
 function closeCircus() {
-  if (circus.anim) return;
+  if (circusBusy()) return;
   ui.circusModal.hidden = true;
   if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
 }
 function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_POOL[i].startsWith('capy_ep') && !skinHas(i)); }   // скіни епох у колесі не випадають
-function circusSpin() {
-  if (circus.anim || state.circus.spun) return;
-  const now = Date.now(), weight = x => (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : x.weight);
+// Один випадковий сектор (з урахуванням скінів, що вже є) і його дія
+function rollCircusSector(noSmall) {
+  const weight = x => (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : (noSmall && x.kind === 'crystal' && (x.amount || 1) === 1 ? 0 : x.weight));
   const total = CIRCUS_SECTORS.reduce((a, x) => a + weight(x), 0);
   let roll = Math.random() * total, idx = 0;
   for (; idx < CIRCUS_SECTORS.length - 1; idx++) { roll -= weight(CIRCUS_SECTORS[idx]); if (roll < 0) break; }
-  const sec = CIRCUS_SECTORS[idx];
+  return { sec: CIRCUS_SECTORS[idx], idx };
+}
+function applyCircusSector(sec, now) {
   let text, skinPick = -1;
   if (sec.kind === 'coins' || sec.kind === 'jackpot') {
     const gain = Math.floor(state.cps * sec.seconds + sec.flat * levelMult()); state.coins += gain; state.totalEarned += gain;
@@ -10541,6 +10930,12 @@ function circusSpin() {
   else if (sec.kind === 'tap') { state.events.tapBoostUntil = now + sec.minutes * 60000; state.events.tapBoostMult = sec.mult; text = t('prize_tap', sec.mult, sec.minutes); }
   else { const free = circusFreeSkins(sec.skin), pick = free[Math.floor(Math.random() * free.length)]; skinGrant(pick); skinPick = pick; text = t('prize_skin', skinName(pick)); }
   recalcIncome();
+  return { text, skin: skinPick };
+}
+function circusSpin() {
+  if (circusBusy() || state.circus.spun) return;
+  if (state.circus.hag) { hagStart(); return; }
+  const now = Date.now(), { sec, idx } = rollCircusSector(false), pr = applyCircusSector(sec, now), text = pr.text, skinPick = pr.skin;
   const step = Math.PI / 6, from = circus.angle % (Math.PI * 2), to = Math.PI * 2 * 5 + (Math.PI * 2 - (idx + 0.5) * step) + rand(-0.35, 0.35) * step;
   circus.anim = { t: 0, dur: CONFIG.WHEEL_SPIN_SECONDS, from, to, text, again: false, skin: skinPick };
   ui.circusResult.textContent = '…';
@@ -10604,21 +10999,52 @@ function updateMail(dt) {
   if (mail.state === 'idle') {
     if (now >= ev.nextMail && quiet && state.circus.phase === 0) {
       ev.nextMail = now + CONFIG.MAIL_MINUTES * 60000;
-      if (!ev.mailPending) { mail.state = 'arriving'; mail.x = worldR() + 50; mail.t = 0; playSfx('sale'); showToast(t('mailArrive'), 'big'); }
+      if (!ev.mailPending) {
+        const pool = CUSTOMER_TYPES.filter(k => k !== 'raccoon' && k !== mail.who);                          // щоразу інший звіряток-кур'єр
+        mail.who = pool[Math.floor(Math.random() * pool.length)]; mail.said = false; mail.honk = false; mail.dustT = 0;
+        mail.state = 'arriving'; mail.x = Math.max(mailStopX() + 130, Math.min(worldR() + 50, visR() + 60)); mail.t = 0; playSfx('sale'); showToast(t('mailArrive'), 'big');
+      }
     }
     return;
   }
   mail.t += dt;
+  const moving = mail.state === 'arriving' || mail.state === 'leaving', gy = mailRoadY();
+  if (moving && animOn()) {                                                                                 // вихлопні клубочки позаду й пил із-під коліс
+    mail.dustT -= dt;
+    if (mail.dustT <= 0) { mail.dustT = 0.1; fx.dust.push({ x: mail.x + 19, y: gy - 3, r: 1.6, vx: rand(8, 16), vy: rand(-12, -5), age: 0, life: 0.7 }); if (mail.state === 'leaving') fx.dust.push({ x: mail.x + 17, y: gy - 1, r: 1.8, vx: rand(10, 20), vy: rand(-6, -1), age: 0, life: 0.5 }); }
+  }
   if (mail.state === 'arriving') {
-    mail.x -= 55 * dt;
-    if (mail.x <= mailStopX()) { mail.x = mailStopX(); mail.state = 'stopped'; mail.t = 0; }
+    const d = mail.x - mailStopX();
+    mail.x -= Math.max(9, Math.min(55, d * 1.5)) * dt;                                                      // підʼїжджає повільніше й гальмує
+    if (mail.x <= mailStopX() + 0.4) { mail.x = mailStopX(); mail.state = 'stopped'; mail.t = 0; spawnDust(mail.x - 11, gy, 3); spawnDust(mail.x + 9, gy, 2); playSfx('pip'); }
   } else if (mail.state === 'stopped') {
-    if (mail.t > 3.2 && !ev.mailPending) { ev.mailPending = 1; saveGame(); playSfx('pip'); }
-    if (mail.t > 4.2) { mail.state = 'leaving'; mail.t = 0; }
+    const T = MAIL_T;
+    if (mail.t > T.wave0 && !mail.said) { mail.said = true; const cp = mailCourier(); if (cp) showBubble('mailer', t('mailSay' + Math.floor(Math.random() * 4)), cp.x, cp.foot - 30, () => { const q = mailCourier(); if (q) mail.lastCp = { x: q.x, y: q.foot - 30 }; return mail.lastCp || { x: cp.x, y: cp.foot - 30 }; }); }
+    if (mail.t > T.put1 && !ev.mailPending) { ev.mailPending = 1; saveGame(); playSfx('wheelWin'); }
+    if (mail.t > T.in1 + 0.15 && !mail.honk) { mail.honk = true; playSfx('pip'); }
+    if (mail.t > T.leave) { mail.state = 'leaving'; mail.t = 0; }
   } else if (mail.state === 'leaving') {
-    mail.x -= 60 * dt;
+    mail.x -= Math.min(70, 12 + mail.t * 45) * dt;
     if (mail.x < worldL() - 50) { mail.state = 'idle'; }
   }
+}
+// Кур'єр: вистрибує із задніх дверцят, іде до поштомата, кладе лист, махає й повертається. Повертає позицію й позу (або null, коли він у кузові)
+const MAIL_T = { out0: 0.45, out1: 0.95, walk1: 2.55, put1: 3.35, wave0: 3.4, wave1: 4.4, back1: 6.0, in1: 6.5, door1: 6.9, leave: 7.1 };
+function mailCourier() {
+  const t = mail.t, T = MAIL_T, gy = mailRoadY(), rx = Math.round(mail.x) + 20, bx = mailBoxX() + 15, foot0 = gy + 3;
+  if (mail.state !== 'stopped' || t < T.out0 || t >= T.in1) return null;
+  let x, foot = foot0, flip = true, pose = 'walk';
+  if (t < T.out1) { const u = (t - T.out0) / (T.out1 - T.out0); x = rx - 8 + 8 * u; foot = gy - 9 + (foot0 - (gy - 9)) * u * u - Math.sin(u * Math.PI) * 6; pose = 'jump'; }
+  else if (t < T.walk1) { const u = (t - T.out1) / (T.walk1 - T.out1); x = rx + (bx - rx) * u; }
+  else if (t < T.wave0) { x = bx; pose = 'put'; }
+  else if (t < T.wave1) { x = bx; flip = false; pose = 'wave'; foot -= Math.abs(Math.sin((t - T.wave0) * 8)) * 3; }
+  else if (t < T.back1) { const u = (t - T.wave1) / (T.back1 - T.wave1); x = bx + (rx - bx) * u; flip = false; }
+  else { const u = (t - T.back1) / (T.in1 - T.back1); x = rx - 8 * u; foot = foot0 + ((gy - 9) - foot0) * u * u - Math.sin(u * Math.PI) * 6; flip = false; pose = 'jump'; }
+  return { x: Math.round(x), foot: Math.round(foot), flip, pose, fr: (pose === 'walk' || pose === 'put') && pose === 'walk' ? Math.floor(animClock * 7) % 2 : 0 };
+}
+function drawPostCap(cx, ht, flip) {                                                                        // поштова кепка: синя з жовтим значком і козирком
+  R(ctx, cx - 4, ht - 2, 9, 3, 'd'); R(ctx, cx - 3, ht - 3, 7, 3, 'n'); R(ctx, cx - 2, ht - 4, 5, 1, 'n'); R(ctx, cx - 1, ht - 3, 3, 2, 'y'); R(ctx, cx, ht - 3, 1, 1, 'r');
+  R(ctx, flip ? cx - 7 : cx + 3, ht, 5, 1, 'd'); R(ctx, flip ? cx - 6 : cx + 3, ht, 3, 1, 'z');
 }
 function drawMailTruck() {
   const x = Math.round(mail.x), moving = mail.state === 'arriving' || mail.state === 'leaving';
@@ -10631,14 +11057,28 @@ function drawMailTruck() {
   R(ctx, x - 15, y - 11, 13, 8, 'n'); R(ctx, x - 14, y - 10, 5, 4, 's'); R(ctx, x - 14, y - 10, 2, 1, 'S'); R(ctx, x - 6, y - 10, 3, 3, 'h');   // кабіна
   R(ctx, x - 17, y - 8, 3, 5, 'n'); R(ctx, x - 17, y - 4, 3, 2, 'e'); R(ctx, x - 17, y - 7, 1, 2, 'y');
   [x - 11, x + 9].forEach(wx => { disc(ctx, wx, y - 2, 3, 'd'); R(ctx, wx - 1, y - 3, 2, 2, 'e'); });
-  if (mail.state === 'stopped' && mail.t > 0.4 && mail.t < 3.4) {         // кур'єр-песик несе лист до поштомата й кладе його в комірку
-    const tx = mailBoxX() + 12, k = Math.min(1, (mail.t - 0.4) / 1.8), cx = Math.round(mail.x - 14 + (tx - (mail.x - 14)) * k), fr = k < 1 ? Math.floor(animClock * 6) % 2 : 0;
-    drawSprite(ctx, 'dog_' + fr, cx - 8, y - 17, { flip: true });
-    if (k < 1) R(ctx, cx - 9, y - 11, 4, 3, 'w');
-    else if (mail.t < 3.0) {                                              // конверт летить із пащі в комірку
-      const u = (mail.t - 2.2) / 0.8, ex = Math.round(cx - 9 + (mailBoxX() + 1 - (cx - 9)) * u), ey = Math.round(y - 11 + (y - 18 - (y - 11)) * u - Math.sin(u * Math.PI) * 5);
-      R(ctx, ex, ey, 4, 3, 'w'); R(ctx, ex + 1, ey + 1, 2, 1, 'r');
+  const T = MAIL_T, st = mail.state === 'stopped', cp = mailCourier();
+  if (!st || mail.t < T.out0 || mail.t >= T.in1) { R(ctx, x - 13, y - 9, 3, 3, 'l'); R(ctx, x - 14, y - 10, 5, 1, 'n'); R(ctx, x - 12, y - 8, 1, 1, 'd'); }          // водій у кабіні в кепці
+  if (st) {                                                                                                // задні дверцята відчиняються, у кузові видно пакунки
+    const open = mail.t < 0.3 ? 0 : mail.t < 0.5 ? (mail.t - 0.3) / 0.2 : mail.t < T.in1 ? 1 : mail.t < T.door1 ? 1 - (mail.t - T.in1) / (T.door1 - T.in1) : 0;
+    if (open > 0.05) {
+      R(ctx, x + 12, y - 14, 5, 12, 'k'); R(ctx, x + 12, y - 5, 4, 3, 'c'); R(ctx, x + 12, y - 5, 4, 1, 'w'); R(ctx, x + 13, y - 8, 3, 3, 'h'); R(ctx, x + 14, y - 8, 1, 3, 'r'); R(ctx, x + 12, y - 11, 3, 3, 'c');
+      const dw = Math.max(1, Math.round(4 * open)); R(ctx, x + 17, y - 15, dw, 13, 'z'); R(ctx, x + 17, y - 15, dw, 1, 'n'); R(ctx, x + 17 + dw - 1, y - 15, 1, 13, 'd');
     }
+  }
+  if (cp) {                                                                                                // кур'єр-звіреня
+    const sx = cp.x - 9, sy = cp.foot - 23;
+    ctx.globalAlpha = 0.22; R(ctx, cp.x - 6, cp.foot, 12, 1, 'd'); ctx.globalAlpha = 1;
+    drawSprite(ctx, mail.who + '_' + cp.fr, sx, sy, { flip: cp.flip });
+    R(ctx, cp.flip ? sx + 10 : sx + 2, sy + 13, 6, 5, 'd'); R(ctx, cp.flip ? sx + 11 : sx + 3, sy + 14, 4, 3, 'h'); R(ctx, cp.flip ? sx + 12 : sx + 4, sy + 14, 2, 1, 'w');         // сумка з листами
+    drawPostCap(sx + 9, sy + 8, cp.flip);
+    const slotX = mailBoxX() + 1, slotY = y - 18;
+    if (cp.pose === 'walk' && mail.t < T.walk1 + 0.001 || cp.pose === 'jump' && mail.t < T.out1) R(ctx, cp.flip ? sx - 1 : sx + 15, sy + 14, 4, 3, 'w');           // лист у лапках
+    if (cp.pose === 'put') {                                                                              // конверт летить із лапки в комірку
+      const u = Math.min(1, (mail.t - T.walk1) / 0.7), ex = Math.round(sx - 1 + (slotX - (sx - 1)) * u), ey = Math.round(sy + 14 + (slotY - (sy + 14)) * u - Math.sin(u * Math.PI) * 6);
+      if (u < 1) { R(ctx, ex, ey, 4, 3, 'w'); R(ctx, ex + 1, ey + 1, 2, 1, 'r'); }
+    }
+    if (cp.pose === 'wave') { const w = Math.floor(animClock * 8) % 2; R(ctx, sx + 16, sy + 8 - w, 2, 5, 'd'); R(ctx, sx + 16, sy + 8 - w, 1, 4, 'B'); }                    // махає лапкою
   }
 }
 // Поштомат біля дороги: синя скринька на стовпчику. З листом прапорець піднімається, лист визирає й блимає
@@ -10662,7 +11102,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 2;
+const NEWS_VERSION = 3;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -10689,7 +11129,7 @@ function hitNews(p) {
   if (Math.abs(p.x - x) <= 14 && p.y >= y - 38 && p.y <= y + 3) { openNews(); return true; }
   return false;
 }
-const NEWS_ITEMS = ['🏘️', '🛍️', '💎', '👗', '🌸', '⚡', '🔨', '📮', '✨'];
+const NEWS_ITEMS = ['🧙', '👻', '📮', '🏗️', '🗺️', '🌸', '🛒', '⏳', '🪟'];
 function openNews() {
   ui.newsTitle.textContent = t('newsTitle'); ui.newsSub.textContent = t('newsSub');
   let h = '<p>' + t('newsIntro') + '</p>';
@@ -10984,6 +11424,7 @@ function initEvents() {
   ui.lootWear.addEventListener('click', () => closeLoot(true));
   ui.lootClose.addEventListener('click', () => closeLoot(false));
   ui.circusClose.addEventListener('click', closeCircus);
+  ui.circusWheel.addEventListener('click', hagClick);
   ui.circusModal.addEventListener('click', e => { if (e.target === ui.circusModal) closeCircus(); });
   ui.dbgCircus.addEventListener('click', () => { const c = state.circus; if (c.phase === 0 || c.phase === 4) { c.phase = 0; c.next = Date.now() - 1; } showToast('Цирк скоро!', 'good'); });
   ui.letterBtn.addEventListener('click', claimLetter);
@@ -11488,6 +11929,8 @@ function render(time) {
   drawRain();
   drawNightShade();
   drawNightLights();
+  drawHalloweenAir();
+  drawHagFlyer();
   drawGhostHunt();
 
   // монетки
@@ -11533,10 +11976,33 @@ function drawShopLayered(sc) {
     }));
   }
 }
+// Біле полотно-шатро: трикутний дах, складки, мотузки й кілочки, смуга «обережно» знизу; при відкритті нижній край піднімається вгору, як штора
+function drawBuildTent(b, x0, x1, top, base, lift, t) {
+  const W = x1 - x0, peak = 7, hemY = Math.round(base - lift), cx = Math.round((x0 + x1) / 2), mid = Math.round((top + hemY) / 2);
+  for (let x = 0; x < W; x++) {
+    const u = x / Math.max(1, W - 1), yT = top + Math.round(peak * Math.abs(u - 0.5) * 2), fold = Math.floor((x + Math.sin(t * 1.4 + x * 0.05) * 1.3) / 5);
+    const h = hemY - yT; if (h <= 0) continue;
+    const col = (x % 5 === 0) ? 'E' : (fold & 1 ? 'w' : 'W');
+    R(ctx, x0 + x, yT, 1, h, col);
+    R(ctx, x0 + x, yT, 1, 1, 'd'); R(ctx, x0 + x, yT + 1, 1, 1, 'w');
+    if (x === 0 || x === W - 1) R(ctx, x0 + x, yT, 1, h, 'd');
+    for (let k = 1; k * 22 < h - 4; k++) { const ry = yT + k * 22 + Math.round(Math.sin(u * Math.PI) * 1.4); if (ry < hemY - 5) R(ctx, x0 + x, ry, 1, 1, 'b'); }          // мотузки впоперек
+    const hy = hemY - 4;                                                                                                                                       // смуга-попередження внизу
+    for (let y = 0; y < 4; y++) if (hy + y > yT) R(ctx, x0 + x, hy + y, 1, 1, y === 3 ? 'd' : (((x + y * 2) >> 1) & 1 ? 'h' : 'k'));
+  }
+  if (hemY - 6 > top + 12) {                                                                                                                                   // знак «будівництво»: молоток на полотні
+    R(ctx, cx - 1, mid - 5, 3, 12, 'd'); R(ctx, cx, mid - 5, 1, 12, 'b'); R(ctx, cx - 5, mid - 8, 11, 6, 'd'); R(ctx, cx - 4, mid - 7, 9, 4, 'e'); R(ctx, cx - 4, mid - 7, 9, 1, 'E');
+    R(ctx, cx - 11, mid + 8, 23, 1, 'd');
+  }
+  if (lift < 2) {
+    lineG(ctx, x0, top + peak + 3, x0 - 7, base, 'b'); lineG(ctx, x1 - 1, top + peak + 3, x1 + 6, base, 'b'); R(ctx, x0 - 9, base - 2, 3, 3, 'd'); R(ctx, x1 + 5, base - 2, 3, 3, 'd');       // розтяжки й кілочки
+    R(ctx, cx, top - 8, 1, 9, 'd'); const wv = Math.round(Math.sin(t * 6) * 1); R(ctx, cx + 1, top - 8 + wv, 7, 4, 'r'); R(ctx, cx + 1, top - 8 + wv, 7, 1, 'J'); R(ctx, cx + 6, top - 6 + wv, 2, 1, 'd');     // прапорець на гребені
+  }
+}
 function drawBuildExtras(b, p) {
   const gy = LAYOUT.curbY + 12, prog = Math.max(0, Math.min(1, (p - BUILD_A) / (BUILD_C - BUILD_A)));
   const pileX = shop.x + shop.w - 26, mixX = shop.x + 38, wallX = shop.x + shop.w * 0.5, signX = shop.x + 12;
-  if (p > 0.03 && p < BUILD_C + 0.08) {
+  if (p > 0.03 && p < BUILD_C + 0.1) {
     const left = Math.round(12 * (1 - prog));                                                // купа цегли меншає
     for (let i = 0; i < left; i++) { const bx = pileX - 7 + (i % 4) * 5, by = gy - 3 - Math.floor(i / 4) * 3; R(ctx, bx, by, 5, 3, 'd'); R(ctx, bx + 1, by, 3, 2, i % 2 ? 'r' : 't'); R(ctx, bx + 1, by, 3, 1, 'o'); }
     R(ctx, pileX + 8, gy - 3, 15, 2, 'd'); R(ctx, pileX + 8, gy - 3, 15, 1, 'c'); R(ctx, pileX + 9, gy - 6, 13, 2, 'd'); R(ctx, pileX + 9, gy - 6, 13, 1, 'l');     // дошки
@@ -11555,14 +12021,14 @@ function drawBuildExtras(b, p) {
       if (carry) { R(ctx, x - 3, sy - 3, 6, 3, 'd'); R(ctx, x - 2, sy - 3, 4, 2, 'r'); }
     }
   }
-  if (p >= BUILD_C) {                                                                        // гірлянда з прапорців і стрічка на відкритті
+  if (p >= BUILD_C && (p - BUILD_C) / (1 - BUILD_C) >= 0.2) {                                // гірлянда з прапорців і стрічка на відкритті (коли полотно знято)
     const q = (p - BUILD_C) / (1 - BUILD_C), cols = ['r', 'y', 'g', 'n', 'p', 'o'];
     for (let x = 0; x < shop.w; x++) { const sag = Math.round(5 * Math.sin(x / shop.w * Math.PI)); R(ctx, shop.x + x, shop.y + 20 + sag, 1, 1, 'd'); if (x % 9 === 4) { const c = cols[Math.floor(x / 9) % cols.length]; R(ctx, shop.x + x - 1, shop.y + 21 + sag, 3, 2, c); R(ctx, shop.x + x, shop.y + 23 + sag, 1, 1, c); } }
     const dr = doorWorld(), hw = (shop.door.w >> 1) + 9, ry = shop.y + shop.door.y + 14;
     R(ctx, dr.cx - hw - 1, ry - 4, 2, 16, 'd'); R(ctx, dr.cx + hw - 1, ry - 4, 2, 16, 'd'); R(ctx, dr.cx - hw - 2, ry - 5, 4, 2, 'h'); R(ctx, dr.cx + hw - 2, ry - 5, 4, 2, 'h');
-    if (q < 0.3) { R(ctx, dr.cx - hw, ry, hw * 2, 2, 'r'); R(ctx, dr.cx - hw, ry, hw * 2, 1, 'J'); R(ctx, dr.cx - 3, ry - 2, 7, 6, 'r'); R(ctx, dr.cx - 1, ry - 1, 3, 3, 'y'); }
+    if (q < 0.5) { R(ctx, dr.cx - hw, ry, hw * 2, 2, 'r'); R(ctx, dr.cx - hw, ry, hw * 2, 1, 'J'); R(ctx, dr.cx - 3, ry - 2, 7, 6, 'r'); R(ctx, dr.cx - 1, ry - 1, 3, 3, 'y'); }
     else if (q < 0.85) {                                                                     // розрізана стрічка падає двома половинками
-      const f = (q - 0.3) / 0.55;
+      const f = (q - 0.5) / 0.35;
       for (let i = 0; i < hw - 1; i++) { const d = i / hw; R(ctx, dr.cx - hw + i, ry + Math.round(f * (0.4 + d) * 12), 1, 2, 'r'); R(ctx, dr.cx + hw - 1 - i, ry + Math.round(f * (0.4 + d) * 12), 1, 2, 'r'); }
     }
   }
@@ -11622,13 +12088,9 @@ function drawBuildCrane(b, p, alpha) {
 }
 function renderBuild() {
   const b = build, p = b.t / b.dur, r = b.r || 0, o = b.old, sty = b.style;
-  if (p < 0.2) {                                                                  // старий магазин хитається й розсипається
-    const crumble = p < 0.1 ? 0 : smooth01((p - 0.1) / 0.1), shake = p < 0.12 ? Math.round(Math.sin(b.t * 60)) : Math.round(Math.sin(b.t * 90) * 2);
-    ctx.globalAlpha = 1 - crumble; drawCanvasSprite(ctx, o.canvas, o.x + shake, o.y, {}); ctx.globalAlpha = 1;
-  }
-  if (sty === 1) drawBuildCrane(b, p, p < 0.06 ? p / 0.06 : p > BUILD_C + 0.12 ? Math.max(0, 1 - (p - BUILD_C - 0.12) / 0.04) : 1);
+  if (p < BUILD_A) drawCanvasSprite(ctx, o.canvas, o.x, o.y, {});                // старий магазин лишається, поки його не накрило полотно
   let shownH = 0;
-  if (sty === 2 && p >= BUILD_A && p < BUILD_C) {                                // смуги з'їжджаються з боків по черзі
+  if (sty === 2 && p >= BUILD_A && p < BUILD_C) {                                // смуги з'їжджаються з боків по черзі (за полотном)
     const u = (p - BUILD_A) / (BUILD_C - BUILD_A), B = buildBands(), bh = shop.h / B;
     for (let i = 0; i < B; i++) {
       const e = Math.max(0, Math.min(1, (u - 0.02 - 0.82 * i / B) / 0.14)); if (e <= 0) continue;
@@ -11647,10 +12109,20 @@ function renderBuild() {
     ctx.drawImage(shop.canvas, shop.x, shop.y);
     ctx.restore();
   }
+  // полотно: падає зверху на старий магазин, розтягується на новий, а наприкінці знімається знизу вгору
+  const base = shop.y + shop.h, q = p >= BUILD_C ? (p - BUILD_C) / (1 - BUILD_C) : 0;
+  const wk = smooth01((p - 0.1) / 0.16);
+  const tx0 = Math.round(o.x - 3 + (shop.x - 3 - (o.x - 3)) * wk), tx1 = Math.round(o.x + o.w + 3 + (shop.x + shop.w + 3 - (o.x + o.w + 3)) * wk);
+  const H = (p < BUILD_A ? o.h : (sty === 2 ? shop.h : Math.max(o.h, shownH))) + 2;
+  const fall = p < 0.12 ? (1 - Math.pow(p / 0.12, 2)) * (H + 70) : 0;
+  const tentLift = q > 0 ? smooth01(q / 0.3) * (H + 6) : 0;
+  const bounce = p >= 0.12 && p < 0.2 ? Math.round(Math.sin((p - 0.12) / 0.08 * Math.PI) * 2) : 0;
+  if (p > 0 && tentLift < H + 4) { ctx.save(); ctx.translate(0, -Math.round(fall) + bounce); drawBuildTent(b, tx0, tx1, base - H, base, tentLift, b.t); ctx.restore(); }
+  if (sty === 1) drawBuildCrane(b, p, p < 0.06 ? p / 0.06 : p > BUILD_C + 0.12 ? Math.max(0, 1 - (p - BUILD_C - 0.12) / 0.04) : 1);
   if (sty !== 1) {                                                                // риштування: ростуть, а на фініші падають
     if (p < BUILD_A) drawScaffold(o.x, o.y, o.w, o.h, Math.min(1, p / 0.1));
     else if (p < BUILD_C) drawScaffold(shop.x, shop.y + shop.h - shownH, shop.w, shownH, 1);
-    else { const q = (p - BUILD_C) / (1 - BUILD_C), al = Math.max(0, 1 - q * 1.6); if (al > 0) { ctx.save(); ctx.translate(0, Math.round(q * q * 46)); drawScaffold(shop.x, shop.y, shop.w, shop.h, al); ctx.restore(); } }
+    else { const qq = (p - BUILD_C) / (1 - BUILD_C), al = Math.max(0, 1 - qq * 1.6); if (al > 0) { ctx.save(); ctx.translate(0, Math.round(qq * qq * 46)); drawScaffold(shop.x, shop.y, shop.w, shop.h, al); ctx.restore(); } }
   }
   drawBuildExtras(b, p);
   drawBeaverBuilder(b, p);
