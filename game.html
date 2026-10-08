@@ -1285,7 +1285,7 @@ const CONFIG = {
   GHOST_MAX: 99,              // найбільше кристалів привидів у скарбничці
   GHOST_RESPIN_COST: 12,      // скільки кристалів привидів коштує додатковий оберт колеса фортуни
   SAVE_KEY: 'capyThroughTime_save',
-  SAVE_VERSION: 12,            // номер версії збереження (збільшуємо, коли змінюється формат)
+  SAVE_VERSION: 13,            // номер версії збереження (збільшуємо, коли змінюється формат)
   AUTOSAVE_SECONDS: 10,
   START_COINS: 1,             // Капі приїздить з однією монеткою
   START_TAP_POWER: 1,
@@ -4176,6 +4176,19 @@ const SAVE_MIGRATIONS = {
   // версія 5 (етап 5) → 6 (етап 6): з'явилися налаштування звуку — беруться зі значень за замовчуванням
   5: (data) => data,
   // версія 6 (етап 6) → 7 (етап 7): гравець, що вже грає, туторіал не бачить; уже найнятих звіряток вважаємо знайомими
+  // версія 12 → 13: монети всіх гравців підлаштовуємо під рівень магазину: не більше ціни наступного розширення (на останньому рівні — половина порога подорожі);
+  // заробіток поточної гри теж обмежуємо, щоб подорож не відкривалась одразу
+  12: (data) => {
+    const st = data.state;
+    if (st) {
+      const L = Math.max(1, Math.min(6, (st.shopLevel | 0) || 1)), trips = Math.max(0, Math.min(8, ((st.stats && st.stats.timeTravels) | 0)));
+      const cap = L < LEVELS.length ? LEVELS[L].cost : 2.5e12 * Math.pow(4, trips);
+      if (!(Number(st.coins) <= cap)) st.coins = cap;
+      const total = Number(st.totalEarned) || 0, runEarned = total - (Number(st.runStartEarned) || 0);
+      if (runEarned > cap * 4) st.runStartEarned = Math.max(0, total - cap * 4);
+    }
+    return data;
+  },
   // версія 11 → 12: +1 осколок за кожну вже зроблену подорож (нові правила осколків)
   11: (data) => {
     const st = data.state;
