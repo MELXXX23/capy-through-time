@@ -6676,7 +6676,7 @@ function layoutScene() {
     const lvl = shop ? shop.level : 1, kW = shop ? availW * dpr * (lvl === 1 ? 0.46 : lvl === 2 ? 0.42 : 0.34 + 0.03 * (lvl - 1)) / shop.w : kH;       // частка ширини екрана під магазин росте з рівнем: торговий центр ~49%, нижчі рівні менші, але теж великі
     // неба над найвищим будинком чи дахом лишаємо не менше ~30% висоти кадру (для всіх епох і з відкритим меню, і з закритим); торговий центр — менше, бо він і так високий
     const topRel = Math.min(LAYOUT.horizonY - MAX_HOUSE_H, shop ? LAYOUT.curbY - shop.h - 6 - (shop.level >= 6 ? CLOCK_H : 0) : 999); let skyF = shop && shop.level >= 6 ? (pcOpen ? 0.2 : 0.1) : (pcOpen ? 0.4 : 0.28);
-    if (Math.min(innerWidth, innerHeight) < 600) skyF += 0.1;                       // телефон горизонтально: ще більше неба над будинками
+    if (Math.min(innerWidth, innerHeight) < 600) skyF += 0.06;                       // телефон горизонтально: ще більше неба над будинками
     const kSkyPC = availH * dpr * (1 - skyF) / (H0 + EB - topRel);
     k = snapK(Math.max(1, Math.min(availW * dpr / CONFIG.MIN_VIEW_W, kH, kW, kSkyPC) * 0.92));       // ПК: трохи менший масштаб, щоб лишалося більше неба і бруківки
     kz = k;
