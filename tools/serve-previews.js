@@ -1,7 +1,7 @@
 // Маленький сервер для перегляду зразків у папці previews (без бібліотек): node tools/serve-previews.js
 const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..', 'previews'), PORT = +process.env.PORT || 8090;
-const TYPES = { '.html': 'text/html; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.js': 'text/javascript', '.json': 'application/json' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.js': 'text/javascript', '.json': 'application/json', '.webm': 'video/webm', '.mp4': 'video/mp4' };
 http.createServer((req, res) => {
   let rel = decodeURIComponent((req.url || '/').split('?')[0]);
   if (rel === '/') rel = '/transitions.html';
