@@ -504,6 +504,9 @@ body.no-anim .floater { display: none; }
 #epochIntro { position: fixed; inset: 0; z-index: 90; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 #epochIntro[hidden] { display: none; }
 /* програма на весь екран: верхню панель не ховаємо під вирізом камери (у звичайному браузері ці відступи = 0) */
+/* iPhone-програма: сторінка закріплена на весь екран, під вирізами й домашньою смужкою темний фон */
+body { position: fixed; inset: 0; width: 100%; background: #2a1d1a; }
+@media all and (display-mode: standalone), all and (display-mode: fullscreen) { #app { height: 100%; } }
 #topbar { margin: env(safe-area-inset-top, 0px) 0 0 calc(env(safe-area-inset-left, 0px) * .3); }      /* лічильник монет лишається біля лівого краю, картинку не рухаємо */
 #tour { position: fixed; inset: 0; z-index: 90000; pointer-events: none; }
 #tour[hidden] { display: none; }
@@ -9636,6 +9639,21 @@ function initTour() {
   if (new URLSearchParams(location.search).has('tour')) setTimeout(() => startMenuTour(null), 1500);
 }
 /* PWA: службовий файл лише на сайті (https), щоб гру можна було поставити на екран і щоб вона запускалась без інтернету */
+/* Діагностика екрана для телефона: 5 швидких дотиків по лічильнику монет показують розміри екрана й відступи (ще раз тицьни по тексту — зникне) */
+window.addEventListener('load', () => {
+  const hud = document.getElementById('hud'); if (!hud) return; let cnt = 0, last = 0;
+  hud.addEventListener('click', () => { const now = Date.now(); cnt = now - last < 700 ? cnt + 1 : 1; last = now; if (cnt >= 5) { cnt = 0; capyDiag(); } });
+});
+function capyDiag() {
+  let d = document.getElementById('capyDiag'); if (d) { d.remove(); return; }
+  d = document.createElement('div'); d.id = 'capyDiag'; d.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483000;pointer-events:none';
+  const pr = document.createElement('div'); pr.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)'; document.body.appendChild(pr);
+  const cs = getComputedStyle(pr), ins = [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].join(' / '); pr.remove();
+  const vv = window.visualViewport, mm = q => matchMedia(q).matches ? 'так' : 'ні';
+  const txt = ['inner ' + innerWidth + 'x' + innerHeight, 'outer ' + outerWidth + 'x' + outerHeight, 'screen ' + screen.width + 'x' + screen.height, 'visual ' + (vv ? Math.round(vv.width) + 'x' + Math.round(vv.height) : '-'), 'insets ' + ins, 'dpr ' + devicePixelRatio, 'standalone ' + navigator.standalone, 'display standalone ' + mm('(display-mode: standalone)'), 'fullscreen ' + mm('(display-mode: fullscreen)'), 'browser ' + mm('(display-mode: browser)')].join('\n');
+  d.innerHTML = '<div style="position:absolute;left:0;right:0;top:0;height:8px;background:#f00"></div><div style="position:absolute;left:0;right:0;bottom:0;height:8px;background:#00f"></div><div style="position:absolute;left:0;top:0;bottom:0;width:8px;background:#0a0"></div><div style="position:absolute;right:0;top:0;bottom:0;width:8px;background:#fa0"></div><pre style="position:absolute;left:14px;top:90px;margin:0;padding:8px;background:rgba(0,0,0,.85);color:#fff;font:12px/1.5 monospace;pointer-events:auto"></pre>';
+  d.querySelector('pre').textContent = txt; d.querySelector('pre').addEventListener('click', () => d.remove()); document.body.appendChild(d);
+}
 if ('serviceWorker' in navigator && location.protocol === 'https:') window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 window.addEventListener('load', initCutscene); window.addEventListener('load', initTour);
 function playSfx(name, ...args) {
