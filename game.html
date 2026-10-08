@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#2a1d1a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CapyTap">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>CapyTap: Market</title>
 <!-- Піксельний шрифт з чіткою кирилицею (Pixelify Sans малює українські літери криво, тому Press Start 2P). Без інтернету спрацює запасний моноширинний -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -495,6 +502,8 @@ body.no-anim .floater { display: none; }
 /* Заставка нової епохи на весь екран */
 #epochIntro { position: fixed; inset: 0; z-index: 90; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 #epochIntro[hidden] { display: none; }
+/* програма на весь екран: верхню панель не ховаємо під вирізом камери (у звичайному браузері ці відступи = 0) */
+#topbar { margin: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px); }
 #tour { position: fixed; inset: 0; z-index: 90000; pointer-events: none; }
 #tour[hidden] { display: none; }
 #tourRing { position: fixed; border: 4px solid #ffe36a; box-shadow: 0 0 0 3px #3a2a22, 0 0 14px 4px rgba(255, 227, 106, .8); animation: tourPulse .8s steps(2) infinite; }
@@ -9625,6 +9634,8 @@ function initTour() {
   go.addEventListener('click', () => tourStop(true)); sk.addEventListener('click', () => tourStop(true));
   if (new URLSearchParams(location.search).has('tour')) setTimeout(() => startMenuTour(null), 1500);
 }
+/* PWA: службовий файл лише на сайті (https), щоб гру можна було поставити на екран і щоб вона запускалась без інтернету */
+if ('serviceWorker' in navigator && location.protocol === 'https:') window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 window.addEventListener('load', initCutscene); window.addEventListener('load', initTour);
 function playSfx(name, ...args) {
   const ac = audio.ctx;
