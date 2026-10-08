@@ -1283,7 +1283,7 @@ const CONFIG = {
   GHOST_MAX: 99,              // найбільше кристалів привидів у скарбничці
   GHOST_RESPIN_COST: 12,      // скільки кристалів привидів коштує додатковий оберт колеса фортуни
   SAVE_KEY: 'capyThroughTime_save',
-  SAVE_VERSION: 13,            // номер версії збереження (збільшуємо, коли змінюється формат)
+  SAVE_VERSION: 14,            // номер версії збереження (збільшуємо, коли змінюється формат)
   AUTOSAVE_SECONDS: 10,
   START_COINS: 1,             // Капі приїздить з однією монеткою
   START_TAP_POWER: 1,
@@ -1342,8 +1342,8 @@ const CONFIG = {
   TEAM_MAX_LEVEL: 10,
   TEAM_LEVEL_COST_GROWTH: 2.2,    // ціна кожного наступного рівня звірятка ×2,2
   BUBBLE_SECONDS: 3.4,            // скільки висить бульбашка з фразою
-  CHATTER_MIN: 22,                // раз на 22–45 секунд хтось із команди щось каже сам
-  CHATTER_MAX: 45,
+  CHATTER_MIN: 16,                // раз на 16–34 секунди хтось із команди щось каже сам
+  CHATTER_MAX: 34,
 
   // Відділи
   COST_GROWTH: 1.15,          // ціна наступного = базова × 1,15^кількість
@@ -1650,8 +1650,9 @@ const TEAM = [
   { id: 'shnyr',  level: 2, baseCost: 3e4,    bonus: { type: 'global', per: 0.02 }, needs: 'shnyrJoined',
     spot: { f: 0.78, r: 12, y: 156, move: 'patrol', prop: 'none' } }
 ];
-const TEAM_PHRASES = 6;   // скільки фраз у кожного звірятка (див. translations)
-const CAPY_PHRASES = 6;
+const TEAM_PHRASES = 16;  // скільки звичайних фраз у кожного звірятка (див. translations; є ще «холодні» взимку й загальні по епохах)
+const CAPY_PHRASES = 16;
+const lastLine = {};
 
 // Сюжетні персонажі, яких не можна найняти (той самий спосіб збирання 16×16, що й у команди)
 const SHNYR_HEAD = ['..d.....', '..ded...', '..deeddd', '..deeeee', '..dkkkkE', '..dkwkkE', '..dkkkkE', '..deEEEk', '..deEEEE', '...deeee'];
@@ -4174,6 +4175,22 @@ const SAVE_MIGRATIONS = {
   // версія 5 (етап 5) → 6 (етап 6): з'явилися налаштування звуку — беруться зі значень за замовчуванням
   5: (data) => data,
   // версія 6 (етап 6) → 7 (етап 7): гравець, що вже грає, туторіал не бачить; уже найнятих звіряток вважаємо знайомими
+  // версія 13 → 14: новий старт для всіх (гру стало легко проходити): скидаємо монети, осколки, покращення Магазину часу, рівень магазину, відділи, звірят, подорожі й бусти.
+  // Лишаються скіни, кристали, налаштування, прочитані глави й досягнення.
+  13: (data) => {
+    const st = data.state;
+    if (st) {
+      st.coins = CONFIG.START_COINS; st.totalEarned = CONFIG.START_COINS; st.runStartEarned = 0; st.cps = 0;
+      st.tapPower = CONFIG.START_TAP_POWER; st.shopLevel = 1;
+      st.depts = DEPARTMENTS.map(() => 0); st.team = TEAM.map(() => 0); st.teamKnown = TEAM.map(() => 0);
+      st.shards = 0; st.shardsTotal = 0; st.shardsInit = 0; st.ws = WORKSHOP.map(() => 0);
+      st.epoch = 0; st.activeEpoch = -1; st.epochSeen = -1; st.epochEarned = [0, 0, 0, 0, 0, 0, 0, 0]; st.pendingOffline = 0;
+      if (st.events) Object.assign(st.events, { saleUntil: 0, incomeBoostUntil: 0, incomeBoostMult: 1, tapBoostUntil: 0, tapBoostMult: 1, mailPending: 0 });
+      if (!st.stats) st.stats = {};
+      Object.assign(st.stats, { timeTravels: 0, maxLevel: 1, teamMaxLevel: 0, deptsBought: 0, milestones: 0, teamUps: 0 });
+    }
+    return data;
+  },
   // версія 12 → 13: монети всіх гравців підлаштовуємо під рівень магазину: не більше ціни наступного розширення (на останньому рівні — половина порога подорожі);
   // заробіток поточної гри теж обмежуємо, щоб подорож не відкривалась одразу
   12: (data) => {
@@ -4348,6 +4365,20 @@ function loadGame() {
 (function () {
   const U = {"good_0_0":"Свічки й сірники","good_0_1":"Мед і марципани","good_0_2":"Пера й пергамент","good_0_3":"Дерев’яні ляльки","good_0_4":"Мило й трави","good_0_5":"Городина й садовина","good_0_6":"Хлібня","good_0_7":"Камзоли й сукні","good_0_8":"Чоботи","good_0_9":"Телескопи й компаси","good_0_10":"Таверна","good_0_11":"Театр масок","good_1_0":"Листівки й значки","good_1_1":"Морозиво й содова","good_1_2":"Зошити й друкарські машинки","good_1_3":"Залізничні іграшки","good_1_4":"Пральні порошки","good_1_5":"Консерви","good_1_6":"Пончики","good_1_7":"Сукні в горошок","good_1_8":"Мокасини","good_1_9":"Лампові телевізори","good_1_10":"Закусочна","good_1_11":"Кіно під зорями","good_2_0":"Блискітки й значки","good_2_1":"Льодяники","good_2_2":"Платівки","good_2_3":"Йо-йо й фрісбі","good_2_4":"Лаки й парфуми","good_2_5":"Екзотичні фрукти","good_2_6":"Круасани","good_2_7":"Клеші й блискучі костюми","good_2_8":"Платформи","good_2_9":"Магнітофони","good_2_10":"Піцерія","good_2_11":"Диско-зала","good_3_0":"Жетони й наліпки","good_3_1":"Газовані напої","good_3_2":"Касети й постери","good_3_3":"Ігрові приставки","good_3_4":"Батарейки","good_3_5":"Фруктові снеки","good_3_6":"Печиво й пончики","good_3_7":"Куртки-бомбери","good_3_8":"Кросівки","good_3_9":"Аркадні автомати","good_3_10":"Фастфуд","good_3_11":"Відеопрокат","good_4_0":"Дискети й флешки","good_4_1":"Чіпси й енергетики","good_4_2":"Мишки й клавіатури","good_4_3":"Тамагочі й фігурки","good_4_4":"Кабелі й зарядки","good_4_5":"Готові салати","good_4_6":"Кав’ярня","good_4_7":"Мерч і футболки","good_4_8":"Кеди","good_4_9":"Ноутбуки","good_4_10":"Суші-бар","good_4_11":"Стрімінг-зал","good_5_0":"Багаторазові речі","good_5_1":"Горіхи й сухофрукти","good_5_2":"Еко-зошити","good_5_3":"Дерев’яні конструктори","good_5_4":"Еко-засоби для дому","good_5_5":"Фермерські овочі","good_5_6":"Хліб на заквасці","good_5_7":"Одяг із льону","good_5_8":"Взуття з переробки","good_5_9":"Сонячні панелі","good_5_10":"Веган-кафе","good_5_11":"Еко-кіно просто неба","good_6_0":"Зоряні сувеніри","good_6_1":"Їжа в тюбиках","good_6_2":"Карти зірок","good_6_3":"Ракети-іграшки","good_6_4":"Антигравітаційні очисники","good_6_5":"Гідропонні овочі","good_6_6":"Космічна випічка","good_6_7":"Скафандри","good_6_8":"Магнітні черевики","good_6_9":"Супутники й гаджети","good_6_10":"Космо-кухня","good_6_11":"Планетарій","good_7_0":"Неонові брелоки","good_7_1":"Бабл-ті й желе","good_7_2":"Голо-блокноти","good_7_3":"Роботи-іграшки","good_7_4":"Нано-очисники","good_7_5":"Лабораторні фрукти","good_7_6":"3D-десерти","good_7_7":"Світні куртки","good_7_8":"Левітуючі кеди","good_7_9":"VR-окуляри","good_7_10":"Вуличний фудкорт","good_7_11":"Голограм-шоу"}, E = {"good_0_0":"Candles & Matches","good_0_1":"Honey & Marzipan","good_0_2":"Quills & Parchment","good_0_3":"Wooden Dolls","good_0_4":"Soap & Herbs","good_0_5":"Garden Produce","good_0_6":"Bread Hall","good_0_7":"Doublets & Gowns","good_0_8":"Boots","good_0_9":"Telescopes & Compasses","good_0_10":"Tavern","good_0_11":"Mask Theatre","good_1_0":"Postcards & Pins","good_1_1":"Ice Cream & Soda","good_1_2":"Notebooks & Typewriters","good_1_3":"Toy Trains","good_1_4":"Washing Powders","good_1_5":"Canned Goods","good_1_6":"Donuts","good_1_7":"Polka-dot Dresses","good_1_8":"Loafers","good_1_9":"Tube TVs","good_1_10":"Diner","good_1_11":"Drive-in Cinema","good_2_0":"Glitter & Badges","good_2_1":"Lollipops","good_2_2":"Vinyl Records","good_2_3":"Yo-yos & Frisbees","good_2_4":"Hairspray & Perfume","good_2_5":"Exotic Fruit","good_2_6":"Croissants","good_2_7":"Flares & Sparkly Suits","good_2_8":"Platform Boots","good_2_9":"Tape Players","good_2_10":"Pizzeria","good_2_11":"Disco Hall","good_3_0":"Tokens & Stickers","good_3_1":"Fizzy Drinks","good_3_2":"Tapes & Posters","good_3_3":"Game Consoles","good_3_4":"Batteries","good_3_5":"Fruit Snacks","good_3_6":"Cookies & Donuts","good_3_7":"Bomber Jackets","good_3_8":"Sneakers","good_3_9":"Arcade Machines","good_3_10":"Fast Food","good_3_11":"Video Rental","good_4_0":"Floppies & USB Sticks","good_4_1":"Chips & Energy Drinks","good_4_2":"Mice & Keyboards","good_4_3":"Tamagotchis & Figures","good_4_4":"Cables & Chargers","good_4_5":"Ready Salads","good_4_6":"Coffee Shop","good_4_7":"Merch & T-shirts","good_4_8":"Canvas Shoes","good_4_9":"Laptops","good_4_10":"Sushi Bar","good_4_11":"Streaming Hall","good_5_0":"Reusable Things","good_5_1":"Nuts & Dried Fruit","good_5_2":"Eco Notebooks","good_5_3":"Wooden Blocks","good_5_4":"Eco Cleaners","good_5_5":"Farm Veggies","good_5_6":"Sourdough Bread","good_5_7":"Linen Clothes","good_5_8":"Recycled Shoes","good_5_9":"Solar Panels","good_5_10":"Vegan Café","good_5_11":"Open-air Eco Cinema","good_6_0":"Star Souvenirs","good_6_1":"Food in Tubes","good_6_2":"Star Maps","good_6_3":"Toy Rockets","good_6_4":"Anti-gravity Cleaners","good_6_5":"Hydroponic Veggies","good_6_6":"Space Pastries","good_6_7":"Spacesuits","good_6_8":"Magnetic Boots","good_6_9":"Satellites & Gadgets","good_6_10":"Cosmo Kitchen","good_6_11":"Planetarium","good_7_0":"Neon Keychains","good_7_1":"Bubble Tea & Jelly","good_7_2":"Holo Notebooks","good_7_3":"Toy Robots","good_7_4":"Nano Cleaners","good_7_5":"Lab-grown Fruit","good_7_6":"3D Desserts","good_7_7":"Glowing Jackets","good_7_8":"Hover Sneakers","good_7_9":"VR Goggles","good_7_10":"Street Food Court","good_7_11":"Hologram Show"};
   Object.assign(translations.uk, U); Object.assign(translations.en, E);
+})();
+// Нові репліки: у кожного звірятка й Капі 16 фраз, взимку є «холодні», а кожна епоха має свої загальні репліки
+(function () {
+  const P = {"team":{"spike":{"uk":["Рахую зміну: монети — мої. Здача — ваша. Приблизно.","Колючка не образа, а система безпеки.","Хто не бере чек, той дарує мені радість.","Сьогодні в касі так рівно, що аж лячно.","Копійка гривню береже. Гривня копійку теж.","Один клієнт — одна усмішка. Дві — вже акція.","Шепну по секрету: решту завжди даю точно.","Я не скупий. Я точний. Це різні вади.","Гроші люблять тишу. І мої колючки.","Каса не лізе в кишеню. Вона лише тримає чужу."],"en":["Counting my shift: coins are mine, change is yours. Roughly.","Prickles are not rudeness, they are security.","Skip the receipt and you make me happy.","The till is so even today, it is scary.","A penny saved is a penny sorted.","One customer, one smile. Two, and it is a sale.","Secret: I always give exact change.","I am not stingy. I am precise. Different flaws.","Money loves quiet. And my prickles.","The till does not reach for pockets. It just holds yours."]},"bodya":{"uk":["Дошка до дошки — і вже є стіна. Майже.","Молоток — мій найкращий співрозмовник.","Будуймо! Чи принаймні красиво стояти біля будівництва.","Пилку я маю. Нервів у запасі менше.","Сказав «до обіду» — маю на увазі до вечері.","Кожна цегла має характер. Мої — впертий.","Рівень у мене є. Будівельний. І ще настроєвий.","Гвіздок вбив — і життя налагодилось.","Бобри не гавкають. Бобри будують.","Дах тече? Це він плаче від краси."],"en":["Plank by plank and there is a wall. Almost.","My hammer is my best conversation partner.","Let us build! Or at least stand next to the building nicely.","I have the saw. Fewer spare nerves.","I said \"by lunch\" and meant \"by dinner\".","Every brick has a character. Mine are stubborn.","I have a level. A builder's one. And a mood one.","One nail in, and life is sorted.","Beavers do not bark. Beavers build.","Leaky roof? It is crying from beauty."]},"zoya":{"uk":["Це не знижка, це дружній жест із двома нулями.","Купіть два — третє піде в подарунок. Моєму плану.","Я не вмовляю. Я лише показую, як ви собі хочете.","Що ви хотіли? Тепер ви хочете ще це.","Мої вуха чують, як гаманець шепоче «так».","Вам до лиця. Мені — до каси.","Той, хто довго вагається, платить повну ціну.","Це останній екземпляр. Як і попередній.","Продаж — це мистецтво. А я — художниця з калькулятором.","Скажу чесно: ціна чесна. Здебільшого."],"en":["It is not a discount, it is a friendly gesture with two zeroes.","Buy two and the third goes as a gift to my plan.","I do not persuade. I just show you what you want.","What did you want? Now you want this too.","My ears hear your wallet whisper \"yes\".","It suits you. And I suit the till.","Those who hesitate long pay full price.","This is the last one. Like the previous one.","Selling is art. I am an artist with a calculator.","Honestly, the price is honest. Mostly."]},"tonya":{"uk":["Я йду. Я вже майже тут. Зачекайте.","Повільно, але назавжди. Це мій девіз і мій панцир.","Бачу злодія — іду до нього. Скоро буде зустріч.","Поспішати — не мій стиль. Мій стиль — доходити.","Хто нікуди не квапиться, той усе помічає.","Охорона — це 90% терпіння і 10% кивання.","Підозрілий хвіст? Занотую. Завтра.","Мій панцир витримав сто сорок років. Витримає й черга.","Я стою. Нічого не краде. Значить, працюю.","Єнот сьогодні нервує. Це так, на всяк випадок."],"en":["I am walking. I am almost there. Please wait.","Slowly, but forever. My motto and my shell.","I see a thief. I am heading to him. Meeting soon.","Hurrying is not my style. Arriving is.","Those who rush nowhere notice everything.","Guarding is 90% patience and 10% nodding.","Suspicious tail? I will note it. Tomorrow.","My shell lasted a hundred and forty years. It will last the queue.","I stand here. Nothing is stolen. So I am working.","The raccoon looks nervous today. Just in case."]},"mikhas":{"uk":["Ящик у лапі — і день задався.","Я не надриваюсь. Я роблю вигляд, що не надриваюсь.","Тяжко? Ні. Лише трохи гравітаційно.","Дві коробки — це розминка. Три — вже зарядка.","Склад великий, а я ще більший. Домовились.","Хто несе — той і править складом.","Моя спина тримає економіку міста. Обережніше з нею.","Піднімаю все, окрім тривоги.","Мед, ящики, мед. Три головних слова.","Я не повільний. Я просто несу надто багато."],"en":["A crate in my paw and the day is on.","I do not strain. I pretend not to strain.","Heavy? No. Just a bit gravitational.","Two boxes is warm-up. Three is exercise.","The warehouse is big and I am bigger. Deal.","Whoever carries, runs the warehouse.","My back holds up the town's economy. Be gentle.","I lift everything except worry.","Honey, crates, honey. Three main words.","I am not slow. I just carry too much."]},"sonia":{"uk":["У-гу. Дебет знову ревнує до кредиту.","Ніч — мій робочий час. Вдень я лише моргаю.","Цифри не брешуть. Люди — інколи.","Одна копійка розбіжності — і я не сплю. Знову.","Сова бачить усе. Особливо помилки в чеках.","Тихіше. Колонки засинають, бо я їх втомила.","Мій улюблений звук — коли зійшовся баланс.","Квартальний звіт — це детектив. З нудним злочинцем.","Мудрість — це знати, де дві копійки загубилися.","Дивлюсь на прибуток і думаю: красиво."],"en":["Hoo. Debit is jealous of credit again.","Night is my working time. By day I just blink.","Numbers do not lie. People sometimes do.","One penny off, and I stay awake. Again.","An owl sees everything. Especially receipt errors.","Quiet. The columns fall asleep, I wore them out.","My favourite sound is a balanced sheet.","A quarterly report is a detective story with a dull culprit.","Wisdom is knowing where two pennies got lost.","Looking at the profit, thinking: beautiful."]},"kria":{"uk":["Кря! Підлога блищить, а я — ні. Така доля.","Швабра — це продовження руки. І характеру.","Хто наслідив, тому окремий ритуал.","Милом пахне перемога. Хлоркою — суворість.","Нема бруду — нема проблем. Нема проблем — нема мене.","Калюжу бачу — калюжа зникає. Магія без різдва.","Піна — це мій шампанський настрій.","Блищить скло — значить, я ще при роботі.","Я не злюся. Я просто швидко мию.","Чистота — це не звичка. Це моя релігія."],"en":["Quack! The floor shines and I do not. Such is fate.","The mop is an extension of the hand. And of the character.","Whoever tracked mud gets a special ritual.","Victory smells of soap. Strictness of bleach.","No dirt, no problems. No problems, no me.","See a puddle, the puddle vanishes. Magic without a wand.","Foam is my champagne mood.","The glass shines, so I still have a job.","I am not angry. I just wash fast.","Cleanliness is not a habit. It is my religion."]},"zhuzha":{"uk":["Ква. Цей відтінок — це не колір, це заява.","Мода змінюється, а мій смак — ні. Він бездоганний.","Шарф до капелюха? Тільки якщо шарф ображений.","Дві смужки — це класика. Три — вже бунт.","Взуття має підкреслювати характер. Мій — зелений.","Я не критикую. Я радо роблю зауваження.","Хто не любить блискітки, той просто не пробував.","Одяг — це настрій, пошитий вручну. Чужий.","Стиль — це коли помилка виглядає наміром.","Дивно: чим вищі підбори, тим нижчі ціни."],"en":["Ribbit. This shade is not a colour, it is a statement.","Fashion changes, my taste does not. It is flawless.","Scarf with a hat? Only if the scarf is offended.","Two stripes are classic. Three, a rebellion.","Shoes must show character. Mine is green.","I do not criticise. I gladly make remarks.","Who does not like sequins just has not tried.","Clothes are a mood tailored by hand. Someone else's.","Style is when a mistake looks like intent.","Funny: the higher the heels, the lower the prices."]},"leo":{"uk":["Наша ціль — зрости ще вчора. Рухаємось у минуле.","Слайд 17: усе пропало, але красиво.","Давайте синхронізуємось і розійдемось.","Це не проблема. Це точка росту з декоративним болем.","Мій календар має блоки. Блок — це я, що дивлюсь у вікно.","KPI — це «Коли Прийде Інструкція».","Я не запізнююсь. Я даю іншим час підготуватись.","Хто володіє таблицею, той володіє світом. Або принаймні кавою.","Висновок: потрібна ще одна нарада про наради.","Дедлайн — це лише порада. Іноді гучна."],"en":["Our goal grew yesterday. We move into the past.","Slide 17: everything is lost, but beautifully.","Let us sync and then go separate ways.","It is not a problem. It is a growth point with decorative pain.","My calendar has blocks. A block is me staring out of the window.","KPI means \"Keep Panic Inside\".","I am not late. I give others time to prepare.","Whoever owns the spreadsheet owns the world. Or at least the coffee.","Conclusion: we need one more meeting about meetings.","A deadline is only advice. Sometimes loud."]},"pao":{"uk":["Новий плакат! На ньому я. І ще трохи знижок.","Бамбук — це бренд. Просто бренд, який їдять.","Реклама працює, поки в когось є очі.","Хештег придумала сама: #КупиТеЩоНеТреба.","Заплющте очі. Тепер подивіться на наш плакат ще раз.","Кожна знижка — це історія. Бажано з щасливим кінцем.","У мене тисяча ідей. Дві навіть законні.","Тренд — це коли всі роблять те, що я вже зробила.","Мій слоган: «Це не купівля, це подарунок собі».","Панда — це чорне, біле й дуже вагоме слово."],"en":["New poster! It has me on it. And a few discounts.","Bamboo is a brand. Just a brand you can eat.","Advertising works as long as someone has eyes.","I made up the hashtag: #BuyWhatYouDontNeed.","Close your eyes. Now look at our poster again.","Every discount is a story. Preferably with a happy ending.","I have a thousand ideas. Two are even legal.","A trend is when everyone does what I already did.","My slogan: \"It is not a purchase, it is a gift to yourself\".","A panda is black, white and a very weighty word."]},"murzyk":{"uk":["Мур. Дроти заплутались, але вони знають куди.","Лампочка не перегоріла. Вона просто задумалась.","Усе вимикаю й вмикаю. Це моя філософія.","Гаджет без помилок — як кіт без хвоста.","Провід — це лише довга миша. Не їм.","Екран мерехтить? Він ловить настрій.","Новий прилад — нова кнопка, якої я не чіпатиму. Наступну секунду.","Батарейка сіла? Дайте їй хвилинку й молока.","Я не ламаю. Я розбираю з надмірним ентузіазмом.","Вайфай ловить лише коли я дивлюсь на роутер."],"en":["Purr. The wires tangled, but they know where to go.","The bulb did not burn out. It just got thoughtful.","I switch everything off and on. My philosophy.","A gadget with no bugs is a cat with no tail.","A cable is just a long mouse. I do not eat it.","The screen flickers? It is catching a mood.","New device, new button I will not touch. For the next second.","Battery dead? Give it a minute and some milk.","I do not break things. I take them apart with excess enthusiasm.","Wi-Fi works only when I stare at the router."]},"toma":{"uk":["Це було у вівторок, о 14:32. Хтось казав «потім».","Склад — мій храм. Двері — мої ключі.","Я не забув. Я просто чекаю слушної хвилини.","У мене пам'ять слона. Це не метафора.","Скажіть мені, що де лежить, і я скажу, хто це перекладав.","Інвентар — це кохання, виміряне в коробках.","Мишка в складі? Я її знаю на ім'я. Не за добре.","Хобот — найкраща лінійка у світі.","Борги, обіцянки і запаси — усе в моєму списку. Це лякає.","Тихіше ходіть, склад ще не прокинувся."],"en":["It was Tuesday, 2:32 pm. Someone said \"later\".","The warehouse is my temple. The doors are my keys.","I did not forget. I am waiting for the right moment.","I have an elephant's memory. Not a metaphor.","Tell me where things lie, and I will say who moved them.","Inventory is love measured in boxes.","A mouse in the warehouse? I know her by name. Not fondly.","A trunk is the best ruler in the world.","Debts, promises and stock are all on my list. It is scary.","Step softly, the warehouse has not woken up yet."]},"shnyr":{"uk":["Ш-ш-ш... я просто мимо проходив. Рівно двадцять разів.","Блискуче — це моє. Але я вже виправляюсь.","Хто питає, тому не скажу, куди зник один ґудзик.","Я чесний єнот. Чесніший за вчорашнього.","У мене лапки чисті. Принаймні ліва.","Не дивіться на смітник так довго. Він не винен.","Дружба — це коли ділишся. Я працюю над цим.","Бачу монетку — іду до неї. Потім згадую, що я хороший.","Мій талант — знаходити те, що ще не втрачено.","Я друг. А друзі не крадуть. Майже."],"en":["Sh-sh-sh... I was just passing by. Twenty times in a row.","Shiny things are my thing. But I am improving.","Ask me and I will not tell where one button went.","I am an honest raccoon. More honest than yesterday.","My paws are clean. At least the left one.","Do not look at the bin that long. It is not guilty.","Friendship is sharing. I am working on it.","I see a coin and go to it. Then I remember I am good.","My talent is finding what has not been lost yet.","I am a friend. Friends do not steal. Almost."]}},"cold":{"spike":{"uk":["Бр-р! Колючки покрились памороззю.","Холодно. Навіть копійки тремтять.","Накиньте на мене шарф. Хоч би й чек."],"en":["Brr! My prickles are frosted.","It is cold. Even the pennies shiver.","Throw a scarf on me. Even a receipt will do."]},"bodya":{"uk":["Бр-р, на морозі дошки не пиляться, а співають.","Сніг на даху — а в мене ніс замерз.","Дайте мені гарячого чаю. Чи хоча б камін."],"en":["Brr, planks do not saw in the frost, they sing.","Snow on the roof and my nose is frozen.","Get me a hot tea. Or a fireplace. Or both."]},"zoya":{"uk":["Ой, вушка змерзли! Купіть ще шапку, будь ласка.","Взимку знижки теж мерзнуть. Ловіть, поки теплі!","Холодно, але гроші гріють. Трохи."],"en":["Oh, my ears are frozen! Buy me a hat, please.","In winter even discounts freeze. Catch them warm!","It is cold, but money warms. A little."]},"tonya":{"uk":["Я повільна, а холод — ще повільніший. Не смішно.","У панцирі тепло. Хто хоче, може постукати.","Зима: лапи мерзнуть, а думки сповільнюються ще більше."],"en":["I am slow and the cold is slower. Not funny.","It is warm in the shell. Knock if you wish.","Winter: paws freeze and thoughts slow down even more."]},"mikhas":{"uk":["Я ведмідь, мені не холодно. Мені просто прохолодно.","Хочу в барліг і чашку меду. Негайно.","Ящики замерзли. Я теж. Давайте перепочинемо."],"en":["I am a bear, I am not cold. Just chilly.","I want a den and a cup of honey. Now.","The crates froze. So did I. Let us rest."]},"sonia":{"uk":["У-гу. Пір'я настовбурчила, а толку мало.","Холодно писати цифри: чорнило мерзне.","Дайте плед. Баланс почекає."],"en":["Hoo. I puffed up my feathers, little use.","Too cold to write numbers: the ink freezes.","Give me a blanket. The balance can wait."]},"kria":{"uk":["Кря! Вода замерзла, а я — ні. Поки що.","Швабра в обіймах криги. Негайно допомогти!","Лапи в калошах, настрій у піні. Не плутайте."],"en":["Quack! The water froze, I did not. Yet.","The mop is hugged by ice. Help at once!","Paws in galoshes, mood in foam. Do not mix them up."]},"zhuzha":{"uk":["Ква... Шарф — це не модно, це порятунок.","Взимку стиль — це шість шарів і гордий вигляд.","Мої лапки ще ніколи не були так далеко від калюжі."],"en":["Ribbit... A scarf is not fashion, it is rescue.","Winter style is six layers and a proud look.","My feet have never been so far from a puddle."]},"leo":{"uk":["Холодно. Давайте перенесемо мітинг на літо.","Моя ефективність впала до нуля Цельсія.","Для команди: вдягайтесь тепліше. Це не порада, це KPI."],"en":["It is cold. Let us move the meeting to summer.","My efficiency dropped to zero Celsius.","Team: dress warmer. Not advice, it is a KPI."]},"pao":{"uk":["Бамбук замерз! Це катастрофа, а не тренд.","Нова реклама: «Купуй шарф — отримай тепло».","Хочу мандарини й плед. Негайно і безкоштовно."],"en":["The bamboo froze! A disaster, not a trend.","New ad: \"Buy a scarf, get warmth\".","I want tangerines and a blanket. Now and free."]},"murzyk":{"uk":["Мур... Лапи примерзли до клавіатури.","Холодно? Увімкніть обігрівач. Або мене.","Дроти зимою — тендітні, як мої нерви."],"en":["Purr... My paws froze to the keyboard.","Cold? Turn on the heater. Or me.","Wires in winter are fragile like my nerves."]},"toma":{"uk":["Пам'ятаю, як було тепло. Давно. У липні.","Хобот замерз. Тепер він — льодяник.","Принесіть мені ковдру. Я не забуду, хто приніс."],"en":["I remember when it was warm. Long ago. In July.","My trunk froze. Now it is a lollipop.","Bring me a blanket. I will remember who did."]},"shnyr":{"uk":["Ш-ш... Холодно! Позичу шапку. Просто позичу.","Мої лапки замерзли. Нікому не кажіть.","У смітнику зимою тепліше. Це факт, не пропозиція."],"en":["Sh-sh... It is cold! I will borrow a hat. Just borrow.","My paws are freezing. Do not tell anyone.","It is warmer in the bin in winter. A fact, not a suggestion."]}},"capy":{"uk":["Місто росте, а я ще більше. Особливо після обіду.","Зараз би трохи моркви. Або акцій. Що ближче.","Тут хтось казав «монета»? Я слухаю.","Бізнес — це просто торгівля з гарною вивіскою.","Люблю свою команду. Особливо коли вона працює.","Цей магазин ще матиме власний прапор.","Калькулятор, карамелька й впевненість. Ось набір магната.","Якщо клікати уважно, можна почути, як дзвенить успіх.","Дехто мріє про океан. Я мрію про довгий прилавок.","Сьогодні день, коли все складається. Майже все."],"en":["The town grows and I grow more. Especially after lunch.","A bit of carrot now. Or shares. Whichever is closer.","Did someone say \"coin\"? I am listening.","Business is just trading with a nice sign.","I love my team. Especially when it works.","This shop will have its own flag one day.","A calculator, a caramel and confidence. A tycoon kit.","If you click carefully, you can hear success ring.","Some dream of the ocean. I dream of a long counter.","Today everything comes together. Almost everything."],"coldUk":["Бр-р! Навіть капібарі хочеться до гарячої ванни.","Сніг лягає на дахи. А на мене — ностальгія за літом.","Холодно, але ж ми маємо магазин. Тепле слово теж гріє."],"coldEn":["Brr! Even a capybara wants a hot bath.","Snow lies on the roofs and nostalgia for summer on me.","It is cold, but we have a shop. A warm word helps too."]},"epoch":{"uk":[["Свічки горять, пергамент шелестить — ось це торгівля!","Колись тут усе писали пером. Чеки досі пахнуть чорнилом.","Місто пахне воском і свіжим хлібом. Затишно.","Хтось знову малює на стіні. Кажуть, це мистецтво.","Гільдія купців схвалила наші ціни. Чи принаймні мовчить.","Тут би ще гобелен, і був би цілий палац."],["Радіо грає й шипить одночасно. Це ретро.","Дирижабль знову над дахами. Мабуть, везе знижки.","Молочний коктейль, і день вдався.","Кіно за копійку? Беру два квитки.","Касети перемотую олівцем, як справжній професіонал.","Пастельні кольори — найкращі кольори. Не сперечайтесь."],["Дзеркальна куля знову підморгує. Хтось танцює без музики?","Платформи на підборах і ціни вищі. Закономірність.","Ритм сьогодні такий, що прилавки танцюють.","Блискітки — це не бруд. Це стиль.","Диско не вмерло, воно просто на касі.","Раз, два, три... знижка!"],["Ще одна монетка — і новий рівень!","Жетонів мало, а бажань багато.","Бос рівня — черга до каси.","Пікселі нині в моді. Ми на передовій.","Двадцять п'ять життів, і всі на роботі.","Рекорд дня побитий. Рекорд тижня ще ні."],["Сторінка з покупками вантажиться... вже вантажиться... ага.","Пошта прийшла: двісті листів, і всі про знижки.","Модем співає, а бізнес оживає.","Хтось поставив смайлик на ціннику. Продажі зросли.","Нам потрібен сайт. Чи принаймні гарна закладка.","Лайк вашому чеку!"],["Пакети з трави, ціни з розуму.","Сонячні панелі гріють касу. І душу.","Сортуємо все. Навіть знижки.","Повітря пахне дощем і яблуками. Чудово.","Де ваша бавовняна торба? Не соромтесь, візьміть у нас.","Земля дякує за кожну здану тару."],["Повітря тут чудове... всередині шлюзу.","Знижка на планети з рук!","Невагомість: найкращий час для інвентаризації.","Зорі сьогодні яскраві. Прямо як ціни.","Ракета пролетіла повз. Хтось забув купити хліб.","Доставка між галактиками? Ще дві години."],["Усе світиться, навіть настрій.","Ніч коротка, а вивіска довга.","Лазери — це гарно. Особливо на чеку.","Рожевий і блакитний — єдині кольори, яким я довіряю.","Кіберпанк — це коли гроші блимають.","Темрява? Не чули. Вмикаємо ще одну лампу."]],"en":[["Candles burn, parchment rustles: this is trade!","They used to write everything with quills. Receipts still smell of ink.","The town smells of wax and fresh bread. Cosy.","Someone is painting on the wall again. They call it art.","The merchants' guild approved our prices. Or at least stays silent.","All we need is a tapestry and it would be a palace."],["The radio plays and hisses at once. That is retro.","The blimp is over the roofs again. Probably carrying discounts.","A milkshake and the day is made.","A movie for a penny? Two tickets, please.","I rewind cassettes with a pencil, like a pro.","Pastel colours are the best colours. No arguing."],["The mirror ball winks again. Is someone dancing with no music?","Platform heels and higher prices. A pattern.","The rhythm today is so good the counters dance.","Glitter is not dirt. It is style.","Disco is not dead, it is at the till.","One, two, three... discount!"],["One more coin and a new level!","Few tokens, many wishes.","The level boss is the queue to the till.","Pixels are in fashion. We lead the way.","Twenty-five lives, and all of them at work.","The day's record is broken. The week's one is not yet."],["The shopping page is loading... still loading... aha.","Mail arrived: two hundred letters, all about discounts.","The modem sings and business comes alive.","Someone put a smiley on the price tag. Sales went up.","We need a website. Or at least a nice bookmark.","A like to your receipt!"],["Bags from grass, prices from sense.","Solar panels warm the till. And the soul.","We sort everything. Even discounts.","The air smells of rain and apples. Lovely.","Where is your cotton bag? Do not be shy, take one from us.","The Earth thanks you for every returned bottle."],["The air here is great... inside the airlock.","Discount on second-hand planets!","Zero gravity: the best time for inventory.","The stars are bright today. Just like the prices.","A rocket flew by. Someone forgot to buy bread.","Delivery between galaxies? Two more hours."],["Everything glows, even the mood.","The night is short and the sign is long.","Lasers are nice. Especially on a receipt.","Pink and blue are the only colours I trust.","Cyberpunk is when money blinks.","Darkness? Never heard of it. We switch on one more lamp."]]}};
+  ['uk', 'en'].forEach(lang => {
+    const T = translations[lang];
+    Object.keys(P.team).forEach(id => {
+      P.team[id][lang].forEach((s, i) => { T['team_' + id + '_say_' + (6 + i)] = s; });
+      P.cold[id][lang].forEach((s, i) => { T['team_' + id + '_cold_' + i] = s; });
+    });
+    P.capy[lang].forEach((s, i) => { T['capy_say_' + (6 + i)] = s; });
+    P.capy[lang === 'uk' ? 'coldUk' : 'coldEn'].forEach((s, i) => { T['capy_cold_' + i] = s; });
+    P.epoch[lang].forEach((arr, e) => arr.forEach((s, i) => { T['epoch_say_' + e + '_' + i] = s; }));
+  });
 })();
 function t(key, ...args) {
   const dict = translations[state.lang] || translations.en;
@@ -4600,9 +4631,10 @@ function hslHex(h, sat, l) {
   const q = l < 0.5 ? l * (1 + sat) : l + sat - l * sat, p = 2 * l - q, ch = t => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 0.5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
   return '#' + [ch(h + 1 / 3), ch(h), ch(h - 1 / 3)].map(v => ('0' + Math.round(v * 255).toString(16)).slice(-2)).join('');
 }
+// п'ять кольорів стін по колу (на кожну епоху свої відтінки), дахи — парні до стін
 function houseColors(i) {
-  const tone = HOUSE_TONE[viewEpoch() % 8] || HOUSE_TONE[0], hue = tone[2] + i * 137.508, v = (hash2(i, 29) % 100) / 100;
-  return { wall: hslHex(hue, tone[0] * (0.8 + 0.4 * v), Math.min(0.82, tone[1] + (v - 0.5) * 0.14)), roof: hslHex(hue + 150 + (i % 3) * 40, tone[0] * 0.8, 0.36 + v * 0.1) };
+  const tone = HOUSE_TONE[viewEpoch() % 8] || HOUSE_TONE[0], k = ((i % 5) + 5) % 5, hue = tone[2] + k * 72;
+  return { wall: hslHex(hue, tone[0], tone[1]), roof: hslHex(hue + 170 + (k % 2) * 25, tone[0] * 0.8, 0.38) };
 }
 function drawHouse(g, spec, lamps) {
   const { x, w, h, wall, roof } = spec;
@@ -4637,10 +4669,12 @@ function drawHouse(g, spec, lamps) {
     const cx = x + w - 15;
     R(g, cx, top - rh - 6, 7, 9, 'b'); R(g, cx, top - rh - 6, 7, 1, 'd'); R(g, cx, top - rh - 6, 1, 9, 'd'); R(g, cx + 6, top - rh - 6, 1, 9, 'd'); R(g, cx - 1, top - rh - 7, 9, 2, 'd');
   }
-  if (buildSeason === 'winter' && !flat) {            // зимою на даху лежить сніг
-    for (let i = 0; i < 4; i++) { const inset = rh - 1 - i; R(g, x - 4 + inset, top - rh + i, w + 8 - 2 * inset, 1, 'w'); }
-    R(g, x - 4 + 7, top - rh + 4, w + 8 - 14, 1, 'W');
-    for (let k = x - 1; k < x + w + 1; k += 4) R(g, k, top - rh + 5, 2, 1, 'w');
+  if (buildSeason === 'winter' && !flat) {            // зимою дах вкритий товстим снігом: шапка, звиси над краєм і бурульки
+    for (let i = 0; i < rh - 1; i++) { const inset = rh - 1 - i, lx = x - 4 + inset, rw = w + 8 - 2 * inset, ry = top - rh + i; R(g, lx + 1, ry, rw - 2, 1, i < 3 ? '#ffffff' : i < 7 ? '#f1f7ff' : '#d9e7f8'); if (i > 3 && i % 2) { g.globalAlpha = 0.35; R(g, lx + 1, ry, rw - 2, 1, '#a9bddb'); g.globalAlpha = 1; } }
+    for (let k = x - 4; k < x + w + 4; k += 3) { const hang = 1 + hash2(k, x) % 3; R(g, k, top - 1, 3, hang, '#f1f7ff'); R(g, k, top - 1 + hang, 3, 1, '#c3d6ee'); }
+    for (let k = x - 2; k < x + w + 2; k += 6 + hash2(k, 5) % 4) { const il = 2 + hash2(k, x + 3) % 4; R(g, k, top + 1, 1, il, '#dff1ff'); R(g, k, top + il, 1, 1, '#ffffff'); }
+  } else if (buildSeason === 'winter' && flat) {
+    R(g, x - 3, top - 9, w + 6, 4, '#ffffff'); R(g, x - 3, top - 6, w + 6, 2, '#d9e7f8'); for (let k = x - 2; k < x + w + 2; k += 4) R(g, k, top - 5, 3, 1 + hash2(k, x) % 2, '#f1f7ff');
   }
   houseRoofExtras(g, spec, top, rh, flat, hs);
   // поверхи: нижній — з дверима, решта — тільки вікна
@@ -4655,15 +4689,7 @@ function drawHouse(g, spec, lamps) {
     for (let c = 0; c < cols; c++) {
       const wx = Math.round(x + 2 + c * space + (space - 8) / 2), wy = y0;
       if (f === floors - 1 && wx + 9 >= doorLeft - 2 && wx <= doorLeft + doorW + 2) continue;      // тут двері
-      if (hs % 2) { R(g, wx - 3, wy, 2, 11, 'b'); R(g, wx + 9, wy, 2, 11, 'b'); R(g, wx - 3, wy, 2, 1, 'd'); R(g, wx + 9, wy, 2, 1, 'd'); }   // віконниці
-      R(g, wx, wy, 8, 11, 'd');
-      R(g, wx + 1, wy + 1, 6, 9, ((c + f + x) % 4 === 0) ? 'y' : 's');
-      R(g, wx + 1, wy + 1, 2, 2, 'S'); R(g, wx + 4, wy + 1, 1, 9, 'd'); R(g, wx + 1, wy + 5, 6, 1, 'd');
-      R(g, wx - 1, wy + 11, 10, 1, 'b'); R(g, wx - 1, wy + 11, 10, 1, 'b');
-      if (buildSeason === 'winter') R(g, wx - 1, wy + 10, 10, 1, 'w');
-      if (buildSeason === 'spring' || buildSeason === 'summer') {        // квіти на підвіконні
-        R(g, wx, wy + 10, 1, 1, 'p'); R(g, wx + 2, wy + 10, 1, 1, 'y'); R(g, wx + 4, wy + 10, 1, 1, buildSeason === 'spring' ? 'q' : 'r'); R(g, wx + 6, wy + 10, 1, 1, 'p');
-      }
+      houseWindowG(g, wx, wy, hash2(wx * 3 + c, wy * 7 + f), ((c + f + x) % 4 === 0), hs % 2 === 1);
       if (houseGlass) houseGlass.push([wx + 1, wy + 1, 6, 9]);
     }
   }
@@ -4677,6 +4703,28 @@ function drawHouse(g, spec, lamps) {
     R(g, doorX - 1, base - 1, doorW + 2, 1, 'E');
   }
   epochHouseDeco(g, spec, top, base, floors, hs, doorOk ? doorX : -9999);
+}
+// Вікно будинку 8×11: кам'яна перемичка, рама, скло зі світлим відблиском і градієнтом, завіски, фрамуга, підвіконня зі сніжком чи квітами, інколи віконниці й квітник
+function houseWindowG(g, wx, wy, h, warm, shutters) {
+  const frame = '#4a3228', glassTop = warm ? '#ffe9a0' : '#bfe3f2', glassMid = warm ? '#ffd45c' : '#8ec4de', glassBot = warm ? '#f0a840' : '#5f95b8';
+  if (shutters) {                                                    // віконниці з планками
+    [wx - 3, wx + 9].forEach(sx => { R(g, sx, wy, 2, 11, '#7a4f35'); R(g, sx, wy, 2, 1, frame); R(g, sx, wy + 10, 2, 1, frame); for (let k = 2; k < 10; k += 2) R(g, sx, wy + k, 2, 1, '#5a3b2e'); R(g, sx, wy + 1, 1, 9, '#946444'); });
+  }
+  R(g, wx - 1, wy - 2, 10, 1, '#d8cdb6'); R(g, wx - 1, wy - 1, 10, 1, '#a89c86'); R(g, wx + 3, wy - 3, 2, 1, '#d8cdb6');   // перемичка з замковим каменем
+  R(g, wx, wy, 8, 11, frame);
+  R(g, wx + 1, wy + 1, 6, 3, glassTop); R(g, wx + 1, wy + 4, 6, 3, glassMid); R(g, wx + 1, wy + 7, 6, 3, glassBot);
+  if (!warm) { R(g, wx + 1, wy + 1, 2, 1, '#ffffff'); R(g, wx + 2, wy + 2, 1, 1, '#ffffff'); R(g, wx + 5, wy + 5, 1, 1, '#d8f0ff'); R(g, wx + 6, wy + 4, 1, 1, '#d8f0ff'); }      // відблиск неба на склі
+  const cur = ['#c4553d', '#e8b44a', '#5f9fc9', '#ef8fa3', '#8ed4a6'][h % 5];                      // завіска
+  if (h % 3 !== 0) { R(g, wx + 1, wy + 1, 2, 5, cur); R(g, wx + 6, wy + 1, 1, 5, cur); R(g, wx + 1, wy + 1, 1, 1, '#ffffff'); }
+  else if (h % 2 === 0) { R(g, wx + 5, wy + 7, 2, 2, '#6f9a5a'); R(g, wx + 5, wy + 6, 1, 1, '#ef8fa3'); R(g, wx + 6, wy + 7, 1, 1, '#e8b44a'); }   // кімнатна квітка
+  R(g, wx + 4, wy + 1, 1, 9, frame); R(g, wx + 1, wy + 4, 6, 1, frame);                           // перехрестя рами
+  R(g, wx - 1, wy + 11, 10, 2, '#c8bda6'); R(g, wx - 1, wy + 13, 10, 1, '#8a7f6a');                  // кам'яне підвіконня з тінню
+  if (buildSeason === 'winter') { R(g, wx - 1, wy + 10, 10, 2, '#ffffff'); R(g, wx, wy + 9, 3, 1, '#eaf3ff'); R(g, wx + 6, wy + 9, 2, 1, '#eaf3ff'); }
+  else if (buildSeason === 'spring' || buildSeason === 'summer' || h % 4 === 0) {                 // квітник під вікном
+    const fc = buildSeason === 'summer' ? ['#e8353a', '#ffd84f', '#ff8fd0'] : ['#ef8fa3', '#ffd9e2', '#fff'];
+    R(g, wx - 1, wy + 13, 10, 2, '#7a4f35'); R(g, wx - 1, wy + 13, 10, 1, '#946444');
+    for (let k = 0; k < 5; k++) { R(g, wx + k * 2 - 1 + (k % 2), wy + 11, 2, 2, '#4f9a63'); R(g, wx + k * 2 - 1 + (k % 2), wy + 11 + (k % 2), 1, 1, fc[k % 3]); }
+  }
 }
 // Деталі будиночків на фоні під епоху: балки, лампочки, неон, ліани, труби, антени
 function epochHouseDeco(g, spec, top, base, floors, hs, doorX) {
@@ -4866,6 +4914,30 @@ function paintCobble(g, X0, Y0, W, H, style) {
     }
   }
 }
+// Зима: сніг лежить на тротуарі, бруківці, вздовж бордюру й на узбіччі дороги (кучугури, плями на камінні, тінь під ними)
+function snowBlob(g, cx, cy, rx, ry) {
+  for (let dy = -ry; dy <= ry; dy++) { const hw = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry + 0.5)))); R(g, cx - hw, cy + dy, hw * 2 + 1, 1, dy > ry * 0.35 ? '#d3e1f4' : dy < -ry * 0.3 ? '#ffffff' : '#f1f7ff'); }
+  R(g, cx - rx, cy + ry + 1, rx * 2, 1, '#a9bddb');
+}
+function winterGround(g, x0, W, H) {
+  const roadTop = view.extraB >= 30 ? H - 36 : H;
+  for (let x = x0; x < x0 + W; x++) {                                                          // кучугура під стінами будинків
+    const hh = 2 + hash2(x >> 2, 71) % 3; R(g, x, LAYOUT.horizonY, 1, hh, '#ffffff'); R(g, x, LAYOUT.horizonY + hh, 1, 1, '#c3d6ee');
+  }
+  for (let gx = Math.floor(x0 / 4) * 4; gx < x0 + W; gx += 4) for (let gy = LAYOUT.horizonY + 5; gy < LAYOUT.curbY - 1; gy += 3) {          // тротуар
+    const hs = hash2(gx + 5, gy + 9); if (hs % 100 < 55) { const ww = 2 + hs % 5; R(g, gx + (hs >>> 8) % 3, gy, ww, 1, '#f6f9ff'); if (hs % 3 === 0) R(g, gx + 1 + (hs >>> 8) % 3, gy + 1, ww - 1, 1, '#d3e1f4'); }
+  }
+  for (let x = x0; x < x0 + W; x++) { const hh = 1 + hash2(x >> 1, 73) % 3; R(g, x, LAYOUT.curbY - hh + 1, 1, hh, '#ffffff'); R(g, x, LAYOUT.curbY + 2, 1, 1, '#c3d6ee'); }       // вал снігу вздовж бордюру
+  for (let gx = Math.floor(x0 / 5) * 5; gx < x0 + W; gx += 5) for (let gy = LAYOUT.streetTop + 2; gy < roadTop - 2; gy += 4) {              // бруківка: сніг на каменях і в швах
+    const hs = hash2(gx + 13, gy + 17);
+    if (hs % 100 < 58) { const ww = 2 + hs % 6; R(g, gx + (hs >>> 9) % 4, gy, ww, 1, '#f6f9ff'); R(g, gx + (hs >>> 9) % 4, gy + 1, Math.max(1, ww - 2), 1, '#d3e1f4'); }
+  }
+  for (let gx = x0 + 10; gx < x0 + W - 10; gx += 38 + hash2(gx, 4) % 40) snowBlob(g, gx, LAYOUT.streetTop + 6 + hash2(gx, 9) % Math.max(10, roadTop - LAYOUT.streetTop - 14), 6 + hash2(gx, 1) % 7, 2 + hash2(gx, 2) % 2);    // кучугури на вулиці
+  if (view.extraB >= 30) {                                                                      // узбіччя дороги: вал снігу й плями
+    for (let x = x0; x < x0 + W; x++) { const hh = 2 + hash2(x >> 1, 79) % 3; R(g, x, roadTop, 1, hh, '#f1f7ff'); R(g, x, roadTop + hh, 1, 1, '#a9bddb'); }
+    for (let gx = x0; gx < x0 + W; gx += 11) { const hs = hash2(gx, 83); if (hs % 100 < 40) R(g, gx, roadTop + 6 + (hs >>> 6) % Math.max(6, H - roadTop - 12), 3 + hs % 5, 1, '#e4edf8'); }
+  }
+}
 const manholeSpots = [];                                           // де стоять люки (над ними піднімається пара)
 function buildGroundLayer() {
   const { c, g } = newLayer();
@@ -4914,10 +4986,11 @@ function buildGroundLayer() {
   const my = Math.min(H - 48, 188);                                   // люки: один ряд уздовж дороги, не часто
   for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
   if (view.extraB >= 30) drawRoadG(g, x0, W, H);
+  if (buildSeason === 'winter') winterGround(g, x0, W, H);
   if (buildSeason === 'autumn' || buildSeason === 'spring') autumnGroundLeaves(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
   g.globalAlpha = 0.1; R(g, x0, H - 20, W, 20, 'd'); g.globalAlpha = 1;
   const trees = treeSpots(x0, W);
-  houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 22));      // двері, закриті деревом, не використовуються: звірята туди не заходять
+  houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 28));      // двері, закриті деревом, не використовуються: звірята туди не заходять
   houseGlass = houseGlass.filter(r => !windowHidden(r, trees));        // вікна, закриті деревами чи магазином, не світяться й не блимають привидами
   houseLit = buildLitLayer(houseGlass);
   return c;
@@ -5011,7 +5084,7 @@ function drawManholeSteam() {
 function windowHidden(r, trees) {
   const base = LAYOUT.horizonY + 8;
   if (shop && r[0] + r[2] > shop.x - 28 && r[0] < shop.x + shop.w + 28 && r[1] + r[3] > shop.y - 4) return true;      // будинки за магазином не дають відблиску на нього
-  return trees.some(tr => r[0] + r[2] > tr.x - 17 && r[0] < tr.x + 17 && r[1] + r[3] > base - 54);
+  return trees.some(tr => r[0] + r[2] > tr.x - 26 && r[0] < tr.x + 26 && r[1] + r[3] > base - 80);
 }
 
 // Додаткові будиночки з боків для широкого екрана (різні розміри й кольори; однакові при кожному запуску)
@@ -5043,8 +5116,10 @@ function buildLitLayer(rects) {
   rects.forEach(r => {
     if (hash2(r[0] + 5, r[1] + 9) % 4 === 0) return;      // частина вікон лишається темною
     const hall = buildSeason === 'halloween';
-    R(g, r[0], r[1], r[2], r[3], hall ? 'h' : 'y');
-    R(g, r[0], r[1] + r[3] - 2, r[2], 2, hall ? 'o' : 'h');
+    g.globalAlpha = 0.22; R(g, r[0] - 2, r[1] - 2, r[2] + 4, r[3] + 4, hall ? '#ff9a3c' : '#ffd36a'); g.globalAlpha = 1;          // ореол світла навколо вікна
+    R(g, r[0], r[1], r[2], 3, hall ? '#ffb347' : '#fff0b8'); R(g, r[0], r[1] + 3, r[2], 3, hall ? '#ff9a3c' : '#ffd860'); R(g, r[0], r[1] + 6, r[2], r[3] - 6, hall ? '#e8742c' : '#f2a63c');
+    R(g, r[0] + 3, r[1], 1, r[3], '#6a4a28'); R(g, r[0], r[1] + 3, r[2], 1, '#6a4a28');                  // рама лишається видно
+    if (hash2(r[0], r[1]) % 3 === 0) R(g, r[0] + 1, r[1] + 5, 2, 4, '#a85a28');                         // силует людини чи лампи в кімнаті
   });
   return c;
 }
@@ -5052,15 +5127,15 @@ function buildLitLayer(rects) {
 /* ---------- Дерева (пора року змінює їхній вигляд) ---------- */
 // Де садити дерева: посередині вільних проміжків між ліхтарями, магазином і краями вулиці (щоб ліхтарі їх не затуляли)
 function treeSpots(x0, W) {
-  const blocks = lampPositions().map(lx => [lx - 8, lx + 10]);
+  const blocks = lampPositions().map(lx => [lx - 12, lx + 14]);
   if (shop) blocks.push([shop.x - 2, shop.x + shop.w + 2]);
   blocks.sort((a, b) => a[0] - b[0]);
   const list = [];
   let prev = x0;
   const gap = (a, b, i) => {
     const room = b - a;
-    if (room < 34) return;
-    const n = room >= 110 ? 2 : 1;
+    if (room < 50) return;
+    const n = room >= 150 ? 2 : 1;
     for (let k = 1; k <= n; k++) {
       const hs = hash2(Math.round(a) + 31 + k, 5);
       list.push({ x: Math.round(a + room * k / (n + 1)), v: (hs >>> 5) % 3 });
@@ -5083,72 +5158,83 @@ function lineG(g, x0, y0, x1, y1, c) {      // лінія з пікселів (�
 function drawStreetTree(g, x, v, season) {
   const base = LAYOUT.horizonY + 8;
   if (season === 'winter') { drawBareTree(g, x, v, season); return; }
-  // кольори: [основа, тінь, світло, контур, цяточки]
+  // Дерево ×1,45 від колишнього: розлогий стовбур із корою й корінням, об'ємна крона з кількох шарів, світло зверху-зліва, тінь знизу-праворуч, сезонні деталі
   const pal = {
     spring: ['q', 'p', 'w', 'b', ['p', 'p', 'w', 'q', 'm']],
     summer: ['g', 'G', 'm', 'G', ['m', 'G', 'y']],
     autumn: ['o', 'r', 'h', 'b', ['h', 'y', 'r', 'h', 'o']],
     halloween: ['u', 'n', 'p', 'k', ['o', 'o', 'y', 'p']]
   }[season];
-  // тінь від дерева на землі
-  g.globalAlpha = 0.22; R(g, x - 17, base, 34, 3, 'd'); R(g, x - 12, base + 3, 24, 1, 'd'); g.globalAlpha = 1;
-  // ствол: кора з тріщинами, мох, коріння, розвилки гілок під кроною
-  R(g, x - 3, base - 18, 6, 18, 'd'); R(g, x - 2, base - 18, 4, 18, 'b'); R(g, x - 2, base - 18, 1, 18, 'l');
-  g.globalAlpha = 0.35; R(g, x + 1, base - 18, 1, 18, 'd'); g.globalAlpha = 1;
-  for (let k = 0; k < 5; k++) R(g, x - 1 + (k % 2), base - 16 + k * 3, 1, 2, 'd');
-  R(g, x - 2, base - 6, 1, 2, 'g'); R(g, x - 2, base - 10, 1, 1, 'm');
-  R(g, x - 6, base - 2, 12, 3, 'd'); R(g, x - 5, base - 2, 10, 2, 'b'); R(g, x - 8, base - 1, 3, 2, 'd'); R(g, x - 7, base - 1, 2, 1, 'b'); R(g, x + 5, base - 1, 3, 2, 'd'); R(g, x + 5, base - 1, 2, 1, 'b');
-  lineG(g, x - 1, base - 17, x - 9, base - 27, 'd'); lineG(g, x, base - 17, x - 8, base - 27, 'b'); lineG(g, x + 1, base - 17, x + 9, base - 27, 'd'); lineG(g, x, base - 17, x + 8, base - 27, 'b');
-  // крона з багатьох кульок: нерівний силует
-  const cy = base - 34;
-  const discs = [[0, -2, 12], [-10, 5, 9], [10, 5, 9], [0, 7, 11], [-5, -9, 8], [6, -8, 8], [-15, -1, 6], [15, 0, 6], [0, -13, 6], [-8, 13, 6], [9, 13, 6]];
+  const seed = x * 7 + v * 13;
+  g.globalAlpha = 0.26; R(g, x - 27, base, 54, 4, 'd'); R(g, x - 19, base + 4, 38, 2, 'd'); R(g, x - 12, base + 6, 24, 1, 'd'); g.globalAlpha = 1;      // тінь на землі
+  // ствол: світлий лівий бік, темний правий, кора з тріщинами, мох, потовщення в корінні
+  R(g, x - 5, base - 26, 10, 26, 'd'); R(g, x - 4, base - 26, 8, 26, 'b'); R(g, x - 4, base - 26, 2, 26, 'l');
+  g.globalAlpha = 0.4; R(g, x + 1, base - 26, 3, 26, 'd'); g.globalAlpha = 1;
+  for (let k = 0; k < 9; k++) { const kx = x - 3 + (hash2(k, seed) % 6), ky = base - 24 + k * 3; R(g, kx, ky, 1, 2, 'd'); if (k % 3 === 0) R(g, kx + 1, ky + 1, 1, 1, 'l'); }
+  R(g, x - 4, base - 9, 2, 2, 'g'); R(g, x - 3, base - 15, 2, 1, 'm'); R(g, x - 4, base - 14, 1, 1, 'g');
+  R(g, x - 9, base - 3, 18, 4, 'd'); R(g, x - 8, base - 3, 16, 3, 'b'); R(g, x - 8, base - 3, 4, 1, 'l');
+  R(g, x - 12, base - 1, 5, 3, 'd'); R(g, x - 11, base - 1, 3, 2, 'b'); R(g, x + 7, base - 1, 5, 3, 'd'); R(g, x + 7, base - 1, 3, 2, 'b');       // коріння
+  lineG(g, x - 1, base - 24, x - 13, base - 38, 'd'); lineG(g, x, base - 24, x - 12, base - 38, 'b'); lineG(g, x + 1, base - 24, x + 13, base - 38, 'd'); lineG(g, x, base - 24, x + 12, base - 38, 'b');
+  lineG(g, x, base - 26, x - 3, base - 42, 'd'); lineG(g, x + 1, base - 26, x - 2, base - 42, 'b');
+  // крона з багатьох кульок (нерівний силует)
+  const cy = base - 51;
+  const discs = [[0, -3, 17], [-14, 7, 13], [14, 7, 13], [0, 10, 16], [-7, -13, 12], [9, -12, 11], [-22, -1, 9], [22, 0, 9], [0, -19, 9], [-12, 19, 9], [13, 19, 9], [-18, 14, 8], [19, 13, 8]];
   const inside = (px, py) => discs.some(d => { const dx = px - (x + d[0]), dy = py - (cy + d[1]); return dx * dx + dy * dy <= d[2] * d[2] + 1; });
-  discs.forEach(d => disc(g, x + d[0], cy + d[1], d[2] + 1, pal[3]));
-  discs.forEach(d => disc(g, x + d[0], cy + d[1], d[2], pal[0]));
-  // об'ємне світло: світла верхня ліва частина, тінь знизу-праворуч, глибокі тіні між кульками, дрібне листя
-  for (let py = cy - 22; py <= cy + 22; py++) for (let px = x - 24; px <= x + 24; px++) {
+  discs.forEach(d => disc(g, x + d[0], cy + d[1], d[2] + 1, pal[3]));                                   // контур
+  const band = (py) => season === 'autumn' ? (py < cy - 9 ? 'h' : py < cy + 8 ? 'o' : 'r') : season === 'summer' ? (py < cy - 6 ? 'g' : 'g') : pal[0];     // восени крона від жовтої до червоної
+  for (let py = cy - 32; py <= cy + 32; py++) for (let px = x - 36; px <= x + 36; px++) {
     if (!inside(px, py)) continue;
-    const sh = (px - x) * 0.45 + (py - cy) * 0.9, n = hash2(px * 3 + 1, py * 5 + 7) % 11, edge = !inside(px - 1, py) || !inside(px + 1, py) || !inside(px, py - 1) || !inside(px, py + 1);
-    if (sh > 12 && n < 5) R(g, px, py, 1, 1, pal[3]);
-    else if (sh > 8 || (sh > 4 && n < 3)) R(g, px, py, 1, 1, pal[1]);
-    else if (sh < -10 && n < 7) R(g, px, py, 1, 1, pal[2]);
-    else if (sh < -5 && n < 2) R(g, px, py, 1, 1, pal[2]);
+    const sh = (px - x) * 0.42 + (py - cy) * 0.85, n = hash2(px * 3 + 1, py * 5 + 7) % 11, n2 = hash2(px + 17, py * 3 + 5) % 7;
+    const edge = !inside(px - 1, py) || !inside(px + 1, py) || !inside(px, py - 1) || !inside(px, py + 1);
+    R(g, px, py, 1, 1, band(py));
+    if (sh > 18 && n < 6) R(g, px, py, 1, 1, pal[3]);                                                      // глибока тінь знизу-праворуч
+    else if (sh > 12 || (sh > 6 && n < 4)) R(g, px, py, 1, 1, pal[1]);
+    else if (sh < -15 && n < 8) R(g, px, py, 1, 1, pal[2]);                                                // світло зверху-зліва
+    else if (sh < -8 && n < 3) R(g, px, py, 1, 1, pal[2]);
     else if (n === 0) R(g, px, py, 1, 1, pal[1]);
-    if (edge && py > cy + 2 && hash2(px, py) % 3 === 0) R(g, px, py, 1, 1, pal[1]);          // зубчики листя знизу
-    if (edge && py < cy - 4 && hash2(py, px) % 3 === 0) R(g, px, py, 1, 1, pal[2]);          // блиск на верхніх краях
+    if (n2 === 0 && sh < 4) R(g, px, py, 2, 1, pal[2]);                                                    // дрібні листочки-відблиски
+    if (edge && py > cy + 3 && hash2(px, py) % 3 === 0) R(g, px, py, 1, 1, pal[1]);                        // зубчики листя знизу
+    if (edge && py < cy - 6 && hash2(py, px) % 3 === 0) R(g, px, py, 1, 1, pal[2]);                        // блиск на верхніх краях
   }
-  // дрібні листочки по кроні (2 пікселі): світлі зверху, темні знизу
-  for (let k = 0; k < 34; k++) {
-    const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 17, px = x + Math.round(Math.cos(a) * rr * 1.2), py = cy + 1 + Math.round(Math.sin(a) * rr * 1.05);
-    if (!inside(px, py) || !inside(px + 1, py + 1)) continue;
-    R(g, px, py, 2, 1, py < cy ? pal[2] : pal[1]);
+  // купки листя: світла шапка зверху й темна підкладка знизу — крона виглядає об'ємною
+  for (let k = 0; k < 26; k++) {
+    const a = (hash2(seed + k, 3) % 628) / 100, rr = 6 + hash2(k, seed + 9) % 24, px = x + Math.round(Math.cos(a) * rr * 1.2), py = cy + Math.round(Math.sin(a) * rr * 0.9);
+    if (!inside(px - 3, py) || !inside(px + 3, py) || !inside(px, py - 2) || !inside(px, py + 3)) continue;
+    R(g, px - 2, py + 2, 5, 1, pal[1]); R(g, px - 3, py + 1, 7, 1, pal[1]); R(g, px - 2, py - 1, 5, 2, season === 'autumn' ? band(py) : pal[0]); R(g, px - 2, py - 1, 3, 1, pal[2]);
   }
-  // сезонні деталі: цвіт навесні, ягоди влітку, строкате листя восени
+  // сезонні деталі: цвіт навесні, плоди й сонячні плями влітку, строкате листя восени
   if (season === 'spring') {
-    for (let k = 0; k < 56; k++) {
-      const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 15, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.1);
-      if (!inside(px, py)) continue;
-      R(g, px, py, 2, 2, pal[4][k % pal[4].length]); if (k % 5 === 0) R(g, px, py, 1, 1, 'y');
+    for (let k = 0; k < 90; k++) {
+      const a = (hash2(seed + k, 3) % 628) / 100, rr = hash2(k, seed + 9) % 27, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 1 + Math.round(Math.sin(a) * rr * 1.0);
+      if (!inside(px, py) || !inside(px + 2, py + 2)) continue;
+      const c1 = pal[4][k % pal[4].length];
+      if (k % 4 === 0) { R(g, px, py, 3, 3, c1); R(g, px + 1, py + 1, 1, 1, 'y'); R(g, px + 1, py - 1, 1, 1, c1); R(g, px + 1, py + 3, 1, 1, c1); R(g, px - 1, py + 1, 1, 1, c1); R(g, px + 3, py + 1, 1, 1, c1); }       // повна квітка
+      else R(g, px, py, 2, 2, c1);
     }
+    for (let k = 0; k < 7; k++) R(g, x - 22 + hash2(k, seed + 2) % 44, cy + 28 + hash2(seed, k) % 12, 2, 1, ['q', 'p', 'w'][k % 3]);              // пелюстки в повітрі
   } else if (season === 'summer') {
-    for (let k = 0; k < 24; k++) {
-      const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 14, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.1);
-      if (inside(px, py)) R(g, px, py, 1, 1, pal[4][k % pal[4].length]);
-    }
-    [[-6, 4], [5, 8], [-1, 14], [9, 1], [-11, 9]].forEach(([dx, dy], i) => { if (inside(x + dx, cy + dy)) { R(g, x + dx, cy + dy, 2, 2, i % 2 ? 'r' : 'o'); R(g, x + dx, cy + dy, 1, 1, 'w'); } });
-  } else if (season === 'autumn') {
-    for (let k = 0; k < 60; k++) {
-      const a = (hash2(x + k, 3) % 628) / 100, rr = hash2(k, x + 9) % 16, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.1);
+    for (let k = 0; k < 40; k++) {
+      const a = (hash2(seed + k, 3) % 628) / 100, rr = hash2(k, seed + 9) % 26, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.0);
       if (inside(px, py)) R(g, px, py, 2, 1, pal[4][k % pal[4].length]);
     }
-    for (let k = 0; k < 5; k++) R(g, x - 14 + hash2(k, x + 2) % 28, cy + 17 + hash2(x, k) % 9, 1, 1, pal[4][k % pal[4].length]);       // листя, що падає
+    for (let k = 0; k < 14; k++) {                                                                             // сонячні плями на листі
+      const a = (hash2(seed + k * 3, 5) % 628) / 100, rr = hash2(k, seed + 33) % 20, px = x - 8 + Math.round(Math.cos(a) * rr), py = cy - 8 + Math.round(Math.sin(a) * rr * 0.8);
+      if (inside(px, py) && inside(px + 2, py + 1)) { R(g, px, py, 3, 1, 'y'); R(g, px + 1, py + 1, 1, 1, 'y'); }
+    }
+    [[-12, 6], [10, 10], [-2, 20], [16, 0], [-20, 14], [4, -4], [-8, -8]].forEach(([dx, dy], i) => { if (inside(x + dx, cy + dy)) { R(g, x + dx - 1, cy + dy - 1, 4, 4, 'd'); R(g, x + dx, cy + dy, 2, 2, i % 2 ? 'r' : 'o'); R(g, x + dx, cy + dy, 1, 1, 'w'); } });   // плоди
+  } else if (season === 'autumn') {
+    for (let k = 0; k < 100; k++) {
+      const a = (hash2(seed + k, 3) % 628) / 100, rr = hash2(k, seed + 9) % 27, px = x + Math.round(Math.cos(a) * rr * 1.25), py = cy + 2 + Math.round(Math.sin(a) * rr * 1.0);
+      if (inside(px, py)) R(g, px, py, 2, 1, pal[4][k % pal[4].length]);
+    }
+    for (let k = 0; k < 9; k++) R(g, x - 24 + hash2(k, seed + 2) % 48, cy + 27 + hash2(seed, k) % 14, 2, 1, pal[4][k % pal[4].length]);              // листя, що падає
   }
   if (season === 'halloween') treeHalloweenDecor(g, x, cy);
-  // на землі: пелюстки навесні, опале листя восени, трава й камінці
-  for (let k = 0; k < 6; k++) { R(g, x - 15 + hash2(k, x + 4) % 30, base + 1, 1, 2, 'g'); }
+  // на землі: трава, пелюстки навесні, опале листя восени
+  for (let k = 0; k < 9; k++) { R(g, x - 22 + hash2(k, seed + 4) % 44, base + 1, 1, 2, 'g'); }
   if (season === 'spring' || season === 'autumn') {
     const gp = season === 'spring' ? ['q', 'p', 'w'] : ['o', 'h', 'r'];
-    for (let k = 0; k < 20; k++) R(g, x - 16 + (hash2(k, x) % 32), base + 1 + (hash2(x, k) % 2), 2, 1, gp[k % 3]);
+    for (let k = 0; k < 30; k++) R(g, x - 24 + (hash2(k, seed) % 48), base + 1 + (hash2(seed, k) % 3), 2, 1, gp[k % 3]);
   }
 }
 // Хелловін: на дереві висять гарбузи-ліхтарики, привиди й гірлянда з вогників
@@ -5165,27 +5251,28 @@ function treeHalloweenDecor(g, x, cy) {
 }
 // Зимове дерево: пишні гілки з багатьма відгалуженнями, на яких лежить сніг
 function drawBareTree(g, x, v, season) {
-  const base = LAYOUT.horizonY + 8, top = base - 20;
-  R(g, x - 3, top, 6, 20, 'd'); R(g, x - 2, top, 4, 20, 'b'); R(g, x - 2, top, 1, 20, 'l');
-  R(g, x - 6, base - 2, 12, 3, 'd'); R(g, x - 5, base - 2, 10, 2, 'b');
+  const base = LAYOUT.horizonY + 8, top = base - 28;
+  g.globalAlpha = 0.24; R(g, x - 24, base, 48, 3, 'd'); g.globalAlpha = 1;
+  R(g, x - 5, top, 10, 28, 'd'); R(g, x - 4, top, 8, 28, 'b'); R(g, x - 4, top, 2, 28, 'l'); g.globalAlpha = 0.4; R(g, x + 1, top, 3, 28, 'd'); g.globalAlpha = 1;
+  for (let k = 0; k < 7; k++) R(g, x - 3 + (hash2(k, x) % 6), top + 2 + k * 4, 1, 2, 'd');
+  R(g, x - 9, base - 3, 18, 4, 'd'); R(g, x - 8, base - 3, 16, 3, 'b'); R(g, x - 12, base - 1, 5, 3, 'd'); R(g, x + 7, base - 1, 5, 3, 'd');
   const seed = x * 7 + v * 13;
   const branch = (bx, by, ang, len, depth) => {
     const ex = Math.round(bx + Math.sin(ang) * len), ey = Math.round(by - Math.cos(ang) * len);
     lineG(g, bx, by, ex, ey, depth <= 1 ? 'd' : 'b');
-    if (depth <= 1) lineG(g, bx + 1, by, ex + 1, ey, 'd');                                         // товсті гілки
+    if (depth <= 1) { lineG(g, bx + 1, by, ex + 1, ey, 'd'); if (depth === 0) lineG(g, bx - 1, by, ex - 1, ey, 'b'); }                  // товсті гілки
     const midx = Math.round((bx + ex) / 2), midy = Math.round((by + ey) / 2);
-    if (depth <= 2 && Math.abs(Math.sin(ang)) > 0.35) R(g, midx - 1, midy - 1, 3, 1, 'w');           // сніг лежить на похилих гілках
-    if (depth >= 3) { R(g, ex - 1, ey - 1, 3, 1, 'w'); return; }                                    // кінчик гілочки зі сніжком
+    if (depth <= 2 && Math.abs(Math.sin(ang)) > 0.3) { R(g, midx - 2, midy - 1, 5, 1, 'w'); R(g, midx - 1, midy - 2, 3, 1, 'w'); }        // сніг лежить на похилих гілках
+    if (depth >= 3) { R(g, ex - 1, ey - 2, 3, 2, 'w'); return; }                                                                            // кінчик гілочки зі сніжком
     const kids = depth === 0 ? 3 : 2;
     for (let k = 0; k < kids; k++) {
       const h = hash2(seed + depth * 31 + k * 7, bx + by);
       const da = (k - (kids - 1) / 2) * (0.75 + (h % 30) / 100) + ((h >>> 5) % 20 - 10) / 60;
-      branch(ex, ey, ang + da, len * (0.66 + (h % 12) / 100), depth + 1);
+      branch(ex, ey, ang + da, len * (0.68 + (h % 12) / 100), depth + 1);
     }
   };
-  // п'ять головних гілок від верхівки стовбура
-  [-1.1, -0.55, 0, 0.55, 1.1].forEach((a, i) => branch(x + (i % 2 ? 1 : 0), top + (i === 2 ? 0 : 3 + (i % 2) * 3), a, i === 2 ? 15 : 12, 0));
-  R(g, x - 3, top - 1, 7, 1, 'w'); R(g, x - 9, base - 1, 18, 3, 'w'); R(g, x - 6, base - 3, 12, 2, 'w');
+  [-1.15, -0.6, 0, 0.6, 1.15].forEach((a, i) => branch(x + (i % 2 ? 1 : 0), top + (i === 2 ? 0 : 4 + (i % 2) * 4), a, i === 2 ? 22 : 18, 0));
+  R(g, x - 5, top - 1, 11, 2, 'w'); R(g, x - 14, base - 2, 28, 4, 'w'); R(g, x - 10, base - 5, 20, 3, 'w'); R(g, x - 6, base - 7, 12, 2, 'w'); R(g, x - 16, base, 6, 2, 'w'); R(g, x + 11, base, 6, 2, 'w');   // кучугури біля стовбура
 }
 
 /* ---------- Хелловін: гірлянда й скелет на будинку ---------- */
@@ -5448,6 +5535,31 @@ const EPOCH_SHOP = [
 ];
 const FLAT_ROOF = [2, 2, 2, 3, 6, 5];       // який дах у «плоских» епохах для кожного рівня
 function epochShopStyle() { return EPOCH_SHOP[viewEpoch() % EPOCH_SHOP.length]; }
+// Варіант вигляду магазину: залежить від епохи й рівня, тож усі магазини схожі за стилем епохи, але не однакові
+function shopVariant(level) { return hash2(viewEpoch() * 17 + level * 5 + 3, 7) % 4; }
+const EPOCH_AWN = [
+  [['r', 'w'], ['g', 'w'], ['n', 'y'], ['u', 'w']], [['p', 'w'], ['q', 'w'], ['y', 'w'], ['T', 'w']], [['f', 'y'], ['J', 'w'], ['u', 'y'], ['T', 'f']], [['T', 'f'], ['v', 'y'], ['r', 'k'], ['y', 'k']],
+  [['n', 'w'], ['a', 'w'], ['e', 'w'], ['S', 'n']], [['g', 'y'], ['m', 'w'], ['G', 'c'], ['o', 'w']], [['e', 'w'], ['n', 'S'], ['z', 'w'], ['S', 'e']], [['f', 'T'], ['T', 'k'], ['v', 'f'], ['f', 'k']]
+];
+const EPOCH_STREET = [['bench', 'planter', 'aboard'], ['aboard', 'bench', 'bike'], ['planter', 'parasol', 'aboard'], ['bike', 'aboard', 'bin'], ['bin', 'bench', 'bike'], ['planter', 'bin', 'bike'], ['bin', 'planter', 'aboard'], ['aboard', 'bench', 'parasol']];
+function benchG(g, x, yb, c) { R(g, x, yb - 7, 14, 2, 'd'); R(g, x + 1, yb - 7, 12, 1, c); R(g, x, yb - 4, 14, 2, 'd'); R(g, x + 1, yb - 4, 12, 1, 'l'); R(g, x + 1, yb - 2, 2, 2, 'd'); R(g, x + 11, yb - 2, 2, 2, 'd'); R(g, x, yb - 8, 1, 1, 'd'); R(g, x + 13, yb - 8, 1, 1, 'd'); }
+function aboardG(g, x, yb, c) { R(g, x + 1, yb - 12, 9, 12, 'd'); R(g, x + 2, yb - 11, 7, 9, c); R(g, x + 3, yb - 9, 5, 1, 'w'); R(g, x + 3, yb - 7, 4, 1, 'w'); R(g, x + 3, yb - 5, 5, 1, 'w'); R(g, x + 2, yb - 11, 7, 1, 'l'); R(g, x + 1, yb - 2, 1, 2, 'd'); R(g, x + 9, yb - 2, 1, 2, 'd'); }
+function planterG(g, x, yb, c) { R(g, x, yb - 5, 12, 5, 'd'); R(g, x + 1, yb - 4, 10, 3, 'b'); R(g, x + 1, yb - 4, 10, 1, 'l'); for (let k = 0; k < 3; k++) { R(g, x + 1 + k * 4, yb - 9, 3, 4, 'g'); R(g, x + 2 + k * 4, yb - 10, 1, 1, c); R(g, x + 1 + k * 4, yb - 8, 1, 1, 'G'); } }
+function bikeG(g, x, yb, c) { disc(g, x + 3, yb - 3, 3, 'd'); disc(g, x + 3, yb - 3, 2, 'w'); disc(g, x + 13, yb - 3, 3, 'd'); disc(g, x + 13, yb - 3, 2, 'w'); lineG(g, x + 3, yb - 3, x + 8, yb - 8, c); lineG(g, x + 8, yb - 8, x + 13, yb - 3, c); lineG(g, x + 8, yb - 8, x + 6, yb - 3, c); R(g, x + 6, yb - 9, 4, 1, 'd'); R(g, x + 12, yb - 9, 2, 1, 'd'); R(g, x + 13, yb - 8, 1, 4, 'd'); }
+function binG(g, x, yb, c) { R(g, x, yb - 9, 8, 9, 'd'); R(g, x + 1, yb - 8, 6, 7, c); R(g, x - 1, yb - 10, 10, 2, 'd'); R(g, x, yb - 10, 8, 1, 'w'); R(g, x + 2, yb - 6, 4, 1, 'w'); R(g, x + 3, yb - 5, 2, 2, 'w'); }
+function parasolG(g, x, yb, c) { R(g, x + 6, yb - 14, 1, 14, 'd'); for (let r = 0; r < 4; r++) R(g, x + 1 + r, yb - 14 + r, 12 - r * 2, 1, r % 2 ? 'w' : c); R(g, x, yb - 11, 14, 1, 'd'); R(g, x + 3, yb - 5, 8, 2, 'c'); R(g, x + 6, yb - 3, 2, 3, 'd'); R(g, x + 3, yb - 1, 8, 1, 'd'); }
+const SHOP_STREET_FN = { bench: benchG, aboard: aboardG, planter: planterG, bike: bikeG, bin: binG, parasol: parasolG };
+// Додаткові речі фасаду за варіантом: гірлянда прапорців, підвісні квіти, ліхтарики або вертикальні стяги; і одна вулична річ біля дверей
+function shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, sv) {
+  const ep = viewEpoch() % EPOCH_SHOP.length, pal = PAV_PAL[ep];
+  if (sv === 0 && level !== 2) buntingG(g, 8, w - 9, yB + 1);
+  else if (sv === 1) { for (let x = 12; x < w - 14; x += 15) { if (x > door.x - 4 && x < door.x + door.w + 2) continue; R(g, x + 1, yG + 10, 1, 2, 'd'); R(g, x - 1, yG + 12, 5, 3, 'd'); R(g, x, yG + 13, 3, 1, 'b'); R(g, x - 1, yG + 11, 1, 1, pal[(x >> 3) % 4]); R(g, x + 1, yG + 11, 1, 1, pal[(x >> 4) % 4]); R(g, x + 3, yG + 11, 1, 1, 'g'); } }
+  else if (sv === 2) { [door.x - 7, door.x + door.w + 5].forEach(lx => lanternG(g, lx, yG + 14)); for (let x = 9; x < w - 9; x += 4) R(g, x, yB + 1, 2, 1, pal[(x >> 2) % 4]); }
+  else { [9, w - 14].forEach((bx, i) => { const by = look.top + 27; R(g, bx, by, 6, 1, 'd'); R(g, bx + 1, by + 1, 4, 14, pal[(i + 1) % 4]); R(g, bx + 1, by + 1, 4, 1, 'w'); R(g, bx + 2, by + 4, 2, 2, 'w'); R(g, bx + 2, by + 9, 2, 1, 'w'); R(g, bx + 2, by + 15, 2, 1, 'd'); R(g, bx + 3, by + 16, 1, 1, 'd'); }); }
+  const pool = EPOCH_STREET[ep], kind = pool[(sv + level) % pool.length], fn = SHOP_STREET_FN[kind], yb = h - 7;
+  const left = (sv + level) % 2 === 0, x = left ? door.x - 17 : door.x + door.w + 6;
+  if (x > 14 && x + 14 < w - 14 && fn) fn(g, x, yb, pal[(sv + 1) % 4]);
+}
 // Скіни магазину (виграш у цирку): накладаються поверх вигляду епохи — кольори даху, колон, вивіски, навісу й пару своїх прикрас
 const SHOP_SKINS = {
   candy: { roofPal: { r: 'f', n: 'q' }, trim: 'q', col: ['f', 'w'], frame: ['d', 'q'], glass: 'q', base: 'p', band: ['dots', 'w'], awningCols: ['f', 'w'], signFill: 'f' },
@@ -5849,7 +5961,9 @@ function snowCap(c, maxY) {
     let y0 = -1;
     for (let y = 0; y < maxY; y++) if (has(x, y)) { y0 = y; break; }
     if (y0 < 0 || (!has(x - 1, y0) && !has(x + 1, y0))) continue;
-    [[255, 244, 220], [253, 229, 200]].forEach((col, k) => { if (y0 + k < maxY) { const i = ((y0 + k) * W + x) * 4; d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255; } });
+    const depth = 4 + (((x * 7) ^ (x >> 2)) % 3);                                            // нерівна шапка снігу: 4–6 рядків
+    const cols = [[255, 255, 255], [248, 251, 255], [236, 244, 253], [220, 233, 249], [204, 220, 242], [188, 207, 234]];
+    for (let k = 0; k < depth; k++) { if (y0 + k < maxY) { const i = ((y0 + k) * W + x) * 4, col = cols[Math.min(cols.length - 1, k)]; d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255; } }
   }
   g.putImageData(img, 0, 0);
 }
@@ -6193,7 +6307,7 @@ function buildShopCanvas(level, tiers) {
   withPal(es.roofPal, () => drawRoof(g, look.roof, w, look.top, look));
   deferSign = false;
   corniceG(g, w, look.top + 4, trim);
-  bandG(g, w, look.top + 4, es.band);
+  bandG(g, w, look.top + 4, es.band && !skinShop ? [['checker', 'dots', 'leaf', 'zig'][(shopVariant(level) + level) % 4], es.band[1]] : es.band);
   const colTop = look.top + 8, colH = h - 6 - colTop;
   [4, w - 8].forEach(cxp => { R(g, cxp - 1, colTop, 5, colH, 'd'); R(g, cxp, colTop, 3, colH, es.col[0]); R(g, cxp, colTop, 1, colH, es.col[1]); R(g, cxp + 2, colTop, 1, colH, 'd'); });
   // вивіска (текст накладається HTML-елементом, щоб був чіткий шрифт)
@@ -6214,7 +6328,7 @@ function buildShopCanvas(level, tiers) {
     }
     // скло: легке забарвлення, мулліони, відблиски (напівпрозорі — крізь них видно покупців)
     g.globalAlpha = 0.12; R(g, innerX, fl.top, innerW, hF, es.glass); g.globalAlpha = 1;
-    const n = Math.max(2, Math.round(innerW / 38));
+    const n = Math.max(2, Math.round(innerW / 38)) + (shopVariant(level) % 2);                                  // кількість шибок залежить від варіанта
     for (let i = 1; i < n; i++) {
       const mx = Math.round(innerX + i * innerW / n);
       if (fl.f === 0 && mx > door.x - 4 && mx < door.x + door.w + 4) continue;
@@ -6226,7 +6340,7 @@ function buildShopCanvas(level, tiers) {
   });
 
   // навіс у смужку з зубчиками
-  const [a1, a2] = (skinShop && skinShop.awningCols) || currentEpoch().awning || look.awning;
+  const sv = shopVariant(level), [a1, a2] = (skinShop && skinShop.awningCols) || (EPOCH_AWN[viewEpoch() % EPOCH_AWN.length] || [])[sv] || currentEpoch().awning || look.awning;
   for (let x = 0; x < w; x++) R(g, x, yG, 1, 8, (Math.floor(x / 6) % 2) ? a2 : a1);
   R(g, 0, yG, w, 1, 'd');
   if (es.awning === 'flat') {                                  // сучасний прямий навіс зі світлодіодною стрічкою
@@ -6266,6 +6380,7 @@ function buildShopCanvas(level, tiers) {
   roofProp(g, es, w, look.top, level, pL); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, pR);
   shopRoofExtras(g, es, w, look.top, level);       // примітні деталі на даху по боках від вивіски
   epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
+  if (!skinShop) shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, shopVariant(level));
   if (skinShop) skinShopDeco(g, skinOn('shop'), w, h, look, yG, door);
   gD.save(); gD.globalCompositeOperation = 'destination-out'; gD.fillStyle = '#000'; gD.fillRect(K.x, K.y, K.w, K.h); gD.restore();
   g = gFront; g.drawImage(dcv, 0, 0);
@@ -6282,7 +6397,10 @@ function buildShopCanvas(level, tiers) {
   lit.width = w; lit.height = h;
   const lg = lit.getContext('2d');
   glassRects.forEach(r => {
-    if (r[2] > 30) { lg.globalAlpha = 0.13; R(lg, r[0], r[1], r[2], r[3], 'y'); lg.globalAlpha = 1; }       // інтер'єр: лише легке тепле світіння, щоб крізь скло було видно звірят
+    if (r[2] > 30) {                                                                                           // інтер'єр: тепле світло, крізь яке все ще видно звірят
+      lg.globalAlpha = 0.2; R(lg, r[0], r[1], r[2], r[3], 'y'); lg.globalAlpha = 0.12; R(lg, r[0], r[1], r[2], 3, 'w'); R(lg, r[0], r[1] + r[3] - 5, r[2], 5, 'h');
+      lg.globalAlpha = 1; for (let bx = r[0] + 5; bx < r[0] + r[2] - 3; bx += 12) { R(lg, bx, r[1] + 1, 3, 2, 'w'); lg.globalAlpha = 0.28; R(lg, bx - 2, r[1] + 3, 7, 6, 'y'); lg.globalAlpha = 1; }          // лампи під стелею з конусом світла
+    }
     else { R(lg, r[0], r[1], r[2], r[3], 'y'); R(lg, r[0], r[1] + r[3] - 3, r[2], 3, 'h'); }                 // ліхтарики й дрібні вікна світяться яскраво
   });
   lg.clearRect(door.x - 3, door.y - 3, door.w + 6, door.h + 3);                                                                  // двері лишаються без підсвітки — вночі їх чітко видно
@@ -7204,6 +7322,7 @@ const clouds = CLOUDS.map(c => ({ ...c }));
 const weather = { rain: 0, target: 0, timer: 30 };
 const raindrops = [];
 function updateWeather(dt) {
+  updateNatRainbow(dt);
   weather.target = (animOn() && state.settings.rain) ? 0.85 : 0;       // дощ іде лише коли гравець увімкнув його крапелькою біля магазину
   weather.rain += (weather.target - weather.rain) * Math.min(1, dt * 0.6);
   if (weather.rain < 0.02) { raindrops.length = 0; return; }
@@ -7817,9 +7936,22 @@ function updateBubbles() {
     placeBubble(el, p.x, Math.max(24, p.y));
   });
 }
+// Репліку обирає ситуація: взимку часто «холодні» фрази, часом — загальна репліка епохи, інакше — власна фраза звірятка; та сама фраза підряд не повторюється
+function pickLine(id, own, cold, nCold) {
+  const winter = theme.season === 'winter', ep = viewEpoch() % 8;
+  for (let k = 0; k < 4; k++) {
+    const r = Math.random();
+    let key;
+    if (winter && r < 0.4) key = cold + Math.floor(Math.random() * nCold);
+    else if (r < (winter ? 0.62 : 0.3)) key = 'epoch_say_' + ep + '_' + Math.floor(Math.random() * 6);
+    else key = own();
+    if (key !== lastLine[id] || k === 3) { lastLine[id] = key; return t(key); }
+  }
+}
 function actorSay(a) {
-  const m = TEAM[a.i];
-  showBubble('t' + a.i, t('team_' + m.id + '_say_' + Math.floor(Math.random() * TEAM_PHRASES)), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 }));
+  const m = TEAM[a.i], up = () => ({ x: a.x, y: a.y - 19 * ACTOR_K - 1 });
+  const p = up();
+  showBubble('t' + a.i, pickLine(m.id, () => 'team_' + m.id + '_say_' + Math.floor(Math.random() * TEAM_PHRASES), 'team_' + m.id + '_cold_', 3), p.x, p.y, up);
 }
 function wornSkinIds() {                                                       // ідентифікатори скінів, які зараз вдягнено (для реплік)
   const ids = [];
@@ -7832,7 +7964,7 @@ function capySay(forceId) {
   if (!id && worn.length && Math.random() < 0.65) { const cs = worn.find(w => w.startsWith('capy_')); id = (cs && Math.random() < 0.6) ? cs : worn[Math.floor(Math.random() * worn.length)]; }
   const key = id ? 'skinSay_' + id : '';
   let pi = Math.floor(Math.random() * CAPY_PHRASES); if (skinOn('capy')) { const ok = [...Array(CAPY_PHRASES).keys()].filter(n => n !== 1 && n !== 4); pi = ok[Math.floor(Math.random() * ok.length)]; }       // у скіні Капі не жартує про квіточку на голові
-  const txt = key && t(key) !== key ? t(key) : t('capy_say_' + pi);
+  const txt = key && t(key) !== key ? t(key) : pickLine('capy', () => 'capy_say_' + pi, 'capy_cold_', 3);
   showBubble('capy', txt, c.x + 14, c.footY - 32 * CAPY_K);
 }
 
@@ -9702,6 +9834,13 @@ function copyExport() {
   else if (ok) showToast(t('exportCopied'), 'good');
 }
 
+// Тільки для перевірки (?debug=1): window.__show(рівень, епоха, час доби 0…1, сезон, меню відкрите) ставить гру в потрібний вигляд
+if (/[?&]debug=1/.test(location.search)) window.__show = (L, ep, ph, season, panel) => {
+  Storage.prototype.setItem = function () {};
+  document.querySelectorAll('button').forEach(b => { if (/Пропустити/.test(b.textContent)) b.click(); }); if (ui.modalBtn) ui.modalBtn.click();
+  state.settings.rain = false; state.settings.season = season || 'summer'; state.epoch = ep; state.activeEpoch = -1; state.shopLevel = L; state.team = state.team.map((v, i) => (i < 8 ? 3 : 0)); state.dayPhase = ph; state.settings.panelOpen = !!panel;
+  recalcIncome(); try { rebuildEpochLayers(); } catch (e) { /* ок */ } rebuildShop(true); syncActors(); layoutScene(); applyPanel(); document.querySelectorAll('.toast').forEach(e => e.remove()); return 'ok';
+};
 // Режим тестування (?debug=1): швидко перевірити баланс
 function debugHour() {
   const add = state.cps * 3600;
@@ -10561,10 +10700,34 @@ function rainbowCanvas(R0) {                                    // перема�
   rainbowKey = R0; rainbowBw = Math.max(5, R0 / 14); rainbowM = Math.round(rainbowBw * 10);
   return (rainbowCv = buildRainbow(R0, rainbowBw, rainbowM, true));
 }
-function drawRainbowSkin() {                                  // малюється ПОЗАДУ магазину, тож його не закриває
+// Велика веселка: дуга сягає майже верху неба, тож видно над високими будинками і на ПК, і на телефоні
+function rainbowGeom() {
+  const cy = LAYOUT.curbY + 14, top = -view.offY + 10;
+  return { R0: Math.round(Math.max(120, Math.min((cy - top) * 0.93, 240))), cy, px: LAYOUT.centerX };
+}
+// Природна веселка для всіх: виглядає після дощу й сама час від часу (вдень), тане за хвилину-півтори
+const natRainbow = { a: 0, life: 0, dur: 0, timer: 18, prevRain: 0 };
+function updateNatRainbow(dt) {
+  const n = natRainbow, night = sky.night > 0.45 || theme.season === 'halloween';
+  if (weather.rain > 0.25) n.prevRain = 1;
+  if (n.prevRain && weather.rain < 0.1 && !night) { n.prevRain = 0; if (n.life <= 0) n.life = n.dur = 75 + Math.random() * 40; }          // після дощу виглядає веселка
+  if (n.life <= 0) { n.timer -= dt; if (n.timer <= 0) { if (!night && weather.rain < 0.1) { n.life = n.dur = 80 + Math.random() * 40; n.timer = 150 + Math.random() * 120; } else n.timer = 20; } }
+  else n.life -= dt;
+  const want = n.life > 0 && !night ? Math.min(1, Math.min(n.dur - n.life, n.life) / 5) : 0;
+  n.a += (want - n.a) * Math.min(1, dt * 1.2);
+}
+function drawNatRainbow(front) {                               // дві проби: позаду будинків — яскрава (видно над дахами), поверх них — ледь помітна, щоб дуга не пропадала за будинками
+  const a = natRainbow.a * (1 - sky.night) * (1 - weather.rain * 0.6);
+  if (a < 0.03 || skinOn('weather') === 'rainbow') return;
+  const gm = rainbowGeom(), shimmer = animOn() ? Math.sin(animClock * 1.3) : 0;
+  ctx.globalAlpha = Math.min(1, ((front ? 0.42 : 0.9) + 0.05 * shimmer) * a);
+  ctx.drawImage(rainbowCanvas(gm.R0), Math.round(gm.px - gm.R0 - rainbowM), Math.round(gm.cy - gm.R0 - rainbowM));
+  ctx.globalAlpha = 1;
+}
+function drawRainbowSkin() {                                  // скін-веселка: позаду будинків, велика, видна над ними
   const a = (1 - sky.night) * (1 - weather.rain * 0.7);
   if (a < 0.03) return;
-  const s = skyArcSize(), R0 = Math.round(Math.max(s.rx, s.ry) * 1.3), px = LAYOUT.centerX, shimmer = animOn() ? Math.sin(animClock * 1.3) : 0;
+  const gm = rainbowGeom(), s = { cy: gm.cy }, R0 = gm.R0, px = gm.px, shimmer = animOn() ? Math.sin(animClock * 1.3) : 0;
   ctx.globalAlpha = Math.min(1, (0.86 + 0.06 * shimmer) * a);
   const rbCv = rainbowCanvas(R0); ctx.drawImage(rbCv, Math.round(px - R0 - rainbowM), Math.round(s.cy - R0 - rainbowM));
   if (animOn()) {                                              // блискітки, що пливуть по веселці
@@ -10749,6 +10912,67 @@ function updateEpochFeatures(dt) {
     }
   }
 }
+// Дирижабль: спрайт малюється один раз (об'ємне тіло з ребрами й смугами, хвіст, гондола з вікнами), а гвинти, ліхтарики й прапорець — щокадру
+let blimpSprite = null;
+function buildBlimpSprite() {
+  const W = 140, H = 66, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), cx = 70, cy = 24, A = 56, B = 19;
+  const body = (x, y) => { const dx = (x + 0.5 - cx) / A, dy = (y + 0.5 - cy) / B; return dx * dx + dy * dy <= 1; };
+  const P = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+  // тяги й підвіска гондоли (позаду корпусу)
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (!body(x, y)) continue;
+    const dy = (y + 0.5 - cy) / B, dx = (x + 0.5 - cx) / A;                                      // -1…1 по висоті
+    const t = (dy + 1) / 2 + (dx < 0 ? 0 : 0) - dx * 0.06;                                       // верхній лівий бік світліший
+    const chk = (x + y) % 2 === 0;
+    const bands = ['#fffaf0', '#fff0d6', '#f4e1bf', '#e6caa0', '#cfa97d', '#a98560'];
+    let k = Math.max(0, Math.min(bands.length - 1, Math.floor(t * bands.length * 0.98 + (chk ? 0.5 : 0) - 0.25)));
+    P(x, y, 1, 1, bands[k]);
+    // поздовжні смуги (червона й синя), що йдуть по обводу корпусу
+    const s1 = Math.abs(dy - 0.18), s2 = Math.abs(dy - 0.42);
+    if (s1 < 0.07) P(x, y, 1, 1, '#c4553d'); else if (s2 < 0.045) P(x, y, 1, 1, '#2f5f9f');
+    if (s1 < 0.07 && dy - 0.18 < -0.04) P(x, y, 1, 1, '#d9705a');
+  }
+  // ребра жорсткості: вертикальні дуги
+  g.globalAlpha = 0.22; for (let rx = -48; rx <= 48; rx += 12) { for (let y = 0; y < H; y++) { const x = cx + rx; if (body(x, y)) P(x, y, 1, 1, '#4a3228'); } } g.globalAlpha = 1;
+  // контур
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (body(x, y) && (!body(x - 1, y) || !body(x + 1, y) || !body(x, y - 1) || !body(x, y + 1))) P(x, y, 1, 1, '#4a3228');
+  // відблиск
+  P(cx - 36, cy - B + 3, 22, 1, '#ffffff'); P(cx - 40, cy - B + 4, 14, 1, '#ffffff'); g.globalAlpha = 0.7; P(cx - 30, cy - B + 5, 12, 1, '#ffffff'); g.globalAlpha = 1;
+  // емблема на боку: зірка в колі
+  const ex = cx + 6, ey = cy + 2; for (let dy = -6; dy <= 6; dy++) for (let dx = -6; dx <= 6; dx++) if (dx * dx + dy * dy <= 36) P(ex + dx, ey + dy, 1, 1, dx * dx + dy * dy >= 25 ? '#4a3228' : '#fff4dc');
+  P(ex - 1, ey - 4, 3, 9, '#c4553d'); P(ex - 4, ey - 1, 9, 3, '#c4553d'); P(ex - 3, ey - 3, 1, 1, '#c4553d'); P(ex + 3, ey - 3, 1, 1, '#c4553d'); P(ex - 3, ey + 3, 1, 1, '#c4553d'); P(ex + 3, ey + 3, 1, 1, '#c4553d'); P(ex, ey, 1, 1, '#ffe08a');
+  // ніс: металевий ковпак із щоглою для прапорця
+  P(cx + A - 3, cy - 3, 4, 7, '#b8bcc8'); P(cx + A - 3, cy - 3, 4, 1, '#e6e9f2'); P(cx + A + 1, cy - 2, 1, 5, '#4a3228'); P(cx + A - 3, cy + 3, 4, 1, '#6a6e7a');
+  // хвіст: чотири оперення — верхнє, нижнє й два бічні (видно як менші)
+  const fin = (pts, col) => { g.fillStyle = col; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); pts.slice(1).forEach(p => g.lineTo(p[0], p[1])); g.closePath(); g.fill(); g.strokeStyle = '#4a3228'; g.lineWidth = 1; g.stroke(); };
+  fin([[cx - A + 4, cy - 8], [cx - A - 2, cy - B - 9], [cx - A + 16, cy - 13]], '#c4553d');
+  fin([[cx - A + 4, cy + 8], [cx - A - 2, cy + B + 9], [cx - A + 16, cy + 13]], '#a8402f');
+  fin([[cx - A + 4, cy - 1], [cx - A - 6, cy - 2], [cx - A - 6, cy + 4], [cx - A + 4, cy + 3]], '#d9705a');
+  P(cx - A - 4, cy - 1, 2, 4, '#4a3228');
+  // гондола під корпусом: дерев'яний каркас, вікна з теплим світлом, ліхтар і драбинка
+  const gx = cx - 20, gy = cy + B + 6, gw = 42, gh = 12;
+  g.strokeStyle = '#4a3228'; g.lineWidth = 1; [[cx - 18, cy + B - 4], [cx - 6, cy + B - 1], [cx + 8, cy + B - 1], [cx + 18, cy + B - 4]].forEach(([tx, ty], i) => { g.beginPath(); g.moveTo(tx + 0.5, ty); g.lineTo(gx + 4 + i * 11 + 0.5, gy); g.stroke(); });
+  P(gx - 1, gy - 1, gw + 2, gh + 2, '#4a3228'); P(gx, gy, gw, gh, '#a87048'); P(gx, gy, gw, 2, '#c8905c'); P(gx, gy + gh - 3, gw, 3, '#7a4f35');
+  for (let k = 0; k < 6; k++) { P(gx + 3 + k * 6, gy + 3, 4, 5, '#4a3228'); P(gx + 4 + k * 6, gy + 4, 2, 3, k % 2 ? '#ffe08a' : '#fff0b8'); }
+  P(gx + gw - 8, gy + 2, 8, 7, '#4a3228'); P(gx + gw - 7, gy + 3, 6, 5, '#bfe3f2'); P(gx + gw - 7, gy + 3, 2, 1, '#ffffff');                       // передня кабіна
+  P(gx + gw, gy + 4, 3, 3, '#ffe08a'); P(gx - 3, gy + 8, 3, 2, '#4a3228');
+  // моторні гондоли по боках
+  [[cx - 34, cy + B - 3], [cx + 30, cy + B - 3]].forEach(([mx, my]) => { P(mx - 1, my - 1, 11, 8, '#4a3228'); P(mx, my, 9, 6, '#b8bcc8'); P(mx, my, 9, 2, '#e6e9f2'); P(mx + 3, my + 2, 3, 2, '#6a6e7a'); P(mx + 4, my - 4, 1, 4, '#4a3228'); });
+  return c;
+}
+function drawBlimp(b, time) {
+  if (!blimpSprite) blimpSprite = buildBlimpSprite();
+  const x = Math.round(b.x), y = Math.round(b.y + Math.sin(time * 0.9) * 1.5), W = blimpSprite.width;
+  ctx.globalAlpha = 0.16; for (let dy = 0; dy < 4; dy++) R(ctx, x - 50 + dy * 5, y + 54 + dy, 100 - dy * 10, 1, 'd'); ctx.globalAlpha = 1;      // легка тінь знизу
+  ctx.drawImage(blimpSprite, x - 70, y - 24);
+  // гвинти на моторах крутяться, на хвості — маленький гвинт
+  [[x - 24, y + 19], [x + 40, y + 19]].forEach(([px, py], i) => { const ph = Math.floor(time * 18 + i) % 3, hh = [9, 5, 2][ph]; R(ctx, px, py - hh, 1, hh * 2 + 1, '#2a1d1a'); if (ph !== 2) R(ctx, px + 1, py - Math.floor(hh / 2), 1, hh, 'e'); });
+  const tp = Math.floor(time * 20) % 2; R(ctx, x - 62, y - 3 + tp, 1, 7 - tp * 2, '#2a1d1a');
+  // прапорець на носі майорить, вогники на кінцях світяться по черзі
+  const wv = Math.floor(time * 5) % 3; R(ctx, x + 57, y - 8, 1, 6, '#4a3228'); for (let k = 0; k < 7; k++) R(ctx, x + 58 + k, y - 8 + Math.round(Math.sin(time * 6 - k * 0.8) * (1 + k * 0.15)) + (wv === 1 ? 0 : 0), 1, 4 - (k > 4 ? 1 : 0), k % 2 ? '#ffe08a' : '#c4553d');
+  const nav = Math.floor(time * 2) % 2; R(ctx, x + 57, y + 22 - 24 + 24, 1, 1, nav ? '#7aff7a' : '#2a6a2a'); R(ctx, x - 64, y + 1, 1, 1, nav ? '#2a0a0a' : '#ff4a4a');
+}
 // Небо епохи (у координатах «ядра», після хмар і до землі)
 function drawEpochSky(time) {
   const fx = currentEpoch().features;
@@ -10761,24 +10985,7 @@ function drawEpochSky(time) {
     }
   }
   const b = epochFx.blimp;
-  if (b) {                                             // повітряне судно
-    const x = Math.round(b.x), y = Math.round(b.y);
-    const hw = 50, hh = 16;                                    // великий дирижабль: близько 100 пікселів завдовжки
-    ctx.globalAlpha = 0.18; for (let dy = hh; dy <= hh + 3; dy++) R(ctx, x - hw + (dy - hh) * 6, y + dy + 14, hw * 2 - (dy - hh) * 12, 1, 'd'); ctx.globalAlpha = 1;      // легка тінь знизу
-    for (let dy = -hh; dy <= hh; dy++) { const half = Math.round(hw * Math.sqrt(Math.max(0, 1 - (dy / (hh + 0.5)) * (dy / (hh + 0.5))))); R(ctx, x - half, y + dy, half * 2 + 1, 1, dy < -hh * 0.5 ? 'w' : dy > hh * 0.45 ? 'e' : 'W'); }
-    for (let dy = -hh; dy <= hh; dy++) { const half = Math.round(hw * Math.sqrt(Math.max(0, 1 - (dy / (hh + 0.5)) * (dy / (hh + 0.5))))); R(ctx, x - half, y + dy, 1, 1, 'd'); R(ctx, x + half, y + dy, 1, 1, 'd'); }
-    for (let i = -hw; i <= hw; i++) { const half = Math.round(hh * Math.sqrt(Math.max(0, 1 - (i / (hw + 0.5)) * (i / (hw + 0.5))))); R(ctx, x + i, y - half, 1, 1, 'd'); R(ctx, x + i, y + half, 1, 1, 'd'); }
-    [-30, -15, 0, 15, 30].forEach((kk, i) => { const hg = Math.round(hh * Math.sqrt(1 - (kk / (hw + 0.5)) * (kk / (hw + 0.5)))) - 1; R(ctx, x + kk - 2, y - hg, 4, hg * 2 + 1, i % 2 ? 'f' : 'p'); R(ctx, x + kk - 2, y - hg, 1, hg * 2 + 1, i % 2 ? 'p' : 'q'); });
-    R(ctx, x - 8, y - 4, 16, 8, 'w'); R(ctx, x - 8, y - 4, 16, 1, 'd'); R(ctx, x - 8, y + 3, 16, 1, 'd'); for (let k = 0; k < 4; k++) R(ctx, x - 6 + k * 4, y - 2, 2, 4, k % 2 ? 'r' : 'n');       // смуга з написом-орнаментом
-    R(ctx, x - hw - 8, y - 14, 10, 9, 'p'); R(ctx, x - hw - 8, y + 6, 10, 9, 'p'); R(ctx, x - hw - 10, y - 2, 9, 5, 'p'); R(ctx, x - hw - 8, y - 14, 10, 1, 'd'); R(ctx, x - hw - 8, y + 14, 10, 1, 'd');   // хвостове оперення
-    R(ctx, x + 6, y + hh + 1, 1, 4, 'd'); R(ctx, x - 14, y + hh + 1, 1, 4, 'd'); R(ctx, x - 20, y + hh + 4, 40, 1, 'd');                                                // підвіска
-    R(ctx, x - 17, y + hh + 5, 34, 9, 'd'); R(ctx, x - 16, y + hh + 6, 32, 7, 'e'); R(ctx, x - 16, y + hh + 6, 32, 1, 'E');
-    for (let k = 0; k < 6; k++) { R(ctx, x - 14 + k * 5, y + hh + 8, 3, 3, 'd'); R(ctx, x - 13 + k * 5, y + hh + 9, 1, 1, k % 2 && Math.floor(time * 2) % 2 ? 'w' : 'y'); }   // ілюмінатори
-    R(ctx, x + 17, y + hh + 8, 3, 3, 'd');
-    const pf = Math.floor(time * 16) % 2; R(ctx, x - hw - 12, y - 6 + pf, 2, 13 - pf * 2, 'e'); R(ctx, x - hw - 11, y - 8, 1, 17, 'd');       // гвинт, що крутиться
-    R(ctx, x + hw - 2, y - hh - 4, 1, 5, 'd'); R(ctx, x + hw - 1, y - hh - 4, 5, 3, Math.floor(time * 3) % 2 ? 'r' : 'y');                   // прапорець на носі
-    if (Math.floor(time * 3) % 2) R(ctx, x + hw - 2, y + 2, 2, 2, 'y');
-  }
+  if (b) drawBlimp(b, time);                           // повітряне судно
   const p = epochFx.plane;
   if (p) {                                             // літак із білим слідом
     const dir = p.vx > 0 ? 1 : -1, x = Math.round(p.x), y = Math.round(p.y);
@@ -11065,7 +11272,7 @@ function drawNightLights() {
   ctx.globalAlpha = 1;
   if (!build && shop.lit) {
     const sc = getShopScale();
-    drawShopLitMasked(sc, L * 0.7);
+    drawShopLitMasked(sc, Math.min(1, L * 0.9));
     withShopScale(sc, () => {
     const rs = shop.roofSign, pulse = 0.85 + 0.15 * Math.sin(animClock * 2.2);        // м'яке сяйво навколо вивісок
     if (rs) {                                                   // «CAPYTAP» світиться іншим кольором, ніж назва магазину
@@ -11088,6 +11295,14 @@ function drawNightLights() {
     ctx.globalAlpha = L;
     R(ctx, x - 2, 88, 6, 5, 'y'); R(ctx, x - 1, 89, 2, 2, 'w');
   });
+  if (!build && shop && L > 0.05) {                                  // теплий ореол навколо магазину й торгового центру: світло виливається на вулицю
+    ctx.save();
+    const big = shop.level >= 4 ? 1.35 : 1;
+    for (let i = 0; i < 6; i++) { const pad = 3 + i * 5; ctx.globalAlpha = L * 0.045 * big; ctx.fillStyle = '#ffb94a'; ctx.fillRect(shop.x - pad, shop.y + shop.h * 0.18 - pad * 0.6, shop.w + pad * 2, shop.h * 0.82 - 44 + pad * 0.6); }
+    ctx.translate(shop.x + shop.w / 2, LAYOUT.curbY + 4); ctx.scale(1, 0.3); ctx.fillStyle = '#ffc060';                                  // м'яка овальна пляма світла на бруківці перед входом
+    for (let i = 0; i < 9; i++) { ctx.globalAlpha = L * 0.022 * big; ctx.beginPath(); ctx.arc(0, 0, shop.w * (0.72 - i * 0.07), 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore();
+  }
   if (!build && shop) {                                              // світло з дверей і вітрин падає на тротуар
     const cx = shop.x + shop.door.x + shop.door.w / 2;
     for (let i = 0; i < 8; i++) { ctx.globalAlpha = L * 0.12; R(ctx, Math.round(cx - 15 - i * 4), LAYOUT.curbY + i * 4, 30 + i * 8, 4, 'y'); }
@@ -12160,7 +12375,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 7;
+const NEWS_VERSION = 8;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -12188,7 +12403,7 @@ function hitNews(p) {
   return false;
 }
 // Випуски газети (новий — першим). Картинки лише до найбільших змін; тексти двома мовами. Для нового випуску: додай запис угору й підніми NEWS_VERSION.
-const NEWS_ISSUES = [{"ver":7,"uk":[["Подорож у часі — своя анімація для кожної епохи.","Відродження: давня Греція з колонами, оливковими деревами й звірятами-ангелятками з німбами. Ретро: перемотка старої відеокасети. Диско: дзеркальна куля й танцпол. Аркади: великі пікселі, прибульці й LEVEL UP. Інтернет: цифровий дощ, спливаючі вікна й завантаження. Еко: вітер, листя й ліани. Космос: політ крізь зорі й планети. Неон: тунель з неонових кілець. Звук теж новий: цокання маятника, шестерні, свист і дзвін."],["Різнокольорові будинки й більше неба.","Усі будинки на фоні тепер різних кольорів, звірята-працівники стали більшими й чіткішими, а на ПК з відкритим меню завжди видно більше неба. Подорож у часі можна пропустити дотиком, коли вже бачив її раз, і в кожної епохи свій звук."],["Завдань для розширення стає більше з кожним рівнем.","Щоб збудувати наступний маркет, треба купити першого товару рівня 25, 28, 31, 34 чи 37 разів, а другого 15, 18, 21, 24 чи 27. Звірят цього рівня треба прокачати до 2-го рівня на ранніх етапах і до 3-го на пізніх."],["Торговий центр без нових відділів.","Фудкорт і кінотеатр прибрано: торговий центр лише завершує шлях до подорожі в часі."],["Осколки часу й подорожі.","За подорож тепер 3–9 осколків (+1 до колишнього), більше, якщо в епосі заробити багато. Кожна наступна епоха потребує в 4 рази більше монет, а дохід за подорож росте в 1,8 раза. Тож епохи довші й рівніші. Покращення Магазину часу високих рівнів відкриваються лише після кількох подорожей."],["Будівництво без крана.","Кран прибрано. Тепер Боді сам носить блоки магазину від купи до будівлі й підкидає їх на місце."],["Годинник рухається разом із магазином.","Годинникова вежа торгового центру більше не відстає, коли тапаєш по магазину."],["Вищі будинки.","Будинки позаду магазину стали майже вдвічі вищими, до середини четвертого поверху торгового центру. Небо не зачеплено."],["Капі більша.","Капі виросла на 30%."],["Цирк частіше.","Цирк Фортуни тепер приїздить трохи частіше."]],"en":[["Time trip: its own animation for every era.","Renaissance: ancient Greece with columns, olive trees and angel animals with halos. Retro: rewinding an old video tape. Disco: a mirror ball and dance floor. Arcade: big pixels, invaders and LEVEL UP. Internet: digital rain, pop-ups and loading. Eco: wind, leaves and vines. Space: a flight through stars and planets. Neon: a tunnel of neon rings. The sound is new too: pendulum ticks, gears, a whoosh and a chime."],["Colourful houses and more sky.","Every house in the background now has its own colour, the working animals are bigger and clearer, and on PC with the menu open you now see more sky. You can skip the time trip with a tap once you have seen it, and every era has its own sound."],["More tasks for expanding on every level.","To build the next market you need to buy the level's first product 25, 28, 31, 34 or 37 times and the second 15, 18, 21, 24 or 27 times. Animals of this level need level 2 on the early stages and level 3 on the late ones."],["A mall without new departments.","The food court and the cinema department are gone: the mall only completes the road to a time trip."],["Time shards and trips.","A trip now gives 3-9 shards (+1 more than before), more if you went far in the era. Every next era needs 4 times more coins and a trip multiplies income by 1.8. Eras are longer and steadier. High-level Time shop upgrades unlock only after several trips."],["Building without a crane.","The crane is gone. Now Bodya carries the shop's blocks from the pile to the building himself and tosses them into place."],["The clock moves with the shop.","The mall clock tower no longer lags when you tap the shop."],["Taller houses.","The houses behind the shop are nearly twice as tall now, up to the middle of the mall's fourth floor. The sky is untouched."],["Capy is bigger.","Capy grew by 30%."],["Circus more often.","The Fortune Circus comes by a little more often."]],"intro":{"uk":"Привіт, друже! У цьому номері: три нові подорожі в часі, більше завдань для розширення, вищі будинки, Боді з блоками й Капі побільшала. Гортай сторінки!","en":"Hi, friend! In this issue: three new time trips, more tasks for expanding, taller houses, Bodya with blocks and a bigger Capy. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":6,"uk":[["Павільйони на поверхах.","У маркетах і торговому центрі на кожному поверсі з’явилися павільйони під тему епохи: одяг із манекенами, іграшки, техніка, книжки, прикраси й рослини. Поки відділ не куплено, павільйон зачинений жалюзі. А що вищий рівень відділу, то повніша вітрина. На широких поверхах з’явилася кав’ярня з прилавком."],["Магазин часу став дорожчим.","«Швидкий старт» прибрано. Усі покращення стали слабшими, але дорожчими, щоб гра не прискорювалася. З’явилося «Золоте чуття»: золоті покупці приходять частіше. Осколки, які були витрачені в старому магазині, повернуто."],["Лис Мел.","Скін Мел тепер лис, а не лисиця. Хитрий лише в ціні."],["Вивіска без перекриттів.","Вивіска CAPYTAP на даху більше нічим не накрита: прапорці, димарі й прикраси стоять осторонь, а годинникова вежа піднята над нею."],["Крапля на місці.","Крапелька, що вмикає дощ, тепер висить на дереві праворуч від магазину й рухається лише разом з вулицею."],["Більше неба на телефоні.","На телефоні над дахом лишається більше неба, особливо коли відкрито меню."],["Чіткі рамки меню.","Рамка меню стала товщою й кольоровою. Вкладки мають виразний контур, як аркуші в таблиці: обрана світла, з кольоровою планкою знизу."],["Лічильник.","Кристали й осколки стоять стовпчиком, а великі числа більше не вилазять за край екрана."]],"en":[["Pavilions on every floor.","Shops and the mall now have pavilions on each floor, themed to the era: clothes with mannequins, toys, tech, books, jewellery and plants. Until a department is bought its pavilion is shut behind shutters. The higher the department level, the fuller the display. Wide floors also got a cafe with a counter."],["The Time shop costs more.","\"Head Start\" is gone. Every upgrade is weaker but pricier, so the game does not speed up. A new upgrade, \"Golden Nose\", makes golden shoppers come more often. Shards spent in the old shop were refunded."],["Mel the fox.","The Mel skin is now a he-fox. Sly only about the price."],["A clear sign.","The CAPYTAP roof sign is no longer covered by anything: flags, chimneys and decorations stand aside, and the clock tower is lifted above it."],["The drop stays put.","The little drop that turns the rain on now hangs on the tree to the right of the shop and moves only with the street."],["More sky on the phone.","On a phone there is more sky above the roof, especially when the menu is open."],["Crisp menu frames.","The menu frame is thicker and coloured. Tabs have a clear outline like sheets in a spreadsheet: the selected one is light with a coloured bar below."],["The counter.","Crystals and shards are stacked in a column, and big numbers no longer run off the edge of the screen."]],"intro":{"uk":"Привіт, друже! У цьому номері: павільйони на кожному поверсі, дорожчий Магазин часу, чіткі рамки меню й багато дрібниць. Гортай сторінки!","en":"Hi, friend! In this issue: pavilions on every floor, a pricier Time shop, crisp menu frames and many small things. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":5,"uk":[["Осколки часу й кристали.","Тепер дві валюти. Осколки часу (фіолетові) дає подорож у часі, і за них купуються покращення в Магазині часу. Кристали випадають з бустів, цирку й золотих покупців, і за них купуються скіни. Кожна подорож у часі ще й назавжди дає ×2 до тапів і доходу."],["Одна відьма.","Відьми більше не літають просто так. На Хелловін замість цирку прилітає лише одна відьма на мітлі. Потім вона запрошує зіграти в «Три казанки». Зелену бабусю прибрали."],["Нові лапки для хатки.","Хатка відьми тепер стоїть на справжніх курячих лапках: з коліньми, лусочками, пальцями й кігтями. Сама відьма стала піксельнішою."],["Скіни говорять.","У кожного скіна є своя репліка: пірат кричить по-піратськи, астронавт просить орбіту цін. Одягни скін і тапни по Капі. А ще з’явилися два скіни розробників: лис Мел і зайка Ніка. Вони безкоштовні."],["Золоті покупці.","Золоті звірята тепер просто золоті. Скіни, капелюхи й шарфи на них не вдягаються."],["Очі на місці.","Костюми героїв більше не закривають звірятам очі. А в Капі прибрали підсвітку, що відставала від скіна."],["Газета MEL & NIKA.","Газета тепер піксельна, з іменами редакторів і вкладками. У вкладках можна перечитати попередні випуски, а кнопка «Написати розробникам» надішле нам твою думку."],["Більший маркет на ПК.","Коли магазин росте, на комп’ютері картинка трохи віддаляється, щоб усе вміщалося зручно."],["Меню на телефоні.","Меню на вертикальному телефоні більше не залазить на цирк і дорогу: сцена тепер закінчується над панеллю."],["Кінозал у торговому центрі.","На торговому центрі з’явився п’ятий поверх із кінозалом: екран, завіси, крісла й неонова вивіска CINEMA. На екрані йде «кіно». Менші маркети теж стали трохи сучаснішими, а на ПК більше неба й ширша бруківка."]],"en":[["Time shards and crystals.","There are now two currencies. Time shards (purple) come from time travel and buy upgrades in the Time shop. Crystals drop from boosts, the circus and golden shoppers, and buy skins. And every time trip permanently gives ×2 to taps and income."],["Just one witch.","Witches no longer fly around for no reason. On Halloween, instead of the circus, a single witch on a broom arrives. Then she invites you to play \"Three cauldrons\". The green granny is gone."],["New legs for the hut.","The witch’s hut now stands on real chicken legs: knees, scales, toes and claws. The witch herself got more pixelated."],["Skins talk.","Every skin has its own line: the pirate shouts like a pirate, the astronaut asks for the orbit of prices. Wear a skin and tap Capy. Two developer skins are new: Mel the fox and Nika the bunny. They are free."],["Golden shoppers.","Golden animals are now just golden. Skins, hats and scarves do not go on them."],["Eyes in place.","Hero costumes no longer cover the animals’ eyes. And the glow around Capy, which lagged behind the skin, is gone."],["The MEL & NIKA paper.","The paper is now pixel-style, with the editors’ names and tabs. Use the tabs to reread earlier issues, and the “Write to the developers” button sends us your thoughts."],["A bigger market on PC.","When the shop grows, the picture on a computer zooms out a little so everything fits comfortably."],["The phone menu.","On a vertical phone the menu no longer covers the circus and the road: the scene now ends above the panel."],["A cinema in the mall.","The mall got a fifth floor with a cinema: a screen, curtains, seats and a neon CINEMA sign. The screen plays a little movie. Smaller shops got a bit more modern too, and on PC there is more sky and wider cobbles."]],"intro":{"uk":"Привіт, друже! У цьому номері: дві валюти (осколки й кристали), одна справжня відьма й хатка на курячих лапках, а ще скіни навчилися говорити. Гортай сторінки!","en":"Hi, friend! In this issue: two currencies (shards and crystals), one real witch and a hut on chicken legs, and skins have learned to talk. Turn the pages!"},"pics":{"0":"shards","1":"hut","2":"witch"},"caps":{"uk":{"0":"Осколок часу й кристал.","1":"Хатка відьми на новеньких лапках.","2":"Єдина відьма Хелловіну."},"en":{"0":"A time shard and a crystal.","1":"The witch’s hut on brand-new legs.","2":"The one witch of Halloween."}}},{"ver":4,"uk":[["Газета замість листа.","Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше."],["Годинникова вежа.","На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху."],["Нове завантаження.","Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну."],["Нова відьма.","Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф."],["Більші маркети.","На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли."],["Надкусані хмари.","У скіні «Цукрові хмари» частину хмар ніби надкусили."],["Крапля дощу.","Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину."],["Чіткі рамки.","Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком."],["Капі вночі.","У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят."]],"en":[["A newspaper instead of a letter.","The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows."],["The clock tower.","A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era."],["New loading screen.","A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one."],["A new witch.","The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars."],["Bigger markets.","On a vertical phone markets of every level are bigger and the brown strips at the edges are gone."],["Bitten clouds.","In the Cotton Clouds skin some of the clouds look as if somebody took a bite."],["The rain drop.","The little drop that turns the rain on now hangs on the right by the shop sign."],["Crisp frames.","Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock."],["Capy at night.","In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals."]],"intro":{"uk":"Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!","en":"Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!"},"pics":{"1":"clock","2":"city","3":"witch"},"caps":{"uk":{"1":"Годинникова вежа торгового центру опівночі.","2":"Нічне місто на екрані завантаження.","3":"Нова відьма облітає місто."},"en":{"1":"The mall clock tower at midnight.","2":"The night city on the loading screen.","3":"The new witch circles the town."}}},{"ver":3,"uk":[["Баба Яга на Хелловін.","Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки»."],["Темніший Хелловін.","Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі."],["Нова пошта.","Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання."],["Нова будівля під полотном.","Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає."],["Ширша вулиця.","Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів."],["Пелюстки навесні.","Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало."],["Магазин часу.","У майстерні часу список покращень за кристали тепер так і називається."],["Завантаження.","На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки."],["Вікна й пара.","У всіх будинків є вікна, а пара з люків стала лагіднішою."]],"en":[["Baba Yaga for Halloween.","Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game."],["A darker Halloween.","The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom."],["New mail.","A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye."],["A new build under a tarp.","When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears."],["A wider street.","The town got wider: scroll further left and right, there are more houses, trees and lamps."],["Spring petals.","In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn."],["Time shop.","In the Time Workshop the crystal upgrade list is now called just that."],["Loading screen.","On the loading screen Capy smoothly runs through the night city and pixel coins."],["Windows and steam.","All houses have windows, and the manhole steam is gentler."]],"intro":{"uk":"Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.","en":"Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done."},"pics":{"0":"hut","1":"witch","2":"van","3":"tent"},"caps":{"uk":{"0":"Хатка на курячих лапках прийшла.","1":"Відьма на мітлі над дахами.","2":"Пошта привозить новини.","3":"Нове будівництво під білим полотном."},"en":{"0":"The hut on chicken legs has arrived.","1":"A witch on a broom over the roofs.","2":"The mail van brings the news.","3":"New building work under a white tarp."}}},{"ver":2,"uk":[["Місто ожило.","Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла."],["Золоті покупці й завдання дня.","Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами."],["Цирк і барабан — окремо.","Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати."],["Скіни для всіх.","Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку."],["Пори року.","Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою."],["Нова погода.","Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку)."],["Бодя будує.","Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют."],["І ця скринька.","Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає."],["Свіже.","Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший."]],"en":[["The town came alive.","More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out."],["Golden shoppers and daily tasks.","Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards."],["Circus and drum, separate.","Both can give crystals, but events are a little rarer now, so waiting is more fun."],["Skins for everyone.","Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus."],["Seasons.","A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show."],["New weather.","Smooth purple lightning and a huge rainbow over the town (you can win them at the circus)."],["Bodie builds.","A new shop level now takes a long, epic build: hammer, crane, dust, fireworks."],["And this mailbox.","It is red because it carries hot news only. Check it when the flag blinks."],["Fresh.","The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer."]],"intro":{"uk":"Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.","en":"Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done."},"pics":{},"caps":{"uk":{},"en":{}}}];
+const NEWS_ISSUES = [{"ver":8,"uk":[["Новий старт для всіх.","Гру стало занадто легко проходити, тому прогрес скинуто: монети, осколки часу, покращення Магазину часу, рівень магазину, відділи й звірята почалися з нуля. Скіни й кристали лишилися з тобою."],["Великі пишні дерева.","Дерева на вулиці стали більшими, об'ємнішими й гарнішими в кожну пору року: цвіт навесні, плоди й сонячні плями влітку, золото й багрянець восени, засніжені гілки взимку."],["Вечірнє світло.","Вночі маркети й особливо торговий центр світяться яскравіше: тепле світло з поверхів, лампи під стелею й пляма світла на бруківці. Вікна будинків теж гарніші, зі шторами, перемичками й квітами."],["П'ять кольорів будинків по колу.","Будинки на задньому плані тепер чергують п'ять кольорів, а відтінки залежать від епохи."],["Маркети різні.","У кожній епосі й на кожному рівні маркет має свій варіант: навіс, візерунок, шибки, прикраси фасаду й лавка, візок чи плакат біля дверей."],["Справжня зима.","На дахах і вулицях лежить багато снігу, а звірята скаржаться, що холодно, і просять накинути щось теплого."],["Нові репліки.","У кожного звірятка тепер 16 фраз, а ще є зимові й загальні репліки під кожну епоху. Репліки йдуть слідом за звірятком."],["Новий дирижабль.","Повітряне судно стало детальнішим: об'ємний корпус із ребрами, хвіст, гондола з вікнами й гвинти, що крутяться."],["Веселка для всіх.","Після дощу й час від часу вдень на небі з'являється велика веселка, яку добре видно і на ПК, і на телефоні."]],"en":[["A fresh start for everyone.","The game became too easy, so progress was reset: coins, time shards, Time shop upgrades, shop level, departments and animals start from zero. Your skins and crystals stay with you."],["Big lush trees.","Street trees are bigger, fuller and prettier in every season: blossoms in spring, fruit and sun spots in summer, gold and crimson in autumn, snowy branches in winter."],["Evening lights.","At night the markets, and the mall especially, glow brighter: warm light from the floors, ceiling lamps and a pool of light on the cobbles. House windows are prettier too, with curtains, lintels and flowers."],["Five house colours in a cycle.","The background houses now cycle through five colours, and the shades depend on the era."],["Different markets.","Every era and every level has its own market variant: awning, pattern, panes, facade decor and a bench, bike or poster by the door."],["A real winter.","Lots of snow lies on the roofs and streets, and the animals complain about the cold and ask for something warm."],["New lines.","Each animal now has 16 phrases, plus winter lines and general lines for every era. The bubbles follow the animal."],["A new airship.","The airship is more detailed: a volumetric hull with ribs, a tail, a gondola with windows and spinning propellers."],["A rainbow for everyone.","After rain and from time to time by day a big rainbow appears in the sky, easy to see on both PC and phone."]],"intro":{"uk":"Привіт, друже! У цьому номері: великі дерева, вечірнє світло, різні маркети, справжня зима, нові репліки, дирижабль і веселка. Гортай сторінки!","en":"Hi, friend! In this issue: big trees, evening lights, different markets, a real winter, new lines, an airship and a rainbow. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":7,"uk":[["Подорож у часі — своя анімація для кожної епохи.","Відродження: давня Греція з колонами, оливковими деревами й звірятами-ангелятками з німбами. Ретро: перемотка старої відеокасети. Диско: дзеркальна куля й танцпол. Аркади: великі пікселі, прибульці й LEVEL UP. Інтернет: цифровий дощ, спливаючі вікна й завантаження. Еко: вітер, листя й ліани. Космос: політ крізь зорі й планети. Неон: тунель з неонових кілець. Звук теж новий: цокання маятника, шестерні, свист і дзвін."],["Різнокольорові будинки й більше неба.","Усі будинки на фоні тепер різних кольорів, звірята-працівники стали більшими й чіткішими, а на ПК з відкритим меню завжди видно більше неба. Подорож у часі можна пропустити дотиком, коли вже бачив її раз, і в кожної епохи свій звук."],["Завдань для розширення стає більше з кожним рівнем.","Щоб збудувати наступний маркет, треба купити першого товару рівня 25, 28, 31, 34 чи 37 разів, а другого 15, 18, 21, 24 чи 27. Звірят цього рівня треба прокачати до 2-го рівня на ранніх етапах і до 3-го на пізніх."],["Торговий центр без нових відділів.","Фудкорт і кінотеатр прибрано: торговий центр лише завершує шлях до подорожі в часі."],["Осколки часу й подорожі.","За подорож тепер 3–9 осколків (+1 до колишнього), більше, якщо в епосі заробити багато. Кожна наступна епоха потребує в 4 рази більше монет, а дохід за подорож росте в 1,8 раза. Тож епохи довші й рівніші. Покращення Магазину часу високих рівнів відкриваються лише після кількох подорожей."],["Будівництво без крана.","Кран прибрано. Тепер Боді сам носить блоки магазину від купи до будівлі й підкидає їх на місце."],["Годинник рухається разом із магазином.","Годинникова вежа торгового центру більше не відстає, коли тапаєш по магазину."],["Вищі будинки.","Будинки позаду магазину стали майже вдвічі вищими, до середини четвертого поверху торгового центру. Небо не зачеплено."],["Капі більша.","Капі виросла на 30%."],["Цирк частіше.","Цирк Фортуни тепер приїздить трохи частіше."]],"en":[["Time trip: its own animation for every era.","Renaissance: ancient Greece with columns, olive trees and angel animals with halos. Retro: rewinding an old video tape. Disco: a mirror ball and dance floor. Arcade: big pixels, invaders and LEVEL UP. Internet: digital rain, pop-ups and loading. Eco: wind, leaves and vines. Space: a flight through stars and planets. Neon: a tunnel of neon rings. The sound is new too: pendulum ticks, gears, a whoosh and a chime."],["Colourful houses and more sky.","Every house in the background now has its own colour, the working animals are bigger and clearer, and on PC with the menu open you now see more sky. You can skip the time trip with a tap once you have seen it, and every era has its own sound."],["More tasks for expanding on every level.","To build the next market you need to buy the level's first product 25, 28, 31, 34 or 37 times and the second 15, 18, 21, 24 or 27 times. Animals of this level need level 2 on the early stages and level 3 on the late ones."],["A mall without new departments.","The food court and the cinema department are gone: the mall only completes the road to a time trip."],["Time shards and trips.","A trip now gives 3-9 shards (+1 more than before), more if you went far in the era. Every next era needs 4 times more coins and a trip multiplies income by 1.8. Eras are longer and steadier. High-level Time shop upgrades unlock only after several trips."],["Building without a crane.","The crane is gone. Now Bodya carries the shop's blocks from the pile to the building himself and tosses them into place."],["The clock moves with the shop.","The mall clock tower no longer lags when you tap the shop."],["Taller houses.","The houses behind the shop are nearly twice as tall now, up to the middle of the mall's fourth floor. The sky is untouched."],["Capy is bigger.","Capy grew by 30%."],["Circus more often.","The Fortune Circus comes by a little more often."]],"intro":{"uk":"Привіт, друже! У цьому номері: три нові подорожі в часі, більше завдань для розширення, вищі будинки, Боді з блоками й Капі побільшала. Гортай сторінки!","en":"Hi, friend! In this issue: three new time trips, more tasks for expanding, taller houses, Bodya with blocks and a bigger Capy. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":6,"uk":[["Павільйони на поверхах.","У маркетах і торговому центрі на кожному поверсі з’явилися павільйони під тему епохи: одяг із манекенами, іграшки, техніка, книжки, прикраси й рослини. Поки відділ не куплено, павільйон зачинений жалюзі. А що вищий рівень відділу, то повніша вітрина. На широких поверхах з’явилася кав’ярня з прилавком."],["Магазин часу став дорожчим.","«Швидкий старт» прибрано. Усі покращення стали слабшими, але дорожчими, щоб гра не прискорювалася. З’явилося «Золоте чуття»: золоті покупці приходять частіше. Осколки, які були витрачені в старому магазині, повернуто."],["Лис Мел.","Скін Мел тепер лис, а не лисиця. Хитрий лише в ціні."],["Вивіска без перекриттів.","Вивіска CAPYTAP на даху більше нічим не накрита: прапорці, димарі й прикраси стоять осторонь, а годинникова вежа піднята над нею."],["Крапля на місці.","Крапелька, що вмикає дощ, тепер висить на дереві праворуч від магазину й рухається лише разом з вулицею."],["Більше неба на телефоні.","На телефоні над дахом лишається більше неба, особливо коли відкрито меню."],["Чіткі рамки меню.","Рамка меню стала товщою й кольоровою. Вкладки мають виразний контур, як аркуші в таблиці: обрана світла, з кольоровою планкою знизу."],["Лічильник.","Кристали й осколки стоять стовпчиком, а великі числа більше не вилазять за край екрана."]],"en":[["Pavilions on every floor.","Shops and the mall now have pavilions on each floor, themed to the era: clothes with mannequins, toys, tech, books, jewellery and plants. Until a department is bought its pavilion is shut behind shutters. The higher the department level, the fuller the display. Wide floors also got a cafe with a counter."],["The Time shop costs more.","\"Head Start\" is gone. Every upgrade is weaker but pricier, so the game does not speed up. A new upgrade, \"Golden Nose\", makes golden shoppers come more often. Shards spent in the old shop were refunded."],["Mel the fox.","The Mel skin is now a he-fox. Sly only about the price."],["A clear sign.","The CAPYTAP roof sign is no longer covered by anything: flags, chimneys and decorations stand aside, and the clock tower is lifted above it."],["The drop stays put.","The little drop that turns the rain on now hangs on the tree to the right of the shop and moves only with the street."],["More sky on the phone.","On a phone there is more sky above the roof, especially when the menu is open."],["Crisp menu frames.","The menu frame is thicker and coloured. Tabs have a clear outline like sheets in a spreadsheet: the selected one is light with a coloured bar below."],["The counter.","Crystals and shards are stacked in a column, and big numbers no longer run off the edge of the screen."]],"intro":{"uk":"Привіт, друже! У цьому номері: павільйони на кожному поверсі, дорожчий Магазин часу, чіткі рамки меню й багато дрібниць. Гортай сторінки!","en":"Hi, friend! In this issue: pavilions on every floor, a pricier Time shop, crisp menu frames and many small things. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":5,"uk":[["Осколки часу й кристали.","Тепер дві валюти. Осколки часу (фіолетові) дає подорож у часі, і за них купуються покращення в Магазині часу. Кристали випадають з бустів, цирку й золотих покупців, і за них купуються скіни. Кожна подорож у часі ще й назавжди дає ×2 до тапів і доходу."],["Одна відьма.","Відьми більше не літають просто так. На Хелловін замість цирку прилітає лише одна відьма на мітлі. Потім вона запрошує зіграти в «Три казанки». Зелену бабусю прибрали."],["Нові лапки для хатки.","Хатка відьми тепер стоїть на справжніх курячих лапках: з коліньми, лусочками, пальцями й кігтями. Сама відьма стала піксельнішою."],["Скіни говорять.","У кожного скіна є своя репліка: пірат кричить по-піратськи, астронавт просить орбіту цін. Одягни скін і тапни по Капі. А ще з’явилися два скіни розробників: лис Мел і зайка Ніка. Вони безкоштовні."],["Золоті покупці.","Золоті звірята тепер просто золоті. Скіни, капелюхи й шарфи на них не вдягаються."],["Очі на місці.","Костюми героїв більше не закривають звірятам очі. А в Капі прибрали підсвітку, що відставала від скіна."],["Газета MEL & NIKA.","Газета тепер піксельна, з іменами редакторів і вкладками. У вкладках можна перечитати попередні випуски, а кнопка «Написати розробникам» надішле нам твою думку."],["Більший маркет на ПК.","Коли магазин росте, на комп’ютері картинка трохи віддаляється, щоб усе вміщалося зручно."],["Меню на телефоні.","Меню на вертикальному телефоні більше не залазить на цирк і дорогу: сцена тепер закінчується над панеллю."],["Кінозал у торговому центрі.","На торговому центрі з’явився п’ятий поверх із кінозалом: екран, завіси, крісла й неонова вивіска CINEMA. На екрані йде «кіно». Менші маркети теж стали трохи сучаснішими, а на ПК більше неба й ширша бруківка."]],"en":[["Time shards and crystals.","There are now two currencies. Time shards (purple) come from time travel and buy upgrades in the Time shop. Crystals drop from boosts, the circus and golden shoppers, and buy skins. And every time trip permanently gives ×2 to taps and income."],["Just one witch.","Witches no longer fly around for no reason. On Halloween, instead of the circus, a single witch on a broom arrives. Then she invites you to play \"Three cauldrons\". The green granny is gone."],["New legs for the hut.","The witch’s hut now stands on real chicken legs: knees, scales, toes and claws. The witch herself got more pixelated."],["Skins talk.","Every skin has its own line: the pirate shouts like a pirate, the astronaut asks for the orbit of prices. Wear a skin and tap Capy. Two developer skins are new: Mel the fox and Nika the bunny. They are free."],["Golden shoppers.","Golden animals are now just golden. Skins, hats and scarves do not go on them."],["Eyes in place.","Hero costumes no longer cover the animals’ eyes. And the glow around Capy, which lagged behind the skin, is gone."],["The MEL & NIKA paper.","The paper is now pixel-style, with the editors’ names and tabs. Use the tabs to reread earlier issues, and the “Write to the developers” button sends us your thoughts."],["A bigger market on PC.","When the shop grows, the picture on a computer zooms out a little so everything fits comfortably."],["The phone menu.","On a vertical phone the menu no longer covers the circus and the road: the scene now ends above the panel."],["A cinema in the mall.","The mall got a fifth floor with a cinema: a screen, curtains, seats and a neon CINEMA sign. The screen plays a little movie. Smaller shops got a bit more modern too, and on PC there is more sky and wider cobbles."]],"intro":{"uk":"Привіт, друже! У цьому номері: дві валюти (осколки й кристали), одна справжня відьма й хатка на курячих лапках, а ще скіни навчилися говорити. Гортай сторінки!","en":"Hi, friend! In this issue: two currencies (shards and crystals), one real witch and a hut on chicken legs, and skins have learned to talk. Turn the pages!"},"pics":{"0":"shards","1":"hut","2":"witch"},"caps":{"uk":{"0":"Осколок часу й кристал.","1":"Хатка відьми на новеньких лапках.","2":"Єдина відьма Хелловіну."},"en":{"0":"A time shard and a crystal.","1":"The witch’s hut on brand-new legs.","2":"The one witch of Halloween."}}},{"ver":4,"uk":[["Газета замість листа.","Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше."],["Годинникова вежа.","На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху."],["Нове завантаження.","Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну."],["Нова відьма.","Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф."],["Більші маркети.","На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли."],["Надкусані хмари.","У скіні «Цукрові хмари» частину хмар ніби надкусили."],["Крапля дощу.","Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину."],["Чіткі рамки.","Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком."],["Капі вночі.","У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят."]],"en":[["A newspaper instead of a letter.","The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows."],["The clock tower.","A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era."],["New loading screen.","A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one."],["A new witch.","The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars."],["Bigger markets.","On a vertical phone markets of every level are bigger and the brown strips at the edges are gone."],["Bitten clouds.","In the Cotton Clouds skin some of the clouds look as if somebody took a bite."],["The rain drop.","The little drop that turns the rain on now hangs on the right by the shop sign."],["Crisp frames.","Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock."],["Capy at night.","In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals."]],"intro":{"uk":"Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!","en":"Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!"},"pics":{"1":"clock","2":"city","3":"witch"},"caps":{"uk":{"1":"Годинникова вежа торгового центру опівночі.","2":"Нічне місто на екрані завантаження.","3":"Нова відьма облітає місто."},"en":{"1":"The mall clock tower at midnight.","2":"The night city on the loading screen.","3":"The new witch circles the town."}}},{"ver":3,"uk":[["Баба Яга на Хелловін.","Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки»."],["Темніший Хелловін.","Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі."],["Нова пошта.","Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання."],["Нова будівля під полотном.","Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає."],["Ширша вулиця.","Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів."],["Пелюстки навесні.","Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало."],["Магазин часу.","У майстерні часу список покращень за кристали тепер так і називається."],["Завантаження.","На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки."],["Вікна й пара.","У всіх будинків є вікна, а пара з люків стала лагіднішою."]],"en":[["Baba Yaga for Halloween.","Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game."],["A darker Halloween.","The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom."],["New mail.","A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye."],["A new build under a tarp.","When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears."],["A wider street.","The town got wider: scroll further left and right, there are more houses, trees and lamps."],["Spring petals.","In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn."],["Time shop.","In the Time Workshop the crystal upgrade list is now called just that."],["Loading screen.","On the loading screen Capy smoothly runs through the night city and pixel coins."],["Windows and steam.","All houses have windows, and the manhole steam is gentler."]],"intro":{"uk":"Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.","en":"Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done."},"pics":{"0":"hut","1":"witch","2":"van","3":"tent"},"caps":{"uk":{"0":"Хатка на курячих лапках прийшла.","1":"Відьма на мітлі над дахами.","2":"Пошта привозить новини.","3":"Нове будівництво під білим полотном."},"en":{"0":"The hut on chicken legs has arrived.","1":"A witch on a broom over the roofs.","2":"The mail van brings the news.","3":"New building work under a white tarp."}}},{"ver":2,"uk":[["Місто ожило.","Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла."],["Золоті покупці й завдання дня.","Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами."],["Цирк і барабан — окремо.","Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати."],["Скіни для всіх.","Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку."],["Пори року.","Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою."],["Нова погода.","Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку)."],["Бодя будує.","Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют."],["І ця скринька.","Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає."],["Свіже.","Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший."]],"en":[["The town came alive.","More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out."],["Golden shoppers and daily tasks.","Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards."],["Circus and drum, separate.","Both can give crystals, but events are a little rarer now, so waiting is more fun."],["Skins for everyone.","Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus."],["Seasons.","A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show."],["New weather.","Smooth purple lightning and a huge rainbow over the town (you can win them at the circus)."],["Bodie builds.","A new shop level now takes a long, epic build: hammer, crane, dust, fireworks."],["And this mailbox.","It is red because it carries hot news only. Check it when the flag blinks."],["Fresh.","The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer."]],"intro":{"uk":"Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.","en":"Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done."},"pics":{},"caps":{"uk":{},"en":{}}}];
 let newsIssue = 0, newsBusy = false;
 function picCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; return { c, g }; }
 function newsPic(kind) {
@@ -13144,12 +13359,14 @@ function render(time) {
   ctx.translate(view.offX, view.offY);          // далі все малюється в координатах «ядра» сцени
   drawEpochBack();
   drawDecorBack();
+  drawNatRainbow(false);
   if (skinOn('weather') === 'rainbow') drawRainbowSkin();     // веселка — позаду будинків і магазину, вища за магазин
   else if (skinOn('weather') === 'lightning') drawLightningBack();
   if (state.settings.clouds) clouds.forEach(c => { const cv = cloudCanvas(c.kind || 0, CLOUD_SKIN_TINT[skinOn('weather')] || c.v || ''); drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), { sx: c.big ? 1.5 : 1, sy: c.big ? 1.5 : 1 }); });
   drawBirds();
   drawEpochSky(time);
   ctx.drawImage(groundLayer, -view.offX, -view.offY);
+  drawNatRainbow(true);
   drawDecorDusk();
   ctx.drawImage(propsLayer, -view.offX, -view.offY);
   drawEpochMid(time);
