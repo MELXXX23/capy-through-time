@@ -2,3 +2,4 @@ desktop/node_modules/
 desktop/dist/
 backups/
 .claude/
+desktop/dist-*/
