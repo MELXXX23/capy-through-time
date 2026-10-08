@@ -823,7 +823,8 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   .tab.secondary .tab-name { display: block; font-size: 7px; letter-spacing: -.3px; }
   #app.more-open .tab.secondary:not([hidden]) { display: flex; }
   .tab.primary, .tabmore { order: 1; flex: 1 1 18%; padding: 4px 2px calc(7px + env(safe-area-inset-bottom, 0px)); }          /* кнопки нижнього ряду тягнуться до самого низу й закривають смугу під меню */
-  .tab.primary { --icw: 40px; }
+  .tab.primary { --icw: clamp(36px, 12.4vw, 60px); }
+  .tab.secondary { --icw: clamp(28px, 9.2vw, 46px); }          /* значок підлаштовується під ширину кнопки */
   .tabmore { display: flex; align-items: flex-start; justify-content: center; font-size: 40px; line-height: 1; }
   #app.more-open .tabmore { background: var(--honey); }
   #tabContent { display: none; max-height: 40dvh; margin-bottom: 8px; padding: 2px 2px 4px; }
