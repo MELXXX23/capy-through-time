@@ -493,9 +493,31 @@ body.no-anim .floater { display: none; }
 /* Заставка нової епохи на весь екран */
 #epochIntro { position: fixed; inset: 0; z-index: 90; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 #epochIntro[hidden] { display: none; }
-#eiBg { position: absolute; inset: 0; background: linear-gradient(rgba(26,16,36,.5), rgba(26,16,36,.58)), linear-gradient(var(--ei1), var(--ei2) 55%, var(--ei3)); animation: eiIris 1.1s steps(14, end) forwards; }
+#eiStage { position: absolute; inset: 0; animation: eiIris 1.1s steps(14, end) forwards; }
+#eiBg { position: absolute; inset: 0; background: linear-gradient(rgba(26,16,36,.5), rgba(26,16,36,.58)), linear-gradient(var(--ei1), var(--ei2) 55%, var(--ei3)); }
+#eiFx { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; }
 @keyframes eiIris { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(85% at 50% 50%); } }
-#epochIntro.out #eiBg { animation: eiIrisOut .7s steps(10, end) forwards; }
+@keyframes eiCurtain { from { clip-path: inset(0 50% 0 50%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes eiTv { 0% { clip-path: inset(49.6% 0 49.6% 0); filter: brightness(3); } 45% { clip-path: inset(49.6% 0 49.6% 0); filter: brightness(3); } 100% { clip-path: inset(0 0 0 0); filter: none; } }
+@keyframes eiWipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes eiDrop { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes eiRect { from { clip-path: inset(46% 42% 46% 42%); } to { clip-path: inset(0 0 0 0); } }
+#epochIntro[data-ep="0"] #eiStage { animation: eiCurtain 1.3s steps(13, end) forwards; }
+#epochIntro[data-ep="1"] #eiStage { animation: eiTv 1.3s steps(14, end) forwards; }
+#epochIntro[data-ep="3"] #eiStage { animation: eiDrop 1s steps(8, end) forwards; }
+#epochIntro[data-ep="4"] #eiStage { animation: eiWipe 1.4s steps(18, end) forwards; }
+#epochIntro[data-ep="7"] #eiStage { animation: eiRect 1s steps(12, end) forwards; }
+#epochIntro[data-ep] #eiRays { display: none; }
+#epochIntro[data-ep="0"] #eiNum { color: #c19a2e; text-shadow: 0 2px 0 rgba(255,255,255,.7); } #epochIntro[data-ep="0"] #eiBox { color: #3a2f1c; text-shadow: 0 2px 0 rgba(255,255,255,.75), 0 0 12px rgba(255,250,220,.9); }
+#epochIntro[data-ep="1"] #eiNum { color: #ef8fa3; } #epochIntro[data-ep="1"] #eiTitle { text-shadow: 3px 0 0 rgba(255,95,162,.8), -3px 0 0 rgba(51,230,255,.8), 0 3px 0 rgba(20,12,28,.85); }
+#epochIntro[data-ep="2"] #eiNum { color: #ffd84f; } #epochIntro[data-ep="2"] #eiTitle { text-shadow: 0 0 14px #ff4fa8, 0 0 26px #8f5fff, 0 3px 0 rgba(20,12,28,.85); }
+#epochIntro[data-ep="3"] #eiNum { color: #7aff7a; } #epochIntro[data-ep="3"] #eiTitle { color: #7aff7a; text-shadow: 3px 3px 0 #1d6b2a, 0 0 12px rgba(122,255,122,.7); }
+#epochIntro[data-ep="4"] #eiNum { color: #2ee69a; } #epochIntro[data-ep="4"] #eiTitle { color: #e6fff4; text-shadow: 0 0 10px #2ee69a, 0 3px 0 rgba(4,20,26,.9); }
+#epochIntro[data-ep="5"] #eiNum { color: #fff6c8; } #epochIntro[data-ep="5"] #eiTitle { text-shadow: 0 3px 0 #2f6b3a, 0 0 14px rgba(255,246,200,.8); }
+#epochIntro[data-ep="6"] #eiNum { color: #9fc8ff; } #epochIntro[data-ep="6"] #eiTitle { text-shadow: 0 0 12px #86cfe8, 0 3px 0 rgba(4,6,30,.9); }
+#epochIntro[data-ep="7"] #eiNum { color: #2ff5ff; } #epochIntro[data-ep="7"] #eiTitle { color: #fff; text-shadow: 0 0 8px #ff2fb0, 0 0 20px #ff2fb0, 0 0 30px #2ff5ff; }
+#epochIntro[data-ep="1"] #eiSub, #epochIntro[data-ep="3"] #eiSub, #epochIntro[data-ep="4"] #eiSub, #epochIntro[data-ep="7"] #eiSub { background: rgba(8,4,20,.55); padding: 8px 12px; }
+#epochIntro.out #eiStage { animation: eiIrisOut .7s steps(10, end) forwards; }
 @keyframes eiIrisOut { from { clip-path: circle(85% at 50% 50%); } to { clip-path: circle(0% at 50% 50%); } }
 #eiRays { position: absolute; left: 50%; top: 50%; width: 220vmax; height: 220vmax; margin: -110vmax 0 0 -110vmax; opacity: 0; background: repeating-conic-gradient(rgba(255,255,255,.13) 0 7deg, transparent 7deg 14deg); animation: eiSpin 24s steps(120) infinite, eiFade .8s steps(8, end) .8s forwards; }
 @keyframes eiSpin { to { transform: rotate(360deg); } }
@@ -1227,7 +1249,7 @@ function bootDone() {
   </div>
 </div>
 <div id="epochIntro" hidden aria-hidden="true">
-  <div id="eiBg"></div>
+  <div id="eiStage"><div id="eiBg"></div><canvas id="eiFx"></canvas></div>
   <div id="eiRays"></div>
   <div id="eiSparks"></div>
   <div id="eiBox">
@@ -6462,7 +6484,7 @@ const ui = {
   timeWarp: $('timeWarp'), warpCanvas: $('warpCanvas'),
   seasonFx: $('seasonFx'), seasonBanner: $('seasonBanner'), sbTitle: $('sbTitle'), sbSub: $('sbSub'), panel: $('panel'), fbModal: $('feedbackModal'), fbTitle: $('fbTitle'), fbHint: $('fbHint'), fbText: $('fbText'), fbCount: $('fbCount'), fbContact: $('fbContact'), fbSend: $('fbSend'), fbCancel: $('fbCancel'), npWrite: $('npWrite'), newsModal: $('newsModal'), npTabs: $('npTabs'), npPaper: $('npPaper'), npPrev: $('npPrev'), npNext: $('npNext'), npNum: $('npNum'), newsTitle: $('newsTitle'), newsSub: $('newsSub'), newsBody: $('newsBody'), newsClose: $('newsClose'), siModal: $('seasonIntroModal'), siIcon: $('siIcon'), siTitle: $('siTitle'), siText: $('siText'), siGo: $('siGo'), siLater: $('siLater'),
   letterModal: $('letterModal'), letterTitle: $('letterTitle'), letterText: $('letterText'), letterBoost: $('letterBoost'), letterBtn: $('letterBtn'),
-  epochIntro: $('epochIntro'), eiEmblem: $('eiEmblem'), eiNum: $('eiNum'), eiTitle: $('eiTitle'), eiSub: $('eiSub'), eiSparks: $('eiSparks'),
+  epochIntro: $('epochIntro'), eiFx: $('eiFx'), eiEmblem: $('eiEmblem'), eiNum: $('eiNum'), eiTitle: $('eiTitle'), eiSub: $('eiSub'), eiSparks: $('eiSparks'),
   soundModal: $('soundModal'), musicVol: $('musicVol'), musicStyleRow: $('musicStyleRow'), sfxVol: $('sfxVol'), muteBtn: $('muteBtn'), soundClose: $('soundClose'),
   dialog: $('dialog'), dlgBox: $('dialogBox'), dlgWrap: $('dlgPortraitWrap'), dlgPortrait: $('dlgPortrait'),
   dlgName: $('dlgName'), dlgText: $('dlgText'), dlgChoices: $('dlgChoices'), dlgNext: $('dlgNext'), dlgSkip: $('dlgSkip'),
@@ -7556,7 +7578,7 @@ function startBuild(old) {
   ejectInside();
   const style = (state.shopLevel + 1) % 3;                       // три способи будівництва по черзі: молоток, кран, дошки
   playSfx('buildTheme');
-  build = { t: 0, dur: CONFIG.BUILD_SECONDS * (old.level >= 3 ? 0.72 : 1), old, dustTimer: 0, burst: false, style, r: 0, shake: 0, hitT: 0, lastSfx: 0, bx: old.x - 30, by: LAYOUT.curbY + 4, bdir: 1, fw: 0, fwT: 0, landed: -1, bands: 0, fin: false };
+  build = { t: 0, dur: CONFIG.BUILD_SECONDS * (state.shopLevel >= 4 ? 0.72 : 1), old, dustTimer: 0, burst: false, style, r: 0, shake: 0, hitT: 0, lastSfx: 0, bx: old.x - 30, by: LAYOUT.curbY + 4, bdir: 1, fw: 0, fwT: 0, landed: -1, bands: 0, fin: false };
   ui.shopOverlay.style.visibility = 'hidden';
 }
 function finishBuild() {
@@ -7584,48 +7606,38 @@ function buildSparks(x, y, n, cols) { for (let i = 0; i < n; i++) { const a = ra
 function buildBands() { return Math.max(4, Math.ceil(shop.h / 6)); }
 function updateBuild(dt) {
   const b = build; b.t += dt;
-  const p = b.t / b.dur, o = b.old, sty = b.style, cx = shop.x + shop.w / 2;
+  const p = b.t / b.dur, o = b.old, cx = shop.x + shop.w / 2;
   b.shake = Math.max(0, b.shake - dt * 3);
   let tx = cx, ty = LAYOUT.curbY + 4, run = false;
-  if (p < BUILD_A) {                                           // Боді вибігає зліва в касці, старий магазин хитається й розсипається
-    b.r = 0; run = true; tx = o.x - 30 + (cx - 20 - (o.x - 30)) * smooth01(p / BUILD_A); b.bx = tx;
-    if (p > 0.115 && !b.crumbled) { b.crumbled = true; b.shake = 0.9; playSfx('build'); for (let i = 0; i < 16; i++) spawnDust(o.x - 6 + (i / 15) * (o.w + 12), LAYOUT.curbY + 2, 1); buildSparks(o.x + o.w / 2, o.y + 8, 6, ['w', 'E']); }      // полотно лягло на магазин
+  // Вантажівка-бетономішалка: приїздить вулицею зліва, стоїть біля магазину, наприкінці їде геть праворуч
+  b.parkX = shop.x - 40;
+  const startX = visL() - 70, endX = visR() + 70;
+  b.truckMoving = false;
+  if (p < BUILD_A) { b.truckX = startX + (b.parkX - startX) * smooth01(p / BUILD_A); b.truckMoving = p < BUILD_A - 0.015; }
+  else if (p < BUILD_C) b.truckX = b.parkX;
+  else { const u = Math.max(0, (p - BUILD_C) / (1 - BUILD_C)); b.truckX = b.parkX + (endX - b.parkX) * u * u; b.truckMoving = u > 0.02; }
+  b.pour = p >= BUILD_A && p < BUILD_A + 0.3;
+  b.build = false; b.carry = false;
+  if (p < BUILD_A) {                                           // Боді вибігає назустріч вантажівці, старий магазин ховається під шатро й розсипається
+    b.r = 0; run = true; tx = (visL() - 20) + (b.parkX - 10 - (visL() - 20)) * smooth01(p / BUILD_A); b.bx = tx;
+    if (p > 0.115 && !b.crumbled) { b.crumbled = true; b.shake = 0.9; playSfx('build'); for (let i = 0; i < 16; i++) spawnDust(o.x - 6 + (i / 15) * (o.w + 12), LAYOUT.curbY + 2, 1); buildSparks(o.x + o.w / 2, o.y + 8, 6, ['w', 'E']); }      // шатро лягло на магазин
   } else if (p < BUILD_C) {
-    const u = (p - BUILD_A) / (BUILD_C - BUILD_A);
-    if (sty === 0) {                                            // молоток: Боді піднімається на риштування й б'є в край новобудови
-      b.r = smooth01(u);
-      const front = shop.y + shop.h * (1 - b.r); let k = -1;
-      for (let j = 0; LAYOUT.curbY - 14 - 22 * j >= front + 10; j++) k = j;
-      ty = k < 0 ? LAYOUT.curbY + 4 : LAYOUT.curbY - 14 - 22 * k;
-      tx = shop.x + shop.w * (0.5 + 0.38 * Math.sin(b.t * 1.7));
-      b.hitT += dt;
-      if (b.hitT >= 0.22) { b.hitT = 0; b.shake = Math.max(b.shake, 0.35); const hx = b.bx + b.bdir * 8, hy = b.by - 8; buildSparks(hx, hy - 6, 4, ['y', 'h', 'w']); spawnDust(Math.max(shop.x, Math.min(shop.x + shop.w, b.bx)), front + 2, 1); buildSfx(b, 0.44); }
-    } else if (sty === 1) {                                     // Боді носить блоки магазину від купи до будівлі й підкидає кожен на місце
-      const N = 8, k = Math.min(N - 1, Math.floor(u * N)), f = u * N - k;
-      b.ck = k; b.cf = f; b.N = N;
-      b.r = (k + (f < 0.78 ? 0 : smooth01((f - 0.78) / 0.15))) / N;
-      const pileXb = shop.x - 20, aim = shop.x + shop.w * (0.2 + 0.6 * ((k * 0.382 + 0.1) % 1));
-      b.aim = aim;
-      if (f < 0.5) tx = pileXb + (aim - pileXb) * smooth01(f / 0.5);                       // несе блок до будівлі
-      else if (f < 0.78) tx = aim;                                                       // підкидає блок на місце
-      else tx = aim + (pileXb - aim) * smooth01((f - 0.78) / 0.22);                      // повертається по наступний
-      run = true;
-      if (f >= 0.78 && b.landed !== k) { b.landed = k; b.shake = 0.9; buildSfx(b, 0.2); for (let i = 0; i < 12; i++) spawnDust(shop.x + (i / 11) * shop.w, shop.y + shop.h * (1 - k / N), 1); buildSparks(aim, shop.y + shop.h * (1 - (k + 1) / N), 8, ['y', 'w']); }
-    } else {                                                    // дошки: смуги будинку по черзі залітають зліва й справа, Боді бігає внизу
-      b.r = u;
-      const B = buildBands(), done = Math.min(B, Math.floor(Math.max(0, (u - 0.14) / 0.85) * B + 0.001));
-      if (done > b.bands) { for (let i = b.bands; i < done; i++) { const side = i % 2 ? shop.x + shop.w : shop.x, yy = shop.y + shop.h - i * 6; spawnDust(side, yy, 1); buildSparks(side, yy, 3, ['c', 'y']); } b.bands = done; b.shake = Math.max(b.shake, 0.3); buildSfx(b, 0.3); }
-      tx = shop.x + shop.w * (0.5 + 0.45 * Math.sin(b.t * 1.9)); run = true;
-    }
-    if (b.style !== 1 && Math.random() < dt * 7) fx.sparks.push({ x: shop.x + rand(0, shop.w), y: shop.y + shop.h * (1 - b.r) + rand(0, 8), vx: rand(-24, 24), vy: rand(-34, -6), age: 0, life: 0.35, col: Math.random() < 0.5 ? 'y' : 'w' });
-    if (b.dustTimer <= 0) { b.dustTimer = 0.09; spawnDust(shop.x + rand(0, shop.w), LAYOUT.curbY + rand(-2, 4), 1); } else b.dustTimer -= dt;
-  } else {                                                      // фінал: риштування падають, салют, Боді підстрибує від радості
+    b.r = 0;                                                     // новий магазин лишається під шатром до самого кінця
+    const ph = ((b.t - BUILD_A * b.dur) / 1.5) % 1, siteX = shop.x + shop.w * 0.24, pileX = b.parkX - 8;
+    b.ph = ph;
+    if (ph < 0.36) { tx = pileX + (siteX - pileX) * smooth01(ph / 0.36); run = true; b.carry = true; }                // несе відро бетону й цеглу до шатра
+    else if (ph < 0.72) {                                                                                        // будує: мастерок і молоток б'ють по стіні під шатром
+      tx = siteX; b.build = true; b.hitT += dt;
+      if (b.hitT >= 0.2) { b.hitT = 0; b.shake = Math.max(b.shake, 0.3); buildSparks(siteX + b.bdir * 8, LAYOUT.curbY - 12, 3, ['y', 'w', 'c']); spawnDust(siteX, LAYOUT.curbY + 2, 1); buildSfx(b, 0.4); }
+    } else { tx = siteX + (pileX - siteX) * smooth01((ph - 0.72) / 0.28); run = true; }                       // повертається по нову порцію
+    if (b.dustTimer <= 0) { b.dustTimer = 0.14; spawnDust(shop.x + rand(0, shop.w), LAYOUT.curbY + rand(-2, 4), 1); } else b.dustTimer -= dt;
+  } else {                                                      // фінал: шатро знімається, салют, Боді підстрибує від радості
     b.r = 1; tx = cx; ty = LAYOUT.curbY + 5;
     if (!b.fin) { b.fin = true; b.shake = 1; playSfx('buildDone'); for (let i = 0; i < 18; i++) spawnDust(shop.x + (i / 17) * shop.w, LAYOUT.curbY, 1); }
     if (!b.cut && (p - BUILD_C) / (1 - BUILD_C) >= 0.5) { b.cut = true; const dr = doorWorld(); for (let i = 0; i < 12; i++) fx.sparks.push({ x: dr.cx + rand(-4, 4), y: shop.y + shop.door.y + 14, vx: rand(-40, 40), vy: rand(-50, -10), age: 0, life: 0.6, col: ['y', 'w', 'r', 'f'][i % 4] }); playSfx('pip'); }
-    if (!b.vanish && p >= BUILD_C + 0.1) {                                                       // усі будівельні матеріали зникають у хмарках пилу
+    if (!b.vanish && p >= BUILD_C + 0.1) {                                                       // будівельні матеріали зникають у хмарках пилу
       b.vanish = true; playSfx('pip');
-      [shop.x + shop.w - 20, shop.x + 38, shop.x + 12, shop.x + shop.w * 0.5].forEach(vx => { spawnDust(vx, LAYOUT.curbY + 8, 3); buildSparks(vx, LAYOUT.curbY + 2, 5, ['y', 'w']); });
+      [b.parkX - 8, shop.x + shop.w * 0.24 - 20].forEach(vx => { spawnDust(vx, LAYOUT.curbY + 8, 3); buildSparks(vx, LAYOUT.curbY + 2, 5, ['y', 'w']); });
     }
     b.fwT -= dt;
     if (b.fwT <= 0 && b.t < b.dur - 0.5) {
@@ -9004,8 +9016,121 @@ function drawEpochEmblem(g, i) {
         .forEach(r => { R(g, r[1] + 1, r[0] + 1, r[2] - r[1] + 1, 1, 'T'); R(g, r[1], r[0], r[2] - r[1] + 1, 1, 'y'); });
   }
 }
+/* ---------- Заставка епохи: у кожної епохи свій фон-анімація й свій вихід на сцену ---------- */
+let eiRaf = 0, eiT0 = 0;
+function eiFont(g, px) { g.font = Math.max(5, Math.round(px)) + 'px "Press Start 2P", monospace'; }
+function eiRand(i, k) { return warpSeed(i * 7 + (k || 0)); }
+const EI_DRAW = [
+  // 0 Відродження — давня Греція: колони підіймаються, оливкові гілки гойдаються, золотий пил і промені світла
+  (g, W, H, t) => {
+    const e = Math.min(1, t / 1.8), ez = e * e * (3 - 2 * e), sc = W / 160;
+    g.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 9; i++) { const an = Math.PI / 2 + (i - 4) * 0.22 + Math.sin(t * 0.4 + i) * 0.03; g.globalAlpha = 0.10; g.fillStyle = '#ffe9a0'; g.beginPath(); g.moveTo(W / 2, -H * 0.1); g.lineTo(W / 2 + Math.cos(an - 0.05) * W * 1.4, -H * 0.1 + Math.sin(an - 0.05) * W * 1.4); g.lineTo(W / 2 + Math.cos(an + 0.05) * W * 1.4, -H * 0.1 + Math.sin(an + 0.05) * W * 1.4); g.closePath(); g.fill(); }
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    const col = (x, w2, a) => { const top = H * 0.1 + (1 - ez) * H, bot = H * 0.9 + (1 - ez) * H; g.globalAlpha = a; g.fillStyle = '#f4efe4'; g.fillRect(x - w2 / 2, top, w2, bot - top); g.fillStyle = '#d6ccb4'; g.fillRect(x + w2 * 0.2, top, w2 * 0.3, bot - top); g.strokeStyle = '#cfc4a8'; for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(x + i * w2 * 0.2, top + 4); g.lineTo(x + i * w2 * 0.2, bot - 3); g.stroke(); } g.fillStyle = '#e9e1d0'; g.fillRect(x - w2 * 0.7, top - 3, w2 * 1.4, 4); g.fillRect(x - w2 * 0.7, bot - 1, w2 * 1.4, 4); g.globalAlpha = 1; };
+    col(W * 0.07, W * 0.075, 1); col(W * 0.93, W * 0.075, 1); col(W * 0.2, W * 0.045, 0.6); col(W * 0.8, W * 0.045, 0.6);
+    g.fillStyle = '#f2ead6'; g.fillRect(0, H * 0.1 - 7 + (1 - ez) * -H * 0.3, W, 7); warpMeander(g, H * 0.1 - 6 - (1 - ez) * H * 0.3, 5, W, sc, t * 30, '#c19a2e', 1);
+    g.fillStyle = '#d9c9a0'; g.fillRect(0, H * 0.9 + 1 + (1 - ez) * H, W, H); warpMeander(g, H * 0.9 + 2 + (1 - ez) * H, 5, W, sc, -t * 30, '#c19a2e', 1);
+    warpOliveBranch(g, W * 0.12, H * 0.1, 1, Math.min(0.6, t / 2.2), sc, 1, t * 1.3); warpOliveBranch(g, W * 0.88, H * 0.1, -1, Math.min(0.6, t / 2.2), sc, 1, t * 1.3 + 2);
+    for (let i = 0; i < 26; i++) { const x = ((eiRand(i) + t * 0.02 * (1 + eiRand(i, 3))) % 1) * W, y = ((eiRand(i, 5) + t * 0.05) % 1) * H; g.globalAlpha = 0.7 * Math.sin(t * 2 + i); g.fillStyle = '#ffe9a0'; if (g.globalAlpha > 0) g.fillRect(x, y, 2, 2); }
+    g.globalAlpha = 1;
+  },
+  // 1 Ретро — відеокасета: смуги відстеження, шум, ▶ PLAY і лічильник
+  (g, W, H, t) => {
+    const sc = W / 160;
+    for (let y = 0; y < H; y += 2) { g.globalAlpha = 0.16; g.fillStyle = '#05030c'; g.fillRect(0, y, W, 1); }
+    const noise = Math.max(0, 1 - t / 1.4);
+    for (let i = 0; i < 260 * noise; i++) { g.globalAlpha = 0.5 * noise; g.fillStyle = eiRand(i, Math.floor(t * 30)) > 0.5 ? '#fff' : '#889'; g.fillRect(eiRand(i + 3, Math.floor(t * 30)) * W, eiRand(i + 9, Math.floor(t * 30)) * H, 3, 1); }
+    const bars = ['#fff4dc', '#ffe08a', '#86cfe8', '#8ed4a6', '#ef8fa3', '#c4553d', '#3d5a8c', '#2a1d1a'];
+    if (t < 0.9) { g.globalAlpha = (0.9 - t) * 0.9; bars.forEach((c, i) => { g.fillStyle = c; g.fillRect(i * W / 8, 0, W / 8 + 1, H); }); }
+    const ty = ((t * 0.28) % 1.3 - 0.15) * H; g.globalAlpha = 0.18; g.fillStyle = '#fff'; g.fillRect(0, ty, W, 5 * sc * 0.6);
+    for (let k = 0; k < 4; k++) { const y = H * (0.2 + eiRand(k + Math.floor(t * 2)) * 0.6); g.globalAlpha = 0.28; g.drawImage(g.canvas, 4, y, W - 4, 3, 0, y, W, 3); }
+    g.globalAlpha = 1; eiFont(g, 8 * sc * 0.8); g.textBaseline = 'top'; g.textAlign = 'left';
+    g.fillStyle = '#000'; g.fillText('▶ PLAY', 9 * sc * 0.6 + 1, 9 * sc * 0.6 + 1); g.fillStyle = '#fff'; g.fillText('▶ PLAY', 9 * sc * 0.6, 9 * sc * 0.6);
+    g.textAlign = 'right'; const sec = Math.floor(t); g.fillStyle = '#000'; g.fillText('SP 0:00:0' + Math.min(9, sec), W - 9 * sc * 0.6 + 1, 9 * sc * 0.6 + 1); g.fillStyle = Math.floor(t * 2) % 2 ? '#ff5fa2' : '#fff'; g.fillText('SP 0:00:0' + Math.min(9, sec), W - 9 * sc * 0.6, 9 * sc * 0.6);
+    g.textAlign = 'left'; g.textBaseline = 'bottom'; g.fillStyle = '#ffe08a'; g.fillText('1957', 9 * sc * 0.6, H - 8 * sc * 0.6);
+  },
+  // 2 Диско — промені прожекторів, танцпол із плитками під ритм, дзеркальні кулі
+  (g, W, H, t) => {
+    const cols = ['#ff4fa8', '#4fd8ff', '#ffd84f', '#8f5fff'], beat = Math.floor(t * 6), sc = W / 160;
+    const fy = H * 0.7, T = Math.max(10, 14 * sc * 0.6);
+    for (let r = 0; r < Math.ceil((H - fy) / T); r++) for (let c = 0; c < Math.ceil(W / T); c++) { g.globalAlpha = 0.45 + 0.3 * ((r + c + beat) % 2); g.fillStyle = cols[(r * 3 + c * 2 + beat) % 4]; g.fillRect(c * T, fy + r * T, T - 1, T - 1); }
+    g.globalCompositeOperation = 'lighter';
+    [[0.1, 0], [0.5, 0], [0.9, 0]].forEach(([px, py], j) => { for (let i = 0; i < 3; i++) { const an = Math.PI / 2 + Math.sin(t * 1.3 + j * 2 + i) * 0.8 + (i - 1) * 0.35; g.globalAlpha = 0.17; g.fillStyle = cols[(i + j) % 4]; g.beginPath(); g.moveTo(W * px, 0); g.lineTo(W * px + Math.cos(an - 0.09) * W, Math.sin(an - 0.09) * W); g.lineTo(W * px + Math.cos(an + 0.09) * W, Math.sin(an + 0.09) * W); g.closePath(); g.fill(); } });
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    [[0.1, 0.16], [0.9, 0.2]].forEach(([bx, by]) => { const R0 = Math.min(W, H) * 0.09 * (1 + 0.04 * Math.sin(t * 6)); g.strokeStyle = '#d8d8f0'; g.beginPath(); g.moveTo(W * bx, 0); g.lineTo(W * bx, H * by - R0); g.stroke(); const gr = g.createRadialGradient(W * bx - R0 * 0.3, H * by - R0 * 0.3, R0 * 0.1, W * bx, H * by, R0); gr.addColorStop(0, '#fff'); gr.addColorStop(0.5, '#b8b8d8'); gr.addColorStop(1, '#5a5a86'); g.fillStyle = gr; g.beginPath(); g.arc(W * bx, H * by, R0, 0, 7); g.fill(); for (let i = 0; i < 22; i++) { const a = eiRand(i) * 6.28, rr = Math.sqrt(eiRand(i + 5)) * R0 * 0.9; g.fillStyle = eiRand(i + beat) > 0.5 ? cols[i % 4] : '#fff'; g.fillRect(W * bx + Math.cos(a) * rr - 1, H * by + Math.sin(a) * rr - 1, 2, 2); } });
+    for (let i = 0; i < 24; i++) { if ((Math.floor(t * 5) + i) % 5 > 1) continue; const x = eiRand(i + 40) * W, y = eiRand(i + 70) * H * 0.7, s = (1.5 + eiRand(i) * 2.5) * sc * 0.6; g.fillStyle = '#fff'; g.fillRect(x - s, y - 0.5, s * 2, 1); g.fillRect(x - 0.5, y - s, 1, s * 2); }
+  },
+  // 3 Аркади — зорі, марш прибульців, INSERT COIN і рахунок
+  (g, W, H, t) => {
+    const sc = W / 160, p = Math.max(2, Math.round(2.2 * sc * 0.7));
+    for (let i = 0; i < 50; i++) { g.globalAlpha = 0.3 + 0.5 * eiRand(i + Math.floor(t * 6)); g.fillStyle = '#fff'; g.fillRect(Math.round(eiRand(i) * W), Math.round(((eiRand(i + 9) * H) + t * H * (0.1 + eiRand(i + 3) * 0.2)) % H), 1, 1); }
+    g.globalAlpha = 1;
+    const cols = ['#ff5a5a', '#ffd84f', '#7aff7a'], step = Math.floor(t * 3) % 2, iw = 11 * p, gap = p * 4, shift = Math.sin(t * 1.2) * W * 0.1;
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 6; c++) { const x = W / 2 - (6 * iw + 5 * gap) / 2 + c * (iw + gap) + shift, y = H * 0.06 + r * (8 * p + p * 3) + (Math.floor(t * 0.8) % 3) * p; g.fillStyle = cols[r]; WARP_INV.forEach((row, ry) => { for (let rx = 0; rx < 11; rx++) if (row[rx] === '1') g.fillRect(Math.round(x + rx * p + (ry === 7 && step ? (rx < 5 ? -p : p) : 0)), Math.round(y + ry * p), p, p); }); }
+    const sx = W / 2 + Math.sin(t * 1.7) * W * 0.3, sy = H * 0.9; g.fillStyle = '#7ad8ff'; g.fillRect(sx - 3 * p, sy, 6 * p, p * 2); g.fillRect(sx - p, sy - p * 2, p * 2, p * 2);
+    for (let i = 0; i < 3; i++) { const f = ((t * 1.4 + i / 3) % 1); g.fillStyle = '#fff'; g.fillRect(sx - p / 2, sy - f * H * 0.75, Math.max(1, p * 0.7), p * 2); }
+    eiFont(g, 7 * sc * 0.8); g.textBaseline = 'top'; g.textAlign = 'left'; g.fillStyle = '#fff'; g.fillText('1UP ' + String(Math.floor(t * 4300)).padStart(6, '0'), 7 * sc * 0.6, 6 * sc * 0.6);
+    g.textAlign = 'right'; g.fillStyle = '#ffd84f'; g.fillText('HI 099990', W - 7 * sc * 0.6, 6 * sc * 0.6);
+    g.textAlign = 'center'; g.textBaseline = 'bottom'; if (Math.floor(t * 2.5) % 2) { g.fillStyle = '#ffe08a'; g.fillText('INSERT COIN', W / 2, H - 4 * sc * 0.6); }
+  },
+  // 4 Інтернет — цифровий дощ у вікні браузера, смуга завантаження
+  (g, W, H, t) => {
+    const sc = W / 160, cw = Math.max(5, 6 * sc * 0.7);
+    eiFont(g, cw * 1.1); g.textAlign = 'center'; g.textBaseline = 'top';
+    for (let c = 0; c < Math.ceil(W / cw); c++) { const sp = 0.4 + eiRand(c) * 0.9, head = ((eiRand(c + 7) + t * sp * 0.4) % 1.4) * H * 1.3 - H * 0.1; for (let j = 0; j < 9; j++) { const y = head - j * cw * 1.2; if (y < -cw || y > H) continue; g.globalAlpha = (1 - j / 9) * 0.55; g.fillStyle = j === 0 ? '#e6fff4' : '#2ee69a'; g.fillText(eiRand(c * 13 + j + Math.floor(t * 8)) > 0.5 ? '1' : '0', c * cw + cw / 2, y); } }
+    g.globalAlpha = 1;
+    const m = 5 * sc * 0.6, tb = 10 * sc * 0.7;
+    g.fillStyle = '#1b2a44'; g.fillRect(m - 1, m - 1, W - 2 * m + 2, H - 2 * m + 2); g.fillStyle = 'rgba(4,20,26,.55)'; g.fillRect(m, m + tb, W - 2 * m, H - 2 * m - tb);
+    g.fillStyle = '#2a55d8'; g.fillRect(m, m, W - 2 * m, tb); [0, 1, 2].forEach(i => { g.fillStyle = ['#ef8fa3', '#ffe08a', '#8ed4a6'][i]; g.fillRect(W - m - (3 - i) * (tb * 0.8), m + tb * 0.25, tb * 0.5, tb * 0.5); });
+    eiFont(g, 5 * sc * 0.8); g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.fillText('www.capytap.net', m + 4, m + tb / 2);
+    const pr = Math.min(1, t / 3.4), bw = W * 0.6, bx = W / 2 - bw / 2, by = H - m - tb * 1.6; g.fillStyle = '#04141a'; g.fillRect(bx - 1, by - 1, bw + 2, tb * 0.7 + 2); g.fillStyle = '#2ee69a'; const sg = Math.max(3, tb * 0.35); for (let x = 0; x < bw * pr - sg; x += sg * 1.3) g.fillRect(bx + x, by + 1, sg, tb * 0.7 - 2);
+    g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillStyle = '#e6fff4'; g.fillText(pr < 1 ? 'LOADING ' + Math.floor(pr * 100) + '%' : 'DONE', W / 2, by - 3);
+  },
+  // 5 Еко — листя в повітрі, ліани з квітами, сонячні промені й метелики
+  (g, W, H, t) => {
+    const sc = W / 160, leaf = ['#2f8f4a', '#5fbf5a', '#9fd45a', '#e8b44a', '#e87a4a', '#ff9fc0'];
+    g.globalCompositeOperation = 'lighter'; for (let i = 0; i < 7; i++) { g.globalAlpha = 0.11; g.fillStyle = '#fff6c8'; g.beginPath(); g.moveTo(W * (0.7 + i * 0.04), -4); g.lineTo(W * (0.7 + i * 0.04) - W * 0.5 - i * 6, H); g.lineTo(W * (0.7 + i * 0.04) - W * 0.5 + 10, H); g.closePath(); g.fill(); } g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    const kv = Math.min(1, t / 2.6);
+    [[0, H, 1], [W, H, -1]].forEach(([x0, y0, d], vi) => { const N = 40, last = Math.floor(N * kv); g.strokeStyle = '#2f7a42'; g.lineWidth = Math.max(1.5, sc); g.beginPath(); for (let i = 0; i <= last; i++) { const t2 = i / N, x = x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y = y0 - t2 * H * 0.92; if (i === 0) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke(); for (let i = 3; i <= last; i += 3) { const t2 = i / N, x = x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y = y0 - t2 * H * 0.92; g.fillStyle = leaf[i % 3]; g.beginPath(); g.ellipse(x + d * 3 * sc, y, 3.2 * sc, 1.7 * sc, d * 0.5, 0, 7); g.fill(); } if (kv > 0.85) { const t2 = last / N, x = x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y = y0 - t2 * H * 0.92; for (let p = 0; p < 6; p++) { g.fillStyle = '#ff9fc0'; g.beginPath(); g.arc(x + Math.cos(p * 1.047) * 3 * sc, y + Math.sin(p * 1.047) * 3 * sc, 2 * sc, 0, 7); g.fill(); } g.fillStyle = '#ffe08a'; g.beginPath(); g.arc(x, y, 1.8 * sc, 0, 7); g.fill(); } });
+    for (let i = 0; i < 40; i++) { const x = ((eiRand(i) + Math.sin(t * 0.7 + i) * 0.04) % 1) * W, y = ((eiRand(i + 9) + t * (0.04 + eiRand(i + 3) * 0.05)) % 1.1) * H - 8, s = (2 + eiRand(i + 5) * 3) * sc * 0.7; g.save(); g.translate(x, y); g.rotate(t * 1.2 + i); g.fillStyle = leaf[i % 6]; g.beginPath(); g.ellipse(0, 0, s, s * 0.5, 0, 0, 7); g.fill(); g.restore(); }
+    for (let i = 0; i < 3; i++) { const bx = (0.2 + 0.3 * i + Math.sin(t * 0.6 + i) * 0.08) * W, by = (0.3 + 0.1 * i + Math.cos(t * 0.8 + i) * 0.06) * H, fl = Math.abs(Math.sin(t * 9 + i)); g.fillStyle = ['#ffd84f', '#ff9fc0', '#9fd4ff'][i]; g.fillRect(bx - 3 * sc * fl, by - 2, 3 * sc * fl, 4); g.fillRect(bx, by - 2, 3 * sc * fl, 4); g.fillStyle = '#4a3228'; g.fillRect(bx - 0.5, by - 2, 1, 4); }
+  },
+  // 6 Космос — зорі летять із центру, планети з кільцями, ракета, зорепад
+  (g, W, H, t) => {
+    const sc = W / 160, cx = W / 2, cy = H / 2, diag = Math.hypot(W, H);
+    g.globalAlpha = 0.5; const nb = g.createRadialGradient(W * 0.3, H * 0.4, 0, W * 0.3, H * 0.4, W * 0.5); nb.addColorStop(0, 'rgba(154,85,232,.45)'); nb.addColorStop(1, 'rgba(154,85,232,0)'); g.fillStyle = nb; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+    g.lineCap = 'round'; for (let i = 0; i < 110; i++) { const an = eiRand(i) * 6.28, f = (eiRand(i + 9) + t * 0.18) % 1, r0 = f * f * diag * 0.6 + 2, len = 1 + f * f * diag * 0.12; g.globalAlpha = Math.min(1, f * 2.5); g.strokeStyle = i % 5 === 0 ? '#9fc8ff' : '#fff'; g.lineWidth = Math.max(1, sc * (0.3 + f * 0.7)); g.beginPath(); g.moveTo(cx + Math.cos(an) * r0, cy + Math.sin(an) * r0); g.lineTo(cx + Math.cos(an) * (r0 + len), cy + Math.sin(an) * (r0 + len)); g.stroke(); }
+    g.globalAlpha = 1;
+    [[0.12, 0.2, 0.09, '#e8794a', '#f2b48a', 0], [0.9, 0.78, 0.13, '#5fa8e8', '#bfe0ff', 1], [0.82, 0.14, 0.05, '#b46ae8', '#e6c4ff', 0]].forEach(([px, py, pr, c1, c2, ring], i) => { const rad = Math.min(W, H) * pr, x = W * px + Math.sin(t * 0.3 + i) * 3, y = H * py; const gr = g.createRadialGradient(x - rad * 0.35, y - rad * 0.35, rad * 0.1, x, y, rad); gr.addColorStop(0, c2); gr.addColorStop(1, c1); g.fillStyle = gr; g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill(); if (ring) { g.strokeStyle = c2; g.lineWidth = Math.max(1, rad * 0.14); g.beginPath(); g.ellipse(x, y, rad * 1.7, rad * 0.45, -0.4, 0, 7); g.stroke(); } });
+    const rx = ((t * 0.12) % 1.4 - 0.2) * W, ry = H * 0.45 - ((t * 0.12) % 1.4) * H * 0.4; g.save(); g.translate(rx, ry); g.rotate(-0.5); g.fillStyle = '#fff'; g.fillRect(-2 * sc, -5 * sc, 4 * sc, 10 * sc); g.fillStyle = '#e04a4a'; g.fillRect(-1 * sc, -7 * sc, 2 * sc, 2 * sc); g.fillRect(-4 * sc, 2 * sc, 2 * sc, 4 * sc); g.fillRect(2 * sc, 2 * sc, 2 * sc, 4 * sc); g.fillStyle = Math.floor(t * 18) % 2 ? '#ffb43a' : '#fff6b0'; g.fillRect(-1.5 * sc, 5 * sc, 3 * sc, 5 * sc + Math.sin(t * 40) * sc); g.restore();
+    const sh = (t * 0.5) % 1; if (sh < 0.3) { const k = sh / 0.3; g.strokeStyle = '#fff'; g.lineWidth = Math.max(1, sc * 0.6); g.globalAlpha = 1 - k; g.beginPath(); g.moveTo(W * (0.8 - k * 0.5), H * (0.05 + k * 0.4)); g.lineTo(W * (0.8 - k * 0.5 + 0.12), H * (0.05 + k * 0.4 - 0.08)); g.stroke(); g.globalAlpha = 1; }
+  },
+  // 7 Неон — сітка синтвейву, смугасте сонце, лазери й неонова рамка
+  (g, W, H, t) => {
+    const sc = W / 160, hy = H * 0.6, cx = W / 2;
+    const sun = g.createLinearGradient(0, hy - H * 0.35, 0, hy); sun.addColorStop(0, '#ffe36a'); sun.addColorStop(1, '#ff2fb0'); g.fillStyle = sun; g.beginPath(); g.arc(cx, hy, H * 0.33, Math.PI, 0); g.fill();
+    for (let i = 0; i < 6; i++) { g.fillStyle = '#12002a'; g.fillRect(cx - H * 0.34, hy - H * 0.3 * (i / 6) - 2 - i * 0.6 + 2, H * 0.68, 1 + i * 0.7); }
+    g.fillStyle = '#12002a'; g.fillRect(0, hy, W, H - hy);
+    g.strokeStyle = '#ff2fb0'; g.lineWidth = Math.max(1, sc * 0.5); g.shadowColor = '#ff2fb0'; g.shadowBlur = 5 * sc;
+    for (let i = -14; i <= 14; i++) { g.beginPath(); g.moveTo(cx + i * 2, hy); g.lineTo(cx + i * W * 0.14, H); g.stroke(); }
+    for (let i = 0; i < 9; i++) { const f = ((i + t * 1.2) % 9) / 9, y = hy + f * f * (H - hy); g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+    g.shadowBlur = 0;
+    g.globalCompositeOperation = 'lighter'; [['#2ff5ff', 0], ['#ff2fb0', W]].forEach(([c, x0], j) => { for (let i = 0; i < 3; i++) { const an = (j ? Math.PI : 0) + (j ? -1 : 1) * (0.2 + 0.2 * i + Math.sin(t * 1.5 + i + j) * 0.12); g.globalAlpha = 0.45; g.strokeStyle = c; g.lineWidth = Math.max(1, sc * 0.6); g.beginPath(); g.moveTo(x0, H * 0.05); g.lineTo(x0 + Math.cos(an) * W, H * 0.05 + Math.sin(an) * W); g.stroke(); } });
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 0.6 + 0.3 * Math.sin(t * 9) * (Math.floor(t * 3) % 5 === 0 ? 1 : 0.2); g.strokeStyle = '#2ff5ff'; g.shadowColor = '#2ff5ff'; g.shadowBlur = 6 * sc; g.lineWidth = Math.max(1.5, sc * 0.8); g.strokeRect(4 * sc * 0.6, 4 * sc * 0.6, W - 8 * sc * 0.6, H - 8 * sc * 0.6); g.shadowBlur = 0; g.globalAlpha = 1;
+  }
+];
+function eiLoop() {
+  if (!epochIntro.active) { eiRaf = 0; return; }
+  const cv = ui.eiFx, g = cv.getContext('2d'), t = (performance.now() - eiT0) / 1000, i = epochIntro.idx || 0;
+  if (cv._ep !== i || cv._w !== window.innerWidth || cv._h !== window.innerHeight) { cv._ep = i; cv._w = window.innerWidth; cv._h = window.innerHeight; cv.width = 240; cv.height = Math.max(120, Math.round(240 * window.innerHeight / Math.max(1, window.innerWidth))); }
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, cv.width, cv.height); g.imageSmoothingEnabled = false; g.lineWidth = 1; g.shadowBlur = 0;
+  try { (EI_DRAW[i] || EI_DRAW[0])(g, cv.width, cv.height, t); } catch (e) { /* заставка не має ламати гру */ }
+  eiRaf = requestAnimationFrame(eiLoop);
+}
 function finishEpochIntro() {
   epochIntro.timers.forEach(clearTimeout); epochIntro.timers = [];
+  if (eiRaf) { cancelAnimationFrame(eiRaf); eiRaf = 0; }
   ui.epochIntro.hidden = true; ui.epochIntro.classList.remove('out');
   epochIntro.active = false;
   const cb = epochIntro.done; epochIntro.done = null;
@@ -9018,6 +9143,7 @@ function playEpochIntro(epochNo, done) {
   epochIntro.active = true; epochIntro.done = done || null; epochIntro.startedAt = performance.now();
   state.epochIntroSeen = epochNo; saveGame();
   const i = epochNo % EPOCHS.length, ep = EPOCHS[i], box = ui.epochIntro;
+  box.dataset.ep = i; epochIntro.idx = i; eiT0 = performance.now(); if (eiRaf) cancelAnimationFrame(eiRaf); eiRaf = requestAnimationFrame(eiLoop);
   box.style.setProperty('--ei1', PALETTE[ep.sky[0]]); box.style.setProperty('--ei2', PALETTE[ep.sky[1]]); box.style.setProperty('--ei3', PALETTE[ep.sky[2]]);
   drawEpochEmblem(ui.eiEmblem.getContext('2d'), i);
   ui.eiNum.textContent = t('epochLabel', EPOCH_ROMAN[i]);
@@ -13488,27 +13614,39 @@ function drawBuildTent(b, x0, x1, top, base, lift, t) {
     R(ctx, cx, top - 8, 1, 9, 'd'); const wv = Math.round(Math.sin(t * 6) * 1); R(ctx, cx + 1, top - 8 + wv, 7, 4, 'r'); R(ctx, cx + 1, top - 8 + wv, 7, 1, 'J'); R(ctx, cx + 6, top - 6 + wv, 2, 1, 'd');     // прапорець на гребені
   }
 }
+// Вантажівка-бетономішалка 46×24, дивиться праворуч: x — лівий край, y — земля під колесами. moving — їде (коливається, димить), pour — виливає бетон у тачку
+function drawMixerTruck(x, y, t, moving, pour) {
+  const bob = moving ? Math.floor(t * 14) % 2 : 0, by = y - 2 - bob;
+  ctx.globalAlpha = 0.25; R(ctx, x + 2, y, 44, 2, 'd'); ctx.globalAlpha = 1;
+  R(ctx, x, by - 9, 47, 5, 'd'); R(ctx, x + 1, by - 8, 45, 3, 'e'); R(ctx, x + 1, by - 8, 45, 1, 'E');                                // рама
+  R(ctx, x + 31, by - 22, 16, 14, 'd'); R(ctx, x + 32, by - 21, 14, 12, 'h'); R(ctx, x + 32, by - 21, 14, 2, 'y');                      // кабіна
+  R(ctx, x + 36, by - 19, 9, 7, 'd'); R(ctx, x + 37, by - 18, 7, 5, 'S'); R(ctx, x + 37, by - 18, 3, 1, 'w');                            // вікно
+  R(ctx, x + 38, by - 16, 4, 4, 'B'); R(ctx, x + 38, by - 17, 4, 2, 'y'); R(ctx, x + 37, by - 18, 6, 1, 'o'); R(ctx, x + 39, by - 14, 1, 1, 'k'); R(ctx, x + 41, by - 14, 1, 1, 'k');   // Боді-водій у касці
+  R(ctx, x + 46, by - 12, 2, 3, 'y'); R(ctx, x + 32, by - 10, 14, 1, 'd');                                                          // фара, бампер
+  const cxd = x + 15, cyd = by - 21, ph = Math.floor(t * 8);                                                                          // барабан із крученими смугами
+  for (let dy = -10; dy <= 10; dy++) { const half = Math.round(15 * Math.sqrt(Math.max(0, 1 - (dy * dy) / 110))); for (let dx = -half; dx <= half; dx++) { const stripe = (((dx + dy * 2 + ph) % 8) + 8) % 8 < 4; R(ctx, cxd + dx, cyd + dy, 1, 1, stripe ? 'o' : 'w'); } }
+  for (let dy = -10; dy <= 10; dy++) { const half = Math.round(15 * Math.sqrt(Math.max(0, 1 - (dy * dy) / 110))); R(ctx, cxd - half, cyd + dy, 1, 1, 'd'); R(ctx, cxd + half, cyd + dy, 1, 1, 'd'); }
+  for (let dx = -15; dx <= 15; dx++) { const half = Math.round(10 * Math.sqrt(Math.max(0, 1 - (dx * dx) / 240))); R(ctx, cxd + dx, cyd - half, 1, 1, 'd'); R(ctx, cxd + dx, cyd + half, 1, 1, 'd'); }
+  R(ctx, x - 1, by - 14, 9, 3, 'd'); R(ctx, x, by - 13, 7, 1, 'e'); R(ctx, x - 2, by - 12, 2, 7, 'd'); R(ctx, x - 1, by - 11, 1, 5, 'e');      // жолоб
+  [x + 8, x + 22, x + 38].forEach((wx, i) => {                                                                                         // колеса
+    disc(ctx, wx, y - 3, 4, 'd'); disc(ctx, wx, y - 3, 3, 'k'); disc(ctx, wx, y - 3, 1, 'e');
+    const a = t * (moving ? 14 : 0) + i; R(ctx, wx + Math.round(Math.cos(a) * 2), y - 3 + Math.round(Math.sin(a) * 2), 1, 1, 'w');
+  });
+  if (pour) { for (let k = 0; k < 8; k++) R(ctx, x - 2 + (k % 2 ? 0 : 1), by - 10 + k * 2, 1 + (k % 2), 2, (Math.floor(t * 12) + k) % 3 ? 'E' : 'e'); }       // струмінь бетону
+  if (moving || Math.floor(t * 2) % 2) { ctx.globalAlpha = 0.45; disc(ctx, x + 44, by - 26 - (Math.floor(t * 6) % 3), 2, 'E'); disc(ctx, x + 46, by - 30 - (Math.floor(t * 4) % 4), 2, 'W'); ctx.globalAlpha = 1; }   // вихлоп
+}
 function drawBuildExtras(b, p) {
   const gy = LAYOUT.curbY + 12, prog = Math.max(0, Math.min(1, (p - BUILD_A) / (BUILD_C - BUILD_A)));
-  const pileX = shop.x + shop.w - 26, mixX = shop.x + 38, wallX = shop.x + shop.w * 0.5, signX = shop.x + 12;
-  if (p > 0.03 && p < BUILD_C + 0.1) {
-    const left = Math.round(12 * (1 - prog));                                                // купа цегли меншає
-    for (let i = 0; i < left; i++) { const bx = pileX - 7 + (i % 4) * 5, by = gy - 3 - Math.floor(i / 4) * 3; R(ctx, bx, by, 5, 3, 'd'); R(ctx, bx + 1, by, 3, 2, i % 2 ? 'r' : 't'); R(ctx, bx + 1, by, 3, 1, 'o'); }
-    R(ctx, pileX + 8, gy - 3, 15, 2, 'd'); R(ctx, pileX + 8, gy - 3, 15, 1, 'c'); R(ctx, pileX + 9, gy - 6, 13, 2, 'd'); R(ctx, pileX + 9, gy - 6, 13, 1, 'l');     // дошки
-    R(ctx, mixX - 7, gy - 4, 2, 4, 'd'); R(ctx, mixX + 5, gy - 4, 2, 4, 'd');                  // бетономішалка
-    for (let dy = -6; dy <= 6; dy++) { const half = Math.round(Math.sqrt(Math.max(0, 36.5 - dy * dy))); R(ctx, mixX - half, gy - 11 + dy, half * 2 + 1, 1, ((dy + Math.floor(b.t * 7)) % 4 + 4) % 4 < 2 ? 'o' : 'h'); }
-    R(ctx, mixX - 3, gy - 18, 6, 3, 'e'); R(ctx, mixX + 7, gy - 10, 4, 1, 'd'); R(ctx, mixX + 10, gy - 11, 1, 3, 'd');
-    if (Math.floor(b.t * 3) % 2) { ctx.globalAlpha = 0.6; disc(ctx, mixX + 1, gy - 21, 2, 'E'); ctx.globalAlpha = 1; }
+  const siteX = shop.x + shop.w * 0.24, signX = shop.x + shop.w - 16, bx0 = Math.round(b.parkX - 24);
+  if (b.truckX !== undefined && p > 0.01) drawMixerTruck(Math.round(b.truckX), LAYOUT.curbY + 20, b.t, !!b.truckMoving, !!b.pour);
+  if (p > BUILD_A - 0.02 && p < BUILD_C + 0.1) {
+    const fill = Math.max(0, Math.min(1, (p - BUILD_A) / 0.25)) * (1 - prog * 0.5);                                              // тачка з бетоном: наповнюється, потім витрачається
+    R(ctx, bx0, gy - 5, 14, 5, 'd'); R(ctx, bx0 + 1, gy - 4, 12, 3, 'e'); R(ctx, bx0 + 1, gy - 5 - Math.round(fill * 3), 12, 1 + Math.round(fill * 3), 'E'); R(ctx, bx0 + 14, gy - 4, 6, 1, 'd'); R(ctx, bx0 + 3, gy - 1, 3, 3, 'd'); R(ctx, bx0 + 4, gy, 1, 1, 'e');
+    const left = Math.round(12 * (1 - prog));                                                                                  // купа цегли біля шатра меншає
+    for (let i = 0; i < left; i++) { const bx = Math.round(siteX - 22 + (i % 4) * 5), by = gy - 3 - Math.floor(i / 4) * 3; R(ctx, bx, by, 5, 3, 'd'); R(ctx, bx + 1, by, 3, 2, i % 2 ? 'r' : 't'); R(ctx, bx + 1, by, 3, 1, 'o'); }
+    R(ctx, Math.round(siteX + 6), gy - 3, 15, 2, 'd'); R(ctx, Math.round(siteX + 6), gy - 3, 15, 1, 'c'); R(ctx, Math.round(siteX + 7), gy - 6, 13, 2, 'd'); R(ctx, Math.round(siteX + 7), gy - 6, 13, 1, 'l');     // дошки
     R(ctx, signX, gy - 12, 2, 12, 'd'); R(ctx, signX - 11, gy - 21, 24, 10, 'd'); R(ctx, signX - 10, gy - 20, 22, 8, 'w');   // табло прогресу
     R(ctx, signX - 8, gy - 18, 18, 4, 'd'); R(ctx, signX - 7, gy - 17, Math.round(16 * prog), 2, prog > 0.9 ? 'y' : 'g'); R(ctx, signX - 9, gy - 13, 3, 1, 'r');
-    if (p < BUILD_C) for (let i = 0; i < 2; i++) {                                           // помічники носять цеглу від купи до стіни
-      const ph = (b.t * 0.45 + i * 0.5) % 1, u = ph < 0.5 ? ph * 2 : 2 - ph * 2, carry = ph < 0.5, dir = ph < 0.5 ? -1 : 1;
-      const x = Math.round(pileX + (wallX - pileX) * u + (i ? 14 : -4)), y = gy + 2 + i * 4, type = i ? 'duck' : 'mouse', fr = Math.floor(b.t * 6 + i) % 2, sy = y - 23 - (fr ? 1 : 0);
-      ctx.globalAlpha = 0.22; R(ctx, x - 5, y, 11, 1, 'd'); ctx.globalAlpha = 1;
-      drawSprite(ctx, type + '_' + fr, x - 9, sy, { flip: dir < 0 });
-      R(ctx, x - 4, sy + 2, 9, 3, 'h'); R(ctx, x - 3, sy + 1, 7, 1, 'h'); R(ctx, x - 5, sy + 5, 11, 1, 'o'); R(ctx, x - 2, sy + 2, 3, 1, 'y');
-      if (carry) { R(ctx, x - 3, sy - 3, 6, 3, 'd'); R(ctx, x - 2, sy - 3, 4, 2, 'r'); }
-    }
   }
   if (p >= BUILD_C && (p - BUILD_C) / (1 - BUILD_C) >= 0.2) {                                // гірлянда з прапорців і стрічка на відкритті (коли полотно знято)
     const q = (p - BUILD_C) / (1 - BUILD_C), cols = ['r', 'y', 'g', 'n', 'p', 'o'];
@@ -13534,66 +13672,33 @@ function drawBeaverBuilder(b, p) {
   const hd = fl ? -1 : 1, hx = x + hd * 7, hy = foot - Math.round(h * 0.5);
   if (p >= BUILD_C) {                                                                                                                              // ура: лапки вгору
     R(ctx, x - 8, hy - 7, 2, 5, 'B'); R(ctx, x + 7, hy - 7, 2, 5, 'B'); R(ctx, x - 8, hy - 8, 2, 1, 'O'); R(ctx, x + 7, hy - 8, 2, 1, 'O');
-  } else if (b.style === 0 && p >= BUILD_A) {                                                                                                      // молоток
-    const sw = Math.floor(b.t * 9) % 3;
-    if (sw === 0) { R(ctx, hx, hy - 8, 1, 9, 'b'); R(ctx, hx - 2 + (fl ? 0 : 0), hy - 10, 5, 3, 'e'); R(ctx, hx - 2, hy - 10, 5, 1, 'E'); }
+  } else if (b.carry) {                                                                                                                            // несе відро бетону й цеглину
+    R(ctx, hx - 2, hy - 2, 7, 6, 'd'); R(ctx, hx - 1, hy - 1, 5, 4, 'E'); R(ctx, hx - 1, hy - 2, 5, 1, 'e'); R(ctx, hx - 3, hy - 4, 2, 5, 'd'); R(ctx, hx + 4, hy - 4, 2, 5, 'd');
+    R(ctx, x - 3, top - 6, 7, 3, 'd'); R(ctx, x - 2, top - 6, 5, 2, 'r'); R(ctx, x - 2, top - 6, 5, 1, 'o');
+  } else if (b.build) {                                                                                                                            // мастерок і молоток
+    const sw = Math.floor(b.t * 10) % 3;
+    if (sw === 0) { R(ctx, hx, hy - 8, 1, 9, 'b'); R(ctx, hx - 2, hy - 10, 5, 3, 'e'); R(ctx, hx - 2, hy - 10, 5, 1, 'E'); }
     else if (sw === 1) { R(ctx, hx, hy - 4, 1, 6, 'b'); R(ctx, hx - 2 + hd * 2, hy - 6, 5, 3, 'e'); }
     else { R(ctx, hx + (hd > 0 ? 0 : -6), hy, 7, 1, 'b'); R(ctx, hx + hd * 6 - 1, hy - 2, 3, 5, 'e'); }
-  } else if (b.style === 1 && p >= BUILD_A) {                                                                                                      // несе блок магазину на голові й підкидає його на місце
-    const N = b.N || 8, k = b.ck || 0, f = b.cf || 0, rowH = shop.h / N, ph = Math.max(8, Math.min(18, Math.round(rowH))), pw = Math.max(18, Math.min(34, Math.round(shop.w * 0.22)));
-    const srcY = Math.max(0, Math.round(shop.h - (k + 1) * rowH + Math.max(0, rowH - ph)));
-    const sxx = Math.max(0, Math.min(shop.w - pw, Math.round((b.aim || shop.x) - shop.x - pw / 2)));
-    const drawBlock = (bx, by) => { R(ctx, bx - 1, by - 1, pw + 2, ph + 2, 'd'); ctx.drawImage(shop.canvas, sxx, srcY, pw, ph, bx, by, pw, ph); };
-    if (f < 0.5) { drawBlock(Math.round(x - pw / 2), top - ph - 3); R(ctx, x - 8, hy - 7, 2, 5, 'B'); R(ctx, x + 7, hy - 7, 2, 5, 'B'); }
-    else if (f < 0.78) {
-      const q = (f - 0.5) / 0.28, tyT = shop.y + shop.h * (1 - (k + 1) / N), x0 = x - pw / 2, y0 = top - ph - 3, x1 = (b.aim || shop.x) - pw / 2;
-      drawBlock(Math.round(x0 + (x1 - x0) * q), Math.round(y0 + (tyT - y0) * q - Math.sin(q * Math.PI) * 16));
-      R(ctx, x - 8, hy - 9, 2, 6, 'B'); R(ctx, x + 7, hy - 9, 2, 6, 'B');
-    }
-  } else if (b.style === 2 && p >= BUILD_A) {                                                                                                      // пила
-    R(ctx, hx, hy, 7, 2, 'e'); R(ctx, hx, hy + 2, 7, 1, 'E'); R(ctx, hx - hd * 2, hy - 1, 3, 4, 'b');
   }
 }
 function renderBuild() {
-  const b = build, p = b.t / b.dur, r = b.r || 0, o = b.old, sty = b.style;
-  if (p < BUILD_A) drawCanvasSprite(ctx, o.canvas, o.x, o.y, {});                // старий магазин лишається, поки його не накрило полотно
-  let shownH = 0;
-  if (sty === 2 && p >= BUILD_A && p < BUILD_C) {                                // смуги з'їжджаються з боків по черзі (за полотном)
-    const u = (p - BUILD_A) / (BUILD_C - BUILD_A), B = buildBands(), bh = shop.h / B;
-    for (let i = 0; i < B; i++) {
-      const e = Math.max(0, Math.min(1, (u - 0.02 - 0.82 * i / B) / 0.14)); if (e <= 0) continue;
-      const off = Math.round((1 - smooth01(e)) * (i % 2 ? 1 : -1) * shop.w * 0.8), sy = Math.round(shop.h - (i + 1) * bh), hh = Math.max(1, Math.round(shop.h - i * bh) - sy);
-      ctx.save(); ctx.globalAlpha = Math.min(1, e * 2.5); ctx.beginPath(); ctx.rect(shop.x - 4, shop.y + sy, shop.w + 8, hh); ctx.clip();
-      ctx.drawImage(shop.canvas, 0, sy, shop.w, hh, shop.x + off, shop.y + sy, shop.w, hh);
-      ctx.restore();
-    }
-    shownH = shop.h;
-  } else if (r > 0) {
-    shownH = Math.max(1, Math.round(shop.h * r));
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(shop.x, shop.y + shop.h - shownH, shop.w, shownH);
-    ctx.clip();
-    ctx.drawImage(shop.canvas, shop.x, shop.y);
-    ctx.restore();
-  }
-  // полотно: падає зверху на старий магазин, розтягується на новий, а наприкінці знімається знизу вгору
+  const b = build, p = b.t / b.dur, o = b.old;
+  if (p < BUILD_A) drawCanvasSprite(ctx, o.canvas, o.x, o.y, {});                // старий магазин лишається, поки його не накрило шатро
+  if (p >= BUILD_C) ctx.drawImage(shop.canvas, shop.x, shop.y);                  // новий магазин показується лише коли шатро знімається: ніяких «поверхів, що вкладаються»
+  // шатро: падає зверху на старий магазин, розтягується на новий розмір, а наприкінці знімається знизу вгору
   const base = shop.y + shop.h, q = p >= BUILD_C ? (p - BUILD_C) / (1 - BUILD_C) : 0;
-  const wk = smooth01((p - 0.1) / 0.16);
+  const wk = smooth01((p - 0.1) / 0.16), prog = smooth01((p - BUILD_A) / (BUILD_C - BUILD_A));
   const tx0 = Math.round(o.x - 3 + (shop.x - 3 - (o.x - 3)) * wk), tx1 = Math.round(o.x + o.w + 3 + (shop.x + shop.w + 3 - (o.x + o.w + 3)) * wk);
-  const H = (p < BUILD_A ? o.h : (sty === 2 ? shop.h : Math.max(o.h, shownH))) + 2;
+  const H = (p < BUILD_A ? o.h : Math.round(o.h + (shop.h - o.h) * prog)) + 2;
   const fall = p < 0.12 ? (1 - Math.pow(p / 0.12, 2)) * (H + 70) : 0;
   const tentLift = q > 0 ? smooth01(q / 0.3) * (H + 6) : 0;
   const bounce = p >= 0.12 && p < 0.2 ? Math.round(Math.sin((p - 0.12) / 0.08 * Math.PI) * 2) : 0;
   if (p > 0 && tentLift < H + 4) { ctx.save(); ctx.translate(0, -Math.round(fall) + bounce); drawBuildTent(b, tx0, tx1, base - H, base, tentLift, b.t); ctx.restore(); }
-  {                                                                // риштування: ростуть, а на фініші падають
-    if (p < BUILD_A) drawScaffold(o.x, o.y, o.w, o.h, Math.min(1, p / 0.1));
-    else if (p < BUILD_C) drawScaffold(shop.x, shop.y + shop.h - shownH, shop.w, shownH, 1);
-    else { const qq = (p - BUILD_C) / (1 - BUILD_C), al = Math.max(0, 1 - qq * 1.6); if (al > 0) { ctx.save(); ctx.translate(0, Math.round(qq * qq * 46)); drawScaffold(shop.x, shop.y, shop.w, shop.h, al); ctx.restore(); } }
-  }
   drawBuildExtras(b, p);
   drawBeaverBuilder(b, p);
 }
+
 /* =====================================================================
    ІГРОВИЙ ЦИКЛ
    ===================================================================== */
