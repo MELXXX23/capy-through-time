@@ -495,6 +495,28 @@ body.no-anim .floater { display: none; }
 /* Заставка нової епохи на весь екран */
 #epochIntro { position: fixed; inset: 0; z-index: 90; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 #epochIntro[hidden] { display: none; }
+#tour { position: fixed; inset: 0; z-index: 90000; pointer-events: none; }
+#tour[hidden] { display: none; }
+#tourRing { position: fixed; border: 4px solid #ffe36a; box-shadow: 0 0 0 3px #3a2a22, 0 0 14px 4px rgba(255, 227, 106, .8); animation: tourPulse .8s steps(2) infinite; }
+@keyframes tourPulse { 50% { box-shadow: 0 0 0 3px #3a2a22, 0 0 24px 9px rgba(255, 227, 106, .95); } }
+#tourArrow { position: fixed; --rot: 0deg; transform: rotate(var(--rot)); animation: tourBob .5s steps(2) infinite; }
+@keyframes tourBob { 0% { transform: rotate(var(--rot)) translateX(0); } 100% { transform: rotate(var(--rot)) translateX(9px); } }
+#tourChars { position: fixed; display: flex; align-items: flex-end; gap: 2px; }
+#tourChars canvas { width: 76px; height: auto; image-rendering: pixelated; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, .35)); }
+#tourChars canvas.talk { animation: tourHop .5s steps(2) infinite; }
+@keyframes tourHop { 50% { transform: translateY(-5px); } }
+#tourBubble { position: fixed; background: #fff3d6; color: #3a2a22; border: 4px solid #3a2a22; box-shadow: 0 4px 0 rgba(0, 0, 0, .3), inset 0 0 0 2px #c98a3c; font-family: var(--font); font-size: 11px; line-height: 1.7; padding: 10px 12px; pointer-events: auto; }
+#tourBubble[data-who="m"] { border-color: #8a4a12; } #tourBubble[data-who="n"] { border-color: #6f56b0; }
+#tourGo { display: block; margin-top: 8px; font-size: 12px; padding: 10px 14px; color: #fff; background: #2a7a3a; border: 3px solid #fff6c8; box-shadow: 0 3px 0 #1d5a2a; } #tourGo[hidden] { display: none; }
+#tourSkip { position: fixed; pointer-events: auto; font-size: 8px; padding: 6px 8px; color: #fff6c8; background: rgba(0, 0, 0, .55); border: 2px solid #f6c744; }
+#cutscene { position: fixed; inset: 0; z-index: 100001; background: #05060f; display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none; -webkit-user-select: none; }
+#cutscene[hidden] { display: none; }
+#cutCv { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+#cutSkip { position: absolute; top: max(10px, env(safe-area-inset-top)); right: 10px; z-index: 2; font-size: 10px; padding: 8px 10px; color: #fff6c8; background: rgba(0, 0, 0, .55); border: 2px solid #f6c744; }
+#cutPick { display: none; flex-direction: column; gap: 12px; width: min(90vw, 360px); padding: 20px; background: #2a1a3a; border: 4px solid #f6c744; text-align: center; }
+#cutscene.picking #cutPick { display: flex; } #cutscene.picking #cutCv, #cutscene.picking #cutSkip { display: none; }
+#cutPick .cp-title { font-size: 14px; color: #ffe36a; } #cutPick .cp-sub { font-size: 9px; color: #fff6c8; line-height: 1.6; }
+#cutPick button { font-size: 11px; padding: 14px 10px; color: #2a1a3a; background: #ffe36a; border: 3px solid #fff6c8; } #cutPick button.cp-close { background: #5a4a6a; color: #fff6c8; border-color: #7a6a8a; font-size: 9px; padding: 10px; }
 #eiStage { position: absolute; inset: 0; animation: eiIris 1.1s steps(14, end) forwards; }
 #eiBg { position: absolute; inset: 0; background: linear-gradient(rgba(26,16,36,.5), rgba(26,16,36,.58)), linear-gradient(var(--ei1), var(--ei2) 55%, var(--ei3)); }
 #eiFx { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; }
@@ -1250,6 +1272,9 @@ function bootDone() {
     </div>
   </div>
 </div>
+<div id="tour" hidden><div id="tourRing"></div><svg id="tourArrow" viewBox="0 0 20 14" width="40" height="28" shape-rendering="crispEdges"><path d="M0 4h10V0l10 7-10 7v-4H0z" fill="#ffe36a" stroke="#3a2a22" stroke-width="1.5"/></svg><div id="tourChars"><canvas id="tourMel"></canvas><canvas id="tourNika"></canvas></div><div id="tourBubble"><span id="tourText"></span><button type="button" id="tourGo" hidden>ГРАТИ!</button></div><button type="button" id="tourSkip">Пропустити тур</button></div>
+<div id="cutscene" hidden><canvas id="cutCv"></canvas><button id="cutSkip" type="button">Пропустити ▶▶</button>
+  <div id="cutPick" hidden><div class="cp-title">Початкова сцена</div><div class="cp-sub">Обери оформлення і дивись</div><button type="button" data-s="A">A · Весняний ранок</button><button type="button" data-s="B">B · Осінній вечір</button><button type="button" data-s="C">C · Зимова ніч</button><button type="button" id="cutClose" class="cp-close">Закрити</button></div></div>
 <div id="epochIntro" hidden aria-hidden="true">
   <div id="eiStage"><div id="eiBg"></div><canvas id="eiFx"></canvas></div>
   <div id="eiRays"></div>
@@ -2906,6 +2931,8 @@ const translations = {
     // Сюжет
     storyNote: "Тут усі відкриті глави. Перечитувати можна без витрат.",
     storyRead: 'Читати',
+    introCutTitle: 'Заставка',
+    introCutBtn: 'Дивитись',
     storyLocked: '🔒 Наступна глава відкриється з прогресом',
     storySkip: 'Пропустити главу',
     chapterLabel: 'Глава {0}',
@@ -3502,6 +3529,8 @@ const translations = {
 
     storyNote: "All the unlocked chapters are here. Re-reading is free.",
     storyRead: 'Read',
+    introCutTitle: 'Intro',
+    introCutBtn: 'Watch',
     storyLocked: '🔒 The next chapter opens as you progress',
     storySkip: 'Skip chapter',
     chapterLabel: 'Chapter {0}',
@@ -4032,6 +4061,7 @@ function createDefaultState() {
     teamKnown: TEAM.map(() => 0),
     ach: ACHIEVEMENTS.map(() => 0),     // 1 — досягнення отримано
     tutorialDone: false,
+    cutSeen: false,                    // вступну заставку з Мел і Нікою вже показано
     buyMode: 1,                        // 1 | 10 | 100 | 'max'
     pendingOffline: 0,                 // офлайн-заробіток, який ще не забрали
     tab: 'shop',
@@ -8876,6 +8906,726 @@ const SFX = {
     }
   }
 };
+/* ====================== ПОЧАТКОВА КАТ-СЦЕНА (v2) ======================
+   Малюнок удвічі дрібніший за гру (CUT_Q = 2 пікселі полотна на «піксель гри»): герої збільшені з плавним згладжуванням (EPX ×4),
+   будинки, дерева, ліхтарі й бруківка беруться з самої гри. Час T — «сюжетні секунди» (1 с сюжету = CUT_SLOW справжніх).
+   Кадр — функція T, тому знімки: ?cut=A&seek=14. Варіанти: A весняний ранок, B осінній вечір, C зимова ніч. */
+const CUT_Q = 2, CUT_SLOW = 1.5;
+const CUT_STYLES = {
+  A: { season: 'spring', sky: ['#4f9fe6', '#7cc0f0', '#b5defa', '#ffe6b4', '#ffc994'], tint: [255, 196, 140, 0.08], stars: 0, sun: 'sun', win: 0.0, lamp: 0, cloud: '#ffffff', fall: 'petal', glow: 0 },
+  B: { season: 'autumn', sky: ['#35295f', '#6b3a82', '#c0507a', '#f07f55', '#ffbd6e'], tint: [150, 80, 110, 0.20], stars: 0.3, sun: 'low', win: 0.75, lamp: 1, cloud: '#ffb08a', fall: 'leaf', glow: 0.6 },
+  C: { season: 'winter', sky: ['#04061a', '#0a1032', '#131c4c', '#1f2e66', '#33477f'], tint: [20, 34, 100, 0.48], stars: 1, sun: 'moon', win: 0.65, lamp: 1, cloud: '#2a3a74', fall: 'snow', glow: 1 }
+};
+const CUT_TXT = {
+  uk: { hi: 'Привіт!', intro: ['Жив собі Капі', 'у своєму піксельному світі…'], introN: ['Жив собі', 'Капі у своєму', 'піксельному', 'світі…'], p1: 'Ого… у мене є монетка!', b1: 'Перша монетка? Тоді тобі потрібен магазин!', c2: 'Магазин?', b2: 'Навіть з однієї монетки виросте бізнес!', b3: 'Дивись уважно!', b4: 'Тепер твоя черга.', c5: 'А що робити?', b5: 'Спробуй тапнути!', hint: 'ТАПНИ НА МАГАЗИН', click: 'КЛІК!',
+    b6: 'Чим більше заробляєш, тим більше можеш розвивати магазин!', b7: 'Розвивай магазин, заробляй монети й відкривай нові епохи!', w1: 'ПОКРАЩУЙ.', w2: 'ТАПАЙ.', w3: 'РОЗВИВАЙ.', i1: 'ТАП', i2: 'МОНЕТИ', i3: 'ПОКРАЩЕННЯ', i4: 'РІВЕНЬ', skip: 'Пропустити',
+    m1: 'Привіт! Я Мел,', n1: 'а я Ніка. Ми розробники цієї гри!', m2: 'Зараз покажемо, як усе працює. Ну що, починаємо?', go: 'ПОЧИНАЄМО!', tuk: 'ТУК!' },
+  en: { hi: 'Hi!', intro: ['Once upon a time,', 'Capy lived in a pixel world…'], introN: ['Once upon', 'a time, Capy', 'lived in a', 'pixel world…'], p1: 'Wow... I have a coin!', b1: 'A first coin? Then you need a shop!', c2: 'A shop?', b2: 'Even one coin can grow into a business!', b3: 'Watch closely!', b4: 'Now it is your turn.', c5: 'What do I do?', b5: 'Try tapping!', hint: 'TAP THE SHOP', click: 'CLICK!',
+    b6: 'The more you earn, the more you can grow your shop!', b7: 'Grow the shop, earn coins and unlock new epochs!', w1: 'UPGRADE.', w2: 'TAP.', w3: 'GROW.', i1: 'TAP', i2: 'COINS', i3: 'UPGRADE', i4: 'LEVEL', skip: 'Skip',
+    m1: 'Hi! I am Mel,', n1: 'and I am Nika. We are the developers!', m2: 'We will show how it all works. Shall we start?', go: "LET'S GO!", tuk: 'TOCK!' }
+};
+// Часова шкала (сюжетні секунди)
+const CUT_PRE = 2.6;
+const CT = { walk: 4.2, ting1: 4.3, ting2: 5.2, pick: 6.2, bIn0: 6.6, bIn1: 7.8, fly0: 12.2, fly1: 13.0, charge: 13.9, big1: 14.7, flash: 14.9, asm0: 15.1, asm1: 19.0, sign0: 19.3, sign1: 21.0, flank0: 19.3, flank1: 20.7, TW: 23.5 };
+CT.u0 = CT.TW + 1.4; CT.fin = CT.u0 + 7.9; CT.finBtn = CT.fin + 7.6; CT.END = CT.finBtn + 1.0;
+const CUT_SAY = [[6.3, 7.5, 'c', 'p1'], [7.7, 8.5, 'b', 'hi'], [8.6, 10.4, 'b', 'b1'], [10.5, 11.3, 'c', 'c2'], [11.4, 13.0, 'b', 'b2'], [20.4, 21.5, 'b', 'b4'], [21.6, 22.5, 'c', 'c5'], [22.5, CT.TW, 'b', 'b5']];
+const cut = { on: false, bagStyle: 0, style: 'A', raf: 0, t0: 0, amb: 0, tapAmb: -1, goAmb: -1, T: 0, W: 384, H: 216, S: 1, fired: {}, cb: null, cache: {}, shopPx: null, thumbs: null, rect: null, btn: null, seek: -1, hit: null };
+const cutHash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+const cutSm = u => { u = Math.max(0, Math.min(1, u)); return u * u * (3 - 2 * u); };
+const cutLerp = (a, b, u) => a + (b - a) * u;
+function cutKf(T, keys) {
+  if (T <= keys[0][0]) return keys[0][1];
+  for (let i = 0; i < keys.length - 1; i++) if (T < keys[i + 1][0]) return cutLerp(keys[i][1], keys[i + 1][1], cutSm((T - keys[i][0]) / (keys[i + 1][0] - keys[i][0])));
+  return keys[keys.length - 1][1];
+}
+const cutRc = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+const cutTf = (g, tx, ty) => g.setTransform(CUT_Q, 0, 0, CUT_Q, Math.round(tx * CUT_Q), Math.round(ty * CUT_Q));
+// Підготовка гри до малювання її ж будинків: перша епоха й потрібна пора року; після — усе повертається
+function cutWithGame(fn) {
+  const oe = state.epoch, ob = buildSeason, oh = LAYOUT.horizonY, od = houseDoors, og = houseGlass;
+  state.epoch = 0; buildSeason = CUT_STYLES[cut.style].season; houseDoors = []; houseGlass = [];
+  try { return fn(); } finally { state.epoch = oe; buildSeason = ob; LAYOUT.horizonY = oh; houseDoors = od; houseGlass = og; }
+}
+function cutTintCv(c) { const st = CUT_STYLES[cut.style], g = c.getContext('2d'); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(' + st.tint[0] + ',' + st.tint[1] + ',' + st.tint[2] + ',' + (st.tint[3] * 0.85) + ')'; g.fillRect(0, 0, c.width, c.height); g.globalCompositeOperation = 'source-over'; }
+const CUT_HW = [52, 46, 44, 62, 48, 46], CUT_HH = [66, 54, 70, 62, 60, 72];
+function cutHouseCv(i) {
+  const k = ((i % 6) + 6) % 6, key = 'h' + cut.style + (((i % 30) + 30) % 30); if (cut.cache[key]) return cut.cache[key];
+  const w = CUT_HW[k] + (((i * 7) % 3) - 1) * 2, h = Math.round(CUT_HH[k] * 1.4), pad = 36, cw = w + 16, ch = h + pad, c = document.createElement('canvas'); c.width = cw; c.height = ch;
+  let glass = [];
+  cutWithGame(() => { LAYOUT.horizonY = ch - 1; const g = c.getContext('2d'); drawHouse(g, Object.assign({ x: 8, w, h }, houseColors(i)), []); glass = houseGlass.slice(); });
+  cutTintCv(c);
+  const st = CUT_STYLES[cut.style], g = c.getContext('2d');
+  glass.forEach((r, n) => { if (cutHash(i * 31 + n * 7) < st.win) { g.fillStyle = '#fff0b0'; g.fillRect(r[0], r[1], r[2], 3); g.fillStyle = '#ffd36b'; g.fillRect(r[0], r[1] + 3, r[2], 4); g.fillStyle = '#f0a840'; g.fillRect(r[0], r[1] + 7, r[2], 2); } });
+  return (cut.cache[key] = { c, w: cw, h: ch, ox: 8, hw: w });
+}
+function cutTreeCv(v) {
+  const key = 't' + cut.style + v; if (cut.cache[key]) return cut.cache[key];
+  const c = document.createElement('canvas'); c.width = 110; c.height = 128;
+  cutWithGame(() => { LAYOUT.horizonY = 112; drawStreetTree(c.getContext('2d'), 55, v, buildSeason); });
+  cutTintCv(c); return (cut.cache[key] = { c, w: 110, h: 128, base: 120 });
+}
+function cutLampCv() {
+  const key = 'l' + cut.style; if (cut.cache[key]) return cut.cache[key];
+  const c = document.createElement('canvas'); c.width = 20; c.height = 56; const g = c.getContext('2d'); g.translate(10, -80); drawLamp(g, 0);
+  const st = CUT_STYLES[cut.style]; cutTintCv(c); if (st.lamp) { g.fillStyle = '#fff3b0'; g.fillRect(8, 8, 6, 5); g.fillStyle = '#ffffff'; g.fillRect(9, 9, 2, 2); }
+  return (cut.cache[key] = { c, w: 20, h: 56 });
+}
+function cutCobbleCv() {
+  const key = 'cb' + cut.style; if (cut.cache[key]) return cut.cache[key];
+  const c = document.createElement('canvas'); c.width = 512; c.height = 44;
+  cutWithGame(() => paintCobble(c.getContext('2d'), 0, 0, 512, 44, buildSeason === 'winter' ? 'snow' : buildSeason === 'autumn' ? 'leaves' : 'stone'));
+  cutTintCv(c); return (cut.cache[key] = c);
+}
+// EPX-згладжування: кожен піксель спрайта дробиться на 2×2 з акуратними діагоналями (двічі = ×4)
+function cutEpx(src) {
+  const w = src.width, h = src.height, d = src.getContext('2d').getImageData(0, 0, w, h).data, out = document.createElement('canvas'); out.width = w * 2; out.height = h * 2;
+  const og = out.getContext('2d'), od = og.createImageData(w * 2, h * 2), o = od.data;
+  const px = (x, y) => { if (x < 0 || y < 0 || x >= w || y >= h) return 0; const i = (y * w + x) * 4; return d[i + 3] < 8 ? 0 : (((d[i] << 24) | (d[i + 1] << 16) | (d[i + 2] << 8) | d[i + 3]) >>> 0) || 1; };
+  const put = (x, y, v) => { const i = (y * w * 2 + x) * 4; if (!v) { o[i + 3] = 0; return; } o[i] = (v >>> 24) & 255; o[i + 1] = (v >>> 16) & 255; o[i + 2] = (v >>> 8) & 255; o[i + 3] = v & 255; };
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const p = px(x, y), a = px(x, y - 1), b = px(x + 1, y), c = px(x - 1, y), e = px(x, y + 1);
+    put(x * 2, y * 2, (c === a && c !== e && a !== b) ? a : p); put(x * 2 + 1, y * 2, (a === b && a !== c && b !== e) ? b : p);
+    put(x * 2, y * 2 + 1, (e === c && e !== b && c !== a) ? c : p); put(x * 2 + 1, y * 2 + 1, (b === e && b !== a && e !== c) ? e : p);
+  }
+  og.putImageData(od, 0, 0); return out;
+}
+function cutHi(name, canvas) { const key = 'hi' + name; if (cut.cache[key]) return cut.cache[key]; const src = canvas || getSpriteCanvas(name); return (cut.cache[key] = cutEpx(cutEpx(src))); }
+// Капі без сукні/футболки: шерсть, голова з квіточкою (дівчинка) або листочком (хлопчик), очей немає — їх малюють емоції
+function cutCapyHi() {
+  const boy = state.settings.gender === 'm', key = 'capy' + (boy ? 'm' : 'f'); if (cut.cache[key]) return cut.cache[key];
+  const rows = makeCapyRows('plain').map(r => r.replace(/K/g, 'B').split('')), W = rows[0].length;
+  const put = (x, y, c) => { const xi = 27 - x; if (rows[y] && xi >= 0 && xi < W) rows[y][xi] = c; };
+  const acc = boy ? [[6, 1, 'g'], [5, 2, 'g'], [6, 2, 'g'], [8, 1, 'g'], [8, 2, 'g'], [9, 2, 'g'], [7, 2, 'G'], [7, 3, 'G']] : [[7, 1, 'p'], [6, 2, 'p'], [7, 2, 'y'], [8, 2, 'p'], [7, 3, 'p']];
+  acc.forEach(([x, y, c]) => put(x, y, c));
+  acc.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const xi = 27 - (x + dx), yy = y + dy; if (rows[yy] && rows[yy][xi] === '.') rows[yy][xi] = 'O'; }));
+  SPRITES['cut_' + key] = { rows: rows.map(r => r.join('')) };
+  return cutHi('cut_' + key);
+}
+// Лице на спрайті ×4 (око ≈ (80,36), мордочка праворуч); координати в пікселях ×4
+function cutFace(g, e) {
+  const ex = 80, ey = 36, dk = '#2a1a14', R_ = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+  const ell = (cx, cy, rx, ry, c) => { g.fillStyle = c; for (let dy = -ry; dy <= ry; dy++) { const half = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry + 0.5)))); g.fillRect(cx - half, cy + dy, half * 2 + 1, 1); } };
+  if (e.blush) { g.globalAlpha = 0.55; ell(ex + 9, ey + 11, 6, 3, '#ff8fa8'); g.globalAlpha = 1; }
+  switch (e.eye) {
+    case 'wide': ell(ex, ey, 7, 8, dk); ell(ex, ey, 6, 7, '#ffffff'); ell(ex + 1, ey + 1, 3, 4, dk); R_(ex - 1, ey - 2, 2, 2, '#ffffff'); break;
+    case 'happy': for (let dx = -6; dx <= 6; dx++) { const y = ey - Math.round(Math.sqrt(Math.max(0, 1 - (dx / 6.5) * (dx / 6.5))) * 5); R_(ex + dx, y + 1, 1, 3, dk); } break;
+    case 'sparkle': ell(ex, ey, 5, 6, dk); R_(ex - 3, ey - 4, 3, 3, '#ffffff'); R_(ex + 1, ey + 1, 2, 2, '#ffffff'); R_(ex + 3, ey - 5, 1, 3, '#ffffff'); R_(ex + 2, ey - 4, 3, 1, '#ffffff'); break;
+    case 'half': ell(ex, ey, 5, 6, dk); R_(ex - 6, ey - 7, 13, 7, '#b57a3e'); R_(ex - 6, ey - 1, 13, 2, dk); R_(ex - 2, ey + 1, 2, 2, '#ffffff'); break;
+    case 'blink': R_(ex - 5, ey, 11, 3, dk); break;
+    default: ell(ex, ey, 4, 5, dk); R_(ex - 2, ey - 3, 2, 3, '#ffffff'); R_(ex + 1, ey + 1, 1, 1, '#ffffff');
+  }
+  const brow = (x0, y0, x1, y1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i++) R_(x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n, 3, 3, dk); };
+  if (e.brow === 'up') brow(ex - 6, ey - 12, ex + 6, ey - 14); else if (e.brow === 'worry') brow(ex - 6, ey - 9, ex + 6, ey - 15); else if (e.brow === 'think') brow(ex - 6, ey - 11, ex + 6, ey - 9); else if (e.brow === 'cross') brow(ex - 6, ey - 15, ex + 6, ey - 9);
+  const mx = 97, my = 49;
+  if (e.mouth === 'smile') { for (let dx = -6; dx <= 6; dx++) R_(mx + dx, my + Math.round(3 * (1 - (dx / 6.5) * (dx / 6.5))), 1, 2, dk); }
+  else if (e.mouth === 'big') { for (let dy = 0; dy <= 6; dy++) { const half = Math.round(7 * Math.sqrt(1 - (dy / 7) * (dy / 7))); R_(mx - half, my + dy, half * 2 + 1, 1, dk); } R_(mx - 3, my + 4, 7, 2, '#ff7a90'); }
+  else if (e.mouth === 'o') { ell(mx, my + 3, 3, 4, dk); R_(mx - 1, my + 4, 3, 2, '#ff7a90'); }
+  else if (e.mouth === 'frown') { for (let dx = -5; dx <= 5; dx++) R_(mx + dx, my + 3 - Math.round(2 * (1 - (dx / 5.5) * (dx / 5.5))), 1, 2, dk); }
+  else R_(mx - 5, my + 2, 11, 2, dk);
+}
+// Значки над головою: ! ? серце іскри краплина
+function cutMark(g, kind, x, y, T) {
+  const b = Math.sin(T * 9) * 1.2;
+  if (kind === '!') { cutPopText(g, '!', x, y + b, 4, '#ff5a5a', '#ffffff'); }
+  else if (kind === '?') { cutPopText(g, '?', x, y + b, 4, '#ffe36a', '#7a3a10'); }
+  else if (kind === 'heart') { const h = ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...']; h.forEach((r, j) => r.split('').forEach((c, i) => { if (c === 'X') { g.fillStyle = j < 1 ? '#ff9fb4' : '#ff4f78'; g.fillRect(x - 3.5 + i, y - 3 + j + b, 1, 1); } })); }
+  else if (kind === 'spark') { for (let k = 0; k < 3; k++) { const ph = (T * 2 + k * 0.33) % 1; if (ph < 0.6) cutSpark(g, x + (k - 1) * 9, y + 4 - ph * 10, ph < 0.3 ? 1 : 2, '#fff7c0'); } }
+}
+function cutEmo(T, amb) {
+  const TW = CT.TW, u = cut.tapAmb >= 0 ? T - TW : -1;
+  let e;
+  if (u >= 0) e = u < 1.4 ? { eye: 'happy', mouth: 'big', blush: 1, mark: 'heart' } : T < CT.fin ? { eye: 'sparkle', brow: 'up', mouth: 'smile', blush: 1 } : { eye: 'happy', mouth: 'big', blush: 1, mark: 'heart' };
+  else if (T < CT.ting1) e = { eye: 'half', brow: 'think', mouth: 'frown' };
+  else if (T < CT.ting2) e = { eye: 'wide', brow: 'up', mouth: 'o', mark: '!' };
+  else if (T < CT.pick) e = { eye: 'wide', brow: 'up', mouth: 'o' };
+  else if (T < 7.9) e = { eye: 'happy', mouth: 'big', blush: 1, mark: 'spark' };
+  else if (T < 10.5) e = { eye: 'open', brow: 'up', mouth: 'smile' };
+  else if (T < 11.4) e = { eye: 'open', brow: 'worry', mouth: 'o', mark: '?' };
+  else if (T < 13.0) e = { eye: 'sparkle', brow: 'up', mouth: 'smile', blush: 1 };
+  else if (T < CT.asm0) e = { eye: 'wide', brow: 'up', mouth: 'o', mark: 'spark' };
+  else if (T < CT.asm1 + 0.4) e = { eye: 'wide', brow: 'up', mouth: 'big', blush: 1, mark: 'spark' };
+  else if (T < 21.6) e = { eye: 'happy', mouth: 'big', blush: 1, mark: 'heart' };
+  else if (T < 22.5) e = { eye: 'open', brow: 'worry', mouth: 'o', mark: '?' };
+  else e = { eye: 'sparkle', brow: 'up', mouth: 'smile', blush: 1 };
+  if ((e.eye === 'open' || e.eye === 'half' || e.eye === 'sparkle') && (amb * 10) % 31 < 1.1) e = Object.assign({}, e, { eye: 'blink' });
+  return e;
+}
+// Текст: шрифт 8 px малюється у проміжне полотно й масштабується без згладжування (k — пікселів полотна на піксель шрифту)
+function cutTextPx(g, str, x, y, k, fill, edge, align, alpha) {
+  if (!str) return; k = Math.max(1, Math.round(k));
+  const key = str + '|' + fill + '|' + (edge || ''), cache = cutCache('txtmap', () => new Map());
+  let c = cache.get(key);
+  if (!c) {
+    const w = str.length * 8, pad = edge ? 1 : 0, base = document.createElement('canvas'); base.width = w + 2; base.height = 10;
+    const bg = base.getContext('2d'); bg.font = '8px "Press Start 2P", monospace'; bg.textBaseline = 'top'; bg.fillStyle = '#000'; bg.fillText(str, 1, 1);
+    const id = bg.getImageData(0, 0, w + 2, 10), d = id.data; for (let i = 3; i < d.length; i += 4) d[i] = d[i] > 110 ? 255 : 0;       // чіткі пікселі
+    bg.putImageData(id, 0, 0);
+    c = document.createElement('canvas'); c.width = w + 2 + pad * 2; c.height = 10 + pad * 2; const cg = c.getContext('2d');
+    const tinted = col => { const t = document.createElement('canvas'); t.width = w + 2; t.height = 10; const tg = t.getContext('2d'); tg.drawImage(base, 0, 0); tg.globalCompositeOperation = 'source-in'; tg.fillStyle = col; tg.fillRect(0, 0, w + 2, 10); return t; };
+    if (edge) { const e = tinted(edge); [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, 1], [-1, 1], [1, -1]].forEach(([dx, dy]) => cg.drawImage(e, pad + dx, pad + dy)); }
+    cg.drawImage(tinted(fill), pad, pad);
+    if (cache.size > 400) cache.clear(); cache.set(key, c);
+  }
+  const dw = c.width * k / CUT_Q, dh = c.height * k / CUT_Q, ox = align === 'center' ? -dw / 2 : align === 'right' ? -dw : 0;
+  g.save(); g.imageSmoothingEnabled = false; if (alpha !== undefined) g.globalAlpha = alpha; g.drawImage(c, Math.round((x + ox) * CUT_Q) / CUT_Q, Math.round((y - dh / 2) * CUT_Q) / CUT_Q, dw, dh); g.restore();
+}
+function cutPopText(g, str, x, y, k, fill, edge, age) { const a = age === undefined ? 1 : age, s = a < 0.12 ? a / 0.12 * 1.3 : a < 0.26 ? 1.3 - (a - 0.12) / 0.14 * 0.3 : 1; cutTextPx(g, str, x, y, Math.max(0.5, k * s), fill, edge, 'center'); }
+function cutSpark(g, x, y, s, col) { g.fillStyle = col || '#fff'; g.fillRect(Math.round(x - s), Math.round(y), s * 2 + 1, 1); g.fillRect(Math.round(x), Math.round(y - s), 1, s * 2 + 1); g.fillRect(Math.round(x - 1), Math.round(y - 1), 3, 3); }
+function cutBubble(g, text, sx, sy, who, prog, W) {
+  const k = 2, cw = 8 * k / CUT_Q, maxChars = Math.max(10, Math.floor((Math.min(W - 24, W >= 300 ? 214 : 160)) / cw)), words = text.split(' '), lines = []; let cur = '';
+  words.forEach(w => { const t2 = cur ? cur + ' ' + w : w; if (t2.length > maxChars && cur) { lines.push(cur); cur = w; } else cur = t2; });
+  if (cur) lines.push(cur);
+  const wmax = Math.max(...lines.map(l => l.length)) * cw, lh = 8 * k / CUT_Q * 1.4, bw = Math.ceil(wmax) + 9, bh = Math.ceil(lines.length * lh + 5);
+  const bx = Math.round(Math.max(4, Math.min(W - 4 - bw, sx - bw / 2))), by = Math.round(sy - bh - 8);
+  const edge = { c: state.settings.gender === 'm' ? '#3f6fc4' : '#c04f7a', b: '#8a5a2a', m: '#d9822b', n: '#9b7fd0' }[who] || '#8a5a2a', fill = who === 'b' ? '#fff6dc' : '#fff3f8';
+  g.fillStyle = edge; g.fillRect(bx, by - 1, bw, bh + 2); g.fillRect(bx - 1, by, bw + 2, bh); g.fillStyle = fill; g.fillRect(bx, by, bw, bh);
+  const tx = Math.round(Math.max(bx + 4, Math.min(bx + bw - 5, sx)));
+  g.fillStyle = edge; g.fillRect(tx - 3, by + bh, 7, 1); g.fillRect(tx - 2, by + bh + 1, 5, 1); g.fillRect(tx - 1, by + bh + 2, 3, 1); g.fillRect(tx, by + bh + 3, 1, 1);
+  g.fillStyle = fill; g.fillRect(tx - 2, by + bh, 5, 1); g.fillRect(tx - 1, by + bh + 1, 3, 1); g.fillRect(tx, by + bh + 2, 1, 1);
+  let left = Math.floor(prog);
+  lines.forEach((l, i) => { if (left > 0) { cutTextPx(g, l.slice(0, left), bx + 4.5, by + 2.5 + lh * (i + 0.5), k, '#3a2a22', null, 'left'); left -= l.length + 1; } });
+}
+function cutSayState(T, txt) {
+  for (const s of CUT_SAY) if (T >= s[0] && T < s[1]) return { who: s[2], text: txt[s[3]], prog: (T - s[0]) * 26 };
+  if (cut.tapAmb >= 0) {
+    const u = T - CT.u0; if (u >= 0 && u < 3) return { who: 'b', text: txt.b6, prog: u * 26 }; if (u >= 3 && u < 5.4) return { who: 'b', text: txt.b7, prog: (u - 3) * 26 };
+    const f = T - CT.fin; if (f >= 2.2 && f < 3.4) return { who: 'm', text: txt.m1, prog: (f - 2.2) * 26 }; if (f >= 3.4 && f < 5.3) return { who: 'n', text: txt.n1, prog: (f - 3.4) * 26 }; if (f >= 5.3) return { who: 'm', text: txt.m2, prog: (f - 5.3) * 26 };
+  }
+  return null;
+}
+// розкладка залежить від ширини екрана: на вузькому телефоні актори стоять ближче
+function cutFinale(T, L, w2s) {
+  const fT = T - CT.fin; if (fT <= 0) return null; const W = cut.W, H = cut.H, melC = cutHi('foxcub_0', SPRITES.capy_mel.canvas), nikC = cutHi('bunny_0', SPRITES.capy_nika.canvas), h0 = melC.height / CUT_Q, w0 = melC.width / CUT_Q;
+  const wk = cutSm((fT - 0.5) / 2.2), scF = Math.min(2.6, H * 0.4 / h0, W * 0.42 / w0), sc = cutLerp(0.5, scF, wk), door = w2s(L.shopCX, 158);
+  const fx = cutLerp(door[0], W / 2, wk), foot = cutLerp(door[1], H - (W < 300 ? 76 : 66), wk), gx = w0 * sc * 0.52;
+  return { fT, wk, sc, melC, nikC, mx: fx - gx, nx: fx + gx, foot, h: h0 * sc, fx };
+}
+function cutLay() {
+  const nar = cut.W < 300, L = { nar, shopCX: 385, lotL: 305, lotR: 465 };
+  L.capyStop = nar ? 265 : 205; L.coinX = L.capyStop + 28; L.bodyStop = L.capyStop + (nar ? 58 : 72); L.bodyStart = 560;
+  L.flankC = L.shopCX - 78; L.flankB = L.shopCX + 78; L.capyStart = L.capyStop - CT.walk * 34;
+  return L;
+}
+function cutCapyX(T, L) { if (T < CT.walk) return L.capyStart + T * 34; if (T < CT.flank0) return L.capyStop; return cutLerp(L.capyStop, L.flankC, cutSm((T - CT.flank0) / (CT.flank1 - CT.flank0))); }
+function cutBodyX(T, L) {
+  if (T < CT.bIn0) return L.bodyStart; if (T < CT.bIn1) return cutLerp(L.bodyStart, L.bodyStop, cutSm((T - CT.bIn0) / (CT.bIn1 - CT.bIn0)));
+  if (T < CT.asm0 - 0.4) return L.bodyStop; if (T < CT.asm0 + 0.6) return cutLerp(L.bodyStop, L.shopCX - 100, cutSm((T - CT.asm0 + 0.4) / 1.0));
+  if (T < CT.sign1 + 0.3) return L.shopCX - 100; return cutLerp(L.shopCX - 100, L.flankB, cutSm((T - CT.sign1 - 0.3) / 1.4));
+}
+function cutCamCx(T, L) {
+  const W = cut.W;
+  if (T < CT.walk) return cutCapyX(T, L) + W * 0.14;
+  return cutKf(T, [[CT.walk, L.capyStop + W * 0.14], [6.6, L.capyStop + W * 0.14], [8.0, (L.capyStop + L.bodyStop) / 2], [12.2, (L.capyStop + L.bodyStop) / 2], [13.2, L.shopCX]]);
+}
+function cutZoom(T) { return cutKf(T, [[5.35, 1], [5.9, 2.4], [6.3, 2.4], [6.9, 1], [12.95, 1], [13.9, 2.1], [14.6, 2.1], [14.62, 1], [CT.sign0, 1], [CT.sign0 + 0.7, 2.5], [CT.sign1 - 0.5, 2.5], [CT.sign1 + 0.3, 1]]); }
+function cutPrep() {
+  if (cut.shopPx) return;
+  const oe = state.epoch; let geo = [];
+  state.epoch = 0;
+  try { [1, 3, 5].forEach(lv => geo.push(buildShopCanvas(lv, state.depts.map(tierOf)))); } finally { state.epoch = oe; }
+  try { if (typeof shop !== 'undefined' && shop) rebuildShop(true); } catch (e) { /* не страшно */ }
+  cut.thumbs = geo.map(o => ({ c: o.canvas, w: o.w, h: o.h })); cut.door = geo[0].door || null;
+  const g0 = geo[0], d = g0.canvas.getContext('2d').getImageData(0, 0, g0.w, g0.h).data, px = [];
+  for (let y = 0; y < g0.h; y++) for (let x = 0; x < g0.w; x++) { const i = (y * g0.w + x) * 4; if (d[i + 3] > 200) px.push({ x, y, c: 'rgb(' + d[i] + ',' + d[i + 1] + ',' + d[i + 2] + ')', o: (1 - y / g0.h) * 0.8 + cutHash(x * 13 + y * 7) * 0.2, a: cutHash(x * 3 + y * 17 + 1) * 6.283, r: cutHash(x * 5 + y * 11 + 2), w: cutHash(x + y * 31) * 6 }); }
+  px.sort((p, q) => p.o - q.o); px.forEach((p, i) => { p.o = i / px.length; });
+  cut.shopPx = px; cut.shopW = g0.w; cut.shopH = g0.h;
+}
+function cutSky(W, H, shift) {
+  const key = 'sky' + cut.style + W + 'x' + H + 's' + shift; if (cut.cache[key]) return cut.cache[key];
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'), st = CUT_STYLES[cut.style];
+  const hexc = v => v.length === 1 ? PALETTE[v] : v, hx = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const A = hx(hexc(st.sky[0])), B = hx(hexc(st.sky[1])), C = hx(hexc(st.sky[2])), mix = (p, q, t) => p.map((v, i) => Math.round(v + (q[i] - v) * t));
+  const col = u => { const lvl = Math.floor(u * 5) / 5; return u < 1 ? mix(A, B, lvl) : mix(B, C, Math.floor((u - 1) * 5) / 5); };
+  const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], hor = 156 + shift;
+  for (let y = 0; y < hor; y++) {
+    const f = y / hor, u = f < 0.45 ? f / 0.45 : 1 + Math.pow((f - 0.45) / 0.55, 0.9), step = 1 / 5, fr = ((u < 1 ? u : u - 1) / step) % 1, c0 = col(u), c1b = col(Math.min(2, u + step));
+    for (let x = 0; x < W; x++) { const th = bayer[y & 3][x & 3] / 16, cc = fr > th ? c1b : c0; g.fillStyle = 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')'; g.fillRect(x, y, 1, 1); }
+  }
+  g.fillStyle = 'rgb(' + C.join(',') + ')'; g.fillRect(0, hor, W, H - hor);
+  for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; g.fillStyle = '#ffffff'; g.fillRect(0, hor - 28 + k * 2, W, 2); }          // тепле сяйво біля обрію
+  g.globalAlpha = 1; return (cut.cache[key] = c);
+}
+function cutCoin(g, cx, cy, r, ang, glow) {
+  const f = Math.max(0.16, Math.abs(Math.cos(ang))), rx = Math.max(1, r * f), ry = r;
+  if (glow) { const gr = g.createRadialGradient(cx, cy, r * 0.4, cx, cy, r * (2.2 + glow)); gr.addColorStop(0, 'rgba(255,230,120,' + (0.55 * Math.min(1, glow + 0.2)) + ')'); gr.addColorStop(1, 'rgba(255,230,120,0)'); g.fillStyle = gr; g.fillRect(cx - r * 4, cy - r * 4, r * 8, r * 8); }
+  const S = 1 / CUT_Q, ell = (k, col) => { g.fillStyle = col; const n = Math.round(ry * k * CUT_Q); for (let i = -n; i <= n; i++) { const dy = i / CUT_Q, half = rx * k * Math.sqrt(Math.max(0, 1 - (i * i) / Math.max(1, n * n))); g.fillRect(Math.round((cx - half) * CUT_Q) / CUT_Q, cy + dy, Math.round(half * 2 * CUT_Q + 1) / CUT_Q, S); } };
+  ell(1, '#9a5e12'); ell(0.94, '#c98a1c'); ell(0.88, '#e8a92a'); ell(0.8, '#f8cf4a'); ell(0.66, '#e8a92a'); ell(0.6, '#f8d85c');
+  if (r >= 5 && f > 0.45) { g.fillStyle = '#b7791a'; const s = Math.max(0.5, r * 0.07); g.fillRect(cx - s, cy - r * 0.34, s * 2, r * 0.68); g.fillRect(cx - r * 0.22 * f, cy - s, r * 0.44 * f, s * 2); }
+  g.fillStyle = '#fff7c0'; for (let i = Math.round(-ry * 0.78 * CUT_Q); i < Math.round(-ry * 0.2 * CUT_Q); i++) g.fillRect(cx - rx * 0.62 + (i + ry * 0.78 * CUT_Q) * 0.25 / CUT_Q, cy + i / CUT_Q, Math.max(0.5, r * 0.07), S);
+}
+function cutDrawChar(g, cv, x, foot, flip, opts) {
+  opts = opts || {}; const w = cv.width / CUT_Q, h = cv.height / CUT_Q, sx = opts.sx || 1, sy = opts.sy || 1;
+  g.save(); g.translate(x, foot); if (opts.rot) g.rotate(opts.rot); g.scale(flip ? -sx : sx, sy);
+  g.globalAlpha = 0.28; g.fillStyle = '#000'; g.beginPath(); g.ellipse(0, 0.5, w * 0.42, 2.2, 0, 0, 7); g.fill(); g.globalAlpha = opts.alpha === undefined ? 1 : opts.alpha;
+  g.imageSmoothingEnabled = false; g.drawImage(cv, -w / 2, -h, w, h);
+  if (opts.after) { g.save(); g.translate(-w / 2, -h); g.scale(1 / CUT_Q, 1 / CUT_Q); opts.after(g); g.restore(); }
+  g.restore();
+}
+const CUT_BAG_NAMES = ['Плюшевий рюкзачок', 'Ведмедик', 'Курчатко', 'Мішок на шнурку', 'Сонечко', 'Хмаринка'];
+function cutBagDraw(gg, style, boy) {                       // м'які рюкзаки: круглі, плюшеві; одна лямка охоплює «руку» спереду. Координати ×4 спрайта Капі
+  const dk = '#2a1a14', R_ = (x, y, w, h, c) => { gg.fillStyle = c; gg.fillRect(x, y, w, h); };
+  const B = (cx, cy, rx, ry, c) => { gg.fillStyle = c; for (let dy = -ry; dy <= ry; dy++) { const h = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry + 0.5)))); gg.fillRect(cx - h, cy + dy, h * 2, 1); } };
+  const soft = (cx, cy, rx, ry, c0, c1, c2) => { B(cx, cy, rx + 1, ry + 1, dk); B(cx, cy + 1, rx, ry, c2); B(cx - 1, cy - 1, rx - 1, ry - 1, c0); B(cx - 5, cy - 6, Math.round(rx * 0.45), Math.round(ry * 0.3), c1); };
+  const SEG = [[40, 20, 4, 3], [42, 23, 4, 4], [43, 27, 4, 5], [44, 32, 4, 6], [44, 38, 4, 6], [43, 44, 4, 5]];
+  const strap = (c, c2) => { SEG.forEach(r => R_(r[0] - 1, r[1] - 1, r[2] + 2, r[3] + 2, dk)); SEG.forEach(r => { R_(r[0], r[1], r[2], r[3], c); R_(r[0], r[1], 1, r[3], c2); }); };
+  gg.save(); gg.translate(0, 9);
+  if (style === 0) {                                        // плюшевий рюкзачок: рожевий (хлопчик — синій), кругла кишенька, петелька
+    const c = boy ? ['#4a82da', '#8abaff', '#2f5aa8', '#2a4a94'] : ['#ee7aa6', '#ffb8d2', '#c24f80', '#a8406a'];
+    R_(25, 2, 10, 3, dk); R_(26, 3, 8, 1, c[2]);
+    soft(28, 21, 17, 14, c[0], c[1], c[2]);
+    B(34, 27, 8, 6, dk); B(34, 27, 7, 5, c[2]); B(34, 26, 6, 4, c[0]); R_(29, 26, 11, 1, c[2]); R_(33, 24, 1, 3, '#f6c744'); R_(33, 24, 2, 1, '#f6c744');
+    strap(c[0], c[1]);
+  } else if (style === 1) {                                 // ведмедик: круглі вушка, мордочка
+    B(17, 7, 6, 5, dk); B(41, 7, 6, 5, dk); B(17, 7, 5, 4, '#a8703a'); B(41, 7, 5, 4, '#a8703a'); B(17, 8, 3, 2, '#e8b87a'); B(41, 8, 3, 2, '#e8b87a');
+    soft(29, 21, 17, 14, '#c98a4a', '#e8b06a', '#8a5a2a');
+    B(29, 26, 8, 6, dk); B(29, 26, 7, 5, '#f0d29a'); B(29, 25, 6, 4, '#f6e4b8'); R_(27, 23, 5, 3, dk); R_(28, 22, 3, 1, '#7a4a20'); R_(29, 27, 1, 3, dk); R_(25, 14, 3, 4, dk); R_(33, 14, 3, 4, dk);
+    strap('#c98a4a', '#e8b06a');
+  } else if (style === 2) {                                 // курчатко: жовтий, дзьобик, очка, крильця
+    soft(29, 21, 17, 14, '#ffd84a', '#fff09a', '#d9a21a');
+    B(14, 24, 4, 6, dk); B(14, 24, 3, 5, '#f0b82a'); B(44, 24, 3, 6, dk); B(44, 24, 2, 5, '#f0b82a');
+    R_(22, 15, 4, 5, dk); R_(32, 15, 4, 5, dk); R_(23, 16, 2, 2, '#fff'); R_(33, 16, 2, 2, '#fff'); R_(24, 18, 1, 1, '#fff');
+    B(29, 24, 5, 3, dk); B(29, 24, 4, 2, '#ff9a3a'); R_(26, 24, 6, 1, '#d96a1a'); R_(26, 10, 2, 3, dk); R_(29, 8, 2, 4, dk); R_(32, 10, 2, 3, dk);
+    strap('#ffd84a', '#fff09a');
+  } else if (style === 3) {                                 // мішок на шнурку: стягнутий зверху, шнурок із бантиком
+    B(29, 22, 15, 14, dk); B(29, 23, 14, 12, '#b88a52'); B(28, 22, 13, 11, '#d9ae72'); B(24, 15, 6, 4, '#ecc990');
+    R_(22, 6, 14, 5, dk); R_(23, 7, 12, 3, '#d9ae72'); R_(25, 4, 3, 4, dk); R_(31, 4, 3, 4, dk); R_(26, 3, 1, 4, '#d9ae72'); R_(32, 3, 1, 4, '#d9ae72');
+    R_(21, 10, 16, 3, dk); R_(22, 10, 14, 2, '#e84a4a'); R_(26, 12, 3, 8, dk); R_(27, 12, 1, 7, '#e84a4a'); R_(31, 12, 3, 6, dk); R_(32, 12, 1, 5, '#e84a4a');
+    R_(16, 20, 1, 12, '#b88a52'); R_(24, 18, 1, 14, '#b88a52'); R_(32, 18, 1, 14, '#b88a52');
+    strap('#e84a4a', '#ff8a8a');
+  } else if (style === 4) {                                 // сонечко (божа корівка): червоне з чорними цятками
+    B(29, 22, 17, 14, dk); B(29, 23, 16, 13, '#b82a2a'); B(28, 21, 15, 12, '#ee4a4a'); B(22, 14, 6, 3, '#ff8a8a');
+    R_(28, 8, 3, 28, dk); B(18, 24, 3, 3, dk); B(40, 24, 3, 3, dk); B(20, 14, 2, 2, dk); B(38, 14, 2, 2, dk); B(24, 30, 2, 2, dk); B(34, 30, 2, 2, dk);
+    R_(24, 3, 2, 5, dk); R_(33, 3, 2, 5, dk); R_(22, 2, 3, 2, dk); R_(34, 2, 3, 2, dk);
+    strap('#ee4a4a', '#ff8a8a');
+  } else {                                                  // хмаринка: ліловий з пухнастим краєм і сердечком
+    B(17, 12, 7, 6, dk); B(29, 7, 8, 6, dk); B(41, 12, 7, 6, dk);
+    B(17, 12, 6, 5, '#c9b0f0'); B(29, 7, 7, 5, '#c9b0f0'); B(41, 12, 6, 5, '#c9b0f0');
+    soft(29, 21, 17, 13, '#c9b0f0', '#eadcff', '#9a7ac8');
+    R_(24, 19, 4, 3, '#ff9ac0'); R_(30, 19, 4, 3, '#ff9ac0'); R_(23, 20, 12, 3, '#ff9ac0'); R_(25, 23, 8, 2, '#ff9ac0'); R_(27, 25, 4, 1, '#ff9ac0'); R_(25, 19, 2, 1, '#ffd0e4');
+    strap('#c9b0f0', '#eadcff');
+  }
+  gg.restore();
+}
+function cutDrawCapy(g, x, T, L, hop, flip, squash, emo) {
+  const cv = cutCapyHi(), moving = (T < CT.walk) || (T > CT.flank0 && T < CT.flank1), bob = moving ? Math.abs(Math.sin(T * 8)) * -1.4 : 0, boy = state.settings.gender === 'm';
+  const bag = boy ? ['#3f6fc4', '#6fa0f0', '#2a4a94'] : ['#e0709a', '#ff9fc0', '#a8406a'];
+  cutDrawChar(g, cv, x, 166 - hop + bob, flip, { sy: squash || 1, rot: moving ? Math.sin(T * 8) * 0.03 : 0, after: gg => {
+    cutFace(gg, emo);
+    cutBagDraw(gg, cut.bagStyle | 0, boy);
+  } });
+  if (emo.mark) { const hx = (flip ? -1 : 1) * 8; cutMark(g, emo.mark, x + hx, 166 - hop - 56, T); }
+}
+function cutDrawBodya(g, x, T, point, faceLeft, hammer) {
+  const cv = cutHi('team_bodya_e0'), walking = (T > CT.bIn0 && T < CT.bIn1) || (T > CT.sign1 + 0.3 && T < CT.sign1 + 1.7) || (T > CT.asm0 - 0.4 && T < CT.asm0 + 0.6), bob = walking ? Math.abs(Math.sin(T * 9)) * -1.2 : 0;
+  cutDrawChar(g, cv, x, 166 + bob, !faceLeft, { after: gg => {
+    gg.fillStyle = '#f5c518'; gg.fillRect(8, -6, 48, 14); gg.fillRect(16, -14, 32, 10); gg.fillStyle = '#e8a010'; gg.fillRect(8, 6, 48, 3); gg.fillStyle = '#fff3a0'; gg.fillRect(20, -10, 8, 3);       // каска
+  } });
+  const dir = faceLeft ? -1 : 1, wave = T >= 7.7 && T < 8.6;
+  if (wave) { const wy = Math.sin(T * 14) * 2; g.fillStyle = '#7a5230'; g.fillRect(dir > 0 ? x + 8 : x - 11, 166 - 30 + wy, 3, 13); g.fillStyle = '#c99a62'; g.fillRect(dir > 0 ? x + 7 : x - 12, 166 - 34 + wy, 5, 5); }
+  if (hammer) { const a = Math.sin(T * 13) * 0.7 - 0.2; g.save(); g.translate(x - dir * 7, 166 - 15); g.scale(-dir, 1); g.rotate(-1.0 + a); g.fillStyle = '#7a5230'; g.fillRect(0, -1, 14, 2); g.fillStyle = '#8f98a8'; g.fillRect(11, -4, 6, 7); g.fillStyle = '#c9d1de'; g.fillRect(11, -4, 6, 2); g.restore(); }
+  else if (point) { g.fillStyle = '#7a5230'; g.fillRect(dir > 0 ? x + 6 : x - 20, 166 - 15, 14, 3); g.fillStyle = '#c99a62'; g.fillRect(dir > 0 ? x + 19 : x - 23, 166 - 16, 4, 5); }
+}
+function cutRenderWorld(T) {
+  const g = cut.wg, W = cut.W, H = cut.H, Q = CUT_Q, st = CUT_STYLES[cut.style], L = cutLay(), shift = H - 216, amb = cut.amb;
+  const camX = Math.round(cutCamCx(T, L) * Q - W * Q / 2) / Q; cut.camX = camX;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.drawImage(cutSky(W, H, shift), 0, 0, W * Q, H * Q);
+  cutTf(g, 0, 0);
+  const hz = 156 + shift;
+  if (st.stars) for (let i = 0; i < 90; i++) { const x = Math.floor(cutHash(i) * W), y = Math.floor(cutHash(i + 99) * (hz * 0.72)), tw = 0.55 + 0.45 * Math.sin(amb * (1.2 + cutHash(i + 5)) + i * 7); if (cutHash(i + 40) < st.stars) { g.globalAlpha = 0.5 * tw + 0.3; cutRc(g, x, y, 1, 1, '#ffffff'); if (i % 9 === 0) { g.globalAlpha = 0.5 * tw; cutRc(g, x - 1, y, 3, 1, '#cfe0ff'); cutRc(g, x, y - 1, 1, 3, '#cfe0ff'); } } }
+  g.globalAlpha = 1;
+  if (st.sun === 'sun' || st.sun === 'low') {                                   // сонце з гри (низьке — помаранчеве)
+    const low = st.sun === 'low', x = Math.round(low ? W * 0.3 : W * 0.78), y = Math.round(low ? hz - 14 : hz - 36);
+    g.globalAlpha = 0.45; disc(g, x, y, 13, low ? 'o' : 'w'); g.globalAlpha = 1; disc(g, x, y, 9, low ? 'o' : 'y'); disc(g, x, y, 6, low ? 'h' : 'w');
+  } else {                                                                       // місяць з гри: ореол, кратери, моря
+    const x = Math.round(W * 0.76), y = 44; g.globalAlpha = 0.09; disc(g, x, y, 20, 'w'); g.globalAlpha = 0.14; disc(g, x, y, 16, 'w'); g.globalAlpha = 0.24; disc(g, x, y, 13, 'w'); g.globalAlpha = 1;
+    disc(g, x, y, 10, 'e'); disc(g, x, y, 9, 'W'); disc(g, x - 1, y - 1, 8, 'w');
+    g.globalAlpha = 0.55; R(g, x - 6, y - 4, 4, 3, 'e'); R(g, x + 1, y - 6, 5, 3, 'e'); R(g, x + 2, y + 1, 4, 4, 'e'); R(g, x - 5, y + 2, 3, 3, 'e'); R(g, x - 1, y + 5, 3, 2, 'e'); g.globalAlpha = 0.8;
+    R(g, x - 6, y - 5, 2, 1, 'w'); R(g, x + 1, y - 7, 3, 1, 'w'); R(g, x + 2, y, 2, 1, 'w'); R(g, x - 5, y + 1, 2, 1, 'w'); R(g, x - 1, y + 4, 2, 1, 'w'); g.globalAlpha = 1;
+  }
+  const nCl = 4 + Math.floor((H - 216) / 34), tint = { A: '', B: 'grey', C: 'dark' }[cut.style];                                     // хмари — ті самі, що в грі
+  for (let i = 0; i < nCl; i++) { const cw = W + 120, x = Math.round((((i * 170 - amb * (2 + (i % 3)) - camX * 0.06) % cw) + cw) % cw - 60), y = Math.round(4 + (i * 37) % Math.max(50, hz - 110)); g.globalAlpha = cut.style === 'C' ? 0.5 : 0.95; g.drawImage(cloudCanvas(i % 3, tint), x, y); }
+  g.globalAlpha = 1;
+  if (cut.style !== 'C') { const bx = ((amb * 7 + W * 0.3) % (W + 120)) - 60, by = 36 + Math.sin(amb * 0.7) * 2, bc = cut.style === 'B' ? '#d96a6a' : '#e8e4d8'; g.globalAlpha = 0.95; cutRc(g, bx + 1, by, 28, 11, bc); cutRc(g, bx + 3, by - 1.5, 24, 14, bc); cutRc(g, bx + 5, by + 2, 20, 2, '#ffffff'); cutRc(g, bx - 5, by + 1, 6, 3, '#b04a4a'); cutRc(g, bx - 5, by + 6, 6, 3, '#b04a4a'); cutRc(g, bx + 10, by + 13, 10, 4, '#6b4a2a'); cutRc(g, bx + 11, by + 14, 3, 2, '#bfe3f2'); g.globalAlpha = 1; }
+  // світ
+  cutTf(g, -camX, shift);
+  const layer = (p, fn) => { g.save(); g.translate(camX * (1 - p), 0); fn(camX * p, camX * p + W); g.restore(); };
+  layer(0.25, (a, b) => { for (let i = Math.floor(a / 46) - 1; i < Math.ceil(b / 46) + 1; i++) { const x = i * 46 + cutHash(i) * 10, w = 28 + cutHash(i + 5) * 18, h = 40 + cutHash(i + 9) * 52; cutRc(g, x, 138 - h, w, h, cut.style === 'A' ? '#a9bfdc' : cut.style === 'B' ? '#6a4a86' : '#1c2a5a'); for (let k = 0; k < h / 12; k++) if (cutHash(i * 7 + k) < st.win) cutRc(g, x + 4 + (k % 2) * 10, 138 - h + 6 + k * 10, 3, 3, 'rgba(255,214,120,.8)'); } });
+  layer(0.55, (a, b) => { for (let i = Math.floor(a / 62) - 1; i < Math.ceil(b / 62) + 1; i++) { const hc = cutHouseCv(i + 3); g.globalAlpha = 0.55; g.drawImage(hc.c, i * 62 + cutHash(i + 21) * 14, 146 - hc.h * 0.5, hc.w * 0.5, hc.h * 0.5); g.globalAlpha = 1; } });
+  const lotBuilt = T >= CT.asm1 - 0.1;
+  { let rx = L.lotL; for (let j = 0; j < 14; j++) { const hc = cutHouseCv(-1 - j); rx -= hc.hw; if (rx + hc.hw > camX - 30 && rx < camX + W + 30) g.drawImage(hc.c, rx - hc.ox, 148 - hc.h + 1); }
+    rx = L.lotR; for (let j = 0; j < 14; j++) { const hc = cutHouseCv(j); if (rx > camX - 120 && rx < camX + W + 30) g.drawImage(hc.c, rx - hc.ox, 148 - hc.h + 1); rx += hc.hw; } }
+  // тротуар
+  g.fillStyle = PALETTE.E; g.fillRect(camX, 148, W, 24); g.fillStyle = PALETTE.e; g.fillRect(camX, 148, W, 1);
+  for (let x = Math.floor(camX / 20) * 20 + 6; x < camX + W; x += 20) g.fillRect(x, 149, 1, 9);
+  const st4 = CUT_STYLES[cut.style].tint; g.fillStyle = 'rgba(' + st4[0] + ',' + st4[1] + ',' + st4[2] + ',' + st4[3] * 0.85 + ')'; g.fillRect(camX, 148, W, 24);
+  if (cut.style === 'C') { g.fillStyle = 'rgba(240,248,255,.7)'; g.fillRect(camX, 148, W, 3); for (let x = Math.floor(camX / 7) * 7; x < camX + W; x += 7) g.fillRect(x, 151, 3 + (x % 5), 1 + (x % 3)); }
+  g.fillStyle = PALETTE.e; g.fillRect(camX, 172, W, 2); g.fillStyle = PALETTE.w; g.fillRect(camX, 172, W, 1);
+  const cb = cutCobbleCv(); for (let yy = 174, r = 0; yy < H - shift + 44; yy += 44, r++) for (let x = Math.floor(camX / 512) * 512 - 200; x < camX + W; x += 512) g.drawImage(cb, x + (r % 2) * 190, yy); g.fillStyle = 'rgba(0,0,0,.1)'; g.fillRect(camX, 208, W, 10);
+  // ділянка: паркан і земля
+  if (!lotBuilt) {
+    cutRc(g, L.lotL, 150, L.lotR - L.lotL, 22, '#a88c5e'); for (let k = 0; k < 18; k++) { const x = L.lotL + 6 + cutHash(k + 61) * (L.lotR - L.lotL - 14); cutRc(g, x, 152 + cutHash(k + 9) * 16, 3, 1.5, cutHash(k) < 0.5 ? '#8a6c40' : '#c0a374'); }
+    for (let k = 0; k < 8; k++) { const x = L.lotL + 4 + k * 22; cutRc(g, x, 120, 4, 28, '#8a5a30'); cutRc(g, x, 120, 4, 2, '#b88450'); cutRc(g, x, 122, 1, 26, '#a06a38'); } cutRc(g, L.lotL, 128, L.lotR - L.lotL, 3, '#a06a38'); cutRc(g, L.lotL, 138, L.lotR - L.lotL, 3, '#a06a38');
+    for (let k = 0; k < 11; k++) { const x = L.lotL + 8 + cutHash(k + 71) * (L.lotR - L.lotL - 16); cutRc(g, x, 164, 1, 5, '#5f9a48'); cutRc(g, x + 2, 166, 1, 3, '#4f8a3a'); cutRc(g, x - 2, 167, 1, 2, '#6fb058'); }
+    cutRc(g, L.lotL + 6, 100, 3, 50, '#6b4a2a'); cutRc(g, L.lotL - 6, 96, 22, 14, '#d8c08a'); cutRc(g, L.lotL - 6, 96, 22, 2, '#a88c5e');
+    if (cut.style === 'C') { g.fillStyle = 'rgba(240,248,255,.75)'; g.fillRect(L.lotL, 150, L.lotR - L.lotL, 3); g.fillRect(L.lotL - 6, 94, 22, 2); }
+  }
+  const lamp = cutLampCv();
+  for (let k = Math.floor(camX / 110) - 1; k < Math.ceil((camX + W) / 110) + 1; k++) { const x = 40 + k * 110; if (x > L.lotL - 12 && x < L.lotR + 12 && !lotBuilt) continue; g.drawImage(lamp.c, x - 10, 158 - lamp.h + 2); }
+  for (let k = Math.floor(camX / 160) - 1; k < Math.ceil((camX + W) / 160) + 1; k++) { const x = 90 + k * 160; if (x > L.lotL - 30 && x < L.lotR + 30) continue; const tc = cutTreeCv(((k % 3) + 3) % 3); g.drawImage(tc.c, x - 55, 156 - tc.base); }
+  // монета: на землі, у руках, летить
+  const coinOn = T >= 3.9 && T < CT.pick, put = T >= CT.pick && T < CT.pick + 0.8, fly = T >= CT.fly0 && T < CT.flash;
+  const capyXn = cutCapyX(T, L), spin = T * 5, bagX = capyXn - 13, bagY = 124; let coinPos = null, coinR = 5;
+  if (coinOn) coinPos = [L.coinX, 163 - Math.max(0, Math.sin((T - 3.9) * 6) * Math.max(0, 1 - (T - 3.9) * 2) * 6)];
+  else if (put) { const u = cutSm((T - CT.pick) / 0.8); coinPos = [cutLerp(L.coinX, bagX, u), cutLerp(163, bagY - 4, u) - Math.sin(Math.PI * u) * 20]; coinR = u > 0.7 ? 5 - (u - 0.7) / 0.3 * 3.5 : 5; }
+  else if (fly) { const u = cutSm((T - CT.fly0) / 0.8), a = T < CT.fly1 ? u : 1; coinPos = [cutLerp(bagX, L.shopCX, a), cutLerp(bagY - 4, 96, a) - Math.sin(Math.PI * Math.min(1, u)) * 26 + (T > CT.fly1 ? Math.sin(T * 4) * 2 : 0)]; coinR = (T < CT.fly0 + 0.25 ? 1.5 + (T - CT.fly0) / 0.25 * 3.5 : 5) + Math.max(0, T - CT.fly1) * 1.2; }
+  cut.coinPos = coinPos;
+  // магазин: збирається з пікселів монети; риштування й Бодя-будівельник
+  const sx0 = L.shopCX - cut.shopW / 2, sy0 = 170 - cut.shopH;
+  if (T >= CT.asm0 - 0.4 && T < CT.asm1 + 0.6) {
+    const a = Math.min(1, (T - CT.asm0 + 0.4) / 0.8) * (T > CT.asm1 ? Math.max(0, 1 - (T - CT.asm1) / 0.6) : 1), pl = [sx0 - 8, sx0 + cut.shopW + 4];
+    g.globalAlpha = a; pl.forEach(px => { cutRc(g, px, 170 - cut.shopH - 12, 3, cut.shopH + 12, '#8a5a30'); cutRc(g, px, 170 - cut.shopH - 12, 1, cut.shopH + 12, '#b88450'); });
+    for (let lv = 0; lv < 5; lv++) { const y = 168 - lv * (cut.shopH + 10) / 5; cutRc(g, pl[0] - 2, y, pl[1] - pl[0] + 7, 2, '#a06a38'); cutRc(g, pl[0] - 2, y, pl[1] - pl[0] + 7, 0.5, '#d9a46a'); }
+    cutRc(g, pl[0] + 2, 170 - cut.shopH + 4, 2, cut.shopH, '#7a4a28'); g.globalAlpha = 1;
+  }
+  if (T >= CT.asm0) {
+    if (T >= CT.asm1) {
+      const k = Math.max(0, 1 - (T - CT.asm1) / 0.45), tap = cut.tapAmb >= 0 ? Math.max(0, 1 - (cut.amb - cut.tapAmb) / 0.18) : 0;
+      g.save(); g.translate(L.shopCX, 170); g.scale(1 + 0.03 * tap + 0.03 * k, 1 - 0.05 * tap + 0.03 * k); g.drawImage(cut.thumbs[0].c, -cut.shopW / 2, -cut.shopH); g.restore();
+      if (k > 0) { g.globalAlpha = k * 0.7; cutRc(g, sx0, sy0, cut.shopW, cut.shopH, '#fff6c8'); g.globalAlpha = 1; }
+    } else {
+      const px = cut.shopPx, cxp = L.shopCX, cyp = 96, spread = L.nar ? 70 : 110, span = CT.asm1 - CT.asm0 - 0.8, ex = cutSm((T - CT.asm0) / 0.5);
+      let front = 0;
+      for (let i = 0; i < px.length; i++) {
+        const p = px[i], tx = sx0 + p.x, ty = sy0 + p.y, scx = cxp + Math.cos(p.a) * (28 + p.r * spread), scy = cyp + Math.sin(p.a) * (20 + p.r * spread * 0.62), tl = CT.asm0 + 0.2 + p.o * span;
+        let x, y;
+        if (T < tl) { if (p.r > 0.4) continue; x = cutLerp(cxp, scx, ex) + Math.sin(T * 3 + p.w) * 1.5; y = cutLerp(cyp, scy, ex) + Math.cos(T * 2.6 + p.w) * 1.5; g.fillStyle = ['#ffe36a', '#f8cf4a', '#fff6c8', '#e8a92a'][Math.floor(p.w) % 4]; g.fillRect(Math.round(x), Math.round(y), 1.2, 1.2); continue; }
+        const u = Math.min(1, (T - tl) / 0.9), e = cutSm(u);
+        if (u >= 1) { front = Math.max(front, p.y); g.fillStyle = (T - tl - 0.9) < 0.14 ? '#fff6c8' : p.c; g.fillRect(tx, ty, 1, 1); continue; }
+        x = cutLerp(scx, tx, e); y = cutLerp(scy, ty, e) - Math.sin(Math.PI * u) * 12;
+        g.fillStyle = u < 0.45 ? ['#ffe36a', '#f8cf4a', '#fff6c8'][Math.floor(p.w) % 3] : p.c; g.fillRect(Math.round(x), Math.round(y), 1.5, 1.5);
+      }
+      const prog = Math.max(0, Math.min(1, (T - CT.asm0 - 0.2 - 0.9) / span)), ly = sy0 + cut.shopH * (1 - prog);       // яскрава лінія зведення рухається вгору
+      if (prog > 0.02 && prog < 0.98) { g.globalAlpha = 0.85; cutRc(g, sx0 - 2, ly, cut.shopW + 4, 1, '#fff6c8'); g.globalAlpha = 0.25; cutRc(g, sx0 - 2, ly - 3, cut.shopW + 4, 3, '#ffe36a'); g.globalAlpha = 1; }
+    }
+  }
+  if (coinPos && T < CT.flash) { cutCoin(g, coinPos[0], coinPos[1], coinR, spin, (T > CT.fly0 ? 0.9 + Math.sin(T * 6) * 0.2 : 0.5)); if (coinOn) { for (let k = 0; k < 3; k++) { const ph = (T * 1.6 + k * 0.33) % 1; if (ph < 0.5) cutSpark(g, coinPos[0] + (k - 1) * 9, coinPos[1] - 6 - ph * 8, ph < 0.25 ? 1 : 2, '#fff7c0'); } } }
+  // пил за Капі
+  if (T < CT.walk) for (let n = 0; n < 12; n++) { const tn = T - n * 0.22; if (tn < 0) break; const age = n * 0.22, x = cutCapyX(tn, L) - 16; g.globalAlpha = Math.max(0, 0.5 - age * 0.18); cutRc(g, x - age * 5, 164 - age * 6, 3 + age * 3, 3 + age * 2, '#e8dcc0'); }
+  g.globalAlpha = 1;
+  // актори на окремому шарі, трохи затонованому
+  const ag = cut.ag; ag.setTransform(1, 0, 0, 1, 0, 0); ag.clearRect(0, 0, W * Q, H * Q); cutTf(ag, -camX, shift); ag.imageSmoothingEnabled = false;
+  const u2 = cut.tapAmb >= 0 ? T - CT.TW : -1, hop = (u2 >= 0.1 && u2 < 0.9) ? Math.abs(Math.sin((u2 - 0.1) / 0.8 * Math.PI)) * 12 : (T >= 6.0 && T < 6.45 ? Math.abs(Math.sin((T - 6.0) / 0.45 * Math.PI)) * 6 : (T > CT.flank0 && T < CT.flank1 ? Math.abs(Math.sin((T - CT.flank0) * 9)) * 3 : 0));
+  const emo = cutEmo(T, cut.amb), look = (T >= 4.55 && T < 5.05) ? 1 : 0, down = (T >= 5.5 && T < 6.2) ? 0.94 : 1;
+  cutDrawCapy(ag, capyXn, T, L, hop, look, down, emo);
+  const hammering = T >= CT.asm0 + 0.6 && T < CT.asm1 + 0.2;
+  if (T >= CT.bIn0) cutDrawBodya(ag, cutBodyX(T, L), T, T >= 11.7 && T < 13.4, T < 11.7 || T >= CT.asm1 + 0.4, hammering);
+  if (hammering) { const sw = Math.sin(T * 13); if (sw > 0.9) for (let k = 0; k < 3; k++) cutSpark(ag, L.shopCX - 80 + k * 4, 150 - k * 3, 1, '#ffe36a'); }
+  cutTf(ag, 0, 0); ag.setTransform(1, 0, 0, 1, 0, 0); ag.globalCompositeOperation = 'source-atop'; ag.fillStyle = 'rgba(' + st.tint[0] + ',' + st.tint[1] + ',' + st.tint[2] + ',' + (st.tint[3] * 0.55) + ')'; ag.fillRect(0, 0, W * Q, H * Q); ag.globalCompositeOperation = 'source-over';
+  // світло ліхтарів, вікон і монети
+  if (st.glow) {
+    g.globalCompositeOperation = 'lighter';
+    for (let k = Math.floor(camX / 110) - 1; k < Math.ceil((camX + W) / 110) + 1; k++) { const x = 40 + k * 110; if (x > L.lotL - 12 && x < L.lotR + 12 && !lotBuilt) continue; const gr = g.createRadialGradient(x, 124, 2, x, 134, 52); gr.addColorStop(0, 'rgba(255,214,120,' + 0.42 * st.glow + ')'); gr.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = gr; g.fillRect(x - 56, 74, 112, 110); g.fillStyle = 'rgba(255,200,110,' + 0.10 * st.glow + ')'; g.beginPath(); g.ellipse(x, 168, 44, 6, 0, 0, 7); g.fill(); }
+    g.globalCompositeOperation = 'source-over';
+  }
+  if (coinPos && T < CT.flash && st.glow) { g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(coinPos[0], coinPos[1], 2, coinPos[0], coinPos[1], 46); gr.addColorStop(0, 'rgba(255,220,110,.45)'); gr.addColorStop(1, 'rgba(255,220,110,0)'); g.fillStyle = gr; g.fillRect(coinPos[0] - 50, coinPos[1] - 50, 100, 100); g.globalCompositeOperation = 'source-over'; }
+  if (lotBuilt && st.glow) { g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(L.shopCX, 150, 4, L.shopCX, 150, 96); gr.addColorStop(0, 'rgba(255,214,120,' + 0.30 * st.glow + ')'); gr.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = gr; g.fillRect(L.shopCX - 100, 80, 200, 110); g.globalCompositeOperation = 'source-over'; }
+  g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(cut.al, 0, 0); cutTf(g, -camX, shift);
+  if ((T > CT.pick + 0.6 && T < CT.pick + 1.2) || (T > CT.fly0 - 0.15 && T < CT.fly0 + 0.4)) for (let k = 0; k < 3; k++) { const ph = (T * 3 + k * 0.33) % 1; cutSpark(g, bagX + (k - 1) * 6, bagY - 4 - ph * 9, ph < 0.4 ? 1 : 2, '#fff7c0'); }
+  // листя, пелюстки або сніг, що падають
+  { cutTf(g, 0, 0); const n = st.fall === 'snow' ? 90 : 36; for (let i = 0; i < n; i++) { const sp = 12 + cutHash(i + 3) * 24, x = (((cutHash(i) * (W + 80) + Math.sin(amb * 0.9 + i) * 8 - amb * 4 * (st.fall === 'snow' ? 0.3 : 1)) % (W + 80)) + W + 80) % (W + 80) - 40, y = ((cutHash(i + 50) * (H + 40) + amb * sp) % (H + 40)) - 20;
+      if (st.fall === 'snow') { g.globalAlpha = 0.85; cutRc(g, x, y, 1.5, 1.5, '#ffffff'); } else { g.globalAlpha = 0.9; cutRc(g, x, y, 3, 1.5, st.fall === 'petal' ? ['#ffc9d4', '#ef8fa3', '#fff0f4'][i % 3] : ['#c4553d', '#e8863c', '#f2b84b', '#a8703f'][i % 4]); } } g.globalAlpha = 1; cutTf(g, -camX, shift); }
+  // передній план: кут сусіднього будинку, з-за якого виходить Боді
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  cut.shopRectW = [sx0, sy0, cut.shopW, cut.shopH]; cut.L = L; cut.shift = shift;
+}
+function cutCache(k, fn) { return cut.cache[k] || (cut.cache[k] = fn()); }
+function cutW2S(wx, wy, z, f) { const sx = wx - cut.camX, sy = wy + cut.shift; return [(sx - f[0]) * z + f[0], (sy - f[1]) * z + f[1]]; }
+function cutDrawFrame(T) {
+  const Tn = T; T = Math.max(0, T);
+  const g = cut.g, W = cut.W, H = cut.H, Q = CUT_Q, txt = CUT_TXT[state.lang] || CUT_TXT.uk, amb = cut.amb;
+  cutRenderWorld(T); const L = cut.L;
+  let z = cutZoom(T), f = [W / 2, H / 2];
+  if (z > 1.001) {
+    const sh = cut.shift; let target;
+    if (T < 7.2 && cut.coinPos) target = [cut.coinPos[0] - cut.camX, cut.coinPos[1] + sh];
+    else if (T < 15) target = [L.shopCX - cut.camX, 96 + sh];
+    else target = [L.shopCX - cut.camX, 170 - cut.shopH + 22 + sh];
+    f = [Math.max(10, Math.min(W - 10, target[0])), Math.max(10, Math.min(H - 10, target[1]))];
+  }
+  let shk = 0; [[CT.flash, 4], [16.2, 1.6], [17.0, 1.6], [17.8, 1.8], [18.6, 2.2]].forEach(([te, a]) => { const d = T - te; if (d >= 0 && d < 0.3) shk = Math.max(shk, a * (1 - d / 0.3)); });
+  if (cut.tapAmb >= 0) { const d = amb - cut.tapAmb; if (d >= 0 && d < 0.25) shk = Math.max(shk, 1.5 * (1 - d / 0.25)); }
+  const ox = shk ? Math.round(Math.sin(T * 91) * shk * Q) : 0, oy = shk ? Math.round(Math.cos(T * 77) * shk * Q) : 0;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.fillStyle = '#000'; g.fillRect(0, 0, W * Q, H * Q);
+  g.drawImage(cut.wc, f[0] * (1 - 1 / z) * Q, f[1] * (1 - 1 / z) * Q, W * Q / z, H * Q / z, ox, oy, W * Q, H * Q);
+  cutTf(g, 0, 0); g.imageSmoothingEnabled = false;
+  const w2s = (wx, wy) => cutW2S(wx, wy, z, f);
+  const u7 = cut.tapAmb >= 0 ? T - CT.u0 : -99;
+  let dim = cutKf(T, [[13.8, 0], [14.5, 0.5], [14.7, 0.5], [CT.flash + 0.05, 0]]); if (u7 > -0.4 && u7 < 7.9) dim = Math.max(dim, 0.45 * cutSm((u7 + 0.4) / 0.5) * (u7 > 7.2 ? Math.max(0, 1 - (u7 - 7.2) / 0.7) : 1));
+  if (dim > 0.01) { g.fillStyle = 'rgba(8,6,20,' + dim + ')'; g.fillRect(0, 0, W, H); }
+  if (T >= CT.charge + 0.05 && T < CT.flash + 0.1) {
+    const u = cutSm((T - CT.charge - 0.05) / 0.75), r = cutLerp(14, Math.max(W, H) * 0.62, u * u), cpos = T < CT.big1 ? w2s(L.shopCX, 96 + Math.sin(T * 4) * 2) : [W / 2, H / 2], cx = cutLerp(cpos[0], W / 2, u), cy = cutLerp(cpos[1], H / 2, u);
+    cutCoin(g, cx, cy, r, T * (5 + u * 14), 0.8);
+  }
+  const fl = cutKf(T, [[14.55, 0], [CT.flash, 1], [CT.flash + 0.06, 1], [15.9, 0]]); if (fl > 0.01) { g.fillStyle = 'rgba(255,248,205,' + fl + ')'; g.fillRect(0, 0, W, H); }
+  const F = cutFinale(T, L, w2s);
+  if (F) {
+    g.fillStyle = 'rgba(8,6,22,' + (0.68 * cutSm(F.fT / 0.9)) + ')'; g.fillRect(0, 0, W, H);
+    const al = Math.min(1, F.fT / 0.4), step = F.fT < 2.8 ? Math.abs(Math.sin(F.fT * 8)) * -2 * F.sc : 0;
+    cutDrawChar(g, F.melC, F.mx, F.foot + step, false, { sx: F.sc, sy: F.sc, alpha: al }); cutDrawChar(g, F.nikC, F.nx, F.foot + step, false, { sx: F.sc, sy: F.sc, alpha: al });
+    if (F.wk > 0.25) cutMark(g, 'heart', F.fx, F.foot - F.h - 8, T);
+  }
+  const say = cutSayState(T, txt);
+  if (say && z < 1.2) {
+    let pos;
+    if (say.who === 'c') pos = w2s(cutCapyX(T, L), 166 - 50); else if (say.who === 'b') pos = w2s(cutBodyX(T, L), 166 - 36); else if (F) pos = [say.who === 'm' ? F.mx : F.nx, F.foot - F.h + 6]; else pos = [W / 2, H / 2];
+    cutBubble(g, say.text, pos[0], pos[1] - 4, say.who, say.prog, W);
+  }
+  [[CT.ting1, 'TING!', 0], [CT.ting2, 'TING!', 1]].forEach(([te, s, k]) => { const a = T - te; if (a >= 0 && a < 0.9) { const p = w2s(cutCapyX(T, L) + (k ? -36 : 36), 166 - 84); cutPopText(g, s, Math.max(40, Math.min(W - 40, p[0])), Math.max(14, p[1] - a * 8), 3, '#ffe36a', '#7a3a10', a); } });
+  if (T >= CT.asm0 + 0.5 && T < CT.asm1) { const per = 0.7, a = (T - CT.asm0 - 0.5) % per, n = Math.floor((T - CT.asm0 - 0.5) / per); if (a < 0.5 && n % 2 === 0) { const p = w2s(L.shopCX - 88, 120); cutPopText(g, txt.tuk, Math.max(30, p[0]), p[1] - n % 3 * 8, 2, '#fff6c8', '#6b3a10', a); } }
+  { const n = (cut.tapAmb >= 0 && T >= CT.TW + 0.75) ? 2 : 1, el = cut.hudEl; if (el) { const show = T >= CT.bIn0 ? '' : 'none'; if (el.style.display !== show) el.style.display = show; if (cut.hudN !== n) { cut.hudN = n; const cc = el.querySelector('#coinCount'); if (cc) cc.textContent = String(n); } } }
+  const sr = cut.shopRectW, sS = w2s(sr[0], sr[1]); cut.rect = [sS[0], sS[1], sr[2] * z, sr[3] * z];
+  if (T >= CT.TW - 0.01 && cut.tapAmb < 0) {
+    const b = Math.abs(Math.sin(amb * 5)) * 4, pulse = 0.5 + 0.5 * Math.sin(amb * 6), top = sS[1];
+    g.globalAlpha = 0.5 + 0.5 * pulse; g.fillStyle = '#fff6c8'; g.fillRect(sS[0] - 2, sS[1] - 2, sr[2] + 4, 1.5); g.fillRect(sS[0] - 2, sS[1] + sr[3], sr[2] + 4, 1.5); g.fillRect(sS[0] - 2, sS[1] - 2, 1.5, sr[3] + 4); g.fillRect(sS[0] + sr[2], sS[1] - 2, 1.5, sr[3] + 4); g.globalAlpha = 1;
+    const ax = sS[0] + sr[2] / 2, ay = Math.max(30, top - 12) + b; g.fillStyle = '#3a2a22'; g.fillRect(ax - 7, ay - 1, 15, 3); g.fillRect(ax - 5, ay + 2, 11, 3); g.fillRect(ax - 3, ay + 5, 7, 3); g.fillRect(ax - 1, ay + 8, 3, 3); g.fillStyle = '#ffe36a'; g.fillRect(ax - 6, ay - 1, 13, 2); g.fillRect(ax - 4, ay + 1, 9, 2); g.fillRect(ax - 2, ay + 3, 5, 2); g.fillRect(ax, ay + 5, 1, 2);
+    cutTextPx(g, txt.hint, W / 2, Math.max(14, Math.min(ay - 18, 28)), W < 300 ? 2 : 3, '#fff6c8', '#3a2a22', 'center');
+  }
+  if (cut.tapAmb >= 0) {
+    const u = T - CT.TW, hp = cut.hit || [sS[0] + sr[2] / 2, sS[1] + sr[3] / 2];
+    if (u >= 0 && u < 0.9) cutPopText(g, txt.click, hp[0], hp[1] - 6 - u * 14, 4, '#ffffff', '#c0392b', u);
+    if (u >= 0.05 && u < 0.75) { const k = cutSm((u - 0.05) / 0.7), p0 = [sS[0] + sr[2] / 2, sS[1] + sr[3] * 0.7], p1 = [16, 14]; cutCoin(g, cutLerp(p0[0], p1[0], k), cutLerp(p0[1], p1[1], k) - Math.sin(Math.PI * k) * 26, 5, T * 12, 0.2); }
+    for (let i = 0; i < 9; i++) { if (u < 0.2 || u > 1.3) break; const a = i / 9 * 6.283 + 0.4, d = (u - 0.2) * 60 * (0.6 + cutHash(i + 3)); cutSpark(g, hp[0] + Math.cos(a) * d, hp[1] + Math.sin(a) * d * 0.8, 1, ['#ffe36a', '#ff9fc0', '#9fd4ff'][i % 3]); }
+  }
+  if (u7 > -0.4 && u7 < 7.9) cutS7(g, u7, W, H, txt);
+  cut.btn = null;
+  if (T >= CT.fin + 7.2) {                                                       // кнопка «ПОЧИНАЄМО!»
+    const a = cutSm((T - CT.fin - 7.2) / 0.4), bw = W < 300 ? 140 : 168, bh = 26, bx = Math.round((W - bw) / 2), by = Math.round(H - 40 + (1 - a) * 30 - (W < 300 ? 0 : 6)), pul = 0.5 + 0.5 * Math.sin(amb * 6);
+    cutRc(g, bx - 2, by - 2, bw + 4, bh + 4, '#fff6c8'); cutRc(g, bx, by, bw, bh, '#2a7a3a'); cutRc(g, bx, by, bw, 3, '#7aff7a'); cutRc(g, bx, by + bh - 3, bw, 3, '#1d5a2a'); g.globalAlpha = 0.25 * pul; cutRc(g, bx, by, bw, bh, '#ffffff'); g.globalAlpha = 1;
+    cutTextPx(g, txt.go, W / 2, by + bh / 2 + 0.5, 3, '#ffffff', '#1d5a2a', 'center'); cut.btn = [bx, by, bw, bh];
+  }
+  if (Tn < 0) {                                                                  // вступний текст на чорному
+    const nar = W < 300, lines = nar ? txt.introN : txt.intro, k = nar ? 2 : 3, cw = 8 * k / CUT_Q; let left = Math.floor((Tn + CUT_PRE) * 20);
+    g.fillStyle = '#05060f'; g.fillRect(0, 0, W, H);
+    lines.forEach((l, i) => { if (left > 0) { cutTextPx(g, l.slice(0, left), Math.round((W - l.length * cw) / 2), H / 2 - (lines.length - 1) * 9 + i * (nar ? 16 : 20), k, '#fff6c8', '#6b3a10', 'left'); left -= l.length; } });
+  }
+  const goT = cut.goAmb >= 0 ? cut.amb - cut.goAmb : -1, fade = Math.max(Tn < 0 ? 0 : cutKf(T, [[0, 1], [0.9, 0]]), goT >= 0 ? cutSm(goT / 0.7) : 0);
+  if (fade > 0.01) { g.fillStyle = goT >= 0 ? 'rgba(255,248,205,' + fade + ')' : 'rgba(0,0,0,' + fade + ')'; g.fillRect(0, 0, W, H); }
+  g.drawImage(cutCache('vig' + W + 'x' + H, () => { const c = document.createElement('canvas'); c.width = W * Q; c.height = H * Q; const v = c.getContext('2d'), gr = v.createRadialGradient(W * Q / 2, H * Q / 2, H * Q * 0.45, W * Q / 2, H * Q / 2, Math.max(W, H) * Q * 0.75); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.42)'); v.fillStyle = gr; v.fillRect(0, 0, W * Q, H * Q); return c; }), 0, 0, W, H);
+}
+// пояснення гри: ланцюжок ТАП → МОНЕТИ → ПОКРАЩЕННЯ → РІВЕНЬ, ріст магазину й гасло
+function cutPanel(g, x, y, w, h) { g.fillStyle = '#3a2a22'; g.fillRect(x - 2, y - 2, w + 4, h + 4); g.fillStyle = '#c98a3c'; g.fillRect(x - 1, y - 1, w + 2, h + 2); g.fillStyle = '#fff3d6'; g.fillRect(x, y, w, h); g.fillStyle = '#fffaf0'; g.fillRect(x, y, w, 2); g.fillStyle = '#ecd9ae'; g.fillRect(x, y + h - 2, w, 2); }
+function cutPix(g, map, pal, x, y, s) { map.forEach((row, j) => { for (let i = 0; i < row.length; i++) { const col = pal[row[i]]; if (col) { g.fillStyle = col; g.fillRect(x + i * s, y + j * s, s, s); } } }); }
+const CUT_ARROW = ['X..........', 'XX.........', 'XOX........', 'XOOX.......', 'XOOOX......', 'XOOOOX.....', 'XOOOOOX....', 'XOOOOOOX...', 'XOOOOOOOX..', 'XOOOOXXXXX.', 'XOXOOX.....', 'XX.XOOX....', 'X..XOOX....', '....XOOX...', '....XOOX...', '.....XX....'];
+const CUT_UP = ['.....XX.....', '....XOOX....', '...XOOOOX...', '..XOOOOOOX..', '.XOOOOOOOOX.', 'XOOOOOOOOOOX', 'XXXXOOOOXXXX', '...XOOOOX...', '...XOOOOX...', '...XOOOOX...', '...XXXXXX...'];
+function cutArrowR(g, x, y) { g.fillStyle = '#3a2a22'; g.fillRect(x - 5, y - 3, 7, 6); g.fillRect(x, y - 7, 3, 14); g.fillRect(x + 3, y - 5, 2, 10); g.fillRect(x + 5, y - 3, 2, 6); g.fillRect(x + 7, y - 1, 1, 2); g.fillStyle = '#e8a92a'; g.fillRect(x - 4, y - 2, 6, 4); g.fillRect(x + 1, y - 6, 2, 12); g.fillRect(x + 3, y - 4, 2, 8); g.fillRect(x + 5, y - 2, 2, 4); }
+function cutIcon(g, i, u) {                      // значки 28×28
+  if (i === 0) { g.fillStyle = '#7fb6e8'; for (let r = 0; r < 2; r++) for (let a = 0; a < 6.283; a += 0.22) g.fillRect(Math.round(Math.cos(a) * (10 + r * 4 + (Math.floor(u * 4) % 2))), Math.round(Math.sin(a) * (10 + r * 4 + (Math.floor(u * 4) % 2))) + 3, 1.5, 1.5); cutPix(g, CUT_ARROW, { X: '#2a1a14', O: '#ffffff' }, -6, -9, 1.5); }
+  else if (i === 1) { cutCoin(g, -5, 6, 7, 0, 0); cutCoin(g, 6, 7, 7, 0, 0); cutCoin(g, 0, -2, 10, u * 3, 0); }
+  else if (i === 2) cutPix(g, CUT_UP, { X: '#1d5a2a', O: '#7aff7a' }, -12, -11, 2);
+  else { const t = cut.thumbs[1], s = Math.min(38 / t.w, 28 / t.h); g.drawImage(t.c, -t.w * s / 2, -t.h * s / 2 + 2, t.w * s, t.h * s); }
+}
+function cutS7(g, u, W, H, txt) {
+  const nar = W < 300, pw = Math.min(W - 12, 350), px = Math.round((W - pw) / 2);
+  if (u >= 0 && u < 3.3) {
+    const row = W >= 392, grid = !row, cardW = row ? 86 : 84, gap = row ? 14 : 8, labels = [txt.i1, txt.i2, txt.i3, txt.i4], top = Math.max(12, Math.round((cut.hudBu || 0) + 3));
+    const pw = row ? 4 * cardW + 3 * gap + 16 : 2 * cardW + gap + 12, ph = row ? 60 : 2 * 50 + 6 + 10, px = Math.round((W - pw) / 2), py = top;
+    g.globalAlpha = cutSm((u + 0.4) / 0.4); cutPanel(g, px, py, pw, ph); g.globalAlpha = 1;
+    for (let i = 0; i < 4; i++) {
+      const a = cutSm((u - (0.2 + 0.6 * i)) / 0.3); if (a <= 0) continue;
+      const col = row ? i : i % 2, rw = row ? 0 : (i >> 1);
+      const cx = px + (row ? 8 : 6) + cardW / 2 + col * (cardW + gap), cy = py + (row ? 22 : 18 + rw * 56), sc = 0.7 + 0.3 * a;
+      g.save(); g.globalAlpha = a; g.translate(cx, cy); g.scale(sc, sc); cutIcon(g, i, u); g.restore(); g.globalAlpha = 1;
+      cutTextPx(g, labels[i], cx, cy + (row ? 28 : 24), 2, '#3a2a22', null, 'center');
+      if (a > 0.9) { if (row && i < 3) cutArrowR(g, cx + cardW / 2 + gap / 2, cy); else if (!row && i === 0) cutArrowR(g, cx + cardW / 2 + gap / 2, cy); else if (!row && i === 2) cutArrowR(g, cx + cardW / 2 + gap / 2, cy); else if (!row && i === 1) { g.save(); g.translate(px + pw / 2, py + 52); g.rotate(Math.PI / 2); cutArrowR(g, 0, 0); g.restore(); } }
+    }
+  } else if (u >= 3.3 && u < 5.5) {
+    const k = u - 3.3, bw = nar ? 52 : 70, bh = nar ? 46 : 54, gap = nar ? 14 : 24, tw = bw * 3 + gap * 2, x0 = Math.round((W - tw) / 2), y0 = nar ? 40 : 22;
+    for (let i = 0; i < 3; i++) {
+      const a = cutSm((k - i * 0.5) / 0.3); if (a <= 0) continue; const t = cut.thumbs[i], s = Math.min(bw / t.w, bh / t.h), dw = Math.round(t.w * s), dh = Math.round(t.h * s), bx = x0 + i * (bw + gap) + (bw - dw) / 2, by = y0 + bh - dh;
+      g.save(); g.globalAlpha = a; g.translate(bx + dw / 2, by + dh); g.scale(0.7 + 0.3 * a, 0.7 + 0.3 * a); g.drawImage(t.c, -dw / 2, -dh, dw, dh); g.restore(); g.globalAlpha = 1;
+      if (i < 2 && a > 0.9) cutTextPx(g, '▶', x0 + (i + 1) * (bw + gap) - gap / 2, y0 + bh / 2, 2, '#f6c744', null, 'center');
+      if (i === 2 && a > 0.9) for (let q = 0; q < 4; q++) cutSpark(g, bx + dw * (0.1 + 0.27 * q), by + 6 + Math.sin(u * 8 + q) * 3, 1 + (Math.floor(u * 6 + q) % 2), '#fff6c8');
+    }
+  } else if (u >= 5.5) {
+    const k = u - 5.5, y0 = nar ? 44 : 34, wds = [txt.w1, txt.w2, txt.w3];
+    wds.forEach((w, i) => { const a = k - i * 0.6; if (a >= 0) cutPopText(g, w, W / 2, y0 + i * (nar ? 22 : 17), nar ? 2.5 : 3, ['#ffe36a', '#9fd4ff', '#7aff7a'][i], '#2a1a3a', a); });
+  }
+}
+// звуки заставки
+Object.assign(SFX, {
+  cutTing() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'sine', 2637, t, 0.35, 0.32, 2600); tone(audio.sfxGain, 'sine', 3951, t + 0.05, 0.4, 0.2, 3900); tone(audio.sfxGain, 'triangle', 1318, t, 0.2, 0.12); },
+  cutPick() { melody('square', [['C6', 0.05], ['E6', 0.05], ['G6', 0.05], ['C7', 0.16]], 0.2); },
+  cutBlipC() { tone(audio.sfxGain, 'square', 560 + Math.random() * 60, audio.ctx.currentTime + 0.01, 0.05, 0.1); },
+  cutBlipB() { tone(audio.sfxGain, 'square', 260 + Math.random() * 40, audio.ctx.currentTime + 0.01, 0.06, 0.12); },
+  cutWhoosh() { const t = audio.ctx.currentTime + 0.01; noiseHit(audio.sfxGain, t, 0.5, 0.2, 'bandpass', 1400); tone(audio.sfxGain, 'sawtooth', 280, t, 0.5, 0.1, 900); },
+  cutCharge() { const t = audio.ctx.currentTime + 0.01; for (let i = 0; i < 18; i++) tone(audio.sfxGain, 'sawtooth', 180 * Math.pow(1.1, i), t + i * 0.045, 0.09, 0.11); tone(audio.sfxGain, 'sine', 120, t, 0.9, 0.2, 880); noiseHit(audio.sfxGain, t, 1.0, 0.1, 'highpass', 2500); },
+  cutBoom() { const t = audio.ctx.currentTime + 0.01; noiseHit(audio.sfxGain, t, 0.9, 0.55, 'lowpass', 1100); tone(audio.sfxGain, 'sine', 90, t, 0.8, 0.5, 28); tone(audio.sfxGain, 'triangle', 1568, t + 0.05, 0.9, 0.2, 1500); tone(audio.sfxGain, 'triangle', 2093, t + 0.1, 0.9, 0.16, 2000); },
+  cutThud() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'triangle', 130, t, 0.14, 0.3, 60); noiseHit(audio.sfxGain, t, 0.08, 0.3, 'bandpass', 900); tone(audio.sfxGain, 'sine', 1800 + Math.random() * 600, t + 0.03, 0.12, 0.1); },
+  cutDone() { melody('triangle', [['C5', 0.09], ['E5', 0.09], ['G5', 0.09], ['C6', 0.09], ['E6', 0.3]], 0.35); melody('square', [['C5', 0.09], ['E5', 0.09], ['G5', 0.09], ['C6', 0.09], ['E6', 0.3]], 0.1); },
+  cutClick() { const t = audio.ctx.currentTime + 0.01; noiseHit(audio.sfxGain, t, 0.06, 0.4, 'bandpass', 2400); tone(audio.sfxGain, 'square', 900, t, 0.08, 0.2, 380); },
+  cutChain(i) { tone(audio.sfxGain, 'triangle', noteFreq(['C5', 'E5', 'G5', 'C6'][i % 4]), audio.ctx.currentTime + 0.01, 0.2, 0.3); },
+  cutWord(i) { melody('square', [[['G5', 'B5', 'D6'][i % 3], 0.07], [['C6', 'E6', 'G6'][i % 3], 0.14]], 0.2); },
+  cutTock() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'square', 190, t, 0.06, 0.2, 80); noiseHit(audio.sfxGain, t, 0.05, 0.25, 'bandpass', 1900); },
+  cutDoor() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'sine', 880, t, 0.25, 0.2, 880); tone(audio.sfxGain, 'sine', 1175, t + 0.18, 0.4, 0.18, 1175); }
+});
+const CUT_EV = [[CT.ting1, 'cutTing'], [CT.ting2, 'cutTing'], [CT.pick, 'cutPick'], [CT.fly0, 'cutWhoosh'], [CT.charge, 'cutCharge'], [CT.flash, 'cutBoom'], [16.2, 'cutThud'], [17.0, 'cutThud'], [17.8, 'cutThud'], [18.6, 'cutThud'], [CT.asm1, 'cutDone'], [CT.fin + 0.4, 'cutDoor'],
+  ...CUT_SAY.map(s => [s[0], s[2] === 'c' ? 'cutBlipC' : 'cutBlipB'])];
+function cutFire(T) {
+  const fire = (key, name, arg) => { if (!cut.fired[key] && T >= key) { cut.fired[key] = 1; playSfx(name, arg); } };
+  CUT_EV.forEach(([te, n]) => fire(te + n, n));
+  for (let k = 0; k < 14; k++) { const te = CT.asm0 + 0.6 + k * 0.5; if (te < CT.asm1) { if (!cut.fired['tk' + k] && T >= te) { cut.fired['tk' + k] = 1; playSfx('cutTock'); } } }
+  if (cut.tapAmb >= 0) {
+    [[0, 'cutClick'], [0.05, 'cutWhoosh'], [0.75, 'cutPick']].forEach(([d, n]) => fire(CT.TW + d + n, n));
+    for (let i = 0; i < 4; i++) { const te = CT.u0 + 0.2 + 0.6 * i; if (!cut.fired['ch' + i] && T >= te) { cut.fired['ch' + i] = 1; playSfx('cutChain', i); } }
+    for (let i = 0; i < 3; i++) { const te = CT.u0 + 3.3 + 0.5 * i; if (!cut.fired['gr' + i] && T >= te) { cut.fired['gr' + i] = 1; playSfx('cutChain', i + 1); } }
+    for (let i = 0; i < 3; i++) { const te = CT.u0 + 5.5 + 0.6 * i; if (!cut.fired['wd' + i] && T >= te) { cut.fired['wd' + i] = 1; playSfx('cutWord', i); } }
+    if (!cut.fired.fan && T >= CT.u0 + 7.3) { cut.fired.fan = 1; playSfx('levelup'); }
+    [[CT.fin + 2.2, 'cutBlipC'], [CT.fin + 3.4, 'cutBlipC'], [CT.fin + 5.3, 'cutBlipC']].forEach(([te, n]) => fire(te + n, n));
+  }
+}
+function cutLayout() {
+  const dpr = window.devicePixelRatio || 1, vwD = innerWidth * dpr, vhD = innerHeight * dpr, Q = CUT_Q;
+  let m = Math.min(vwD / (192 * Q), vhD / (216 * Q)); m = m >= 1 ? Math.floor(m) : m;      // низький екран (телефон горизонтально): дробовий масштаб, щоб усе влізло          // фізичних пікселів на піксель полотна: ціле число, тож картинка й текст чіткі
+  let W = Math.floor(vwD / (m * Q)), H = Math.floor(vhD / (m * Q));
+  W = Math.max(192, Math.min(W, 520)); H = Math.max(216, Math.min(H, 480)); if (W < 300) H = Math.min(H, 300);
+  cut.W = W; cut.H = H; cut.S = m * Q / dpr;
+  const cv = cut.cv; cv.width = W * Q; cv.height = H * Q; cv.style.width = (W * m * Q / dpr) + 'px'; cv.style.height = (H * m * Q / dpr) + 'px';
+  ['wc', 'al'].forEach(k => { const c = cut[k] || (cut[k] = document.createElement('canvas')); c.width = W * Q; c.height = H * Q; });
+  cut.wg = cut.wc.getContext('2d'); cut.ag = cut.al.getContext('2d'); cut.g = cv.getContext('2d');
+  const hud = document.getElementById('hud'), cr = cv.getBoundingClientRect();
+  cut.hudBu = hud && hud.getBoundingClientRect().height > 0 ? (hud.getBoundingClientRect().bottom - cr.top) / cut.S : 0;
+}
+function cutTick(now) {
+  if (!cut.on) return;
+  const dt = Math.min(0.1, (now - cut.t0) / 1000); cut.t0 = now; cut.amb += dt;
+  if (cut.seek >= 0) cut.T = cut.seek;
+  else {
+    let lim = CT.END;
+    if (cut.tapAmb < 0) lim = Math.min(lim, CT.TW);
+    if (cut.goAmb < 0) lim = Math.min(lim, CT.finBtn);
+    cut.T = Math.min(lim, cut.T + dt / CUT_SLOW);
+  }
+  cutFire(cut.T);
+  try { cutDrawFrame(cut.T); } catch (e) { console.error('cutscene', e); }
+  if (cut.goAmb >= 0 && cut.amb - cut.goAmb > 0.75 && cut.seek < 0) { cutStop(true); return; }
+  cut.raf = requestAnimationFrame(cutTick);
+}
+function playCutscene(style, opts) {
+  opts = opts || {}; cut.cb = null; cutStop(false);
+  const box = document.getElementById('cutscene'); box.hidden = false; box.classList.remove('picking');
+  cut.cv = document.getElementById('cutCv'); cut.style = CUT_STYLES[style] ? style : 'A'; cut.cb = opts.done || null;
+  cut.fired = {}; cut.tapAmb = -1; cut.goAmb = -1; cut.T = (opts.seek !== undefined) ? 0 : -CUT_PRE; cut.amb = 0; cut.hit = null; cut.seek = opts.seek !== undefined ? opts.seek : -1;
+  if (opts.tapped) cut.tapAmb = 0;
+  if (opts.go) cut.goAmb = 0;
+  document.getElementById('cutSkip').textContent = (CUT_TXT[state.lang] || CUT_TXT.uk).skip + ' ▶▶';
+  try { if (typeof initAudio === 'function') initAudio(); } catch (e) { /* без звуку */ }
+  cutLayout(); cutPrep(); cutHudMake();
+  const go = () => { cut.on = true; cut.t0 = performance.now(); cut.raf = requestAnimationFrame(cutTick); };
+  if (document.fonts && document.fonts.load) document.fonts.load('8px "Press Start 2P"').then(go, go); else go();
+}
+function cutHudMake() {
+  cutHudKill(); const src = document.getElementById('hud'); if (!src) return; const r = src.getBoundingClientRect(); if (r.width < 4) return;
+  const cl = src.cloneNode(true); cl.classList.add('cut-hud'); cl.style.cssText = 'position:fixed;z-index:4;margin:0;display:none;left:' + r.left + 'px;top:' + r.top + 'px;';
+  const gm = cl.querySelector('#gems'); if (gm) gm.style.display = 'none'; const cp = cl.querySelector('#cps'); if (cp) cp.textContent = '0/' + (state.lang === 'en' ? 's' : 'с');
+  const ic = cl.querySelector('#coinIcon'), oi = src.querySelector('#coinIcon'); if (ic && oi) ic.getContext('2d').drawImage(oi, 0, 0);
+  document.getElementById('cutscene').appendChild(cl); cut.hudEl = cl; cut.hudN = -1;
+}
+function cutHudKill() { if (cut.hudEl) cut.hudEl.remove(); cut.hudEl = null; }
+function cutStop(finished) {
+  cutHudKill();
+  cut.on = false; if (cut.raf) cancelAnimationFrame(cut.raf); cut.raf = 0;
+  const box = document.getElementById('cutscene'); if (!box) return; box.hidden = true;
+  const cb = cut.cb; cut.cb = null; if (cb && finished !== undefined) cb(!!finished);
+}
+function cutPicker() {
+  const box = document.getElementById('cutscene'); box.hidden = false; box.classList.add('picking'); cut.on = false;
+  document.getElementById('cutPick').hidden = false;
+}
+function cutAfter(ok) { if (ok) startMenuTour(() => cutPicker()); else cutPicker(); }
+function startIntroCutscene() {                                   // нова гра й кнопка «Щоденника»: заставка, потім екскурсія по меню
+  state.cutSeen = true; saveGame();
+  playCutscene('B', { done: ok => { if (ok) startMenuTour(null); } });
+}
+function initCutscene() {
+  const box = document.getElementById('cutscene'); if (!box) return;
+  document.getElementById('cutSkip').addEventListener('click', e => { e.stopPropagation(); cutStop(true); });
+  document.getElementById('cutClose').addEventListener('click', () => { document.getElementById('cutscene').hidden = true; });
+  document.getElementById('cutPick').querySelectorAll('button[data-s]').forEach(b => b.addEventListener('click', () => { document.getElementById('cutPick').hidden = true; playCutscene(b.dataset.s, { done: ok => cutAfter(ok) }); }));
+  box.addEventListener('pointerdown', e => {
+    if (!cut.on) return;
+    const r = cut.cv.getBoundingClientRect(), x = (e.clientX - r.left) / cut.S, y = (e.clientY - r.top) / cut.S;
+    if (cut.tapAmb < 0 && cut.T >= CT.TW - 0.01 && cut.rect) { const q = cut.rect, pad = 14; if (x >= q[0] - pad && x <= q[0] + q[2] + pad && y >= q[1] - pad && y <= q[1] + q[3] + pad) { cut.tapAmb = cut.amb; cut.hit = [x, y]; } }
+    else if (cut.goAmb < 0 && cut.btn) { const q = cut.btn; if (x >= q[0] - 6 && x <= q[0] + q[2] + 6 && y >= q[1] - 6 && y <= q[1] + q[3] + 6) cut.goAmb = cut.amb; }
+  });
+  addEventListener('keydown', e => { if (cut.on && e.key === 'Escape') cutStop(true); });
+  addEventListener('resize', () => { if (cut.on) cutLayout(); });
+  const q = new URLSearchParams(location.search);
+  if (q.has('cutpick')) setTimeout(cutPicker, 900);
+  else if (q.has('cut')) setTimeout(() => playCutscene(q.get('cut').toUpperCase(), { seek: q.has('seek') ? parseFloat(q.get('seek')) : undefined, tapped: q.has('tapped'), done: ok => cutAfter(ok) }), 900);
+}
+
+/* ====================== ЕКСКУРСІЯ ПО МЕНЮ ======================
+   Після заставки: стрілка веде до кожної вкладки меню по черзі, гравець натискає на неї, а в куті стоять Мел і Ніка й пояснюють. */
+const TOUR_IDS = ['shop', 'departments', 'team', 'story', 'skins', 'seasons', 'achievements', 'settings', 'news'];
+const TOUR_TXT = {
+  uk: { shop: ['m', 'Це «Магазин». Тут ти тапаєш, прокачуєш тап і розширюєш магазин. Натисни сюди!'], departments: ['n', '«Відділи» самі приносять монети, навіть коли ти не граєш. Тисни!'], team: ['m', 'У «Команді» наймаєш звірят-помічників. Кожен допомагає по-своєму.'],
+    story: ['n', '«Щоденник»: глави історії та історії епох. Їх можна перечитати.'], skins: ['m', '«Скіни»: змінюй вигляд Капі, магазину й героїв за кристали.'], seasons: ['n', '«Пори року» і час доби. Замок відкриється після 2-ї епохи.'],
+    achievements: ['m', '«Нагороди»: тут чекають призи за досягнення.'], settings: ['n', '«Налаштування»: мова, звук, перегляд епох та анімації.'], news: ['m', 'А це скринька розробників! Там новини про оновлення, а ще можна написати нам. Відкрий її!'], end: ['m', 'От і все! Тапай по магазину й розвивай його. Ми завжди поруч!'], endBtn: 'ГРАТИ!', skip: 'Пропустити тур' },
+  en: { shop: ['m', 'This is the Shop. Tap, boost your tap and expand the shop here. Press it!'], departments: ['n', 'Departments earn coins by themselves, even when you are away. Press!'], team: ['m', 'In Team you hire animal helpers. Each one helps in their own way.'],
+    story: ['n', 'Diary: story chapters and epoch stories. You can reread them.'], skins: ['m', 'Skins: change the look of Capy, the shop and heroes for crystals.'], seasons: ['n', 'Seasons and time of day. The lock opens after the 2nd epoch.'],
+    achievements: ['m', 'Awards: prizes wait here for your achievements.'], settings: ['n', 'Settings: language, sound, epoch viewing and animations.'], news: ['m', 'And this is the developers mailbox! News about updates are there, and you can write to us. Open it!'], end: ['m', 'That is all! Tap the shop and grow it. We are always nearby!'], endBtn: 'PLAY!', skip: 'Skip tour' }
+};
+const tour = { on: false, i: 0, cb: null, timer: 0, btn: null, handler: null, talk: 0, news: false, wrapped: false };
+function tourVisible(el) { return !!el && el.offsetParent !== null && el.getBoundingClientRect().width > 0; }
+function startMenuTour(cb) {
+  const box = document.getElementById('tour'); if (!box) { if (cb) cb(); return; }
+  tourStop(false); tour.on = true; tour.i = 0; tour.cb = cb || null; tour.news = false;
+  if (!tour.wrapped && typeof openNews === 'function') { tour.wrapped = true; const orig = openNews; openNews = function () { const r = orig.apply(this, arguments); if (tour.on && tour.news) { tour.news = false; setTimeout(() => { if (tour.on) { tour.i++; tourStep(); } }, 400); } return r; }; }
+  ['tourMel', 'tourNika'].forEach((id, k) => { const cv = document.getElementById(id), hi = k ? cutHi('bunny_0', SPRITES.capy_nika.canvas) : cutHi('foxcub_0', SPRITES.capy_mel.canvas); cv.width = hi.width; cv.height = hi.height; cv.getContext('2d').drawImage(hi, 0, 0); });
+  if (!(typeof mobileMQ !== 'undefined' && mobileMQ.matches) && !state.settings.panelOpen) { state.settings.panelOpen = true; try { applyPanel(); } catch (e) { /* не страшно */ } }
+  box.hidden = false; document.getElementById('tourSkip').textContent = (TOUR_TXT[state.lang] || TOUR_TXT.uk).skip;
+  tourStep(); tour.timer = setInterval(tourPlace, 120);
+}
+function tourStep() {
+  const T = TOUR_TXT[state.lang] || TOUR_TXT.uk, id = TOUR_IDS[tour.i], bub = document.getElementById('tourBubble'), btnEnd = document.getElementById('tourGo');
+  if (tour.btn && tour.handler) tour.btn.removeEventListener('click', tour.handler); tour.btn = null; tour.handler = null;
+  if (!id) { const e = T.end; tourSay(e[0], e[1]); btnEnd.hidden = false; btnEnd.textContent = T.endBtn; document.getElementById('tourArrow').style.display = 'none'; document.getElementById('tourRing').style.display = 'none'; tourPlace(); return; }
+  btnEnd.hidden = true; tour.news = false;
+  if (id === 'news') { tour.news = true; tourSay(T.news[0], T.news[1]); document.getElementById('tourArrow').style.display = ''; document.getElementById('tourRing').style.display = ''; tourPlace(); return; }
+  const b = ui.tabs.querySelector('.tab[data-tab="' + id + '"]');
+  if (!b || b.hidden) { tour.i++; tourStep(); return; }
+  tour.btn = b; tour.handler = () => { setTimeout(() => { if (tour.on && tour.btn === b) { tour.i++; tourStep(); } }, 350); }; b.addEventListener('click', tour.handler, { once: true });
+  tourSay(T[id][0], T[id][1]); document.getElementById('tourArrow').style.display = ''; document.getElementById('tourRing').style.display = ''; tourPlace();
+}
+function tourSay(who, text) {
+  const bub = document.getElementById('tourBubble'); document.getElementById('tourText').textContent = text; bub.dataset.who = who;
+  document.getElementById('tourMel').classList.toggle('talk', who === 'm'); document.getElementById('tourNika').classList.toggle('talk', who === 'n'); playSfx('cutBlipC');
+}
+function tourPlace() {
+  if (!tour.on) return;
+  const sc = document.getElementById('scene').getBoundingClientRect(), chars = document.getElementById('tourChars'), bub = document.getElementById('tourBubble'), arrow = document.getElementById('tourArrow'), ring = document.getElementById('tourRing');
+  const phone = typeof mobileMQ !== 'undefined' && mobileMQ.matches;
+  chars.style.left = Math.round(sc.left + 8) + 'px'; chars.style.bottom = Math.max(8, Math.round(innerHeight - sc.bottom + 8)) + 'px';
+  const ch = chars.getBoundingClientRect(), skp = document.getElementById('tourSkip'); bub.style.left = Math.round(sc.left + 8) + 'px'; bub.style.bottom = Math.round(innerHeight - ch.top + 8) + 'px'; bub.style.maxWidth = Math.min(320, Math.round(innerWidth * (phone ? 0.84 : 0.4))) + 'px'; const br = bub.getBoundingClientRect(); skp.style.left = Math.round(br.left) + 'px'; skp.style.bottom = Math.round(innerHeight - br.top + 6) + 'px';
+  if (arrow.style.display === 'none') return;
+  let r;
+  if (tour.news) { const wr = ui.world.getBoundingClientRect(), x = newsBoxX(), y = mailRoadY(), sx = u => wr.left + (u + view.offX) / view.w * wr.width, sy = u => wr.top + (u + view.offY) / view.h * wr.height; r = { left: sx(x - 14), top: sy(y - 38), width: sx(x + 14) - sx(x - 14), height: sy(y + 3) - sy(y - 38) }; }
+  else { let target = tour.btn; if (!tourVisible(target)) target = (typeof ui !== 'undefined' && ui.tabMore && tourVisible(ui.tabMore)) ? ui.tabMore : target; if (!tourVisible(target)) return; r = target.getBoundingClientRect(); } ring.style.left = (r.left - 4) + 'px'; ring.style.top = (r.top - 4) + 'px'; ring.style.width = (r.width + 8) + 'px'; ring.style.height = (r.height + 8) + 'px';
+  if (phone || tour.news) { arrow.style.setProperty('--rot', '90deg'); arrow.style.left = Math.round(r.left + r.width / 2 - 20) + 'px'; arrow.style.top = Math.round(r.top - 46) + 'px'; arrow.dataset.dir = 'down'; }
+  else { arrow.style.setProperty('--rot', '0deg'); arrow.style.left = Math.round(r.left - 52) + 'px'; arrow.style.top = Math.round(r.top + r.height / 2 - 14) + 'px'; arrow.dataset.dir = 'right'; }
+}
+function tourStop(finished) {
+  if (tour.timer) clearInterval(tour.timer); tour.timer = 0;
+  if (tour.btn && tour.handler) tour.btn.removeEventListener('click', tour.handler); tour.btn = null; tour.handler = null;
+  const was = tour.on; tour.on = false; const box = document.getElementById('tour'); if (box) box.hidden = true;
+  const cb = tour.cb; tour.cb = null; if (was && cb && finished !== false) cb();
+}
+function initTour() {
+  const go = document.getElementById('tourGo'), sk = document.getElementById('tourSkip'); if (!go) return;
+  go.addEventListener('click', () => tourStop(true)); sk.addEventListener('click', () => tourStop(true));
+  if (new URLSearchParams(location.search).has('tour')) setTimeout(() => startMenuTour(null), 1500);
+}
+window.addEventListener('load', initCutscene); window.addEventListener('load', initTour);
 function playSfx(name, ...args) {
   const ac = audio.ctx;
   if (!ac || ac.state !== 'running' || state.settings.muted || state.settings.sfxVol <= 0) return;
@@ -12523,7 +13273,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 9;
+const NEWS_VERSION = 10;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -12551,7 +13301,7 @@ function hitNews(p) {
   return false;
 }
 // Випуски газети (новий — першим). Картинки лише до найбільших змін; тексти двома мовами. Для нового випуску: додай запис угору й підніми NEWS_VERSION.
-const NEWS_ISSUES = [{"ver":9,"uk":[["Грузовик-бетономішалка на будівництві.","Коли магазин росте, приїжджає вантажівка з бетономішалкою, що крутиться, а Бодя в касці носить бетон і цеглу та будує під шатром. Поверхи більше не складаються самі."],["Заставка для кожної епохи.","Нова епоха відкривається своєю сценою: колони й оливкові гілки, стрічка VHS, дзеркальні кулі диско, прибульці аркад, вікно браузера, ліани еко, зорі космосу, неонова сітка. Поруч назва епохи й короткий опис."],["Звуки будівництва.","Гуркіт двигуна, пшик гальм, шум бетону з жолоба й стукіт молотка."],["Цирк приходить частіше.","Тепер він з'являється приблизно раз на 5-8 хвилин, тож колесо фортуни крутиться частіше."],["Магазин часу дорожчий.","Покращення в Магазині часу коштують приблизно в півтора раза більше, а осколки обнулено ще раз, щоб усі починали з однаковим запасом. Куплені покращення, скіни й кристали лишилися."]],"en":[["A mixer truck at the building site.","When the shop grows, a truck with a spinning concrete mixer drives in, and Bodya in a hard hat carries concrete and bricks and builds under the tent. Floors no longer stack up by themselves."],["An intro scene for every epoch.","A new epoch opens with its own scene: columns and olive branches, a VHS tape, disco mirror balls, arcade invaders, a browser window, eco vines, space stars, a neon grid. The epoch name and a short description come with it."],["Building sounds.","An engine rumble, the hiss of the brakes, concrete pouring from the chute and the knock of a hammer."],["The circus comes more often.","It now shows up about every 5-8 minutes, so the Wheel of Fortune spins more often."],["The Time shop costs more.","Time shop upgrades cost about one and a half times as much, and time shards were reset once more so everyone starts even. Upgrades you bought, skins and crystals stay."]],"intro":{"uk":"Привіт, друже! У цьому випуску: вантажівка-бетономішалка, заставки епох, звуки будівництва, частіший цирк і дорожчий Магазин часу. Гортай сторінки!","en":"Hi, friend! In this issue: a mixer truck, epoch intro scenes, building sounds, a more frequent circus and a pricier Time shop. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":8,"uk":[["Новий старт для всіх.","Гру стало занадто легко проходити, тому прогрес скинуто: монети, осколки часу, покращення Магазину часу, рівень магазину, відділи й звірята почалися з нуля. Скіни й кристали лишилися з тобою."],["Великі пишні дерева.","Дерева на вулиці стали більшими, об'ємнішими й гарнішими в кожну пору року: цвіт навесні, плоди й сонячні плями влітку, золото й багрянець восени, засніжені гілки взимку."],["Вечірнє світло.","Вночі маркети й особливо торговий центр світяться яскравіше: тепле світло з поверхів, лампи під стелею й пляма світла на бруківці. Вікна будинків теж гарніші, зі шторами, перемичками й квітами."],["П'ять кольорів будинків по колу.","Будинки на задньому плані тепер чергують п'ять кольорів, а відтінки залежать від епохи."],["Маркети різні.","У кожній епосі й на кожному рівні маркет має свій варіант: навіс, візерунок, шибки, прикраси фасаду й лавка, візок чи плакат біля дверей."],["Справжня зима.","На дахах і вулицях лежить багато снігу, а звірята скаржаться, що холодно, і просять накинути щось теплого."],["Нові репліки.","У кожного звірятка тепер 16 фраз, а ще є зимові й загальні репліки під кожну епоху. Репліки йдуть слідом за звірятком."],["Новий дирижабль.","Повітряне судно стало детальнішим: об'ємний корпус із ребрами, хвіст, гондола з вікнами й гвинти, що крутяться."],["Веселка-скін.","Скін погоди «Веселка» став великим і помітнішим: дугу видно над будинками і на ПК, і на телефоні."]],"en":[["A fresh start for everyone.","The game became too easy, so progress was reset: coins, time shards, Time shop upgrades, shop level, departments and animals start from zero. Your skins and crystals stay with you."],["Big lush trees.","Street trees are bigger, fuller and prettier in every season: blossoms in spring, fruit and sun spots in summer, gold and crimson in autumn, snowy branches in winter."],["Evening lights.","At night the markets, and the mall especially, glow brighter: warm light from the floors, ceiling lamps and a pool of light on the cobbles. House windows are prettier too, with curtains, lintels and flowers."],["Five house colours in a cycle.","The background houses now cycle through five colours, and the shades depend on the era."],["Different markets.","Every era and every level has its own market variant: awning, pattern, panes, facade decor and a bench, bike or poster by the door."],["A real winter.","Lots of snow lies on the roofs and streets, and the animals complain about the cold and ask for something warm."],["New lines.","Each animal now has 16 phrases, plus winter lines and general lines for every era. The bubbles follow the animal."],["A new airship.","The airship is more detailed: a volumetric hull with ribs, a tail, a gondola with windows and spinning propellers."],["The rainbow skin.","The \"Rainbow\" weather skin is bigger and easier to see: the arc rises above the houses on both PC and phone."]],"intro":{"uk":"Привіт, друже! У цьому номері: великі дерева, вечірнє світло, різні маркети, справжня зима, нові репліки, дирижабль і веселка. Гортай сторінки!","en":"Hi, friend! In this issue: big trees, evening lights, different markets, a real winter, new lines, an airship and a rainbow. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":7,"uk":[["Подорож у часі — своя анімація для кожної епохи.","Відродження: давня Греція з колонами, оливковими деревами й звірятами-ангелятками з німбами. Ретро: перемотка старої відеокасети. Диско: дзеркальна куля й танцпол. Аркади: великі пікселі, прибульці й LEVEL UP. Інтернет: цифровий дощ, спливаючі вікна й завантаження. Еко: вітер, листя й ліани. Космос: політ крізь зорі й планети. Неон: тунель з неонових кілець. Звук теж новий: цокання маятника, шестерні, свист і дзвін."],["Різнокольорові будинки й більше неба.","Усі будинки на фоні тепер різних кольорів, звірята-працівники стали більшими й чіткішими, а на ПК з відкритим меню завжди видно більше неба. Подорож у часі можна пропустити дотиком, коли вже бачив її раз, і в кожної епохи свій звук."],["Завдань для розширення стає більше з кожним рівнем.","Щоб збудувати наступний маркет, треба купити першого товару рівня 25, 28, 31, 34 чи 37 разів, а другого 15, 18, 21, 24 чи 27. Звірят цього рівня треба прокачати до 2-го рівня на ранніх етапах і до 3-го на пізніх."],["Торговий центр без нових відділів.","Фудкорт і кінотеатр прибрано: торговий центр лише завершує шлях до подорожі в часі."],["Осколки часу й подорожі.","За подорож тепер 3–9 осколків (+1 до колишнього), більше, якщо в епосі заробити багато. Кожна наступна епоха потребує в 4 рази більше монет, а дохід за подорож росте в 1,8 раза. Тож епохи довші й рівніші. Покращення Магазину часу високих рівнів відкриваються лише після кількох подорожей."],["Будівництво без крана.","Кран прибрано. Тепер Боді сам носить блоки магазину від купи до будівлі й підкидає їх на місце."],["Годинник рухається разом із магазином.","Годинникова вежа торгового центру більше не відстає, коли тапаєш по магазину."],["Вищі будинки.","Будинки позаду магазину стали майже вдвічі вищими, до середини четвертого поверху торгового центру. Небо не зачеплено."],["Капі більша.","Капі виросла на 30%."],["Цирк частіше.","Цирк Фортуни тепер приїздить трохи частіше."]],"en":[["Time trip: its own animation for every era.","Renaissance: ancient Greece with columns, olive trees and angel animals with halos. Retro: rewinding an old video tape. Disco: a mirror ball and dance floor. Arcade: big pixels, invaders and LEVEL UP. Internet: digital rain, pop-ups and loading. Eco: wind, leaves and vines. Space: a flight through stars and planets. Neon: a tunnel of neon rings. The sound is new too: pendulum ticks, gears, a whoosh and a chime."],["Colourful houses and more sky.","Every house in the background now has its own colour, the working animals are bigger and clearer, and on PC with the menu open you now see more sky. You can skip the time trip with a tap once you have seen it, and every era has its own sound."],["More tasks for expanding on every level.","To build the next market you need to buy the level's first product 25, 28, 31, 34 or 37 times and the second 15, 18, 21, 24 or 27 times. Animals of this level need level 2 on the early stages and level 3 on the late ones."],["A mall without new departments.","The food court and the cinema department are gone: the mall only completes the road to a time trip."],["Time shards and trips.","A trip now gives 3-9 shards (+1 more than before), more if you went far in the era. Every next era needs 4 times more coins and a trip multiplies income by 1.8. Eras are longer and steadier. High-level Time shop upgrades unlock only after several trips."],["Building without a crane.","The crane is gone. Now Bodya carries the shop's blocks from the pile to the building himself and tosses them into place."],["The clock moves with the shop.","The mall clock tower no longer lags when you tap the shop."],["Taller houses.","The houses behind the shop are nearly twice as tall now, up to the middle of the mall's fourth floor. The sky is untouched."],["Capy is bigger.","Capy grew by 30%."],["Circus more often.","The Fortune Circus comes by a little more often."]],"intro":{"uk":"Привіт, друже! У цьому номері: три нові подорожі в часі, більше завдань для розширення, вищі будинки, Боді з блоками й Капі побільшала. Гортай сторінки!","en":"Hi, friend! In this issue: three new time trips, more tasks for expanding, taller houses, Bodya with blocks and a bigger Capy. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":6,"uk":[["Павільйони на поверхах.","У маркетах і торговому центрі на кожному поверсі з’явилися павільйони під тему епохи: одяг із манекенами, іграшки, техніка, книжки, прикраси й рослини. Поки відділ не куплено, павільйон зачинений жалюзі. А що вищий рівень відділу, то повніша вітрина. На широких поверхах з’явилася кав’ярня з прилавком."],["Магазин часу став дорожчим.","«Швидкий старт» прибрано. Усі покращення стали слабшими, але дорожчими, щоб гра не прискорювалася. З’явилося «Золоте чуття»: золоті покупці приходять частіше. Осколки, які були витрачені в старому магазині, повернуто."],["Лис Мел.","Скін Мел тепер лис, а не лисиця. Хитрий лише в ціні."],["Вивіска без перекриттів.","Вивіска CAPYTAP на даху більше нічим не накрита: прапорці, димарі й прикраси стоять осторонь, а годинникова вежа піднята над нею."],["Крапля на місці.","Крапелька, що вмикає дощ, тепер висить на дереві праворуч від магазину й рухається лише разом з вулицею."],["Більше неба на телефоні.","На телефоні над дахом лишається більше неба, особливо коли відкрито меню."],["Чіткі рамки меню.","Рамка меню стала товщою й кольоровою. Вкладки мають виразний контур, як аркуші в таблиці: обрана світла, з кольоровою планкою знизу."],["Лічильник.","Кристали й осколки стоять стовпчиком, а великі числа більше не вилазять за край екрана."]],"en":[["Pavilions on every floor.","Shops and the mall now have pavilions on each floor, themed to the era: clothes with mannequins, toys, tech, books, jewellery and plants. Until a department is bought its pavilion is shut behind shutters. The higher the department level, the fuller the display. Wide floors also got a cafe with a counter."],["The Time shop costs more.","\"Head Start\" is gone. Every upgrade is weaker but pricier, so the game does not speed up. A new upgrade, \"Golden Nose\", makes golden shoppers come more often. Shards spent in the old shop were refunded."],["Mel the fox.","The Mel skin is now a he-fox. Sly only about the price."],["A clear sign.","The CAPYTAP roof sign is no longer covered by anything: flags, chimneys and decorations stand aside, and the clock tower is lifted above it."],["The drop stays put.","The little drop that turns the rain on now hangs on the tree to the right of the shop and moves only with the street."],["More sky on the phone.","On a phone there is more sky above the roof, especially when the menu is open."],["Crisp menu frames.","The menu frame is thicker and coloured. Tabs have a clear outline like sheets in a spreadsheet: the selected one is light with a coloured bar below."],["The counter.","Crystals and shards are stacked in a column, and big numbers no longer run off the edge of the screen."]],"intro":{"uk":"Привіт, друже! У цьому номері: павільйони на кожному поверсі, дорожчий Магазин часу, чіткі рамки меню й багато дрібниць. Гортай сторінки!","en":"Hi, friend! In this issue: pavilions on every floor, a pricier Time shop, crisp menu frames and many small things. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":5,"uk":[["Осколки часу й кристали.","Тепер дві валюти. Осколки часу (фіолетові) дає подорож у часі, і за них купуються покращення в Магазині часу. Кристали випадають з бустів, цирку й золотих покупців, і за них купуються скіни. Кожна подорож у часі ще й назавжди дає ×2 до тапів і доходу."],["Одна відьма.","Відьми більше не літають просто так. На Хелловін замість цирку прилітає лише одна відьма на мітлі. Потім вона запрошує зіграти в «Три казанки». Зелену бабусю прибрали."],["Нові лапки для хатки.","Хатка відьми тепер стоїть на справжніх курячих лапках: з коліньми, лусочками, пальцями й кігтями. Сама відьма стала піксельнішою."],["Скіни говорять.","У кожного скіна є своя репліка: пірат кричить по-піратськи, астронавт просить орбіту цін. Одягни скін і тапни по Капі. А ще з’явилися два скіни розробників: лис Мел і зайка Ніка. Вони безкоштовні."],["Золоті покупці.","Золоті звірята тепер просто золоті. Скіни, капелюхи й шарфи на них не вдягаються."],["Очі на місці.","Костюми героїв більше не закривають звірятам очі. А в Капі прибрали підсвітку, що відставала від скіна."],["Газета MEL & NIKA.","Газета тепер піксельна, з іменами редакторів і вкладками. У вкладках можна перечитати попередні випуски, а кнопка «Написати розробникам» надішле нам твою думку."],["Більший маркет на ПК.","Коли магазин росте, на комп’ютері картинка трохи віддаляється, щоб усе вміщалося зручно."],["Меню на телефоні.","Меню на вертикальному телефоні більше не залазить на цирк і дорогу: сцена тепер закінчується над панеллю."],["Кінозал у торговому центрі.","На торговому центрі з’явився п’ятий поверх із кінозалом: екран, завіси, крісла й неонова вивіска CINEMA. На екрані йде «кіно». Менші маркети теж стали трохи сучаснішими, а на ПК більше неба й ширша бруківка."]],"en":[["Time shards and crystals.","There are now two currencies. Time shards (purple) come from time travel and buy upgrades in the Time shop. Crystals drop from boosts, the circus and golden shoppers, and buy skins. And every time trip permanently gives ×2 to taps and income."],["Just one witch.","Witches no longer fly around for no reason. On Halloween, instead of the circus, a single witch on a broom arrives. Then she invites you to play \"Three cauldrons\". The green granny is gone."],["New legs for the hut.","The witch’s hut now stands on real chicken legs: knees, scales, toes and claws. The witch herself got more pixelated."],["Skins talk.","Every skin has its own line: the pirate shouts like a pirate, the astronaut asks for the orbit of prices. Wear a skin and tap Capy. Two developer skins are new: Mel the fox and Nika the bunny. They are free."],["Golden shoppers.","Golden animals are now just golden. Skins, hats and scarves do not go on them."],["Eyes in place.","Hero costumes no longer cover the animals’ eyes. And the glow around Capy, which lagged behind the skin, is gone."],["The MEL & NIKA paper.","The paper is now pixel-style, with the editors’ names and tabs. Use the tabs to reread earlier issues, and the “Write to the developers” button sends us your thoughts."],["A bigger market on PC.","When the shop grows, the picture on a computer zooms out a little so everything fits comfortably."],["The phone menu.","On a vertical phone the menu no longer covers the circus and the road: the scene now ends above the panel."],["A cinema in the mall.","The mall got a fifth floor with a cinema: a screen, curtains, seats and a neon CINEMA sign. The screen plays a little movie. Smaller shops got a bit more modern too, and on PC there is more sky and wider cobbles."]],"intro":{"uk":"Привіт, друже! У цьому номері: дві валюти (осколки й кристали), одна справжня відьма й хатка на курячих лапках, а ще скіни навчилися говорити. Гортай сторінки!","en":"Hi, friend! In this issue: two currencies (shards and crystals), one real witch and a hut on chicken legs, and skins have learned to talk. Turn the pages!"},"pics":{"0":"shards","1":"hut","2":"witch"},"caps":{"uk":{"0":"Осколок часу й кристал.","1":"Хатка відьми на новеньких лапках.","2":"Єдина відьма Хелловіну."},"en":{"0":"A time shard and a crystal.","1":"The witch’s hut on brand-new legs.","2":"The one witch of Halloween."}}},{"ver":4,"uk":[["Газета замість листа.","Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше."],["Годинникова вежа.","На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху."],["Нове завантаження.","Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну."],["Нова відьма.","Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф."],["Більші маркети.","На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли."],["Надкусані хмари.","У скіні «Цукрові хмари» частину хмар ніби надкусили."],["Крапля дощу.","Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину."],["Чіткі рамки.","Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком."],["Капі вночі.","У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят."]],"en":[["A newspaper instead of a letter.","The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows."],["The clock tower.","A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era."],["New loading screen.","A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one."],["A new witch.","The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars."],["Bigger markets.","On a vertical phone markets of every level are bigger and the brown strips at the edges are gone."],["Bitten clouds.","In the Cotton Clouds skin some of the clouds look as if somebody took a bite."],["The rain drop.","The little drop that turns the rain on now hangs on the right by the shop sign."],["Crisp frames.","Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock."],["Capy at night.","In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals."]],"intro":{"uk":"Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!","en":"Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!"},"pics":{"1":"clock","2":"city","3":"witch"},"caps":{"uk":{"1":"Годинникова вежа торгового центру опівночі.","2":"Нічне місто на екрані завантаження.","3":"Нова відьма облітає місто."},"en":{"1":"The mall clock tower at midnight.","2":"The night city on the loading screen.","3":"The new witch circles the town."}}},{"ver":3,"uk":[["Баба Яга на Хелловін.","Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки»."],["Темніший Хелловін.","Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі."],["Нова пошта.","Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання."],["Нова будівля під полотном.","Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає."],["Ширша вулиця.","Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів."],["Пелюстки навесні.","Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало."],["Магазин часу.","У майстерні часу список покращень за кристали тепер так і називається."],["Завантаження.","На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки."],["Вікна й пара.","У всіх будинків є вікна, а пара з люків стала лагіднішою."]],"en":[["Baba Yaga for Halloween.","Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game."],["A darker Halloween.","The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom."],["New mail.","A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye."],["A new build under a tarp.","When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears."],["A wider street.","The town got wider: scroll further left and right, there are more houses, trees and lamps."],["Spring petals.","In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn."],["Time shop.","In the Time Workshop the crystal upgrade list is now called just that."],["Loading screen.","On the loading screen Capy smoothly runs through the night city and pixel coins."],["Windows and steam.","All houses have windows, and the manhole steam is gentler."]],"intro":{"uk":"Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.","en":"Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done."},"pics":{"0":"hut","1":"witch","2":"van","3":"tent"},"caps":{"uk":{"0":"Хатка на курячих лапках прийшла.","1":"Відьма на мітлі над дахами.","2":"Пошта привозить новини.","3":"Нове будівництво під білим полотном."},"en":{"0":"The hut on chicken legs has arrived.","1":"A witch on a broom over the roofs.","2":"The mail van brings the news.","3":"New building work under a white tarp."}}},{"ver":2,"uk":[["Місто ожило.","Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла."],["Золоті покупці й завдання дня.","Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами."],["Цирк і барабан — окремо.","Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати."],["Скіни для всіх.","Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку."],["Пори року.","Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою."],["Нова погода.","Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку)."],["Бодя будує.","Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют."],["І ця скринька.","Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає."],["Свіже.","Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший."]],"en":[["The town came alive.","More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out."],["Golden shoppers and daily tasks.","Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards."],["Circus and drum, separate.","Both can give crystals, but events are a little rarer now, so waiting is more fun."],["Skins for everyone.","Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus."],["Seasons.","A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show."],["New weather.","Smooth purple lightning and a huge rainbow over the town (you can win them at the circus)."],["Bodie builds.","A new shop level now takes a long, epic build: hammer, crane, dust, fireworks."],["And this mailbox.","It is red because it carries hot news only. Check it when the flag blinks."],["Fresh.","The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer."]],"intro":{"uk":"Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.","en":"Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done."},"pics":{},"caps":{"uk":{},"en":{}}}];
+const NEWS_ISSUES = [{"ver":10,"uk":[["Вступна заставка й екскурсія.","Нова гра тепер починається з маленької історії про Капі, а в кінці Мел і Ніка проводять екскурсію по меню. Заставку можна переглянути знову у вкладці «Щоденник»."]],"en":[["Intro cutscene and menu tour.","A new game now starts with a short story about Capy, and at the end Mel and Nika show you around the menu. You can watch the cutscene again in the Diary tab."]],"pics":{}},{"ver":9,"uk":[["Грузовик-бетономішалка на будівництві.","Коли магазин росте, приїжджає вантажівка з бетономішалкою, що крутиться, а Бодя в касці носить бетон і цеглу та будує під шатром. Поверхи більше не складаються самі."],["Заставка для кожної епохи.","Нова епоха відкривається своєю сценою: колони й оливкові гілки, стрічка VHS, дзеркальні кулі диско, прибульці аркад, вікно браузера, ліани еко, зорі космосу, неонова сітка. Поруч назва епохи й короткий опис."],["Звуки будівництва.","Гуркіт двигуна, пшик гальм, шум бетону з жолоба й стукіт молотка."],["Цирк приходить частіше.","Тепер він з'являється приблизно раз на 5-8 хвилин, тож колесо фортуни крутиться частіше."],["Магазин часу дорожчий.","Покращення в Магазині часу коштують приблизно в півтора раза більше, а осколки обнулено ще раз, щоб усі починали з однаковим запасом. Куплені покращення, скіни й кристали лишилися."]],"en":[["A mixer truck at the building site.","When the shop grows, a truck with a spinning concrete mixer drives in, and Bodya in a hard hat carries concrete and bricks and builds under the tent. Floors no longer stack up by themselves."],["An intro scene for every epoch.","A new epoch opens with its own scene: columns and olive branches, a VHS tape, disco mirror balls, arcade invaders, a browser window, eco vines, space stars, a neon grid. The epoch name and a short description come with it."],["Building sounds.","An engine rumble, the hiss of the brakes, concrete pouring from the chute and the knock of a hammer."],["The circus comes more often.","It now shows up about every 5-8 minutes, so the Wheel of Fortune spins more often."],["The Time shop costs more.","Time shop upgrades cost about one and a half times as much, and time shards were reset once more so everyone starts even. Upgrades you bought, skins and crystals stay."]],"intro":{"uk":"Привіт, друже! У цьому випуску: вантажівка-бетономішалка, заставки епох, звуки будівництва, частіший цирк і дорожчий Магазин часу. Гортай сторінки!","en":"Hi, friend! In this issue: a mixer truck, epoch intro scenes, building sounds, a more frequent circus and a pricier Time shop. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":8,"uk":[["Новий старт для всіх.","Гру стало занадто легко проходити, тому прогрес скинуто: монети, осколки часу, покращення Магазину часу, рівень магазину, відділи й звірята почалися з нуля. Скіни й кристали лишилися з тобою."],["Великі пишні дерева.","Дерева на вулиці стали більшими, об'ємнішими й гарнішими в кожну пору року: цвіт навесні, плоди й сонячні плями влітку, золото й багрянець восени, засніжені гілки взимку."],["Вечірнє світло.","Вночі маркети й особливо торговий центр світяться яскравіше: тепле світло з поверхів, лампи під стелею й пляма світла на бруківці. Вікна будинків теж гарніші, зі шторами, перемичками й квітами."],["П'ять кольорів будинків по колу.","Будинки на задньому плані тепер чергують п'ять кольорів, а відтінки залежать від епохи."],["Маркети різні.","У кожній епосі й на кожному рівні маркет має свій варіант: навіс, візерунок, шибки, прикраси фасаду й лавка, візок чи плакат біля дверей."],["Справжня зима.","На дахах і вулицях лежить багато снігу, а звірята скаржаться, що холодно, і просять накинути щось теплого."],["Нові репліки.","У кожного звірятка тепер 16 фраз, а ще є зимові й загальні репліки під кожну епоху. Репліки йдуть слідом за звірятком."],["Новий дирижабль.","Повітряне судно стало детальнішим: об'ємний корпус із ребрами, хвіст, гондола з вікнами й гвинти, що крутяться."],["Веселка-скін.","Скін погоди «Веселка» став великим і помітнішим: дугу видно над будинками і на ПК, і на телефоні."]],"en":[["A fresh start for everyone.","The game became too easy, so progress was reset: coins, time shards, Time shop upgrades, shop level, departments and animals start from zero. Your skins and crystals stay with you."],["Big lush trees.","Street trees are bigger, fuller and prettier in every season: blossoms in spring, fruit and sun spots in summer, gold and crimson in autumn, snowy branches in winter."],["Evening lights.","At night the markets, and the mall especially, glow brighter: warm light from the floors, ceiling lamps and a pool of light on the cobbles. House windows are prettier too, with curtains, lintels and flowers."],["Five house colours in a cycle.","The background houses now cycle through five colours, and the shades depend on the era."],["Different markets.","Every era and every level has its own market variant: awning, pattern, panes, facade decor and a bench, bike or poster by the door."],["A real winter.","Lots of snow lies on the roofs and streets, and the animals complain about the cold and ask for something warm."],["New lines.","Each animal now has 16 phrases, plus winter lines and general lines for every era. The bubbles follow the animal."],["A new airship.","The airship is more detailed: a volumetric hull with ribs, a tail, a gondola with windows and spinning propellers."],["The rainbow skin.","The \"Rainbow\" weather skin is bigger and easier to see: the arc rises above the houses on both PC and phone."]],"intro":{"uk":"Привіт, друже! У цьому номері: великі дерева, вечірнє світло, різні маркети, справжня зима, нові репліки, дирижабль і веселка. Гортай сторінки!","en":"Hi, friend! In this issue: big trees, evening lights, different markets, a real winter, new lines, an airship and a rainbow. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":7,"uk":[["Подорож у часі — своя анімація для кожної епохи.","Відродження: давня Греція з колонами, оливковими деревами й звірятами-ангелятками з німбами. Ретро: перемотка старої відеокасети. Диско: дзеркальна куля й танцпол. Аркади: великі пікселі, прибульці й LEVEL UP. Інтернет: цифровий дощ, спливаючі вікна й завантаження. Еко: вітер, листя й ліани. Космос: політ крізь зорі й планети. Неон: тунель з неонових кілець. Звук теж новий: цокання маятника, шестерні, свист і дзвін."],["Різнокольорові будинки й більше неба.","Усі будинки на фоні тепер різних кольорів, звірята-працівники стали більшими й чіткішими, а на ПК з відкритим меню завжди видно більше неба. Подорож у часі можна пропустити дотиком, коли вже бачив її раз, і в кожної епохи свій звук."],["Завдань для розширення стає більше з кожним рівнем.","Щоб збудувати наступний маркет, треба купити першого товару рівня 25, 28, 31, 34 чи 37 разів, а другого 15, 18, 21, 24 чи 27. Звірят цього рівня треба прокачати до 2-го рівня на ранніх етапах і до 3-го на пізніх."],["Торговий центр без нових відділів.","Фудкорт і кінотеатр прибрано: торговий центр лише завершує шлях до подорожі в часі."],["Осколки часу й подорожі.","За подорож тепер 3–9 осколків (+1 до колишнього), більше, якщо в епосі заробити багато. Кожна наступна епоха потребує в 4 рази більше монет, а дохід за подорож росте в 1,8 раза. Тож епохи довші й рівніші. Покращення Магазину часу високих рівнів відкриваються лише після кількох подорожей."],["Будівництво без крана.","Кран прибрано. Тепер Боді сам носить блоки магазину від купи до будівлі й підкидає їх на місце."],["Годинник рухається разом із магазином.","Годинникова вежа торгового центру більше не відстає, коли тапаєш по магазину."],["Вищі будинки.","Будинки позаду магазину стали майже вдвічі вищими, до середини четвертого поверху торгового центру. Небо не зачеплено."],["Капі більша.","Капі виросла на 30%."],["Цирк частіше.","Цирк Фортуни тепер приїздить трохи частіше."]],"en":[["Time trip: its own animation for every era.","Renaissance: ancient Greece with columns, olive trees and angel animals with halos. Retro: rewinding an old video tape. Disco: a mirror ball and dance floor. Arcade: big pixels, invaders and LEVEL UP. Internet: digital rain, pop-ups and loading. Eco: wind, leaves and vines. Space: a flight through stars and planets. Neon: a tunnel of neon rings. The sound is new too: pendulum ticks, gears, a whoosh and a chime."],["Colourful houses and more sky.","Every house in the background now has its own colour, the working animals are bigger and clearer, and on PC with the menu open you now see more sky. You can skip the time trip with a tap once you have seen it, and every era has its own sound."],["More tasks for expanding on every level.","To build the next market you need to buy the level's first product 25, 28, 31, 34 or 37 times and the second 15, 18, 21, 24 or 27 times. Animals of this level need level 2 on the early stages and level 3 on the late ones."],["A mall without new departments.","The food court and the cinema department are gone: the mall only completes the road to a time trip."],["Time shards and trips.","A trip now gives 3-9 shards (+1 more than before), more if you went far in the era. Every next era needs 4 times more coins and a trip multiplies income by 1.8. Eras are longer and steadier. High-level Time shop upgrades unlock only after several trips."],["Building without a crane.","The crane is gone. Now Bodya carries the shop's blocks from the pile to the building himself and tosses them into place."],["The clock moves with the shop.","The mall clock tower no longer lags when you tap the shop."],["Taller houses.","The houses behind the shop are nearly twice as tall now, up to the middle of the mall's fourth floor. The sky is untouched."],["Capy is bigger.","Capy grew by 30%."],["Circus more often.","The Fortune Circus comes by a little more often."]],"intro":{"uk":"Привіт, друже! У цьому номері: три нові подорожі в часі, більше завдань для розширення, вищі будинки, Боді з блоками й Капі побільшала. Гортай сторінки!","en":"Hi, friend! In this issue: three new time trips, more tasks for expanding, taller houses, Bodya with blocks and a bigger Capy. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":6,"uk":[["Павільйони на поверхах.","У маркетах і торговому центрі на кожному поверсі з’явилися павільйони під тему епохи: одяг із манекенами, іграшки, техніка, книжки, прикраси й рослини. Поки відділ не куплено, павільйон зачинений жалюзі. А що вищий рівень відділу, то повніша вітрина. На широких поверхах з’явилася кав’ярня з прилавком."],["Магазин часу став дорожчим.","«Швидкий старт» прибрано. Усі покращення стали слабшими, але дорожчими, щоб гра не прискорювалася. З’явилося «Золоте чуття»: золоті покупці приходять частіше. Осколки, які були витрачені в старому магазині, повернуто."],["Лис Мел.","Скін Мел тепер лис, а не лисиця. Хитрий лише в ціні."],["Вивіска без перекриттів.","Вивіска CAPYTAP на даху більше нічим не накрита: прапорці, димарі й прикраси стоять осторонь, а годинникова вежа піднята над нею."],["Крапля на місці.","Крапелька, що вмикає дощ, тепер висить на дереві праворуч від магазину й рухається лише разом з вулицею."],["Більше неба на телефоні.","На телефоні над дахом лишається більше неба, особливо коли відкрито меню."],["Чіткі рамки меню.","Рамка меню стала товщою й кольоровою. Вкладки мають виразний контур, як аркуші в таблиці: обрана світла, з кольоровою планкою знизу."],["Лічильник.","Кристали й осколки стоять стовпчиком, а великі числа більше не вилазять за край екрана."]],"en":[["Pavilions on every floor.","Shops and the mall now have pavilions on each floor, themed to the era: clothes with mannequins, toys, tech, books, jewellery and plants. Until a department is bought its pavilion is shut behind shutters. The higher the department level, the fuller the display. Wide floors also got a cafe with a counter."],["The Time shop costs more.","\"Head Start\" is gone. Every upgrade is weaker but pricier, so the game does not speed up. A new upgrade, \"Golden Nose\", makes golden shoppers come more often. Shards spent in the old shop were refunded."],["Mel the fox.","The Mel skin is now a he-fox. Sly only about the price."],["A clear sign.","The CAPYTAP roof sign is no longer covered by anything: flags, chimneys and decorations stand aside, and the clock tower is lifted above it."],["The drop stays put.","The little drop that turns the rain on now hangs on the tree to the right of the shop and moves only with the street."],["More sky on the phone.","On a phone there is more sky above the roof, especially when the menu is open."],["Crisp menu frames.","The menu frame is thicker and coloured. Tabs have a clear outline like sheets in a spreadsheet: the selected one is light with a coloured bar below."],["The counter.","Crystals and shards are stacked in a column, and big numbers no longer run off the edge of the screen."]],"intro":{"uk":"Привіт, друже! У цьому номері: павільйони на кожному поверсі, дорожчий Магазин часу, чіткі рамки меню й багато дрібниць. Гортай сторінки!","en":"Hi, friend! In this issue: pavilions on every floor, a pricier Time shop, crisp menu frames and many small things. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":5,"uk":[["Осколки часу й кристали.","Тепер дві валюти. Осколки часу (фіолетові) дає подорож у часі, і за них купуються покращення в Магазині часу. Кристали випадають з бустів, цирку й золотих покупців, і за них купуються скіни. Кожна подорож у часі ще й назавжди дає ×2 до тапів і доходу."],["Одна відьма.","Відьми більше не літають просто так. На Хелловін замість цирку прилітає лише одна відьма на мітлі. Потім вона запрошує зіграти в «Три казанки». Зелену бабусю прибрали."],["Нові лапки для хатки.","Хатка відьми тепер стоїть на справжніх курячих лапках: з коліньми, лусочками, пальцями й кігтями. Сама відьма стала піксельнішою."],["Скіни говорять.","У кожного скіна є своя репліка: пірат кричить по-піратськи, астронавт просить орбіту цін. Одягни скін і тапни по Капі. А ще з’явилися два скіни розробників: лис Мел і зайка Ніка. Вони безкоштовні."],["Золоті покупці.","Золоті звірята тепер просто золоті. Скіни, капелюхи й шарфи на них не вдягаються."],["Очі на місці.","Костюми героїв більше не закривають звірятам очі. А в Капі прибрали підсвітку, що відставала від скіна."],["Газета MEL & NIKA.","Газета тепер піксельна, з іменами редакторів і вкладками. У вкладках можна перечитати попередні випуски, а кнопка «Написати розробникам» надішле нам твою думку."],["Більший маркет на ПК.","Коли магазин росте, на комп’ютері картинка трохи віддаляється, щоб усе вміщалося зручно."],["Меню на телефоні.","Меню на вертикальному телефоні більше не залазить на цирк і дорогу: сцена тепер закінчується над панеллю."],["Кінозал у торговому центрі.","На торговому центрі з’явився п’ятий поверх із кінозалом: екран, завіси, крісла й неонова вивіска CINEMA. На екрані йде «кіно». Менші маркети теж стали трохи сучаснішими, а на ПК більше неба й ширша бруківка."]],"en":[["Time shards and crystals.","There are now two currencies. Time shards (purple) come from time travel and buy upgrades in the Time shop. Crystals drop from boosts, the circus and golden shoppers, and buy skins. And every time trip permanently gives ×2 to taps and income."],["Just one witch.","Witches no longer fly around for no reason. On Halloween, instead of the circus, a single witch on a broom arrives. Then she invites you to play \"Three cauldrons\". The green granny is gone."],["New legs for the hut.","The witch’s hut now stands on real chicken legs: knees, scales, toes and claws. The witch herself got more pixelated."],["Skins talk.","Every skin has its own line: the pirate shouts like a pirate, the astronaut asks for the orbit of prices. Wear a skin and tap Capy. Two developer skins are new: Mel the fox and Nika the bunny. They are free."],["Golden shoppers.","Golden animals are now just golden. Skins, hats and scarves do not go on them."],["Eyes in place.","Hero costumes no longer cover the animals’ eyes. And the glow around Capy, which lagged behind the skin, is gone."],["The MEL & NIKA paper.","The paper is now pixel-style, with the editors’ names and tabs. Use the tabs to reread earlier issues, and the “Write to the developers” button sends us your thoughts."],["A bigger market on PC.","When the shop grows, the picture on a computer zooms out a little so everything fits comfortably."],["The phone menu.","On a vertical phone the menu no longer covers the circus and the road: the scene now ends above the panel."],["A cinema in the mall.","The mall got a fifth floor with a cinema: a screen, curtains, seats and a neon CINEMA sign. The screen plays a little movie. Smaller shops got a bit more modern too, and on PC there is more sky and wider cobbles."]],"intro":{"uk":"Привіт, друже! У цьому номері: дві валюти (осколки й кристали), одна справжня відьма й хатка на курячих лапках, а ще скіни навчилися говорити. Гортай сторінки!","en":"Hi, friend! In this issue: two currencies (shards and crystals), one real witch and a hut on chicken legs, and skins have learned to talk. Turn the pages!"},"pics":{"0":"shards","1":"hut","2":"witch"},"caps":{"uk":{"0":"Осколок часу й кристал.","1":"Хатка відьми на новеньких лапках.","2":"Єдина відьма Хелловіну."},"en":{"0":"A time shard and a crystal.","1":"The witch’s hut on brand-new legs.","2":"The one witch of Halloween."}}},{"ver":4,"uk":[["Газета замість листа.","Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше."],["Годинникова вежа.","На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху."],["Нове завантаження.","Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну."],["Нова відьма.","Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф."],["Більші маркети.","На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли."],["Надкусані хмари.","У скіні «Цукрові хмари» частину хмар ніби надкусили."],["Крапля дощу.","Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину."],["Чіткі рамки.","Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком."],["Капі вночі.","У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят."]],"en":[["A newspaper instead of a letter.","The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows."],["The clock tower.","A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era."],["New loading screen.","A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one."],["A new witch.","The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars."],["Bigger markets.","On a vertical phone markets of every level are bigger and the brown strips at the edges are gone."],["Bitten clouds.","In the Cotton Clouds skin some of the clouds look as if somebody took a bite."],["The rain drop.","The little drop that turns the rain on now hangs on the right by the shop sign."],["Crisp frames.","Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock."],["Capy at night.","In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals."]],"intro":{"uk":"Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!","en":"Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!"},"pics":{"1":"clock","2":"city","3":"witch"},"caps":{"uk":{"1":"Годинникова вежа торгового центру опівночі.","2":"Нічне місто на екрані завантаження.","3":"Нова відьма облітає місто."},"en":{"1":"The mall clock tower at midnight.","2":"The night city on the loading screen.","3":"The new witch circles the town."}}},{"ver":3,"uk":[["Баба Яга на Хелловін.","Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки»."],["Темніший Хелловін.","Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі."],["Нова пошта.","Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання."],["Нова будівля під полотном.","Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає."],["Ширша вулиця.","Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів."],["Пелюстки навесні.","Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало."],["Магазин часу.","У майстерні часу список покращень за кристали тепер так і називається."],["Завантаження.","На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки."],["Вікна й пара.","У всіх будинків є вікна, а пара з люків стала лагіднішою."]],"en":[["Baba Yaga for Halloween.","Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game."],["A darker Halloween.","The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom."],["New mail.","A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye."],["A new build under a tarp.","When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears."],["A wider street.","The town got wider: scroll further left and right, there are more houses, trees and lamps."],["Spring petals.","In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn."],["Time shop.","In the Time Workshop the crystal upgrade list is now called just that."],["Loading screen.","On the loading screen Capy smoothly runs through the night city and pixel coins."],["Windows and steam.","All houses have windows, and the manhole steam is gentler."]],"intro":{"uk":"Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.","en":"Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done."},"pics":{"0":"hut","1":"witch","2":"van","3":"tent"},"caps":{"uk":{"0":"Хатка на курячих лапках прийшла.","1":"Відьма на мітлі над дахами.","2":"Пошта привозить новини.","3":"Нове будівництво під білим полотном."},"en":{"0":"The hut on chicken legs has arrived.","1":"A witch on a broom over the roofs.","2":"The mail van brings the news.","3":"New building work under a white tarp."}}},{"ver":2,"uk":[["Місто ожило.","Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла."],["Золоті покупці й завдання дня.","Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами."],["Цирк і барабан — окремо.","Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати."],["Скіни для всіх.","Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку."],["Пори року.","Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою."],["Нова погода.","Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку)."],["Бодя будує.","Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют."],["І ця скринька.","Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає."],["Свіже.","Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший."]],"en":[["The town came alive.","More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out."],["Golden shoppers and daily tasks.","Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards."],["Circus and drum, separate.","Both can give crystals, but events are a little rarer now, so waiting is more fun."],["Skins for everyone.","Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus."],["Seasons.","A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show."],["New weather.","Smooth purple lightning and a huge rainbow over the town (you can win them at the circus)."],["Bodie builds.","A new shop level now takes a long, epic build: hammer, crane, dust, fireworks."],["And this mailbox.","It is red because it carries hot news only. Check it when the flag blinks."],["Fresh.","The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer."]],"intro":{"uk":"Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.","en":"Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done."},"pics":{},"caps":{"uk":{},"en":{}}}];
 let newsIssue = 0, newsBusy = false;
 function picCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; return { c, g }; }
 function newsPic(kind) {
@@ -13271,7 +14021,11 @@ function checkStory(dt) {
   storyTimer -= dt;
   if (storyTimer > 0) return;
   storyTimer = CONFIG.STORY_CHECK_SECONDS;
-  if (dialog.active || build || !ui.modal.hidden || warp || epochIntro.active) return;
+  if (dialog.active || build || !ui.modal.hidden || warp || epochIntro.active || cut.on || tour.on) return;
+  if (!state.cutSeen) {                                                                          // нова гра: спершу заставка й екскурсія; хто вже грає — не чіпаємо
+    if (state.story.done >= 1 || state.epoch > 0 || state.stats.timeTravels > 0) { state.cutSeen = true; saveGame(); }
+    else { startIntroCutscene(); return; }
+  }
   if (state.epochIntroSeen < state.epoch) { playEpochIntro(state.epoch); return; }               // нова епоха: спершу заставка
   if (state.story.done >= 1 && !state.tutorialDone) { startDialogue(1, false, 'tut'); return; }   // коротке навчання після першої глави
   if (state.story.done >= 4 && state.tutorialDone && !state.story.guests[8]) { startDialogue(9, false, 'ep', 1); return; }       // гість першої епохи
@@ -13287,6 +14041,12 @@ function updateStoryUI() {
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
+  { const card = document.createElement('div'); card.className = 'card chapter-card';
+    const num = document.createElement('div'); num.className = 'num'; num.textContent = '🎬';
+    const title = document.createElement('div'); title.className = 'title'; title.textContent = t('introCutTitle');
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('introCutBtn');
+    btn.addEventListener('click', () => startIntroCutscene());
+    card.append(num, title, btn); ui.storyList.appendChild(card); }
   for (let n = 1; n <= Math.min(state.story.done, CHAPTERS.length); n++) {
     const card = document.createElement('div');
     card.className = 'card chapter-card';
