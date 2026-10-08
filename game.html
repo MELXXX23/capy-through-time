@@ -509,7 +509,7 @@ body.no-anim .floater { display: none; }
 #tourBubble[data-who="m"] { border-color: #8a4a12; } #tourBubble[data-who="n"] { border-color: #6f56b0; }
 #tourGo { display: block; margin-top: 8px; font-size: 12px; padding: 10px 14px; color: #fff; background: #2a7a3a; border: 3px solid #fff6c8; box-shadow: 0 3px 0 #1d5a2a; } #tourGo[hidden] { display: none; }
 #tourSkip { position: fixed; pointer-events: auto; font-size: 8px; padding: 6px 8px; color: #fff6c8; background: rgba(0, 0, 0, .55); border: 2px solid #f6c744; }
-#cutscene { position: fixed; inset: 0; z-index: 100001; background: #05060f; display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none; -webkit-user-select: none; }
+#cutscene { position: fixed; inset: 0; overflow: hidden; z-index: 100001; background: #05060f; display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none; -webkit-user-select: none; }
 #cutscene[hidden] { display: none; }
 #cutCv { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
 #cutSkip { position: absolute; top: max(10px, env(safe-area-inset-top)); right: 10px; z-index: 2; font-size: 10px; padding: 8px 10px; color: #fff6c8; background: rgba(0, 0, 0, .55); border: 2px solid #f6c744; }
@@ -9226,7 +9226,7 @@ function cutDrawBodya(g, x, T, point, faceLeft, hammer) {
   else if (point) { g.fillStyle = '#7a5230'; g.fillRect(dir > 0 ? x + 6 : x - 20, 166 - 15, 14, 3); g.fillStyle = '#c99a62'; g.fillRect(dir > 0 ? x + 19 : x - 23, 166 - 16, 4, 5); }
 }
 function cutRenderWorld(T) {
-  const g = cut.wg, W = cut.W, H = cut.H, Q = CUT_Q, st = CUT_STYLES[cut.style], L = cutLay(), shift = H - 216, amb = cut.amb;
+  const g = cut.wg, W = cut.W, H = cut.H, Q = CUT_Q, st = CUT_STYLES[cut.style], L = cutLay(), shift = Math.round((H - 216) * 0.9), amb = cut.amb;      // зайву висоту (телефон) заповнюють небо зверху й трохи бруківки знизу
   const camX = Math.round(cutCamCx(T, L) * Q - W * Q / 2) / Q; cut.camX = camX;
   g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.drawImage(cutSky(W, H, shift), 0, 0, W * Q, H * Q);
   cutTf(g, 0, 0);
@@ -9486,8 +9486,8 @@ function cutFire(T) {
 function cutLayout() {
   const dpr = window.devicePixelRatio || 1, vwD = innerWidth * dpr, vhD = innerHeight * dpr, Q = CUT_Q;
   let m = Math.min(vwD / (192 * Q), vhD / (216 * Q)); m = m >= 1 ? Math.floor(m) : m;      // низький екран (телефон горизонтально): дробовий масштаб, щоб усе влізло          // фізичних пікселів на піксель полотна: ціле число, тож картинка й текст чіткі
-  let W = Math.floor(vwD / (m * Q)), H = Math.floor(vhD / (m * Q));
-  W = Math.max(192, Math.min(W, 520)); H = Math.max(216, Math.min(H, 480)); if (W < 300) H = Math.min(H, 300);
+  let W = Math.ceil(vwD / (m * Q)), H = Math.ceil(vhD / (m * Q));      // з запасом, щоб картинка заповнювала весь екран (зайве обрізається по краях)
+  W = Math.max(192, Math.min(W, 760)); H = Math.max(216, Math.min(H, 480));
   cut.W = W; cut.H = H; cut.S = m * Q / dpr;
   const cv = cut.cv; cv.width = W * Q; cv.height = H * Q; cv.style.width = (W * m * Q / dpr) + 'px'; cv.style.height = (H * m * Q / dpr) + 'px';
   ['wc', 'al'].forEach(k => { const c = cut[k] || (cut[k] = document.createElement('canvas')); c.width = W * Q; c.height = H * Q; });
