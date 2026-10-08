@@ -1289,7 +1289,7 @@ const CONFIG = {
   WORLD_W: 1400,              // ширина всієї вулиці на ПК (пікселів сцени): її можна гортати стрілками ◀ ▶
   MOBILE_PAD: 360,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
   DAY_SECONDS: 300,           // скільки секунд триває повна доба (день + ніч)
-  CIRCUS_FIRST_MINUTES: 9,     // перший «!» цирку з'являється через 4 хвилини гри
+  CIRCUS_FIRST_MINUTES: 5,     // перший «!» цирку з'являється через 4 хвилини гри
   CIRCUS_HOURS: 24,            // раз на 24 ігрові години, тобто щодоби гри (CONFIG.DAY_SECONDS)
   CIRCUS_BANG_SECONDS: 40,     // скільки секунд висить «!», поки гравець не натисне
   CIRCUS_DRIVE_SECONDS: 5,     // скільки їде цирк справа наліво
@@ -12056,7 +12056,7 @@ function updateCircus(dt) {
     if (c.phase === 3) circus.setup = 1;
   }
   if (c.phase === 0) {
-    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * evMult() * (1.6 + 0.8 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : 'circusBang'), 'good'); saveGame(); }
+    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * (1.0 + 0.6 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : 'circusBang'), 'good'); saveGame(); }
   } else if (c.phase === 1) {                      // «!» чекає на тап, а з часом зникає (гравець сам вирішує, чи тикати)
     circus.bangT += dt;
     if (circus.bangT > CONFIG.CIRCUS_BANG_SECONDS) { c.phase = 0; saveGame(); }
@@ -12082,7 +12082,7 @@ function updateCircus(dt) {
     if (circus.setup <= 0) { c.phase = 4; playSfx('pip'); }
   } else if (c.phase === 4) {                      // від'їжджає ліворуч
     circus.x -= (c.hag ? 48 : 60) * dt;
-    if (circus.x < worldL() - 140) { c.phase = 0; if (c.next < now + 6 * 60000) c.next = now + 6 * 60000; saveGame(); }
+    if (circus.x < worldL() - 140) { c.phase = 0; if (c.next < now + 3 * 60000) c.next = now + 3 * 60000; saveGame(); }
   }
   updateHagFly(dt);
   updateCircusSpin(dt);
