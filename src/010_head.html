@@ -1,0 +1,37 @@
+<!--#part 010_head.html-->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#2a1d1a">
+<meta name="color-scheme" content="dark">
+<script>
+(function () {                                         /* програма з головного екрана: клас standalone + «поштовх» viewport-fit на холодному старті (iOS інакше рахує відступи криво) */
+  var d = document.documentElement, st = navigator.standalone || (window.matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches));
+  if (!st) return; d.classList.add('standalone');
+  function inset() { var p = document.createElement('div'); p.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding-top:env(safe-area-inset-top,0px)'; d.appendChild(p); var v = parseFloat(getComputedStyle(p).paddingTop) || 0; d.removeChild(p); return v; }
+  var lastGap = -1;
+  function setGap() {                                    /* порожній низ = на скільки вікно коротше за екран, але не більше за верхній відступ (інакше це не наш випадок) */
+    var g = 0; if (innerHeight > innerWidth) { var t = inset(), raw = Math.max(screen.width, screen.height) - innerHeight; if (t > 0 && raw > 0) g = Math.min(raw, t + 2); }
+    d.style.setProperty('--gap', g + 'px'); window.__gap = g; if (g !== lastGap) { lastGap = g; window.dispatchEvent(new Event('resize')); }
+  }
+  window.addEventListener('resize', setGap); window.addEventListener('orientationchange', function () { setTimeout(setGap, 300); });
+  var vm = document.querySelector('meta[name="viewport"]'), orig = vm.getAttribute('content'), poke = function () { setGap(); window.dispatchEvent(new Event('resize')); };
+  vm.setAttribute('content', orig.replace('viewport-fit=cover', 'viewport-fit=auto'));
+  requestAnimationFrame(function () { vm.setAttribute('content', orig); requestAnimationFrame(poke); });
+  [150, 600, 1500, 3000].forEach(function (ms) { setTimeout(poke, ms); }); document.addEventListener('DOMContentLoaded', poke);
+})();
+</script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CapyTap">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>CapyTap: Market</title>
+<!-- Піксельний шрифт з чіткою кирилицею (Pixelify Sans малює українські літери криво, тому Press Start 2P). Без інтернету спрацює запасний моноширинний -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">

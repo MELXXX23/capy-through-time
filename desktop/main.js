@@ -72,6 +72,18 @@ function createWindow() {
   mainWindow.on('closed', () => { mainWindow = null; });
 }
 
+// Автооновлення лише для встановленої версії (Setup.exe) з релізів GitHub; portable-версія й запуск із коду не оновлюються.
+// Без пакета electron-updater або без інтернету просто нічого не відбувається.
+function startAutoUpdate() {
+  if (!app.isPackaged || process.env.PORTABLE_EXECUTABLE_DIR) return;
+  try {
+    const { autoUpdater } = require('electron-updater');
+    autoUpdater.autoDownload = true;
+    autoUpdater.on('error', () => {});
+    autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+  } catch (e) { /* оновлень нема */ }
+}
+
 if (gotLock) {
   app.on('second-instance', () => {
     if (mainWindow) {
@@ -83,6 +95,7 @@ if (gotLock) {
   app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
     createWindow();
+    startAutoUpdate();
     app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
   });
 

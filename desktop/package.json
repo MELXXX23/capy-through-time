@@ -50,6 +50,16 @@
     },
     "portable": {
       "artifactName": "CapyTapMarket-Portable-${version}.exe"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "MELXXX23",
+        "repo": "capy-through-time"
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
   }
 }

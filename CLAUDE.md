@@ -15,12 +15,12 @@
 - Скіни: вкладка «Скіни», ціна 50 кристалів (`SKIN_PRICE`) або виграш у цирку; скіни Капі Мел (лисеня) і Ніка (зайчик) безкоштовні; під кожен скін є репліка `skinSay_*`. Пори року — окрема вкладка (замок до 2-ї епохи), у ній і час доби. Події трохи рідші (`evMult()` = 1,4), кнопки подій у налаштуваннях немає. Червона скринька біля синьої на дорозі — газета «Пошта від розробників» (`openNews`, `NEWS_ISSUES`, `NEWS_VERSION`): при кожному великому оновленні додай НОВИЙ випуск першим у `NEWS_ISSUES` (тексти uk/en, картинки лише до сильних змін) і піднімай `NEWS_VERSION`. У газеті кнопка «Написати розробникам» (`FEEDBACK.url/email`).
 
 ## Структура файлів
-- `game.html` — УСЯ гра (HTML + CSS + JS, без бібліотек і картинок). ~560 КБ.
+- `game.html` — УСЯ гра (HTML + CSS + JS, без бібліотек і картинок), ~1,3 МБ. Це ЗІБРАНИЙ файл: джерело — частини в `src/` (33 файли з маркерами `#part`, див. `src/README.md`). Правиш `src/…` → `node tools/build.js`; або `game.html` напряму → `node tools/split.js` (латки через `previews/r33/lib.js` роблять це самі). `node tools/sync.js` бере новішу сторону.
 - `docs/index.html` — копія для GitHub Pages (робиться скриптом `tools/publish.js`; шрифт локальний `docs/fonts/PressStart2P-Regular.ttf`). Сайт: https://melxxx23.github.io/capy-through-time/ (репозиторій MELXXX23/capy-through-time).
 - `desktop/` — Electron-обгортка для ПК: `main.js`, `package.json`, `prepare.js` (копіює `game.html` → `desktop/app/game.html`), `serve.js` (локальний сервер для перегляду; `.claude/launch.json`, конфіг `capy`). Збірки в `desktop/dist/`.
 - `backups/` — копії `game.html` перед кожною зміною (`game_before_*.html`) і `backups/exe/` (збірки). Не потрапляє в git.
 - `previews/` — зразки для узгодження з користувачем (героїв, цирку, магазинів, світу) і референси `previews/refs/` (скіни Капі). Генеруються скриптами, у git не додавати.
-- `tools/` — `publish.js` (готує `docs/index.html`), `shot.js` / `shot_mobile.js` (знімки екрана гри через Electron, у т.ч. емуляція телефона), `watch-pages.sh` (стежить за публікацією на GitHub Pages).
+- `tools/` — `autotest.sh [--quick]` (автоперевірка всіх епох/рівнів/вкладок/подій/перекладів/збереження перед випуском; `release.sh` запускає її сам), `build.js`/`split.js`/`sync.js` (src ↔ game.html), `publish.js` (готує `docs/index.html`), `shot.js` / `shot_mobile.js` (знімки екрана гри через Electron, у т.ч. емуляція телефона), `watch-pages.sh` (стежить за публікацією на GitHub Pages).
 - `PROMPTS.md` — промпти етапів 1–8 + повна історія повідомлень користувача. `PROGRESS.md` — що зроблено / в процесі / баги / далі.
 
 ## Технічні правила

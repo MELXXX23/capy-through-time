@@ -1,0 +1,97 @@
+<!--#part 040_boot_script.html-->
+<script>
+(function () {
+  var rows = ["....................O.......","...................OpO......","..................OpypO.....","...............OO..OpO......","..............OMMOOOOOO.....","..............OMBOBBBBBOO...",".............OBOBBBBBBBBBO..","............OBBBBBBBBBBBBBO.",".....OOOOOOOBBBBBBBKKBBBBBBO","....OBBBBBBBBBBBBBBKKBBBMMMO","...OBBppwpppppppBBBBBBBMMOMO","..OBBBppppppppppBBBBBBBMMMMO",".OBBBBpwpppppwppBBBBBBBMMMMO",".OBBBBppppppppppBBBBBBBMMMMO",".OBBBBppppwpppppBBBBBBBMMMO.",".OBBBBppppppwpppBBBBLLOOOO..",".OBBBBwqwqwqwqwqBBBBBO......",".OBBBBBBBBBBBBBBBBBBBO......","..OBBBBBBBBBBBBBBBBBO.......","..OBBBBBBBBBBBBBBBLLO.......","...OBBBBBLLLLOBBBOLLO.......","....OBBOMMOOOOOBBOMO........","....OMMOOO....OMMOOO........",".....OOO.......OOO.........."], pal = {"O":"#302418","p":"#ef8fa3","y":"#ffe08a","M":"#7c4830","B":"#bd8449","K":"#140e0b","w":"#fff4dc","L":"#9c6c3c","q":"#ffc9d4"};
+  function svg(rows, pal, sc) {
+    var h = '', w = rows[0].length;
+    for (var y = 0; y < rows.length; y++) { var x = 0; while (x < w) { var c = rows[y][x]; if (c === '.') { x++; continue; } var x2 = x; while (x2 < w && rows[y][x2] === c) x2++; h += '<rect x="' + x + '" y="' + y + '" width="' + (x2 - x) + '" height="1" fill="' + pal[c] + '"/>'; x = x2; } }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + rows.length + '" width="' + w * sc + '" height="' + rows.length * sc + '" shape-rendering="crispEdges">' + h + '</svg>';
+  }
+  var q = location.search, bootEl = document.getElementById('boot'), VW = innerWidth, VH = innerHeight;
+  var sc = Math.max(3, Math.min(6, Math.floor(Math.min(VW, VH) / 110))), cs = Math.max(2, sc - 1);
+  var cp = document.getElementById('bootCapy');
+  var legRows = rows.slice();                                              // друга поза Капі: лапи «схрещуються» під час бігу
+  for (var r = 21; r <= 23; r++) {
+    var src = rows[r].split(''), out = src.slice(), c;
+    for (c = 4; c <= 9; c++) out[c] = '.'; for (c = 14; c <= 19; c++) out[c] = '.';
+    for (c = 4; c <= 9; c++) if (src[c] !== '.') out[c + 2] = src[c]; for (c = 14; c <= 19; c++) if (src[c] !== '.') out[c - 2] = src[c];
+    legRows[r] = out.join('');
+  }
+  cp.innerHTML = '<span class="pa">' + svg(rows, pal, sc) + '</span><span class="pb">' + svg(legRows, pal, sc) + '</span>';
+  cp.style.marginLeft = (-rows[0].length * sc / 2) + 'px';
+  function pad(a) { var w = 0; a.forEach(function (x) { w = Math.max(w, x.length); }); return a.map(function (x) { while (x.length < w) x += '.'; return x; }); }
+  function sp(a, p, k) { return svg(pad(a), p, k); }
+  var P = { O: '#302418', w: '#fff4dc', r: '#ef8fa3', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', b: '#7a4f35', s: '#9fd8f0', K: '#1b1224', Y: '#ffd98a', o: '#e8863c', u: '#8b6bb0', n: '#3d5a8c', e: '#9c9087', f: '#ff5fa2' };
+  // ---- місто: два шари з вікнами, що блимають
+  function city(dark) {
+    var b = '', x = 0, i = 0;
+    while (x < 330) {
+      var hh = ((i * 37 + 11) % 5) * 9 + 36, ww = 18 + ((i * 13) % 4) * 5, col = dark ? '#4a2a78' : (i % 2 ? '#2a1747' : '#35205a');
+      b += '<rect x="' + x + '" y="' + (100 - hh) + '" width="' + ww + '" height="' + hh + '" fill="' + col + '"/>';
+      if (!dark && i % 4 === 1) b += '<rect x="' + (x + (ww >> 1) - 1) + '" y="' + (100 - hh - 8) + '" width="2" height="8" fill="' + col + '"/><rect x="' + (x + (ww >> 1) - 2) + '" y="' + (100 - hh - 8) + '" width="4" height="1" fill="#ff5fa2"/>';
+      for (var wy = 100 - hh + 5; wy < 94; wy += 9) for (var wx = x + 4; wx < x + ww - 5; wx += 7) {
+        var hsh = (wx * 7 + wy * 3);
+        if ((hsh % 5) < 3) b += '<rect class="' + (!dark && hsh % 3 === 0 ? 'bw' : '') + '" style="--bd:' + (3 + (hsh % 5)) + 's;animation-delay:-' + (hsh % 7) + 's" x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + (dark ? '#8a60c0' : (((wx * 3 + wy) % 4 === 0) ? '#ff9ad0' : '#ffd98a')) + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
+      }
+      x += ww; i++;
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">' + b + '</svg>';
+  }
+  document.getElementById('bootCity').innerHTML = city(false) + city(false);
+  document.getElementById('bootCityFar').innerHTML = city(true) + city(true);
+  // ---- вулиця: ліхтарі, дерева, поштова скринька їдуть із тією ж швидкістю, що й дорога
+  var LAMP = ['..OOOO..', '.OyyyyO.', '.OyyyyO.', '..OOOO..', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '..OOOO..', '.OOOOOO.'];
+  var TREE = ['....OOOOOO......', '..OOggggggOO....', '.OggggGgggggO...', 'OggGgggggggggO..', 'OgggggggGgggggO.', 'OggggGgggggggGO.', '.OggggggGgggOO..', '..OOggggggOO....', '....OOOOOO......', '......ObO.......', '......ObO.......', '......ObO.......', '.....OObOO......'];
+  var BOX = ['.OOOOOO.', 'OnnnnnnO', 'OnwwwwnO', 'OnnnnnnO', '.OOOOOO.', '...ObO..', '...ObO..', '...ObO..'];
+  var per = Math.max(VW, 520), st = document.getElementById('bootStreet'), html = '';
+  [[0.08, LAMP, sc], [0.27, TREE, sc], [0.5, LAMP, sc], [0.68, BOX, sc], [0.84, TREE, sc]].forEach(function (it) {
+    [0, 1].forEach(function (k) { html += '<span style="left:' + Math.round(it[0] * per + k * per) + 'px">' + sp(it[1], P, it[2]) + '</span>'; });
+  });
+  st.innerHTML = html; st.style.width = (per * 2) + 'px'; st.style.setProperty('--p', per + 'px'); st.style.setProperty('--sd', (per / 192) + 's');
+  // ---- небо: дирижабль, птахи, хмарки
+  var BLIMP = ['....OOOOOOOOOOOO....', '..OOwwwwwwwwwwwwOO..', '.OwwwwrrrwwwwwrrwwO.', 'OwwwwwrrrwwwwwrrwwwO', '.OwwwwrrrwwwwwrrwwO.', '..OOwwwwwwwwwwwwOO..', '....OOOOOOOOOOOO....', '.......OyyyyO.......', '.......OOOOOO.......'];
+  var CLOUD = ['....OOOO........', '..OOwwwwOO..OO..', '.OwwwwwwwwOOwwO.', 'OwwwwwwwwwwwwwwO', '.OOOOOOOOOOOOOO.'];
+  var B1 = ['O...O', '.O.O.', '..O..'], B2 = ['..O..', '.OOO.', 'O...O'];
+  var sky = '';
+  sky += '<div class="b-fly" style="top:19%;--an:bFlyL;--d:' + ((VW + 300) / 17) + 's;--w:-3s">' + sp(BLIMP, P, sc) + '</div>';
+  [[27, 0, 70], [33, 1, 52], [14, 2, 62]].forEach(function (c, i) { sky += '<div class="b-fly" style="top:' + c[0] + '%;--an:bFlyL;--d:' + ((VW + 300) / (9 + i * 3)) + 's;--w:-' + (i * 6) + 's;opacity:.55">' + sp(CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, sc + 1) + '</div>'; });
+  for (var bi = 0; bi < 4; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs) + '</span></div>';
+  document.getElementById('bootSky').innerHTML = sky;
+  // ---- машини на дорозі
+  var CAR = ['.....OOOOOOOO', '....OsssOsssO', '...OsssssOssssO', '.OOOBBBBBBBBBBOOO', 'OBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOO', '..OKKO......OKKO', '...OO........OO'];
+  var BUS = ['OOOOOOOOOOOOOOOOOOOOOOOO', 'OsssOsssOsssOsssOsssOssO', 'OsssOsssOsssOsssOsssOssO', 'OBBBBBBBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOOOOOOOO', '..OKKO..........OKKO..', '...OO............OO...'];
+  function pal2(B) { var p = {}; for (var k in P) p[k] = P[k]; p.B = B; return p; }
+  var cars = '';
+  cars += '<div class="b-car" style="bottom:calc(25% + 2px);--an:bCarR;--d:15s;--w:-1s"><span>' + sp(CAR, pal2('#e8863c'), sc) + '</span></div>';
+  cars += '<div class="b-car" style="bottom:calc(25% + 2px);--an:bCarR;--d:15s;--w:-9s"><span>' + sp(CAR, pal2('#4f9a63'), sc) + '</span></div>';
+  cars += '<div class="b-car l" style="bottom:calc(25% + 12px);--an:bBusL;--d:11s;--w:-2s"><span>' + sp(BUS, pal2('#f2b84b'), sc) + '</span></div>';
+  cars += '<div class="b-car l" style="bottom:calc(25% + 12px);--an:bBusL;--d:11s;--w:-7s"><span>' + sp(CAR, pal2('#ef5fa2'), sc) + '</span></div>';
+  document.getElementById('bootCars').innerHTML = cars;
+  // ---- підказки до гри (тап — наступна)
+  var TIPS = {
+    uk: ['Тапни 5 разів по єноту-злодію, щоб він нічого не вкрав.', 'Золотий покупець дає більше за всіх. Встигни його тапнути!', 'Червоний «!» біля магазину — це цирк. Там можна виграти скін чи кристал.', 'Біля дороги дві скриньки: синя для листів, червона для новин від розробників.', 'Кристали часу дає подорож у часі. Витрачай їх у Магазині часу.', 'Скін коштує 50 кристалів, а в цирку його можна виграти.', 'Осколки часу дає подорож у часі, а витрачаються вони в Магазині часу.', 'Пори року відкриються після другої епохи: сезон, Хелловін і час доби.', 'Щодня крутни Барабан фортуни, поки не охолов.', 'Щоб піти в нову епоху, збудуй торговий центр і дочекайся трьох ночей.', 'Завдання дня дає кристал. Заглядай до нього.', 'Дощ вмикає крапелька біля вивіски магазину.', 'Тапни по звірятку: підстрибне й щось скаже.', 'Люки димлять не від пожежі, а для затишку.', 'Телефон гріється? У налаштуваннях можна вимкнути хмари, пару й анімації.', 'Новий маркет будує Бодя: на старий кладуть біле полотно, а далі глянь сам.', 'Чим більше тапів, тим більше монет. Простіше нікуди.'],
+    en: ['Tap the thief raccoon 5 times so he steals nothing.', 'The golden shopper pays the most. Tap them in time!', 'The red "!" by the shop is the circus. You can win a skin or a crystal there.', 'Two boxes by the road: blue for letters, red for the developers\' news.', 'Time travel gives time shards. Spend them in the Time shop.', 'A skin costs 50 crystals, and you can win one at the circus.', 'Seasons unlock after the second era: season, Halloween and time of day.', 'Spin the Wheel of Fortune every day while it is ready.', 'To enter a new era, build the mall and wait three nights.', 'The daily task gives a crystal. Check on it.', 'The little drop by the shop sign turns rain on.', 'Tap an animal: it hops and says something.', 'Manholes steam for coziness, not because of a fire.', 'Phone getting warm? Turn off clouds, steam and animations in settings.', 'Bodya builds the new market: a white tarp goes over the old one, then see for yourself.', 'More taps, more coins. It could not be simpler.']
+  };
+  var lang = 'en';
+  try { var sv = JSON.parse(localStorage.getItem('capyThroughTime_save') || 'null'); lang = sv && (sv.lang === 'uk' || sv.lang === 'en') ? sv.lang : (/^uk/.test((navigator.language || 'en').toLowerCase()) ? 'uk' : 'en'); } catch (e) { lang = /^uk/.test((navigator.language || 'en').toLowerCase()) ? 'uk' : 'en'; }
+  document.getElementById('bootText').textContent = lang === 'uk' ? 'Завантаження' : 'Loading';
+  var arr = TIPS[lang], ti = Math.floor(Math.random() * arr.length), tipEl = document.getElementById('bootTip'), tipTxt = document.getElementById('bootTipText'), auto = null;
+  document.getElementById('bootTipHint').textContent = lang === 'uk' ? '👆 тапни, щоб побачити іншу підказку' : '👆 tap for another tip';
+  function showTip(first) {
+    if (!first) ti = (ti + 1) % arr.length;
+    tipTxt.textContent = (lang === 'uk' ? 'Підказка: ' : 'Tip: ') + arr[ti];
+    tipEl.classList.remove('pop'); void tipEl.offsetWidth; tipEl.classList.add('pop');
+  }
+  function restart() { clearInterval(auto); auto = setInterval(function () { if (!document.getElementById('boot')) clearInterval(auto); else showTip(); }, 6000); }
+  showTip(true); restart();
+  bootEl.addEventListener('pointerdown', function () { showTip(); restart(); });
+  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); } }, 18000);   // страховка
+})();
+function bootDone() {
+  var el = document.getElementById('boot'); if (!el) return;
+  el.classList.add('ready');
+  if (/[?&]hold=1/.test(location.search)) return;
+  var wait = Math.max(0, 6600 - performance.now());                    // показуємо кілька секунд, щоб устигнути прочитати підказку
+  setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); }, wait + 250);
+}
+</script>

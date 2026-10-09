@@ -1,0 +1,9 @@
+{
+  "appId": "com.capy.capytapmarket",
+  "appName": "CapyTap Market",
+  "webDir": "www",
+  "backgroundColor": "#2a1d1a",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never", "backgroundColor": "#2a1d1a" }
+}

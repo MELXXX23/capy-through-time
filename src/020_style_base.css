@@ -1,0 +1,81 @@
+<!--#part 020_style_base.css-->
+<style>
+/* ===== Змінні та база ===== */
+:root {
+  --darker: #2a1d1a;
+  --dark: #4a3228;
+  --brown: #7a4f35;
+  --tan: #dba46a;
+  --honey: #f2b84b;
+  --yellow: #ffe08a;
+  --cream: #fff4dc;
+  --pink: #ef8fa3;
+  --mint: #8ed4a6;
+  --green: #4f9a63;
+  --red: #c4553d;
+  --panel: #f3d9a8;
+  --panel-dark: #e2bf86;
+  --u: 3px; /* скільки css-пікселів займає один піксель сцени (ставить скрипт) */
+  --font: 'Press Start 2P', 'Courier New', monospace;
+  --notch: 4px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: #2a1d1a;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body {
+  background: var(--darker);
+  color: var(--dark);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+button { font-family: inherit; font-size: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+button:disabled { cursor: default; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+
+/* Меню залежить від епохи: панель, картки, кнопки та рамки */
+body[data-epoch="0"] { --panel: #bfe3f2; --panel-dark: #8fc3dc; --card: #e9f6fc; --honey: #5f9fc9; --mint: #8fd3ea; --brown: #3f6283; }
+body[data-epoch="1"] { --panel: #ffd6e1; --panel-dark: #f2adc2; --card: #fff0f4; --honey: #e8789a; --mint: #f6a3b8; --brown: #8a4a5e; }
+body[data-epoch="2"] { --panel: #dcc3e6; --panel-dark: #bd93cf; --card: #f3e6f8; --honey: #b04fd0; --mint: #d08ad9; --brown: #5a2e63; }
+body[data-epoch="3"] { --panel: #cdc3f2; --panel-dark: #a493e2; --card: #ece8fb; --honey: #7a5cc9; --mint: #9a85e8; --brown: #3a2a66; }
+body[data-epoch="4"] { --panel: #d3ecfb; --panel-dark: #a5d2f2; --card: #eef8ff; --honey: #3d8fd6; --mint: #8ccaf5; --brown: #2f5f8f; }
+body[data-epoch="5"] { --panel: #cfeed6; --panel-dark: #9fd4ae; --card: #eaf8ee; --honey: #4f9a63; --mint: #6fc08c; --brown: #3f6f4a; }
+body[data-epoch="6"] { --panel: #c3cde6; --panel-dark: #93a5cf; --card: #e4e9f5; --honey: #4d6fb8; --mint: #7f99d6; --brown: #2b3f6a; }
+body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb; --honey: #ff5fa2; --mint: #6fe3e8; --brown: #243a66; }
+
+/* Піксельна рамка зі «сходинками» по кутах */
+.frame, .card, .btn {
+  clip-path: polygon(
+    0 var(--notch), var(--notch) var(--notch), var(--notch) 0,
+    calc(100% - var(--notch)) 0, calc(100% - var(--notch)) var(--notch), 100% var(--notch),
+    100% calc(100% - var(--notch)), calc(100% - var(--notch)) calc(100% - var(--notch)), calc(100% - var(--notch)) 100%,
+    var(--notch) 100%, var(--notch) calc(100% - var(--notch)), 0 calc(100% - var(--notch)));
+}
+.frame {
+  background: var(--panel);
+  box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 6px var(--cream), inset 0 0 0 8px var(--dark), inset 0 -10px 0 8px rgba(74,50,40,.12);
+}
+.card {
+  --notch: 3px;
+  background: var(--card, var(--cream));
+  box-shadow: inset 0 0 0 3px var(--brown);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.btn {
+  --notch: 3px;
+  background: var(--panel-dark);
+  box-shadow: inset 0 0 0 3px var(--dark), inset 0 -4px 0 3px rgba(74,50,40,.18);
+}
+.btn:disabled { opacity: .5; }
+

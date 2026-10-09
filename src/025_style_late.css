@@ -1,0 +1,52 @@
+/*#part 025_style_late.css*/
+/* ===== Раунд 27: чіткі рамки меню й вкладки «як в Excel» ===== */
+/* рамка меню: товстий темний контур, широке кільце кольору епохи, темна лінія */
+#app #panel { box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 10px var(--honey), inset 0 0 0 12px var(--dark), inset 0 -10px 0 12px rgba(74,50,40,.12); }
+/* вкладки: кожна в темному контурі; невибрані трохи темніші, вибрана світла з кольоровою планкою знизу, як активний аркуш у таблиці */
+.tab, .tabmore { background: color-mix(in srgb, var(--panel-dark) 82%, var(--dark)); box-shadow: inset 0 0 0 3px var(--dark), inset 0 3px 0 3px rgba(255,244,220,.28), inset 0 -4px 0 3px rgba(0,0,0,.16); }
+.tab[aria-selected="true"], #app.more-open .tabmore { background: var(--cream); box-shadow: inset 0 0 0 3px var(--dark), inset 0 -8px 0 3px var(--honey), inset 0 -11px 0 3px var(--dark); }
+.tab:not([aria-selected="true"]):not(.locked):hover { filter: brightness(1.08); }
+@media (max-width: 820px) and (orientation: portrait), (max-width: 560px) {
+  /* лічильник підлаштовується під ширину екрана, щоб великі числа монет, кристалів і осколків не вилазили */
+  #coinCount { font-size: clamp(13px, 5vw, 20px); }
+  #cps { font-size: clamp(8px, 2.8vw, 11px); }
+  #coinIcon { width: clamp(16px, 6.2vw, 24px); height: clamp(16px, 6.2vw, 24px); }
+  #gemBox, #shardBox { font-size: clamp(9px, 3.2vw, 13px); }
+  #shardBox .shard { width: clamp(9px, 3.2vw, 13px); height: clamp(9px, 3.2vw, 13px); }
+  #gemIcon { font-size: clamp(10px, 3.6vw, 14px); }
+  #app #panel, #app.panel-closed #panel { box-shadow: 0 -3px 0 var(--dark), inset 0 4px 0 var(--honey), inset 0 6px 0 var(--dark); }
+  #app.sheet-open .card { box-shadow: inset 0 0 0 3px var(--brown); }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  #app #panel { box-shadow: inset 0 0 0 2px var(--dark), inset 0 0 0 6px var(--honey), inset 0 0 0 8px var(--dark); }
+}
+
+/* лічильник: значки кристала й осколка в однакових комірках, числа рівно одне під одним */
+#gems { --gi: 18px; align-items: flex-start; }
+#gemBox, #shardBox { gap: 7px; }
+#gemIcon, #shardBox .shard { flex: none; image-rendering: pixelated; width: var(--gi); height: var(--gi); margin: 0; vertical-align: 0; }
+#gemIcon { display: flex; align-items: center; justify-content: center; font-size: calc(var(--gi) * .85); line-height: 1; }
+@media (max-width: 820px) and (orientation: portrait), (max-width: 560px) {
+  #gems { --gi: clamp(11px, 3.6vw, 15px); }
+  #gemIcon { font-size: calc(var(--gi) * .85); }
+  #shardBox .shard { width: var(--gi); height: var(--gi); }
+}
+/* газета: розмір тексту підлаштовується під ширину екрана, довгі слова не вилазять за поля */
+.np-in { font-size: clamp(9px, 2.5vw, 13px); line-height: 1.8; overflow-wrap: break-word; word-break: normal; hyphens: manual; }
+.np-in h3 { font-size: clamp(10px, 2.9vw, 15px); }
+.np-lead { font-size: clamp(11px, 3.2vw, 15px); overflow-wrap: break-word; }
+.np-toc { font-size: clamp(8px, 2.2vw, 11px); }
+.np-cover p { font-size: clamp(9px, 2.4vw, 12px); }
+.np-sign { font-size: clamp(9px, 2.4vw, 12px); }
+.np-fig figcaption { font-size: clamp(8px, 2.2vw, 11px); }
+.np-mast small { font-size: clamp(7px, 2vw, 10px); }
+.np-mast .who { font-size: clamp(8px, 2.2vw, 10px); }
+.np-tab { font-size: clamp(8px, 2.5vw, 12px); }
+.np-btns .btn { font-size: clamp(8px, 2.5vw, 12px); }
+.np-nav span { font-size: clamp(9px, 2.5vw, 11px); }
+.np-secs { display: flex; gap: 6px; width: 100%; }
+.np-secs .np-tab { flex: 1 1 0; min-width: 0; padding: 9px 3px 8px; text-align: center; overflow-wrap: break-word; }
+#newsTitle { font-size: min(15px, 3.4vw); max-width: 100%; text-wrap: balance; overflow-wrap: break-word; }
+#newsModal.open .np-secs { animation: npFade .6s .7s both; }
+.np-guide-n { display: inline-block; min-width: 1.6em; color: #7a2230; }
+</style>

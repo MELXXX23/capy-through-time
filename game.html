@@ -1,3 +1,4 @@
+<!--#part 010_head.html-->
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -34,6 +35,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<!--#part 020_style_base.css-->
 <style>
 /* ===== Змінні та база ===== */
 :root {
@@ -114,6 +116,7 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 }
 .btn:disabled { opacity: .5; }
 
+/*#part 021_style_page.css*/
 /* ===== Каркас сторінки ===== */
 #app {
   height: 100vh;
@@ -343,6 +346,7 @@ body[data-epoch="1"] { --glow: #ff8fb3; } body[data-epoch="2"] { --glow: #ff5fa2
 #saveWarn { margin-top: 8px; padding: 8px 10px; font-size: 11px; line-height: 1.6; color: var(--cream); background: var(--red); }
 #saveWarn[hidden] { display: none; }
 
+/*#part 022_style_panels.css*/
 /* ===== Відділи ===== */
 .buy-modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
 .buy-mode { padding: 9px 2px; font-size: 12px; }
@@ -462,6 +466,7 @@ body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoc
 @keyframes warpSpin { to { transform: rotate(360deg); } }
 body.big-text #panel { zoom: 1.18; }
 
+/*#part 023_style_boot.css*/
 /* ===== Екран завантаження: нічне місто, Капі біжить, підказки внизу ===== */
 #boot { position: fixed; inset: 0; z-index: 99999; overflow: hidden; background: linear-gradient(#150b2e 0%, #2f1860 38%, #6b2f90 68%, #c25fb5 92%, #ffb0c8 100%); transition: opacity .55s ease; font-family: 'Press Start 2P', monospace; }
 #boot.done { opacity: 0; pointer-events: none; }
@@ -670,6 +675,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @keyframes toastIn { from { opacity: 0; transform: translateY(-16px); } }
 @keyframes toastOut { to { opacity: 0; transform: translateY(-10px); } }
 
+/*#part 024_style_modal_phone.css*/
 /* ===== Вікно (офлайн-заробіток) ===== */
 #soundModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
 #soundModal[hidden] { display: none; }
@@ -870,6 +876,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   .floater { animation-duration: 0.01s; }
 }
 
+/*#part 025_style_late.css*/
 /* ===== Раунд 27: чіткі рамки меню й вкладки «як в Excel» ===== */
 /* рамка меню: товстий темний контур, широке кільце кольору епохи, темна лінія */
 #app #panel { box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 10px var(--honey), inset 0 0 0 12px var(--dark), inset 0 -10px 0 12px rgba(74,50,40,.12); }
@@ -921,6 +928,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 #newsModal.open .np-secs { animation: npFade .6s .7s both; }
 .np-guide-n { display: inline-block; min-width: 1.6em; color: #7a2230; }
 </style>
+<!--#part 030_body_open.html-->
 </head>
 <body>
 <div id="boot" aria-hidden="true">
@@ -936,6 +944,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   <div class="b-load"><span id="bootText">Loading</span><span class="b-dots"></span><div class="b-bar"><i></i></div></div>
   <div class="b-tip" id="bootTip"><b id="bootTipText"></b><small id="bootTipHint"></small></div>
 </div>
+<!--#part 040_boot_script.html-->
 <script>
 (function () {
   var rows = ["....................O.......","...................OpO......","..................OpypO.....","...............OO..OpO......","..............OMMOOOOOO.....","..............OMBOBBBBBOO...",".............OBOBBBBBBBBBO..","............OBBBBBBBBBBBBBO.",".....OOOOOOOBBBBBBBKKBBBBBBO","....OBBBBBBBBBBBBBBKKBBBMMMO","...OBBppwpppppppBBBBBBBMMOMO","..OBBBppppppppppBBBBBBBMMMMO",".OBBBBpwpppppwppBBBBBBBMMMMO",".OBBBBppppppppppBBBBBBBMMMMO",".OBBBBppppwpppppBBBBBBBMMMO.",".OBBBBppppppwpppBBBBLLOOOO..",".OBBBBwqwqwqwqwqBBBBBO......",".OBBBBBBBBBBBBBBBBBBBO......","..OBBBBBBBBBBBBBBBBBO.......","..OBBBBBBBBBBBBBBBLLO.......","...OBBBBBLLLLOBBBOLLO.......","....OBBOMMOOOOOBBOMO........","....OMMOOO....OMMOOO........",".....OOO.......OOO.........."], pal = {"O":"#302418","p":"#ef8fa3","y":"#ffe08a","M":"#7c4830","B":"#bd8449","K":"#140e0b","w":"#fff4dc","L":"#9c6c3c","q":"#ffc9d4"};
@@ -1032,6 +1041,7 @@ function bootDone() {
   setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); }, wait + 250);
 }
 </script>
+<!--#part 050_body_markup.html-->
 <div id="app">
   <header id="topbar">
     <div id="hudWrap">
@@ -1184,18 +1194,34 @@ function bootDone() {
           <button type="button" class="btn wide sw-row" id="setRain" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
           <button type="button" class="btn wide sw-row" id="setBigText" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
           <button type="button" class="btn wide sw-row" id="setVibrate" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <button type="button" class="btn wide sw-row" id="setEco" role="switch" aria-checked="false"><span class="sw-label"></span><span class="sw-track"><i></i></span></button>
+          <p class="ws-line" data-i18n="setEcoNote"></p>
           <p class="ws-line" data-i18n="setNumFmt"></p>
           <div class="row" id="setNumFmt"></div>
         </div>
         <div class="card">
           <h2 data-i18n="setSave"></h2>
           <p class="ws-line" data-i18n="setSaveNote"></p>
+          <p class="ws-line" data-i18n="setSaveNote2"></p>
+          <p class="ws-line" id="exportLast"></p>
           <textarea id="exportBox" rows="3" readonly></textarea>
           <p class="ws-line" id="exportInfo"></p>
           <div class="row"><button type="button" class="btn" id="exportBtn" data-i18n="exportBtn"></button><button type="button" class="btn" id="copyBtn" data-i18n="copyBtn"></button><button type="button" class="btn" id="shareBtn" data-i18n="shareBtn" hidden></button></div>
           <textarea id="importBox" rows="3" data-i18n-ph="importPlaceholder"></textarea>
           <button type="button" class="btn wide" id="importBtn" data-i18n="importBtn"></button>
           <button type="button" class="btn wide danger" id="resetBtn" data-i18n="resetBtn"></button>
+        </div>
+        <div class="card">
+          <h2 data-i18n="setReport"></h2>
+          <p class="ws-line" data-i18n="setReportNote"></p>
+          <textarea id="reportBox" rows="6" readonly hidden></textarea>
+          <button type="button" class="btn wide" id="reportBtn" data-i18n="reportBtn"></button>
+          <button type="button" class="btn wide" id="privacyBtn" data-i18n="privacyBtn"></button>
+        </div>
+        <div class="card">
+          <h2 data-i18n="aboutTitle"></h2>
+          <p class="ws-line" id="aboutInfo" style="white-space:pre-line"></p>
+          <button type="button" class="btn wide" id="licenseBtn" data-i18n="licenseBtn"></button>
         </div>
         <div class="card" id="debugCard" hidden>
           <h2>🛠 DEBUG</h2>
@@ -1349,12 +1375,23 @@ function bootDone() {
   </div>
 </div>
 
+<!--#part 100_config.js-->
 <script>
 'use strict';
 
 /* =====================================================================
    КОНФІГИ (усі ігрові дані — тут, на початку скрипту)
    ===================================================================== */
+
+// Журнал помилок для «Звіту» в налаштуваннях (останні 15)
+const errLog = [];
+function logErr(kind, msg, src, line, col, stack) {
+  const clean = s => String(s || '').replace(/(?:file:\/\/\/|[A-Za-z]:[\\/])[^\s)]*[\\/]/g, '');
+  if (errLog.length >= 15) errLog.shift();
+  errLog.push({ at: new Date().toISOString().slice(11, 19), kind, msg: clean(msg).slice(0, 200), src: clean(src), line: line || 0, col: col || 0, stack: clean(stack).split('\n').slice(0, 4).join(' | ').slice(0, 400) });
+}
+window.addEventListener('error', e => logErr('error', e.message, e.filename, e.lineno, e.colno, e.error && e.error.stack));
+window.addEventListener('unhandledrejection', e => logErr('promise', e.reason && e.reason.message ? e.reason.message : e.reason, '', 0, 0, e.reason && e.reason.stack));
 
 const CONFIG = {
   SCENE_W: 320,               // внутрішня ширина сцени (пікселів)
@@ -3198,6 +3235,7 @@ function refreshCoinIcon() {
   g.drawImage(getSpriteCanvas(coinSprite()), 0, 0);
 }
 
+//#part 110_texts.js
 /* =====================================================================
    ТЕКСТИ (єдиний словник; жодного тексту прямо в коді)
    ===================================================================== */
@@ -4428,6 +4466,7 @@ const GENDER_TEXTS = {
 // Пори року (налаштування «Пора року»): auto — за датою на пристрої
 const SEASONS = ['auto', 'spring', 'summer', 'autumn', 'winter', 'halloween'];
 
+//#part 120_state.js
 /* =====================================================================
    СТАН ГРИ (весь стан — в одному об'єкті state)
    ===================================================================== */
@@ -4449,7 +4488,7 @@ function createDefaultState() {
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни
     stats: { ghostsCaught: 0, raccoonsCaught: 0, raccoonsLost: 0, wheelSpins: 0, timeTravels: 0, puddlesFixed: 0, deptsBought: 0, milestones: 0, teamMaxLevel: 0, maxLevel: 1, holidaysSeen: 0, jackpots: 0, teamUps: 0, vipTaps: 0 },
     // звук 0…1; анімації; формат чисел; стать гравця ('f' / 'm'); день і ніч; чи відкрите меню; чи бачив підказку про гортання
-    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, rain: false, birds: true, birdsLate: false, clouds: true, steam: true, vibrate: true, bigText: false, events: 0, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
+    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, rain: false, birds: true, birdsLate: false, eco: false, ecoAsked: false, clouds: true, steam: true, vibrate: true, bigText: false, events: 0, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
     dayPhase: 0.3,                     // час доби 0…1: 0.25 — схід сонця, 0.5 — полудень, 0.75 — захід, 0 — північ
     epochIntroSeen: -1,                // для якої епохи вже показали заставку-анімацію
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
@@ -4457,6 +4496,7 @@ function createDefaultState() {
     crystals: 0, crystalsTotal: 0, shards: 0, shardsTotal: 0, shardsInit: 0, epoch: 0, runStartEarned: 0,
     circus: { next: 0, phase: 0, spun: 0, hag: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
     daily: { day: '', k: [0, 0, 0], b: [0, 0, 0], t: [1, 1, 1], c: [0, 0, 0], bonus: 0, seen: '' },     // завдання дня: який вид, з якого значення рахуємо, ціль, забрано чи ні
+    lastExport: 0, exportNag: 0,              // коли востаннє копіювали код збереження / показали нагадування (мс)
     skinsMask: 0,                             // виграні скіни (біти за списком SKIN_POOL)
     skinsMask2: 0,                            // виграні скіни з номерами 32 і далі
     skinsSeen2: 0,
@@ -4613,6 +4653,7 @@ function teamCost(i, lvl) {
   return TEAM[i].baseCost * Math.pow(CONFIG.TEAM_LEVEL_COST_GROWTH, lvl - 1) * known * (1 - 0.02 * wsLevel('cheaperTeam'));
 }
 
+//#part 125_save.js
 /* =====================================================================
    ЗБЕРЕЖЕННЯ
    ===================================================================== */
@@ -4788,12 +4829,29 @@ function mergeInto(target, src) {
   }
 }
 
+// Телефонна обгортка (Capacitor): копія збереження ще й у сховищі застосунку (воно не стирається, як localStorage браузера). У браузері й на ПК нічого не робить.
+function nativeApp() { try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); } catch (e) { return false; } }
+function nativePlugin(name) { try { return nativeApp() && window.Capacitor.Plugins ? window.Capacitor.Plugins[name] : null; } catch (e) { return null; } }
+let lastNativeAt = 0;
+function nativeMirror(json) {
+  const P = nativePlugin('Preferences'); if (!P || Date.now() - lastNativeAt < 15000) return;      // не частіше раз на 15 с
+  lastNativeAt = Date.now();
+  try { P.set({ key: CONFIG.SAVE_KEY, value: json }).catch(() => {}); } catch (e) { /* нічого */ }
+}
+const SAVE_BAK_KEY = CONFIG.SAVE_KEY + '_bak';      // друга копія збереження
+let lastBakAt = 0, forceBakNext = false, restoredFromBak = false, hadBak = false;
 function saveGame() {
   if (savingDisabled) return;
   try {
     syncEpochEarned();
     state.savedAt = Date.now();
-    localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify({ v: CONFIG.SAVE_VERSION, state }));
+    const json = JSON.stringify({ v: CONFIG.SAVE_VERSION, state });
+    localStorage.setItem(CONFIG.SAVE_KEY, json);
+    nativeMirror(json);
+    if (forceBakNext || Date.now() - lastBakAt > 120000) {                  // друга копія: не частіше раз на 2 хвилини
+      forceBakNext = false; lastBakAt = Date.now();
+      try { localStorage.setItem(SAVE_BAK_KEY, json); } catch (e2) { /* місця нема — головне збереження вже записане */ }
+    }
     if (!storageOk) { storageOk = true; updateSaveWarning(); }
   } catch (e) {
     if (storageOk) { storageOk = false; updateSaveWarning(); }
@@ -4801,16 +4859,24 @@ function saveGame() {
 }
 
 function loadGame() {
-  let raw = null;
-  try {
-    raw = localStorage.getItem(CONFIG.SAVE_KEY);
-  } catch (e) {
-    storageOk = false;
-    return false;
+  let raw = null, bak = null;
+  try { raw = localStorage.getItem(CONFIG.SAVE_KEY); bak = localStorage.getItem(SAVE_BAK_KEY); } catch (e) { storageOk = false; return false; }
+  hadBak = !!bak;
+  if (!raw && !bak) return false;
+  if (raw && applySave(raw)) return true;
+  if (raw) { try { localStorage.setItem(CONFIG.SAVE_KEY + '_broken', raw); } catch (e2) { /* нічого */ } }
+  if (bak && bak !== raw && applySave(bak)) {                         // головне збереження зламане: беремо другу копію й одразу відновлюємо головне
+    restoredFromBak = true;
+    try { localStorage.setItem(CONFIG.SAVE_KEY, bak); } catch (e3) { /* нічого */ }
+    return true;
   }
-  if (!raw) return false;
+  return false;
+}
+function applySave(raw) {
+  let data;
+  try { data = migrateSave(JSON.parse(raw)); } catch (e) { return false; }
+  if (!data || !data.state || typeof data.state !== 'object') return false;
   try {
-    const data = migrateSave(JSON.parse(raw));
     mergeInto(state, data.state);
     state.shopLevel = Math.max(1, Math.min(LEVELS.length, Math.floor(state.shopLevel)));
     if (state.settings.gender !== 'm') state.settings.gender = 'f';
@@ -4827,12 +4893,11 @@ function loadGame() {
     });   // вдягнений лише виграний скін своєї групи
     return true;
   } catch (e) {
-    // Пошкоджене збереження: відкладаємо копію вбік і починаємо з нуля
-    try { localStorage.setItem(CONFIG.SAVE_KEY + '_broken', raw); } catch (e2) { /* нічого */ }
     return false;
   }
 }
 
+//#part 130_format.js
 /* =====================================================================
    ТЕКСТИ І ФОРМАТУВАННЯ ЧИСЕЛ
    ===================================================================== */
@@ -4856,6 +4921,26 @@ function loadGame() {
     P.epoch[lang].forEach((arr, e) => arr.forEach((s, i) => { T['epoch_say_' + e + '_' + i] = s; }));
   });
 })();
+Object.assign(translations.uk, {
+  swEco: 'Режим економії', setEcoNote: 'Менше частинок, без дощу, пари й птахів. Вмикається сам, коли гра гальмує.',
+  ecoAuto: 'Гра почала гальмувати. Режим економії ввімкнено: менше частинок, без дощу й пари. Вимкнути можна в налаштуваннях.',
+  setSaveNote2: 'Гра сама тримає другу копію збереження й відновлює її, якщо основне зламається. Усе одно раз на тиждень копіюй код і лишай десь у нотатках.',
+  exportNever: 'Код збереження ще не копіювався.', exportLast: 'Код востаннє копіювався: {0}', exportToday: 'сьогодні', exportDaysAgo: '{0} дн. тому',
+  exportNag: 'Давно не було копії прогресу. Відкрий Налаштування, блок «Збереження», і натисни «Копіювати». Код збережи в нотатках.',
+  restoredBak: 'Основне збереження було пошкоджене. Прогрес відновлено з другої копії.',
+  setReport: 'Звіт про помилки', setReportNote: 'Якщо щось зламалось, натисни кнопку й надішли текст розробникам. Особистих даних там нема.',
+  aboutTitle: 'Про гру', aboutInfo: 'CapyTap: Market · випуск {0}\n© CapyTap Company\nШрифт Press Start 2P © 2012 The Press Start 2P Project Authors, ліцензія SIL Open Font License 1.1.', licenseBtn: 'Ліцензія шрифту', privacyBtn: 'Політика конфіденційності', reportBtn: 'Скопіювати звіт', reportCopied: 'Звіт скопійовано!', reportManual: 'Виділи текст і скопіюй його вручну.'
+});
+Object.assign(translations.en, {
+  swEco: 'Power saving', setEcoNote: 'Fewer particles; no rain, steam or birds. Turns on by itself when the game is slow.',
+  ecoAuto: 'The game was running slowly. Power saving is on: fewer particles, no rain or steam. You can turn it off in Settings.',
+  setSaveNote2: 'The game keeps a second copy of your save and restores it if the main one breaks. Still, copy the code once a week and keep it in your notes.',
+  exportNever: 'The save code has not been copied yet.', exportLast: 'Save code last copied: {0}', exportToday: 'today', exportDaysAgo: '{0} days ago',
+  exportNag: 'It has been a while since you backed up your progress. Open Settings, the Save block, and press Copy. Keep the code in your notes.',
+  restoredBak: 'The main save was damaged. Your progress was restored from the second copy.',
+  setReport: 'Error report', setReportNote: 'If something breaks, press the button and send the text to the developers. It has no personal data.',
+  aboutTitle: 'About', aboutInfo: 'CapyTap: Market · release {0}\n© CapyTap Company\nPress Start 2P font © 2012 The Press Start 2P Project Authors, SIL Open Font License 1.1.', licenseBtn: 'Font license', privacyBtn: 'Privacy policy', reportBtn: 'Copy report', reportCopied: 'Report copied!', reportManual: 'Select the text and copy it by hand.'
+});
 function t(key, ...args) {
   const dict = translations[state.lang] || translations.en;
   const male = state.settings.gender === 'm' ? GENDER_TEXTS.m[state.lang] : null;   // чоловічі варіанти, якщо є
@@ -4906,6 +4991,7 @@ function formatNumber(value, lang, maxDecimals = 0) {
 }
 function fmt(n, dec) { return formatNumber(n, state.lang, dec || 0); }
 
+//#part 140_sprites.js
 /* =====================================================================
    СПРАЙТИ ТА МАЛЮВАННЯ
    ===================================================================== */
@@ -5580,7 +5666,7 @@ function manholeG(g, x, y) {                  // люк: чавунна криш
 }
 // Над люками піднімається пара (легкі білі клубочки, що плавно зникають)
 function drawManholeSteam() {
-  if (!manholeSpots.length || !state.settings.steam) return;
+  if (!manholeSpots.length || !state.settings.steam || ecoOn()) return;
   manholeSpots.forEach((m, mi) => {
     if (m.x < visL() - 16 || m.x > visR() + 16) return;
     for (let i = 0; i < 4; i++) {
@@ -5850,6 +5936,7 @@ function buildPropsLayer() {
   return c;
 }
 
+//#part 150_facade.js
 /* =====================================================================
    ФАСАД МАГАЗИНУ (малюється з прямокутників; росте з рівнем)
    ===================================================================== */
@@ -7000,6 +7087,7 @@ function buildShopCanvas(level, tiers) {
   };
 }
 
+//#part 160_refs.js
 /* =====================================================================
    ПОСИЛАННЯ НА ЕЛЕМЕНТИ ІНТЕРФЕЙСУ
    ===================================================================== */
@@ -7026,7 +7114,7 @@ const ui = {
   wheelBtn: $('wheelBtn'), wheelGhostBtn: $('wheelGhostBtn'), wheelGhostNote: $('wheelGhostNote'), wheelClose: $('wheelClose'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), routeTitle: $('routeTitle'), routeNext: $('routeNext'), routeList: $('routeList'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
   paneSkins: $('pane-skins'), paneSeasons: $('pane-seasons'), skinsList: $('skinsList'), paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), statsCard: $('statsCard'),
-  app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'), setRain: $('setRain'), setBirds: $('setBirds'), setBirdsLate: $('setBirdsLate'), setClouds: $('setClouds'), setSteam: $('setSteam'), setBigText: $('setBigText'), setVibrate: $('setVibrate'),
+  app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'), setRain: $('setRain'), setEco: $('setEco'), exportLast: $('exportLast'), reportBox: $('reportBox'), reportBtn: $('reportBtn'), privacyBtn: $('privacyBtn'), aboutInfo: $('aboutInfo'), licenseBtn: $('licenseBtn'), setBirds: $('setBirds'), setBirdsLate: $('setBirdsLate'), setClouds: $('setClouds'), setSteam: $('setSteam'), setBigText: $('setBigText'), setVibrate: $('setVibrate'),
   paneSettings: $('pane-settings'), setLangBtns: $('setLangBtns'), setNumFmt: $('setNumFmt'), setAnim: $('setAnim'), setSound: $('setSound'),
   exportBox: $('exportBox'), importBox: $('importBox'), exportInfo: $('exportInfo'), shareBtn: $('shareBtn'), exportBtn: $('exportBtn'), copyBtn: $('copyBtn'), importBtn: $('importBtn'), resetBtn: $('resetBtn'),
   debugCard: $('debugCard'), dbgHour: $('dbgHour'), dbgX100: $('dbgX100'), statEpoch: $('statEpoch'),
@@ -7058,6 +7146,7 @@ const teamEls = [];            // елементи карток звіряток
 let teamLockedEl = null;       // картка «нові звірята прийдуть пізніше»
 let deptLockedEl = null;       // картка «нові відділи відкриються пізніше»
 
+//#part 165_shop.js
 /* =====================================================================
    МАГАЗИН: побудова, вивіска, масштаб сцени
    ===================================================================== */
@@ -7261,6 +7350,7 @@ function fitSign() {
   }
 }
 
+//#part 170_ui.js
 /* =====================================================================
    МОВА ТА ІНТЕРФЕЙС
    ===================================================================== */
@@ -7813,6 +7903,7 @@ function showToast(text, kind, icon) {
   while (ui.toasts.childElementCount > CONFIG.MAX_TOASTS) ui.toasts.firstChild.remove();
 }
 
+//#part 175_buy.js
 /* =====================================================================
    ПОКУПКИ: відділи й розширення
    ===================================================================== */
@@ -7851,6 +7942,7 @@ function expandShop() {
   saveGame();
 }
 
+//#part 178_offline.js
 /* =====================================================================
    ОФЛАЙН-ЗАРОБІТОК
    ===================================================================== */
@@ -7888,6 +7980,7 @@ function claimOffline() {
   saveGame();
 }
 
+//#part 180_anim.js
 /* =====================================================================
    АНІМАЦІЇ ТА ЕФЕКТИ
    ===================================================================== */
@@ -7901,7 +7994,7 @@ const clouds = CLOUDS.map(c => ({ ...c }));
 const weather = { rain: 0, target: 0, timer: 30 };
 const raindrops = [];
 function updateWeather(dt) {
-  weather.target = (animOn() && state.settings.rain) ? 0.85 : 0;       // дощ іде лише коли гравець увімкнув його крапелькою біля магазину
+  weather.target = (animOn() && state.settings.rain && !ecoOn()) ? 0.85 : 0;       // дощ іде лише коли гравець увімкнув його крапелькою біля магазину
   weather.rain += (weather.target - weather.rain) * Math.min(1, dt * 0.6);
   if (weather.rain < 0.02) { raindrops.length = 0; return; }
   const want = Math.min(200, Math.round(weather.rain * 120 * (view.w * view.h) / (320 * 180)));         // не більше 200 крапель, щоб не гальмувало
@@ -8036,7 +8129,7 @@ function updateBirds(dt) {
   });
 }
 function drawBirds() {
-  if (!state.settings.birds) return;
+  if (!state.settings.birds || ecoOn()) return;
   if (viewEpoch() % 8 >= 1 && !state.settings.birdsLate) return;                     // з 2-ї епохи птахів не видно, доки гравець не ввімкне їх у налаштуваннях
   const vis = 1 - Math.min(1, sky.night * 1.5);
   if (vis <= 0.05 || !birds.length) return;
@@ -8135,7 +8228,7 @@ function drawCloudsLayer() {
 }
 function updateCloudSkinFx(dt) {
   const sk = skinOn('weather');
-  if (!animOn() || !state.settings.clouds || (sk !== 'goldcloud' && sk !== 'starcloud')) { cloudCoins.length = 0; starDust.length = 0; return; }
+  if (!animOn() || ecoOn() || !state.settings.clouds || (sk !== 'goldcloud' && sk !== 'starcloud')) { cloudCoins.length = 0; starDust.length = 0; return; }
   const vis = clouds.filter(c => c.x > visL() - 20 && c.x < visR() - 20);
   if (sk === 'goldcloud') {
     cloudCoinT -= dt;
@@ -8219,10 +8312,11 @@ function finishBuild() {
 }
 function spawnDust(x, y, n) {
   if (!animOn()) return;
+  if (ecoOn()) n = Math.ceil(n / 2);
   for (let i = 0; i < n; i++) {
     fx.dust.push({ x: x + rand(-3, 3), y: y + rand(-2, 2), r: rand(2, 4), vx: rand(-14, 14), vy: rand(-18, -4), age: 0, life: rand(0.5, 0.9) });
   }
-  while (fx.dust.length > CONFIG.MAX_DUST) fx.dust.shift();
+  while (fx.dust.length > (ecoOn() ? CONFIG.MAX_DUST >> 1 : CONFIG.MAX_DUST)) fx.dust.shift();
 }
 // Будівництво (≈8,5 с): прибуття Боді, руйнування старого, зведення нового (три стилі), обвалення риштувань, салют
 const BUILD_A = 0.16, BUILD_C = 0.84;
@@ -9112,7 +9206,7 @@ function spawnTapEffects(x, y) {
     fx.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.25, 0.4), col: i % 2 ? 'y' : 'w' });
   }
   while (fx.coins.length > CONFIG.MAX_COIN_PARTICLES) fx.coins.shift();
-  while (fx.sparks.length > CONFIG.MAX_SPARKS) fx.sparks.shift();
+  while (fx.sparks.length > (ecoOn() ? CONFIG.MAX_SPARKS >> 1 : CONFIG.MAX_SPARKS)) fx.sparks.shift();
 }
 
 // Текст «+1», що піднімається і зникає (HTML-елемент — чіткий піксельний шрифт)
@@ -9128,6 +9222,7 @@ function spawnFloater(x, y, text) {
   while (ui.floaters.childElementCount > CONFIG.MAX_FLOATERS) ui.floaters.firstChild.remove();
 }
 
+//#part 190_sound.js
 /* =====================================================================
    ЗВУК: 8-бітна музика та ефекти через Web Audio API (без аудіофайлів)
    ===================================================================== */
@@ -10320,6 +10415,7 @@ function setupSound() {
   updateSoundUI();
 }
 
+//#part 200_travel_settings.js
 /* =====================================================================
    ПОДОРОЖ У ЧАСІ, МАЙСТЕРНЯ, ДОСЯГНЕННЯ, СТАТИСТИКА, НАЛАШТУВАННЯ
    ===================================================================== */
@@ -11327,6 +11423,9 @@ function updateSettingsUI() {
   setSwitch(ui.setRain, t('swRain'), S.rain);
   setSwitch(ui.setBigText, t('swBig'), S.bigText);
   setSwitch(ui.setVibrate, t('swVib'), S.vibrate);
+  setSwitch(ui.setEco, t('swEco'), S.eco);
+  ui.exportLast.textContent = exportLastText();
+  ui.aboutInfo.textContent = t('aboutInfo', NEWS_VERSION);
   ui.setGender.querySelectorAll('button').forEach(b => { b.textContent = t('gender_' + b.dataset.gender); b.setAttribute('aria-pressed', String(b.dataset.gender === state.settings.gender)); });
   ui.setNumFmt.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.fmt === state.settings.numFmt)));
   ui.setNumFmt.querySelectorAll('button').forEach(b => { b.textContent = t('numFmt_' + b.dataset.fmt); });
@@ -11363,7 +11462,21 @@ function saveSummary(st) {
   const team = (st.team || []).filter(v => v > 0).length;
   return t('saveSummary', t('levelName_' + lvl), fmt(depts), team, fmt(st.crystalsTotal || 0), fmt(Math.floor(st.totalEarned || 0)));
 }
+function markExported() { state.lastExport = Date.now(); state.exportNag = state.lastExport; saveGame(); ui.exportLast.textContent = exportLastText(); }
+function exportLastText() {
+  if (!state.lastExport) return t('exportNever');
+  const d = Math.floor((Date.now() - state.lastExport) / 864e5);
+  return t('exportLast', d <= 0 ? t('exportToday') : t('exportDaysAgo', d));
+}
+// Раз на тиждень нагадуємо скопіювати код, якщо прогрес уже вартий збереження
+function checkExportNag() {
+  const now = Date.now(), last = Math.max(state.lastExport || 0, state.exportNag || 0);
+  if (!last) { state.exportNag = now; saveGame(); return; }
+  if (!(state.stats.timeTravels >= 1 || state.shopLevel >= 3) || now - last < 7 * 864e5) return;
+  state.exportNag = now; saveGame(); showToast(t('exportNag'), 'good');
+}
 function showExport() {
+  markExported();
   ui.exportBox.value = makeExportCode();
   ui.exportBox.select();
   ui.exportInfo.textContent = saveSummary(state);
@@ -11375,6 +11488,7 @@ function importSave() {
     const fresh = createDefaultState();
     mergeInto(fresh, data.state);
     Object.assign(state, fresh);
+    forceBakNext = true;
     saveGame();
     if (!storageOk) { showToast(t('importNoStorage'), 'bad'); return; }
     savingDisabled = true;
@@ -11383,7 +11497,7 @@ function importSave() {
 }
 function hardReset() {
   savingDisabled = true;
-  try { localStorage.removeItem(CONFIG.SAVE_KEY); } catch (e) { /* нічого */ }
+  try { localStorage.removeItem(CONFIG.SAVE_KEY); localStorage.removeItem(SAVE_BAK_KEY); } catch (e) { /* нічого */ }
   location.reload();
 }
 function shareExport() {
@@ -11391,6 +11505,7 @@ function shareExport() {
   if (navigator.share) navigator.share({ text: ui.exportBox.value }).catch(() => {});
 }
 function copyExport() {
+  markExported();
   ui.exportBox.value = makeExportCode();
   ui.exportInfo.textContent = saveSummary(state);
   ui.exportBox.focus(); ui.exportBox.select();
@@ -11422,6 +11537,7 @@ function debugX100() {
   updateUI();
 }
 
+//#part 210_skins.js
 /* =====================================================================
    ВКЛАДКА «СКІНИ»: виграні в цирку наряди для Капі, магазину, погоди й героїв. Тап — вдягнути, ще раз — зняти.
    ===================================================================== */
@@ -11623,6 +11739,10 @@ function setupProgression() {
   ui.setDayNight.addEventListener('click', () => { state.settings.dayNight = !dayNightOn(); updateUI(); saveGame(); });
   [['setBirds', 'birds'], ['setBirdsLate', 'birdsLate'], ['setClouds', 'clouds'], ['setSteam', 'steam'], ['setVibrate', 'vibrate']].forEach(([id, key]) => ui[id].addEventListener('click', () => { state.settings[key] = !state.settings[key]; if (key === 'vibrate') buzz(30); updateUI(); saveGame(); }));
   ui.setRain.addEventListener('click', () => { state.settings.rain = !state.settings.rain; if (state.settings.rain) weather.rain = Math.max(weather.rain, 0.3); updateUI(); saveGame(); });
+  ui.setEco.addEventListener('click', () => { state.settings.eco = !state.settings.eco; state.settings.ecoAsked = true; perf.slow = 0; perf.auto = false; updateUI(); saveGame(); });
+  ui.licenseBtn.addEventListener('click', () => { window.open('https://openfontlicense.org/', '_blank', 'noopener'); });
+  ui.privacyBtn.addEventListener('click', () => { window.open('https://melxxx23.github.io/capy-through-time/privacy.html', '_blank', 'noopener'); });
+  ui.reportBtn.addEventListener('click', () => copyText(buildReport(), ui.reportBox, 'reportCopied'));
   ui.setBigText.addEventListener('click', () => { state.settings.bigText = !state.settings.bigText; applyViewSettings(); updateUI(); saveGame(); });
   ui.setSound.addEventListener('click', () => { ui.soundModal.hidden = false; updateSoundUI(); });
   ui.exportBtn.addEventListener('click', showExport);
@@ -11655,6 +11775,7 @@ function setupProgression() {
   applyViewSettings();
 }
 
+//#part 220_events.js
 /* =====================================================================
    ПОДІЇ: СВЯТА, РОЗПРОДАЖІ, НЕПРИЄМНОСТІ, МІНІ-ІГРИ
    ===================================================================== */
@@ -12463,6 +12584,87 @@ function skyxIsland(x, y, w, ph) {
   R(ctx, x + 7, y - 5, 3, 3, 'r'); R(ctx, x + 8, y - 8, 1, 3, 'G');
   const wx = x + hw - 6, fl = Math.floor(animClock * 10); R(ctx, wx, y + 6, 3, 18, 'S'); for (let k = 0; k < 6; k++) R(ctx, wx + ((k + fl) % 3), y + 6 + ((k * 3 + fl) % 18), 1, 2, 'w'); R(ctx, wx - 1, y + 24, 5, 1, 'w');
 }
+// Планета з кільцем і місяць: малюються один раз піксель за пікселем зі світлом зверху зліва (опукла куля, терминатор, відбите світло, тінь кільця)
+let SPACE_PL = null;
+function spacePlanets() {
+  if (SPACE_PL) return SPACE_PL;
+  const BAY = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];                       // матриця 4×4 для м'якого переходу між тонами
+  const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+  const put = (g, x, y, hex, a) => { g.globalAlpha = a === undefined ? 1 : a; g.fillStyle = hex; g.fillRect(x, y, 1, 1); g.globalAlpha = 1; };
+  const tone = (ramp, v, x, y, flat) => { const f = Math.max(0, Math.min(0.999, v)) * (ramp.length - 1), i = Math.floor(f), fr = f - i; const th = flat ? 0.5 : 0.5 + ((BAY[(y & 3) * 4 + (x & 3)] + 0.5) / 16 - 0.5) * 0.55; return ramp[i + (fr > th ? 1 : 0)]; };
+  const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+  const noise = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), fx = x - xi, fy = y - yi, sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy), a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1); return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy; };
+  const L = (() => { const x = -0.58, y = -0.55, z = 0.6, n = Math.hypot(x, y, z); return [x / n, y / n, z / n]; })();
+  // ---------- планета ----------
+  const R0 = 17, W = 92, H = 64, CX = 46, CY = 32, K = 0.26, TILT = -0.3, ct = Math.cos(TILT), st = Math.sin(TILT);
+  const pc = mk(W, H), pg = pc.getContext('2d');
+  const pRamp = ['#3a1840', '#6e2a4c', '#b04a3a', '#e07a34', '#f6a84a', '#ffd88e', '#fff1c4'];
+  const rRamp = ['#6a4a52', '#a07a64', '#d2a878', '#f2d9a0', '#fff0c8'];
+  const rot = (px, py) => { const dx = px - CX, dy = py - CY; return [dx * ct + dy * st, -dx * st + dy * ct]; };        // у площину кільця
+  const ringAt = (px, py) => { const [u, v] = rot(px, py), s = Math.hypot(u, v / K); return { u, v, s }; };
+  const inRing = s => (s >= 1.42 * R0 && s <= 1.72 * R0) || (s >= 1.8 * R0 && s <= 2.22 * R0);
+  const ringTone = (s, px, py, shadow) => {
+    const wob = noise(s * 0.9, 3.1) * 0.5 + noise(s * 2.4, 7.7) * 0.5;
+    let v = 0.55 + 0.35 * Math.sin(s * 0.85) * 0.5 + (wob - 0.5) * 0.45 - (s > 1.72 * R0 ? 0.06 : 0);
+    if (s > 2.1 * R0) v -= 0.18;                                                                                          // край кільця темніший
+    if (shadow) v *= 0.32;
+    return tone(rRamp, v, px, py, true);
+  };
+  const ringShadowed = (u, v) => {                                                                                       // тінь планети на кільці: промінь до світла перетинає кулю
+    const X = u, Z = v / K, Lx = L[0], Lz = L[2];                                             // кільце лежить горизонтально, світло трохи зверху
+    const bq = X * Lx + Z * Lz, cq = X * X + Z * Z - R0 * R0, disc2 = bq * bq - cq * (Lx * Lx + Lz * Lz);
+    if (disc2 < 0) return false; const t = (-bq - Math.sqrt(disc2)) / (Lx * Lx + Lz * Lz); return t > 0;
+  };
+  // 1) далека половина кільця (за планетою)
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const r = ringAt(x + 0.5, y + 0.5); if (r.v < 0 && inRing(r.s)) put(pg, x, y, ringTone(r.s, x, y, ringShadowed(r.u, r.v))); }
+  // 2) куля
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const dx = (x + 0.5 - CX) / R0, dy = (y + 0.5 - CY) / R0, d2 = dx * dx + dy * dy; if (d2 > 1) continue;
+    const nz = Math.sqrt(1 - d2), lam = Math.max(0, dx * L[0] + dy * L[1] + nz * L[2]);
+    const lat = dy * 1.15, bands = Math.sin(lat * 9 + noise(dx * 3 + 4, dy * 5) * 2.2) * 0.5 + 0.5, fine = noise(dx * 9 + 1, dy * 24) - 0.5;
+    let alb = 0.55 + (bands - 0.5) * 0.34 + fine * 0.16;
+    const sx = dx + 0.28, sy = dy - 0.34, spot = sx * sx / 0.028 + sy * sy / 0.012;                                       // велика буря
+    if (spot < 1) alb -= 0.2 * (1 - spot); if (spot < 0.35) alb += 0.1;
+    let v = (0.06 + lam * 0.94) * (0.45 + alb * 0.7);
+    v += Math.pow(1 - nz, 3) * -0.12;                                                                                     // край кулі темніший
+    const lit = Math.max(0, dx * -L[0] + dy * -L[1]) * Math.pow(1 - nz, 2.2) * 0.2;                                       // відбите світло з боку тіні
+    // тінь кільця на кулі
+    const r2 = ringAt(x + 0.5 - 2.5, y + 0.5 - 3.5);
+    if (r2.v > 0 && inRing(r2.s)) v *= 0.55;
+    put(pg, x, y, tone(pRamp, v + lit, x, y));
+  }
+  // світла кромка зверху зліва й теплий ореол
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const dx = (x + 0.5 - CX) / R0, dy = (y + 0.5 - CY) / R0, d = Math.hypot(dx, dy);
+    if (d > 1 && d < 1.2) { const lit = Math.max(0, (-dx * 0.58 - dy * 0.55) / 0.8); if (lit > 0.1) put(pg, x, y, '#ffb860', (1.2 - d) * 0.85 * lit); }
+    if (d >= 0.93 && d <= 1) { const lit = Math.max(0, (-dx * 0.58 - dy * 0.55) / 0.8); if (lit > 0.55) put(pg, x, y, '#ffe9b0', 0.55 * (lit - 0.55) / 0.45); }
+  }
+  // 3) близька половина кільця (перед планетою)
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const r = ringAt(x + 0.5, y + 0.5); if (r.v >= 0 && inRing(r.s)) put(pg, x, y, ringTone(r.s, x, y, false)); }
+  // яскраві краї кільця на світлому боці
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const r = ringAt(x + 0.5, y + 0.5); if (inRing(r.s) && r.v >= 0 && Math.abs(r.s - 1.42 * R0) < 0.7) put(pg, x, y, '#fff6d8', 0.55); }
+  // ---------- місяць ----------
+  const MR = 10, MS = 2 * MR + 8, mcv = mk(MS, MS), mg = mcv.getContext('2d'), MC = MS / 2;
+  const mRamp = ['#1c2240', '#3a4670', '#6a789e', '#a2b0cc', '#dce6f6', '#ffffff'];
+  const craters = [[-0.42, -0.38, 0.28], [0.34, -0.05, 0.22], [-0.1, 0.46, 0.2], [0.18, -0.55, 0.14], [-0.55, 0.12, 0.13], [0.5, 0.42, 0.14]];
+  for (let y = 0; y < MS; y++) for (let x = 0; x < MS; x++) {
+    const dx = (x + 0.5 - MC) / MR, dy = (y + 0.5 - MC) / MR, d2 = dx * dx + dy * dy; if (d2 > 1) continue;
+    const nz = Math.sqrt(1 - d2), lam = Math.max(0, dx * L[0] + dy * L[1] + nz * L[2]);
+    let v = 0.04 + lam * 0.96; v *= 0.78 + (noise(dx * 6 + 9, dy * 6) - 0.5) * 0.3;
+    craters.forEach(([cx, cy, cr]) => {
+      const ex = dx - cx, ey = dy - cy, e = Math.hypot(ex, ey);
+      if (e < cr * 0.92) v *= 0.55 + e / cr * 0.3;                                                                       // дно кратера темніше
+      else if (e < cr * 1.22) { const side = (ex * L[0] + ey * L[1]) / (e || 1); v += side < 0 ? 0.2 : -0.16; }        // освітлений валик з боку світла, тінь з іншого
+    });
+    v += Math.pow(1 - nz, 2.5) * -0.1;
+    const rim = Math.max(0, dx * -L[0] + dy * -L[1]) * Math.pow(1 - nz, 2.4) * 0.22;                                      // відсвіт планети з боку тіні
+    put(mg, x, y, tone(mRamp, v + rim, x, y));
+  }
+  for (let y = 0; y < MS; y++) for (let x = 0; x < MS; x++) { const dx = (x + 0.5 - MC) / MR, dy = (y + 0.5 - MC) / MR, d = Math.hypot(dx, dy); if (d > 1 && d < 1.35) { const lit = Math.max(0, (-dx * 0.58 - dy * 0.55) / 0.8); put(mg, x, y, '#9ec0ff', (1.35 - d) * 0.5 * lit); } }
+  SPACE_PL = { planet: pc, planetCx: CX, planetCy: CY, moon: mcv, moonCx: MC, moonCy: MC };
+  return SPACE_PL;
+}
 function drawSkyExtra(time) {
   const ep = SKYX.ep, top = 8 - view.offY;
   if (ep === 2) {                                                         // Диско: лазерний віяр над дахами
@@ -12471,11 +12673,11 @@ function drawSkyExtra(time) {
     for (let i = 0; i < 6; i++) { const sx = Math.round(worldL() + 20 + i * (view.w - 40) / 5), sy = top + 6 + (i * 13) % 34, v = Math.sin(time * 2.4 + i * 1.7); if (v > 0.3) sparkPlus(sx, sy, (v - 0.3) / 0.7, i % 2 ? '#fff6b0' : '#ffd0f0'); }
   }
   if (ep === 6) {                                                         // Космос: планета з кільцем і місяць
-    const px0 = Math.round(visL() + (visR() - visL()) * 0.74), py0 = top + 38;
-    for (let a = 0; a < 63; a++) { const an = a / 10; if (Math.sin(an) < 0) R(ctx, Math.round(px0 + Math.cos(an) * 28), Math.round(py0 + Math.sin(an) * 6), 2, 1, 'M'); }
-    disc(ctx, px0, py0, 15, 'd'); disc(ctx, px0, py0, 14, 'o'); disc(ctx, px0 - 2, py0 - 2, 11, 'j'); disc(ctx, px0 - 5, py0 - 5, 5, 'y');
-    for (let a = 0; a < 63; a++) { const an = a / 10; if (Math.sin(an) >= 0) R(ctx, Math.round(px0 + Math.cos(an) * 28), Math.round(py0 + Math.sin(an) * 6), 2, 1, a % 7 < 4 ? 'c' : 'h'); }
-    const mx = Math.round(visL() + (visR() - visL()) * 0.22), my = top + 16; disc(ctx, mx, my, 6, 'd'); disc(ctx, mx, my, 5, 'E'); disc(ctx, mx - 2, my - 2, 2, 'w'); R(ctx, mx + 1, my + 1, 2, 2, 'e');
+    const spl = spacePlanets(), cxw = (worldL() + worldR()) / 2, dlt = (visL() + visR()) / 2 - cxw, vw = visR() - visL();     // dlt — на скільки камера зсунута від центру світу
+    const pxp = Math.round(cxw + (0.74 - 0.5) * vw + 0.75 * dlt), pyp = top + 40;                                          // планета далеко: зсувається за камерою лише на 25%
+    const mxp = Math.round(cxw + (0.2 - 0.5) * vw + 0.7 * dlt), myp = top + 22;                                           // місяць ближче: на 40%
+    ctx.drawImage(spl.planet, pxp - spl.planetCx, pyp - spl.planetCy);
+    ctx.drawImage(spl.moon, mxp - spl.moonCx, myp - spl.moonCy);
     SKYX.meteors.forEach(m => { const a = Math.max(0, 1 - m.life / 1.1); for (let k = 0; k < 16; k++) { ctx.globalAlpha = a * (1 - k / 16); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k), 1, 1, k < 4 ? 'w' : 'y'); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k) + 1, 1, 1, 'o'); } ctx.globalAlpha = a; R(ctx, Math.round(m.x), Math.round(m.y), 3, 2, 'w'); ctx.globalAlpha = 1; });
   }
   if (ep === 1 && SKYX.banner) {                                          // Ретро: літак тягне полотнище SALE
@@ -13265,6 +13467,7 @@ function drawGhostHunt() {
 }
 
 
+//#part 230_circus.js
 /* =====================================================================
    ЦИРК ФОРТУНИ: раз на 24 години в правому куті з'являється червоний «!», який мигає й грає марш.
    Тап по ньому → цирк-причіп їде справа наліво ~5 с → тап по цирку → вікно з колесом на 12 секторів і клоуном Бубоном.
@@ -14017,7 +14220,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 14;
+const NEWS_VERSION = 15;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -14045,7 +14248,7 @@ function hitNews(p) {
   return false;
 }
 // Випуски газети (новий — першим). Картинки лише до найбільших змін; тексти двома мовами. Для нового випуску: додай запис угору й підніми NEWS_VERSION.
-const NEWS_ISSUES = [{"ver":14,"uk":[["Нове небо в кожній епосі.","Відродження: повітряні кулі. Ретро: літак із полотнищем SALE. Диско: лазерний віяр. Аркади: тетріс-блоки, що падають. Інтернет: дрони-кур’єри з посилками. Еко: літаючі острівці з деревами й водоспадами. Космос: планета з кільцем і метеорний дощ."],["Птахи за бажанням.","З другої епохи птахів у небі більше нема, щоб не заважали новим прикрасам. Хто за ними сумує, може ввімкнути «Птахи в пізніх епохах» у налаштуваннях."],["Будівництво з двома машинами.","До мішалки приїжджає бетононасос зі стрілою. Барабан мішалки тепер крутиться, а стріла гойдається, поки качає бетон."],["Свої пакети в кожної епохи.","Кошик, паперовий пакет, блискучий пакет, коробка з грою, посилка, сітка з овочами, капсула й неонова торба. Покупці виходять з покупками відповідної епохи."],["Золота дорога сяє.","По золотій бруківці біжить смуга блиску, а на цеглинах спалахують зірочки."],["Живіші репліки.","Скіни Капі говорять різними фразами, не лише жартами про ціни. У Мела й Ніки їх по вісім."],["Дрібниці.","Іконки меню на телефоні більші. У заставці Капі з чорним рюкзаком, без квіточки на голові, а Мел і Ніка трохи менші. Заставку показують лише раз. Нічний ліхтар більше не засвічує Капі."]],"en":[["A new sky in every era.","Renaissance: hot-air balloons. Retro: a plane with a SALE banner. Disco: a laser fan. Arcade: falling Tetris blocks. Internet: courier drones with parcels. Eco: floating islands with trees and waterfalls. Space: a ringed planet and a meteor shower."],["Birds on request.","From the second era on there are no birds in the sky, so they do not hide the new decorations. If you miss them, switch on “Birds in later eras” in Settings."],["Building with two machines.","A concrete pump with a boom now joins the mixer. The mixer drum spins, and the boom sways while it pumps concrete."],["Own bags for every era.","A basket, a paper bag, a glittery bag, a game box, a parcel, a net of veggies, a capsule and a neon tote. Customers leave with the bag of their era."],["The golden road shines.","A streak of light runs across the golden cobbles and stars flash on the bricks."],["Livelier lines.","Capy skins say different things, not only price jokes. Mel and Nika have eight lines each."],["Little things.","Menu icons are bigger on phones. In the intro Capy has a black backpack and no flower on the head, and Mel and Nika are a bit smaller. The intro plays only once. The night street lamp no longer over-lights Capy."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: нове небо в кожній епосі, дві будівельні машини й пакети по епохах. Гортай сторінки!","en":"Hi, friend! In this issue: a new sky in every era, two building machines and bags for every era. Turn the pages!"}},{"ver":13,"uk":[["Капі стала детальнішою.","Усі старі скіни Капі оновили так само детально, як супергероя: пірат з папугою, астронавт зі скляним шоломом, чарівник і Дід Мороз з бородами, шеф-кухар з великим ковпаком, мандрівник з рюкзаком і килимком, відьма з гарбузом, квіткова Капі з метеликом, пляжна з м’ячем, осінна з розвіяним шарфом."],["Скіни епох.","Теж стали детальнішими: Відродження з гофрованим коміром, Ретро з радіо, Диско з дзеркальною кулею, Аркади з геймпадом, Інтернет з рюкзаком, Еко з паростком на рюкзаку, Космос зі скляним шоломом і Неон з сяючим візором."],["Рюкзак для заставки.","Ми ще обираємо новий рюкзак для вступної заставки, тому він з’явиться трохи пізніше."]],"en":[["Capy got more detailed.","All the older Capy skins now have the same detail as the superhero: the pirate with a parrot, the astronaut with a glass helmet, the wizard and Santa with beards, the chef with a big hat, the explorer with a backpack and bedroll, the witch with a pumpkin, the flower Capy with a butterfly, the beach one with a ball, and the autumn one with a flowing scarf."],["Era skins.","They are more detailed too: Renaissance with a ruff collar, Retro with a radio, Disco with a mirror ball, Arcade with a gamepad, Internet with a backpack, Eco with a sprout on the backpack, Space with a glass helmet and Neon with a glowing visor."],["Backpack for the intro.","We are still choosing a new backpack for the intro cutscene, so it will come a little later."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: старі скіни Капі стали набагато детальнішими.","en":"Hi, friend! In this issue: the older Capy skins got much more detail."}},{"ver":12,"uk":[["Магічні хмари.","Зоряні хмари тепер чарівні: вони переливаються від бузкового до бірюзового й рожевого, зорі мерехтять, а вниз сиплеться зоряний пил. Золоті хмари виблискують, а час від часу з них падають монети."],["Блискавки трьох кольорів.","До фіолетових блискавок додалися зелені й червоні. У вкладці «Скіни» вони стоять поруч, а хмари тепер у кінці списку погоди."],["Магазини з деталями.","Цукерковий магазин отримав один великий довгий лоліпоп, колони-тростини, глазур і мармеладки. Золотий блищить: по фасаду біжить блиск, а на золоті спалахують зірочки. Лід, дерево, сад, ялинка, Хелловін, весна й осінь теж стали детальнішими."],["Нова бруківка.","З’явилися «Замшіла бруківка» і «Золота дорога». Снігову й осінню бруківку прибрали зі списку, бо сніг і листя вже є в порах року."],["Порядок у скінах.","Лис Мел і зайка Ніка завжди стоять у кінці списку Капі, а нові скіни додаються перед ними. Прибрали «Звичайний» скін Капі, моряка й детектива. Хто їх носив, тепер носить скін епохи."],["Дрібниці.","Вивіска OPEN у вітрині більше не ховається за іншими деталями. Капелюх і шарфик Капі рухаються разом з її диханням."]],"en":[["Magic clouds.","Star clouds are enchanted now: they shimmer from lilac to turquoise and pink, the stars twinkle and star dust sprinkles down. Gold clouds glint, and now and then coins drop from them."],["Lightning in three colours.","Green and red lightning joined the purple one. They sit side by side in the Skins tab, and the clouds are now at the end of the weather list."],["Shops with more detail.","The candy shop got one big long lollipop, candy-cane columns, icing and gumdrops. The golden shop shines: a glint runs across the facade and stars flash on the gold. Ice, wood, garden, Christmas tree, Halloween, spring and autumn shops are more detailed too."],["New cobbles.","Mossy cobbles and the Golden road are here. The snowy and autumn cobbles left the list, because snow and leaves already come with the seasons."],["Skin order.","Mel the fox and Nika the bunny always stay at the end of the Capy list, and new skins go before them. The plain Capy skin, the sailor and the detective are gone. If you wore one, you now wear the era skin."],["Little things.","The OPEN sign in the window no longer hides behind other details. Capy’s hat and scarf move with her breathing."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: чарівні хмари, блискавки трьох кольорів, магазини з деталями й нова бруківка. Гортай сторінки!","en":"Hi, friend! In this issue: magic clouds, lightning in three colours, shops with more detail and new cobbles. Turn the pages!"}},{"ver":11,"uk":[["Газета з інструкцією й планами.","Тепер у газеті три розділи: «Новини», «Інструкція» (як грати) і «Скоро» (що ми готуємо). Текст став меншим і більше не вилазить за поля."],["Швидший початок гри.","Після екскурсії по меню ми прибрали зайве навчання: можна одразу тапати й заробляти. Скринька розробників більше не ховається за Мел і Нікою."],["Колючий Голка й нові рюкзачки.","Їжак Голка став схожий на їжака, а в Капі-дівчинки й Капі-хлопчика замість «футболки» тепер маленький портфель на спині: рожевий або синій."],["Більше героїв епох.","Тепер у кожній епосі треба зловити шістьох героїв замість двох, а часу на це більше. Награда та сама: кристал, і не частіше, ніж раніше."],["Чіткіший нічний магазин.","Нічне світло більше не розмиває вітрину й двері, а лічильник днів у барабані фортуни рахує правильно."],["Шість нових скінів Капі.","Лицар, супергерой, ковбой, фея, вікінг і пілот: їх можна виграти в цирку або купити за кристали у вкладці «Скіни»."],["Піксельні кристали.","Кристал тепер намальований пікселями й має свій вигляд у кожній епосі."]],"en":[["A newspaper with a guide and plans.","The newspaper now has three sections: News, How to play and Coming soon. The text is smaller and no longer runs out of the margins."],["A faster start.","After the menu tour we removed the extra tutorial: you can tap and earn right away. The developers mailbox no longer hides behind Mel and Nika."],["Spiky Spike and new backpacks.","Spike the hedgehog now looks like a hedgehog, and the girl and boy Capy wear a small backpack instead of the “T-shirt”: pink or blue."],["More era heroes.","In every era you now catch six heroes instead of two, and you have more time for it. The reward is the same crystal, and it comes no more often than before."],["A crisper shop at night.","The night glow no longer blurs the window and the door, and the day streak in the fortune drum counts correctly."],["Six new Capy skins.","Knight, superhero, cowboy, fairy, viking and pilot: win them at the circus or buy them for crystals in the Skins tab."],["Pixel crystals.","The crystal is now drawn in pixels and looks different in every era."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: газета з інструкцією, швидший початок і багато виправлень. Гортай сторінки!","en":"Hi, friend! In this issue: a guide in the newspaper, a faster start and many fixes. Turn the pages!"}},{"ver":10,"uk":[["Вступна заставка й екскурсія.","Нова гра тепер починається з маленької історії про Капі, а в кінці Мел і Ніка проводять екскурсію по меню. Заставку можна переглянути знову у вкладці «Щоденник»."]],"en":[["Intro cutscene and menu tour.","A new game now starts with a short story about Capy, and at the end Mel and Nika show you around the menu. You can watch the cutscene again in the Diary tab."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: вступна заставка з екскурсією по меню. Гортай сторінки!","en":"Hi, friend! In this issue: the intro cutscene with a menu tour. Turn the pages!"}},{"ver":9,"uk":[["Грузовик-бетономішалка на будівництві.","Коли магазин росте, приїжджає вантажівка з бетономішалкою, що крутиться, а Бодя в касці носить бетон і цеглу та будує під шатром. Поверхи більше не складаються самі."],["Заставка для кожної епохи.","Нова епоха відкривається своєю сценою: колони й оливкові гілки, стрічка VHS, дзеркальні кулі диско, прибульці аркад, вікно браузера, ліани еко, зорі космосу, неонова сітка. Поруч назва епохи й короткий опис."],["Звуки будівництва.","Гуркіт двигуна, пшик гальм, шум бетону з жолоба й стукіт молотка."],["Цирк приходить частіше.","Тепер він з'являється приблизно раз на 5-8 хвилин, тож колесо фортуни крутиться частіше."],["Магазин часу дорожчий.","Покращення в Магазині часу коштують приблизно в півтора раза більше, а осколки обнулено ще раз, щоб усі починали з однаковим запасом. Куплені покращення, скіни й кристали лишилися."]],"en":[["A mixer truck at the building site.","When the shop grows, a truck with a spinning concrete mixer drives in, and Bodya in a hard hat carries concrete and bricks and builds under the tent. Floors no longer stack up by themselves."],["An intro scene for every epoch.","A new epoch opens with its own scene: columns and olive branches, a VHS tape, disco mirror balls, arcade invaders, a browser window, eco vines, space stars, a neon grid. The epoch name and a short description come with it."],["Building sounds.","An engine rumble, the hiss of the brakes, concrete pouring from the chute and the knock of a hammer."],["The circus comes more often.","It now shows up about every 5-8 minutes, so the Wheel of Fortune spins more often."],["The Time shop costs more.","Time shop upgrades cost about one and a half times as much, and time shards were reset once more so everyone starts even. Upgrades you bought, skins and crystals stay."]],"intro":{"uk":"Привіт, друже! У цьому випуску: вантажівка-бетономішалка, заставки епох, звуки будівництва, частіший цирк і дорожчий Магазин часу. Гортай сторінки!","en":"Hi, friend! In this issue: a mixer truck, epoch intro scenes, building sounds, a more frequent circus and a pricier Time shop. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":8,"uk":[["Новий старт для всіх.","Гру стало занадто легко проходити, тому прогрес скинуто: монети, осколки часу, покращення Магазину часу, рівень магазину, відділи й звірята почалися з нуля. Скіни й кристали лишилися з тобою."],["Великі пишні дерева.","Дерева на вулиці стали більшими, об'ємнішими й гарнішими в кожну пору року: цвіт навесні, плоди й сонячні плями влітку, золото й багрянець восени, засніжені гілки взимку."],["Вечірнє світло.","Вночі маркети й особливо торговий центр світяться яскравіше: тепле світло з поверхів, лампи під стелею й пляма світла на бруківці. Вікна будинків теж гарніші, зі шторами, перемичками й квітами."],["П'ять кольорів будинків по колу.","Будинки на задньому плані тепер чергують п'ять кольорів, а відтінки залежать від епохи."],["Маркети різні.","У кожній епосі й на кожному рівні маркет має свій варіант: навіс, візерунок, шибки, прикраси фасаду й лавка, візок чи плакат біля дверей."],["Справжня зима.","На дахах і вулицях лежить багато снігу, а звірята скаржаться, що холодно, і просять накинути щось теплого."],["Нові репліки.","У кожного звірятка тепер 16 фраз, а ще є зимові й загальні репліки під кожну епоху. Репліки йдуть слідом за звірятком."],["Новий дирижабль.","Повітряне судно стало детальнішим: об'ємний корпус із ребрами, хвіст, гондола з вікнами й гвинти, що крутяться."],["Веселка-скін.","Скін погоди «Веселка» став великим і помітнішим: дугу видно над будинками і на ПК, і на телефоні."]],"en":[["A fresh start for everyone.","The game became too easy, so progress was reset: coins, time shards, Time shop upgrades, shop level, departments and animals start from zero. Your skins and crystals stay with you."],["Big lush trees.","Street trees are bigger, fuller and prettier in every season: blossoms in spring, fruit and sun spots in summer, gold and crimson in autumn, snowy branches in winter."],["Evening lights.","At night the markets, and the mall especially, glow brighter: warm light from the floors, ceiling lamps and a pool of light on the cobbles. House windows are prettier too, with curtains, lintels and flowers."],["Five house colours in a cycle.","The background houses now cycle through five colours, and the shades depend on the era."],["Different markets.","Every era and every level has its own market variant: awning, pattern, panes, facade decor and a bench, bike or poster by the door."],["A real winter.","Lots of snow lies on the roofs and streets, and the animals complain about the cold and ask for something warm."],["New lines.","Each animal now has 16 phrases, plus winter lines and general lines for every era. The bubbles follow the animal."],["A new airship.","The airship is more detailed: a volumetric hull with ribs, a tail, a gondola with windows and spinning propellers."],["The rainbow skin.","The \"Rainbow\" weather skin is bigger and easier to see: the arc rises above the houses on both PC and phone."]],"intro":{"uk":"Привіт, друже! У цьому номері: великі дерева, вечірнє світло, різні маркети, справжня зима, нові репліки, дирижабль і веселка. Гортай сторінки!","en":"Hi, friend! In this issue: big trees, evening lights, different markets, a real winter, new lines, an airship and a rainbow. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":7,"uk":[["Подорож у часі — своя анімація для кожної епохи.","Відродження: давня Греція з колонами, оливковими деревами й звірятами-ангелятками з німбами. Ретро: перемотка старої відеокасети. Диско: дзеркальна куля й танцпол. Аркади: великі пікселі, прибульці й LEVEL UP. Інтернет: цифровий дощ, спливаючі вікна й завантаження. Еко: вітер, листя й ліани. Космос: політ крізь зорі й планети. Неон: тунель з неонових кілець. Звук теж новий: цокання маятника, шестерні, свист і дзвін."],["Різнокольорові будинки й більше неба.","Усі будинки на фоні тепер різних кольорів, звірята-працівники стали більшими й чіткішими, а на ПК з відкритим меню завжди видно більше неба. Подорож у часі можна пропустити дотиком, коли вже бачив її раз, і в кожної епохи свій звук."],["Завдань для розширення стає більше з кожним рівнем.","Щоб збудувати наступний маркет, треба купити першого товару рівня 25, 28, 31, 34 чи 37 разів, а другого 15, 18, 21, 24 чи 27. Звірят цього рівня треба прокачати до 2-го рівня на ранніх етапах і до 3-го на пізніх."],["Торговий центр без нових відділів.","Фудкорт і кінотеатр прибрано: торговий центр лише завершує шлях до подорожі в часі."],["Осколки часу й подорожі.","За подорож тепер 3–9 осколків (+1 до колишнього), більше, якщо в епосі заробити багато. Кожна наступна епоха потребує в 4 рази більше монет, а дохід за подорож росте в 1,8 раза. Тож епохи довші й рівніші. Покращення Магазину часу високих рівнів відкриваються лише після кількох подорожей."],["Будівництво без крана.","Кран прибрано. Тепер Боді сам носить блоки магазину від купи до будівлі й підкидає їх на місце."],["Годинник рухається разом із магазином.","Годинникова вежа торгового центру більше не відстає, коли тапаєш по магазину."],["Вищі будинки.","Будинки позаду магазину стали майже вдвічі вищими, до середини четвертого поверху торгового центру. Небо не зачеплено."],["Капі більша.","Капі виросла на 30%."],["Цирк частіше.","Цирк Фортуни тепер приїздить трохи частіше."]],"en":[["Time trip: its own animation for every era.","Renaissance: ancient Greece with columns, olive trees and angel animals with halos. Retro: rewinding an old video tape. Disco: a mirror ball and dance floor. Arcade: big pixels, invaders and LEVEL UP. Internet: digital rain, pop-ups and loading. Eco: wind, leaves and vines. Space: a flight through stars and planets. Neon: a tunnel of neon rings. The sound is new too: pendulum ticks, gears, a whoosh and a chime."],["Colourful houses and more sky.","Every house in the background now has its own colour, the working animals are bigger and clearer, and on PC with the menu open you now see more sky. You can skip the time trip with a tap once you have seen it, and every era has its own sound."],["More tasks for expanding on every level.","To build the next market you need to buy the level's first product 25, 28, 31, 34 or 37 times and the second 15, 18, 21, 24 or 27 times. Animals of this level need level 2 on the early stages and level 3 on the late ones."],["A mall without new departments.","The food court and the cinema department are gone: the mall only completes the road to a time trip."],["Time shards and trips.","A trip now gives 3-9 shards (+1 more than before), more if you went far in the era. Every next era needs 4 times more coins and a trip multiplies income by 1.8. Eras are longer and steadier. High-level Time shop upgrades unlock only after several trips."],["Building without a crane.","The crane is gone. Now Bodya carries the shop's blocks from the pile to the building himself and tosses them into place."],["The clock moves with the shop.","The mall clock tower no longer lags when you tap the shop."],["Taller houses.","The houses behind the shop are nearly twice as tall now, up to the middle of the mall's fourth floor. The sky is untouched."],["Capy is bigger.","Capy grew by 30%."],["Circus more often.","The Fortune Circus comes by a little more often."]],"intro":{"uk":"Привіт, друже! У цьому номері: три нові подорожі в часі, більше завдань для розширення, вищі будинки, Боді з блоками й Капі побільшала. Гортай сторінки!","en":"Hi, friend! In this issue: three new time trips, more tasks for expanding, taller houses, Bodya with blocks and a bigger Capy. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":6,"uk":[["Павільйони на поверхах.","У маркетах і торговому центрі на кожному поверсі з’явилися павільйони під тему епохи: одяг із манекенами, іграшки, техніка, книжки, прикраси й рослини. Поки відділ не куплено, павільйон зачинений жалюзі. А що вищий рівень відділу, то повніша вітрина. На широких поверхах з’явилася кав’ярня з прилавком."],["Магазин часу став дорожчим.","«Швидкий старт» прибрано. Усі покращення стали слабшими, але дорожчими, щоб гра не прискорювалася. З’явилося «Золоте чуття»: золоті покупці приходять частіше. Осколки, які були витрачені в старому магазині, повернуто."],["Лис Мел.","Скін Мел тепер лис, а не лисиця. Хитрий лише в ціні."],["Вивіска без перекриттів.","Вивіска CAPYTAP на даху більше нічим не накрита: прапорці, димарі й прикраси стоять осторонь, а годинникова вежа піднята над нею."],["Крапля на місці.","Крапелька, що вмикає дощ, тепер висить на дереві праворуч від магазину й рухається лише разом з вулицею."],["Більше неба на телефоні.","На телефоні над дахом лишається більше неба, особливо коли відкрито меню."],["Чіткі рамки меню.","Рамка меню стала товщою й кольоровою. Вкладки мають виразний контур, як аркуші в таблиці: обрана світла, з кольоровою планкою знизу."],["Лічильник.","Кристали й осколки стоять стовпчиком, а великі числа більше не вилазять за край екрана."]],"en":[["Pavilions on every floor.","Shops and the mall now have pavilions on each floor, themed to the era: clothes with mannequins, toys, tech, books, jewellery and plants. Until a department is bought its pavilion is shut behind shutters. The higher the department level, the fuller the display. Wide floors also got a cafe with a counter."],["The Time shop costs more.","\"Head Start\" is gone. Every upgrade is weaker but pricier, so the game does not speed up. A new upgrade, \"Golden Nose\", makes golden shoppers come more often. Shards spent in the old shop were refunded."],["Mel the fox.","The Mel skin is now a he-fox. Sly only about the price."],["A clear sign.","The CAPYTAP roof sign is no longer covered by anything: flags, chimneys and decorations stand aside, and the clock tower is lifted above it."],["The drop stays put.","The little drop that turns the rain on now hangs on the tree to the right of the shop and moves only with the street."],["More sky on the phone.","On a phone there is more sky above the roof, especially when the menu is open."],["Crisp menu frames.","The menu frame is thicker and coloured. Tabs have a clear outline like sheets in a spreadsheet: the selected one is light with a coloured bar below."],["The counter.","Crystals and shards are stacked in a column, and big numbers no longer run off the edge of the screen."]],"intro":{"uk":"Привіт, друже! У цьому номері: павільйони на кожному поверсі, дорожчий Магазин часу, чіткі рамки меню й багато дрібниць. Гортай сторінки!","en":"Hi, friend! In this issue: pavilions on every floor, a pricier Time shop, crisp menu frames and many small things. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":5,"uk":[["Осколки часу й кристали.","Тепер дві валюти. Осколки часу (фіолетові) дає подорож у часі, і за них купуються покращення в Магазині часу. Кристали випадають з бустів, цирку й золотих покупців, і за них купуються скіни. Кожна подорож у часі ще й назавжди дає ×2 до тапів і доходу."],["Одна відьма.","Відьми більше не літають просто так. На Хелловін замість цирку прилітає лише одна відьма на мітлі. Потім вона запрошує зіграти в «Три казанки». Зелену бабусю прибрали."],["Нові лапки для хатки.","Хатка відьми тепер стоїть на справжніх курячих лапках: з коліньми, лусочками, пальцями й кігтями. Сама відьма стала піксельнішою."],["Скіни говорять.","У кожного скіна є своя репліка: пірат кричить по-піратськи, астронавт просить орбіту цін. Одягни скін і тапни по Капі. А ще з’явилися два скіни розробників: лис Мел і зайка Ніка. Вони безкоштовні."],["Золоті покупці.","Золоті звірята тепер просто золоті. Скіни, капелюхи й шарфи на них не вдягаються."],["Очі на місці.","Костюми героїв більше не закривають звірятам очі. А в Капі прибрали підсвітку, що відставала від скіна."],["Газета MEL & NIKA.","Газета тепер піксельна, з іменами редакторів і вкладками. У вкладках можна перечитати попередні випуски, а кнопка «Написати розробникам» надішле нам твою думку."],["Більший маркет на ПК.","Коли магазин росте, на комп’ютері картинка трохи віддаляється, щоб усе вміщалося зручно."],["Меню на телефоні.","Меню на вертикальному телефоні більше не залазить на цирк і дорогу: сцена тепер закінчується над панеллю."],["Кінозал у торговому центрі.","На торговому центрі з’явився п’ятий поверх із кінозалом: екран, завіси, крісла й неонова вивіска CINEMA. На екрані йде «кіно». Менші маркети теж стали трохи сучаснішими, а на ПК більше неба й ширша бруківка."]],"en":[["Time shards and crystals.","There are now two currencies. Time shards (purple) come from time travel and buy upgrades in the Time shop. Crystals drop from boosts, the circus and golden shoppers, and buy skins. And every time trip permanently gives ×2 to taps and income."],["Just one witch.","Witches no longer fly around for no reason. On Halloween, instead of the circus, a single witch on a broom arrives. Then she invites you to play \"Three cauldrons\". The green granny is gone."],["New legs for the hut.","The witch’s hut now stands on real chicken legs: knees, scales, toes and claws. The witch herself got more pixelated."],["Skins talk.","Every skin has its own line: the pirate shouts like a pirate, the astronaut asks for the orbit of prices. Wear a skin and tap Capy. Two developer skins are new: Mel the fox and Nika the bunny. They are free."],["Golden shoppers.","Golden animals are now just golden. Skins, hats and scarves do not go on them."],["Eyes in place.","Hero costumes no longer cover the animals’ eyes. And the glow around Capy, which lagged behind the skin, is gone."],["The MEL & NIKA paper.","The paper is now pixel-style, with the editors’ names and tabs. Use the tabs to reread earlier issues, and the “Write to the developers” button sends us your thoughts."],["A bigger market on PC.","When the shop grows, the picture on a computer zooms out a little so everything fits comfortably."],["The phone menu.","On a vertical phone the menu no longer covers the circus and the road: the scene now ends above the panel."],["A cinema in the mall.","The mall got a fifth floor with a cinema: a screen, curtains, seats and a neon CINEMA sign. The screen plays a little movie. Smaller shops got a bit more modern too, and on PC there is more sky and wider cobbles."]],"intro":{"uk":"Привіт, друже! У цьому номері: дві валюти (осколки й кристали), одна справжня відьма й хатка на курячих лапках, а ще скіни навчилися говорити. Гортай сторінки!","en":"Hi, friend! In this issue: two currencies (shards and crystals), one real witch and a hut on chicken legs, and skins have learned to talk. Turn the pages!"},"pics":{"0":"shards","1":"hut","2":"witch"},"caps":{"uk":{"0":"Осколок часу й кристал.","1":"Хатка відьми на новеньких лапках.","2":"Єдина відьма Хелловіну."},"en":{"0":"A time shard and a crystal.","1":"The witch’s hut on brand-new legs.","2":"The one witch of Halloween."}}},{"ver":4,"uk":[["Газета замість листа.","Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше."],["Годинникова вежа.","На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху."],["Нове завантаження.","Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну."],["Нова відьма.","Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф."],["Більші маркети.","На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли."],["Надкусані хмари.","У скіні «Цукрові хмари» частину хмар ніби надкусили."],["Крапля дощу.","Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину."],["Чіткі рамки.","Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком."],["Капі вночі.","У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят."]],"en":[["A newspaper instead of a letter.","The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows."],["The clock tower.","A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era."],["New loading screen.","A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one."],["A new witch.","The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars."],["Bigger markets.","On a vertical phone markets of every level are bigger and the brown strips at the edges are gone."],["Bitten clouds.","In the Cotton Clouds skin some of the clouds look as if somebody took a bite."],["The rain drop.","The little drop that turns the rain on now hangs on the right by the shop sign."],["Crisp frames.","Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock."],["Capy at night.","In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals."]],"intro":{"uk":"Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!","en":"Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!"},"pics":{"1":"clock","2":"city","3":"witch"},"caps":{"uk":{"1":"Годинникова вежа торгового центру опівночі.","2":"Нічне місто на екрані завантаження.","3":"Нова відьма облітає місто."},"en":{"1":"The mall clock tower at midnight.","2":"The night city on the loading screen.","3":"The new witch circles the town."}}},{"ver":3,"uk":[["Баба Яга на Хелловін.","Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки»."],["Темніший Хелловін.","Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі."],["Нова пошта.","Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання."],["Нова будівля під полотном.","Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає."],["Ширша вулиця.","Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів."],["Пелюстки навесні.","Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало."],["Магазин часу.","У майстерні часу список покращень за кристали тепер так і називається."],["Завантаження.","На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки."],["Вікна й пара.","У всіх будинків є вікна, а пара з люків стала лагіднішою."]],"en":[["Baba Yaga for Halloween.","Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game."],["A darker Halloween.","The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom."],["New mail.","A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye."],["A new build under a tarp.","When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears."],["A wider street.","The town got wider: scroll further left and right, there are more houses, trees and lamps."],["Spring petals.","In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn."],["Time shop.","In the Time Workshop the crystal upgrade list is now called just that."],["Loading screen.","On the loading screen Capy smoothly runs through the night city and pixel coins."],["Windows and steam.","All houses have windows, and the manhole steam is gentler."]],"intro":{"uk":"Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.","en":"Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done."},"pics":{"0":"hut","1":"witch","2":"van","3":"tent"},"caps":{"uk":{"0":"Хатка на курячих лапках прийшла.","1":"Відьма на мітлі над дахами.","2":"Пошта привозить новини.","3":"Нове будівництво під білим полотном."},"en":{"0":"The hut on chicken legs has arrived.","1":"A witch on a broom over the roofs.","2":"The mail van brings the news.","3":"New building work under a white tarp."}}},{"ver":2,"uk":[["Місто ожило.","Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла."],["Золоті покупці й завдання дня.","Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами."],["Цирк і барабан — окремо.","Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати."],["Скіни для всіх.","Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку."],["Пори року.","Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою."],["Нова погода.","Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку)."],["Бодя будує.","Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют."],["І ця скринька.","Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає."],["Свіже.","Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший."]],"en":[["The town came alive.","More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out."],["Golden shoppers and daily tasks.","Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards."],["Circus and drum, separate.","Both can give crystals, but events are a little rarer now, so waiting is more fun."],["Skins for everyone.","Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus."],["Seasons.","A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show."],["New weather.","Smooth purple lightning and a huge rainbow over the town (you can win them at the circus)."],["Bodie builds.","A new shop level now takes a long, epic build: hammer, crane, dust, fireworks."],["And this mailbox.","It is red because it carries hot news only. Check it when the flag blinks."],["Fresh.","The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer."]],"intro":{"uk":"Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.","en":"Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done."},"pics":{},"caps":{"uk":{},"en":{}}}];
+const NEWS_ISSUES = [{"ver":15,"uk":[["Планети в Космосі справжні.","Планета з кільцем і місяць стали об’ємними: світло, тінь, кратери, а кільце відкидає тінь на планету. Вони висять у небі й повільно пливуть, коли гортаєш вулицю, а не липнуть до екрана."],["Збереження тепер подвійне.","Гра тримає другу копію прогресу й сама відновлює її, якщо основне збереження пошкодилось. Раз на тиждень вона нагадає скопіювати код, а в налаштуваннях видно, коли це було востаннє."],["Режим економії.","Якщо гра гальмує, вона сама вимикає дощ, пару, птахів і зайві частинки. Увімкнути чи вимкнути його можна в налаштуваннях."],["Звіт про помилки.","У налаштуваннях з’явилась кнопка «Скопіювати звіт». Якщо щось зламалось, надішли цей текст розробникам. Особистих даних там нема."],["Про гру й політика конфіденційності.","Нова картка «Про гру» з версією та ліцензією шрифту і кнопка політики конфіденційності. Поштову скриньку розробників теж налаштовано: capytap.games@gmail.com."],["Дрібниці.","Гра краще працює у версії для телефона: збереження не губиться, кнопка «Назад» і пауза у фоні. Перед кожним випуском усе перевіряє автоматичний тест."]],"en":[["Real planets in Space.","The ringed planet and the moon now look three-dimensional: light, shadow, craters, and the ring casts a shadow on the planet. They hang in the sky and drift slowly when you scroll the street instead of sticking to the screen."],["Your save is now doubled.","The game keeps a second copy of your progress and restores it by itself if the main save gets damaged. Once a week it reminds you to copy your code, and Settings shows when you last did."],["Power saving mode.","If the game slows down, it switches off rain, steam, birds and extra particles by itself. You can turn it on or off in Settings."],["Error report.","Settings now has a “Copy report” button. If something breaks, send that text to the developers. It contains no personal data."],["About and privacy policy.","A new “About” card with the version and the font license, and a privacy policy button. The developers’ mailbox is set up too: capytap.games@gmail.com."],["Small things.","The phone version works better: saves are not lost, the Back button and pause in the background work. An automatic test checks everything before each release."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: справжні планети в Космосі, подвійне збереження, режим економії і звіт про помилки. Гортай сторінки!","en":"Hi, friend! In this issue: real planets in Space, a doubled save, power saving mode and an error report. Turn the pages!"}},{"ver":14,"uk":[["Нове небо в кожній епосі.","Відродження: повітряні кулі. Ретро: літак із полотнищем SALE. Диско: лазерний віяр. Аркади: тетріс-блоки, що падають. Інтернет: дрони-кур’єри з посилками. Еко: літаючі острівці з деревами й водоспадами. Космос: планета з кільцем і метеорний дощ."],["Птахи за бажанням.","З другої епохи птахів у небі більше нема, щоб не заважали новим прикрасам. Хто за ними сумує, може ввімкнути «Птахи в пізніх епохах» у налаштуваннях."],["Будівництво з двома машинами.","До мішалки приїжджає бетононасос зі стрілою. Барабан мішалки тепер крутиться, а стріла гойдається, поки качає бетон."],["Свої пакети в кожної епохи.","Кошик, паперовий пакет, блискучий пакет, коробка з грою, посилка, сітка з овочами, капсула й неонова торба. Покупці виходять з покупками відповідної епохи."],["Золота дорога сяє.","По золотій бруківці біжить смуга блиску, а на цеглинах спалахують зірочки."],["Живіші репліки.","Скіни Капі говорять різними фразами, не лише жартами про ціни. У Мела й Ніки їх по вісім."],["Дрібниці.","Іконки меню на телефоні більші. У заставці Капі з чорним рюкзаком, без квіточки на голові, а Мел і Ніка трохи менші. Заставку показують лише раз. Нічний ліхтар більше не засвічує Капі."]],"en":[["A new sky in every era.","Renaissance: hot-air balloons. Retro: a plane with a SALE banner. Disco: a laser fan. Arcade: falling Tetris blocks. Internet: courier drones with parcels. Eco: floating islands with trees and waterfalls. Space: a ringed planet and a meteor shower."],["Birds on request.","From the second era on there are no birds in the sky, so they do not hide the new decorations. If you miss them, switch on “Birds in later eras” in Settings."],["Building with two machines.","A concrete pump with a boom now joins the mixer. The mixer drum spins, and the boom sways while it pumps concrete."],["Own bags for every era.","A basket, a paper bag, a glittery bag, a game box, a parcel, a net of veggies, a capsule and a neon tote. Customers leave with the bag of their era."],["The golden road shines.","A streak of light runs across the golden cobbles and stars flash on the bricks."],["Livelier lines.","Capy skins say different things, not only price jokes. Mel and Nika have eight lines each."],["Little things.","Menu icons are bigger on phones. In the intro Capy has a black backpack and no flower on the head, and Mel and Nika are a bit smaller. The intro plays only once. The night street lamp no longer over-lights Capy."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: нове небо в кожній епосі, дві будівельні машини й пакети по епохах. Гортай сторінки!","en":"Hi, friend! In this issue: a new sky in every era, two building machines and bags for every era. Turn the pages!"}},{"ver":13,"uk":[["Капі стала детальнішою.","Усі старі скіни Капі оновили так само детально, як супергероя: пірат з папугою, астронавт зі скляним шоломом, чарівник і Дід Мороз з бородами, шеф-кухар з великим ковпаком, мандрівник з рюкзаком і килимком, відьма з гарбузом, квіткова Капі з метеликом, пляжна з м’ячем, осінна з розвіяним шарфом."],["Скіни епох.","Теж стали детальнішими: Відродження з гофрованим коміром, Ретро з радіо, Диско з дзеркальною кулею, Аркади з геймпадом, Інтернет з рюкзаком, Еко з паростком на рюкзаку, Космос зі скляним шоломом і Неон з сяючим візором."],["Рюкзак для заставки.","Ми ще обираємо новий рюкзак для вступної заставки, тому він з’явиться трохи пізніше."]],"en":[["Capy got more detailed.","All the older Capy skins now have the same detail as the superhero: the pirate with a parrot, the astronaut with a glass helmet, the wizard and Santa with beards, the chef with a big hat, the explorer with a backpack and bedroll, the witch with a pumpkin, the flower Capy with a butterfly, the beach one with a ball, and the autumn one with a flowing scarf."],["Era skins.","They are more detailed too: Renaissance with a ruff collar, Retro with a radio, Disco with a mirror ball, Arcade with a gamepad, Internet with a backpack, Eco with a sprout on the backpack, Space with a glass helmet and Neon with a glowing visor."],["Backpack for the intro.","We are still choosing a new backpack for the intro cutscene, so it will come a little later."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: старі скіни Капі стали набагато детальнішими.","en":"Hi, friend! In this issue: the older Capy skins got much more detail."}},{"ver":12,"uk":[["Магічні хмари.","Зоряні хмари тепер чарівні: вони переливаються від бузкового до бірюзового й рожевого, зорі мерехтять, а вниз сиплеться зоряний пил. Золоті хмари виблискують, а час від часу з них падають монети."],["Блискавки трьох кольорів.","До фіолетових блискавок додалися зелені й червоні. У вкладці «Скіни» вони стоять поруч, а хмари тепер у кінці списку погоди."],["Магазини з деталями.","Цукерковий магазин отримав один великий довгий лоліпоп, колони-тростини, глазур і мармеладки. Золотий блищить: по фасаду біжить блиск, а на золоті спалахують зірочки. Лід, дерево, сад, ялинка, Хелловін, весна й осінь теж стали детальнішими."],["Нова бруківка.","З’явилися «Замшіла бруківка» і «Золота дорога». Снігову й осінню бруківку прибрали зі списку, бо сніг і листя вже є в порах року."],["Порядок у скінах.","Лис Мел і зайка Ніка завжди стоять у кінці списку Капі, а нові скіни додаються перед ними. Прибрали «Звичайний» скін Капі, моряка й детектива. Хто їх носив, тепер носить скін епохи."],["Дрібниці.","Вивіска OPEN у вітрині більше не ховається за іншими деталями. Капелюх і шарфик Капі рухаються разом з її диханням."]],"en":[["Magic clouds.","Star clouds are enchanted now: they shimmer from lilac to turquoise and pink, the stars twinkle and star dust sprinkles down. Gold clouds glint, and now and then coins drop from them."],["Lightning in three colours.","Green and red lightning joined the purple one. They sit side by side in the Skins tab, and the clouds are now at the end of the weather list."],["Shops with more detail.","The candy shop got one big long lollipop, candy-cane columns, icing and gumdrops. The golden shop shines: a glint runs across the facade and stars flash on the gold. Ice, wood, garden, Christmas tree, Halloween, spring and autumn shops are more detailed too."],["New cobbles.","Mossy cobbles and the Golden road are here. The snowy and autumn cobbles left the list, because snow and leaves already come with the seasons."],["Skin order.","Mel the fox and Nika the bunny always stay at the end of the Capy list, and new skins go before them. The plain Capy skin, the sailor and the detective are gone. If you wore one, you now wear the era skin."],["Little things.","The OPEN sign in the window no longer hides behind other details. Capy’s hat and scarf move with her breathing."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: чарівні хмари, блискавки трьох кольорів, магазини з деталями й нова бруківка. Гортай сторінки!","en":"Hi, friend! In this issue: magic clouds, lightning in three colours, shops with more detail and new cobbles. Turn the pages!"}},{"ver":11,"uk":[["Газета з інструкцією й планами.","Тепер у газеті три розділи: «Новини», «Інструкція» (як грати) і «Скоро» (що ми готуємо). Текст став меншим і більше не вилазить за поля."],["Швидший початок гри.","Після екскурсії по меню ми прибрали зайве навчання: можна одразу тапати й заробляти. Скринька розробників більше не ховається за Мел і Нікою."],["Колючий Голка й нові рюкзачки.","Їжак Голка став схожий на їжака, а в Капі-дівчинки й Капі-хлопчика замість «футболки» тепер маленький портфель на спині: рожевий або синій."],["Більше героїв епох.","Тепер у кожній епосі треба зловити шістьох героїв замість двох, а часу на це більше. Награда та сама: кристал, і не частіше, ніж раніше."],["Чіткіший нічний магазин.","Нічне світло більше не розмиває вітрину й двері, а лічильник днів у барабані фортуни рахує правильно."],["Шість нових скінів Капі.","Лицар, супергерой, ковбой, фея, вікінг і пілот: їх можна виграти в цирку або купити за кристали у вкладці «Скіни»."],["Піксельні кристали.","Кристал тепер намальований пікселями й має свій вигляд у кожній епосі."]],"en":[["A newspaper with a guide and plans.","The newspaper now has three sections: News, How to play and Coming soon. The text is smaller and no longer runs out of the margins."],["A faster start.","After the menu tour we removed the extra tutorial: you can tap and earn right away. The developers mailbox no longer hides behind Mel and Nika."],["Spiky Spike and new backpacks.","Spike the hedgehog now looks like a hedgehog, and the girl and boy Capy wear a small backpack instead of the “T-shirt”: pink or blue."],["More era heroes.","In every era you now catch six heroes instead of two, and you have more time for it. The reward is the same crystal, and it comes no more often than before."],["A crisper shop at night.","The night glow no longer blurs the window and the door, and the day streak in the fortune drum counts correctly."],["Six new Capy skins.","Knight, superhero, cowboy, fairy, viking and pilot: win them at the circus or buy them for crystals in the Skins tab."],["Pixel crystals.","The crystal is now drawn in pixels and looks different in every era."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: газета з інструкцією, швидший початок і багато виправлень. Гортай сторінки!","en":"Hi, friend! In this issue: a guide in the newspaper, a faster start and many fixes. Turn the pages!"}},{"ver":10,"uk":[["Вступна заставка й екскурсія.","Нова гра тепер починається з маленької історії про Капі, а в кінці Мел і Ніка проводять екскурсію по меню. Заставку можна переглянути знову у вкладці «Щоденник»."]],"en":[["Intro cutscene and menu tour.","A new game now starts with a short story about Capy, and at the end Mel and Nika show you around the menu. You can watch the cutscene again in the Diary tab."]],"pics":{},"intro":{"uk":"Привіт, друже! У цьому випуску: вступна заставка з екскурсією по меню. Гортай сторінки!","en":"Hi, friend! In this issue: the intro cutscene with a menu tour. Turn the pages!"}},{"ver":9,"uk":[["Грузовик-бетономішалка на будівництві.","Коли магазин росте, приїжджає вантажівка з бетономішалкою, що крутиться, а Бодя в касці носить бетон і цеглу та будує під шатром. Поверхи більше не складаються самі."],["Заставка для кожної епохи.","Нова епоха відкривається своєю сценою: колони й оливкові гілки, стрічка VHS, дзеркальні кулі диско, прибульці аркад, вікно браузера, ліани еко, зорі космосу, неонова сітка. Поруч назва епохи й короткий опис."],["Звуки будівництва.","Гуркіт двигуна, пшик гальм, шум бетону з жолоба й стукіт молотка."],["Цирк приходить частіше.","Тепер він з'являється приблизно раз на 5-8 хвилин, тож колесо фортуни крутиться частіше."],["Магазин часу дорожчий.","Покращення в Магазині часу коштують приблизно в півтора раза більше, а осколки обнулено ще раз, щоб усі починали з однаковим запасом. Куплені покращення, скіни й кристали лишилися."]],"en":[["A mixer truck at the building site.","When the shop grows, a truck with a spinning concrete mixer drives in, and Bodya in a hard hat carries concrete and bricks and builds under the tent. Floors no longer stack up by themselves."],["An intro scene for every epoch.","A new epoch opens with its own scene: columns and olive branches, a VHS tape, disco mirror balls, arcade invaders, a browser window, eco vines, space stars, a neon grid. The epoch name and a short description come with it."],["Building sounds.","An engine rumble, the hiss of the brakes, concrete pouring from the chute and the knock of a hammer."],["The circus comes more often.","It now shows up about every 5-8 minutes, so the Wheel of Fortune spins more often."],["The Time shop costs more.","Time shop upgrades cost about one and a half times as much, and time shards were reset once more so everyone starts even. Upgrades you bought, skins and crystals stay."]],"intro":{"uk":"Привіт, друже! У цьому випуску: вантажівка-бетономішалка, заставки епох, звуки будівництва, частіший цирк і дорожчий Магазин часу. Гортай сторінки!","en":"Hi, friend! In this issue: a mixer truck, epoch intro scenes, building sounds, a more frequent circus and a pricier Time shop. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":8,"uk":[["Новий старт для всіх.","Гру стало занадто легко проходити, тому прогрес скинуто: монети, осколки часу, покращення Магазину часу, рівень магазину, відділи й звірята почалися з нуля. Скіни й кристали лишилися з тобою."],["Великі пишні дерева.","Дерева на вулиці стали більшими, об'ємнішими й гарнішими в кожну пору року: цвіт навесні, плоди й сонячні плями влітку, золото й багрянець восени, засніжені гілки взимку."],["Вечірнє світло.","Вночі маркети й особливо торговий центр світяться яскравіше: тепле світло з поверхів, лампи під стелею й пляма світла на бруківці. Вікна будинків теж гарніші, зі шторами, перемичками й квітами."],["П'ять кольорів будинків по колу.","Будинки на задньому плані тепер чергують п'ять кольорів, а відтінки залежать від епохи."],["Маркети різні.","У кожній епосі й на кожному рівні маркет має свій варіант: навіс, візерунок, шибки, прикраси фасаду й лавка, візок чи плакат біля дверей."],["Справжня зима.","На дахах і вулицях лежить багато снігу, а звірята скаржаться, що холодно, і просять накинути щось теплого."],["Нові репліки.","У кожного звірятка тепер 16 фраз, а ще є зимові й загальні репліки під кожну епоху. Репліки йдуть слідом за звірятком."],["Новий дирижабль.","Повітряне судно стало детальнішим: об'ємний корпус із ребрами, хвіст, гондола з вікнами й гвинти, що крутяться."],["Веселка-скін.","Скін погоди «Веселка» став великим і помітнішим: дугу видно над будинками і на ПК, і на телефоні."]],"en":[["A fresh start for everyone.","The game became too easy, so progress was reset: coins, time shards, Time shop upgrades, shop level, departments and animals start from zero. Your skins and crystals stay with you."],["Big lush trees.","Street trees are bigger, fuller and prettier in every season: blossoms in spring, fruit and sun spots in summer, gold and crimson in autumn, snowy branches in winter."],["Evening lights.","At night the markets, and the mall especially, glow brighter: warm light from the floors, ceiling lamps and a pool of light on the cobbles. House windows are prettier too, with curtains, lintels and flowers."],["Five house colours in a cycle.","The background houses now cycle through five colours, and the shades depend on the era."],["Different markets.","Every era and every level has its own market variant: awning, pattern, panes, facade decor and a bench, bike or poster by the door."],["A real winter.","Lots of snow lies on the roofs and streets, and the animals complain about the cold and ask for something warm."],["New lines.","Each animal now has 16 phrases, plus winter lines and general lines for every era. The bubbles follow the animal."],["A new airship.","The airship is more detailed: a volumetric hull with ribs, a tail, a gondola with windows and spinning propellers."],["The rainbow skin.","The \"Rainbow\" weather skin is bigger and easier to see: the arc rises above the houses on both PC and phone."]],"intro":{"uk":"Привіт, друже! У цьому номері: великі дерева, вечірнє світло, різні маркети, справжня зима, нові репліки, дирижабль і веселка. Гортай сторінки!","en":"Hi, friend! In this issue: big trees, evening lights, different markets, a real winter, new lines, an airship and a rainbow. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":7,"uk":[["Подорож у часі — своя анімація для кожної епохи.","Відродження: давня Греція з колонами, оливковими деревами й звірятами-ангелятками з німбами. Ретро: перемотка старої відеокасети. Диско: дзеркальна куля й танцпол. Аркади: великі пікселі, прибульці й LEVEL UP. Інтернет: цифровий дощ, спливаючі вікна й завантаження. Еко: вітер, листя й ліани. Космос: політ крізь зорі й планети. Неон: тунель з неонових кілець. Звук теж новий: цокання маятника, шестерні, свист і дзвін."],["Різнокольорові будинки й більше неба.","Усі будинки на фоні тепер різних кольорів, звірята-працівники стали більшими й чіткішими, а на ПК з відкритим меню завжди видно більше неба. Подорож у часі можна пропустити дотиком, коли вже бачив її раз, і в кожної епохи свій звук."],["Завдань для розширення стає більше з кожним рівнем.","Щоб збудувати наступний маркет, треба купити першого товару рівня 25, 28, 31, 34 чи 37 разів, а другого 15, 18, 21, 24 чи 27. Звірят цього рівня треба прокачати до 2-го рівня на ранніх етапах і до 3-го на пізніх."],["Торговий центр без нових відділів.","Фудкорт і кінотеатр прибрано: торговий центр лише завершує шлях до подорожі в часі."],["Осколки часу й подорожі.","За подорож тепер 3–9 осколків (+1 до колишнього), більше, якщо в епосі заробити багато. Кожна наступна епоха потребує в 4 рази більше монет, а дохід за подорож росте в 1,8 раза. Тож епохи довші й рівніші. Покращення Магазину часу високих рівнів відкриваються лише після кількох подорожей."],["Будівництво без крана.","Кран прибрано. Тепер Боді сам носить блоки магазину від купи до будівлі й підкидає їх на місце."],["Годинник рухається разом із магазином.","Годинникова вежа торгового центру більше не відстає, коли тапаєш по магазину."],["Вищі будинки.","Будинки позаду магазину стали майже вдвічі вищими, до середини четвертого поверху торгового центру. Небо не зачеплено."],["Капі більша.","Капі виросла на 30%."],["Цирк частіше.","Цирк Фортуни тепер приїздить трохи частіше."]],"en":[["Time trip: its own animation for every era.","Renaissance: ancient Greece with columns, olive trees and angel animals with halos. Retro: rewinding an old video tape. Disco: a mirror ball and dance floor. Arcade: big pixels, invaders and LEVEL UP. Internet: digital rain, pop-ups and loading. Eco: wind, leaves and vines. Space: a flight through stars and planets. Neon: a tunnel of neon rings. The sound is new too: pendulum ticks, gears, a whoosh and a chime."],["Colourful houses and more sky.","Every house in the background now has its own colour, the working animals are bigger and clearer, and on PC with the menu open you now see more sky. You can skip the time trip with a tap once you have seen it, and every era has its own sound."],["More tasks for expanding on every level.","To build the next market you need to buy the level's first product 25, 28, 31, 34 or 37 times and the second 15, 18, 21, 24 or 27 times. Animals of this level need level 2 on the early stages and level 3 on the late ones."],["A mall without new departments.","The food court and the cinema department are gone: the mall only completes the road to a time trip."],["Time shards and trips.","A trip now gives 3-9 shards (+1 more than before), more if you went far in the era. Every next era needs 4 times more coins and a trip multiplies income by 1.8. Eras are longer and steadier. High-level Time shop upgrades unlock only after several trips."],["Building without a crane.","The crane is gone. Now Bodya carries the shop's blocks from the pile to the building himself and tosses them into place."],["The clock moves with the shop.","The mall clock tower no longer lags when you tap the shop."],["Taller houses.","The houses behind the shop are nearly twice as tall now, up to the middle of the mall's fourth floor. The sky is untouched."],["Capy is bigger.","Capy grew by 30%."],["Circus more often.","The Fortune Circus comes by a little more often."]],"intro":{"uk":"Привіт, друже! У цьому номері: три нові подорожі в часі, більше завдань для розширення, вищі будинки, Боді з блоками й Капі побільшала. Гортай сторінки!","en":"Hi, friend! In this issue: three new time trips, more tasks for expanding, taller houses, Bodya with blocks and a bigger Capy. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":6,"uk":[["Павільйони на поверхах.","У маркетах і торговому центрі на кожному поверсі з’явилися павільйони під тему епохи: одяг із манекенами, іграшки, техніка, книжки, прикраси й рослини. Поки відділ не куплено, павільйон зачинений жалюзі. А що вищий рівень відділу, то повніша вітрина. На широких поверхах з’явилася кав’ярня з прилавком."],["Магазин часу став дорожчим.","«Швидкий старт» прибрано. Усі покращення стали слабшими, але дорожчими, щоб гра не прискорювалася. З’явилося «Золоте чуття»: золоті покупці приходять частіше. Осколки, які були витрачені в старому магазині, повернуто."],["Лис Мел.","Скін Мел тепер лис, а не лисиця. Хитрий лише в ціні."],["Вивіска без перекриттів.","Вивіска CAPYTAP на даху більше нічим не накрита: прапорці, димарі й прикраси стоять осторонь, а годинникова вежа піднята над нею."],["Крапля на місці.","Крапелька, що вмикає дощ, тепер висить на дереві праворуч від магазину й рухається лише разом з вулицею."],["Більше неба на телефоні.","На телефоні над дахом лишається більше неба, особливо коли відкрито меню."],["Чіткі рамки меню.","Рамка меню стала товщою й кольоровою. Вкладки мають виразний контур, як аркуші в таблиці: обрана світла, з кольоровою планкою знизу."],["Лічильник.","Кристали й осколки стоять стовпчиком, а великі числа більше не вилазять за край екрана."]],"en":[["Pavilions on every floor.","Shops and the mall now have pavilions on each floor, themed to the era: clothes with mannequins, toys, tech, books, jewellery and plants. Until a department is bought its pavilion is shut behind shutters. The higher the department level, the fuller the display. Wide floors also got a cafe with a counter."],["The Time shop costs more.","\"Head Start\" is gone. Every upgrade is weaker but pricier, so the game does not speed up. A new upgrade, \"Golden Nose\", makes golden shoppers come more often. Shards spent in the old shop were refunded."],["Mel the fox.","The Mel skin is now a he-fox. Sly only about the price."],["A clear sign.","The CAPYTAP roof sign is no longer covered by anything: flags, chimneys and decorations stand aside, and the clock tower is lifted above it."],["The drop stays put.","The little drop that turns the rain on now hangs on the tree to the right of the shop and moves only with the street."],["More sky on the phone.","On a phone there is more sky above the roof, especially when the menu is open."],["Crisp menu frames.","The menu frame is thicker and coloured. Tabs have a clear outline like sheets in a spreadsheet: the selected one is light with a coloured bar below."],["The counter.","Crystals and shards are stacked in a column, and big numbers no longer run off the edge of the screen."]],"intro":{"uk":"Привіт, друже! У цьому номері: павільйони на кожному поверсі, дорожчий Магазин часу, чіткі рамки меню й багато дрібниць. Гортай сторінки!","en":"Hi, friend! In this issue: pavilions on every floor, a pricier Time shop, crisp menu frames and many small things. Turn the pages!"},"pics":{},"caps":{"uk":{},"en":{}}},{"ver":5,"uk":[["Осколки часу й кристали.","Тепер дві валюти. Осколки часу (фіолетові) дає подорож у часі, і за них купуються покращення в Магазині часу. Кристали випадають з бустів, цирку й золотих покупців, і за них купуються скіни. Кожна подорож у часі ще й назавжди дає ×2 до тапів і доходу."],["Одна відьма.","Відьми більше не літають просто так. На Хелловін замість цирку прилітає лише одна відьма на мітлі. Потім вона запрошує зіграти в «Три казанки». Зелену бабусю прибрали."],["Нові лапки для хатки.","Хатка відьми тепер стоїть на справжніх курячих лапках: з коліньми, лусочками, пальцями й кігтями. Сама відьма стала піксельнішою."],["Скіни говорять.","У кожного скіна є своя репліка: пірат кричить по-піратськи, астронавт просить орбіту цін. Одягни скін і тапни по Капі. А ще з’явилися два скіни розробників: лис Мел і зайка Ніка. Вони безкоштовні."],["Золоті покупці.","Золоті звірята тепер просто золоті. Скіни, капелюхи й шарфи на них не вдягаються."],["Очі на місці.","Костюми героїв більше не закривають звірятам очі. А в Капі прибрали підсвітку, що відставала від скіна."],["Газета MEL & NIKA.","Газета тепер піксельна, з іменами редакторів і вкладками. У вкладках можна перечитати попередні випуски, а кнопка «Написати розробникам» надішле нам твою думку."],["Більший маркет на ПК.","Коли магазин росте, на комп’ютері картинка трохи віддаляється, щоб усе вміщалося зручно."],["Меню на телефоні.","Меню на вертикальному телефоні більше не залазить на цирк і дорогу: сцена тепер закінчується над панеллю."],["Кінозал у торговому центрі.","На торговому центрі з’явився п’ятий поверх із кінозалом: екран, завіси, крісла й неонова вивіска CINEMA. На екрані йде «кіно». Менші маркети теж стали трохи сучаснішими, а на ПК більше неба й ширша бруківка."]],"en":[["Time shards and crystals.","There are now two currencies. Time shards (purple) come from time travel and buy upgrades in the Time shop. Crystals drop from boosts, the circus and golden shoppers, and buy skins. And every time trip permanently gives ×2 to taps and income."],["Just one witch.","Witches no longer fly around for no reason. On Halloween, instead of the circus, a single witch on a broom arrives. Then she invites you to play \"Three cauldrons\". The green granny is gone."],["New legs for the hut.","The witch’s hut now stands on real chicken legs: knees, scales, toes and claws. The witch herself got more pixelated."],["Skins talk.","Every skin has its own line: the pirate shouts like a pirate, the astronaut asks for the orbit of prices. Wear a skin and tap Capy. Two developer skins are new: Mel the fox and Nika the bunny. They are free."],["Golden shoppers.","Golden animals are now just golden. Skins, hats and scarves do not go on them."],["Eyes in place.","Hero costumes no longer cover the animals’ eyes. And the glow around Capy, which lagged behind the skin, is gone."],["The MEL & NIKA paper.","The paper is now pixel-style, with the editors’ names and tabs. Use the tabs to reread earlier issues, and the “Write to the developers” button sends us your thoughts."],["A bigger market on PC.","When the shop grows, the picture on a computer zooms out a little so everything fits comfortably."],["The phone menu.","On a vertical phone the menu no longer covers the circus and the road: the scene now ends above the panel."],["A cinema in the mall.","The mall got a fifth floor with a cinema: a screen, curtains, seats and a neon CINEMA sign. The screen plays a little movie. Smaller shops got a bit more modern too, and on PC there is more sky and wider cobbles."]],"intro":{"uk":"Привіт, друже! У цьому номері: дві валюти (осколки й кристали), одна справжня відьма й хатка на курячих лапках, а ще скіни навчилися говорити. Гортай сторінки!","en":"Hi, friend! In this issue: two currencies (shards and crystals), one real witch and a hut on chicken legs, and skins have learned to talk. Turn the pages!"},"pics":{"0":"shards","1":"hut","2":"witch"},"caps":{"uk":{"0":"Осколок часу й кристал.","1":"Хатка відьми на новеньких лапках.","2":"Єдина відьма Хелловіну."},"en":{"0":"A time shard and a crystal.","1":"The witch’s hut on brand-new legs.","2":"The one witch of Halloween."}}},{"ver":4,"uk":[["Газета замість листа.","Пошта від розробників тепер газета: вона розгортається, а сторінки перегортаються. Свайп, тап чи стрілки: як зручніше."],["Годинникова вежа.","На торговому центрі виросла велика годинникова вежа. Перед подорожжю вона б’є: першої ночі раз, другої двічі, а третьої тричі. Тапни по ній, щоб вирушити в нову епоху."],["Нове завантаження.","Живе нічне місто з вікнами, машинами та птахами, а внизу корисні підказки. Тапни по підказці, щоб побачити наступну."],["Нова відьма.","Відьма на мітлі стала гарнішою: великий капелюх, пухнастий віник і зоряний шлейф."],["Більші маркети.","На вертикальному телефоні маркети всіх рівнів стали більшими, а коричневі смуги по краях зникли."],["Надкусані хмари.","У скіні «Цукрові хмари» частину хмар ніби надкусили."],["Крапля дощу.","Крапелька, що вмикає дощ, тепер висить праворуч біля вивіски магазину."],["Чіткі рамки.","Рамки меню мають виразний контур з усіх боків, а підписи вкладок не ховаються під замочком."],["Капі вночі.","У темряві Капі обведена теплим світлом, тож її добре видно, а туман більше не затягує звірят."]],"en":[["A newspaper instead of a letter.","The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows."],["The clock tower.","A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era."],["New loading screen.","A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one."],["A new witch.","The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars."],["Bigger markets.","On a vertical phone markets of every level are bigger and the brown strips at the edges are gone."],["Bitten clouds.","In the Cotton Clouds skin some of the clouds look as if somebody took a bite."],["The rain drop.","The little drop that turns the rain on now hangs on the right by the shop sign."],["Crisp frames.","Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock."],["Capy at night.","In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals."]],"intro":{"uk":"Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!","en":"Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!"},"pics":{"1":"clock","2":"city","3":"witch"},"caps":{"uk":{"1":"Годинникова вежа торгового центру опівночі.","2":"Нічне місто на екрані завантаження.","3":"Нова відьма облітає місто."},"en":{"1":"The mall clock tower at midnight.","2":"The night city on the loading screen.","3":"The new witch circles the town."}}},{"ver":3,"uk":[["Баба Яга на Хелловін.","Замість цирку на Хелловін над містом летить Баба Яга, а за нею приходить хатка на курячих лапках з грою «Три казанки»."],["Темніший Хелловін.","Небо стало темним, світить великий місяць, привиди вилітають із вікон частіше, а звірята від них тікають. Над дахами кружляє відьма на мітлі."],["Нова пошта.","Листи щоразу привозить інший звіреня в поштовій кепці: машина гальмує, кур’єр вистрибує, несе лист до скриньки й махає на прощання."],["Нова будівля під полотном.","Коли росте новий маркет, на старий падає біле полотно, а Бодя працює під ним. Наприкінці полотно знімають, і магазин більше не зникає."],["Ширша вулиця.","Місто стало ширшим: гортай далі вліво й вправо, там ще більше будинків, дерев і ліхтарів."],["Пелюстки навесні.","Навесні під деревами й на бруківці лежать рожеві пелюстки, а восени листя на дорозі поменшало."],["Магазин часу.","У майстерні часу список покращень за кристали тепер так і називається."],["Завантаження.","На екрані завантаження Капі плавно біжить нічним містом крізь піксельні монетки."],["Вікна й пара.","У всіх будинків є вікна, а пара з люків стала лагіднішою."]],"en":[["Baba Yaga for Halloween.","Instead of the circus, Baba Yaga flies over town on Halloween, and her hut on chicken legs follows with the Three Cauldrons game."],["A darker Halloween.","The sky is dark with a big moon, ghosts fly out of windows more often and the animals run from them. A witch circles over the roofs on a broom."],["New mail.","A different animal in a postal cap delivers the letters each time: the van brakes, the courier hops out, brings the letter to the box and waves goodbye."],["A new build under a tarp.","When a new market is built, a white tarp drops on the old one and Bodya works under it. At the end the tarp comes off, and the shop never disappears."],["A wider street.","The town got wider: scroll further left and right, there are more houses, trees and lamps."],["Spring petals.","In spring pink petals lie under the trees and on the cobblestones, and there are fewer leaves on the road in autumn."],["Time shop.","In the Time Workshop the crystal upgrade list is now called just that."],["Loading screen.","On the loading screen Capy smoothly runs through the night city and pixel coins."],["Windows and steam.","All houses have windows, and the manhole steam is gentler."]],"intro":{"uk":"Привіт, друже! Свіжа порція новин: Хелловін став моторошнішим, пошта привітнішою, а місто ширшим. Дивись, що встигли.","en":"Hi, friend! A fresh batch of news: Halloween got spookier, the mail friendlier and the town wider. Here is what we got done."},"pics":{"0":"hut","1":"witch","2":"van","3":"tent"},"caps":{"uk":{"0":"Хатка на курячих лапках прийшла.","1":"Відьма на мітлі над дахами.","2":"Пошта привозить новини.","3":"Нове будівництво під білим полотном."},"en":{"0":"The hut on chicken legs has arrived.","1":"A witch on a broom over the roofs.","2":"The mail van brings the news.","3":"New building work under a white tarp."}}},{"ver":2,"uk":[["Місто ожило.","Більше звірят-покупців, а ті, що купили багато, ідуть додому: стукають у двері, заходять і виходять із теплого світла."],["Золоті покупці й завдання дня.","Тапни по золотому — отримаєш ×5 золота або кристал. А щодня є три завдання з нагородами."],["Цирк і барабан — окремо.","Кристали можна виграти в обох, але події стали трохи рідшими, щоб було цікавіше чекати."],["Скіни для всіх.","Капі, герої, покупці, магазин, погода й бруківка. Один скін — 50 кристалів, або виграй його в цирку."],["Пори року.","Окрема кнопка в меню з колесом. Відкривається після 2-ї епохи, а кожна пора починається своєю маленькою виставою."],["Нова погода.","Плавні фіолетові блискавки й велика веселка над містом (їх можна виграти в цирку)."],["Бодя будує.","Новий рівень магазину тепер будується довго й епічно: молоток, кран, пил, салют."],["І ця скринька.","Вона червона, бо тут лише гарячі новини. Заглядай, коли прапорець блимає."],["Свіже.","Сюжет став веселішим і трохи гострішим (14+), магазини більші й з дрібницями на дахах, у Космосі й Неоні більше всього літає, а будівництво має власну музику. Золоті покупці швидші, клоун рідший."]],"en":[["The town came alive.","More animal shoppers, and those who bought a lot go home: they knock, step into the warm light and come back out."],["Golden shoppers and daily tasks.","Tap a golden one for ×5 gold or a crystal. Every day brings three tasks with rewards."],["Circus and drum, separate.","Both can give crystals, but events are a little rarer now, so waiting is more fun."],["Skins for everyone.","Capy, heroes, shoppers, the shop, weather and cobbles. One skin costs 50 crystals, or win it at the circus."],["Seasons.","A separate wheel button in the menu. It unlocks after era 2, and every season starts with its own little show."],["New weather.","Smooth purple lightning and a huge rainbow over the town (you can win them at the circus)."],["Bodie builds.","A new shop level now takes a long, epic build: hammer, crane, dust, fireworks."],["And this mailbox.","It is red because it carries hot news only. Check it when the flag blinks."],["Fresh.","The story is funnier and a little sharper (14+), shops are bigger with details on the roofs, Space and Neon have more things flying around, and construction has its own music. Golden shoppers are faster, the clown is rarer."]],"intro":{"uk":"Привіт, друже! Питаєш, чому оновлення довго не було? Бо ми не сиділи склавши лапки: капібара пильнувала касу, а ми — код. Дивись, що встигли.","en":"Hi, friend! Wondering why there was no update for so long? We were not sitting idle: the capybara guarded the till and we guarded the code. Here is what we got done."},"pics":{},"caps":{"uk":{},"en":{}}}];
 let newsIssue = 0, newsBusy = false;
 function picCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; return { c, g }; }
 function newsPic(kind) {
@@ -14229,7 +14432,7 @@ function openNews() {
 //   email — запасний варіант: відкриє поштову програму гравця з готовим листом;
 //   form  — Google Форма (рекомендовано: відгуки збираються в таблицю, яку розробник відкриває за посиланням на ПК). Адреса виду
 //           https://docs.google.com/forms/d/e/<ID>/formResponse, а entries — номери полів «Відгук» і «Контакт» (entry.1234567890).
-const FEEDBACK = { url: '', email: '', form: '', entries: { message: '', contact: '' } };
+const FEEDBACK = { url: '', email: 'capytap.games@gmail.com', form: '', entries: { message: '', contact: '' } };
 function openFeedback() {
   ui.fbTitle.textContent = t('fbTitle'); ui.fbHint.textContent = t('fbHint'); ui.fbText.placeholder = '…'; ui.fbContact.placeholder = t('fbContact');
   ui.fbSend.textContent = t('fbSend'); ui.fbCancel.textContent = t('fbCancel');
@@ -14590,6 +14793,7 @@ function initEvents() {
   }
 }
 
+//#part 240_story.js
 /* =====================================================================
    СЮЖЕТ І ДІАЛОГИ
    ===================================================================== */
@@ -14960,6 +15164,7 @@ function drawCameo(c) {
   R(ctx, x + 6, y - 9 - step, 4, 4, 'c'); R(ctx, x + 7, y - 8 - step, 1, 1, 'd'); R(ctx, x + 8, y - 7 - step, 1, 1, 'd');   // печиво
 }
 
+//#part 250_tap.js
 /* =====================================================================
    ТАП ПО МАГАЗИНУ
    ===================================================================== */
@@ -14969,6 +15174,8 @@ let hapticSwitch = null;
 function buzz(ms) {
   if (!state.settings.vibrate) return;
   try {
+    const H = nativePlugin('Haptics');
+    if (H) { H.vibrate({ duration: ms || 12 }); return; }
     if (navigator.vibrate) { navigator.vibrate(ms || 12); return; }
     if (!hapticSwitch) {
       const l = document.createElement('label'); l.setAttribute('aria-hidden', 'true');
@@ -15072,6 +15279,7 @@ function setupInput() {
   ui.modalBtn.addEventListener('click', claimOffline);
 }
 
+//#part 260_render.js
 /* =====================================================================
    МАЛЮВАННЯ КАДРУ
    ===================================================================== */
@@ -15391,6 +15599,7 @@ function renderBuild() {
   drawBeaverBuilder(b, p);
 }
 
+//#part 270_loop.js
 /* =====================================================================
    ІГРОВИЙ ЦИКЛ
    ===================================================================== */
@@ -15401,8 +15610,9 @@ let uiTimer = 0;
 let animClock = 0;
 
 function frame(now) {
-  const dt = Math.min(CONFIG.MAX_DT, Math.max(0, (now - lastFrame) / 1000));
+  const raw = Math.max(0, (now - lastFrame) / 1000), dt = Math.min(CONFIG.MAX_DT, raw);
   lastFrame = now;
+  perfSample(raw);
   updateCamera(dt);
   animClock += dt;
 
@@ -15448,9 +15658,55 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
+//#part 280_launch.js
 /* =====================================================================
    ЗАПУСК
    ===================================================================== */
+
+/* ---------- Режим економії: сам вмикається, коли гра гальмує ---------- */
+const perf = { ema: 1 / 60, slow: 0, auto: false };
+function ecoOn() { return !!state.settings.eco; }
+function perfSample(raw) {
+  if (raw <= 0 || raw > 0.5 || document.hidden) return;             // вкладка спала або була пауза
+  perf.ema += (raw - perf.ema) * 0.05;
+  if (state.settings.eco || state.settings.ecoAsked || animClock < 8) return;
+  if (perf.ema > 0.04) perf.slow += raw; else perf.slow = Math.max(0, perf.slow - raw * 2);       // менше 25 кадрів/с довше 6 секунд
+  if (perf.slow > 6) {
+    state.settings.eco = true; state.settings.ecoAsked = true; perf.auto = true;
+    showToast(t('ecoAuto'), 'good'); updateUI(); saveGame();
+  }
+}
+
+/* ---------- Звіт про помилки: текст без особистих даних ---------- */
+function buildReport() {
+  const S = state.settings, n = navigator, scr = window.screen || {}, on = v => (v ? 'on' : 'off');
+  let tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { /* нічого */ }
+  const standalone = !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches) || n.standalone === true;
+  const L = [
+    'CapyTap: Market — report',
+    'Game: news #' + NEWS_VERSION + ', save v' + CONFIG.SAVE_VERSION + (window.__debug ? ', desktop build' : ''),
+    'Time: ' + new Date().toISOString() + (tz ? ' (' + tz + ')' : ''),
+    'Device: ' + n.userAgent,
+    'Screen: ' + scr.width + 'x' + scr.height + ' @' + (window.devicePixelRatio || 1) + ', window ' + innerWidth + 'x' + innerHeight + ', touch ' + (n.maxTouchPoints || 0) + ', app-mode ' + on(standalone),
+    'Game state: lang ' + state.lang + ', epoch ' + state.epoch + ' (shown ' + viewEpoch() + '), shop level ' + state.shopLevel + ', travels ' + state.stats.timeTravels + ', played ' + Math.round(state.playTime / 60) + ' min, tab ' + state.tab + ', season ' + S.season + ', day ' + state.dayPhase.toFixed(2),
+    'Performance: frame ' + Math.round(perf.ema * 1000) + ' ms (' + Math.round(1 / perf.ema) + ' fps), eco ' + on(S.eco) + (perf.auto ? ' (auto)' : ''),
+    'Settings: animations ' + on(S.animations) + ', clouds ' + on(S.clouds) + ', birds ' + on(S.birds) + ', rain ' + on(S.rain) + ', big text ' + on(S.bigText),
+    'Storage: ' + (storageOk ? 'ok' : 'FAILED') + ', second copy ' + (hadBak || lastBakAt ? 'yes' : 'no') + (restoredFromBak ? ', RESTORED from second copy' : '') + ', last export ' + (state.lastExport ? new Date(state.lastExport).toISOString().slice(0, 10) : 'never'),
+    'Errors (' + errLog.length + '):'
+  ];
+  if (!errLog.length) L.push('  none');
+  errLog.forEach(e => L.push('  [' + e.at + '] ' + e.kind + ': ' + e.msg + (e.src ? ' @ ' + e.src + ':' + e.line + ':' + e.col : '') + (e.stack ? '\n    ' + e.stack : '')));
+  return L.join('\n');
+}
+function copyText(text, box, okKey) {
+  const done = () => showToast(t(okKey), 'good');
+  const manual = () => {
+    box.hidden = false; box.value = text; box.focus(); box.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) { /* нічого */ }
+    if (ok) done(); else showToast(t('reportManual'), 'good');
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, manual); else manual();
+}
 
 let hiddenAt = 0;
 
@@ -15512,12 +15768,35 @@ function init() {
   recalcIncome();
   addOfflineEarnings(awaySeconds);
   showOfflineModal();     // якщо з минулого разу лишилися незабрані монетки
+  lastBakAt = hadBak ? Date.now() : 0;                                  // існуючу копію не перезаписуємо одразу після запуску
+  if (restoredFromBak) setTimeout(() => showToast(t('restoredBak'), 'bad'), 1200);
+  setTimeout(checkExportNag, 40000);
   if (!hadSave) saveGame();
   requestAnimationFrame(t0 => { lastFrame = t0; requestAnimationFrame(frame); });
 }
 
-init();
-bootDone();
+// Телефонна обгортка: пауза/збереження у фоні, кнопка «Назад»
+function setupNativeApp() {
+  const A = nativePlugin('App'); if (!A) return;
+  try {
+    A.addListener('appStateChange', s => { if (!s.isActive) { saveGame(); try { audio.ctx && audio.ctx.suspend(); } catch (e) { /* нічого */ } } else resumeAudio(); });
+    A.addListener('backButton', () => {
+      const open = [...document.querySelectorAll("[id$=Modal], #modal")].find(m => !m.hidden);
+      const close = open && open.querySelector('[id$=Close], [id$=close], .modal-close');
+      if (close) close.click(); else if (open) open.hidden = true; else A.minimizeApp();
+    });
+  } catch (e) { /* нічого */ }
+}
+// Якщо в обгортці localStorage порожній (його стерла система), а копія в застосунку є — відновлюємо її перед стартом
+function startGame() { init(); bootDone(); setupNativeApp(); }
+(function () {
+  const P = nativePlugin('Preferences');
+  let has = true; try { has = !!localStorage.getItem(CONFIG.SAVE_KEY); } catch (e) { /* нічого */ }
+  if (!P || has) { startGame(); return; }
+  Promise.race([P.get({ key: CONFIG.SAVE_KEY }), new Promise(r => setTimeout(() => r(null), 2500))]).then(r => {
+    try { if (r && r.value) localStorage.setItem(CONFIG.SAVE_KEY, r.value); } catch (e) { /* нічого */ }
+  }).catch(() => {}).then(startGame);
+})();
 </script>
 </body>
 </html>
