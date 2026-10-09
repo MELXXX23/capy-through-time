@@ -45,6 +45,7 @@ function render(time) {
   actors.forEach(a => items.push({ y: a.y, draw: () => drawActor(a) }));
   cameos.forEach(c => items.push({ y: c.y, draw: () => drawCameo(c) }));
   guestWalkers.forEach(g => items.push({ y: g.y, draw: () => drawGuest(g) }));
+  guestStands().forEach(st => items.push({ y: st.y, draw: () => drawGuestStand(st) }));
   if (trouble && trouble.type === 'thief') items.push({ y: trouble.y, draw: drawRaccoon });
   benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); });
   if (view.extraB >= 30 || state.events.mailPending || mail.state !== 'idle') items.push({ y: mailRoadY() - 1, draw: drawMailBox });
@@ -53,12 +54,12 @@ function render(time) {
   if (shop) items.push({ y: LAYOUT.curbY, draw: drawRainToggle });
   if (state.circus.phase >= 2) items.push({ y: circusY(), draw: drawCircus });
   if (state.circus.phase === 1) items.push({ y: bangPos().y, draw: drawBang });
-  items.push({
-    y: cp.footY,
-    draw: () => {
+  items.push({ y: cp.footY, draw: () => drawCapyFull(time, true) });
+  function drawCapyFull(time, shadow) {
       const breath = (Math.sin(time * 2.2) + 1) / 2;
       capyScaled(() => {
-        ctx.globalAlpha = 0.22; R(ctx, cp.x, cp.footY, 28, 2, 'd'); ctx.globalAlpha = 1;
+        if (shadow) { ctx.globalAlpha = 0.22; R(ctx, cp.x, cp.footY, 28, 2, 'd'); ctx.globalAlpha = 1; }
+        ctx.save(); ctx.translate(0, -capyHopY());
         drawCapyBody(breath);
         const capySkin = skinOn('capy');       // у скіні вже є свій капелюх і вбрання — сезонні не потрібні
         const lift = Math.round(24 * 1.2 * 0.045 * breath);        // тіло «дихає» (розтягується вгору), тож капелюх і шарфик піднімаються разом із ним
@@ -67,9 +68,9 @@ function render(time) {
           R(ctx, cp.x + 4, cp.footY - 17 - lift, 11, 3, 'r'); R(ctx, cp.x + 4, cp.footY - 16 - lift, 11, 1, 'w');
           R(ctx, cp.x + 8, cp.footY - 14 - lift, 3, 6, 'r'); R(ctx, cp.x + 8, cp.footY - 11 - lift, 3, 1, 'w');
         }
+        ctx.restore();
       });
-    }
-  });
+  }
   items.sort((a, b) => a.y - b.y).forEach(it => it.draw());
 
   // пил від будівництва
@@ -84,6 +85,7 @@ function render(time) {
   drawNightShade();
   if (sky.night > 0.2 && !build) { ctx.globalAlpha = Math.min(0.4, sky.night * 0.45); capyScaled(() => drawCapyBody((Math.sin(time * 2.2) + 1) / 2)); ctx.globalAlpha = 1; }       // вночі Капі не тьмяніє разом із вулицею
   drawNightLights();
+  if (sky.lamp > 0.05 && !build) { ctx.globalAlpha = Math.min(0.92, 0.5 + sky.lamp * 0.45); drawCapyFull(time, false); ctx.globalAlpha = 1; }          // Капі поверх сяйва магазину
   drawHalloweenAir();
   drawHagFlyer();
   drawGhostHunt();

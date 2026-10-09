@@ -4,7 +4,7 @@
    ===================================================================== */
 
 const shopAnim = { squash: 0, vel: 0 };          // пружинка стискання магазину
-const capyAnim = { blinkIn: 3, blinkLeft: 0 };   // кліпання
+const capyAnim = { blinkIn: 3, blinkLeft: 0, hopAt: -9 };   // кліпання
 const fx = { coins: [], sparks: [], dust: [] };
 const clouds = CLOUDS.map(c => ({ ...c }));
 // Хмаринки розсипаються по всій ширині й висоті неба (на великому екрані їх більше)
@@ -815,7 +815,7 @@ function hitVip(p) {
     if (!c.vip || c.vipDone) continue;
     if (Math.abs(p.x - c.x) <= 17 && p.y >= c.y - 38 && p.y <= c.y + 5) {
       c.vipDone = true; c.speed = 62; state.stats.vipTaps = (state.stats.vipTaps || 0) + 1;
-      const crystal = Math.random() < 0.2;                                  // нагорода одна з двох: кристал часу або ×5 золота
+      const crystal = Math.random() < 0.2;                                  // нагорода одна з двох: кристал або ×5 золота
       const gain = crystal ? 0 : Math.floor((state.cps * 40 + 200 * levelMult()) * 5);
       if (crystal) { state.crystals += 1; state.crystalsTotal += 1; } else { state.coins += gain; state.totalEarned += gain; }
       for (let i = 0; i < 14; i++) { const a = rand(0, Math.PI * 2), sp = rand(30, 80); fx.sparks.push({ x: c.x, y: c.y - 12, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 24, age: 0, life: rand(0.4, 0.7), col: i % 2 ? 'y' : 'h' }); }

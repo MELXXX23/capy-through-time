@@ -366,7 +366,7 @@ const CUSTOMER_PARTS = {
 // Команда звіряток. Спрайт 16×16 дивиться прямо, тож малюємо лише ліву половину голови (top, 10 рядків)
 // — нижня частина тулуба спільна (body / belly / feet — літери палітри), а права половина дзеркалиться.
 const TEAM_PARTS = {
-  spike:   { body: 'b', belly: 'c', feet: 'd', top: ['..d.d.d.', '.dbdbdbd', 'dbbbbbbb', '.dbbbbbb', 'dbbbbbbb', '.dbbwwww', 'dbbdwXww', '.ddwwxww', '..ddwwkk', '...ddwwk'] },
+  spike:   { body: 'b', belly: 'c', feet: 'd', top: ['.d..d..d', 'dlddlddl', 'dbldbldb', 'dldbldbl', '.dbbbbbb', 'dbbbwwww', '.dbbwXww', '.dbbwxww', '..dbwwkk', '...dwwwk'] },
   bodya:   { body: 'n', belly: 'y', feet: 'd', top: ['....hhhh', '...hhhhh', '..dhhhhh', '.ddddddd', '..dlllll', '.bdlXlll', '.bdlxlll', '..dlccck', '..dlcccw', '...dllll'] },
   sonia:   { body: 'b', belly: 'c', feet: 'o', top: ['.d......', '.dbd....', '..dbbbbb', '..dbbbbb', '..dyyybb', '..dyXybb', '..dyxybb', '..dyyybo', '...dbbbo', '....dddd'] },
   tonya:   { body: 'G', belly: 'm', feet: 'g', top: ['....nnnn', '...nnnnn', '..dnnnnh', '.ddddddd', '..dggggg', '..dgXggg', '..dgxggg', '..dgggmm', '..dggggg', '...dgggg'] },
@@ -691,7 +691,7 @@ function trackDef(key) {
 
 // ---- Подорож у часі, майстерня, епохи, досягнення (етап 7) ----
 
-// Покращення за Кристали часу. costs — ціна кожного рівня (довжина = максимум рівнів).
+// Покращення за Кристали. costs — ціна кожного рівня (довжина = максимум рівнів).
 // Що саме робить кожне — див. функції wsEffect… нижче.
 const WORKSHOP = [
   { id: 'goldenFreq',   icon: '🌟', costs: [6, 11, 17] },              // золоті покупці приходять частіше: +15% за рівень

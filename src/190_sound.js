@@ -190,11 +190,16 @@ function melody(wave, notes, vol, gap = 0) {
     t += d + gap;
   });
 }
-const SFX_TAP_VARIANTS = [['E6', 'B6'], ['G6', 'C7'], ['D6', 'A6'], ['F#6', 'C#7'], ['A5', 'E6']];
+const SFX_TAP_VARIANTS = [['E5', 'B5'], ['G5', 'C6'], ['D5', 'A5'], ['F#5', 'C#6'], ['A4', 'E5']];       // нижче й м'якше, ніж було (високі квадрати «дзвеніли»)
 const SFX = {
-  tap() {   // кілька варіантів, щоб не набридало
-    const v = SFX_TAP_VARIANTS[Math.floor(Math.random() * SFX_TAP_VARIANTS.length)];
-    melody('square', [[v[0], 0.04], [v[1], 0.07]], 0.22);
+  tap() {   // кілька варіантів, щоб не набридало; тріщить усе рідше й тихіше при довгому тапанні
+    const ac = audio.ctx, now = ac.currentTime;
+    if (now - (SFX._tapLast || 0) < 0.05) return;                                    // не частіше 20 разів на секунду
+    SFX._tapRun = now - (SFX._tapAt || 0) < 0.5 ? (SFX._tapRun || 0) + 1 : 0; SFX._tapAt = now; SFX._tapLast = now;
+    if (!audio.tapLP) { const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1400; f.Q.value = 0.3; f.connect(audio.sfxGain); audio.tapLP = f; }       // зрізає різкі верхи
+    const v = SFX_TAP_VARIANTS[Math.floor(Math.random() * SFX_TAP_VARIANTS.length)], k = Math.max(0.4, 1 - SFX._tapRun * 0.04), t = now + 0.004;
+    tone(audio.tapLP, 'triangle', noteFreq(v[0]), t, 0.06, 0.2 * k);
+    tone(audio.tapLP, 'sine', noteFreq(v[1]), t + 0.04, 0.1, 0.13 * k);
   },
   buy()       { melody('square', [['C5', 0.05], ['E5', 0.05], ['G5', 0.05], ['C6', 0.12]], 0.22); },
   hire()      { melody('square', [['E5', 0.07], ['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.2]], 0.22); },

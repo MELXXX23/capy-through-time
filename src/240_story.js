@@ -323,7 +323,12 @@ function updateGuests(dt) {
     g.y = Math.min(g.y, roadFloor());
     if (g.mode === 'idle') {
       g.moving = false; g.wait -= dt;
-      if (g.wait <= 0) { g.tx = Math.max(worldL() + 14, Math.min(worldR() - 14, g.x + rand(-90, 90))); g.ty = rand(LAYOUT.streetTop + 8, roadFloor()); g.speed = rand(12, 20); g.mode = 'walk'; }
+      if (g.wait <= 0) {
+        const st = guestStands().find(s => s.k === g.k);                                      // є своє місце — гуляє біля нього
+        if (st) { g.tx = Math.max(st.x - st.w / 2 - 6, Math.min(st.x + st.w / 2 + 6, g.x + rand(-26, 26))); g.ty = rand(st.y + 4, Math.max(st.y + 5, Math.min(roadFloor(), st.y + 16))); }
+        else { g.tx = Math.max(worldL() + 14, Math.min(worldR() - 14, g.x + rand(-90, 90))); g.ty = rand(LAYOUT.streetTop + 8, roadFloor()); }
+        g.speed = rand(12, 20); g.mode = 'walk';
+      }
     } else {
       const dx = g.tx - g.x, dy = g.ty - g.y, d = Math.hypot(dx, dy), step = g.speed * dt;
       if (d <= step) { g.x = g.tx; g.y = g.ty; g.mode = 'idle'; g.wait = rand(1, 5); g.moving = false; }
@@ -334,7 +339,12 @@ function updateGuests(dt) {
   });
 }
 function guestSay(g) {
-  showBubble('g' + g.k, t('guestSay_' + g.id + '_' + Math.floor(Math.random() * 3)), g.x, g.y - 19, () => ({ x: g.x, y: g.y - 19 }));
+  const n = t('guestSay_' + g.id + '_5') !== 'guestSay_' + g.id + '_5' ? 6 : 3;
+  showBubble('g' + g.k, t('guestSay_' + g.id + '_' + Math.floor(Math.random() * n)), g.x, g.y - 19, () => ({ x: g.x, y: g.y - 19 }));
+}
+function hitStandGuest(p) {
+  const st = guestStands().find(s => Math.abs(p.x - s.x) <= s.w / 2 && p.y >= s.y - s.h && p.y <= s.y + 3);
+  return st ? guestWalkers.find(g => g.k === st.k) || null : null;
 }
 function hitGuest(p) {
   let best = null;

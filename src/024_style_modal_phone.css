@@ -147,7 +147,7 @@
   /* Мінімалістичне меню: внизу тонка смужка з іконками; торкнувся — вміст виїжджає над нею, торкнувся ще раз чи сцени — ховається */
   #panel, #app.panel-closed #panel { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0 6px calc(3px + env(safe-area-inset-bottom, 0px)); padding: 7px; flex-direction: column-reverse; max-height: 82dvh; overflow: hidden; box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 6px var(--cream), inset 0 0 0 8px var(--dark); }
   #tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
-  #panel, #app.panel-closed #panel { margin: 0; padding: 11px 8px 0; clip-path: none; box-shadow: inset 0 4px 0 var(--dark); }          /* на телефоні меню на всю ширину й до самого низу, як у програмі: без рамок по краях і порожніх смуг */
+  #panel, #app.panel-closed #panel { margin: 0; padding: 5px 8px 0; clip-path: none; box-shadow: inset 0 4px 0 var(--dark); }          /* на телефоні меню на всю ширину й до самого низу, як у програмі: без рамок по краях і порожніх смуг */
   #app.sheet-open .card { box-shadow: inset 0 0 0 2px var(--panel-dark); }
   .tab, .tabmore { flex: 1 1 18%; padding: 5px 2px; --icw: 24px; }
   .tab .tab-icon { font-size: 22px; }
@@ -157,10 +157,10 @@
   .tab.secondary .tab-name { display: block; font-size: 7px; letter-spacing: -.3px; }
   @media (max-width: 380px) { .tab.secondary .tab-name { font-size: 6.4px; letter-spacing: -.4px; } }          /* «Пори року» не вилазить за кнопку на вузьких екранах (360 px) */
   #app.more-open .tab.secondary:not([hidden]) { display: flex; }
-  .tab.primary, .tabmore { order: 1; flex: 1 1 18%; padding: 4px 2px calc(7px + env(safe-area-inset-bottom, 0px)); }          /* кнопки нижнього ряду тягнуться до самого низу й закривають смугу під меню */
-  .tab.primary { --icw: clamp(42px, 16.2vw, 70px); }
+  .tab.primary, .tabmore { order: 1; flex: 1 1 18%; padding: 4px 2px 6px; justify-content: center; }          /* кнопки нижнього ряду тягнуться до самого низу й закривають смугу під меню */
+  .tab.primary { --icw: clamp(36px, 13.8vw, 56px); }
   .tab.secondary { --icw: clamp(34px, 13.6vw, 58px); }          /* значок підлаштовується під ширину кнопки */
-  .tabmore { display: flex; align-items: flex-start; justify-content: center; font-size: 40px; line-height: 1; }
+  .tabmore { display: flex; align-items: center; justify-content: center; font-size: 40px; line-height: 1; }
   #app.more-open .tabmore { background: var(--honey); }
   #tabContent { display: none; max-height: 40dvh; margin-bottom: 8px; padding: 2px 2px 4px; }
   #app.sheet-open #tabContent { display: block; }

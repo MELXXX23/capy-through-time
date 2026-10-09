@@ -9,5 +9,6 @@ html = html.replace('</title>', "</title>\n<style>@font-face{font-family:'Press 
 const www = path.join(__dirname, 'www');
 fs.mkdirSync(path.join(www, 'fonts'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'docs', 'fonts', 'PressStart2P-Regular.ttf'), path.join(www, 'fonts', 'PressStart2P-Regular.ttf'));
+fs.copyFileSync(path.join(ROOT, 'docs', 'fonts', 'OFL.txt'), path.join(www, 'fonts', 'OFL.txt'));
 fs.writeFileSync(path.join(www, 'index.html'), html, 'utf8');
 console.log('mobile/www/index.html готовий (' + Math.round(html.length / 1024) + ' КБ)');

@@ -1477,7 +1477,7 @@ function endGhostHunt() {
   const h = ghostHunt;
   ghostHunt = null;
   nextGhostAt = Date.now() + (h.crt < 0 ? rand(CONFIG.GHOST_HUNT_MIN_SECONDS, CONFIG.GHOST_HUNT_MAX_SECONDS) : CONFIG.CREATURE_INTERVAL_SECONDS) * 1000 * evMult();   // герої епох — рівно раз на 5 хвилин
-  if (h.caught && h.caught >= h.total) { state.crystals += 1; state.crystalsTotal += 1; showToast(t('huntAll'), 'big'); }     // зловив усіх — кристал часу
+  if (h.caught && h.caught >= h.total) { state.crystals += 1; state.crystalsTotal += 1; showToast(t('huntAll'), 'big'); }     // зловив усіх — кристал
   else if (h.caught) showToast(t('huntEnd', h.caught, h.total), 'good');
   else showToast(t(h.crt < 0 ? 'ghostEndNone' : 'crtEndNone'), 'bad');
   saveGame();
@@ -1568,6 +1568,7 @@ function drawWitchSpriteOld(x, y, dir, t) {                                     
 }
 const capyRimCache = {};
 const CAPY_K = 1.3;                                   // Капі збільшена на 30%
+function capyHopY() { const k = (animClock - capyAnim.hopAt) / 0.5; return k >= 0 && k < 1 ? Math.round(Math.sin(k * Math.PI) * 10) : 0; }       // підскок Капі при тапі на неї (пікселі сцени)
 function capyScaled(fn) { const cp = LAYOUT.capy, px = cp.x + 14, py = cp.footY; ctx.save(); ctx.translate(px, py); ctx.scale(CAPY_K, CAPY_K); ctx.translate(-px, -py); fn(); ctx.restore(); }
 function drawCapyBody(breath) {
   const cp = LAYOUT.capy;

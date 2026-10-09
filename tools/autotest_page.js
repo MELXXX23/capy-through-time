@@ -41,7 +41,7 @@
     state.epoch = ep; state.activeEpoch = -1; state.shopLevel = lvl; state.dayPhase = phase;
     state.team = TEAM.map((m, i) => (m.level <= lvl && !m.needs ? 3 : 0));
     state.depts = DEPARTMENTS.map(d => (d.level <= lvl ? 3 : 0));
-    state.settings.season = 'summer';
+    state.settings.season = 'summer'; state.story.guests = state.story.guests.map(() => 1);          // усі гості зустрінуті: видно їхні місця
     updateTheme(); recalcIncome(); rebuildShop(true); syncActors(); syncGuests();
   };
 
