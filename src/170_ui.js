@@ -214,19 +214,20 @@ function buildTeamCards() {
 }
 
 // Текст бонусу звірятка на рівні lvl
-function bonusText(i, lvl) {
+function bonusText(i, lvl, sm) {
   const b = TEAM[i].bonus;
-  const pct = v => Math.round(v * 100);
+  if (sm === undefined) sm = starMult(i);                                       // множник зірок (за замовчуванням — поточний)
+  const pct = v => Math.round(v * 100), cap = b.cap === undefined ? Infinity : Math.min(b.cap * sm, STAR_HARD_CAP[b.type] || Infinity);
   switch (b.type) {
-    case 'tap': return t('bonus_tap', fmt(1 + b.per * lvl, 2));
-    case 'expandCost': return t('bonus_expandCost', pct(Math.min(b.per * lvl, b.cap)));
-    case 'offline': return t('bonus_offline', pct(CONFIG.OFFLINE_RATE + b.rate * lvl), CONFIG.OFFLINE_MAX_HOURS + b.hours * lvl);
-    case 'thief': return t('bonus_thief', pct(Math.min(b.per * lvl, b.cap)));
-    case 'deptIncome': return t('bonus_deptIncome', b.depts.map(d => deptName(d)).join(', '), fmt(1 + b.per * lvl, 2));
-    case 'global': return t('bonus_global', fmt(1 + b.per * lvl, 2));
-    case 'event': return t('bonus_event', pct(b.per * lvl));
-    case 'fix': return t('bonus_fix', pct(b.per * lvl));
-    case 'deptCost': return t('bonus_deptCost', pct(Math.min(b.per * lvl, b.cap)));
+    case 'tap': return t('bonus_tap', fmt(1 + b.per * lvl * sm, 2));
+    case 'expandCost': return t('bonus_expandCost', pct(Math.min(b.per * lvl * sm, cap)));
+    case 'offline': return t('bonus_offline', pct(CONFIG.OFFLINE_RATE + b.rate * lvl * sm), CONFIG.OFFLINE_MAX_HOURS + b.hours * lvl * sm);
+    case 'thief': return t('bonus_thief', pct(Math.min(b.per * lvl * sm, cap)));
+    case 'deptIncome': return t('bonus_deptIncome', b.depts.map(d => deptName(d)).join(', '), fmt(1 + b.per * lvl * sm, 2));
+    case 'global': return t('bonus_global', fmt(1 + b.per * lvl * sm, 2));
+    case 'event': return t('bonus_event', pct(b.per * lvl * sm));
+    case 'fix': return t('bonus_fix', pct(b.per * lvl * sm));
+    case 'deptCost': return t('bonus_deptCost', pct(Math.min(b.per * lvl * sm, cap)));
   }
   return '';
 }
@@ -414,7 +415,7 @@ function hasAffordableAction() {
 }
 // Чи можна зараз найняти або прокачати когось із команди
 function hasTeamAction() {
-  return TEAM.some((m, i) => isTeamUnlocked(i) && state.team[i] < CONFIG.TEAM_MAX_LEVEL && state.coins >= teamCost(i, state.team[i] + 1));
+  return TEAM.some((m, i) => isTeamUnlocked(i) && (state.team[i] < CONFIG.TEAM_MAX_LEVEL ? state.coins >= teamCost(i, state.team[i] + 1) : teamStarsOf(i) < STAR_MAX && state.coins >= starCost(i, teamStarsOf(i) + 1)));
 }
 
 function updateTeamUI() {
@@ -431,17 +432,18 @@ function updateTeamUI() {
     setText(el.name, t('team_' + m.id), 'tn' + i);
     setText(el.role, t('team_' + m.id + '_role'), 'tr' + i);
     setText(el.trait, t('team_' + m.id + '_trait'), 'tt' + i);
-    setText(el.lvl, lvl === 0 ? '' : t('teamLevel', lvl, CONFIG.TEAM_MAX_LEVEL), 'tl' + i + '_' + lvl);
+    const stars = teamStarsOf(i);
+    setText(el.lvl, lvl === 0 ? '' : t('teamLevel', lvl, CONFIG.TEAM_MAX_LEVEL) + (lvl >= CONFIG.TEAM_MAX_LEVEL ? '  ★ ' + stars + '/' + STAR_MAX : ''), 'tl' + i + '_' + lvl + '_' + stars);
     if (lvl === 0) {
       setText(el.now, t('teamGives', bonusText(i, 1)), 'tw' + i);
       setText(el.next, '', 'tx' + i);
     } else {
-      setText(el.now, t('teamNow', bonusText(i, lvl)), 'tw' + i + '_' + lvl);
-      setText(el.next, lvl < CONFIG.TEAM_MAX_LEVEL ? t('teamNext', bonusText(i, lvl + 1)) : '', 'tx' + i + '_' + lvl);
+      setText(el.now, t('teamNow', bonusText(i, lvl)), 'tw' + i + '_' + lvl + '_' + stars);
+      setText(el.next, lvl < CONFIG.TEAM_MAX_LEVEL ? t('teamNext', bonusText(i, lvl + 1)) : (stars < STAR_MAX ? t('teamNext', bonusText(i, lvl, STAR_MULT[stars + 1])) : ''), 'tx' + i + '_' + lvl + '_' + stars);
     }
     if (lvl >= CONFIG.TEAM_MAX_LEVEL) {
-      setText(el.btn, t('teamMax'), 'tb' + i);
-      el.btn.disabled = true;
+      if (stars >= STAR_MAX) { setText(el.btn, t('teamMax'), 'tb' + i); el.btn.disabled = true; }
+      else { const sc = starCost(i, stars + 1); setText(el.btn, t('teamStarBtn', stars + 1, fmt(sc)), 'tb' + i + '_' + stars); el.btn.disabled = state.coins < sc; }
     } else {
       const cost = teamCost(i, lvl + 1);
       setText(el.btn, t(lvl === 0 ? 'teamHire' : 'teamUpgrade', fmt(cost)), 'tb' + i);

@@ -1,72 +1,300 @@
 <!--#part 040_boot_script.html-->
 <script>
 (function () {
-  var rows = ["....................O.......","...................OpO......","..................OpypO.....","...............OO..OpO......","..............OMMOOOOOO.....","..............OMBOBBBBBOO...",".............OBOBBBBBBBBBO..","............OBBBBBBBBBBBBBO.",".....OOOOOOOBBBBBBBKKBBBBBBO","....OBBBBBBBBBBBBBBKKBBBMMMO","...OBBppwpppppppBBBBBBBMMOMO","..OBBBppppppppppBBBBBBBMMMMO",".OBBBBpwpppppwppBBBBBBBMMMMO",".OBBBBppppppppppBBBBBBBMMMMO",".OBBBBppppwpppppBBBBBBBMMMO.",".OBBBBppppppwpppBBBBLLOOOO..",".OBBBBwqwqwqwqwqBBBBBO......",".OBBBBBBBBBBBBBBBBBBBO......","..OBBBBBBBBBBBBBBBBBO.......","..OBBBBBBBBBBBBBBBLLO.......","...OBBBBBLLLLOBBBOLLO.......","....OBBOMMOOOOOBBOMO........","....OMMOOO....OMMOOO........",".....OOO.......OOO.........."], pal = {"O":"#302418","p":"#ef8fa3","y":"#ffe08a","M":"#7c4830","B":"#bd8449","K":"#140e0b","w":"#fff4dc","L":"#9c6c3c","q":"#ffc9d4"};
   function svg(rows, pal, sc) {
     var h = '', w = rows[0].length;
-    for (var y = 0; y < rows.length; y++) { var x = 0; while (x < w) { var c = rows[y][x]; if (c === '.') { x++; continue; } var x2 = x; while (x2 < w && rows[y][x2] === c) x2++; h += '<rect x="' + x + '" y="' + y + '" width="' + (x2 - x) + '" height="1" fill="' + pal[c] + '"/>'; x = x2; } }
+    for (var y = 0; y < rows.length; y++) { var x = 0; while (x < w) { var c = rows[y][x]; if (c === '.' || !pal[c]) { x++; continue; } var x2 = x; while (x2 < w && rows[y][x2] === c) x2++; h += '<rect x="' + x + '" y="' + y + '" width="' + (x2 - x) + '" height="1" fill="' + pal[c] + '"/>'; x = x2; } }
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + rows.length + '" width="' + w * sc + '" height="' + rows.length * sc + '" shape-rendering="crispEdges">' + h + '</svg>';
   }
   var q = location.search, bootEl = document.getElementById('boot'), VW = innerWidth, VH = innerHeight;
   var sc = Math.max(3, Math.min(6, Math.floor(Math.min(VW, VH) / 110))), cs = Math.max(2, sc - 1);
-  var cp = document.getElementById('bootCapy');
-  var legRows = rows.slice();                                              // друга поза Капі: лапи «схрещуються» під час бігу
-  for (var r = 21; r <= 23; r++) {
-    var src = rows[r].split(''), out = src.slice(), c;
-    for (c = 4; c <= 9; c++) out[c] = '.'; for (c = 14; c <= 19; c++) out[c] = '.';
-    for (c = 4; c <= 9; c++) if (src[c] !== '.') out[c + 2] = src[c]; for (c = 14; c <= 19; c++) if (src[c] !== '.') out[c - 2] = src[c];
-    legRows[r] = out.join('');
-  }
-  cp.innerHTML = '<span class="pa">' + svg(rows, pal, sc) + '</span><span class="pb">' + svg(legRows, pal, sc) + '</span>';
-  cp.style.marginLeft = (-rows[0].length * sc / 2) + 'px';
   function pad(a) { var w = 0; a.forEach(function (x) { w = Math.max(w, x.length); }); return a.map(function (x) { while (x.length < w) x += '.'; return x; }); }
   function sp(a, p, k) { return svg(pad(a), p, k); }
+  function rnd(a, b) { var v = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return v - Math.floor(v); }       // детермінований «шум»
+  function grid(w, h, fn) { var out = []; for (var y = 0; y < h; y++) { var r = ''; for (var x = 0; x < w; x++) r += fn(x, y) || '.'; out.push(r); } return out; }
   var P = { O: '#302418', w: '#fff4dc', r: '#ef8fa3', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', b: '#7a4f35', s: '#9fd8f0', K: '#1b1224', Y: '#ffd98a', o: '#e8863c', u: '#8b6bb0', n: '#3d5a8c', e: '#9c9087', f: '#ff5fa2' };
-  // ---- місто: два шари з вікнами, що блимають
-  function city(dark) {
-    var b = '', x = 0, i = 0;
+
+  // ---- сцена: щоразу інша (не та, що була востаннє); ?boot=night|dawn|rain|snow|time — для перегляду
+  var SCENES = ['night', 'dawn', 'rain', 'snow', 'time'], scene = 'night';
+  (function () {
+    var m = /[?&]boot=(\w+)/.exec(q), last = '';
+    try { last = localStorage.getItem('capyBootScene') || ''; } catch (e) { /* нічого */ }
+    if (m && SCENES.indexOf(m[1]) >= 0) { scene = m[1]; return; }
+    var pool = SCENES.filter(function (n) { return n !== last; });
+    scene = pool[Math.floor(Math.random() * pool.length)];
+    try { localStorage.setItem('capyBootScene', scene); } catch (e) { /* нічого */ }
+  })();
+  var SD = {
+    night: { bg: 'linear-gradient(#150b2e 0%, #2f1860 38%, #6b2f90 68%, #c25fb5 92%, #ffb0c8 100%)', gr: '#3a2a55', gb: '#b99be0', rd: '21, 11, 46', puff: '#cbb6ee' },
+    dawn: { bg: 'linear-gradient(#4f9fd6 0%, #86c6e6 28%, #ffe2a8 60%, #ffb872 84%, #ff9a62 100%)', gr: '#8d6b56', gb: '#f1d3a4', rd: '90, 55, 40', puff: '#fff0d0' },
+    rain: { bg: 'linear-gradient(#0a1120 0%, #14233a 38%, #23405c 70%, #3c6a88 100%)', gr: '#1a2436', gb: '#4a6a8c', rd: '8, 14, 28', puff: '#9fc4e6' },
+    snow: { bg: 'linear-gradient(#0d1838 0%, #1d3874 38%, #4b72b4 70%, #b4cff0 100%)', gr: '#e2ecf8', gb: '#ffffff', rd: '120, 150, 190', puff: '#ffffff' },
+    time: { bg: 'linear-gradient(#12062a 0%, #371660 34%, #7a3a8f 62%, #e29a62 88%, #ffd88a 100%)', gr: '#2a1a40', gb: '#ffd36a', rd: '12, 6, 30', puff: '#ffe08a' }
+  }[scene];
+  bootEl.classList.add('s-' + scene);
+  bootEl.style.background = SD.bg;
+  bootEl.style.setProperty('--gr', SD.gr); bootEl.style.setProperty('--gb', SD.gb); bootEl.style.setProperty('--rd', SD.rd); bootEl.style.setProperty('--puff', SD.puff);
+
+  // ---- Капі: піксельна, шість відтінків хутра, чотири кадри бігу, рюкзак; приладдя залежить від сцени (дощовик, шапка із шарфом, окуляри часу)
+  var CP = { O: '#2a1d18', h: '#e2b278', l: '#c68c54', b: '#a8703f', s: '#85562f', S: '#5f3d25', c: '#f0d6a6', C: '#d3b27e', k: '#1b1214', w: '#fff4dc', e: '#8a5434', t: '#41aaa2', T: '#2b7b78', u: '#8be0d6', y: '#ffd36a', Y: '#d9a441', n: '#4a78c9', N: '#2f5090', r: '#d9473d', q: '#9a2f2a', W: '#f2f6ff', Z: '#c9d7ee' };
+  /*capy-new*/
+  function capyFrame(f, acc) {
+    var W = 48, H = 32, g = [], x, y;
+    for (y = 0; y < H; y++) { g.push([]); for (x = 0; x < W; x++) g[y].push('.'); }
+    function put(x, y, c) { x = Math.round(x); y = Math.round(y); if (x >= 0 && x < W && y >= 0 && y < H) g[y][x] = c; }
+    function ell(cx, cy, rx, ry, fn) {
+      for (var yy = Math.floor(cy - ry); yy <= Math.ceil(cy + ry); yy++) for (var xx = Math.floor(cx - rx); xx <= Math.ceil(cx + rx); xx++) {
+        var dx = (xx + 0.5 - cx) / rx, dy = (yy + 0.5 - cy) / ry;
+        if (dx * dx + dy * dy <= 1) put(xx, yy, typeof fn === 'string' ? fn : fn(xx, yy, dx, dy));
+      }
+    }
+    function rect(x0, y0, w, h, c) { for (var yy = y0; yy < y0 + h; yy++) for (var xx = x0; xx < x0 + w; xx++) put(xx, yy, c); }
+    function fur(xx, yy, dx, dy) {                                                   // світло зверху-ліворуч: гладкі смуги від світлого до тіні
+      var t = dy * 0.9 - dx * 0.2;
+      return t < -0.62 ? 'h' : t < -0.28 ? 'l' : t < 0.32 ? 'b' : t < 0.68 ? 's' : 'S';
+    }
+    function furHead(xx, yy, dx, dy) { var t = dy * 0.85 - dx * 0.15; return t < -0.55 ? 'h' : t < -0.18 ? 'l' : t < 0.4 ? 'b' : t < 0.75 ? 's' : 'S'; }
+    function leg(x0, ph, near) {                                                     // нога: стегно, гомілка, копитце; стопа йде вперед-назад і підіймається
+      var a = f * Math.PI / 2 + ph, dx = Math.round(Math.sin(a) * 3), lift = Math.cos(a) > 0.2 ? 2 : 0, top = 19, bot = 30 - lift;
+      for (var yy = top; yy < bot; yy++) {
+        var shift = Math.round(dx * Math.max(0, yy - top - 2) / (bot - top)), c = near ? (yy < bot - 3 ? 'b' : 's') : (yy < bot - 3 ? 's' : 'S');
+        rect(x0 + shift, yy, 4, 1, c); if (near) put(x0 + shift, yy, 'l');
+      }
+      rect(x0 + dx, bot - 1, 5, 1, 'S'); rect(x0 + dx, bot - 2, 5, 1, near ? 'S' : 's');
+    }
+    leg(8, Math.PI, false); leg(29, 0, false);                                       // дальні лапи
+    ell(21, 15.5, 18, 8.8, fur);                                                     // тулуб
+    function inBody(xx, yy) { var dx = (xx + 0.5 - 21) / 18, dy = (yy + 0.5 - 15.5) / 8.8; return dx * dx + dy * dy <= 1; }
+    for (y = 0; y < H; y++) for (x = 4; x < 38; x++) if (inBody(x, y)) {                  // шерсть: рідкі короткі штрихи
+      var c0 = g[y][x];
+      if (c0 === 'b' && (x * 3 + y * 5) % 19 === 0) { put(x, y, 's'); put(x + 1, y, 's'); }
+      else if (c0 === 'l' && (x * 7 + y * 3) % 23 === 0) { put(x, y, 'h'); put(x + 1, y, 'h'); }
+    }
+    for (x = 11; x < 32; x++) { var by = 15.5 + 8.8 * Math.sqrt(Math.max(0, 1 - Math.pow((x + 0.5 - 21) / 18, 2))); if (x > 9) { put(x, Math.round(by) - 1, 'c'); put(x, Math.round(by) - 2, x % 3 ? 'c' : 'C'); } }   // світла смуга черева
+    if (acc === 'rain') { for (y = 0; y < H; y++) for (x = 3; x < 38; x++) { var d = (y + 0.5 - 15.5) / 8.8; if (inBody(x, y) && d < 0.05 && x > 5 && x < 33) g[y][x] = d < -0.5 ? 'y' : 'Y'; } rect(6, 16, 28, 1, 'q'); }   // жовтий дощовик
+    ell(37, 13.5, 9, 8.2, furHead); ell(43.5, 16, 4.6, 6.4, furHead);                // голова й морда
+    ell(41, 12.5, 4.5, 3.2, function (xx, yy, dx, dy) { return dy < -0.2 ? 'l' : 'b'; });  // лоб
+    ell(43, 20, 3.6, 2.2, function (xx, yy) { return yy > 20 ? 'C' : 'c'; });         // підборіддя
+    rect(45, 10, 3, 4, 'k'); put(45, 10, 'S'); put(46, 10, 'w'); rect(40, 18, 7, 1, 'S');          // ніс, рот
+    rect(39, 9, 3, 3, 'k'); put(40, 9, 'w'); put(39, 11, 'S'); rect(38, 8, 5, 1, 's');          // око й брова
+    for (y = 14; y < 20; y++) put(30, y, 's');                                       // шов шиї
+    ell(32, 5.5, 2.5, 2.4, 's'); put(32, 5, 'e'); put(32, 6, 'e'); put(31, 5, 'e');           // вухо
+    put(44, 15, 'S'); put(43, 16, 'S'); put(42, 15, 'S');                            // вуса й цятки
+    leg(13, 0, true); leg(33, Math.PI, true);                                        // ближні лапи
+    function outline(x0, y0, w, h) { rect(x0 - 1, y0 - 1, w + 2, h + 2, 'O'); }
+    if (acc === 'winter') {                                                          // в’язана шапка з помпоном і червоний шарф
+      ell(36, 4.5, 5.2, 3.4, function (xx, yy) { return (xx + yy) % 4 < 2 ? 'N' : 'n'; }); rect(30, 7, 12, 2, 'W'); rect(35, 0, 3, 3, 'W'); put(36, 0, 'Z');
+      rect(29, 15, 4, 4, 'r'); for (x = 29; x < 33; x += 2) put(x, 16, 'q'); rect(26, 19, 4, 6, 'r'); rect(26, 21, 4, 1, 'q'); rect(26, 24, 4, 1, 'q');
+    }
+    if (acc === 'rain') { ell(37, 5.5, 6.8, 3.4, 'y'); rect(30, 7, 15, 1, 'Y'); rect(32, 4, 3, 1, 'w'); }                    // капелюх-зюйдвестка
+    if (acc === 'time') { rect(30, 7, 9, 1, 'Y'); ell(40.5, 8.5, 3.2, 2.8, 'Y'); ell(40.5, 8.5, 2.1, 1.7, 'u'); put(40, 8, 'w'); rect(33, 21, 2, 3, 'Y'); ell(34, 24, 2.6, 2.6, 'Y'); ell(34, 24, 1.6, 1.6, 'w'); put(34, 23, 'k'); put(35, 24, 'k'); }   // окуляри й кишеньковий годинник
+    var px = 11, py = 2;                                                             // рюкзак
+    outline(px, py + 1, 11, 11); rect(px + 1, py, 9, 1, 'O');
+    rect(px, py + 1, 11, 11, 't'); rect(px + 1, py, 9, 1, 't'); rect(px, py + 10, 11, 2, 'T'); rect(px + 10, py + 2, 1, 9, 'T');
+    rect(px + 1, py + 2, 4, 2, 'u'); rect(px + 2, py + 6, 7, 4, 'T'); rect(px + 3, py + 7, 5, 2, 't'); put(px + 5, py + 6, 'y');   // відблиск, кишеня, замок
+    for (y = 11; y < 19; y++) { put(22 + Math.round((y - 11) * 0.3), y, 'T'); put(23 + Math.round((y - 11) * 0.3), y, 't'); }  // лямка
+    put(24, 15, 'y'); put(25, 15, 'y');
+    var o = g.map(function (r) { return r.slice(); });                               // контур: темна рамка навколо силуету
+    for (y = 0; y < H; y++) for (x = 0; x < W; x++) if (g[y][x] === '.') {
+      if ((y > 0 && g[y - 1][x] !== '.') || (y < H - 1 && g[y + 1][x] !== '.') || (x > 0 && g[y][x - 1] !== '.') || (x < W - 1 && g[y][x + 1] !== '.')) o[y][x] = 'O';
+    }
+    return o.map(function (r) { return r.join(''); });
+  }
+  var cacc = { night: 'pack', dawn: 'pack', rain: 'rain', snow: 'winter', time: 'time' }[scene];
+  var cp = document.getElementById('bootCapy'), frames = [0, 1, 2, 3].map(function (f) { return capyFrame(f, cacc); }), csc = Math.max(3, Math.min(5, Math.floor(Math.min(VW, VH) / 130)));
+  cp.innerHTML = [0, 1, 2, 3].map(function (j) { return '<span class="pf" style="--j:' + j + '">' + svg(frames[(4 - j) % 4], CP, csc) + '</span>'; }).join('');
+  cp.style.marginLeft = (-48 * csc / 2) + 'px';
+  var pf = document.getElementById('bootPuff'); pf.style.marginLeft = (-48 * csc / 2 + 5 * csc) + 'px';
+  pf.innerHTML = '<i></i><i></i><i></i><i></i>';
+
+  // ---- місто: два шари з вікнами, що блимають; параметри залежать від сцени
+  function city(o) {
+    var b = '', x = 0, i = 0, far = !!o.far;
     while (x < 330) {
-      var hh = ((i * 37 + 11) % 5) * 9 + 36, ww = 18 + ((i * 13) % 4) * 5, col = dark ? '#4a2a78' : (i % 2 ? '#2a1747' : '#35205a');
-      b += '<rect x="' + x + '" y="' + (100 - hh) + '" width="' + ww + '" height="' + hh + '" fill="' + col + '"/>';
-      if (!dark && i % 4 === 1) b += '<rect x="' + (x + (ww >> 1) - 1) + '" y="' + (100 - hh - 8) + '" width="2" height="8" fill="' + col + '"/><rect x="' + (x + (ww >> 1) - 2) + '" y="' + (100 - hh - 8) + '" width="4" height="1" fill="#ff5fa2"/>';
-      for (var wy = 100 - hh + 5; wy < 94; wy += 9) for (var wx = x + 4; wx < x + ww - 5; wx += 7) {
+      var hh = ((i * 37 + 11) % 5) * 9 + 36, ww = 18 + ((i * 13) % 4) * 5, col = o.cols[i % o.cols.length], top = 100 - hh;
+      b += '<rect x="' + x + '" y="' + top + '" width="' + ww + '" height="' + hh + '" fill="' + col + '"/>';
+      if (o.shade) b += '<rect x="' + (x + ww - 3) + '" y="' + top + '" width="3" height="' + hh + '" fill="' + o.shade + '" opacity=".35"/>';
+      if (!far && i % 4 === 1) b += '<rect x="' + (x + (ww >> 1) - 1) + '" y="' + (top - 8) + '" width="2" height="8" fill="' + col + '"/><rect x="' + (x + (ww >> 1) - 2) + '" y="' + (top - 8) + '" width="4" height="1" fill="' + (o.anten || '#ff5fa2') + '"/>';
+      if (!far && o.chim && i % 3 === 0) b += '<rect x="' + (x + 3) + '" y="' + (top - 6) + '" width="4" height="6" fill="' + o.chim + '"/>' + [0, 1, 2].map(function (k) { return '<rect class="sm" style="animation-delay:-' + (k * 1.1) + 's" x="' + (x + 4) + '" y="' + (top - 8) + '" width="3" height="3" fill="' + (o.smoke || '#fff') + '" opacity=".6"/>'; }).join('');
+      if (o.snow) b += '<rect x="' + (x - 1) + '" y="' + (top - 2) + '" width="' + (ww + 2) + '" height="4" fill="#f4f8ff"/><rect x="' + x + '" y="' + (top + 2) + '" width="3" height="3" fill="#f4f8ff"/><rect x="' + (x + ww - 5) + '" y="' + (top + 2) + '" width="4" height="2" fill="#f4f8ff"/>';
+      for (var wy = top + 5; wy < 94; wy += 9) for (var wx = x + 4; wx < x + ww - 5; wx += 7) {
         var hsh = (wx * 7 + wy * 3);
-        if ((hsh % 5) < 3) b += '<rect class="' + (!dark && hsh % 3 === 0 ? 'bw' : '') + '" style="--bd:' + (3 + (hsh % 5)) + 's;animation-delay:-' + (hsh % 7) + 's" x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + (dark ? '#8a60c0' : (((wx * 3 + wy) % 4 === 0) ? '#ff9ad0' : '#ffd98a')) + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
+        if ((hsh % 5) < (o.lit || 3)) b += '<rect class="' + (!far && hsh % 3 === 0 ? 'bw' : '') + '" style="--bd:' + (3 + (hsh % 5)) + 's;animation-delay:-' + (hsh % 7) + 's" x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + (far ? o.winFar : (((wx * 3 + wy) % 4 === 0) ? o.win[1] : o.win[0])) + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
+      }
+      if (!far && o.neon && i % 4 === 2) { var nc = o.neon[(i >> 1) % o.neon.length]; b += '<rect class="nf" style="animation-delay:-' + (i % 5) + 's" x="' + (x + 2) + '" y="' + (top + 3) + '" width="' + (ww - 4) + '" height="3" fill="' + nc + '"/><rect class="nf" style="animation-delay:-' + (i % 5) + 's" x="' + (x + 2) + '" y="' + (top + 3) + '" width="' + (ww - 4) + '" height="3" fill="' + nc + '" opacity=".35" transform="translate(0 4)"/>'; }
+      x += ww; i++;
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">' + b + '</svg>';
+  }
+  // «Крізь час»: будинки з різних епох поспіль (Відродження → Неон)
+  function eraCity(far) {
+    var b = '', x = 0, i = 0, E = [['#b49a74', '#e7d2a2'], ['#d9788f', '#ffe9c4'], ['#8b4ab0', '#ffb0e8'], ['#2c2a58', '#6ee7ff'], ['#3d6aa6', '#bfe8ff'], ['#4f8a52', '#e9ffc8'], ['#cfd6e4', '#7aa8ff'], ['#1b1236', '#ff5fa2']];
+    while (x < 330) {
+      var ep = i % 8, hh = [52, 40, 46, 38, 60, 44, 66, 72][ep], ww = [20, 26, 22, 24, 20, 26, 14, 20][ep], top = 100 - hh, c = E[ep][0], w = E[ep][1];
+      if (far) { b += '<rect x="' + x + '" y="' + top + '" width="' + ww + '" height="' + hh + '" fill="#4a2a78"/>'; x += ww; i++; continue; }
+      b += '<rect x="' + x + '" y="' + top + '" width="' + ww + '" height="' + hh + '" fill="' + c + '"/><rect x="' + (x + ww - 3) + '" y="' + top + '" width="3" height="' + hh + '" fill="#000" opacity=".22"/>';
+      if (ep === 0) b += '<polygon points="' + (x - 2) + ',' + top + ' ' + (x + ww / 2) + ',' + (top - 14) + ' ' + (x + ww + 2) + ',' + top + '" fill="#a8402f"/><rect x="' + (x + ww / 2) + '" y="' + (top - 22) + '" width="1" height="8" fill="#302418"/><rect x="' + (x + ww / 2 + 1) + '" y="' + (top - 22) + '" width="5" height="3" fill="#d9473d"/>';
+      if (ep === 1) b += '<rect x="' + (x + 3) + '" y="' + (top - 8) + '" width="' + (ww - 6) + '" height="8" fill="#fff4dc"/><rect x="' + (x + 5) + '" y="' + (top - 6) + '" width="' + (ww - 10) + '" height="4" fill="#d9788f"/>';
+      if (ep === 2) b += '<circle class="bw" cx="' + (x + ww / 2) + '" cy="' + (top - 7) + '" r="7" fill="#dfe8ff"/><rect x="' + (x + ww / 2 - 5) + '" y="' + (top - 8) + '" width="10" height="1" fill="#8aa0e0"/><rect x="' + (x + ww / 2) + '" y="' + (top - 13) + '" width="1" height="12" fill="#8aa0e0"/>';
+      if (ep === 3) b += '<rect x="' + (x + 2) + '" y="' + (top + 4) + '" width="' + (ww - 4) + '" height="14" fill="#0a0a1e"/><rect class="nf" x="' + (x + 4) + '" y="' + (top + 6) + '" width="' + (ww - 8) + '" height="10" fill="#6ee7ff" opacity=".8"/>';
+      if (ep === 4) b += '<rect x="' + (x + ww / 2) + '" y="' + (top - 14) + '" width="1" height="14" fill="#fff"/><rect class="nf" x="' + (x + ww / 2 - 4) + '" y="' + (top - 14) + '" width="9" height="1" fill="#9fe1ff"/><rect class="nf" x="' + (x + ww / 2 - 2) + '" y="' + (top - 17) + '" width="5" height="1" fill="#9fe1ff"/>';
+      if (ep === 5) b += '<rect x="' + (x - 1) + '" y="' + (top - 3) + '" width="' + (ww + 2) + '" height="4" fill="#6fbf5a"/><rect x="' + (x + 4) + '" y="' + (top - 6) + '" width="4" height="4" fill="#4f9a63"/><rect x="' + (x + ww - 10) + '" y="' + (top - 5) + '" width="5" height="3" fill="#4f9a63"/>';
+      if (ep === 6) b += '<polygon points="' + (x + ww / 2 - 3) + ',' + top + ' ' + (x + ww / 2) + ',' + (top - 18) + ' ' + (x + ww / 2 + 3) + ',' + top + '" fill="#ffffff"/><rect x="' + (x + ww / 2 - 6) + '" y="' + (top - 4) + '" width="3" height="5" fill="#d9473d"/><rect x="' + (x + ww / 2 + 3) + '" y="' + (top - 4) + '" width="3" height="5" fill="#d9473d"/><rect class="nf" x="' + (x + ww / 2 - 1) + '" y="' + (top + 1) + '" width="2" height="4" fill="#ffd36a"/>';
+      if (ep === 7) b += '<rect class="nf" x="' + (x + 1) + '" y="' + (top + 10) + '" width="' + (ww - 2) + '" height="2" fill="#ff5fa2"/><rect class="nf" style="animation-delay:-2s" x="' + (x + 1) + '" y="' + (top + 24) + '" width="' + (ww - 2) + '" height="2" fill="#6ee7ff"/><rect x="' + (x + ww / 2) + '" y="' + (top - 10) + '" width="1" height="10" fill="#6ee7ff"/>';
+      for (var wy = top + 5; wy < 94; wy += 9) for (var wx = x + 4; wx < x + ww - 5; wx += 6) {
+        var hsh = (wx * 7 + wy * 3 + ep);
+        if ((hsh % 5) < 3) b += '<rect class="' + (hsh % 3 === 0 ? 'bw' : '') + '" style="--bd:' + (3 + (hsh % 5)) + 's;animation-delay:-' + (hsh % 7) + 's" x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + w + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
       }
       x += ww; i++;
     }
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">' + b + '</svg>';
   }
-  document.getElementById('bootCity').innerHTML = city(false) + city(false);
-  document.getElementById('bootCityFar').innerHTML = city(true) + city(true);
-  // ---- вулиця: ліхтарі, дерева, поштова скринька їдуть із тією ж швидкістю, що й дорога
+  var CITY = {
+    night: [city({ far: 1, cols: ['#4a2a78'], winFar: '#8a60c0' }), city({ cols: ['#2a1747', '#35205a'], win: ['#ffd98a', '#ff9ad0'], neon: ['#ff5fa2', '#6ee7ff'] })],
+    dawn: [city({ far: 1, cols: ['#c9a8b8', '#b79bb0'], winFar: '#fff0d0', lit: 2 }), city({ cols: ['#e9b98f', '#d9a07a', '#f0c9a0', '#c98a6a'], shade: '#6a3a2a', win: ['#fff1c8', '#9fd8f0'], anten: '#d9473d', chim: '#8a5a44', smoke: '#fff4e8', lit: 4 })],
+    rain: [city({ far: 1, cols: ['#1b2c46', '#223552'], winFar: '#4a6a8c' }), city({ cols: ['#15233a', '#1e2f4c', '#18283f'], win: ['#ffd98a', '#9fe1ff'], anten: '#ff5fa2', neon: ['#ff5fa2', '#6ee7ff', '#ffd36a'], lit: 3 })],
+    snow: [city({ far: 1, cols: ['#2d4a86', '#3a5a9a'], winFar: '#d8e8ff', snow: 1, lit: 2 }), city({ cols: ['#2a3f78', '#34508c', '#243968'], win: ['#ffe39a', '#ffb870'], snow: 1, anten: '#ffffff', lit: 4 })],
+    time: [eraCity(true), eraCity(false)]
+  }[scene];
+  document.getElementById('bootCityFar').innerHTML = CITY[0] + CITY[0];
+  document.getElementById('bootCity').innerHTML = CITY[1] + CITY[1];
+
+  // ---- небесне тіло та зорі
+  var orb = document.getElementById('bootOrb'), stars = bootEl.querySelector('.b-stars');
+  stars.style.display = (scene === 'dawn' || scene === 'rain') ? 'none' : '';
+  function disc(r, fn) { return grid(r * 2, r * 2, function (x, y) { var dx = x + 0.5 - r, dy = y + 0.5 - r; return dx * dx + dy * dy <= r * r ? fn(x, y, dx, dy) : '.'; }); }
+  if (scene === 'night' || scene === 'snow') {
+    var mr = 12, moon = disc(mr, function (x, y, dx, dy) { var c = (dx + dy * 0.6) < -2 ? 'w' : (dx + dy) < 4 ? 'Y' : 'e'; if ((x === 6 && y === 7) || (x === 14 && y === 11) || (x === 9 && y === 16) || (x === 7 && y === 8) || (x === 15 && y === 12)) c = 'e'; return c; });
+    orb.innerHTML = '<span class="moon">' + svg(moon, { w: '#fff8e4', Y: '#f2e6bc', e: '#cdbf98' }, sc) + '</span>';
+    orb.style.left = scene === 'night' ? '70%' : '24%'; orb.style.bottom = scene === 'night' ? '50%' : '58%';
+  }
+  if (scene === 'dawn') { orb.innerHTML = '<span class="sunrays"></span><span class="sunball"></span>'; orb.style.left = '26%'; orb.style.bottom = '53%'; }
+  if (scene === 'time') {
+    var teeth = '', hub = '';
+    for (var tk = 0; tk < 12; tk++) { var an = tk * 30; teeth += '<rect x="-3" y="-60" width="6" height="12" fill="#ffd36a" transform="rotate(' + an + ')"/>'; }
+    var ticks = ''; for (var tl = 0; tl < 12; tl++) ticks += '<rect x="' + (tl % 3 ? -1 : -2) + '" y="-44" width="' + (tl % 3 ? 2 : 4) + '" height="' + (tl % 3 ? 5 : 8) + '" fill="#302418" transform="rotate(' + tl * 30 + ')"/>';
+    orb.innerHTML = '<svg class="bigclock" viewBox="-70 -70 140 140" width="' + Math.min(VW * 0.5, 260) + '" height="' + Math.min(VW * 0.5, 260) + '" shape-rendering="crispEdges"><g class="cg">' + teeth + '<circle r="52" fill="#ffd36a"/><circle r="47" fill="#fff4dc"/><circle r="47" fill="none" stroke="#302418" stroke-width="2"/>' + ticks + '<g class="hh"><rect x="-2" y="-28" width="4" height="30" fill="#302418"/></g><g class="mm"><rect x="-1.5" y="-40" width="3" height="42" fill="#302418"/></g><g class="ss"><rect x="-1" y="-42" width="2" height="48" fill="#d9473d"/></g><circle r="4" fill="#302418"/><circle r="1.6" fill="#ffd36a"/></g></svg>';
+    orb.style.left = '50%'; orb.style.bottom = '54%';
+  }
+  if (scene === 'rain') orb.style.display = 'none';
+
+  // ---- вулиця: реквізит їде з тією ж швидкістю, що й дорога
   var LAMP = ['..OOOO..', '.OyyyyO.', '.OyyyyO.', '..OOOO..', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '..OOOO..', '.OOOOOO.'];
   var TREE = ['....OOOOOO......', '..OOggggggOO....', '.OggggGgggggO...', 'OggGgggggggggO..', 'OgggggggGgggggO.', 'OggggGgggggggGO.', '.OggggggGgggOO..', '..OOggggggOO....', '....OOOOOO......', '......ObO.......', '......ObO.......', '......ObO.......', '.....OObOO......'];
   var BOX = ['.OOOOOO.', 'OnnnnnnO', 'OnwwwwnO', 'OnnnnnnO', '.OOOOOO.', '...ObO..', '...ObO..', '...ObO..'];
-  var per = Math.max(VW, 520), st = document.getElementById('bootStreet'), html = '';
-  [[0.08, LAMP, sc], [0.27, TREE, sc], [0.5, LAMP, sc], [0.68, BOX, sc], [0.84, TREE, sc]].forEach(function (it) {
-    [0, 1].forEach(function (k) { html += '<span style="left:' + Math.round(it[0] * per + k * per) + 'px">' + sp(it[1], P, it[2]) + '</span>'; });
+  var STALL = ['..OOOOOOOOOOOOOOOOOOOO..', '.OrrwwrrwwrrwwrrwwrrwO..'.slice(0, 25), 'OrrwwrrwwrrwwrrwwrrwwrO.', 'OOOOOOOOOOOOOOOOOOOOOOOO', '.O..................O.', '.O.ooffjjggooffjjggo.O.', '.O.ooffjjggooffjjggo.O.', '.OOOOOOOOOOOOOOOOOOOOO..', '.ObbbbbbbbbbbbbbbbbbbO..', '.ObbOOOObbbbbOOOObbbbO..', '.ObbOjjOObbbbOggOObbbO..', '.OOOOOOOOOOOOOOOOOOOOO..'];
+  var STALL2 = ['..OOOOOOOOOOOOOOOOOOOO..', '.OnnwwnnwwnnwwnnwwnnwO..', 'OnnwwnnwwnnwwnnwwnnwwnO.', 'OOOOOOOOOOOOOOOOOOOOOOOO', '.O..................O.', '.O.rrwwrrrwwrrrwwrrr.O..', '.O.rrwwrrrwwrrrwwrrr.O..', '.OOOOOOOOOOOOOOOOOOOOO..', '.ObbbbbbbbbbbbbbbbbbbO..', '.ObbOOOObbbbbOOOObbbbO..', '.ObbOrrOObbbbOjjOObbbO..', '.OOOOOOOOOOOOOOOOOOOOO..'];
+  var BENCH = ['OOOOOOOOOOOO', 'ObbbbbbbbbbO', 'OOOOOOOOOOOO', '.O........O.', '.OOOOOOOOOO.', '.O........O.', '.O........O.'];
+  var PINE = ['.......OO.......', '......OWWO......', '.....OGggGO.....', '....OGgWgGgO....', '...OGgWWggGgO...', '..OOGgggggGGOO..', '....OGgWggGO....', '...OGgWWgggGO...', '..OGgWgggWggGO..', '.OGgWWgggggWgGO.', 'OOOGGGggggGGGOOO', '....OOOObOOO....', '......ObbO......', '......ObbO......'];
+  var SNOWMAN = ['....OOOOOO....', '...OnnnnnnO...', '...OnnnnnnO...', '..OOOOOOOOOO..', '...OwwwwwwO...', '..OwwKwwKwwO..', '..OwwwwjjjjOjj', '..OwwwKKwwwO..', '...OwwwwwwO...', '..OOOwwwwOOO..', '.OwwwKwwwwwwO.', 'OwwwwwwwKwwwwO', 'OwwwwwwwwwwwwO', 'OwwKwwwwwwwwwO', '.OwwwwwwwwwwO.', '..OOwwwwwwOO..', '....OOOOOO....'];
+  var PUDDLE = ['..sssssssssss..', '.sSSSSSSSSSSSs.', 'sSSwSSSSSwSSSSs', '.sSSSSSSSSSSSs.', '..sssssssssss..'];
+  var HYD = ['..OOOO..', '.OrrrrO.', 'OOrrrrOO', 'OrrrrrrO', '.OrrrrO.', '.OrrrrO.', 'OOrrrrOO', 'OOOOOOOO'];
+  var CLOCKPOST = ['..OOOOOOO..', '.OyyyyyyyO.', 'OyywwwwwyyO', 'OywwwKwwwyO', 'OywwwKKwwyO', 'OywwwwwwwyO', '.OyyyyyyyO.', '..OOOOOOO..', '....OyO....', '....OyO....', '....OyO....', '....OyO....', '....OyO....', '....OyO....', '...OOOOO...', '..OOOOOOO..'];
+  var GEMTREE = ['....OOOOOO......', '..OOuuuuuuOO....', '.OuuuvuuuuuuO...', 'OuuvuuuuuuvuuO..', 'OuuuuuuUuuuuuO..', 'OuuuvuuuuuvuuO..', '.OuuuuvuuuuOO...', '..OOuuuuuuOO....', '....OOOOOO......', '......OyO.......', '......OyO.......', '......OyO.......', '.....OOyOO......'];
+  var PA = { O: '#302418', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', n: '#3d5a8c', w: '#fff4dc', b: '#7a4f35', r: '#d9473d', o: '#8a5a30', f: '#e8863c', j: '#ffd36a', K: '#1b1224', W: '#f4f8ff', s: '#7fb6e0', S: '#3d6a96', u: '#8b6bb0', U: '#c7a6f0', v: '#ffd36a' };
+  var per = Math.max(VW, 520), st = document.getElementById('bootStreet'), html = '', LAMPY = { y: '#ffe08a' };
+  var LIST = {
+    night: [[0.08, LAMP], [0.27, TREE], [0.5, LAMP], [0.68, BOX], [0.84, TREE]],
+    dawn: [[0.02, STALL], [0.3, LAMP], [0.43, TREE], [0.6, STALL2], [0.84, BOX], [0.93, BENCH]],
+    rain: [[0.06, LAMP], [0.2, PUDDLE], [0.36, HYD], [0.5, LAMP], [0.66, PUDDLE], [0.8, BOX], [0.9, PUDDLE]],
+    snow: [[0.05, PINE], [0.2, LAMP], [0.4, SNOWMAN], [0.6, PINE], [0.78, LAMP], [0.9, PINE]],
+    time: [[0.08, CLOCKPOST], [0.3, LAMP], [0.5, GEMTREE], [0.7, CLOCKPOST], [0.88, LAMP]]
+  }[scene];
+  var PAL2 = JSON.parse(JSON.stringify(PA));
+  if (scene === 'snow') { PAL2.y = '#fff2b0'; PAL2.g = '#2f6b48'; PAL2.G = '#1f4f38'; }
+  if (scene === 'rain') { PAL2.y = '#ffe08a'; PAL2.s = '#4f86b8'; PAL2.S = '#2b4d70'; PAL2.w = '#9fc4e6'; }
+  if (scene === 'time') { PAL2.y = '#ffd36a'; PAL2.O = '#1b1224'; }
+  LIST.forEach(function (it) {
+    [0, 1].forEach(function (k) {
+      var isP = it[1] === PUDDLE, extra = isP ? '<i class="rp"></i><i class="rp r2"></i>' : '';
+      html += '<span style="left:' + Math.round(it[0] * per + k * per) + 'px;' + (isP ? 'bottom:-14px' : '') + '">' + sp(it[1], PAL2, sc) + extra + '</span>';
+    });
   });
+  if (scene === 'snow') {                                                           // гірлянда між ліхтарями
+    var gx0 = 0.2 * per + 4 * sc, gx1 = 0.78 * per + 4 * sc, gh = 6 * sc, gl = '';
+    [0, 1].forEach(function (k) {
+      var x0 = gx0 + k * per, w = gx1 - gx0, sv = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + (gh + 14 * sc) + '" shape-rendering="crispEdges">', cols = ['#ff5a4a', '#ffd36a', '#4fd0ff', '#6fe08a'];
+      for (var gi = 0; gi <= 28; gi++) { var gx = gi / 28 * w, gy = 2 + Math.sin(gi / 28 * Math.PI) * gh * 1.4; sv += '<rect x="' + gx + '" y="' + gy + '" width="' + (w / 28 + 1) + '" height="2" fill="#302418"/>'; if (gi % 2) sv += '<rect class="bb" style="animation-delay:-' + ((gi % 4) * 0.35) + 's" x="' + (gx - 1) + '" y="' + (gy + 2) + '" width="' + (2 * cs) + '" height="' + (2 * cs) + '" fill="' + cols[gi % 4] + '"/>'; }
+      html += '<span style="left:' + Math.round(x0) + 'px;bottom:' + (17 * sc - 4) + 'px">' + sv + '</svg></span>';
+    });
+  }
   st.innerHTML = html; st.style.width = (per * 2) + 'px'; st.style.setProperty('--p', per + 'px'); st.style.setProperty('--sd', (per / 192) + 's');
-  // ---- небо: дирижабль, птахи, хмарки
+
+  // ---- небо: об’єкти по сцені
   var BLIMP = ['....OOOOOOOOOOOO....', '..OOwwwwwwwwwwwwOO..', '.OwwwwrrrwwwwwrrwwO.', 'OwwwwwrrrwwwwwrrwwwO', '.OwwwwrrrwwwwwrrwwO.', '..OOwwwwwwwwwwwwOO..', '....OOOOOOOOOOOO....', '.......OyyyyO.......', '.......OOOOOO.......'];
   var CLOUD = ['....OOOO........', '..OOwwwwOO..OO..', '.OwwwwwwwwOOwwO.', 'OwwwwwwwwwwwwwwO', '.OOOOOOOOOOOOOO.'];
+  var BIGCLOUD = ['......OOOOO.........', '....OOwwwwwOO..OOO..', '..OOwwwwwwwwwOOwwwOO', '.OwwwwwwwwwwwwwwwwwwO', 'OwwwwwwwwwwwwwwwwwwwwO', '.OOOOOOOOOOOOOOOOOOOO.'];
   var B1 = ['O...O', '.O.O.', '..O..'], B2 = ['..O..', '.OOO.', 'O...O'];
+  var BALLOON = ['....OOOOOO....', '..OOrrwwrrOO..', '.OrrrwwwwrrrO.', 'OrrrwwnnwwrrrO', 'OrrwwnnnnwwrrO', 'OrrwwnnnnwwrrO', '.OrrwwnnwwrrO.', '.OOrrwwwwrrOO.', '..OOrrwwrrOO..', '....OOrrOO....', '.....OOOO.....', '.....O..O.....', '.....OOOO.....', '.....OyyO.....', '.....OOOO.....'];
+  var SLEIGH = ['................OOOO.........', '..O.O..........OrrrrO........', '.OOOOOOO.......OrwwwO.OO.....', 'OOObOOObOOOOOOOOrrrrrOOO.....', '..bO.bO.......ObbbbbbbbbO....', '..bO.bO......OObbbbbbbbbOO...', '.....................OO......'];
+  var DEER = ['......O.O....', '.....OOOOO...', '...OOObbbOO..', '.OObbbbbbbbOO', '.ObbbbbbbbbbO', '..ObbbbbbbbO.', '..OO.OO.OO.OO', '..O..O..O..O.'];
   var sky = '';
-  sky += '<div class="b-fly" style="top:19%;--an:bFlyL;--d:' + ((VW + 300) / 17) + 's;--w:-3s">' + sp(BLIMP, P, sc) + '</div>';
-  [[27, 0, 70], [33, 1, 52], [14, 2, 62]].forEach(function (c, i) { sky += '<div class="b-fly" style="top:' + c[0] + '%;--an:bFlyL;--d:' + ((VW + 300) / (9 + i * 3)) + 's;--w:-' + (i * 6) + 's;opacity:.55">' + sp(CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, sc + 1) + '</div>'; });
-  for (var bi = 0; bi < 4; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs) + '</span></div>';
+  function cl(top, delay, dur, op, rows, pal, k) { return '<div class="b-fly" style="top:' + top + '%;--an:bFlyL;--d:' + dur + 's;--w:-' + delay + 's;opacity:' + op + '">' + sp(rows, pal, k) + '</div>'; }
+  if (scene === 'night') {
+    sky += '<div class="b-fly" style="top:19%;--an:bFlyL;--d:' + ((VW + 300) / 17) + 's;--w:-3s">' + sp(BLIMP, P, sc) + '</div>';
+    [[27, 0, 70], [33, 1, 52], [14, 2, 62]].forEach(function (c, i) { sky += cl(c[0], i * 6, (VW + 300) / (9 + i * 3), 0.55, CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, sc + 1); });
+    for (var bi = 0; bi < 4; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs) + '</span></div>';
+    sky += '<i class="b-shoot" style="top:8%"></i><i class="b-shoot s2" style="top:16%"></i>';
+  } else if (scene === 'dawn') {
+    [[16, 0, 60], [30, 5, 48], [8, 11, 74]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (7 + i * 2), 0.9, BIGCLOUD, { O: '#e9a98f', w: '#fff6ea' }, sc + 1); });
+    sky += '<div class="b-fly" style="top:22%;--an:bFlyL;--d:' + ((VW + 300) / 6) + 's;--w:-9s"><span class="bob">' + sp(BALLOON, { O: '#302418', r: '#d9473d', w: '#fff4dc', n: '#3d7ac9', y: '#ffd36a' }, sc) + '</span></div>';
+    sky += '<div class="b-fly" style="top:36%;--an:bFlyL;--d:' + ((VW + 300) / 5) + 's;--w:-3s"><span class="bob b2">' + sp(BALLOON, { O: '#302418', r: '#f0a030', w: '#fff4dc', n: '#4f9a63', y: '#ffd36a' }, cs + 1) + '</span></div>';
+    for (var di = 0; di < 5; di++) sky += '<div class="b-fly b-bird" style="top:' + (12 + (di % 3) * 4 + (di > 2 ? 6 : 0)) + '%;--an:bFlyR;--d:' + ((VW + 300) / (30 + di * 2)) + 's;--w:-' + (di * 1.3) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#6a3a2a' }, cs) + '</span><span class="f2">' + sp(B2, { O: '#6a3a2a' }, cs) + '</span></div>';
+  } else if (scene === 'rain') {
+    [[6, 0], [17, 5], [28, 9], [11, 13]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 1.5), 0.95, BIGCLOUD, { O: '#0a1220', w: '#2a3c58' }, sc + 2); });
+    sky += '<div class="b-fly" style="top:30%;--an:bFlyL;--d:' + ((VW + 300) / 14) + 's;--w:-4s;opacity:.8">' + sp(BLIMP, { O: '#0a1220', w: '#3a4f70', r: '#ff5fa2', y: '#ffd36a' }, sc) + '</div>';
+  } else if (scene === 'snow') {
+    [[18, 0, 60], [32, 4, 50]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 2), 0.6, BIGCLOUD, { O: '#5a78b0', w: '#c6d8f4' }, sc + 1); });
+    sky += '<div class="b-fly" style="top:14%;--an:bFlyR;--d:' + ((VW + 300) / 26) + 's;--w:-6s"><span class="bob">' + sp(DEER, { O: '#302418', b: '#8a5a30' }, cs) + sp(DEER, { O: '#302418', b: '#8a5a30' }, cs) + sp(SLEIGH, { O: '#302418', r: '#d9473d', w: '#fff4dc', b: '#7a4f35' }, cs) + '</span></div>';
+  } else {
+    [[20, 2, 50], [34, 8, 40]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 2), 0.5, CLOUD, { O: '#8a5ab0', w: '#e0b8ee' }, sc + 1); });
+  }
   document.getElementById('bootSky').innerHTML = sky;
-  // ---- машини на дорозі
+
+  // ---- транспорт на дорозі
   var CAR = ['.....OOOOOOOO', '....OsssOsssO', '...OsssssOssssO', '.OOOBBBBBBBBBBOOO', 'OBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOO', '..OKKO......OKKO', '...OO........OO'];
   var BUS = ['OOOOOOOOOOOOOOOOOOOOOOOO', 'OsssOsssOsssOsssOsssOssO', 'OsssOsssOsssOsssOsssOssO', 'OBBBBBBBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOOOOOOOO', '..OKKO..........OKKO..', '...OO............OO...'];
-  function pal2(B) { var p = {}; for (var k in P) p[k] = P[k]; p.B = B; return p; }
+  function pal2(B, extra) { var p = {}; for (var k in P) p[k] = P[k]; p.B = B; if (extra) for (var e in extra) p[e] = extra[e]; return p; }
   var cars = '';
-  cars += '<div class="b-car" style="bottom:calc(25% + 2px);--an:bCarR;--d:15s;--w:-1s"><span>' + sp(CAR, pal2('#e8863c'), sc) + '</span></div>';
-  cars += '<div class="b-car" style="bottom:calc(25% + 2px);--an:bCarR;--d:15s;--w:-9s"><span>' + sp(CAR, pal2('#4f9a63'), sc) + '</span></div>';
-  cars += '<div class="b-car l" style="bottom:calc(25% + 12px);--an:bBusL;--d:11s;--w:-2s"><span>' + sp(BUS, pal2('#f2b84b'), sc) + '</span></div>';
-  cars += '<div class="b-car l" style="bottom:calc(25% + 12px);--an:bBusL;--d:11s;--w:-7s"><span>' + sp(CAR, pal2('#ef5fa2'), sc) + '</span></div>';
+  function car(l, bottom, an, d, w, rows, pal, beam) { return '<div class="b-car' + (l ? ' l' : '') + '" style="bottom:' + bottom + ';--an:' + an + ';--d:' + d + 's;--w:-' + w + 's"><span>' + sp(rows, pal, sc) + (beam ? '<i class="beam"></i>' : '') + '</span></div>'; }
+  if (scene === 'night') {
+    cars += car(0, 'calc(25% + 2px)', 'bCarR', 15, 1, CAR, pal2('#e8863c')) + car(0, 'calc(25% + 2px)', 'bCarR', 15, 9, CAR, pal2('#4f9a63'));
+    cars += car(1, 'calc(25% + 12px)', 'bBusL', 11, 2, BUS, pal2('#f2b84b')) + car(1, 'calc(25% + 12px)', 'bBusL', 11, 7, CAR, pal2('#ef5fa2'));
+  } else if (scene === 'dawn') {
+    cars += car(0, 'calc(25% + 2px)', 'bCarR', 17, 2, CAR, pal2('#4f9ad9')) + car(0, 'calc(25% + 2px)', 'bCarR', 17, 11, CAR, pal2('#f2b84b'));
+    cars += car(1, 'calc(25% + 12px)', 'bBusL', 12, 3, BUS, pal2('#d9473d')) + car(1, 'calc(25% + 12px)', 'bBusL', 12, 9, CAR, pal2('#4f9a63'));
+  } else if (scene === 'rain') {
+    var taxi = pal2('#ffd36a', { s: '#4f86b8', Y: '#fff2b0' });
+    cars += car(0, 'calc(25% + 2px)', 'bCarR', 14, 1, CAR, taxi, 1) + car(0, 'calc(25% + 2px)', 'bCarR', 14, 8, CAR, pal2('#3d6aa6', { s: '#4f86b8' }), 1);
+    cars += car(1, 'calc(25% + 12px)', 'bBusL', 11, 2, BUS, pal2('#ff5fa2', { s: '#4f86b8' }), 1) + car(1, 'calc(25% + 12px)', 'bBusL', 11, 7, CAR, pal2('#9a2f2a', { s: '#4f86b8' }), 1);
+  } else if (scene === 'snow') {
+    cars += car(0, 'calc(25% + 2px)', 'bCarR', 18, 2, CAR, pal2('#d9473d', { s: '#cfe6ff' }), 1) + car(0, 'calc(25% + 2px)', 'bCarR', 18, 11, CAR, pal2('#3d7ac9', { s: '#cfe6ff' }), 1);
+    cars += car(1, 'calc(25% + 12px)', 'bBusL', 13, 4, BUS, pal2('#4f9a63', { s: '#cfe6ff' })) + car(1, 'calc(25% + 12px)', 'bBusL', 13, 10, CAR, pal2('#f0a030', { s: '#cfe6ff' }), 1);
+  } else {
+    cars += car(0, 'calc(25% + 2px)', 'bCarR', 16, 2, CAR, pal2('#ffd36a', { s: '#8be0d6' })) + car(1, 'calc(25% + 12px)', 'bBusL', 12, 5, BUS, pal2('#8b6bb0', { s: '#8be0d6' }));
+  }
   document.getElementById('bootCars').innerHTML = cars;
+
+  // ---- погода й дрібні ефекти поверх усього (під текстом)
+  function tile(w, h, n, seed, col, dw, dh) { var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" shape-rendering="crispEdges">'; for (var i = 0; i < n; i++) s += '<rect x="' + Math.floor(rnd(i, seed) * w) + '" y="' + Math.floor(rnd(seed, i) * h) + '" width="' + dw + '" height="' + dh + '" fill="' + col + '"/>'; return "url('data:image/svg+xml;utf8," + encodeURIComponent(s + '</svg>').replace(/'/g, '%27') + "')"; }
+  var fx = document.getElementById('bootFx'), fh = '';
+  if (scene === 'rain') {
+    fh += '<div class="b-flash"></div><div class="fx-rain a" style="background-image:' + tile(96, 96, 16, 3, '#bfe3ff', 2, 9) + '"></div><div class="fx-rain b" style="background-image:' + tile(64, 64, 9, 8, '#7fb0dd', 2, 6) + '"></div><div class="fx-rain c" style="background-image:' + tile(160, 160, 12, 5, '#e6f4ff', 3, 13) + '"></div>';
+  } else if (scene === 'snow') {
+    fh += '<div class="fx-snow a" style="background-image:' + tile(120, 120, 14, 2, '#ffffff', 4, 4) + '"></div><div class="fx-snow b" style="background-image:' + tile(80, 80, 12, 6, '#e8f2ff', 3, 3) + '"></div><div class="fx-snow c" style="background-image:' + tile(50, 50, 9, 9, '#cfe0ff', 2, 2) + '"></div>';
+  } else if (scene === 'night') {
+    for (var fi = 0; fi < 10; fi++) fh += '<i class="ff" style="left:' + Math.round(rnd(fi, 1) * 100) + '%;bottom:' + (26 + Math.round(rnd(2, fi) * 22)) + '%;animation-delay:-' + (fi * 0.9) + 's;animation-duration:' + (5 + (fi % 4)) + 's"></i>';
+  } else if (scene === 'dawn') {
+    for (var pi = 0; pi < 12; pi++) fh += '<i class="mote" style="left:' + Math.round(rnd(pi, 3) * 100) + '%;bottom:' + (27 + Math.round(rnd(4, pi) * 30)) + '%;animation-delay:-' + (pi * 0.8) + 's;animation-duration:' + (6 + (pi % 5)) + 's"></i>';
+  } else {
+    var COIN = ['..OOOO..', '.OyyyyO.', 'OyywwyyO', 'OywyyyyO', 'OyywyyyO', 'OyyyyyyO', '.OyyyyO.', '..OOOO..'];
+    var GEAR = ['...yy...', '.y.yy.y.', '.yyyyyy.', 'yyyOOyyy', 'yyyOOyyy', '.yyyyyy.', '.y.yy.y.', '...yy...'];
+    var GLASS = ['OOOOOOOO', '.OuuuuO.', '..OuuO..', '...OO...', '..OyyO..', '.OyyyyO.', 'OOOOOOOO'];
+    var STAR4 = ['...y...', '...y...', '..yyy..', 'yyywyyy', '..yyy..', '...y...', '...y...'];
+    var ICONS = [[COIN, { O: '#302418', y: '#ffd36a', w: '#fff4dc' }], [GEAR, { O: '#8a5a30', y: '#ffe08a' }], [GLASS, { O: '#302418', u: '#c9b0ee', y: '#ffd36a' }], [STAR4, { y: '#ffe08a', w: '#fff' }]];
+    for (var ii = 0; ii < 14; ii++) { var ic = ICONS[ii % 4]; fh += '<span class="fl" style="left:' + Math.round(4 + rnd(ii, 7) * 90) + '%;animation-delay:-' + (ii * 1.1) + 's;animation-duration:' + (9 + (ii % 5)) + 's">' + sp(ic[0], ic[1], Math.max(2, cs - 1 + (ii % 2))) + '</span>'; }
+  }
+  fx.innerHTML = fh;
   // ---- підказки до гри (тап — наступна)
   var TIPS = {
     uk: ['Тапни 5 разів по єноту-злодію, щоб він нічого не вкрав.', 'Золотий покупець дає більше за всіх. Встигни його тапнути!', 'Червоний «!» біля магазину — це цирк. Там можна виграти скін чи кристал.', 'Біля дороги дві скриньки: синя для листів, червона для новин від розробників.', 'Кристали часу дає подорож у часі. Витрачай їх у Магазині часу.', 'Скін коштує 50 кристалів, а в цирку його можна виграти.', 'Осколки часу дає подорож у часі, а витрачаються вони в Магазині часу.', 'Пори року відкриються після другої епохи: сезон, Хелловін і час доби.', 'Щодня крутни Барабан фортуни, поки не охолов.', 'Щоб піти в нову епоху, збудуй торговий центр і дочекайся трьох ночей.', 'Завдання дня дає кристал. Заглядай до нього.', 'Дощ вмикає крапелька біля вивіски магазину.', 'Тапни по звірятку: підстрибне й щось скаже.', 'Люки димлять не від пожежі, а для затишку.', 'Телефон гріється? У налаштуваннях можна вимкнути хмари, пару й анімації.', 'Новий маркет будує Бодя: на старий кладуть біле полотно, а далі глянь сам.', 'Чим більше тапів, тим більше монет. Простіше нікуди.'],

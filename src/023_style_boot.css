@@ -8,8 +8,8 @@
 #boot .b-city svg { width: 50%; height: 100%; flex: none; display: block; }
 #boot .b-city.far { bottom: 29%; height: 20%; opacity: .5; animation-duration: 52s; }
 #boot .bw { animation: bWin var(--bd, 4s) steps(1, end) infinite; }
-#boot .b-ground { position: absolute; left: 0; bottom: 0; width: 100%; height: 25%; background: #3a2a55; border-top: 4px solid #b99be0; overflow: hidden; }
-#boot .b-road { position: absolute; left: 0; top: 0; width: calc(100% + 96px); height: 100%; background-image: repeating-linear-gradient(90deg, rgba(21, 11, 46, .4) 0 3px, transparent 3px 48px), repeating-linear-gradient(0deg, rgba(21, 11, 46, .35) 0 3px, transparent 3px 24px); animation: bRoad .5s linear infinite; }
+#boot .b-ground { position: absolute; left: 0; bottom: 0; width: 100%; height: 25%; background: var(--gr, #3a2a55); border-top: 4px solid var(--gb, #b99be0); overflow: hidden; }
+#boot .b-road { position: absolute; left: 0; top: 0; width: calc(100% + 96px); height: 100%; background-image: repeating-linear-gradient(90deg, rgba(var(--rd, 21, 11, 46), .4) 0 3px, transparent 3px 48px), repeating-linear-gradient(0deg, rgba(var(--rd, 21, 11, 46), .35) 0 3px, transparent 3px 24px); animation: bRoad .5s linear infinite; }
 #boot .b-street { position: absolute; left: 0; bottom: 25%; height: 0; z-index: 1; animation: bStreet var(--sd) linear infinite; }
 #boot .b-street > * { position: absolute; bottom: 0; }
 #boot .b-capy { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 16px); animation: bRun .6s ease-in-out infinite; }
@@ -52,7 +52,69 @@
 @keyframes bBusL { 0% { transform: translateX(calc(100vw + 40px)); } 36% { transform: translateX(-200px); } 100% { transform: translateX(-200px); } }
 @keyframes bCarR { 0% { transform: translateX(-160px); } 55% { transform: translateX(calc(100vw + 40px)); } 100% { transform: translateX(calc(100vw + 40px)); } }
 @keyframes bPop { 0% { transform: scale(.94); opacity: .3; } 100% { transform: scale(1); opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { #boot .b-road, #boot .b-capy, #boot .b-stars, #boot .b-city, #boot .b-street, #boot .b-fly, #boot .b-car { animation: none; } }
+@media (prefers-reduced-motion: reduce) { #boot .b-road, #boot .b-capy, #boot .b-stars, #boot .b-city, #boot .b-street, #boot .b-fly, #boot .b-car, #boot #bootFx *, #boot .pf, #boot .b-puff i { animation: none; } #boot .pf:first-child { opacity: 1; } }
+/* --- екран завантаження: сцени (night, dawn, rain, snow, time), Капі з чотирма кадрами бігу --- */
+#boot:not(.s-night) .b-sun { display: none; }
+#boot #bootOrb { position: absolute; z-index: 0; transform: translate(-50%, 50%); }
+#boot #bootOrb .moon { display: block; filter: drop-shadow(0 0 14px rgba(255, 244, 214, .55)); }
+#boot #bootOrb .sunball { position: absolute; left: 50%; top: 50%; width: min(34vw, 190px); height: min(34vw, 190px); margin: calc(min(34vw, 190px) / -2) 0 0 calc(min(34vw, 190px) / -2); border-radius: 50%; background: radial-gradient(circle, #fffbe0 0 38%, #ffe27a 40% 62%, #ffb24a 64% 100%); box-shadow: 0 0 60px 20px rgba(255, 190, 90, .55); }
+#boot #bootOrb .sunrays { position: absolute; left: 50%; top: 50%; width: min(90vw, 620px); height: min(90vw, 620px); margin: calc(min(90vw, 620px) / -2) 0 0 calc(min(90vw, 620px) / -2); background: repeating-conic-gradient(from 0deg, rgba(255, 244, 190, .30) 0 6deg, transparent 6deg 24deg); border-radius: 50%; -webkit-mask-image: radial-gradient(circle, #000 20%, transparent 66%); mask-image: radial-gradient(circle, #000 20%, transparent 66%); animation: bSpin 60s linear infinite; }
+#boot #bootOrb .bigclock { display: block; filter: drop-shadow(0 0 18px rgba(255, 211, 106, .6)); opacity: .92; }
+#boot .bigclock .hh { animation: bSpin 24s linear infinite; transform-origin: 0 0; transform-box: view-box; }
+#boot .bigclock .mm { animation: bSpin 6s linear infinite; transform-origin: 0 0; transform-box: view-box; }
+#boot .bigclock .ss { animation: bSpin 2s steps(12, end) infinite; transform-origin: 0 0; transform-box: view-box; }
+@keyframes bSpin { to { transform: rotate(360deg); } }
+#boot .b-capy .pf { display: block; position: absolute; left: 0; top: 0; opacity: 0; animation: bFr .48s steps(1, end) infinite; animation-delay: calc(var(--j) * -.12s); }
+#boot .b-capy .pf:first-child { position: relative; }
+@keyframes bFr { 0% { opacity: 1; } 25% { opacity: 0; } 100% { opacity: 0; } }
+#boot .b-puff { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 15px); width: 0; height: 0; }
+#boot .b-puff i { position: absolute; left: 0; bottom: 0; width: 8px; height: 8px; background: var(--puff, #fff); opacity: 0; animation: bPuff .72s linear infinite; }
+#boot .b-puff i:nth-child(2) { animation-delay: -.18s; width: 6px; height: 6px; }
+#boot .b-puff i:nth-child(3) { animation-delay: -.36s; width: 10px; height: 10px; }
+#boot .b-puff i:nth-child(4) { animation-delay: -.54s; width: 5px; height: 5px; }
+@keyframes bPuff { 0% { opacity: .85; transform: translate(0, 0) scale(1); } 100% { opacity: 0; transform: translate(-46px, -14px) scale(.3); } }
+#boot #bootFx { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+#boot .fx-rain, #boot .fx-snow { position: absolute; inset: -20% 0 0 0; background-repeat: repeat; }
+#boot .fx-rain.a { animation: bRainA .55s linear infinite; opacity: .8; }
+#boot .fx-rain.b { animation: bRainB .8s linear infinite; opacity: .5; }
+#boot .fx-rain.c { animation: bRainC .42s linear infinite; opacity: .9; }
+@keyframes bRainA { to { background-position: -40px 96px; } }
+@keyframes bRainB { to { background-position: -24px 64px; } }
+@keyframes bRainC { to { background-position: -64px 160px; } }
+#boot .fx-snow.a { animation: bSnowA 7s linear infinite; }
+#boot .fx-snow.b { animation: bSnowB 11s linear infinite; opacity: .85; }
+#boot .fx-snow.c { animation: bSnowC 16s linear infinite; opacity: .7; }
+@keyframes bSnowA { to { background-position: -30px 120px; } }
+@keyframes bSnowB { to { background-position: 20px 80px; } }
+@keyframes bSnowC { to { background-position: -10px 50px; } }
+#boot .b-flash { position: absolute; inset: 0; background: #dfeaff; opacity: 0; animation: bFlash 9s linear infinite; }
+@keyframes bFlash { 0%, 90% { opacity: 0; } 90.6% { opacity: .75; } 91.4% { opacity: .05; } 92.2% { opacity: .5; } 94% { opacity: 0; } 100% { opacity: 0; } }
+#boot .nf { animation: bNeon 3.2s steps(1, end) infinite; }
+@keyframes bNeon { 0%, 18%, 22%, 62%, 66%, 100% { opacity: 1; } 20%, 64% { opacity: .25; } }
+#boot .sm { animation: bSmoke 3.3s linear infinite; }
+@keyframes bSmoke { 0% { transform: translate(0, 0); opacity: .6; } 100% { transform: translate(4px, -22px); opacity: 0; } }
+#boot .bb { animation: bBulb 1.4s steps(1, end) infinite; }
+@keyframes bBulb { 0% { opacity: 1; } 50% { opacity: .25; } }
+#boot .rp { position: absolute; left: 30%; bottom: 3px; width: 28px; height: 8px; border: 2px solid rgba(190, 225, 255, .7); border-radius: 50%; animation: bRip 1.5s linear infinite; }
+#boot .rp.r2 { left: 58%; animation-delay: -.75s; }
+@keyframes bRip { 0% { transform: scale(.2); opacity: .9; } 100% { transform: scale(1); opacity: 0; } }
+#boot .b-car > span { position: relative; display: block; }
+#boot .b-car .beam { position: absolute; right: -90px; bottom: 6px; width: 110px; height: 14px; background: linear-gradient(90deg, rgba(255, 244, 190, .55), rgba(255, 244, 190, 0)); clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 60%); }
+#boot .b-car.l .beam { right: auto; left: -90px; transform: scaleX(-1); }
+#boot .ff { position: absolute; width: 5px; height: 5px; background: #fff3a0; border-radius: 50%; box-shadow: 0 0 8px 3px rgba(255, 240, 140, .65); animation: bFF 6s ease-in-out infinite; }
+@keyframes bFF { 0%, 100% { transform: translate(0, 0); opacity: .2; } 25% { transform: translate(14px, -12px); opacity: 1; } 50% { transform: translate(-8px, -22px); opacity: .3; } 75% { transform: translate(10px, -8px); opacity: 1; } }
+#boot .mote { position: absolute; width: 4px; height: 4px; background: #fff6c8; box-shadow: 0 0 6px 2px rgba(255, 240, 180, .6); animation: bMote 8s linear infinite; }
+@keyframes bMote { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translate(30px, -140px); opacity: 0; } }
+#boot .fl { position: absolute; bottom: 20%; animation: bFloat 10s linear infinite; opacity: 0; }
+#boot .fl svg { display: block; }
+@keyframes bFloat { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 12% { opacity: .95; } 85% { opacity: .8; } 100% { transform: translate(30px, -62vh) rotate(24deg); opacity: 0; } }
+#boot .bob { display: block; animation: bBob 3.2s ease-in-out infinite; }
+#boot .bob.b2 { animation-duration: 2.6s; animation-delay: -1s; }
+@keyframes bBob { 50% { transform: translateY(-9px); } }
+#boot .b-shoot { position: absolute; left: 8%; width: 70px; height: 2px; background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff); transform: rotate(24deg); opacity: 0; animation: bShoot 11s linear infinite; }
+#boot .b-shoot.s2 { animation-delay: -6s; left: 40%; width: 50px; }
+@keyframes bShoot { 0%, 88% { opacity: 0; transform: translate(0, 0) rotate(24deg); } 89% { opacity: 1; } 96% { opacity: 0; transform: translate(220px, 100px) rotate(24deg); } 100% { opacity: 0; } }
+#boot.s-snow .b-title, #boot.s-dawn .b-title { text-shadow: 3px 3px 0 #302418, -2px 0 0 #302418, 2px 0 0 #302418, 0 -2px 0 #302418; }
 body.warping #app { filter: sepia(1) saturate(1.5) contrast(1.05); transition: filter .6s; }
 body.no-anim .floater { display: none; }
 
@@ -147,6 +209,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .chapter-card { display: flex; align-items: center; gap: 10px; }
 .chapter-card .num { font-size: 18px; color: var(--red); flex: none; min-width: 26px; text-align: center; }
 .chapter-card .title { flex: 1; min-width: 0; font-size: 13px; line-height: 1.5; }
+.chapter-card .title small { display: block; margin-top: 3px; font-size: 10px; line-height: 1.4; opacity: .75; }
 .chapter-card .btn { flex: none; padding: 10px 12px; font-size: 11px; }
 
 /* ===== Діалоги ===== */

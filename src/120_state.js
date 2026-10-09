@@ -14,7 +14,8 @@ function createDefaultState() {
     shopLevel: 1,                      // 1 = крамничка ... 6 = торговий центр
     depts: DEPARTMENTS.map(() => 0),   // скільки штук кожного відділу куплено
     team: TEAM.map(() => 0),           // рівень кожного звірятка: 0 — не найняте, 1…10
-    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
+    teamStars: TEAM.map(() => 0),      // зірки звірятка (0…3): після 10-го рівня множать його бонус, скидаються з подорожжю разом із рівнями
+    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, help: [0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
     // Події: час (мс від 1970 р.) наступного розпродажу / неприємності та активні бусти
     events: { nextSale: 0, saleUntil: 0, nextTrouble: 0, incomeBoostUntil: 0, incomeBoostMult: 1, tapBoostUntil: 0, tapBoostMult: 1, nextMail: 0, mailPending: 0 },
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни
@@ -71,13 +72,21 @@ function teamLevelOf(id) {
   const i = TEAM.findIndex(m => m.id === id);
   return i < 0 ? 0 : state.team[i];
 }
-// Сума бонусів одного типу від усіх найнятих звіряток (значення × рівень), з обмеженням cap
+// Зірки звіряток: після 10-го рівня звірятко можна підвищити до трьох зірок. Зірка множить його бонус ×1,25 / ×1,5 / ×2;
+// ціна зірки — ціна 10-го рівня ×5 / ×25 / ×125
+const STAR_MULT = [1, 1.25, 1.5, 2], STAR_COST = [0, 5, 25, 125], STAR_MAX = 3;
+const STAR_HARD_CAP = { expandCost: 0.6, thief: 0.8, deptCost: 0.35 };          // зі зірками обмеження «дешевше» й «рідше єнот» теж ростуть, але не безмежно
+function teamStarsOf(i) { return Math.min(STAR_MAX, (state.teamStars && state.teamStars[i]) | 0); }
+function starMult(i) { return STAR_MULT[teamStarsOf(i)]; }
+function starCost(i, n) { return teamCost(i, CONFIG.TEAM_MAX_LEVEL) * STAR_COST[n]; }          // n — номер зірки, яку купуємо (1…3)
+// Сума бонусів одного типу від усіх найнятих звіряток (значення × рівень × зірки), з обмеженням cap
 function teamBonus(type, field = 'per') {
   let sum = 0;
   TEAM.forEach((m, i) => {
     if (m.bonus.type !== type || state.team[i] <= 0) return;
-    let v = m.bonus[field] * state.team[i];
-    if (field === 'per' && m.bonus.cap !== undefined) v = Math.min(v, m.bonus.cap);
+    const sm = starMult(i);
+    let v = m.bonus[field] * state.team[i] * sm;
+    if (field === 'per' && m.bonus.cap !== undefined) v = Math.min(v, m.bonus.cap * sm, STAR_HARD_CAP[type] || Infinity);
     sum += v;
   });
   return sum;
@@ -86,7 +95,7 @@ function teamBonus(type, field = 'per') {
 function teamDeptMult(i) {
   let mult = 1;
   TEAM.forEach((m, k) => {
-    if (m.bonus.type === 'deptIncome' && state.team[k] > 0 && m.bonus.depts.includes(i)) mult *= 1 + m.bonus.per * state.team[k];
+    if (m.bonus.type === 'deptIncome' && state.team[k] > 0 && m.bonus.depts.includes(i)) mult *= 1 + m.bonus.per * state.team[k] * starMult(k);
   });
   return mult;
 }

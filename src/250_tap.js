@@ -60,7 +60,7 @@ function setupInput() {
     if (hitRainToggle(p)) return;               // крапелька біля магазину: дощ увімк./вимк.
     const actor = hitActor(p);                  // звірятко підстрибує й каже фразу, а магазин усе одно дає монетку
     if (actor) { actor.hop = 1; actorSay(actor); }
-    else { const guest = hitGuest(p) || hitStandGuest(p); if (guest) guestSay(guest); else if (hitCapy(p)) { capyAnim.hopAt = animClock; capySay(); } }
+    else { const guest = hitGuest(p) || hitStandGuest(p); if (guest) guestTapSay(guest); else if (hitCapy(p)) { capyAnim.hopAt = animClock; capySay(); } }
     doTap(p.x, p.y);                            // тапати можна в будь-яку точку екрана
   };
   // На телефоні вулицю можна гортати пальцем: тап рахується при відпусканні, якщо палець не рушав

@@ -25,6 +25,15 @@ function equipSkin(type, i) {
   showToast(now === -2 ? t('skinWornToast', t('skinEpoch', t('epoch_' + (viewEpoch() % EPOCHS.length)))) : now < 0 ? t('skinDefaultToast') : t('skinWornToast', skinName(now)), 'good');
   if (type === 'hero' && !state.team.some(v => v > 0)) showToast(t('skinHeroNone'), 'bad');
 }
+// Знімає всі вдягнені скіни: усе повертається до початкового вигляду (куплені й виграні скіни лишаються)
+function resetAllSkins() {
+  const def = { capy: -2, shop: -1, weather: -1, street: -1, hero: -1 };
+  let changed = false;
+  SKIN_TYPES.forEach(ty => { if (state.skins[ty] !== def[ty]) { state.skins[ty] = def[ty]; changed = true; } });
+  if (!changed) { showToast(t('skinsResetNone'), 'good'); return; }
+  drawCapiPortrait(); refreshTeamPortraits(); rebuildShop(true); groundLayer = buildGroundLayer();
+  playSfx('upgrade'); skinsSig = ''; updateSkinsUI(); showToast(t('skinsResetDone'), 'good'); saveGame();
+}
 function setSkin(type, i) {
   state.skins[type] = i;
   if (i !== -1) { const nm = skinOn(type); if (nm) setTimeout(() => capySay(type + '_' + nm), 350); }       // Капі коментує новий скін
@@ -212,6 +221,7 @@ function setupProgression() {
   ui.importBtn.addEventListener('click', importSave);
   ui.resetBtn.addEventListener('click', () => askConfirm(t('resetTitle'), t('resetText'), t('resetYes'), hardReset));
   ui.warpBtn.addEventListener('click', askTimeTravel);
+  document.getElementById('skinsReset').addEventListener('click', resetAllSkins);
   ui.newsClose.addEventListener('click', closeNews);
   ui.npWrite.addEventListener('click', openFeedback); ui.fbCancel.addEventListener('click', closeFeedback); ui.fbSend.addEventListener('click', sendFeedback);
   ui.fbModal.addEventListener('click', e => { if (e.target === ui.fbModal) closeFeedback(); });

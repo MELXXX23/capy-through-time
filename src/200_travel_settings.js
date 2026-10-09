@@ -298,7 +298,7 @@ function startLevel() { return 1; }                                             
 function askTimeTravel() {
   const gain = prestigeGain();
   if (!state.story.finale || gain < 1) return;
-  askConfirm(t('warpConfirmTitle'), t('warpConfirmText', gain, eraStep((state.stats && state.stats.timeTravels) || 0)), t('warpConfirmYes'), startWarp);
+  askConfirm(t('warpConfirmTitle'), t('warpConfirmText', gain, eraStep((state.stats && state.stats.timeTravels) || 0)), t('warpConfirmYes'), travelWithThanks);
 }
 function startWarp(view, demo) {
   if (warp) return;
@@ -713,6 +713,7 @@ function applyTimeTravel() {
   state.coins = CONFIG.START_COINS;
   state.depts = DEPARTMENTS.map(() => 0);
   state.team = TEAM.map(() => 0);
+  state.teamStars = TEAM.map(() => 0);
   state.shopLevel = startLevel();
   state.runStartEarned = state.totalEarned;
   state.events.incomeBoostUntil = 0; state.events.tapBoostUntil = 0;

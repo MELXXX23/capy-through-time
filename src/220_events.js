@@ -215,6 +215,7 @@ function updateBoostsUI() {
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
    // скільки зібрано до додаткового оберту барабана (самі привиди й кристали лишаються)
   if (trouble && trouble.type === 'leak') items.push({ cls: 'bad', icon: '💧', text: t('boost_leak', Math.round(CONFIG.LEAK_INCOME_PENALTY * 100)) });
+  items.splice(1, 0, ...helpChips());                                                      // «Допоможи Піпу: 4/12»
   const sig = items.map(i => i.icon + i.text).join('|');
   if (uiCache.boostSig === sig) return;
   uiCache.boostSig = sig;
@@ -888,11 +889,33 @@ function spacePlanets() {
   SPACE_PL = { planet: pc, planetCx: CX, planetCy: CY, moon: mcv, moonCx: MC, moonCy: MC };
   return SPACE_PL;
 }
+// Диско: великі прожектори на щоглах за будинками. Стоять на місці у світі (рухаються разом із камерою), кожен має три промені, що гойдаються й блимають різними кольорами
+const DISCO_COLS = ['f', 'T', 'y', 'N', 'p', 'j'];
+function discoLamps(time) {
+  const W = worldR() - worldL(), n = Math.max(4, Math.round(W / 170)), a0 = 0.16 + 0.22 * sky.night, on = animOn();
+  for (let k = 0; k < n; k++) {
+    const hx = hash2(k * 31, 9), x = Math.round(worldL() + (k + 0.5) * W / n + (hx % 30) - 15), y = -18 + (hx >>> 5) % 16, ph = k * 1.9;
+    if (x < visL() - 170 || x > visR() + 170) continue;                              // поза кадром не малюємо
+    R(ctx, x - 1, y + 6, 3, LAYOUT.horizonY - y - 6, 'd');                          // щогла (нижню частину закривають будинки)
+    for (let b = 0; b < 3; b++) {
+      const ang = -Math.PI / 2 + (b - 1) * 0.62 + (on ? Math.sin(time * (0.7 + b * 0.23) + ph + b * 2.1) * 0.55 : 0), len = 118 + b * 14;
+      const idx = Math.floor((on ? time * 1.3 : 0) + k + b * 2) % DISCO_COLS.length, blink = on ? Math.floor(time * 2.2 + ph + b * 1.7) % 4 !== 0 : true;
+      if (!blink) continue;
+      ctx.globalAlpha = a0; ctx.fillStyle = PALETTE[DISCO_COLS[idx]];
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(ang - 0.12) * len, y + Math.sin(ang - 0.12) * len); ctx.lineTo(x + Math.cos(ang + 0.12) * len, y + Math.sin(ang + 0.12) * len); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = a0 * 0.9; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(ang - 0.04) * len, y + Math.sin(ang - 0.04) * len); ctx.lineTo(x + Math.cos(ang + 0.04) * len, y + Math.sin(ang + 0.04) * len); ctx.closePath(); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    const lens = DISCO_COLS[Math.floor((on ? time * 2 : 0) + k) % DISCO_COLS.length];              // корпус прожектора з кольоровою лінзою, що змінюється
+    ctx.globalAlpha = 0.22; disc(ctx, x, y, 15, lens); ctx.globalAlpha = 0.4; disc(ctx, x, y, 11, lens); ctx.globalAlpha = 1;
+    disc(ctx, x, y, 8, 'd'); disc(ctx, x, y, 7, 'e'); disc(ctx, x - 1, y - 1, 5, 'E'); disc(ctx, x, y, 5, 'd'); disc(ctx, x, y, 4, lens); disc(ctx, x - 1, y - 1, 2, 'w');
+    R(ctx, x - 5, y + 7, 11, 2, 'd'); R(ctx, x - 5, y + 7, 11, 1, 'e');
+  }
+}
 function drawSkyExtra(time) {
   const ep = SKYX.ep, top = 8 - view.offY;
   if (ep === 2) {                                                         // Диско: лазерний віяр над дахами
-    const ox = Math.round((visL() + visR()) / 2), oy = LAYOUT.horizonY + 4, cols = ['f', 'T', 'y', 'N', 'p'], base = animOn() ? Math.sin(time * 0.6) * 0.22 : 0;
-    ctx.globalAlpha = 0.6; for (let i = 0; i < 9; i++) { const a = -2.75 + i * 0.28 + base * (i % 2 ? 1 : -1), c = cols[i % 5]; skyxLn(ctx, ox, oy, ox + Math.cos(a) * 150, oy + Math.sin(a) * 150, c); skyxLn(ctx, ox + 1, oy, ox + 1 + Math.cos(a) * 150, oy + Math.sin(a) * 150, c); } ctx.globalAlpha = 1;
+    discoLamps(time);
     for (let i = 0; i < 6; i++) { const sx = Math.round(worldL() + 20 + i * (view.w - 40) / 5), sy = top + 6 + (i * 13) % 34, v = Math.sin(time * 2.4 + i * 1.7); if (v > 0.3) sparkPlus(sx, sy, (v - 0.3) / 0.7, i % 2 ? '#fff6b0' : '#ffd0f0'); }
   }
   if (ep === 6) {                                                         // Космос: планета з кільцем і місяць
@@ -1638,6 +1661,7 @@ function hitGhost(p) {
       g.alive = false; buzz(25);
       h.caught++;
       const prize = Math.floor(state.cps * 20 + 100 * levelMult()); state.coins += prize; state.totalEarned += prize;        // за кожного — готова нагорода монетами
+      if (h.crt >= 0) helpCredit(h.crt);                                                                                     // і крок до допомоги гостеві цієї епохи
       state.stats.ghostsCaught++;
       for (let i = 0; i < 8; i++) { const a = rand(0, Math.PI * 2), sp = rand(30, 70); fx.sparks.push({ x: g.x, y: g.sy - 6, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.3, 0.5), col: i % 2 ? 'w' : (h.crt < 0 ? 'S' : 'y') }); }
       spawnFloater(g.x, g.sy - 14, '+' + fmt(prize));

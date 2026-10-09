@@ -3,7 +3,7 @@
    СЮЖЕТ І ДІАЛОГИ
    ===================================================================== */
 
-const dialog = { active: false, kind: 'ch', chapter: 0, labelNo: 0, replay: false, pages: [], page: 0, shown: 0, text: '' };
+const dialog = { active: false, kind: 'ch', chapter: 0, labelNo: 0, replay: false, pages: [], page: 0, shown: 0, text: '', after: null };
 let storyTimer = 1;           // перша перевірка через секунду після старту
 const cameos = [];            // гості-камео на вулиці (Шнирь, що тікає з печивом)
 
@@ -25,7 +25,7 @@ function speakerName(sp) {
 }
 function pageText(p) {
   if (p.speaker === 'title') return t(dialog.kind === 'ep' ? 'epochLabel' : 'chapterLabel', dialog.labelNo) + '\n' + t(dialog.kind + dialog.chapter + '_title');
-  return t(p.key);
+  return t(p.key, HELP_NEED);
 }
 
 function renderDialogText() {
@@ -89,8 +89,9 @@ function showDialogPage() {
 // Запускає главу n (kind 'ch'), фрагмент епохи (kind 'ep') або туторіал (kind 'tut').
 // replay — перечитування з вкладки «Історія» (без наслідків для гри); labelNo — номер, що пишеться в заголовку
 function startDialogue(n, replay = false, kind = 'ch', labelNo = n) {
-  const def = kind === 'ch' ? CHAPTERS[n - 1] : kind === 'ep' ? EPOCH_STORIES[n - 1] : TUTORIAL;
+  const def = kind === 'ch' ? CHAPTERS[n - 1] : (kind === 'ep' || kind === 'thx') ? EPOCH_STORIES[n - 1] : TUTORIAL;
   if (!def || dialog.active) return;
+  dialog.after = null;
   dialog.active = true;
   dialog.kind = kind;
   dialog.chapter = n;
@@ -105,6 +106,8 @@ function startDialogue(n, replay = false, kind = 'ch', labelNo = n) {
     dialog.pages = [{ speaker: 'title' }, ...def.pre.map((sp, k) => ({ speaker: sp, key: 'ep' + n + '_' + k })),
       ...(stored > 0 ? choicePages(n, def, stored) : [{ speaker: 'capy', choice: true }]),
       ...def.post.map((sp, j) => ({ speaker: sp, key: 'ep' + n + '_' + (def.pre.length + j) }))];
+  } else if (kind === 'thx') {
+    dialog.pages = def.thx.map((sp, k) => ({ speaker: sp, key: 'thx' + n + '_' + k }));          // подяка гостя за допомогу: окрема коротка сцена
   } else dialog.pages = [...(kind === 'tut' ? [] : [{ speaker: 'title' }]), ...def.lines.map((sp, k) => ({ speaker: sp, key: prefix + '_' + k }))];
   ui.dlgSkip.textContent = t('storySkip');
   ui.dialog.hidden = false;
@@ -127,11 +130,13 @@ function endDialogue() {
   dialog.choosing = false;
   ui.dlgChoices.hidden = true;
   ui.dialog.hidden = true;
+  const after = dialog.after; dialog.after = null;
+  if (kind === 'thx') { if (!replay) { state.story.thx[n - 1] = 1; saveGame(); } if (after) after(); return; }
   if (replay) return;
   if (kind === 'tut') { state.tutorialDone = true; storyTimer = 1; saveGame(); return; }
   if (kind === 'ep') {
     const st = state.story;
-    if (!st.guests[n - 1]) { st.guests[n - 1] = Math.max(...st.guests) + 1; syncGuests(n - 1); }       // гість лишається жити в місті
+    if (!st.guests[n - 1]) { st.guests[n - 1] = Math.max(...st.guests) + 1; syncGuests(n - 1); nextGhostAt = Date.now() + 25000; }       // гість лишається жити в місті; перші істоти для його прохання з’являться за пів хвилини
     if (n === 7 && !st.shnyrJoined) { st.shnyrJoined = true; showToast(t('shnyrJoined'), 'big'); }   // у Неоновій епосі Шнирь стає другом і працівником
     storyTimer = 1; updateUI(); saveGame(); return;
   }
@@ -251,6 +256,7 @@ function checkStory(dt) {
     else { startIntroCutscene(); return; }
   }
   if (state.epochIntroSeen < state.epoch) { playEpochIntro(state.epoch); return; }               // нова епоха: спершу заставка
+  if (!ghostHunt) { const late = helpThanksLate(); if (late.length) { playThanksChain(late); return; } }       // гостям минулих епох, яким уже допомогли, подяка одразу
   if (state.story.done >= 1 && !state.tutorialDone) { startDialogue(1, false, 'tut'); return; }   // коротке навчання після першої глави
   if (state.story.done >= 4 && state.tutorialDone && !state.story.guests[8]) { startDialogue(9, false, 'ep', 1); return; }       // гість першої епохи
   const next = state.story.done;
@@ -261,7 +267,7 @@ function checkStory(dt) {
 // Вкладка «Історія»: відкриті глави з кнопкою «Читати»
 function updateStoryUI() {
   if (ui.paneStory.hidden) return;
-  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels + '|' + state.story.guests[8];
+  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels + '|' + state.story.guests[8] + '|' + state.story.help.join() + '|' + state.story.thx.join();
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
@@ -293,8 +299,20 @@ function updateStoryUI() {
     const title = document.createElement('div'); title.className = 'title'; title.textContent = t('epochLabel', label) + ': ' + t('ep' + k + '_title');
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
     btn.addEventListener('click', () => startDialogue(k, true, 'ep', label));
+    if (state.story.guests[k - 1] > 0) {                                                 // як іде допомога гостеві
+      const sub = document.createElement('small'); sub.textContent = (helpDone(k - 1) ? '✅ ' + t('helpDiaryDone') : EPOCH_CREATURES[guestEpochOf(k - 1)].icon + ' ' + t('helpDiaryLine', helpCount(k - 1), HELP_NEED));
+      title.appendChild(sub);
+    }
     card.append(num, title, btn);
     ui.storyList.appendChild(card);
+    if (state.story.thx[k - 1]) {                                                        // подяку можна перечитати
+      const tc = document.createElement('div'); tc.className = 'card chapter-card';
+      const tn = document.createElement('div'); tn.className = 'num'; tn.textContent = '💌';
+      const tt = document.createElement('div'); tt.className = 'title'; tt.textContent = t('thanksCardTitle', t('speaker_' + GUEST_IDS[k - 1]));
+      const tb = document.createElement('button'); tb.type = 'button'; tb.className = 'btn'; tb.textContent = t('storyRead');
+      tb.addEventListener('click', () => startDialogue(k, true, 'thx', label));
+      tc.append(tn, tt, tb); ui.storyList.appendChild(tc);
+    }
   }
   if (state.story.done < CHAPTERS.length) {
     const lock = document.createElement('div');
@@ -339,12 +357,11 @@ function updateGuests(dt) {
   });
 }
 function guestSay(g) {
-  const n = t('guestSay_' + g.id + '_5') !== 'guestSay_' + g.id + '_5' ? 6 : 3;
-  showBubble('g' + g.k, t('guestSay_' + g.id + '_' + Math.floor(Math.random() * n)), g.x, g.y - 19, () => ({ x: g.x, y: g.y - 19 }));
+  showBubble('g' + g.k, t(guestLineKey(g)), g.x, g.y - 19, () => ({ x: g.x, y: g.y - 19 }));
 }
 function hitStandGuest(p) {
   const st = guestStands().find(s => Math.abs(p.x - s.x) <= s.w / 2 && p.y >= s.y - s.h && p.y <= s.y + 3);
-  return st ? guestWalkers.find(g => g.k === st.k) || null : null;
+  return st ? guestWalkers.find(g => g.k === st.k) || { id: GUEST_IDS[st.k], k: st.k, x: st.x, y: st.y + 4 } : null;       // гостя нема на вулиці (їх гуляє найбільше 4), але його місце відповідає
 }
 function hitGuest(p) {
   let best = null;

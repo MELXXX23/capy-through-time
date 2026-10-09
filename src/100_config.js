@@ -102,7 +102,7 @@ const CONFIG = {
 
   // Команда
   TEAM_MAX_LEVEL: 10,
-  TEAM_LEVEL_COST_GROWTH: 2.2,    // ціна кожного наступного рівня звірятка ×2,2
+  TEAM_LEVEL_COST_GROWTH: 2.3,    // ціна кожного наступного рівня звірятка ×2,3 (було 2,2: зірки дають більше сили, тож прокачка трохи важча)
   BUBBLE_SECONDS: 3.4,            // скільки висить бульбашка з фразою
   CHATTER_MIN: 16,                // раз на 16–34 секунди хтось із команди щось каже сам
   CHATTER_MAX: 34,
@@ -366,7 +366,7 @@ const CUSTOMER_PARTS = {
 // Команда звіряток. Спрайт 16×16 дивиться прямо, тож малюємо лише ліву половину голови (top, 10 рядків)
 // — нижня частина тулуба спільна (body / belly / feet — літери палітри), а права половина дзеркалиться.
 const TEAM_PARTS = {
-  spike:   { body: 'b', belly: 'c', feet: 'd', top: ['.d..d..d', 'dlddlddl', 'dbldbldb', 'dldbldbl', '.dbbbbbb', 'dbbbwwww', '.dbbwXww', '.dbbwxww', '..dbwwkk', '...dwwwk'] },
+  spike:   { body: 'b', belly: 'c', feet: 'd', top: ['...d.d.d', '..dlldbl', '.dlbdlbd', '.dbldblb', 'dlbbdlbb', 'dbblwwww', 'dbbbwXww', '.dbbwxww', '..dbwwkk', '...dwwwk'] },
   bodya:   { body: 'n', belly: 'y', feet: 'd', top: ['....hhhh', '...hhhhh', '..dhhhhh', '.ddddddd', '..dlllll', '.bdlXlll', '.bdlxlll', '..dlccck', '..dlcccw', '...dllll'] },
   sonia:   { body: 'b', belly: 'c', feet: 'o', top: ['.d......', '.dbd....', '..dbbbbb', '..dbbbbb', '..dyyybb', '..dyXybb', '..dyxybb', '..dyyybo', '...dbbbo', '....dddd'] },
   tonya:   { body: 'G', belly: 'm', feet: 'g', top: ['....nnnn', '...nnnnn', '..dnnnnh', '.ddddddd', '..dggggg', '..dgXggg', '..dgxggg', '..dgggmm', '..dggggg', '...dgggg'] },
@@ -386,7 +386,7 @@ const TEAM_PARTS = {
 // spot — де стоїть на сцені: x (null — біля дверей, зі зсувом dx), y — ноги, move: stand / patrol (x…x2), prop — що тримає.
 const TEAM = [
   { id: 'spike',  level: 1, baseCost: 100,    bonus: { type: 'tap', per: 0.5 },
-    spot: { x: null, dx: -27, y: 143, move: 'stand', prop: 'register' } },
+    spot: { x: null, dx: -27, y: 139, move: 'stand', prop: 'register' } },
   { id: 'bodya',  level: 2, baseCost: 9.8e3,  bonus: { type: 'expandCost', per: 0.04, cap: 0.4 },
     spot: { f: 0.03, y: 155, move: 'stand', prop: 'hammer' } },
   { id: 'zoya',   level: 2, baseCost: 7.8e3,  bonus: { type: 'deptIncome', depts: [1, 3], per: 0.2 },
@@ -797,15 +797,15 @@ const GLYPHS = {
 // 8 історій: прихід у епохи 2…8 і нове коло. guest — гість епохи; pre — репліки до вибору; потім Капі обирає (o1/o2), reply — хто відповідає; post — кінець.
 // Тексти: ep{N}_title, ep{N}_{k} (по порядку pre, потім post), ep{N}_o1/o2 (варіанти Капі), ep{N}_r1/r2 (відповіді)
 const EPOCH_STORIES = [
-  { guest: 'pip', pre: ['narr', 'pip', 'capy', 'shnyr1', 'pip', 'capy'], reply: ['shnyr1', 'shnyr1'], post: ['pip', 'capy', 'clock'] },
-  { guest: 'zina', pre: ['narr', 'zina', 'capy', 'shnyr2', 'zina', 'capy'], reply: ['shnyr2', 'shnyr2'], post: ['zina', 'capy', 'clock'] },
-  { guest: 'maks', pre: ['narr', 'maks', 'capy', 'shnyr3', 'maks', 'capy'], reply: ['shnyr3', 'shnyr3'], post: ['maks', 'capy', 'clock'] },
-  { guest: 'bitik', pre: ['narr', 'bitik', 'capy', 'shnyr4', 'bitik', 'capy'], reply: ['shnyr4', 'bitik'], post: ['bitik', 'capy', 'clock'] },
-  { guest: 'lesyk', pre: ['narr', 'lesyk', 'capy', 'shnyr5', 'lesyk', 'capy'], reply: ['shnyr5', 'shnyr5'], post: ['lesyk', 'capy', 'clock'] },
-  { guest: 'orbit', pre: ['narr', 'orbit', 'capy', 'shnyr6', 'orbit', 'capy'], reply: ['shnyr6', 'shnyr6'], post: ['orbit', 'capy', 'clock'] },
-  { guest: 'lumi', pre: ['narr', 'lumi', 'capy', 'shnyr7', 'lumi', 'capy'], reply: ['shnyr7', 'shnyr7'], post: ['lumi', 'shnyr7', 'capy', 'clock'] },
-  { guest: 'bruno', pre: ['narr', 'bruno', 'capy', 'shnyr8', 'bruno', 'capy'], reply: ['bruno', 'bruno'], post: ['bruno', 'capy', 'clock'] },
-  { guest: 'pietro', pre: ['narr', 'pietro', 'capy', 'shnyr0', 'pietro', 'capy'], reply: ['shnyr0', 'shnyr0'], post: ['pietro', 'capy', 'clock'] }
+  { guest: 'pip', pre: ['narr', 'pip', 'capy', 'shnyr1', 'pip', 'capy'], reply: ['shnyr1', 'shnyr1'], post: ['pip', 'capy', 'clock'], thx: ['pip', 'capy', 'pip'] },
+  { guest: 'zina', pre: ['narr', 'zina', 'capy', 'shnyr2', 'zina', 'capy'], reply: ['shnyr2', 'shnyr2'], post: ['zina', 'capy', 'clock'], thx: ['zina', 'capy', 'zina'] },
+  { guest: 'maks', pre: ['narr', 'maks', 'capy', 'shnyr3', 'maks', 'capy'], reply: ['shnyr3', 'shnyr3'], post: ['maks', 'capy', 'clock'], thx: ['maks', 'capy', 'maks'] },
+  { guest: 'bitik', pre: ['narr', 'bitik', 'capy', 'shnyr4', 'bitik', 'capy'], reply: ['shnyr4', 'bitik'], post: ['bitik', 'capy', 'clock'], thx: ['bitik', 'capy', 'bitik'] },
+  { guest: 'lesyk', pre: ['narr', 'lesyk', 'capy', 'shnyr5', 'lesyk', 'capy'], reply: ['shnyr5', 'shnyr5'], post: ['lesyk', 'capy', 'clock'], thx: ['lesyk', 'capy', 'lesyk'] },
+  { guest: 'orbit', pre: ['narr', 'orbit', 'capy', 'shnyr6', 'orbit', 'capy'], reply: ['shnyr6', 'orbit'], post: ['orbit', 'capy', 'clock'], thx: ['orbit', 'capy', 'orbit'] },
+  { guest: 'lumi', pre: ['narr', 'lumi', 'capy', 'shnyr7', 'lumi', 'capy'], reply: ['shnyr7', 'shnyr7'], post: ['lumi', 'shnyr7', 'capy', 'clock'], thx: ['lumi', 'capy', 'lumi'] },
+  { guest: 'bruno', pre: ['narr', 'bruno', 'capy', 'shnyr8', 'bruno', 'capy'], reply: ['bruno', 'bruno'], post: ['bruno', 'capy', 'clock'], thx: ['bruno', 'capy', 'bruno'] },
+  { guest: 'pietro', pre: ['narr', 'pietro', 'capy', 'shnyr0', 'pietro', 'capy'], reply: ['shnyr0', 'shnyr0'], post: ['pietro', 'capy', 'clock'], thx: ['pietro', 'capy', 'pietro'] }
 ];
 const GUEST_IDS = EPOCH_STORIES.map(e => e.guest);
 const TUTORIAL = { lines: ['capy', 'capy'] };

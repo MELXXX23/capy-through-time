@@ -102,17 +102,17 @@
 #seasonBanner.s-winter { --sc: #e4f4ff; --se: #1f4f94; } #seasonBanner.s-spring { --sc: #ffd0e6; --se: #2f6b48; } #seasonBanner.s-summer { --sc: #fff08a; --se: #b35a10; }
 #seasonBanner.s-autumn { --sc: #ffb060; --se: #6d2f10; } #seasonBanner.s-halloween { --sc: #ff9e3d; --se: #2b1a4f; }
 @keyframes sBanner { 0% { opacity: 0; transform: scale(.5); } 16% { opacity: 1; transform: scale(1.18); } 26% { transform: scale(1); } 78% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
-#circusWheel { width: min(64vw, 256px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
-.clown-win { width: min(76vw, 288px); margin: 0 auto 6px; box-shadow: 0 0 0 3px var(--brown); }
+#circusWheel { width: min(64vw, 256px, max(120px, calc((100dvh - 430px) * .914))); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+.clown-win { width: min(76vw, 288px, max(120px, calc((100dvh - 250px) * .9))); margin: 0 auto 6px; box-shadow: 0 0 0 3px var(--brown); }
 #clownCanvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
 #circusSub { font-size: 11px; line-height: 1.6; margin: 4px 0 6px; }
 #circusResult { min-height: 22px; font-size: 15px !important; }
-#circusModal.hag #circusWheel { width: min(84vw, 372px); cursor: pointer; }
+#circusModal.hag #circusWheel { width: min(84vw, 372px, max(180px, calc((100dvh - 400px) * 1.6))); cursor: pointer; }
 #circusModal.hag #circusResult { min-height: 44px; font-size: 12px !important; line-height: 1.5; }
 #circusClose { margin-top: 6px; }
 .wheel-box { max-height: 96vh; overflow-y: auto; padding-top: 22px; }
 .wheel-wrap { display: flex; justify-content: center; margin: 4px 0 8px; }
-#wheelCanvas { width: min(64vw, 256px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+#wheelCanvas { width: min(64vw, 256px, max(120px, calc((100dvh - 340px) * .914))); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
 #wheelLegend { font-size: 11px !important; color: var(--brown); }
 #wheelStreak { font-size: 11px !important; color: var(--dark); }
 #wheelResult { min-height: 22px; font-size: 15px !important; }

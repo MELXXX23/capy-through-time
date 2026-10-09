@@ -139,6 +139,35 @@
   // глави історії
   for (let n = 1; n <= 8; n++) await check('глава ' + n, () => { startDialogue(n, true); }, 350).then(() => { try { endDialogue(); } catch (e) { /* нічого */ } closeAll(); });
 
+  // історії гостей епох і подяки: усі сторінки з текстом, без сирих ключів; допомога гостю: ловимо істот і рахуємо
+  for (let n = 1; n <= 9; n++) for (const kind of ['ep', 'thx']) {
+    await check('історія гостя ' + n + ' ' + kind, () => {
+      startDialogue(n, true, kind, n);
+      if (!dialog.active) throw new Error('діалог не відкрився');
+      let guard = 0;
+      while (dialog.active && guard++ < 40) {
+        if (dialog.choosing) { chooseOption(1); continue; }
+        if (!dialog.text || /^(ep|thx)d/.test(dialog.text) || dialog.text.length < 8) throw new Error('порожній або сирий текст сторінки ' + dialog.page + ': ' + dialog.text);
+        dialog.shown = dialog.text.length; advanceDialog();
+      }
+    }, 60);
+    closeAll();
+  }
+  {
+    const sv = JSON.stringify(state.story);
+    setWorld(1, 4, 0.5); state.story.guests[0] = 1; state.story.help[0] = HELP_NEED - 1; state.story.thx[0] = 0; state.crystals = 0;
+    await check('допомога гостю: лови', () => {
+      startGhostHunt();
+      const g = ghostHunt.ghosts[0]; g.alive = true; ghostHunt.t = 5; g.sy = g.y; g.sx = g.x; g.x = g.x;
+      if (!hitGhost({ x: g.x, y: g.sy - 6 })) throw new Error('не влучили по істоті');
+      if (!helpDone(0)) throw new Error('допомогу не зараховано: ' + state.story.help[0]);
+      if (state.crystals < 1) throw new Error('кристал за допомогу не видано');
+      if (!helpThanksNow().includes(0) && helpThanksLate().length === 0) throw new Error('подяка не поставлена в чергу');
+      endGhostHunt();
+    }, 200);
+    state.story = JSON.parse(sv); closeAll();
+  }
+
   notes.push('перевірено підписів у меню: ' + scanned);
   if (scanned < 100) fail('перевірка меню побачила замало підписів (' + scanned + '): меню не відкрилось?');
 

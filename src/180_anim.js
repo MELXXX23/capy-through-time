@@ -581,6 +581,7 @@ function drawTeamProp(prop, x, y, t, dir) {
 }
 
 const ACTOR_K = 1.15;                                  // звірята-працівники на 15% більші
+function actorK(a) { return ACTOR_K * (TEAM[a.i].id === 'spike' ? 1.18 : 1); }       // їжак ще трохи більший: щоб було видно за прилавком
 const actorRimCache = {};
 function drawActorRim(name, x, y, flip) {               // тонкий світлий контур: звірятко чітко видно на будь-якому тлі, а вночі воно не зливається з вулицею
   const src = getOutlinedCanvas(name);
@@ -595,7 +596,8 @@ function drawActorRim(name, x, y, flip) {               // тонкий світ
 }
 function drawActor(a) {
   const x0 = Math.round(a.x), y0 = a.y;
-  ctx.save(); ctx.translate(x0, y0); ctx.scale(ACTOR_K, ACTOR_K); ctx.translate(-x0, -y0);
+  const k = actorK(a);
+  ctx.save(); ctx.translate(x0, y0); ctx.scale(k, k); ctx.translate(-x0, -y0);
   drawActorBody(a);
   ctx.restore();
 }
@@ -637,7 +639,7 @@ function drawScarf(cx, top, i) {          // top — верх спрайта 16�
 function hitActor(p) {
   let best = null;
   actors.forEach(a => {
-    if (Math.abs(p.x - a.x) <= 10 * ACTOR_K && p.y >= a.y - 19 * ACTOR_K && p.y <= a.y + 3 && (!best || a.y > best.y)) best = a;
+    if (Math.abs(p.x - a.x) <= 10 * actorK(a) && p.y >= a.y - 19 * actorK(a) && p.y <= a.y + 3 && (!best || a.y > best.y)) best = a;
   });
   return best;
 }
@@ -712,7 +714,7 @@ function pickLine(id, own, cold, nCold) {
   }
 }
 function actorSay(a) {
-  const m = TEAM[a.i], up = () => ({ x: a.x, y: a.y - 19 * ACTOR_K - 1 });
+  const m = TEAM[a.i], up = () => ({ x: a.x, y: a.y - 19 * actorK(a) - 1 });
   const p = up();
   showBubble('t' + a.i, pickLine(m.id, () => 'team_' + m.id + '_say_' + Math.floor(Math.random() * TEAM_PHRASES), 'team_' + m.id + '_cold_', 3), p.x, p.y, up);
 }
@@ -739,9 +741,25 @@ function capySay(forceId) {
   showBubble('capy', txt, c.x + 14, c.footY - 32 * CAPY_K);
 }
 
+// Зірка звірятку (після 10-го рівня): бонус ×1,25 / ×1,5 / ×2
+function buyStar(i) {
+  const n = teamStarsOf(i) + 1;
+  if (n > STAR_MAX) return;
+  const cost = starCost(i, n);
+  if (!(state.coins >= cost)) return;
+  state.coins -= cost; state.stats.teamUps = (state.stats.teamUps || 0) + 1;
+  state.teamStars[i] = n;
+  recalcIncome();
+  const a = actors.find(x => x.i === i);
+  if (a) { a.hop = 1; spawnDust(a.x, a.y - 2, 8); }
+  showToast(t('teamStarred', t('team_' + TEAM[i].id), n), 'big');
+  playSfx('upgrade');
+  updateUI(); saveGame();
+}
 // Найняти або прокачати звірятко
 function hireOrUpgrade(i) {
   const lvl = state.team[i];
+  if (isTeamUnlocked(i) && lvl >= CONFIG.TEAM_MAX_LEVEL) { buyStar(i); return; }
   if (!isTeamUnlocked(i) || lvl >= CONFIG.TEAM_MAX_LEVEL) return;
   const cost = teamCost(i, lvl + 1);
   if (!(state.coins >= cost)) return;
