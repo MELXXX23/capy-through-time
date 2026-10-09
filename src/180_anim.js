@@ -147,7 +147,7 @@ function updateBirds(dt) {
   });
 }
 function drawBirds() {
-  if (!state.settings.birds || ecoOn()) return;
+  if (!state.settings.birds || state.settings.noFly || ecoOn()) return;
   if (viewEpoch() % 8 >= 1 && !state.settings.birdsLate) return;                     // з 2-ї епохи птахів не видно, доки гравець не ввімкне їх у налаштуваннях
   const vis = 1 - Math.min(1, sky.night * 1.5);
   if (vis <= 0.05 || !birds.length) return;
@@ -425,7 +425,10 @@ let chatterTimer = 20;
 // Де стоїть звірятко: Голка — біля дверей, решта — на фіксованих місцях
 function actorHome(m) {
   const s = m.spot;
-  if (s.x === null) return shop.x + shop.door.x + shop.door.w / 2 + s.dx;
+  if (s.x === null) {
+    if (mobileMQ.matches) return shop.x + shop.door.x + shop.door.w / 2 + s.dx;          // на телефоні праворуч від Капі край екрана: лишається біля дверей, щоб його було видно
+    const cp = LAYOUT.capy; return Math.min(worldR() - 24, cp.x + 14 + 62);          // на ПК їжак із касою стоїть праворуч від Капі, не впритул
+  }
   // решта звіряток розставлені по всій ширині вулиці (f — частка ширини); на широкому екрані відстані більші
   const sc = Math.max(1, Math.min(1.3, (view.w - 36) / 284));
   return LAYOUT.centerX + (s.f - 0.5) * 284 * sc;
@@ -580,8 +583,8 @@ function drawTeamProp(prop, x, y, t, dir) {
   }
 }
 
-const ACTOR_K = 1.15;                                  // звірята-працівники на 15% більші
-function actorK(a) { return ACTOR_K * (TEAM[a.i].id === 'spike' ? 1.18 : 1); }       // їжак ще трохи більший: щоб було видно за прилавком
+const ACTOR_K = 1.56;                                  // звірята-працівники: 16 px × 1,56 ≈ 25 px, тобто на 20% нижчі за Капі (24 px × 1,3 ≈ 31 px)
+function actorK(a) { return ACTOR_K; }
 const actorRimCache = {};
 function drawActorRim(name, x, y, flip) {               // тонкий світлий контур: звірятко чітко видно на будь-якому тлі, а вночі воно не зливається з вулицею
   const src = getOutlinedCanvas(name);
@@ -741,18 +744,20 @@ function capySay(forceId) {
   showBubble('capy', txt, c.x + 14, c.footY - 32 * CAPY_K);
 }
 
-// Зірка звірятку (після 10-го рівня): бонус ×1,25 / ×1,5 / ×2
+// Прокачування звірятка після 10-го рівня: кожні 10 дають зірку (бонус доходить до ×1,25 / ×1,5 / ×2)
 function buyStar(i) {
-  const n = teamStarsOf(i) + 1;
-  if (n > STAR_MAX) return;
-  const cost = starCost(i, n);
+  const plus = teamPlusOf(i);
+  if (plus >= PLUS_MAX) return;
+  const cost = plusCost(i, plus + 1);
   if (!(state.coins >= cost)) return;
   state.coins -= cost; state.stats.teamUps = (state.stats.teamUps || 0) + 1;
-  state.teamStars[i] = n;
+  state.teamPlus[i] = plus + 1;
   recalcIncome();
-  const a = actors.find(x => x.i === i);
-  if (a) { a.hop = 1; spawnDust(a.x, a.y - 2, 8); }
-  showToast(t('teamStarred', t('team_' + TEAM[i].id), n), 'big');
+  const a = actors.find(x => x.i === i), name = t('team_' + TEAM[i].id), n = (plus + 1) / STAR_STEP;
+  if (n === Math.floor(n)) {
+    if (a) { a.hop = 1; spawnDust(a.x, a.y - 2, 8); }
+    showToast(t('teamStarred', name, n), 'big');
+  } else showToast(t('teamPlus', name, (plus + 1) % STAR_STEP, STAR_STEP, Math.floor(n) + 1), 'good');
   playSfx('upgrade');
   updateUI(); saveGame();
 }
@@ -831,7 +836,7 @@ function spawnVip() {
 function hitVip(p) {
   for (const c of customers) {
     if (!c.vip || c.vipDone) continue;
-    if (Math.abs(p.x - c.x) <= 17 && p.y >= c.y - 38 && p.y <= c.y + 5) {
+    if (Math.abs(p.x - c.x) <= 20 && p.y >= c.y - 44 && p.y <= c.y + 5) {
       c.vipDone = true; c.speed = 62; state.stats.vipTaps = (state.stats.vipTaps || 0) + 1;
       const crystal = Math.random() < 0.2;                                  // нагорода одна з двох: кристал або ×5 золота
       const gain = crystal ? 0 : Math.floor((state.cps * 40 + 200 * levelMult()) * 5);
@@ -1140,8 +1145,8 @@ function drawCustomer(c) {
   ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 3, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
   if (c.vip) {
     const pulse = animOn() ? Math.sin(animClock * 5) : 0;
-    ctx.globalAlpha = (0.2 + 0.08 * pulse) * c.alpha; disc(ctx, sx + 9, sy + 10, 18, 'y'); ctx.globalAlpha = 1;
-    drawCanvasSprite(ctx, goldCanvas(c.type, frame), sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: 1.3, sy: 1.3 });
+    ctx.globalAlpha = (0.2 + 0.08 * pulse) * c.alpha; disc(ctx, sx + 9, sy + 8, 21, 'y'); ctx.globalAlpha = 1;
+    drawCanvasSprite(ctx, goldCanvas(c.type, frame), sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: 1.56, sy: 1.56 });
     for (let k = 0; k < 3; k++) { const a = animClock * 2.2 + k * 2.1, px = Math.round(sx + 9 + Math.cos(a) * 13), py = Math.round(sy + 7 + Math.sin(a * 1.3) * 12); if (Math.floor(animClock * 6 + k) % 2) { R(ctx, px, py - 1, 1, 3, 'y'); R(ctx, px - 1, py, 3, 1, 'y'); } }
     if (!c.vipDone) { const by = sy - 13 + (animOn() ? Math.round(Math.sin(animClock * 4)) : 0); R(ctx, sx + 7, by + 2, 5, 3, 'd'); R(ctx, sx + 8, by + 1, 3, 1, 'd'); R(ctx, sx + 8, by + 2, 3, 2, 'h'); R(ctx, sx + 9, by, 1, 1, 'y'); }
   } else { const sc = c.scale || 1; drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc, sy: sc }); }

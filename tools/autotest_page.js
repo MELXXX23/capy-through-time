@@ -192,6 +192,21 @@
   await check('збереження: старі версії', () => {
     for (const v of [1, 5, 9, 12, 14, 15]) { const d = migrateSave({ v, state: createDefaultState() }); if (d.v !== CONFIG.SAVE_VERSION) throw new Error('міграція з v' + v + ' не дійшла до кінця'); }
   }, 50);
+  await check('зірки помічників: 10 прокачувань = зірка, міграція зі старих зірок', () => {
+    const d = migrateSave({ v: 16, state: Object.assign(createDefaultState(), { teamStars: TEAM.map((m, i) => (i === 0 ? 2 : 0)) }) });
+    if (d.state.teamPlus[0] !== 20 || d.state.teamStars !== undefined) throw new Error('стара зірка не стала 10 прокачуваннями');
+    const keep = state.teamPlus.slice(), keepLvl = state.team[0], keepCoins = state.coins;
+    try {
+      state.team[0] = CONFIG.TEAM_MAX_LEVEL; state.shopLevel = Math.max(state.shopLevel, TEAM[0].level); state.coins = 1e60; state.teamPlus[0] = 0;
+      if (starMult(0) !== 1) throw new Error('без зірок множник не 1');
+      for (let k = 1; k <= PLUS_MAX; k++) {
+        buyStar(0);
+        if (state.teamPlus[0] !== k) throw new Error('прокачування ' + k + ' не зарахувалось');
+        if (k % STAR_STEP === 0 && (teamStarsOf(0) !== k / STAR_STEP || Math.abs(starMult(0) - STAR_MULT[k / STAR_STEP]) > 1e-9)) throw new Error('зірка на ' + k + ' неправильна');
+      }
+      buyStar(0); if (state.teamPlus[0] !== PLUS_MAX) throw new Error('понад 3 зірки можна купити');
+    } finally { state.teamPlus = keep; state.team[0] = keepLvl; state.coins = keepCoins; recalcIncome(); }
+  }, 50);
   await check('збереження: запис і друга копія', () => {
     forceBakNext = true; saveGame();
     if (!localStorage.getItem(CONFIG.SAVE_KEY) || !localStorage.getItem(SAVE_BAK_KEY)) throw new Error('нема основної або другої копії');

@@ -540,14 +540,16 @@ function drawBalloon(x, y, col) {
 // Гірлянда під навісом магазину
 function drawGarland() {
   const y0 = shop.y + shop.h - 39 + 12;
-  for (let x = shop.x + 2; x < shop.x + shop.w - 2; x++) {
-    const sag = Math.round(3 * Math.sin(((x - shop.x) % 22) / 22 * Math.PI));
-    R(ctx, x, y0 + sag, 1, 1, 'd');
-    if ((x - shop.x) % 5 === 2) {
-      const col = theme.lights[(Math.floor((x - shop.x) / 5) + Math.floor(animClock * 2)) % theme.lights.length];
-      R(ctx, x, y0 + sag + 1, 2, 2, col);
+  withShopScale(getShopScale(), () => {                                  // гірлянда стискається разом з магазином
+    for (let x = shop.x + 2; x < shop.x + shop.w - 2; x++) {
+      const sag = Math.round(3 * Math.sin(((x - shop.x) % 22) / 22 * Math.PI));
+      R(ctx, x, y0 + sag, 1, 1, 'd');
+      if ((x - shop.x) % 5 === 2) {
+        const col = theme.lights[(Math.floor((x - shop.x) / 5) + Math.floor(animClock * 2)) % theme.lights.length];
+        R(ctx, x, y0 + sag + 1, 2, 2, col);
+      }
     }
-  }
+  });
 }
 
 // Прикраси ПІСЛЯ магазину (малюються до звіряток — стоять на землі)
@@ -764,7 +766,10 @@ function skyxTetris(init) { const top = 8 - view.offY; return { k: 'tet', x: Mat
 function seedSkyExtra() {
   const ep = viewEpoch() % 8, wide = Math.max(1, view.w / 320), top = 8 - view.offY;
   SKYX.ep = ep; SKYX.items = []; SKYX.banner = null; SKYX.tBanner = rand(3, 8); SKYX.meteors = []; SKYX.tMeteor = rand(0.3, 1);
-  if (ep === 0) for (let i = 0; i < Math.round(3 * wide); i++) SKYX.items.push({ k: 'hab', x: rand(worldL(), worldR()), y: rand(top + 14, 62), r: [9, 7, 5][i % 3], vx: rand(1, 2.5) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['p', 'w'], ['h', 'n']][i % 5] });
+  if (ep === 0) {                                                       // повітряні кулі: рідко (одна на ~260 px світу), рівномірно по світу, летять в один бік з близькою швидкістю, тож не збиваються докупи
+    const n = Math.max(3, Math.round((worldR() - worldL()) / 210)), step = (worldR() - worldL()) / n, dir = Math.random() < 0.5 ? -1 : 1;
+    for (let i = 0; i < n; i++) SKYX.items.push({ k: 'hab', x: worldL() + step * (i + 0.5) + rand(-step * 0.15, step * 0.15), y: Math.max(top + 16, LAYOUT.horizonY - 134 - [0, 12, 24, 6, 18][i % 5] + rand(-4, 4)), r: [11, 9, 7][i % 3], vx: dir * rand(1.2, 1.6), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['p', 'w'], ['h', 'n']][i % 5] });
+  }
   if (ep === 3) for (let i = 0; i < Math.round(5 * wide); i++) SKYX.items.push(skyxTetris(true));
   if (ep === 4) for (let i = 0; i < Math.round(4 * wide); i++) SKYX.items.push({ k: 'drn', x: rand(worldL(), worldR()), y: rand(top + 8, 66), vx: rand(8, 15) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), box: i % 3 !== 2 });
   if (ep === 5) for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'isl', x: rand(worldL() + 30, worldR() - 30), y: rand(top + 26, 54), w: rand(26, 36), vx: rand(0.6, 1.4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
@@ -789,11 +794,57 @@ function updateSkyExtra(dt) {
     for (let i = SKYX.meteors.length - 1; i >= 0; i--) { const m = SKYX.meteors[i]; m.x += m.vx * dt; m.y += m.vy * dt; m.life += dt; if (m.life > 1.1) SKYX.meteors.splice(i, 1); }
   }
 }
+// Повітряна куля: об'ємна (шість відтінків, світло зверху-ліворуч, тінь знизу-праворуч, як у хмар), справжній «грушевий» силует, меридіани-смуги, пояс, канати й кошик. Малюється один раз у полотно
+const balloonCache = {};
+function hexRgb(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+function mixHex(a, b, k) { const p = hexRgb(a), q = hexRgb(b); return 'rgb(' + p.map((v, i) => Math.round(v + (q[i] - v) * k)).join(',') + ')'; }
+function balloonCanvas(r, c1, c2) {
+  const key = r + c1 + c2;
+  if (balloonCache[key]) return balloonCache[key];
+  const rampOf = base => { const h = PALETTE[base] || base; return [mixHex(h, '#ffffff', 0.42), mixHex(h, '#ffffff', 0.16), h, mixHex(h, '#3b3560', 0.3), mixHex(h, '#272048', 0.55)]; };
+  const R1 = rampOf(c1), R2 = rampOf(c2), TRIM = rampOf('y');
+  const Henv = Math.round(r * 2.4), cy = r, low = Henv - r, ropeL = Math.max(3, Math.round(r * 0.5)), bw = Math.max(5, Math.round(r * 0.75)), bh = Math.max(3, Math.round(r * 0.42));
+  const W = r * 2 + 4, H = 1 + Henv + ropeL + bh + 2, cx = W / 2;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const half = y => { const dy = y - cy; if (dy <= 0) return Math.sqrt(Math.max(0, r * r - dy * dy)); const u = Math.min(1, dy / low); return Math.max(r * 0.3, r * (1 - 0.7 * Math.pow(u, 1.5))); };
+  const gores = r >= 9 ? 6 : 5, L = [-0.55, -0.6, 0.58];
+  const inside = (x, y) => y >= 1 && y < 1 + Henv && Math.abs(x + 0.5 - cx) <= half(y - 1);
+  for (let y = 1; y < 1 + Henv; y++) {
+    const hw = half(y - 1);
+    for (let x = 0; x < W; x++) {
+      const dx = x + 0.5 - cx; if (Math.abs(dx) > hw) continue;
+      const nx = Math.max(-1, Math.min(1, dx / Math.max(0.5, hw))), th = Math.asin(nx);
+      const dyN = y - 1 - cy, ny = Math.max(-1, Math.min(1, dyN / (r * (dyN > 0 ? 1.4 : 1)))), nz = Math.sqrt(Math.max(0.02, 1 - nx * nx * 0.8 - ny * ny * 0.6));
+      const lum = (nx * L[0] + ny * L[1] + nz * L[2]);
+      let sh = 0.72 - lum * 0.58 + (((x * 3 + y * 7) % 5 === 0) ? 0.05 : 0) + (((x + y) & 1) ? 0.025 : 0);
+      if (!inside(x - 1, y - 1)) sh -= 0.18;          // світла кромка зверху-ліворуч
+      if (!inside(x + 1, y + 1)) sh += 0.24;          // тінь на нижньо-правому краї
+      const gi = Math.floor((th + Math.PI / 2) / (Math.PI / gores) + 1e-6) % 2;
+      let rp = gi ? R1 : R2;
+      if (y - 1 >= cy + r * 0.5 && y - 1 < cy + r * 0.5 + Math.max(2, Math.round(r * 0.28))) rp = TRIM;       // пояс-оздоба
+      g.fillStyle = sh < 0.14 ? rp[0] : sh < 0.34 ? rp[1] : sh < 0.55 ? rp[2] : sh < 0.76 ? rp[3] : rp[4];
+      g.fillRect(x, y, 1, 1);
+    }
+  }
+  g.fillStyle = 'rgba(255,255,255,0.85)'; g.fillRect(Math.round(cx - r * 0.55), 1 + Math.round(r * 0.45), 2, 1); g.fillRect(Math.round(cx - r * 0.55) - 1, 1 + Math.round(r * 0.45) + 1, 1, 2);    // відблиск
+  g.fillStyle = R1[4]; g.fillRect(Math.round(cx) - 1, 1, 2, 1);                                                    // верхній клапан
+  const nw = Math.max(2, Math.round(half(Henv - 1))), nyb = 1 + Henv;                                           // обідок горловини
+  g.fillStyle = '#3a2f3d'; g.fillRect(Math.round(cx - nw), nyb - 1, nw * 2, 1);
+  const bx0 = Math.round(cx - bw / 2), by0 = nyb + ropeL;                                                         // канати й кошик
+  g.fillStyle = '#5a4a52';
+  const rope = (xa, ya, xb, yb) => { const n = Math.max(1, Math.abs(yb - ya)); for (let i = 0; i <= n; i++) g.fillRect(Math.round(xa + (xb - xa) * i / n), Math.round(ya + (yb - ya) * i / n), 1, 1); };
+  rope(cx - nw + 0.5, nyb, bx0 + 0.5, by0); rope(cx + nw - 1.5, nyb, bx0 + bw - 1.5, by0);
+  g.fillStyle = '#4a3228'; g.fillRect(bx0, by0, bw, bh);
+  for (let yy = 0; yy < bh - 1; yy++) for (let xx = 1; xx < bw - 1; xx++) { g.fillStyle = (xx + yy) & 1 ? '#a8703f' : '#7a4f35'; g.fillRect(bx0 + xx, by0 + 1 + yy, 1, 1); }
+  g.fillStyle = '#dba46a'; g.fillRect(bx0, by0, bw, 1);
+  cv.cx = cx; cv.topY = 1; cv.neckY = nyb; cv.burnY = nyb + 1;
+  return (balloonCache[key] = cv);
+}
 function skyxBalloon(x, y, r, c1, c2, ph) {
-  x = Math.round(x); y = Math.round(y + Math.sin(ph) * 1.5);
-  for (let dy = -r; dy <= r; dy++) { const hw = Math.round(r * Math.sqrt(Math.max(0, 1 - dy * dy / (r * r + 0.5)))); for (let dx = -hw; dx <= hw; dx++) R(ctx, x + dx, y + dy, 1, 1, Math.floor((dx + 40) / 3) % 2 ? c1 : c2); R(ctx, x - hw - 1, y + dy, 1, 1, 'd'); R(ctx, x + hw + 1, y + dy, 1, 1, 'd'); }
-  R(ctx, x - 1, y - r - 1, 3, 1, 'd'); R(ctx, x - 1, y + r + 1, 3, 1, 'd');
-  skyxLn(ctx, x - r + 2, y + r - 1, x - 2, y + r + 6, 'd'); skyxLn(ctx, x + r - 2, y + r - 1, x + 2, y + r + 6, 'd'); R(ctx, x - 2, y + r + 6, 5, 4, 'b'); R(ctx, x - 2, y + r + 6, 5, 1, 'c');
+  const cv = balloonCanvas(r, c1, c2), sway = Math.sin(ph) * 1.5;
+  x = Math.round(x - cv.cx); y = Math.round(y + sway - r - 1);
+  ctx.drawImage(cv, x, y);
+  if (Math.floor(animClock * 7 + ph * 3) % 3) { const fx = Math.round(x + cv.cx) - 1; R(ctx, fx, y + cv.burnY, 1, 2, 'o'); R(ctx, fx, y + cv.burnY, 1, 1, 'y'); }       // пальник блимає
 }
 function skyxDrone(x, y, ph, box) {
   x = Math.round(x); y = Math.round(y + Math.sin(ph * 0.7) * 1.5); const bl = Math.floor(ph * 2) % 2 ? 4 : 2;
@@ -913,7 +964,7 @@ function discoLamps(time) {
   }
 }
 function drawSkyExtra(time) {
-  const ep = SKYX.ep, top = 8 - view.offY;
+  const ep = SKYX.ep, top = 8 - view.offY, noFly = !!state.settings.noFly;
   if (ep === 2) {                                                         // Диско: лазерний віяр над дахами
     discoLamps(time);
     for (let i = 0; i < 6; i++) { const sx = Math.round(worldL() + 20 + i * (view.w - 40) / 5), sy = top + 6 + (i * 13) % 34, v = Math.sin(time * 2.4 + i * 1.7); if (v > 0.3) sparkPlus(sx, sy, (v - 0.3) / 0.7, i % 2 ? '#fff6b0' : '#ffd0f0'); }
@@ -924,16 +975,16 @@ function drawSkyExtra(time) {
     const mxp = Math.round(cxw + (0.2 - 0.5) * vw + 0.7 * dlt), myp = top + 22;                                           // місяць ближче: на 40%
     ctx.drawImage(spl.planet, pxp - spl.planetCx, pyp - spl.planetCy);
     ctx.drawImage(spl.moon, mxp - spl.moonCx, myp - spl.moonCy);
-    SKYX.meteors.forEach(m => { const a = Math.max(0, 1 - m.life / 1.1); for (let k = 0; k < 16; k++) { ctx.globalAlpha = a * (1 - k / 16); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k), 1, 1, k < 4 ? 'w' : 'y'); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k) + 1, 1, 1, 'o'); } ctx.globalAlpha = a; R(ctx, Math.round(m.x), Math.round(m.y), 3, 2, 'w'); ctx.globalAlpha = 1; });
+    if (!noFly) SKYX.meteors.forEach(m => { const a = Math.max(0, 1 - m.life / 1.1); for (let k = 0; k < 16; k++) { ctx.globalAlpha = a * (1 - k / 16); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k), 1, 1, k < 4 ? 'w' : 'y'); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k) + 1, 1, 1, 'o'); } ctx.globalAlpha = a; R(ctx, Math.round(m.x), Math.round(m.y), 3, 2, 'w'); ctx.globalAlpha = 1; });
   }
-  if (ep === 1 && SKYX.banner) {                                          // Ретро: літак тягне полотнище SALE
+  if (ep === 1 && SKYX.banner && !noFly) {                                          // Ретро: літак тягне полотнище SALE
     const b = SKYX.banner, x = Math.round(b.x), y = Math.round(b.y + Math.sin(time * 1.5) * 1);
     R(ctx, x, y, 14, 4, 'w'); R(ctx, x + 14, y + 1, 3, 2, 'e'); R(ctx, x + 3, y - 2, 6, 2, 'r'); R(ctx, x + 4, y + 4, 4, 2, 'r'); R(ctx, x + 12, y, 2, 1, 'S'); R(ctx, x - 2, y + 1, 2, 2, 'e'); R(ctx, x + 17, y + 1, 1, 2, Math.floor(time * 30) % 2 ? 'd' : 'e');
     skyxLn(ctx, x - 2, y + 2, x - 8, y + 4, 'd');
     for (let i = 0; i < 40; i++) { const yy = y + 4 - 3 + Math.round(Math.sin(time * 5 + i * 0.35) * 1); R(ctx, x - 8 - 40 + i, yy, 1, 13, i < 1 || i > 38 ? 'r' : 'w'); R(ctx, x - 8 - 40 + i, yy, 1, 1, 'r'); R(ctx, x - 8 - 40 + i, yy + 12, 1, 1, 'r'); }
     wordBig(ctx, x - 8 - 36, y + 4 - 3 + 3, 'SALE', 'r');
   }
-  SKYX.items.forEach(f => {
+  (noFly ? [] : SKYX.items).forEach(f => {
     if (f.k === 'hab') skyxBalloon(f.x, f.y, f.r, f.c[0], f.c[1], f.ph);
     else if (f.k === 'drn') skyxDrone(f.x, f.y, f.ph, f.box);
     else if (f.k === 'isl') skyxIsland(f.x, f.y, f.w, f.ph);
@@ -1060,7 +1111,7 @@ function drawBlimp(b, time) {
 }
 // Небо епохи (у координатах «ядра», після хмар і до землі)
 function drawEpochSky(time) {
-  const fx = currentEpoch().features;
+  const fx = currentEpoch().features, noFly = !!state.settings.noFly;           // «Прибрати літаючі об'єкти»: усе, що літає в небі (крім хмар)
   drawSkyExtra(time);
   if (fx.includes('retrosun')) {                      // смугасте сонце з синтвейву
     const sx = worldL() + 84;
@@ -1071,16 +1122,16 @@ function drawEpochSky(time) {
     }
   }
   const b = epochFx.blimp;
-  if (b) drawBlimp(b, time);                           // повітряне судно
+  if (b && !noFly) drawBlimp(b, time);                           // повітряне судно
   const p = epochFx.plane;
-  if (p) {                                             // літак із білим слідом
+  if (p && !noFly) {                                   // літак із білим слідом
     const dir = p.vx > 0 ? 1 : -1, x = Math.round(p.x), y = Math.round(p.y);
     for (let i = 1; i <= 38; i++) { ctx.globalAlpha = 0.7 * (1 - i / 38); R(ctx, x - dir * (i + 4), y, 1, 1, 'w'); }
     ctx.globalAlpha = 1;
     R(ctx, x - 4, y - 1, 9, 2, 'w'); R(ctx, x + (dir > 0 ? 5 : -5), y - 1, 1, 2, 'e'); R(ctx, x - 1, y - 3, 3, 2, 'e'); R(ctx, x - 1, y + 1, 3, 2, 'e'); R(ctx, x - dir * 4, y - 3, 2, 2, 'e');
   }
   const r = epochFx.rocket;
-  if (r) {                                             // ракета з димовим слідом
+  if (r && !noFly) {                                   // ракета з димовим слідом
     const x = Math.round(r.x), y = Math.round(r.y);
     for (let i = 0; i < 15; i++) { ctx.globalAlpha = 0.6 * (1 - i / 15); disc(ctx, x + Math.round(Math.sin(i + r.t * 6)), y + 9 + i * 3, 2 + (i >> 2), 'w'); }
     ctx.globalAlpha = 1;
@@ -1097,7 +1148,7 @@ function drawEpochSky(time) {
       for (let k = 0; k < 3; k++) { const ang = a + k * 2.094; lineG(ctx, x + 1, hy, x + 1 + Math.round(Math.cos(ang) * 13), hy + Math.round(Math.sin(ang) * 13), k ? 'w' : 'E'); }
     }
   }
-  epochFx.fly.forEach(f => {
+  (noFly ? [] : epochFx.fly).forEach(f => {
     const x = Math.round(f.x), y = Math.round(f.y);
     if (f.k === 'comet') {                                             // падаюча зірка / неоновий метеор
       const k = f.life / 0.9, n = 16, dx = f.vx / Math.hypot(f.vx, f.vy), dy = f.vy / Math.hypot(f.vx, f.vy);
@@ -1131,7 +1182,7 @@ function drawEpochSky(time) {
       disc(ctx, x, yy, 4, 'k'); disc(ctx, x, yy, 3, f.c); R(ctx, x - 2, yy - 2, 1, 1, 'w'); R(ctx, x, yy + 4, 1, 1, 'k'); R(ctx, x + (Math.floor(f.ph) % 2 ? 1 : 0), yy + 5, 1, 5, 'e');
     }
   });
-  epochFx.drones.forEach(d => {                        // дрони з вогниками
+  (noFly ? [] : epochFx.drones).forEach(d => {         // дрони з вогниками
     const x = Math.round(d.x), y = Math.round(d.y + Math.sin(d.ph) * 2);
     R(ctx, x - 3, y, 7, 2, 'k'); R(ctx, x - 5, y - 1, 3, 1, 'e'); R(ctx, x + 3, y - 1, 3, 1, 'e');
     if (Math.floor(time * 6 + d.ph) % 2) { ctx.globalAlpha = 0.35; disc(ctx, x, y + 3, 3, d.c); ctx.globalAlpha = 1; R(ctx, x, y + 2, 1, 1, d.c); }
@@ -1293,9 +1344,11 @@ function bulbColors() { return (theme.holiday && theme.lights && theme.lights.le
 function awningBulbs(fn) {
   if (build || !shop) return;
   const cols = bulbColors(), tw = Math.floor(animClock * 1.5), y0 = shop.y + shop.h - 39 + 13;
+  const sc = getShopScale(), dw = Math.max(1, Math.round(shop.w * sc.sx)), dh = Math.max(1, Math.round(shop.h * sc.sy));
+  const kx = dw / shop.w, ky = dh / shop.h, ox = Math.round(shop.x + (shop.w - dw) / 2), oy = Math.round(shop.y + (shop.h - dh));       // лампочки навісу їдуть разом із магазином при тапі
   for (let x = shop.x + 3; x < shop.x + shop.w - 3; x += 6) {
     const sag = Math.round(2 * Math.sin(((x - shop.x) % 12) / 12 * Math.PI));
-    fn(x, y0 + sag, cols[(Math.floor((x - shop.x) / 6) + tw) % cols.length]);
+    fn(Math.round(ox + (x - shop.x) * kx), Math.round(oy + (y0 + sag - shop.y) * ky), cols[(Math.floor((x - shop.x) / 6) + tw) % cols.length]);
   }
 }
 function garlandSpans() {
@@ -1384,17 +1437,19 @@ function drawNightLights() {
   });
   if (!build && shop && L > 0.05) {                                  // теплий ореол навколо магазину й торгового центру: світло виливається на вулицю
     ctx.save();
-    ctx.beginPath(); ctx.rect(-3000, -3000, 8000, 8000); ctx.rect(shop.x, shop.y, shop.w, shop.h); ctx.clip('evenodd');       // фасад, вітрина й двері лишаються чіткими: світло лише довкола
+    const hs = getShopScale(), hw = Math.max(1, Math.round(shop.w * hs.sx)), hh = Math.max(1, Math.round(shop.h * hs.sy));      // ореол слідує за стисканням магазину при тапі (інакше він «відстає» від фасаду)
+    const hx = Math.round(shop.x + (shop.w - hw) / 2), hy = Math.round(shop.y + (shop.h - hh));
+    ctx.beginPath(); ctx.rect(-3000, -3000, 8000, 8000); ctx.rect(hx, hy, hw, hh); ctx.clip('evenodd');       // фасад, вітрина й двері лишаються чіткими: світло лише довкола
     const big = shop.level >= 4 ? 1.35 : 1;
-    for (let i = 0; i < 6; i++) { const pad = 3 + i * 5; ctx.globalAlpha = L * 0.035 * big; ctx.fillStyle = '#ffb94a'; ctx.fillRect(shop.x - pad, shop.y + shop.h * 0.18 - pad * 0.6, shop.w + pad * 2, shop.h * 0.82 - 44 + pad * 0.6); }
+    for (let i = 0; i < 6; i++) { const pad = 3 + i * 5; ctx.globalAlpha = L * 0.035 * big; ctx.fillStyle = '#ffb94a'; ctx.fillRect(hx - pad, hy + hh * 0.18 - pad * 0.6, hw + pad * 2, hh * 0.82 - 44 + pad * 0.6); }
     ctx.translate(shop.x + shop.w / 2, LAYOUT.curbY + 4); ctx.scale(1, 0.3); ctx.fillStyle = '#ffc060';                                  // м'яка овальна пляма світла на бруківці перед входом
     for (let i = 0; i < 9; i++) { ctx.globalAlpha = L * 0.022 * big; ctx.beginPath(); ctx.arc(0, 0, shop.w * (0.72 - i * 0.07), 0, Math.PI * 2); ctx.fill(); }
     ctx.restore();
   }
   if (!build && shop) {                                              // світло з дверей і вітрин падає на тротуар
-    const cx = shop.x + shop.door.x + shop.door.w / 2;
+    const ws = getShopScale(), sw = shop.w * ws.sx, cx = shop.x + (shop.w - sw) / 2 + (shop.door.x + shop.door.w / 2) * ws.sx;
     for (let i = 0; i < 8; i++) { ctx.globalAlpha = L * 0.12; R(ctx, Math.round(cx - 15 - i * 4), LAYOUT.curbY + i * 4, 30 + i * 8, 4, 'y'); }
-    ctx.globalAlpha = L * 0.1; R(ctx, shop.x - 4, LAYOUT.curbY, shop.w + 8, 9, 'y');
+    ctx.globalAlpha = L * 0.1; R(ctx, Math.round(shop.x + (shop.w - sw) / 2) - 4, LAYOUT.curbY, Math.round(sw) + 8, 9, 'y');
   }
   drawStreetGarlandGlow(L);
   if (mail.state !== 'idle' || state.events.mailPending) {            // фари поштової машини й підсвітка поштомата

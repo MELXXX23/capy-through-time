@@ -48,5 +48,9 @@
 .np-secs .np-tab { flex: 1 1 0; min-width: 0; padding: 9px 3px 8px; text-align: center; overflow-wrap: break-word; }
 #newsTitle { font-size: min(15px, 3.4vw); max-width: 100%; text-wrap: balance; overflow-wrap: break-word; }
 #newsModal.open .np-secs { animation: npFade .6s .7s both; }
+.np-list { margin: 0 0 6px; padding: 0 0 0 1.5em; list-style: square; }
+.np-toc { padding-left: 2.6em; list-style-position: outside; }
+.np-list li { margin-bottom: 7px; overflow-wrap: break-word; }
+.np-gift { display: block; width: 100%; margin: 8px 0 4px; padding: 10px 6px; font-size: clamp(8px, 2.4vw, 12px); line-height: 1.5; overflow-wrap: break-word; white-space: normal; }
 .np-guide-n { display: inline-block; min-width: 1.6em; color: #7a2230; }
 </style>

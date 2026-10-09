@@ -151,14 +151,14 @@ function nearLamp(x0, x1, lamps) {          // чи заходить відрі�
   return lamps.some(lx => x1 >= lx - 6 && x0 <= lx + 8);
 }
 // Предмети на даху: антени, тарілки, флюгери, труби, голуби, прапорці, білизна, сонячні панелі, дзеркальна кулька, неонова вивіска, купол телескопа, кіт
-const ROOF_PREF = { renaissance: [2, 5, 3, 4], retro: [0, 0, 6, 4], disco: [5, 0, 8, 4], arcade: [0, 9, 1, 4], internet: [1, 1, 0, 3], eco: [7, 3, 4, 6], space: [1, 10, 0, 3], neon: [11, 0, 5, 1] };
+const ROOF_PREF = { renaissance: [2, 5, 4, 2], retro: [0, 0, 6, 4], disco: [5, 0, 8, 4], arcade: [0, 9, 1, 4], internet: [1, 1, 0, 0], eco: [7, 4, 6, 7], space: [1, 10, 0, 1], neon: [11, 0, 5, 1] };       // труб (3) майже нема: сірі стовпчики на дахах набридали
 function drawRoofThing(g, k, px, by, hs, i) {
   const cols = ['r', 'p', 'T', 'y', 'o', 'f'], c = cols[(hs >>> (i * 3)) % cols.length];
   switch (k) {
     case 0: R(g, px, by - 10, 1, 10, 'd'); R(g, px - 4, by - 9, 9, 1, 'd'); R(g, px - 3, by - 7, 7, 1, 'd'); R(g, px - 2, by - 5, 5, 1, 'd'); break;
     case 1: R(g, px, by - 5, 1, 5, 'd'); disc(g, px, by - 8, 3, 'd'); disc(g, px, by - 8, 2, 'w'); R(g, px + 2, by - 11, 1, 4, 'd'); R(g, px + 1, by - 11, 3, 1, 'r'); break;
     case 2: R(g, px, by - 11, 1, 11, 'd'); R(g, px - 4, by - 8, 9, 1, 'd'); R(g, px + 4, by - 9, 2, 3, 'r'); R(g, px - 5, by - 9, 2, 3, 'r'); R(g, px - 1, by - 12, 3, 2, 'h'); break;
-    case 3: R(g, px - 3, by - 6, 2, 6, 'e'); R(g, px - 4, by - 7, 4, 1, 'd'); R(g, px + 2, by - 8, 2, 8, 'e'); R(g, px + 1, by - 9, 4, 1, 'd'); break;
+    case 3: R(g, px - 1, by - 7, 3, 7, 'e'); R(g, px - 2, by - 8, 5, 1, 'd'); R(g, px + 1, by - 7, 1, 7, 'E'); break;                       // одна невисока труба
     case 4: R(g, px - 4, by - 3, 4, 2, 'e'); R(g, px - 5, by - 4, 2, 2, 'e'); R(g, px - 6, by - 4, 1, 1, 'o'); R(g, px - 4, by - 1, 1, 1, 'd'); R(g, px - 2, by - 1, 1, 1, 'd');
             R(g, px + 2, by - 3, 4, 2, 'w'); R(g, px + 5, by - 4, 2, 2, 'w'); R(g, px + 7, by - 4, 1, 1, 'o'); R(g, px + 3, by - 1, 1, 1, 'd'); R(g, px + 5, by - 1, 1, 1, 'd'); break;
     case 5: R(g, px, by - 12, 1, 12, 'd'); R(g, px + 1, by - 12, 7, 2, c); R(g, px + 1, by - 10, 5, 2, c); R(g, px + 1, by - 8, 3, 1, c); break;
@@ -174,12 +174,15 @@ function drawRoofThing(g, k, px, by, hs, i) {
 function houseRoofExtras(g, spec, top, rh, flat, hs) {
   const { x, w } = spec, by = flat ? top - 5 : top - rh, pref = ROOF_PREF[currentEpoch().id] || [0, 3, 4, 5];
   const xs = [x + Math.round(w * 0.24), x + Math.round(w * 0.5), x + Math.round(w * 0.76)];
+  let chim = !flat && hs % 3 === 0 && w >= 40;                    // на даху вже є цегляний димар — сірих труб не додаємо
   xs.forEach((px, i) => {
     if (!flat && hs % 3 === 0 && w >= 40 && Math.abs(px - (x + w - 12)) < 11) return;       // тут димар
     if (flat && hs % 3 === 0 && Math.abs(px - (x + w - 12)) < 9) return;                       // тут антена
     if (flat && hs % 3 === 1 && Math.abs(px - (x + 10)) < 11) return;                          // тут кондиціонер
     if ((hs >>> (i * 4 + 1)) % 5 === 0) return;                                                // не на кожному будинку все й одразу
-    const roll = (hs >>> (i * 5)) % 10, k = roll < 7 ? pref[(hs >>> (i * 3 + 2)) % pref.length] : [0, 3, 4, 5, 6, 12][(hs >>> (i * 2 + 7)) % 6];
+    const roll = (hs >>> (i * 5)) % 10;
+    let k = roll < 7 ? pref[(hs >>> (i * 3 + 2)) % pref.length] : [0, 3, 4, 5, 6, 12][(hs >>> (i * 2 + 7)) % 6];
+    if (k === 3) { if (chim || hs % 2) k = 4; else chim = true; }                          // сіра труба: не більше однієї на дах, і не на кожному
     drawRoofThing(g, k, px, by, hs, i);
   });
   if ((hs >>> 5) % 3 === 0) for (let lx = x + 4; lx < x + w - 2; lx += 5) R(g, lx, top - 1, 1, 1, ['y', 'r', 'T', 'p'][((lx - x) / 5 | 0) % 4]);      // гірлянда вздовж карниза
@@ -188,7 +191,8 @@ function shopRoofExtras(g, es, w, top, level) {
   const seed = hash2(level * 31 + (es.fx ? es.fx.length : 0), 7), by = top + 4, pref = ROOF_PREF[currentEpoch().id] || [0, 3, 4, 5];
   const ks = lastRoofSign, kl = ks ? ks.x - 20 : w * 0.3, kr = ks ? ks.x + ks.w + 20 : w * 0.68;
   [Math.max(12, Math.min(Math.round(w * 0.3), kl)), Math.min(w - 14, Math.max(Math.round(w * 0.68), kr))].forEach((px, i) => {
-    const k = (seed >>> (i * 4)) % 4 === 0 ? 4 : pref[(seed >>> (i * 3 + 1)) % pref.length];
+    let k = (seed >>> (i * 4)) % 4 === 0 ? 4 : pref[(seed >>> (i * 3 + 1)) % pref.length];
+    if (k === 3) k = 5;                                                              // на даху магазину сірих труб нема
     drawRoofThing(g, k === 7 ? 7 : k, px, by, seed, i);
   });
   for (let x = 10; x < w - 10; x += 5) R(g, x, top + 5, 1, 1, ['y', 'r', 'p', 'T'][((x / 5) | 0) % 4]);                                       // гірлянда вздовж карниза
@@ -330,9 +334,25 @@ function seedBenches() {
   const x0 = -view.offX, x1 = CONFIG.SCENE_W + view.offX;
   const free = x => x > x0 + 22 && x < x1 - 22 && !lamps.some(lx => Math.abs(x - lx) < 20) &&
     !(shop && x > shop.x - 14 && x < shop.x + shop.w + 14) && benches.every(b => Math.abs(b.x - x) > 46);
-  const add = (x, y) => benches.push({ x, y: y || LAYOUT.streetTop, slots: [{ dx: -8, who: null }, { dx: 8, who: null }] });
-  treeSpots(x0, view.w).forEach(tr => { [26, -26, 32, -32].some(off => { if (free(tr.x + off)) { add(tr.x + off); return true; } return false; }); });
-  [0.12, 0.88, 0.3, 0.7, 0.2, 0.8, 0.5].forEach(f => { const bx = Math.round(x0 + view.w * f); if (benches.length < 3 && free(bx)) add(bx); });
+  const add = (x, y) => benches.push({ x, y: y || LAYOUT.streetTop, slots: [{ dx: -10, who: null }, { dx: 10, who: null }] });
+  // одна лавка на пару дерев: стоїть між двома деревами поряд; біля одинокого дерева — збоку від нього
+  const trees = treeSpots(x0, view.w).sort((p, q) => p.x - q.x), groups = [];
+  trees.forEach(tr => { const g = groups[groups.length - 1]; if (g && tr.x - g[g.length - 1].x < 110) g.push(tr); else groups.push([tr]); });
+  groups.forEach(g => {
+    const first = g[0].x, last = g[g.length - 1].x, mid = Math.round((first + last) / 2);
+    const cands = g.length > 1 ? [0, 6, -6, 12, -12, 18, -18, 24, -24].map(d => mid + d).filter(c => c > first - 4 && c < last + 4) : [26, -26, 32, -32].map(d => first + d);
+    const spot = cands.find(free); if (spot !== undefined) add(Math.round(spot));
+  });
+  if (!benches.length) [0.3, 0.7, 0.2, 0.8, 0.5].some(f => { const bx = Math.round(x0 + view.w * f); if (free(bx)) { add(bx); return true; } return false; });      // дерев нема — хоч одна лавка
+  // біля кожної лавки — одна урна: збоку, де вільно від ліхтаря, магазину й краю
+  benches.forEach(b => {
+    b.binX = null;
+    [21, -21, 25, -25].some(off => {
+      const bx = b.x + off;
+      if (bx < x0 + 6 || bx > x1 - 6 || lamps.some(lx => Math.abs(bx - lx - 1) < 8) || (shop && bx > shop.x - 10 && bx < shop.x + shop.w + 10) || benches.some(o => o !== b && Math.abs(o.x - bx) < 22)) return false;
+      b.binX = bx; return true;
+    });
+  });
 
   actors.forEach(a => { if (a.mode === 'toBench' || a.mode === 'sit') { a.mode = 'idle'; a.wait = 1; a.bench = null; if (a.y < LAYOUT.streetTop + 6) a.y = LAYOUT.streetTop + 8; } });
 }
@@ -351,6 +371,15 @@ function drawBenchFront(b) {       // передня планка й ніжки 
   const [fb, fl] = benchColors();
   R(ctx, x - 16, y - 7, 32, 3, fb); R(ctx, x - 16, y - 7, 32, 1, fl); R(ctx, x - 16, y - 5, 32, 1, 'd');
   R(ctx, x - 15, y - 4, 3, 4, 'd'); R(ctx, x + 12, y - 4, 3, 4, 'd');
+}
+
+function drawBin(b) {              // урна біля лавки: колір тримається епохи лавки
+  if (b.binX === null || b.binX === undefined) return;
+  const x = Math.round(b.binX) - 4, y = b.y + 1, [bb, bl] = benchColors();
+  ctx.globalAlpha = 0.2; R(ctx, x - 1, y, 10, 2, 'd'); ctx.globalAlpha = 1;
+  R(ctx, x, y - 10, 8, 10, 'd'); R(ctx, x + 1, y - 9, 6, 8, bb); R(ctx, x + 1, y - 9, 1, 8, bl); R(ctx, x + 6, y - 9, 1, 8, 'd');
+  R(ctx, x - 1, y - 11, 10, 2, 'd'); R(ctx, x, y - 11, 8, 1, bl);                          // кришка
+  R(ctx, x + 2, y - 7, 4, 1, 'd'); R(ctx, x + 2, y - 5, 4, 1, 'd'); R(ctx, x + 2, y - 3, 4, 1, 'd');       // прорізи
 }
 
 /* ---------- Лампа, ящики, кущ ---------- */
@@ -679,8 +708,8 @@ function drawManholeSteam() {
     for (let i = 0; i < 4; i++) {
       const ph = ((animOn() ? animClock * 0.34 : 0) + i / 4 + mi * 0.37) % 1, yy = m.y - 3 - ph * 24;
       const xx = m.x + (animOn() ? Math.sin(animClock * 1.3 + i * 2 + mi) : 0) * (1.5 + ph * 5), r = 1.5 + ph * 3, a = Math.sin(ph * Math.PI);
-      ctx.globalAlpha = a * 0.28; disc(ctx, Math.round(xx), Math.round(yy), Math.round(r) + 1, 'E');       // м'який край клубочка
-      ctx.globalAlpha = a * 0.46; disc(ctx, Math.round(xx) - 1, Math.round(yy) - 1, Math.round(r), 'w');
+      ctx.globalAlpha = a * 0.36; disc(ctx, Math.round(xx), Math.round(yy), Math.round(r) + 1, 'E');       // м'який край клубочка
+      ctx.globalAlpha = a * 0.6; disc(ctx, Math.round(xx) - 1, Math.round(yy) - 1, Math.round(r), 'w');
     }
   });
   ctx.globalAlpha = 1;

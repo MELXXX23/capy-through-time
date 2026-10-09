@@ -14,14 +14,14 @@ function createDefaultState() {
     shopLevel: 1,                      // 1 = крамничка ... 6 = торговий центр
     depts: DEPARTMENTS.map(() => 0),   // скільки штук кожного відділу куплено
     team: TEAM.map(() => 0),           // рівень кожного звірятка: 0 — не найняте, 1…10
-    teamStars: TEAM.map(() => 0),      // зірки звірятка (0…3): після 10-го рівня множать його бонус, скидаються з подорожжю разом із рівнями
+    teamPlus: TEAM.map(() => 0),       // прокачування звірятка після 10-го рівня (0…30): кожні 10 дають зірку, бонус росте з кожним; скидаються з подорожжю разом із рівнями
     story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, help: [0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
     // Події: час (мс від 1970 р.) наступного розпродажу / неприємності та активні бусти
     events: { nextSale: 0, saleUntil: 0, nextTrouble: 0, incomeBoostUntil: 0, incomeBoostMult: 1, tapBoostUntil: 0, tapBoostMult: 1, nextMail: 0, mailPending: 0 },
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни
     stats: { ghostsCaught: 0, raccoonsCaught: 0, raccoonsLost: 0, wheelSpins: 0, timeTravels: 0, puddlesFixed: 0, deptsBought: 0, milestones: 0, teamMaxLevel: 0, maxLevel: 1, holidaysSeen: 0, jackpots: 0, teamUps: 0, vipTaps: 0 },
     // звук 0…1; анімації; формат чисел; стать гравця ('f' / 'm'); день і ніч; чи відкрите меню; чи бачив підказку про гортання
-    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, rain: false, birds: true, birdsLate: false, eco: false, ecoAsked: false, clouds: true, steam: true, vibrate: true, bigText: false, events: 0, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
+    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, rain: false, birds: true, noFly: false, birdsLate: false, eco: false, ecoAsked: false, clouds: true, steam: true, vibrate: true, bigText: false, events: 0, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
     dayPhase: 0.3,                     // час доби 0…1: 0.25 — схід сонця, 0.5 — полудень, 0.75 — захід, 0 — північ
     epochIntroSeen: -1,                // для якої епохи вже показали заставку-анімацію
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
@@ -34,6 +34,7 @@ function createDefaultState() {
     skinsMask2: 0,                            // виграні скіни з номерами 32 і далі
     skinsSeen2: 0,
     seasonsIntro: 0,                          // вже показали віконце «пори року відкрито»
+    newsGift: 0,                              // 1 — подарунок від розробників (розділ «Про нас» у газеті) вже забрано
     newsSeen: 0,                              // остання прочитана новина з червоної скриньки
     skinsSeen: 0,                             // які з виграних скінів гравець уже бачив у вкладці (для мигаючої точки)
     skins: { capy: -2, shop: -1, weather: -1, street: -1, hero: -1 },   // який скін зараз вдягнено в кожній групі (номер у SKIN_POOL, -1 — звичайний вигляд)
@@ -72,14 +73,19 @@ function teamLevelOf(id) {
   const i = TEAM.findIndex(m => m.id === id);
   return i < 0 ? 0 : state.team[i];
 }
-// Зірки звіряток: після 10-го рівня звірятко можна підвищити до трьох зірок. Зірка множить його бонус ×1,25 / ×1,5 / ×2;
-// ціна зірки — ціна 10-го рівня ×5 / ×25 / ×125
-const STAR_MULT = [1, 1.25, 1.5, 2], STAR_COST = [0, 5, 25, 125], STAR_MAX = 3;
+// Зірки звіряток: після 10-го рівня прокачування тривають, кожні 10 дають зірку (до трьох). Зірка 1 / 2 / 3 доводить бонус до ×1,25 / ×1,5 / ×2,
+// а кожне з 10 прокачувань між зірками додає свою десяту частину приросту. Ціна: ціна 10-го рівня ×1,1 за кожне наступне прокачування
+const STAR_MULT = [1, 1.25, 1.5, 2], STAR_MAX = 3, STAR_STEP = 10, PLUS_MAX = STAR_MAX * STAR_STEP;
 const STAR_HARD_CAP = { expandCost: 0.6, thief: 0.8, deptCost: 0.35 };          // зі зірками обмеження «дешевше» й «рідше єнот» теж ростуть, але не безмежно
-function teamStarsOf(i) { return Math.min(STAR_MAX, (state.teamStars && state.teamStars[i]) | 0); }
-function starMult(i) { return STAR_MULT[teamStarsOf(i)]; }
-function starCost(i, n) { return teamCost(i, CONFIG.TEAM_MAX_LEVEL) * STAR_COST[n]; }          // n — номер зірки, яку купуємо (1…3)
-// Сума бонусів одного типу від усіх найнятих звіряток (значення × рівень × зірки), з обмеженням cap
+function teamPlusOf(i) { return Math.min(PLUS_MAX, (state.teamPlus && state.teamPlus[i]) | 0); }
+function teamStarsOf(i) { return Math.floor(teamPlusOf(i) / STAR_STEP); }
+function starMultAt(plus) {                                                                // множник бонусу після plus прокачувань понад 10-й рівень (росте плавно між зірками)
+  const k = Math.min(STAR_MAX, Math.floor(plus / STAR_STEP));
+  return k >= STAR_MAX ? STAR_MULT[STAR_MAX] : STAR_MULT[k] + (STAR_MULT[k + 1] - STAR_MULT[k]) * (plus % STAR_STEP) / STAR_STEP;
+}
+function starMult(i) { return starMultAt(teamPlusOf(i)); }
+function plusCost(i, n) { return teamCost(i, CONFIG.TEAM_MAX_LEVEL) * Math.pow(CONFIG.TEAM_PLUS_GROWTH, n); }          // n — номер прокачування понад 10-й рівень (1…30)
+// Сума бонусів одного типу від усіх найнятих звіряток (значення × рівень × множник зірок), з обмеженням cap
 function teamBonus(type, field = 'per') {
   let sum = 0;
   TEAM.forEach((m, i) => {

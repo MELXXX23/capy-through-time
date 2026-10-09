@@ -415,7 +415,7 @@ function hasAffordableAction() {
 }
 // Чи можна зараз найняти або прокачати когось із команди
 function hasTeamAction() {
-  return TEAM.some((m, i) => isTeamUnlocked(i) && (state.team[i] < CONFIG.TEAM_MAX_LEVEL ? state.coins >= teamCost(i, state.team[i] + 1) : teamStarsOf(i) < STAR_MAX && state.coins >= starCost(i, teamStarsOf(i) + 1)));
+  return TEAM.some((m, i) => isTeamUnlocked(i) && (state.team[i] < CONFIG.TEAM_MAX_LEVEL ? state.coins >= teamCost(i, state.team[i] + 1) : teamPlusOf(i) < PLUS_MAX && state.coins >= plusCost(i, teamPlusOf(i) + 1)));
 }
 
 function updateTeamUI() {
@@ -432,18 +432,18 @@ function updateTeamUI() {
     setText(el.name, t('team_' + m.id), 'tn' + i);
     setText(el.role, t('team_' + m.id + '_role'), 'tr' + i);
     setText(el.trait, t('team_' + m.id + '_trait'), 'tt' + i);
-    const stars = teamStarsOf(i);
+    const stars = teamStarsOf(i), plus = teamPlusOf(i);
     setText(el.lvl, lvl === 0 ? '' : t('teamLevel', lvl, CONFIG.TEAM_MAX_LEVEL) + (lvl >= CONFIG.TEAM_MAX_LEVEL ? '  ★ ' + stars + '/' + STAR_MAX : ''), 'tl' + i + '_' + lvl + '_' + stars);
     if (lvl === 0) {
       setText(el.now, t('teamGives', bonusText(i, 1)), 'tw' + i);
       setText(el.next, '', 'tx' + i);
     } else {
-      setText(el.now, t('teamNow', bonusText(i, lvl)), 'tw' + i + '_' + lvl + '_' + stars);
-      setText(el.next, lvl < CONFIG.TEAM_MAX_LEVEL ? t('teamNext', bonusText(i, lvl + 1)) : (stars < STAR_MAX ? t('teamNext', bonusText(i, lvl, STAR_MULT[stars + 1])) : ''), 'tx' + i + '_' + lvl + '_' + stars);
+      setText(el.now, t('teamNow', bonusText(i, lvl)), 'tw' + i + '_' + lvl + '_' + plus);
+      setText(el.next, lvl < CONFIG.TEAM_MAX_LEVEL ? t('teamNext', bonusText(i, lvl + 1)) : (plus < PLUS_MAX ? t('teamNext', bonusText(i, lvl, starMultAt(plus + 1))) : ''), 'tx' + i + '_' + lvl + '_' + plus);
     }
     if (lvl >= CONFIG.TEAM_MAX_LEVEL) {
-      if (stars >= STAR_MAX) { setText(el.btn, t('teamMax'), 'tb' + i); el.btn.disabled = true; }
-      else { const sc = starCost(i, stars + 1); setText(el.btn, t('teamStarBtn', stars + 1, fmt(sc)), 'tb' + i + '_' + stars); el.btn.disabled = state.coins < sc; }
+      if (plus >= PLUS_MAX) { setText(el.btn, t('teamMax'), 'tb' + i); el.btn.disabled = true; }
+      else { const sc = plusCost(i, plus + 1); setText(el.btn, t('teamStarBtn', stars + 1, plus % STAR_STEP + 1, STAR_STEP, fmt(sc)), 'tb' + i + '_' + plus); el.btn.disabled = state.coins < sc; }
     } else {
       const cost = teamCost(i, lvl + 1);
       setText(el.btn, t(lvl === 0 ? 'teamHire' : 'teamUpgrade', fmt(cost)), 'tb' + i);

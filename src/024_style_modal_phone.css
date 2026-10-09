@@ -172,6 +172,7 @@
   #hudWrap { gap: 5px; }
   #topRight { gap: 6px; }
   #wheelOpen, #soundBtn { padding: 3px 8px; font-size: 16px; }
+  #wheelOpen { padding: 1px 8px; }
   #eventBanner { top: 124px; font-size: 11px; padding: 5px 8px; }
 }
 /* ===== Телефон у горизонтальному положенні: той самий вигляд, що на ПК (сцена зліва, меню справа), лише компактніше ===== */

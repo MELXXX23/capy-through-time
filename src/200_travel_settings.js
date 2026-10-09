@@ -713,7 +713,7 @@ function applyTimeTravel() {
   state.coins = CONFIG.START_COINS;
   state.depts = DEPARTMENTS.map(() => 0);
   state.team = TEAM.map(() => 0);
-  state.teamStars = TEAM.map(() => 0);
+  state.teamPlus = TEAM.map(() => 0);
   state.shopLevel = startLevel();
   state.runStartEarned = state.totalEarned;
   state.events.incomeBoostUntil = 0; state.events.tapBoostUntil = 0;
@@ -1000,7 +1000,7 @@ function updateSettingsUI() {
   setSwitch(ui.setAnim, t('swAnim'), animOn());
   setSwitch(ui.setDayNight, t('swDayNight'), dayNightOn());
   const S = state.settings;
-  setSwitch(ui.setBirds, t('swBirds'), S.birds);
+  setSwitch(ui.setBirds, t('swNoFly'), S.noFly);
   setSwitch(ui.setBirdsLate, t('swBirdsLate'), S.birdsLate);
   setSwitch(ui.setClouds, t('swClouds'), S.clouds);
   setSwitch(ui.setSteam, t('swSteam'), S.steam);

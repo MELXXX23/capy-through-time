@@ -8,6 +8,20 @@ let storageOk = true;
 // Міграції старих збережень: ключ N — функція, що перетворює версію N у N+1.
 // Додаючи нові поля в state, нічого ламати не треба: відсутні поля беруться зі значень за замовчуванням.
 const SAVE_MIGRATIONS = {
+  // версія 17 → 18: перемикач птахів став «Прибрати літаючі об'єкти»
+  17: (data) => {
+    const st = data.state;
+    if (st) {
+      if (st.settings && st.settings.birds === false) st.settings.noFly = true;
+    }
+    return data;
+  },
+  // версія 16 → 17: зірки звіряток більше не купуються, а набираються прокачуванням (10 прокачувань = зірка): стара зірка = 10 прокачувань
+  16: (data) => {
+    const st = data.state;
+    if (st && Array.isArray(st.teamStars)) { st.teamPlus = st.teamStars.map(n => Math.max(0, Math.min(3, n | 0)) * 10); delete st.teamStars; }
+    return data;
+  },
   // версія 1 (етап 1) → 2 (етап 2): з'явилися відділи, офлайн-заробіток та режим покупки
   1: (data) => {
     if (data.state && !Array.isArray(data.state.depts)) data.state.depts = DEPARTMENTS.map(() => 0);

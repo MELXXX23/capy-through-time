@@ -47,7 +47,7 @@ function render(time) {
   guestWalkers.forEach(g => items.push({ y: g.y, draw: () => drawGuest(g) }));
   guestStands().forEach(st => items.push({ y: st.y, draw: () => drawGuestStand(st) }));
   if (trouble && trouble.type === 'thief') items.push({ y: trouble.y, draw: drawRaccoon });
-  benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); });
+  benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); if (b.binX != null) items.push({ y: b.y, draw: () => drawBin(b) }); });
   if (view.extraB >= 30 || state.events.mailPending || mail.state !== 'idle') items.push({ y: mailRoadY() - 1, draw: drawMailBox });
   items.push({ y: mailRoadY() - 1, draw: drawNewsBox });
   if (mail.state !== 'idle') items.push({ y: mailRoadY(), draw: drawMailTruck });
