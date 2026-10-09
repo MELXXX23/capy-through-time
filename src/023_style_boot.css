@@ -12,12 +12,12 @@
 #boot .b-road { position: absolute; left: 0; top: 0; width: calc(100% + 96px); height: 100%; background-image: repeating-linear-gradient(90deg, rgba(var(--rd, 21, 11, 46), .4) 0 3px, transparent 3px 48px), repeating-linear-gradient(0deg, rgba(var(--rd, 21, 11, 46), .35) 0 3px, transparent 3px 24px); animation: bRoad .5s linear infinite; }
 #boot .b-street { position: absolute; left: 0; bottom: 25%; height: 0; z-index: 1; animation: bStreet var(--sd) linear infinite; }
 #boot .b-street > * { position: absolute; bottom: 0; }
-#boot .b-capy { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 16px); animation: bRun .6s ease-in-out infinite; }
+#boot .b-capy { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 9px); animation: bRun .6s ease-in-out infinite; }
 #boot .b-capy .pa, #boot .b-capy .pb { display: block; }
 #boot .b-capy .pb { position: absolute; left: 0; top: 0; opacity: 0; }
 #boot .b-capy .pa { animation: bLegA .3s steps(1, end) infinite; }
 #boot .b-capy .pb { animation: bLegB .3s steps(1, end) infinite; }
-#boot .b-shadow { position: absolute; left: 50%; bottom: calc(25% - 22px); width: 120px; height: 12px; margin-left: -60px; border-radius: 50%; background: rgba(21, 11, 46, .4); z-index: 1; animation: bShadow .6s ease-in-out infinite; }
+#boot .b-shadow { position: absolute; left: 50%; bottom: calc(25% - 16px); width: 120px; height: 12px; margin-left: -60px; border-radius: 50%; background: rgba(21, 11, 46, .4); z-index: 1; animation: bShadow .6s ease-in-out infinite; }
 #boot .b-fly { position: absolute; left: 0; z-index: 1; animation: var(--an) var(--d) linear infinite; animation-delay: var(--w, 0s); }
 #boot .b-fly > * { display: block; }
 #boot .b-car { position: absolute; left: 0; z-index: 1; animation: var(--an) var(--d) linear infinite; animation-delay: var(--w, 0s); }
@@ -42,7 +42,7 @@
 @keyframes bDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 @keyframes bPar { to { transform: translateX(-50%); } }
 @keyframes bStreet { to { transform: translateX(calc(var(--p) * -1)); } }
-@keyframes bRun { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes bRun { 0%, 100% { transform: translateY(0) rotate(-1.6deg) scale(1.03, .96); } 50% { transform: translateY(-10px) rotate(1.6deg) scale(.99, 1.03); } }
 @keyframes bShadow { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.82); opacity: .7; } }
 @keyframes bLegA { 0% { opacity: 1; } 50% { opacity: 0; } }
 @keyframes bLegB { 0% { opacity: 0; } 50% { opacity: 1; } }
@@ -64,10 +64,14 @@
 #boot .bigclock .mm { animation: bSpin 6s linear infinite; transform-origin: 0 0; transform-box: view-box; }
 #boot .bigclock .ss { animation: bSpin 2s steps(12, end) infinite; transform-origin: 0 0; transform-box: view-box; }
 @keyframes bSpin { to { transform: rotate(360deg); } }
+#boot .b-capy { transform-origin: 50% 100%; }
+#boot .b-capy .pf, #boot .b-capy .blink { image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+#boot .b-capy .blink { position: absolute; opacity: 0; animation: bBlink 4.2s steps(1, end) infinite; }
+@keyframes bBlink { 0%, 90%, 96%, 100% { opacity: 0; } 91%, 95% { opacity: 1; } }
 #boot .b-capy .pf { display: block; position: absolute; left: 0; top: 0; opacity: 0; animation: bFr .48s steps(1, end) infinite; animation-delay: calc(var(--j) * -.12s); }
 #boot .b-capy .pf:first-child { position: relative; }
 @keyframes bFr { 0% { opacity: 1; } 25% { opacity: 0; } 100% { opacity: 0; } }
-#boot .b-puff { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 15px); width: 0; height: 0; }
+#boot .b-puff { position: absolute; z-index: 2; left: 50%; bottom: calc(25% - 8px); width: 0; height: 0; }
 #boot .b-puff i { position: absolute; left: 0; bottom: 0; width: 8px; height: 8px; background: var(--puff, #fff); opacity: 0; animation: bPuff .72s linear infinite; }
 #boot .b-puff i:nth-child(2) { animation-delay: -.18s; width: 6px; height: 6px; }
 #boot .b-puff i:nth-child(3) { animation-delay: -.36s; width: 10px; height: 10px; }
