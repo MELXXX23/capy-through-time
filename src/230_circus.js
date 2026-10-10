@@ -1021,7 +1021,8 @@ function openNews() {
 //   email — запасний варіант: відкриє поштову програму гравця з готовим листом;
 //   form  — Google Форма (рекомендовано: відгуки збираються в таблицю, яку розробник відкриває за посиланням на ПК). Адреса виду
 //           https://docs.google.com/forms/d/e/<ID>/formResponse, а entries — номери полів «Відгук» і «Контакт» (entry.1234567890).
-const FEEDBACK = { url: '', email: 'capytap.games@gmail.com', form: '', entries: { message: '', contact: '' } };
+//   key   — публічний ключ Web3Forms (призначений для вставки в код сторінки): відгук приходить розробникам листом, без реєстрації гравця.
+const FEEDBACK = { url: 'https://api.web3forms.com/submit', key: 'e64b25f5-050c-4ad9-be85-0d3535b2b622', email: 'capytap.games@gmail.com', form: '', entries: { message: '', contact: '' } };
 function openFeedback() {
   ui.fbTitle.textContent = t('fbTitle'); ui.fbHint.textContent = t('fbHint'); ui.fbText.placeholder = '…'; ui.fbContact.placeholder = t('fbContact');
   ui.fbSend.textContent = t('fbSend'); ui.fbCancel.textContent = t('fbCancel');
@@ -1048,8 +1049,17 @@ async function sendFeedback() {
   }
   if (FEEDBACK.url) {
     ui.fbSend.disabled = true;
-    try { const r = await fetch(FEEDBACK.url, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(info) }); if (!r.ok) throw new Error('http'); done(); showToast(t('fbThanks'), 'good'); playSfx('wheelWin'); }
-    catch (e) { showToast(t('fbFail'), 'bad'); }
+    try {
+      const payload = Object.assign({}, info);
+      if (FEEDBACK.key) {                                                           // Web3Forms: ключ, тема й відправник; «email» заповнюємо лише справжньою поштою, щоб розробник міг відповісти
+        payload.access_key = FEEDBACK.key; payload.subject = 'CapyTap: Market — відгук гравця'; payload.from_name = 'CapyTap: Market';
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) payload.email = contact;
+      }
+      const r = await fetch(FEEDBACK.url, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });
+      let ok = r.ok; try { const j = await r.json(); if (j && j.success === false) ok = false; } catch (e) { /* відповідь не JSON: довіряємо кодові статусу */ }
+      if (!ok) throw new Error('http');
+      done(); showToast(t('fbThanks'), 'good'); playSfx('wheelWin');
+    } catch (e) { showToast(t('fbFail'), 'bad'); }
     ui.fbSend.disabled = false; return;
   }
   const body = msg + '\n\n— ' + (contact || '') + '\n(' + info.game + ', ' + info.lang + ', epoch ' + info.epoch + ', level ' + info.shopLevel + ')';
