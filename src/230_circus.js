@@ -15,7 +15,8 @@ const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weat
 const SKIN_SEASON = { capy_santa: '🎄', capy_witch: '🎃', capy_flower: '🌸', capy_beach: '🏖️', capy_autumn: '🍂', hero_santa: '🎄', hero_witch: '🎃', shop_xmas: '🎄', shop_halloween: '🎃', shop_spring: '🌸', shop_autumn: '🍂', street_snow: '❄️', street_leaves: '🍂' };   // сезонні скіни
 function skinHas(i) { return i < 32 ? !!(state.skinsMask & (1 << i)) : !!(state.skinsMask2 & (1 << (i - 32))); }       // перші 32 скіни — у skinsMask, решта — у skinsMask2
 function skinGrant(i) { if (i < 32) state.skinsMask |= (1 << i); else state.skinsMask2 |= (1 << (i - 32)); }
-const SKINS_FREE = false;          // скіни відкриваються виграшем у цирку або купівлею
+const SKINS_FREE_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
+const SKINS_FREE = SKINS_FREE_BUILD || GOD_ON;          // скіни відкриваються виграшем у цирку або купівлею
 const SKIN_PRICE = 50;             // символічна ціна скіна в кристалах
 function skinOwned(i) {
   if (SKIN_POOL[i] === 'capy_mel' || SKIN_POOL[i] === 'capy_nika') return true;                  // скіни розробників MEL і NIKA — подарунок усім

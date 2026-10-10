@@ -35,7 +35,8 @@ function drawCapiPortrait() {
 }
 // Яка зараз пора року: з налаштувань або (в режимі «Авто») за датою пристрою; Хелловін — за датою свята
 // Вибір пори року й Хелловіну відкривається після проходження 2 епохи (поки що діє «Авто»)
-const DEV_OPEN_ALL = false;     // для перевірки можна тимчасово поставити true: відкриє всі сезони й усі 8 епох
+const DEV_OPEN_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
+const DEV_OPEN_ALL = DEV_OPEN_BUILD || GOD_ON;   // GOD_ON — режим бога за кодом власника (див. 100_config.js)     // для перевірки можна тимчасово поставити true: відкриє всі сезони й усі 8 епох
 function themesUnlocked() { return DEV_OPEN_ALL || state.epoch >= 2; }
 function seasonNow() {
   const s = state.settings.season;
@@ -49,7 +50,7 @@ function seasonNow() {
   return m >= 3 && m <= 5 ? 'spring' : m >= 6 && m <= 8 ? 'summer' : m >= 9 && m <= 11 ? 'autumn' : 'winter';
 }
 function isDebug() {
-  try { return new URLSearchParams(location.search).get('debug') === '1' || window.__debug === true; } catch (e) { return false; }
+  try { return GOD_ON || new URLSearchParams(location.search).get('debug') === '1' || window.__debug === true; } catch (e) { return false; }
 }
 function currentEpoch() { return EPOCHS[viewEpoch() % EPOCHS.length]; }
 
@@ -1065,7 +1066,17 @@ function showExport() {
   ui.exportBox.select();
   ui.exportInfo.textContent = saveSummary(state);
 }
+// Код власника: GOD:<пароль> вмикає режим бога на цьому пристрої, GOD:OFF — вимикає
+function godCommand(pass) {
+  try {
+    if (pass.toUpperCase() === 'OFF') { localStorage.removeItem('capyGod'); showToast(t('godOff'), 'good'); setTimeout(() => location.reload(), 900); return; }
+    if (sha256hex('capy-god|' + pass) === GOD_HASH) { localStorage.setItem('capyGod', GOD_HASH); showToast(t('godOn'), 'good'); setTimeout(() => location.reload(), 900); return; }
+  } catch (e) { /* нічого */ }
+  showToast(t('importFail'), 'bad');
+}
 function importSave() {
+  const raw = ui.importBox.value.trim();
+  if (/^GOD:/i.test(raw)) { godCommand(raw.slice(4).trim()); return; }
   let data;
   try { data = parseImportCode(ui.importBox.value); } catch (e) { showToast(t('importFail'), 'bad'); return; }
   askConfirm(t('importTitle'), t('importText') + '\n\n' + saveSummary(data.state), t('importYes'), () => {

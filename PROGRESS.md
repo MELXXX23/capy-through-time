@@ -399,3 +399,8 @@ _Оновлено: 8 жовтня 2026 (раунд 28, не випущено). �
 - Іконки: 6 варіантів кадрів із гри в `previews/r40/icons/` (A–F), чекаю вибору.
 - Автоперевірка `--quick` чиста (ПК і телефон).
 - Іконка (раунд 40): варіант «Капі на монетці-німбі, нічне небо» — docs/icons (PWA/apple/favicon/maskable), desktop/build+app icon.ico, store/icons; простий Капі (без рожевого й квіточки), проста монетка.
+
+## 49. Режим бога за кодом (локально, НЕ випущено)
+- Код `GOD:<пароль>` у полі імпорту прогресу (Налаштування) вмикає на пристрої режим бога: усі епохи й сезони, усі скіни безкоштовні, блок DEBUG (година, цирк, ×100). `GOD:OFF` — вимикає. Прапорець у localStorage (`capyGod`), окремо від збереження.
+- У грі лише SHA-256 пароля (`GOD_HASH`, src/100_config.js; чистий JS-sha256, бо на http у телефона нема crypto.subtle). Пароль — `backups/god_secret.txt` (поза git); видає `node tools/godcode.js` (також кладе код у буфер і в `backups/GOD_CODE.txt`).
+- Прапорці збірки: `DEV_OPEN_BUILD` / `SKINS_FREE_BUILD` (їх ставить desktop/prepare.js для exe); `DEV_OPEN_ALL = DEV_OPEN_BUILD || GOD_ON`, `SKINS_FREE = SKINS_FREE_BUILD || GOD_ON`, `isDebug()` теж враховує GOD_ON.
