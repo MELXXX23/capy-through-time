@@ -1437,11 +1437,7 @@ function drawNightLights() {
   });
   if (!build && shop && L > 0.05) {                                  // теплий ореол навколо магазину й торгового центру: світло виливається на вулицю
     ctx.save();
-    const hs = getShopScale(), hw = Math.max(1, Math.round(shop.w * hs.sx)), hh = Math.max(1, Math.round(shop.h * hs.sy));      // ореол слідує за стисканням магазину при тапі (інакше він «відстає» від фасаду)
-    const hx = Math.round(shop.x + (shop.w - hw) / 2), hy = Math.round(shop.y + (shop.h - hh));
-    ctx.beginPath(); ctx.rect(-3000, -3000, 8000, 8000); ctx.rect(hx, hy, hw, hh); ctx.clip('evenodd');       // фасад, вітрина й двері лишаються чіткими: світло лише довкола
-    const big = shop.level >= 4 ? 1.35 : 1;
-    for (let i = 0; i < 6; i++) { const pad = 3 + i * 5; ctx.globalAlpha = L * 0.035 * big; ctx.fillStyle = '#ffb94a'; ctx.fillRect(hx - pad, hy + hh * 0.18 - pad * 0.6, hw + pad * 2, hh * 0.82 - 44 + pad * 0.6); }
+    const big = shop.level >= 4 ? 1.35 : 1;                              // прямокутний ореол по контуру прибрано: він давав різкі смуги світла на сусідніх будинках
     ctx.translate(shop.x + shop.w / 2, LAYOUT.curbY + 4); ctx.scale(1, 0.3); ctx.fillStyle = '#ffc060';                                  // м'яка овальна пляма світла на бруківці перед входом
     for (let i = 0; i < 9; i++) { ctx.globalAlpha = L * 0.022 * big; ctx.beginPath(); ctx.arc(0, 0, shop.w * (0.72 - i * 0.07), 0, Math.PI * 2); ctx.fill(); }
     ctx.restore();

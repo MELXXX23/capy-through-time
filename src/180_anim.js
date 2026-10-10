@@ -426,7 +426,7 @@ let chatterTimer = 20;
 function actorHome(m) {
   const s = m.spot;
   if (s.x === null) {
-    if (mobileMQ.matches) return shop.x + shop.door.x + shop.door.w / 2 + s.dx;          // на телефоні праворуч від Капі край екрана: лишається біля дверей, щоб його було видно
+    if (mobileMQ.matches) { const cp = LAYOUT.capy; return cp ? Math.max(cp.x + 27, Math.min(cp.x + 50, visR() - 24)) : shop.x + shop.door.x + shop.door.w / 2 + 40; }   // на телефоні їжак теж праворуч від Капі, впритул до краю екрана (каса — ліворуч від нього, її частково затуляє Капі)
     const cp = LAYOUT.capy; return Math.min(worldR() - 24, cp.x + 14 + 62);          // на ПК їжак із касою стоїть праворуч від Капі, не впритул
   }
   // решта звіряток розставлені по всій ширині вулиці (f — частка ширини); на широкому екрані відстані більші
@@ -526,11 +526,13 @@ function pickWanderTarget(a) {
 function drawTeamProp(prop, x, y, t, dir) {
   const ph = Math.floor(t * 3) % 2;
   switch (prop) {
-    case 'register':     // прилавок з касою
-      R(ctx, x - 11, y - 7, 22, 7, 'b'); R(ctx, x - 11, y - 7, 22, 1, 'l'); R(ctx, x - 11, y - 1, 22, 1, 'd');
-      R(ctx, x - 8, y - 11, 7, 4, 'e'); R(ctx, x - 7, y - 10, 5, 2, 'g'); R(ctx, x + 3, y - 9, 4, 2, 'h');
-      if (Math.floor(t * 1.2) % 3 === 0) R(ctx, x + 4, y - 12 - ph, 2, 2, 'y');
+    case 'register': {   // прилавок з касою стоїть збоку (ліворуч від їжака), щоб Голка було повністю видно, а не лише голову
+      const rx = x - 27;
+      R(ctx, rx, y - 7, 17, 7, 'b'); R(ctx, rx, y - 7, 17, 1, 'l'); R(ctx, rx, y - 1, 17, 1, 'd');
+      R(ctx, rx + 2, y - 11, 7, 4, 'e'); R(ctx, rx + 3, y - 10, 5, 2, 'g'); R(ctx, rx + 11, y - 9, 4, 2, 'h');
+      if (Math.floor(t * 1.2) % 3 === 0) R(ctx, rx + 12, y - 12 - ph, 2, 2, 'y');
       break;
+    }
     case 'hammer': {     // молоток і дошка
       const up = Math.floor(t * 3) % 2 === 0;
       R(ctx, x + 7, y - 2, 13, 2, 'l'); R(ctx, x + 7, y - 1, 13, 1, 'd');
@@ -583,43 +585,51 @@ function drawTeamProp(prop, x, y, t, dir) {
   }
 }
 
-const ACTOR_K = 1.56;                                  // звірята-працівники: 16 px × 1,56 ≈ 25 px, тобто на 20% нижчі за Капі (24 px × 1,3 ≈ 31 px)
+const ACTOR_K = 1.4;                                   // звірята-працівники й гості: 16 px × 1,4 ≈ 22 px (було 1,56; −10%), Капі 24 px × 1,3 ≈ 31 px
 function actorK(a) { return ACTOR_K; }
-const actorRimCache = {};
-function drawActorRim(name, x, y, flip) {               // тонкий світлий контур: звірятко чітко видно на будь-якому тлі, а вночі воно не зливається з вулицею
-  const src = getOutlinedCanvas(name);
-  let rim = actorRimCache[name];
-  if (!rim) {
-    rim = document.createElement('canvas'); rim.width = src.width; rim.height = src.height;
-    const g = rim.getContext('2d'); g.drawImage(src, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = '#fff1c8'; g.fillRect(0, 0, rim.width, rim.height);
-    actorRimCache[name] = rim;
-  }
-  const al = Math.min(0.8, 0.28 + sky.night * 0.6);
-  [[-1, 0], [1, 0], [0, -1]].forEach(([dx, dy]) => drawCanvasSprite(ctx, rim, x - 1 + dx, y - 1 + dy, { flip, alpha: al }));
+// Чітка «фігурка»: спрайт спершу масштабується (nearest) і лише потім обводиться — контур завжди рівно 1 px,
+// без світного німба й без розмитих країв, які давав масштаб 1,56 прямо на сцені.
+const crispFigCache = new Map();
+function crispFigure(name, flip) {
+  const key = name + '|' + (flip ? 1 : 0) + '|' + ACTOR_K;
+  let c = crispFigCache.get(key); if (c) return c;
+  const src = getSpriteCanvas(name), w = Math.round(src.width * ACTOR_K), h = Math.round(src.height * ACTOR_K);
+  const body = document.createElement('canvas'); body.width = w; body.height = h;
+  const bg = body.getContext('2d'); bg.imageSmoothingEnabled = false;
+  if (flip) { bg.translate(w, 0); bg.scale(-1, 1); }
+  bg.drawImage(src, 0, 0, w, h);
+  const sil = document.createElement('canvas'); sil.width = w; sil.height = h;
+  const sg = sil.getContext('2d'); sg.drawImage(body, 0, 0); sg.globalCompositeOperation = 'source-in'; sg.fillStyle = PALETTE.k; sg.fillRect(0, 0, w, h);
+  c = document.createElement('canvas'); c.width = w + 2; c.height = h + 2;
+  const g = c.getContext('2d'); [[0, 1], [2, 1], [1, 0], [1, 2]].forEach(o => g.drawImage(sil, o[0], o[1])); g.drawImage(body, 1, 1);
+  crispFigCache.set(key, c);
+  return c;
 }
-function drawActor(a) {
-  const x0 = Math.round(a.x), y0 = a.y;
-  const k = actorK(a);
-  ctx.save(); ctx.translate(x0, y0); ctx.scale(k, k); ctx.translate(-x0, -y0);
-  drawActorBody(a);
-  ctx.restore();
+function drawCrispFigure(name, x0, y0, bob, flip) {      // x0, y0 — ноги по центру; bob — підстрибування в «малих» пікселях
+  ctx.drawImage(crispFigure(name, flip), Math.round(x0 - 8 * ACTOR_K) - 1, Math.round(y0 - (16 + bob) * ACTOR_K) - 1);
 }
-function drawActorBody(a) {
+function actorPose(a) {
   const m = TEAM[a.i];
-  const x = Math.round(a.x), y = a.y;
   const sitting = a.mode === 'sit';
   const waddle = a.moving ? Math.floor(a.t * 5) % 2 : 0;
   const idleBob = !a.moving && !sitting && Math.sin(a.t * 2.4 + a.i) > 0.7 ? 1 : 0;
   const hopY = Math.round(Math.sin(Math.min(1, a.hop) * Math.PI) * 4);
   let flip = a.moving ? waddle === 1 : false;
   if (m.id === 'tonya') flip = Math.floor(a.t / 3) % 2 === 1;   // охоронниця виглядає то вліво, то вправо
-  ctx.globalAlpha = 0.32; R(ctx, x - 7, y, 14, 2, 'd'); ctx.globalAlpha = 1;
-  drawActorRim(teamSprite(m.id), x - 8, y - 16 - waddle - idleBob - hopY, flip);
-  drawSprite(ctx, teamSprite(m.id), x - 8, y - 16 - waddle - idleBob - hopY, { flip });
-  if (hasHats()) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);
-  if (!sitting) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, a.dir);
-  if (a.rest > 0) drawDrink(x, y - hopY, a.t);
-  if (hasScarves()) drawScarf(x, y - 16 - waddle - idleBob - hopY, a.i);
+  return { m, x: Math.round(a.x), y: a.y, sitting, waddle, idleBob, hopY, flip, bob: waddle + idleBob + hopY };
+}
+function drawActor(a) {
+  const x0 = Math.round(a.x), y0 = a.y, k = actorK(a), p = actorPose(a);
+  const scaled = fn => { ctx.save(); ctx.translate(x0, y0); ctx.scale(k, k); ctx.translate(-x0, -y0); fn(); ctx.restore(); };
+  scaled(() => { ctx.globalAlpha = 0.32; R(ctx, p.x - 7, p.y, 14, 2, 'd'); ctx.globalAlpha = 1; });
+  drawCrispFigure(teamSprite(p.m.id), p.x, p.y, p.bob, p.flip);
+  scaled(() => {
+    const { m, x, y, sitting, waddle, idleBob, hopY } = p;
+    if (hasHats()) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);
+    if (!sitting) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, a.dir);
+    if (a.rest > 0) drawDrink(x, y - hopY, a.t);
+    if (hasScarves()) drawScarf(x, y - 16 - waddle - idleBob - hopY, a.i);
+  });
 }
 // Склянка води в лапках і краплі поту (літній перепочинок)
 function drawDrink(x, y, t) {

@@ -627,7 +627,7 @@ function cutCoin(g, cx, cy, r, ang, glow) {
   if (glow) { const gr = g.createRadialGradient(cx, cy, r * 0.4, cx, cy, r * (2.2 + glow)); gr.addColorStop(0, 'rgba(255,230,120,' + (0.55 * Math.min(1, glow + 0.2)) + ')'); gr.addColorStop(1, 'rgba(255,230,120,0)'); g.fillStyle = gr; g.fillRect(cx - r * 4, cy - r * 4, r * 8, r * 8); }
   const S = 1 / CUT_Q, ell = (k, col) => { g.fillStyle = col; const n = Math.round(ry * k * CUT_Q); for (let i = -n; i <= n; i++) { const dy = i / CUT_Q, half = rx * k * Math.sqrt(Math.max(0, 1 - (i * i) / Math.max(1, n * n))); g.fillRect(Math.round((cx - half) * CUT_Q) / CUT_Q, cy + dy, Math.round(half * 2 * CUT_Q + 1) / CUT_Q, S); } };
   ell(1, '#9a5e12'); ell(0.94, '#c98a1c'); ell(0.88, '#e8a92a'); ell(0.8, '#f8cf4a'); ell(0.66, '#e8a92a'); ell(0.6, '#f8d85c');
-  if (r >= 5 && f > 0.45) { g.fillStyle = '#b7791a'; const s = Math.max(0.5, r * 0.07); g.fillRect(cx - s, cy - r * 0.34, s * 2, r * 0.68); g.fillRect(cx - r * 0.22 * f, cy - s, r * 0.44 * f, s * 2); }
+  // проста монетка: без хреста й значка всередині (за проханням гравчині), лише ободок, диск і відблиск
   g.fillStyle = '#fff7c0'; for (let i = Math.round(-ry * 0.78 * CUT_Q); i < Math.round(-ry * 0.2 * CUT_Q); i++) g.fillRect(cx - rx * 0.62 + (i + ry * 0.78 * CUT_Q) * 0.25 / CUT_Q, cy + i / CUT_Q, Math.max(0.5, r * 0.07), S);
 }
 function cutDrawChar(g, cv, x, foot, flip, opts) {

@@ -357,7 +357,7 @@ function updateGuests(dt) {
   });
 }
 function guestSay(g) {
-  showBubble('g' + g.k, t(guestLineKey(g)), g.x, g.y - 19, () => ({ x: g.x, y: g.y - 19 }));
+  showBubble('g' + g.k, t(guestLineKey(g)), g.x, g.y - 19 * ACTOR_K, () => ({ x: g.x, y: g.y - 19 * ACTOR_K }));
 }
 function hitStandGuest(p) {
   const st = guestStands().find(s => Math.abs(p.x - s.x) <= s.w / 2 && p.y >= s.y - s.h && p.y <= s.y + 3);
@@ -365,15 +365,19 @@ function hitStandGuest(p) {
 }
 function hitGuest(p) {
   let best = null;
-  guestWalkers.forEach(g => { if (Math.abs(p.x - g.x) <= 10 && p.y >= g.y - 19 && p.y <= g.y + 3 && (!best || g.y > best.y)) best = g; });
+  guestWalkers.forEach(g => { if (Math.abs(p.x - g.x) <= 10 * ACTOR_K && p.y >= g.y - 19 * ACTOR_K && p.y <= g.y + 3 && (!best || g.y > best.y)) best = g; });
   return best;
 }
-function drawGuest(g) {
-  const x = Math.round(g.x), y = Math.round(g.y), step = g.moving ? Math.floor(g.t * 5) % 2 : 0;
+function drawGuest(g) {                                   // гість такого ж розміру й чіткості, як звірята команди (ACTOR_K)
+  const x = Math.round(g.x), y = Math.round(g.y), step = g.moving ? Math.floor(g.t * 5) % 2 : 0, k = ACTOR_K;
+  ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
   ctx.globalAlpha = 0.22; R(ctx, x - 6, y, 12, 2, 'd'); ctx.globalAlpha = 1;
-  drawSprite(ctx, 'npc_' + g.id, x - 8, y - 16 - step, { flip: step === 1 });
+  ctx.restore();
+  drawCrispFigure('npc_' + g.id, x, y, step, step === 1);
+  ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
   if (hasHats()) drawHat(x, y - 13 - step, 20 + g.k);
   if (hasScarves()) drawScarf(x, y - 16 - step, g.k);
+  ctx.restore();
 }
 
 /* ---------- Камео: гість пробігає вулицею ---------- */
