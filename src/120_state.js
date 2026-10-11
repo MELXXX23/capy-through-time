@@ -15,7 +15,7 @@ function createDefaultState() {
     depts: DEPARTMENTS.map(() => 0),   // скільки штук кожного відділу куплено
     team: TEAM.map(() => 0),           // рівень кожного звірятка: 0 — не найняте, 1…10
     teamPlus: TEAM.map(() => 0),       // прокачування звірятка після 10-го рівня (0…30): кожні 10 дають зірку, бонус росте з кожним; скидаються з подорожжю разом із рівнями
-    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, help: [0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
+    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, epDone: [0, 0, 0, 0, 0, 0, 0, 0], help: [0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
     // Події: час (мс від 1970 р.) наступного розпродажу / неприємності та активні бусти
     events: { nextSale: 0, saleUntil: 0, nextTrouble: 0, incomeBoostUntil: 0, incomeBoostMult: 1, tapBoostUntil: 0, tapBoostMult: 1, nextMail: 0, mailPending: 0 },
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни

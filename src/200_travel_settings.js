@@ -697,7 +697,13 @@ function updateWarp(dt) {
     if (viewOnly) return;
     // новий сюжетний фрагмент епохи
     const storyNo = ((state.epoch - 1) % EPOCHS.length) + 1, label = (state.epoch % EPOCHS.length) + 1;
-    playEpochIntro(state.epoch, () => { if (!state.story.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); });      // історія — лише вперше, далі тільки заставка
+    playEpochIntro(state.epoch, () => {
+      setTimeout(() => { try { capySay(); } catch (e) { /* не страшно */ } }, 700);
+      const ek = state.epoch % EPOCHS.length, st = state.story, guestStory = () => { if (!st.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); };
+      // нова епоха: спершу відкривається її ПЕРША глава, а гість зі своїми речами приходить одразу після неї
+      if (ek >= 1 && EPOCH_CHAPTERS[ek] && !((st.epDone && st.epDone[ek]) || 0)) { startDialogue(1, false, 'ec', 1, ek); if (dialog.active) dialog.after = guestStory; else guestStory(); }
+      else guestStory();
+    });      // історія — лише вперше, далі тільки заставка
   }
 }
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні

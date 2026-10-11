@@ -223,12 +223,12 @@ const LEVELS = [
 // floors — скільки стелажів (по 2 відділи) на кожному поверсі, знизу вгору; 0 — верхній поверх-кафе (столики, лампи) без відділів. Кожен рівень, починаючи з 2-го, має такий додатковий поверх.
 const FLOOR_H = 36;               // висота верхнього поверху (пікселів)
 const SHOP_LOOK = [
-  { w: 140, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 176, top: 24, floors: [2, 0], inner: ['y', 'S'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 212, top: 16, floors: [2, 1, 0], inner: ['S', 'm', 'q'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
-  { w: 250, top: 22, floors: [2, 2, 0], inner: ['m', 'q', 'S'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
-  { w: 288, top: 28, floors: [2, 3, 0], inner: ['q', 'S', 'm'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
-  { w: 326, top: 30, floors: [2, 2, 1, 0, -1], inner: ['m', 'q', 'S', 'y'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
+  { w: 154, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 194, top: 24, floors: [2, 0], inner: ['y', 'S'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 234, top: 16, floors: [2, 1, 0], inner: ['S', 'm', 'q'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
+  { w: 276, top: 22, floors: [2, 2, 0], inner: ['m', 'q', 'S'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
+  { w: 316, top: 28, floors: [2, 3, 0], inner: ['q', 'S', 'm'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
+  { w: 358, top: 30, floors: [2, 2, 1, 0, -1], inner: ['m', 'q', 'S', 'y'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
 ];
 const DOOR_WIDTHS = [28, 28, 34, 38, 44];
 
@@ -754,7 +754,7 @@ const WHEEL_HOURS_BY_LEVEL = [24, 12, 8];
 const EPOCHS = [
   { id: 'renaissance', sky: ['s', 'S', 'y'], tint: null, decor: [], signFill: 'b', awning: ['t', 'w'], roofStyle: 'tile', features: ['pennants'],
     houses: { walls: ['W', 'c', 'y', 'q'], roofs: ['t', 'r', 'b'] } },
-  { id: 'retro', sky: ['q', 'w', 'W'], tint: { color: 'm', alpha: 0.10 }, decor: [], signFill: 'u', awning: ['p', 'w'], roofStyle: 'tile', features: ['blimp'],
+  { id: 'retro', sky: ['q', 'w', 'W'], tint: { color: 'm', alpha: 0.10 }, decor: [], signFill: 'n', awning: ['p', 'w'], roofStyle: 'tile', features: ['blimp'],
     houses: { walls: ['m', 'q', 'y', 'S'], roofs: ['p', 'n'] } },
   { id: 'disco', sky: ['J', 'j', 'y'], tint: { color: 'o', alpha: 0.10 }, decor: [], signFill: 'P', awning: ['f', 'y'], roofStyle: 'tile', features: ['disco'],
     houses: { walls: ['o', 'h', 'y', 'c'], roofs: ['b', 'P', 't'] } },
@@ -852,6 +852,9 @@ function triggerMet(trig, s) {
   if (trig.level !== undefined && !(s.shopLevel >= trig.level)) return false;
   if (trig.nights !== undefined && !(s.story && s.story.nights >= trig.nights)) return false;
   if (trig.depts && !trig.depts.every(([i, n]) => s.depts && s.depts[i] >= n)) return false;
+  if (trig.guest && !(s.story && s.story.guests && s.story.guests[((s.epoch % 8) + 7) % 8] > 0)) return false;               // гість цієї епохи вже прийшов (його історія прочитана)
+  if (trig.eeSec !== undefined && !((s.epochEarned && s.epochEarned[s.epoch % 8] || 0) >= (s.cps || 0) * trig.eeSec)) return false;   // у цій епосі зароблено хоча б eeSec секунд доходу
+  if (trig.near && !(Math.max(0, s.totalEarned - s.runStartEarned) >= shardThreshold() * 0.5)) return false;                      // до подорожі лишилось недалеко
   return true;
 }
 

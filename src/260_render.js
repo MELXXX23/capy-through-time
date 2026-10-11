@@ -22,7 +22,7 @@ function render(time) {
 
   if (shop && shop.level >= 6 && !build) withShopScale(getShopScale(), drawClockTower);      // вежа стискається разом з магазином
   // магазин: тінь + спрайт зі стисканням (або будівництво)
-  ctx.globalAlpha = 0.22; R(ctx, shop.x - 2, LAYOUT.curbY + 1, shop.w + 4, 3, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.22; R(ctx, shop.x - 2, LAYOUT.curbY + 1, shop.w + 4, 3, 'd'); ctx.globalAlpha = 0.1; R(ctx, shop.x - 6, LAYOUT.curbY + 4, shop.w + 12, 2, 'd'); ctx.globalAlpha = 1;
   if (build) {
     renderBuild();
   } else {
@@ -42,7 +42,7 @@ function render(time) {
   // Капі та покупці — від дальніх до ближніх (за положенням ніг)
   const cp = LAYOUT.capy;
   const items = customers.filter(c => !c.inside).map(c => ({ y: c.y, draw: () => drawCustomer(c) }));       // ті, хто всередині, малюються разом з магазином
-  actors.forEach(a => items.push({ y: a.y, draw: () => drawActor(a) }));
+  actors.forEach(a => items.push({ y: (Math.abs(a.x - (cp.x + 14)) < 24 && a.y > cp.footY - 10 && a.y < cp.footY + 26) ? cp.footY - 0.5 : a.y, draw: () => drawActor(a) }));       // поруч із Капі звірятко завжди позаду неї, не перекриває її
   cameos.forEach(c => items.push({ y: c.y, draw: () => drawCameo(c) }));
   guestWalkers.forEach(g => items.push({ y: g.y, draw: () => drawGuest(g) }));
   guestStands().forEach(st => items.push({ y: st.y, draw: () => drawGuestStand(st) }));

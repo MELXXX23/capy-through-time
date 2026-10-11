@@ -100,6 +100,13 @@ function updateSkinsUI() {
   const sig = [state.skinsMask, state.skinsMask2, state.crystals >= SKIN_PRICE, SKIN_TYPES.map(ty => state.skins[ty]).join(), JSON.stringify(skinPage), state.lang, state.shopLevel, viewEpoch(), state.settings.gender, seasonNow()].join('|');
   if (sig === skinsSig) return;
   skinsSig = sig;
+  // список перебудовується повністю: запам'ятовуємо прокрутку, щоб після вибору скіна гравця не кидало на початок
+  let sc = ui.skinsList.parentElement;
+  while (sc && sc !== document.body) { const cs = getComputedStyle(sc); if (/(auto|scroll)/.test(cs.overflowY) && sc.scrollHeight > sc.clientHeight + 2) break; sc = sc.parentElement; }
+  if (sc === document.body) sc = null;
+  const keepTop = sc ? sc.scrollTop : 0, keepH = ui.skinsList.offsetHeight;
+  if (keepH) ui.skinsList.style.minHeight = keepH + 'px';
+  Promise.resolve().then(() => { ui.skinsList.style.minHeight = ''; if (sc) sc.scrollTop = keepTop; });
   ui.skinsList.innerHTML = '';
   [['capy', false], ['shop', false], ['weather', false], ['street', false], ['hero', false]].forEach(([type, epochGroup]) => {
     const card = document.createElement('div');

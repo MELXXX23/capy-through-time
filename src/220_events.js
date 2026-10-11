@@ -617,7 +617,9 @@ function rainbowCanvas(R0) {                                    // перема�
 // Велика веселка: дуга сягає майже верху неба, тож видно над високими будинками і на ПК, і на телефоні
 function rainbowGeom() {
   const cy = LAYOUT.curbY + 14, top = -view.offY + 10;
-  return { R0: Math.round(Math.max(120, Math.min((cy - top) * 0.93, 240))), cy, px: LAYOUT.centerX };
+  const base = Math.max(120, Math.min((cy - top) * 0.93, 240));
+  const need = shop ? Math.max(cy - shop.y + 26, shop.w * 0.62 + 20) : 0;                 // дуга охоплює магазин будь-якого рівня (вежу й ширину ТЦ), а не ховається за ним
+  return { R0: Math.round(Math.max(base, Math.min(need, (cy - top) * 1.25, 330))), cy, px: LAYOUT.centerX };
 }
 function drawRainbowSkin() {                                  // веселка — лише як скін погоди: позаду будинків, велика, видна над ними
   const a = (1 - sky.night) * (1 - weather.rain * 0.7);
@@ -767,12 +769,21 @@ function seedSkyExtra() {
   const ep = viewEpoch() % 8, wide = Math.max(1, view.w / 320), top = 8 - view.offY;
   SKYX.ep = ep; SKYX.items = []; SKYX.banner = null; SKYX.tBanner = rand(3, 8); SKYX.meteors = []; SKYX.tMeteor = rand(0.3, 1);
   if (ep === 0) {                                                       // повітряні кулі: рідко (одна на ~260 px світу), рівномірно по світу, летять в один бік з близькою швидкістю, тож не збиваються докупи
-    const n = Math.max(3, Math.round((worldR() - worldL()) / 210)), step = (worldR() - worldL()) / n, dir = Math.random() < 0.5 ? -1 : 1;
-    for (let i = 0; i < n; i++) SKYX.items.push({ k: 'hab', x: worldL() + step * (i + 0.5) + rand(-step * 0.15, step * 0.15), y: Math.max(top + 16, LAYOUT.horizonY - 134 - [0, 12, 24, 6, 18][i % 5] + rand(-4, 4)), r: [11, 9, 7][i % 3], vx: dir * rand(1.2, 1.6), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['p', 'w'], ['h', 'n']][i % 5] });
+    const n = Math.max(4, Math.round((worldR() - worldL()) / 165)), step = (worldR() - worldL()) / n, dir = Math.random() < 0.5 ? -1 : 1;
+    for (let i = 0; i < n; i++) SKYX.items.push({ k: 'hab', x: worldL() + step * (i + 0.5) + rand(-step * 0.15, step * 0.15), y: Math.max(top + 16, LAYOUT.horizonY - 134 - [0, 12, 24, 6, 18][i % 5] + rand(-4, 4)), r: [13, 11, 9][i % 3], vx: dir * rand(1.2, 1.6), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['p', 'w'], ['h', 'n']][i % 5] });
   }
-  if (ep === 3) for (let i = 0; i < Math.round(5 * wide); i++) SKYX.items.push(skyxTetris(true));
-  if (ep === 4) for (let i = 0; i < Math.round(4 * wide); i++) SKYX.items.push({ k: 'drn', x: rand(worldL(), worldR()), y: rand(top + 8, 66), vx: rand(8, 15) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), box: i % 3 !== 2 });
-  if (ep === 5) for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'isl', x: rand(worldL() + 30, worldR() - 30), y: rand(top + 26, 54), w: rand(26, 36), vx: rand(0.6, 1.4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
+  if (ep === 0) for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'kite', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 14, 58), vx: rand(0.8, 1.8) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['y', 'n'], ['g', 'w']][i % 3] });
+  if (ep === 1) {
+    const nP = Math.max(3, Math.round((worldR() - worldL()) / 260));                                   // пропелерні літаки різних кольорів: на екрані завжди хоча б один
+    for (let i = 0; i < nP; i++) SKYX.items.push({ k: 'ppl', x: worldL() + (worldR() - worldL()) * (i + rand(0.2, 0.8)) / nP, y: rand(top + 20, 70), vx: rand(16, 26) * (i % 2 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['o', 'w']][i % 4] });
+    for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'sput', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 12, 52), vx: rand(2, 4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
+  }
+  if (ep === 2) for (let i = 0; i < Math.max(7, Math.round(8 * wide)); i++) SKYX.items.push({ k: 'note', x: rand(worldL() + 10, worldR() - 10), x0: 0, y: rand(top + 16, 128), vy: -rand(6, 10), ph: rand(0, 6.28), amp: rand(5, 11), c: ['f', 'T', 'y', 'p', 'a'][i % 5], g: i % 3 });
+  if (ep === 3) for (let i = 0; i < Math.round(9 * wide); i++) SKYX.items.push(skyxTetris(true));
+  if (ep === 3) for (let i = 0; i < Math.max(2, Math.round(3 * wide)); i++) SKYX.items.push({ k: 'inv', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 10, 46), vx: rand(6, 11) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), v: i % 3 });
+  if (ep === 4) for (let i = 0; i < Math.round(6 * wide); i++) SKYX.items.push({ k: 'drn', x: rand(worldL(), worldR()), y: rand(top + 8, 66), vx: rand(8, 15) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), box: i % 3 !== 2 });
+  if (ep === 5) for (let i = 0; i < Math.round(5 * wide); i++) SKYX.items.push({ k: 'bfly', x: rand(worldL(), worldR()), y: rand(top + 30, 112), vx: rand(5, 10) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), c: [['o', 'y'], ['f', 'w'], ['a', 'S'], ['p', 'w']][i % 4] });
+  if (ep === 5) for (let i = 0; i < Math.max(3, Math.round(3.5 * wide)); i++) SKYX.items.push({ k: 'isl', v: i % 3, x: rand(worldL() + 30, worldR() - 30), y: rand(top + 30, 62), w: [44, 36, 54, 40][i % 4] + Math.round(rand(0, 6)), vx: rand(0.6, 1.4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
 }
 function updateSkyExtra(dt) {
   if (SKYX.ep !== viewEpoch() % 8) seedSkyExtra();
@@ -782,11 +793,17 @@ function updateSkyExtra(dt) {
     if (f.k === 'hab') { f.x += f.vx * dt; f.ph += dt * 0.6; }
     else if (f.k === 'drn') { f.x += f.vx * dt; f.ph += dt * 3; if (f.x < worldL() - 8) f.vx = Math.abs(f.vx); if (f.x > worldR() + 8) f.vx = -Math.abs(f.vx); }
     else if (f.k === 'isl') { f.x += f.vx * dt; f.ph += dt * 0.5; }
+    else if (f.k === 'kite') { f.x += f.vx * dt; f.ph += dt * 1.2; }
+    else if (f.k === 'note') { f.y += f.vy * dt; f.ph += dt * 1.1; if (f.y < top - 6) { f.y = 130; f.x = rand(worldL() + 10, worldR() - 10); f.ph = rand(0, 6.28); } }
+    else if (f.k === 'ppl') { f.x += f.vx * dt; f.ph += dt; }
+    else if (f.k === 'sput') { f.x += f.vx * dt; f.ph += dt * 1.4; }
+    else if (f.k === 'inv') { f.x += f.vx * dt; f.ph += dt; if (f.x > worldR() + 12) f.vx = -Math.abs(f.vx); if (f.x < worldL() - 12) f.vx = Math.abs(f.vx); }
+    else if (f.k === 'bfly') { f.x += f.vx * dt; f.y += Math.sin(f.ph * 1.7) * 6 * dt; f.ph += dt * 3; if (f.y < top + 24) f.y += 10 * dt; if (f.y > 122) f.y -= 10 * dt; }
     else if (f.k === 'tet') { f.y += f.vy * dt; f.rt -= dt; if (f.rt <= 0) { f.rt = rand(1, 2.2); f.rot = (f.rot + 1) % 4; } if (f.y > 96) Object.assign(f, skyxTetris(false)); }
-    if (f.k !== 'tet' && f.k !== 'drn') { if (f.x > worldR() + 60) f.x = worldL() - 60; else if (f.x < worldL() - 60) f.x = worldR() + 60; }
+    if (f.k !== 'tet' && f.k !== 'drn' && f.k !== 'note' && f.k !== 'inv') { if (f.x > worldR() + 60) f.x = worldL() - 60; else if (f.x < worldL() - 60) f.x = worldR() + 60; }
   });
   if (SKYX.ep === 1) {
-    if (SKYX.banner) { SKYX.banner.x += SKYX.banner.vx * dt; if (SKYX.banner.x > worldR() + 90) { SKYX.banner = null; SKYX.tBanner = rand(14, 28); } }
+    if (SKYX.banner) { SKYX.banner.x += SKYX.banner.vx * dt; if (SKYX.banner.x > worldR() + 90) { SKYX.banner = null; SKYX.tBanner = rand(5, 11); } }
     else { SKYX.tBanner -= dt; if (SKYX.tBanner <= 0) SKYX.banner = { x: worldL() - 90, y: rand(top + 12, 44), vx: rand(38, 52) }; }
   }
   if (SKYX.ep === 6) {
@@ -858,6 +875,170 @@ function skyxIsland(x, y, w, ph) {
   R(ctx, x - 4, y - 16, 3, 15, 'b'); disc(ctx, x - 3, y - 19, 8, 'd'); disc(ctx, x - 3, y - 19, 7, 'G'); disc(ctx, x - 5, y - 21, 5, 'g'); R(ctx, x - 6, y - 23, 2, 1, 'm');
   R(ctx, x + 7, y - 5, 3, 3, 'r'); R(ctx, x + 8, y - 8, 1, 3, 'G');
   const wx = x + hw - 6, fl = Math.floor(animClock * 10); R(ctx, wx, y + 6, 3, 18, 'S'); for (let k = 0; k < 6; k++) R(ctx, wx + ((k + fl) % 3), y + 6 + ((k * 3 + fl) % 18), 1, 2, 'w'); R(ctx, wx - 1, y + 24, 5, 1, 'w');
+}
+// ---------- Якісніші прикраси неба: кеш-спрайти зі світлом зверху-ліворуч і тінню знизу-праворуч (як у куль) ----------
+const skyBlockCache = {}, islandCache = {}, droneCache = {};
+function skyHash(x, y) { const q = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return q - Math.floor(q); }
+function skyxBlock(c) {                                           // блок тетрісу 6×6: темний контур, скошені грані, відблиск
+  if (skyBlockCache[c]) return skyBlockCache[c];
+  const h = PALETTE[c] || c, cv = document.createElement('canvas'); cv.width = 6; cv.height = 6; const g = cv.getContext('2d');
+  g.fillStyle = '#1c1630'; g.fillRect(0, 0, 6, 6);
+  g.fillStyle = mixHex(h, '#272048', 0.5); g.fillRect(1, 1, 4, 4);
+  g.fillStyle = h; g.fillRect(1, 1, 3, 3);
+  g.fillStyle = mixHex(h, '#ffffff', 0.55); g.fillRect(1, 1, 3, 1); g.fillRect(1, 1, 1, 3);
+  g.fillStyle = '#ffffff'; g.fillRect(2, 2, 1, 1);
+  return (skyBlockCache[c] = cv);
+}
+function islandCanvas(w, v) {                                      // літаючий острів: каміння з прошарками, трава, об'ємне дерево/кущі, квіти
+  const key = w + '_' + v; if (islandCache[key]) return islandCache[key];
+  const hw = Math.round(w / 2), depth = Math.round(w * 0.55), treeH = 30, W = w + 14, H = treeH + 6 + depth + 4, cx = W / 2, ty = treeH + 3;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const rock = ['#d2b494', '#b5977a', '#977a62', '#765d4d', '#52413a'], gr = ['#b8e86a', '#7cc84a', '#4e9a38', '#357a30', '#245626'];
+  const px = (x, y, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), 1, 1); };
+  // каміння: округла «морква» з нерівним низом, світло зверху-ліворуч, прошарки
+  for (let y = 0; y < depth; y++) {
+    const u = y / depth, half = Math.max(1, Math.round(hw * (1 - Math.pow(u, 1.55) * 0.93)) + (skyHash(y, v) > 0.7 ? 1 : 0));
+    for (let x = -half; x <= half; x++) {
+      const nx = x / Math.max(1, half), n = skyHash(x + 40, y + v * 9);
+      let sh = 0.34 + (nx + 1) * 0.2 + u * 0.38 + (n - 0.5) * 0.18;
+      if (y % 6 === 4 && n > 0.25) sh += 0.14;                                  // прошарок
+      const ci = sh < 0.3 ? 0 : sh < 0.5 ? 1 : sh < 0.7 ? 2 : sh < 0.9 ? 3 : 4;
+      px(cx + x, ty + 2 + y, rock[ci]);
+    }
+  }
+  // трава зверху: ламана кромка зі «шторкою» над каменем
+  for (let x = -hw; x <= hw; x++) {
+    const n = skyHash(x, 77 + v), dh = n > 0.8 ? 3 : n > 0.4 ? 2 : 1;
+    for (let k = -1; k < dh + 1; k++) px(cx + x, ty + k, k < 0 ? gr[0] : k === 0 ? gr[1] : gr[2 + Math.min(1, k - 1)]);
+    if (n > 0.55) px(cx + x, ty - 2 - (n > 0.9 ? 1 : 0), gr[1]);              // травинки
+  }
+  const crown = (ox, oy, r) => {                                             // об'ємна крона-куля з напівтоном
+    for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+      const d = Math.hypot(x + 0.5, y + 0.5); if (d > r) continue;
+      const nx = x / r, ny = y / r, nz = Math.sqrt(Math.max(0.02, 1 - nx * nx - ny * ny)), lum = -nx * 0.55 - ny * 0.6 + nz * 0.58;
+      let q = 0.62 - lum * 0.55 + ((x + y) & 1 ? 0.04 : 0) + (skyHash(x + ox, y + oy) - 0.5) * 0.16;
+      if (d > r - 1.1) q += 0.12;
+      px(cx + ox + x, oy + y, gr[q < 0.18 ? 0 : q < 0.4 ? 1 : q < 0.62 ? 2 : q < 0.82 ? 3 : 4]);
+    }
+  };
+  const trunk = (ox, h2) => { g.fillStyle = '#3c2a22'; g.fillRect(cx + ox - 1, ty - h2, 3, h2 + 1); g.fillStyle = '#8a5e3a'; g.fillRect(cx + ox - 1, ty - h2, 1, h2 + 1); };
+  if (v === 0) { trunk(-4, 11); crown(-4, ty - 17, 9); crown(3, ty - 12, 6); }
+  else if (v === 1) { trunk(-6, 9); crown(-6, ty - 14, 7); crown(5, ty - 5, 5); crown(11, ty - 3, 3); }
+  else { trunk(-8, 8); crown(-8, ty - 12, 6); trunk(4, 10); crown(4, ty - 16, 8); }
+  for (let k = 0; k < 5; k++) { const fx = cx - hw + 3 + Math.round(skyHash(k, v + 3) * (w - 6)); px(fx, ty - 1, k % 2 ? '#ff7a8a' : '#ffe27a'); }     // квіточки
+  // контур: темний 1 px навколо силуету
+  const id = g.getImageData(0, 0, W, H), d = id.data, solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 40, out = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!solid(x, y) && (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1))) out.push([x, y]);
+  g.fillStyle = '#2a1f2e'; out.forEach(([x, y]) => g.fillRect(x, y, 1, 1));
+  cv.cx = cx; cv.ty = ty;
+  return (islandCache[key] = cv);
+}
+function skyxIsland2(x, y, w, v, ph) {
+  const cv = islandCanvas(w, v || 0); x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
+  ctx.drawImage(cv, Math.round(x - cv.cx), y - cv.ty);
+  const hw = Math.round(w / 2), wx = x + hw - Math.max(5, Math.round(w * 0.16)), fl = Math.floor(animClock * 10), wy = y + 7;     // водоспад зі шлейфом бризок
+  R(ctx, wx, wy, 3, 20, 'S'); R(ctx, wx, wy, 1, 20, 'w');
+  for (let k = 0; k < 6; k++) R(ctx, wx + ((k + fl) % 3), wy + ((k * 3 + fl) % 18), 1, 2, 'w');
+  ctx.globalAlpha = 0.45; R(ctx, wx - 2, wy + 20, 7, 1, 'w'); R(ctx, wx - 1, wy + 21, 5, 1, 'w'); ctx.globalAlpha = 1;
+}
+function droneBody(box) {                                          // корпус дрона 17×14 з об'ємом: світлий верх, темний низ, мотори, вантаж на стропі
+  const key = box ? 1 : 0; if (droneCache[key]) return droneCache[key];
+  const cv = document.createElement('canvas'); cv.width = 17; cv.height = 15; const g = cv.getContext('2d');
+  const P = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  P(2, 4, 13, 1, '#1c1630'); P(2, 5, 13, 1, '#8890b8'); P(2, 6, 13, 1, '#6a7098');                            // рами-промені
+  P(1, 3, 3, 3, '#1c1630'); P(2, 4, 1, 1, '#4a4468'); P(13, 3, 3, 3, '#1c1630'); P(14, 4, 1, 1, '#4a4468');     // мотори
+  P(5, 2, 7, 6, '#1c1630'); P(6, 3, 5, 4, '#e9edf7'); P(6, 3, 5, 1, '#ffffff'); P(6, 6, 5, 1, '#9aa3c4'); P(10, 3, 1, 4, '#b4bcd8');   // корпус
+  P(7, 4, 3, 2, '#2b3566'); P(8, 4, 1, 1, '#7fe3ff');                                                         // камера-«очко»
+  P(4, 8, 1, 2, '#1c1630'); P(12, 8, 1, 2, '#1c1630');                                                         // шасі
+  if (box) { P(8, 8, 1, 2, '#1c1630'); P(5, 10, 7, 5, '#1c1630'); P(6, 11, 5, 3, '#c98a4a'); P(6, 11, 5, 1, '#ffd07a'); P(8, 11, 1, 3, '#f4e6c8'); }
+  return (droneCache[key] = cv);
+}
+function skyxDrone2(x, y, ph, box) {
+  const cv = droneBody(box); x = Math.round(x); y = Math.round(y + Math.sin(ph * 0.7) * 1.5);
+  ctx.drawImage(cv, x - 8, y - 4);
+  const bl = Math.floor(ph * 3) % 2 ? 4 : 2;                                                                    // пропелери: короткі «розмиті» лопаті
+  R(ctx, x - 8 - bl + 1, y - 5, bl * 2 + 1, 1, 'w'); R(ctx, x + 7 - bl, y - 5, bl * 2 + 1, 1, 'w');
+  ctx.globalAlpha = 0.25; R(ctx, x - 10, y - 4, 7, 1, 'w'); R(ctx, x + 4, y - 4, 7, 1, 'w'); ctx.globalAlpha = 1;
+  R(ctx, x - 7, y + 2, 1, 1, Math.floor(animClock * 2 + ph) % 2 ? 'r' : 'd'); R(ctx, x + 7, y + 2, 1, 1, Math.floor(animClock * 2 + ph) % 2 ? 'd' : 'g');   // бортові вогні
+}
+function skyxKite(x, y, ph, c) {                                   // повітряний змій-ромб із хвостом і бантиками
+  x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
+  const rp = c.map(b => { const h = PALETTE[b] || b; return [mixHex(h, '#ffffff', 0.4), h, mixHex(h, '#272048', 0.45)]; });
+  for (let j = -8; j <= 8; j++) { const half = Math.round(6 * (1 - Math.abs(j) / 9) + (j < 0 ? 1 : 0)); for (let i = -half; i <= half; i++) { const left = i < 0, top = j < 0; R(ctx, x + i, y + j, 1, 1, i === 0 ? '#2a1f2e' : (left === top ? rp[0][top ? 1 : 0] : rp[1][1])); } }
+  R(ctx, x, y - 9, 1, 18, '#2a1f2e'); R(ctx, x - 6, y, 13, 1, '#2a1f2e');
+  for (let k = 1; k <= 20; k++) { const tx = x + Math.round(Math.sin(ph * 1.5 - k * 0.5) * (1 + k * 0.28)), ty = y + 8 + k; R(ctx, tx, ty, 1, 1, '#2a1f2e'); if (k % 5 === 0) { R(ctx, tx - 2, ty, 5, 1, rp[1][1]); R(ctx, tx, ty - 2, 1, 5, rp[0][1]); } }
+}
+const noteCache = {};
+function noteCanvas(c, g) {                                         // нота-спрайт: заливка з відблиском, темний контур і м'яке сяйво кольору
+  const key = c + g; if (noteCache[key]) return noteCache[key];
+  const hex = PALETTE[c] || c, W = 30, H = 36, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const q = cv.getContext('2d');
+  const sx = 11, by = 27, put = (x, y, w, h, col) => { q.fillStyle = col; q.fillRect(x, y, w, h); };
+  const body = document.createElement('canvas'); body.width = W; body.height = H; const b = body.getContext('2d');
+  const bp = (x, y, w, h, col) => { b.fillStyle = col; b.fillRect(x, y, w, h); };
+  const head = (hx, hy) => { for (let dy = -3; dy <= 3; dy++) for (let dx = -4; dx <= 4; dx++) { const v = (dx * 0.92 + dy * 0.28) * (dx * 0.92 + dy * 0.28) / 16 + (dy * 0.92 - dx * 0.28) * (dy * 0.92 - dx * 0.28) / 9.6; if (v <= 1) bp(hx + dx, hy + dy, 1, 1, (dx < 0 && dy < 0) ? mixHex(hex, '#ffffff', 0.55) : (dx > 1 && dy > 0) ? mixHex(hex, '#272048', 0.35) : hex); } };
+  if (g === 0) { head(sx, by); bp(sx + 3, by - 18, 2, 18, hex); bp(sx + 3, by - 18, 1, 18, mixHex(hex, '#ffffff', 0.5)); bp(sx + 5, by - 18, 2, 3, hex); bp(sx + 6, by - 15, 3, 3, hex); bp(sx + 7, by - 12, 2, 4, hex); bp(sx + 6, by - 9, 2, 2, hex); }
+  else if (g === 1) { head(sx - 2, by); head(sx + 10, by - 2); bp(sx + 1, by - 18, 2, 18, hex); bp(sx + 13, by - 20, 2, 18, hex); bp(sx + 1, by - 18, 14, 3, hex); bp(sx + 1, by - 18, 14, 1, mixHex(hex, '#ffffff', 0.55)); }
+  else { head(sx, by); bp(sx + 3, by - 19, 2, 19, hex); bp(sx + 3, by - 19, 1, 19, mixHex(hex, '#ffffff', 0.5)); head(sx, by); }
+  const id = b.getImageData(0, 0, W, H).data, solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && id[(y * W + x) * 4 + 3] > 40;
+  // м'яке сяйво, потім контур, потім заливка
+  const grd = q.createRadialGradient(W / 2, H / 2, 2, W / 2, H / 2, 17); grd.addColorStop(0, mixHex(hex, '#ffffff', 0.4).replace('rgb', 'rgba').replace(')', ',0.5)')); grd.addColorStop(1, 'rgba(255,255,255,0)');
+  q.fillStyle = grd; q.fillRect(0, 0, W, H);
+  q.fillStyle = '#2a1f2e';
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!solid(x, y) && (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1) || solid(x - 1, y - 1) || solid(x + 1, y + 1))) q.fillRect(x, y, 1, 1);
+  q.drawImage(body, 0, 0);
+  return (noteCache[key] = cv);
+}
+function skyxNote(x, y, ph, c, g, amp) {                            // нота пливе вгору по м'якій хвилі (дві гармоніки), з появою й згасанням
+  const cv = noteCanvas(c, g), wob = Math.sin(ph) * (amp || 7) + Math.sin(ph * 2.3 + 1) * 2;
+  x = Math.round(x + wob); y = Math.round(y);
+  const top = 8 - view.offY, fade = Math.max(0, Math.min(1, (y - top) / 26)) * Math.max(0, Math.min(1, (132 - y) / 16));
+  if (fade <= 0.02) return;
+  ctx.globalAlpha = 0.92 * fade; ctx.drawImage(cv, x - 15, y - 27); ctx.globalAlpha = 1;
+}
+const planeCache = {};
+function skyxPlane(x, y, ph, c, dir) {                              // пропелерний літак 50-х: корпус, крило, хвіст, кабіна, пропелер і слід
+  const key = c.join() + dir; let cv = planeCache[key];
+  if (!cv) {
+    const S = 1.5; cv = document.createElement('canvas'); cv.width = 45; cv.height = 21; const g = cv.getContext('2d');
+    const h1 = PALETTE[c[0]], h2 = PALETTE[c[1]], P = (px, py, w, h, col) => { const X = Math.round(px * S), Wd = Math.max(1, Math.round(w * S)); g.fillStyle = col; g.fillRect(dir > 0 ? X : 45 - X - Wd, Math.round(py * S), Wd, Math.max(1, Math.round(h * S))); };
+    P(5, 5, 20, 5, '#2a1f2e'); P(6, 6, 18, 3, h1); P(6, 6, 18, 1, mixHex(h1, '#ffffff', 0.5)); P(6, 8, 18, 1, mixHex(h1, '#272048', 0.35));   // корпус
+    P(21, 4, 5, 2, '#2a1f2e'); P(22, 4, 3, 1, h2); P(1, 8, 6, 3, '#2a1f2e'); P(2, 8, 4, 2, h2);                                                // кабіна й хвіст
+    P(12, 2, 8, 3, '#2a1f2e'); P(13, 3, 6, 1, h2); P(11, 10, 9, 2, '#2a1f2e'); P(12, 10, 7, 1, h2);                                              // крила (біплан)
+    P(15, 3, 1, 8, '#2a1f2e'); P(25, 7, 2, 2, '#2a1f2e'); P(26, 7, 1, 2, '#c0c8e0');                                                              // стійка й капот
+    P(22, 6, 3, 2, '#bfe9ff'); P(22, 6, 1, 1, '#ffffff');                                                                                         // скло
+    planeCache[key] = cv;
+  }
+  x = Math.round(x); y = Math.round(y + Math.sin(ph * 1.3) * 1.5);
+  ctx.drawImage(cv, x - 22, y - 11);
+  const px = x + dir * 20, bl = Math.floor(animClock * 20) % 2 ? 7 : 4;                                                                            // пропелер
+  R(ctx, px, y - bl, 2, bl * 2 + 1, 'w'); ctx.globalAlpha = 0.35; R(ctx, px, y - 9, 2, 19, 'w'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.5; for (let k = 1; k <= 14; k++) { ctx.globalAlpha = 0.5 * (1 - k / 15); R(ctx, x - dir * (24 + k * 3), y + 1 + (k >> 3), 3, 1, 'w'); } ctx.globalAlpha = 1;      // слід
+}
+function skyxSputnik(x, y, ph) {                                    // перший супутник: блискуча куля з чотирма вусами, миготливий вогник
+  x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
+  for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.hypot(dx, dy); if (d > 4.3) continue; const sh = (-dx - dy) / 8; R(ctx, x + dx, y + dy, 1, 1, d > 3.4 ? 'd' : sh > 0.35 ? 'w' : sh > -0.05 ? 'E' : 'e'); }
+  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => { for (let k = 5; k <= 13; k++) R(ctx, x + sx * k, y + sy * Math.round(k * 0.45), 1, 1, k > 11 ? 'w' : 'd'); });
+  if (Math.floor(animClock * 2 + ph) % 2) { ctx.globalAlpha = 0.4; disc(ctx, x + 3, y - 3, 3, 'r'); ctx.globalAlpha = 1; R(ctx, x + 3, y - 3, 1, 1, 'r'); }
+}
+const INV_ART = [
+  ['..#....#..', '...#..#...', '..######..', '.##.##.##.', '##########', '#.######.#', '#.#....#.#', '...##.##..'],
+  ['...####...', '.########.', '##########', '###..##..#', '##########', '..##..##..', '.##.##.##.', '##......##'],
+  ['..#....#..', '#..#..#..#', '#.######.#', '###.##.###', '##########', '.########.', '..#....#..', '.#......#.']];
+function skyxInvader(x, y, ph, v) {                                // піксельний прибулець: двокадрова анімація, ступінчастий рух
+  const art = INV_ART[v % 3], step = Math.floor(ph * 2) % 2, col = ['g', 'f', 'T'][v % 3];
+  x = Math.round(x / 2) * 2; y = Math.round(y);
+  const at = (i, j) => { const sx = (step && j >= 6) ? (i < 5 ? -1 : 1) : 0; return [x - 5 + i + sx, y + j]; };       // нижні «ніжки» розходяться на другому кадрі
+  art.forEach((row, j) => { for (let i = 0; i < 10; i++) if (row[i] === '#') { const p = at(i, j); R(ctx, p[0] + 1, p[1] + 1, 1, 1, 'd'); } });
+  art.forEach((row, j) => { for (let i = 0; i < 10; i++) if (row[i] === '#') { const p = at(i, j); R(ctx, p[0], p[1], 1, 1, col); } });
+  R(ctx, x - 3, y + 3, 1, 1, 'd'); R(ctx, x + 2, y + 3, 1, 1, 'd');
+}
+function skyxButterfly(x, y, ph, c) {                              // метелик: крила змахують, опускаючись і піднімаючись
+  x = Math.round(x); y = Math.round(y);
+  const f = Math.floor(ph * 3) % 3, wH = [4, 2, 0][f];
+  R(ctx, x, y - 1, 1, 3, 'd');
+  R(ctx, x - 3, y - wH, 3, wH + 1, c[0]); R(ctx, x + 1, y - wH, 3, wH + 1, c[0]);
+  R(ctx, x - 2, y + 1, 2, 1, c[1]); R(ctx, x + 1, y + 1, 2, 1, c[1]);
+  R(ctx, x - 3, y - wH, 3, 1, 'd'); R(ctx, x + 1, y - wH, 3, 1, 'd');
 }
 // Планета з кільцем і місяць: малюються один раз піксель за пікселем зі світлом зверху зліва (опукла куля, терминатор, відбите світло, тінь кільця)
 let SPACE_PL = null;
@@ -970,9 +1151,9 @@ function drawSkyExtra(time) {
     for (let i = 0; i < 6; i++) { const sx = Math.round(worldL() + 20 + i * (view.w - 40) / 5), sy = top + 6 + (i * 13) % 34, v = Math.sin(time * 2.4 + i * 1.7); if (v > 0.3) sparkPlus(sx, sy, (v - 0.3) / 0.7, i % 2 ? '#fff6b0' : '#ffd0f0'); }
   }
   if (ep === 6) {                                                         // Космос: планета з кільцем і місяць
-    const spl = spacePlanets(), cxw = (worldL() + worldR()) / 2, dlt = (visL() + visR()) / 2 - cxw, vw = visR() - visL();     // dlt — на скільки камера зсунута від центру світу
-    const pxp = Math.round(cxw + (0.74 - 0.5) * vw + 0.75 * dlt), pyp = top + 40;                                          // планета далеко: зсувається за камерою лише на 25%
-    const mxp = Math.round(cxw + (0.2 - 0.5) * vw + 0.7 * dlt), myp = top + 22;                                           // місяць ближче: на 40%
+    const spl = spacePlanets(), wl = worldL(), ww = worldR() - worldL();
+    const pxp = Math.round(wl + ww * 0.6), pyp = top + 40;                                   // планета й місяць прикріплені до світу: при русі камери стоять на місці, як будинки
+    const mxp = Math.round(wl + ww * 0.4), myp = top + 22;
     ctx.drawImage(spl.planet, pxp - spl.planetCx, pyp - spl.planetCy);
     ctx.drawImage(spl.moon, mxp - spl.moonCx, myp - spl.moonCy);
     if (!noFly) SKYX.meteors.forEach(m => { const a = Math.max(0, 1 - m.life / 1.1); for (let k = 0; k < 16; k++) { ctx.globalAlpha = a * (1 - k / 16); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k), 1, 1, k < 4 ? 'w' : 'y'); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k) + 1, 1, 1, 'o'); } ctx.globalAlpha = a; R(ctx, Math.round(m.x), Math.round(m.y), 3, 2, 'w'); ctx.globalAlpha = 1; });
@@ -986,9 +1167,15 @@ function drawSkyExtra(time) {
   }
   (noFly ? [] : SKYX.items).forEach(f => {
     if (f.k === 'hab') skyxBalloon(f.x, f.y, f.r, f.c[0], f.c[1], f.ph);
-    else if (f.k === 'drn') skyxDrone(f.x, f.y, f.ph, f.box);
-    else if (f.k === 'isl') skyxIsland(f.x, f.y, f.w, f.ph);
-    else if (f.k === 'tet') { f.cells.forEach(([i0, j0]) => { let i = i0, j = j0; for (let r = 0; r < f.rot; r++) { const ni = -j, nj = i; i = ni; j = nj; } const cx = Math.round(f.x + i * 5), cy = Math.round(f.y + j * 5); R(ctx, cx, cy, 5, 5, 'k'); R(ctx, cx + 1, cy + 1, 3, 3, f.c); R(ctx, cx + 1, cy + 1, 3, 1, 'w'); }); }
+    else if (f.k === 'drn') skyxDrone2(f.x, f.y, f.ph, f.box);
+    else if (f.k === 'isl') skyxIsland2(f.x, f.y, f.w, f.v, f.ph);
+    else if (f.k === 'kite') skyxKite(f.x, f.y, f.ph, f.c);
+    else if (f.k === 'note') skyxNote(f.x, f.y, f.ph, f.c, f.g, f.amp);
+    else if (f.k === 'ppl') skyxPlane(f.x, f.y, f.ph, f.c, f.vx > 0 ? 1 : -1);
+    else if (f.k === 'sput') skyxSputnik(f.x, f.y, f.ph);
+    else if (f.k === 'inv') skyxInvader(f.x, f.y, f.ph, f.v);
+    else if (f.k === 'bfly') skyxButterfly(f.x, f.y, f.ph, f.c);
+    else if (f.k === 'tet') { f.cells.forEach(([i0, j0]) => { let i = i0, j = j0; for (let r = 0; r < f.rot; r++) { const ni = -j, nj = i; i = ni; j = nj; } const cx = Math.round(f.x + i * 6), cy = Math.round(f.y + j * 6); ctx.drawImage(skyxBlock(f.c), cx, cy); }); }
   });
 }
 
@@ -1257,7 +1444,7 @@ function updateShootingStar(dt) {
   if (shootingStar) {
     const q = shootingStar;
     q.t += dt; q.x += q.vx * dt; q.y += q.vy * dt;
-    if (q.t >= q.life) { shootingStar = null; shootTimer = rand(8, 22); }
+    if (q.t >= q.life) { shootingStar = null; shootTimer = rand(2.5, 8); }
   } else {
     shootTimer -= dt;
     if (shootTimer <= 0) shootingStar = { x: rand(view.w * 0.1, view.w * 0.8), y: rand(4, view.offY + 40), vx: rand(110, 160), vy: rand(40, 70), t: 0, life: 0.7 };

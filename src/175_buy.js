@@ -35,5 +35,6 @@ function expandShop() {
   layoutScene();
   updateUI();
   saveGame();
+  setTimeout(() => { try { capySay(); } catch (e) { /* не страшно */ } }, 900);          // Капі сама коментує нове розширення
 }
 

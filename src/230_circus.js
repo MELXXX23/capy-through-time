@@ -304,7 +304,12 @@ function drawHagGame() {
 /* ---- логіка ---- */
 function circusStopX() { return mailBoxX() + 150; }   // стоїть на дорозі прямо над поштоматом (так, щоб шатра повністю його закрили) — прив'язаний до дороги, а не до екрана
 function circusStartX() { return circus.sx !== undefined ? circus.sx : Math.max(visR() + 90, circusStopX() + 150); }   // звідки в'їжджає: трохи правіше від того, що видно в момент тапу, далі їде по дорозі
-function bangPos() { return { x: Math.min(visR() - 14, shop.x + shop.w + 50), y: LAYOUT.streetTop + 9 }; }   // «!» стоїть далеко праворуч від магазину, щоб не заважав обзору й тапам   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
+function bangPos() {
+  const hi = TEAM.findIndex(m => m.spot && m.spot.x === null), hx = hi >= 0 ? actorHome(TEAM[hi]) : 0;      // «!» стоїть правіше за їжака з касою, щоб не перекривати його
+  let x = Math.max(shop.x + shop.w + 50, hx + 36);
+  if (x > visR() - 12) x = Math.max(visL() + 14, shop.x - 36);                                        // справа немає місця (телефон): ліворуч від магазину
+  return { x, y: LAYOUT.streetTop + 9 };
+}   // «!» стоїть далеко праворуч від магазину, щоб не заважав обзору й тапам   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
 function circusY() { return mailRoadY() + 2; }
 function circusQuiet() { return !dialog.active && !epochIntro.active && !build && !trouble && !ghostHunt && ui.modal.hidden && ui.wheelModal.hidden && ui.letterModal.hidden && ui.circusModal.hidden; }
 function updateCircus(dt) {

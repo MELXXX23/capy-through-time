@@ -3,7 +3,7 @@
    СЮЖЕТ І ДІАЛОГИ
    ===================================================================== */
 
-const dialog = { active: false, kind: 'ch', chapter: 0, labelNo: 0, replay: false, pages: [], page: 0, shown: 0, text: '', after: null };
+const dialog = { active: false, kind: 'ch', chapter: 0, labelNo: 0, epk: 0, replay: false, pages: [], page: 0, shown: 0, text: '', after: null };
 let storyTimer = 1;           // перша перевірка через секунду після старту
 const cameos = [];            // гості-камео на вулиці (Шнирь, що тікає з печивом)
 
@@ -24,6 +24,8 @@ function speakerName(sp) {
   return t('team_' + sp);
 }
 function pageText(p) {
+  if (p.speaker === 'title' && dialog.kind === 'ec') return t('epochTitle_' + dialog.epk) + ' · ' + t('chapterLabel', dialog.labelNo) + '\n' + t('ec' + dialog.epk + '_' + dialog.chapter + '_title');
+  if (p.speaker === 'title' && dialog.kind === 'ch') return t('epochTitle_0') + ' · ' + t('chapterLabel', dialog.labelNo) + '\n' + t('ch' + dialog.chapter + '_title');
   if (p.speaker === 'title') return t(dialog.kind === 'ep' ? 'epochLabel' : 'chapterLabel', dialog.labelNo) + '\n' + t(dialog.kind + dialog.chapter + '_title');
   return t(p.key, HELP_NEED);
 }
@@ -88,17 +90,18 @@ function showDialogPage() {
 
 // Запускає главу n (kind 'ch'), фрагмент епохи (kind 'ep') або туторіал (kind 'tut').
 // replay — перечитування з вкладки «Історія» (без наслідків для гри); labelNo — номер, що пишеться в заголовку
-function startDialogue(n, replay = false, kind = 'ch', labelNo = n) {
-  const def = kind === 'ch' ? CHAPTERS[n - 1] : (kind === 'ep' || kind === 'thx') ? EPOCH_STORIES[n - 1] : TUTORIAL;
+function startDialogue(n, replay = false, kind = 'ch', labelNo = n, epk = 0) {
+  const def = kind === 'ec' ? (EPOCH_CHAPTERS[epk] || [])[n - 1] : kind === 'ch' ? CHAPTERS[n - 1] : (kind === 'ep' || kind === 'thx') ? EPOCH_STORIES[n - 1] : TUTORIAL;
   if (!def || dialog.active) return;
   dialog.after = null;
   dialog.active = true;
   dialog.kind = kind;
   dialog.chapter = n;
   dialog.labelNo = labelNo;
+  dialog.epk = epk;
   dialog.replay = replay;
   dialog.page = 0;
-  const prefix = kind === 'tut' ? 'tut' + n : kind + n;
+  const prefix = kind === 'tut' ? 'tut' + n : kind === 'ec' ? 'ec' + epk + '_' + n : kind + n;
   dialog.choosing = false;
   if (kind === 'ep') {
     // історія епохи: вступ → вибір Капі (жарт чи серйозно) → відповідь → завершення. При перечитуванні вибір береться зі збереженого
@@ -125,7 +128,7 @@ function advanceDialog() {
 
 function endDialogue() {
   if (!dialog.active) return;
-  const n = dialog.chapter, replay = dialog.replay, kind = dialog.kind;
+  const n = dialog.chapter, replay = dialog.replay, kind = dialog.kind, epk = dialog.epk;
   dialog.active = false;
   dialog.choosing = false;
   ui.dlgChoices.hidden = true;
@@ -134,10 +137,15 @@ function endDialogue() {
   if (kind === 'thx') { if (!replay) { state.story.thx[n - 1] = 1; saveGame(); } if (after) after(); return; }
   if (replay) return;
   if (kind === 'tut') { state.tutorialDone = true; storyTimer = 1; saveGame(); return; }
+  if (kind === 'ec') {                                                                    // глава епохи 2–8
+    const st = state.story; if (!st.epDone) st.epDone = [0, 0, 0, 0, 0, 0, 0, 0];
+    st.epDone[epk] = Math.max(st.epDone[epk] || 0, n);
+    if (epk === 7 && n === 8 && !st.shnyrJoined) joinShnyr();                              // фінал останньої епохи: Шнирь іде в команду
+    storyTimer = 1.5; updateUI(); saveGame(); if (after) after(); return;
+  }
   if (kind === 'ep') {
     const st = state.story;
     if (!st.guests[n - 1]) { st.guests[n - 1] = Math.max(...st.guests) + 1; syncGuests(n - 1); nextGhostAt = Date.now() + 25000; }       // гість лишається жити в місті; перші істоти для його прохання з’являться за пів хвилини
-    if (n === 7 && !st.shnyrJoined) { st.shnyrJoined = true; showToast(t('shnyrJoined'), 'big'); }   // у Неоновій епосі Шнирь стає другом і працівником
     storyTimer = 1; updateUI(); saveGame(); return;
   }
   state.story.done = Math.max(state.story.done, n);
@@ -259,15 +267,26 @@ function checkStory(dt) {
   if (!ghostHunt) { const late = helpThanksLate(); if (late.length) { playThanksChain(late); return; } }       // гостям минулих епох, яким уже допомогли, подяка одразу
   if (state.story.done >= 1 && !state.tutorialDone) { startDialogue(1, false, 'tut'); return; }   // коротке навчання після першої глави
   if (state.story.done >= 4 && state.tutorialDone && !state.story.guests[8]) { startDialogue(9, false, 'ep', 1); return; }       // гість першої епохи
+  { const ek = state.epoch % EPOCHS.length, st = state.story;                           // глави поточної епохи (з 2-ї): свій сюжет у кожній
+    if (ek >= 1 && EPOCH_CHAPTERS[ek] && st.finale) { const nd = (st.epDone && st.epDone[ek]) || 0; if (nd < 8 && triggerMet(EPOCH_CHAPTERS[ek][nd].trigger, state)) { startDialogue(nd + 1, false, 'ec', nd + 1, ek); return; } } }
   const next = state.story.done;
   if (next >= CHAPTERS.length) return;
   if (triggerMet(CHAPTERS[next].trigger, state)) startDialogue(next + 1);
 }
 
+// Шнирь іде в команду: одразу найнятий і отримує особливу здібність — сам ловить золотих відвідувачів
+function shnyrIdx() { return TEAM.findIndex(m => m.id === 'shnyr'); }
+function shnyrPerk() { const i = shnyrIdx(); return !!(state.story.shnyrJoined && i >= 0 && state.team[i] > 0); }
+function joinShnyr() {
+  state.story.shnyrJoined = true; const i = shnyrIdx();
+  if (i >= 0 && !(state.team[i] > 0)) state.team[i] = 1;
+  try { recalcIncome(); syncActors(); } catch (e) { /* не страшно */ }
+  showToast(t('shnyrJoined'), 'big'); showToast(t('shnyrPerk'), 'good');
+}
 // Вкладка «Історія»: відкриті глави з кнопкою «Читати»
 function updateStoryUI() {
   if (ui.paneStory.hidden) return;
-  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels + '|' + state.story.guests[8] + '|' + state.story.help.join() + '|' + state.story.thx.join();
+  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels + '|' + state.story.guests[8] + '|' + state.story.help.join() + '|' + state.story.thx.join() + '|' + (state.story.epDone || []).join();
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
@@ -277,7 +296,24 @@ function updateStoryUI() {
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('introCutBtn');
     btn.addEventListener('click', () => startIntroCutscene(true));
     card.append(num, title, btn); ui.storyList.appendChild(card); }
-  for (let n = 1; n <= Math.min(state.story.done, CHAPTERS.length); n++) {
+  const curEp = state.epoch % EPOCHS.length;
+  if (!uiCache.storyOpen) uiCache.storyOpen = {};
+  const isOpen = ek => (uiCache.storyOpen[ek] !== undefined ? uiCache.storyOpen[ek] : ek === curEp);        // за замовчуванням розкрита лише поточна епоха
+  const sectionHead = (ek, nd) => {                                                           // заголовок розділу епохи (тап — згорнути/розкрити): назва · скільки глав прочитано
+    if (nd === 0 && ek !== curEp) {                                                            // епоха ще не відкрита: заголовок із замком
+      const lk = document.createElement('div'); lk.className = 'card chapter-card'; const ln = document.createElement('div'); ln.className = 'num'; ln.textContent = '🔒';
+      const lt = document.createElement('div'); lt.className = 'title'; lt.textContent = t('epochTitle_' + ek) + ' · 0/8'; lk.style.opacity = '0.6'; lk.append(ln, lt); ui.storyList.appendChild(lk); return;
+    }
+    const head = document.createElement('button'); head.type = 'button'; head.className = 'card chapter-card'; head.style.cssText = 'width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;';
+    head.setAttribute('aria-expanded', String(isOpen(ek)));
+    const hn = document.createElement('div'); hn.className = 'num'; hn.textContent = ek === curEp ? '★' : '⏳';
+    const ht = document.createElement('div'); ht.className = 'title'; ht.textContent = (isOpen(ek) ? '[−] ' : '[+] ') + t('epochTitle_' + ek) + ' · ' + nd + '/8';
+    head.addEventListener('click', () => { uiCache.storyOpen[ek] = !isOpen(ek); uiCache.storySig = ''; updateStoryUI(); });
+    head.append(hn, ht); ui.storyList.appendChild(head);
+  };
+  const lockCard = () => { const lock = document.createElement('div'); lock.className = 'card dept locked'; lock.textContent = t('storyLocked'); ui.storyList.appendChild(lock); };
+  sectionHead(0, Math.min(state.story.done, CHAPTERS.length));
+  for (let n = 1; n <= (isOpen(0) ? Math.min(state.story.done, CHAPTERS.length) : 0); n++) {
     const card = document.createElement('div');
     card.className = 'card chapter-card';
     const num = document.createElement('div'); num.className = 'num'; num.textContent = n;
@@ -286,6 +322,21 @@ function updateStoryUI() {
     btn.addEventListener('click', () => startDialogue(n, true));
     card.append(num, title, btn);
     ui.storyList.appendChild(card);
+  }
+  // глави епох 2–8: окремий розділ на кожну епоху
+  for (let ek = 1; ek < EPOCHS.length; ek++) {
+    const nd = Math.min(8, (state.story.epDone && state.story.epDone[ek]) || 0);
+    sectionHead(ek, nd);
+    if (!isOpen(ek) || (nd === 0 && ek !== curEp)) continue;
+    for (let n = 1; n <= nd; n++) {
+      const card = document.createElement('div'); card.className = 'card chapter-card';
+      const num = document.createElement('div'); num.className = 'num'; num.textContent = n;
+      const title = document.createElement('div'); title.className = 'title'; title.textContent = t('ec' + ek + '_' + n + '_title');
+      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
+      btn.addEventListener('click', () => startDialogue(n, true, 'ec', n, ek));
+      card.append(num, title, btn); ui.storyList.appendChild(card);
+    }
+    if (ek === curEp && nd < 8) lockCard();
   }
   // фрагменти епох (відкриваються подорожами в часі)
   const epEntries = [];
@@ -331,13 +382,21 @@ function syncGuests(arrive) {
   for (let i = guestWalkers.length - 1; i >= 0; i--) if (!met.includes(guestWalkers[i].k)) guestWalkers.splice(i, 1);
   met.forEach(k => {
     if (guestWalkers.some(g => g.k === k)) return;
-    guestWalkers.push({ k, id: GUEST_IDS[k], x: arrive === k ? worldL() - 12 : rand(worldL() + 20, worldR() - 20), y: rand(LAYOUT.streetTop + 10, roadFloor()),
-      dir: 1, t: rand(0, 10), mode: 'idle', wait: rand(0.3, 2), speed: rand(12, 20), moving: false, tx: 0, ty: 0, sayIn: rand(15, 40) });
+    const fresh = arrive === k;
+    guestWalkers.push({ k, id: GUEST_IDS[k], x: fresh ? Math.max(worldL() - 12, visL() - 14) : rand(worldL() + 20, worldR() - 20), y: fresh ? roadFloor() - 4 : rand(LAYOUT.streetTop + 10, roadFloor()),
+      dir: 1, t: rand(0, 10), mode: 'idle', wait: fresh ? 0.1 : rand(0.3, 2), speed: fresh ? 34 : rand(12, 20), moving: false, tx: 0, ty: 0, sayIn: rand(15, 40) });
+    if (fresh && typeof guestArrived === 'function') guestArrived(k);                           // місце гостя з'явиться, коли він дійде
   });
 }
 function updateGuests(dt) {
   guestWalkers.forEach(g => {
     g.t += dt;
+    if (typeof standPending !== 'undefined' && standPending[g.k] !== undefined) {              // новий гість іде до свого місця
+      const st = guestStands(true).find(s => s.k === g.k);
+      if (!st || Math.abs(g.x - st.x) < st.w / 2 + 10 || animClock > standPending[g.k]) {
+        delete standPending[g.k]; if (st) { standReveal[g.k] = animClock; try { spawnDust(st.x, st.y, 8); playSfx('upgrade'); } catch (e) { /* не страшно */ } }
+      } else if (g.mode === 'idle' || g.mode === 'walk') { g.tx = st.x; g.ty = Math.min(roadFloor(), st.y + 8); g.mode = 'walk'; g.speed = 34; }
+    }
     g.y = Math.min(g.y, roadFloor());
     if (g.mode === 'idle') {
       g.moving = false; g.wait -= dt;
@@ -371,7 +430,7 @@ function hitGuest(p) {
 function drawGuest(g) {                                   // гість такого ж розміру й чіткості, як звірята команди (ACTOR_K)
   const x = Math.round(g.x), y = Math.round(g.y), step = g.moving ? Math.floor(g.t * 5) % 2 : 0, k = ACTOR_K;
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
-  ctx.globalAlpha = 0.22; R(ctx, x - 6, y, 12, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.24; R(ctx, x - 7, y, 14, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 4, y + 2, 8, 1, 'd'); ctx.globalAlpha = 1;
   ctx.restore();
   drawCrispFigure('npc_' + g.id, x, y, step, step === 1);
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
@@ -395,7 +454,7 @@ function updateCameos(dt) {
 function drawCameo(c) {
   const step = Math.floor(c.t * 8) % 2;
   const x = Math.round(c.x), y = c.y;
-  ctx.globalAlpha = 0.22; R(ctx, x - 6, y, 12, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.24; R(ctx, x - 7, y, 14, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 4, y + 2, 8, 1, 'd'); ctx.globalAlpha = 1;
   drawSprite(ctx, c.sprite, x - 8, y - 16 - step, { flip: step === 1 });
   R(ctx, x + 6, y - 9 - step, 4, 4, 'c'); R(ctx, x + 7, y - 8 - step, 1, 1, 'd'); R(ctx, x + 8, y - 7 - step, 1, 1, 'd');   // печиво
 }

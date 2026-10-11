@@ -226,7 +226,7 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 .chip.dark { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 2px var(--honey); }
 .chip .ico { font-size: 11px; }
 #topRight { display: flex; align-items: center; gap: 8px; flex: none; }
-#wheelOpen { position: relative; padding: 3px 10px; font-size: 18px; line-height: 1.3; background: var(--panel); }
+#wheelOpen { position: relative; padding: 3px 11px; font-size: 20.7px; line-height: 1.3; background: var(--panel); }
 #wheelOpen .drum-ico { display: block; width: 1.38em; height: 1.38em; }
 #wheelOpen.ready { background: var(--honey); animation: wheelPulse 1.1s steps(2, jump-none) infinite; }
 @keyframes wheelPulse { 50% { transform: translateY(-2px); } }
@@ -715,11 +715,11 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .bubble {
   position: absolute; left: 0; top: 0;
   transform: translate(-50%, -100%);
-  max-width: min(max(calc(var(--u) * 46), 124px), 62vw);
+  max-width: min(max(calc(var(--u) * 38), 100px), 52vw);
   width: max-content;
   box-sizing: border-box;
-  padding: calc(var(--u) * 1.3) calc(var(--u) * 2.2);
-  font-size: max(8px, min(calc(var(--u) * 3.3), 13px));
+  padding: calc(var(--u) * 1) calc(var(--u) * 1.8);
+  font-size: max(7px, min(calc(var(--u) * 2.7), 10.5px));
   line-height: 1.5;
   overflow-wrap: break-word;
   text-align: center;
@@ -915,7 +915,7 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
   #hudWrap { gap: 5px; }
   #topRight { gap: 6px; }
   #wheelOpen, #soundBtn { padding: 3px 8px; font-size: 16px; }
-  #wheelOpen { padding: 1px 8px; }
+  #wheelOpen { padding: 1px 9px; font-size: 18.4px; }
   #eventBanner { top: 124px; font-size: 11px; padding: 5px 8px; }
 }
 /* ===== Телефон у горизонтальному положенні: той самий вигляд, що на ПК (сцена зліва, меню справа), лише компактніше ===== */
@@ -1861,12 +1861,12 @@ const LEVELS = [
 // floors — скільки стелажів (по 2 відділи) на кожному поверсі, знизу вгору; 0 — верхній поверх-кафе (столики, лампи) без відділів. Кожен рівень, починаючи з 2-го, має такий додатковий поверх.
 const FLOOR_H = 36;               // висота верхнього поверху (пікселів)
 const SHOP_LOOK = [
-  { w: 140, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 176, top: 24, floors: [2, 0], inner: ['y', 'S'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
-  { w: 212, top: 16, floors: [2, 1, 0], inner: ['S', 'm', 'q'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
-  { w: 250, top: 22, floors: [2, 2, 0], inner: ['m', 'q', 'S'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
-  { w: 288, top: 28, floors: [2, 3, 0], inner: ['q', 'S', 'm'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
-  { w: 326, top: 30, floors: [2, 2, 1, 0, -1], inner: ['m', 'q', 'S', 'y'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
+  { w: 154, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 194, top: 24, floors: [2, 0], inner: ['y', 'S'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
+  { w: 234, top: 16, floors: [2, 1, 0], inner: ['S', 'm', 'q'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
+  { w: 276, top: 22, floors: [2, 2, 0], inner: ['m', 'q', 'S'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
+  { w: 316, top: 28, floors: [2, 3, 0], inner: ['q', 'S', 'm'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
+  { w: 358, top: 30, floors: [2, 2, 1, 0, -1], inner: ['m', 'q', 'S', 'y'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
 ];
 const DOOR_WIDTHS = [28, 28, 34, 38, 44];
 
@@ -2392,7 +2392,7 @@ const WHEEL_HOURS_BY_LEVEL = [24, 12, 8];
 const EPOCHS = [
   { id: 'renaissance', sky: ['s', 'S', 'y'], tint: null, decor: [], signFill: 'b', awning: ['t', 'w'], roofStyle: 'tile', features: ['pennants'],
     houses: { walls: ['W', 'c', 'y', 'q'], roofs: ['t', 'r', 'b'] } },
-  { id: 'retro', sky: ['q', 'w', 'W'], tint: { color: 'm', alpha: 0.10 }, decor: [], signFill: 'u', awning: ['p', 'w'], roofStyle: 'tile', features: ['blimp'],
+  { id: 'retro', sky: ['q', 'w', 'W'], tint: { color: 'm', alpha: 0.10 }, decor: [], signFill: 'n', awning: ['p', 'w'], roofStyle: 'tile', features: ['blimp'],
     houses: { walls: ['m', 'q', 'y', 'S'], roofs: ['p', 'n'] } },
   { id: 'disco', sky: ['J', 'j', 'y'], tint: { color: 'o', alpha: 0.10 }, decor: [], signFill: 'P', awning: ['f', 'y'], roofStyle: 'tile', features: ['disco'],
     houses: { walls: ['o', 'h', 'y', 'c'], roofs: ['b', 'P', 't'] } },
@@ -2490,6 +2490,9 @@ function triggerMet(trig, s) {
   if (trig.level !== undefined && !(s.shopLevel >= trig.level)) return false;
   if (trig.nights !== undefined && !(s.story && s.story.nights >= trig.nights)) return false;
   if (trig.depts && !trig.depts.every(([i, n]) => s.depts && s.depts[i] >= n)) return false;
+  if (trig.guest && !(s.story && s.story.guests && s.story.guests[((s.epoch % 8) + 7) % 8] > 0)) return false;               // гість цієї епохи вже прийшов (його історія прочитана)
+  if (trig.eeSec !== undefined && !((s.epochEarned && s.epochEarned[s.epoch % 8] || 0) >= (s.cps || 0) * trig.eeSec)) return false;   // у цій епосі зароблено хоча б eeSec секунд доходу
+  if (trig.near && !(Math.max(0, s.totalEarned - s.runStartEarned) >= shardThreshold() * 0.5)) return false;                      // до подорожі лишилось недалеко
   return true;
 }
 
@@ -4501,7 +4504,7 @@ function createDefaultState() {
     depts: DEPARTMENTS.map(() => 0),   // скільки штук кожного відділу куплено
     team: TEAM.map(() => 0),           // рівень кожного звірятка: 0 — не найняте, 1…10
     teamPlus: TEAM.map(() => 0),       // прокачування звірятка після 10-го рівня (0…30): кожні 10 дають зірку, бонус росте з кожним; скидаються з подорожжю разом із рівнями
-    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, help: [0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
+    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, epDone: [0, 0, 0, 0, 0, 0, 0, 0], help: [0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
     // Події: час (мс від 1970 р.) наступного розпродажу / неприємності та активні бусти
     events: { nextSale: 0, saleUntil: 0, nextTrouble: 0, incomeBoostUntil: 0, incomeBoostMult: 1, tapBoostUntil: 0, tapBoostMult: 1, nextMail: 0, mailPending: 0 },
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни
@@ -5407,7 +5410,7 @@ function drawBenchBack(b) {        // спинка й сидіння (малює
 }
 function drawBenchFront(b) {       // передня планка й ніжки (малюється ПІСЛЯ того, хто сидить — ніби він сидить на лавці)
   const x = b.x, y = b.y;
-  ctx.globalAlpha = 0.2; R(ctx, x - 16, y, 32, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.22; R(ctx, x - 17, y, 34, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 14, y + 2, 28, 1, 'd'); ctx.globalAlpha = 1;
   const [fb, fl] = benchColors();
   R(ctx, x - 16, y - 7, 32, 3, fb); R(ctx, x - 16, y - 7, 32, 1, fl); R(ctx, x - 16, y - 5, 32, 1, 'd');
   R(ctx, x - 15, y - 4, 3, 4, 'd'); R(ctx, x + 12, y - 4, 3, 4, 'd');
@@ -5433,6 +5436,7 @@ function lampPositions() {
   return list;
 }
 function drawLamp(g, x) {
+  g.globalAlpha = 0.22; R(g, x - 6, 134, 14, 2, 'd'); g.globalAlpha = 0.12; R(g, x - 3, 136, 8, 1, 'd'); g.globalAlpha = 1;        // тінь біля основи ліхтаря
   R(g, x, 94, 2, 40, 'd');
   R(g, x - 2, 130, 6, 4, 'd');
   R(g, x - 4, 92, 10, 2, 'd');
@@ -6199,7 +6203,7 @@ function corniceG(g, w, y, trim) {                  // карниз під да�
 // awning — 'scallop' (зубчики) чи 'flat' (пряма стрічка з підсвіткою); fx — особливий декор епохи
 const EPOCH_SHOP = [
   { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance', roofs: [0, 1, 1, 4, 4, 1] },
-  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 3] },
+  { flat: false, roofPal: { r: 'T', n: 'r' }, trim: 'w', col: ['T', 'a'], frame: ['d', 'T'], glass: 'S', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['w', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 3] },
   { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco', roofs: [2, 2, 3, 3, 6, 3] },
   { flat: true, roofPal: { r: 'v', n: 'V' }, trim: 'V', col: ['V', 'v'], frame: ['k', 'T'], glass: 'v', base: 'V', band: ['checker', 'v'], awning: 'flat', inner: ['V', 'P', 'v'], fx: 'arcade' },
   { flat: true, roofPal: { r: 'n', n: 'e' }, trim: 'a', col: ['e', 'E'], frame: ['n', 'a'], glass: 'a', base: 'e', band: ['dots', 'n'], awning: 'flat', inner: ['a', 'w', 'S'], fx: 'internet' },
@@ -6212,7 +6216,7 @@ function epochShopStyle() { return EPOCH_SHOP[viewEpoch() % EPOCH_SHOP.length]; 
 // Варіант вигляду магазину: залежить від епохи й рівня, тож усі магазини схожі за стилем епохи, але не однакові
 function shopVariant(level) { return hash2(viewEpoch() * 17 + level * 5 + 3, 7) % 4; }
 const EPOCH_AWN = [
-  [['r', 'w'], ['g', 'w'], ['n', 'y'], ['u', 'w']], [['p', 'w'], ['q', 'w'], ['y', 'w'], ['T', 'w']], [['f', 'y'], ['J', 'w'], ['u', 'y'], ['T', 'f']], [['T', 'f'], ['v', 'y'], ['r', 'k'], ['y', 'k']],
+  [['r', 'w'], ['g', 'w'], ['n', 'y'], ['u', 'w']], [['r', 'w'], ['T', 'w'], ['y', 'w'], ['T', 'r']], [['f', 'y'], ['J', 'w'], ['u', 'y'], ['T', 'f']], [['T', 'f'], ['v', 'y'], ['r', 'k'], ['y', 'k']],
   [['n', 'w'], ['a', 'w'], ['e', 'w'], ['S', 'n']], [['g', 'y'], ['m', 'w'], ['G', 'c'], ['o', 'w']], [['e', 'w'], ['n', 'S'], ['z', 'w'], ['S', 'e']], [['f', 'T'], ['T', 'k'], ['v', 'f'], ['f', 'k']]
 ];
 const EPOCH_STREET = [['bench', 'planter', 'aboard'], ['aboard', 'bench', 'bike'], ['planter', 'parasol', 'aboard'], ['bike', 'aboard', 'bin'], ['bin', 'bench', 'bike'], ['planter', 'bin', 'bike'], ['bin', 'planter', 'aboard'], ['aboard', 'bench', 'parasol']];
@@ -6422,7 +6426,7 @@ function hologram(g, x, y, w, h, c) { g.globalAlpha = 0.35; R(g, x, y, w, h, c);
 function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
   const top = look.top, f0 = floors[0], yb = h - 7, big = level >= 4;
   const L0 = 11, L1 = door.x - 6, R0 = door.x + door.w + 6, R1 = w - 12;           // вільні місця біля дверей на нижньому поверсі
-  const slotsL = 1, slotsR = 1;                         // лише по одній тематичній деталі з кожного боку від дверей
+  const slotsL = level >= 3 ? 2 : 1, slotsR = level >= 3 ? 2 : 1;                         // по одній (рівні 1–2) чи по дві (з 3-го) тематичні деталі з кожного боку від дверей
   const flat = es.flat;
   switch (es.fx) {
     case 'renaissance': {                              // таверна: дерев'яні балки, діжки, вивіска з кухлем
@@ -6490,6 +6494,58 @@ function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
       break;
     }
   }
+}
+
+
+// Додаткові тематичні деталі на верхніх поверхах і біля вивіски: щоб магазини різних епох не були однаковими
+function epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB) {
+  if (level < 2) return;
+  const fx = es.fx, ups = floors.filter(fl => fl.f >= 1), yb = h - 7, top = look.top;
+  const colL = 12, colR = w - 22, art = (x, y, rows, cm) => rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] !== '.') R(g, x + i, y + j, 1, 1, cm ? cm[row[i]] || row[i] : row[i]); });
+  const INV = ['..#...#..', '...#.#...', '..#####..', '.##.#.##.', '#########', '#.#####.#', '#.#...#.#'];
+  if (fx === 'renaissance' && level >= 3) [9, w - 16].forEach(bx => {                                                // знамена під вивіскою
+    const by = top + 26; R(g, bx, by, 7, 12, 'd'); R(g, bx + 1, by + 1, 5, 10, 'r'); R(g, bx + 3, by + 1, 1, 10, 'y');
+    R(g, bx + 1, by + 12, 5, 1, 'r'); R(g, bx + 2, by + 13, 3, 1, 'r'); R(g, bx + 3, by + 14, 1, 1, 'r');
+  });
+  if (fx === 'retro' && level >= 2) {                                                                                  // смугастий стовпчик перукарні біля дверей
+    const px = door.x - 5; R(g, px - 1, yb - 20, 5, 20, 'd'); R(g, px, yb - 19, 3, 18, 'w');
+    for (let k = 0; k < 18; k += 4) R(g, px, yb - 19 + k, 3, 2, 'r'); R(g, px - 1, yb - 22, 5, 2, 'd'); R(g, px, yb - 21, 3, 1, 'y');
+  }
+  ups.forEach((fl, n) => {
+    const t0 = fl.top, fy = fl.fy, hF = fy - t0;
+    switch (fx) {
+      case 'renaissance':                                                                                              // ящики з квітами на підвіконнях
+        [colL, colR].forEach((x, k) => { R(g, x, fy - 3, 10, 3, 'd'); R(g, x + 1, fy - 2, 8, 1, 'b'); for (let i = 0; i < 5; i++) { R(g, x + 1 + i * 2, fy - 5 - (i & 1), 1, 3, 'G'); R(g, x + 1 + i * 2, fy - 6 - (i & 1), 1, 1, ['r', 'y', 'p', 'w', 'r'][(i + k + n) % 5]); } });
+        break;
+      case 'retro':                                                                                                   // вінілові платівки й зірки на стіні
+        disc(g, 18, t0 + 13, 6, 'd'); disc(g, 18, t0 + 13, 5, 'k'); disc(g, 18, t0 + 13, 2, n % 2 ? 'p' : 'y'); R(g, 14, t0 + 9, 3, 1, 'w');
+        disc(g, w - 18, t0 + 13, 5, 'd'); disc(g, w - 18, t0 + 13, 4, 'y'); disc(g, w - 18, t0 + 13, 2, 'r');
+        break;
+      case 'disco':                                                                                                   // світлова доріжка вздовж підлоги
+        for (let x = 9; x < w - 9; x += 2) { R(g, x, fy - 2, 2, 1, (x >> 1) % 2 ? 'w' : 'S'); if ((x >> 1) % 4 === n % 4) R(g, x, fy - 3, 2, 1, ['f', 'T', 'y', 'p'][(x >> 3) % 4]); }
+        break;
+      case 'arcade':                                                                                                  // піксельні прибульці на стінах
+        art(11, t0 + 6, INV, { '#': ['g', 'f', 'T'][n % 3] }); art(w - 20, t0 + 6, INV, { '#': ['T', 'g', 'f'][n % 3] });
+        break;
+      case 'internet': {                                                                                              // ряд іконок застосунків і QR-код
+        for (let r2 = 0; r2 < 2; r2++) for (let c2 = 0; c2 < 3; c2++) { R(g, 11 + c2 * 5, t0 + 6 + r2 * 5, 4, 4, 'd'); R(g, 12 + c2 * 5, t0 + 7 + r2 * 5, 2, 2, ['a', 'g', 'f', 'y', 'T', 'n'][(c2 + r2 * 3 + n) % 6]); }
+        const qx = w - 20, qy = t0 + 6; R(g, qx - 1, qy - 1, 10, 10, 'w'); for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) if (((i * 7 + j * 13 + n * 5) % 5) < 2 || (i < 2 && j < 2)) R(g, qx + i, qy + j, 1, 1, 'k');
+        break;
+      }
+      case 'eco':                                                                                                     // зелена стіна: ліани й горщики
+        vinesG(g, 13, t0 + 3, Math.min(16, hF - 8)); vinesG(g, w - 15, t0 + 3, Math.min(14, hF - 8)); vinesG(g, 19, t0 + 3, Math.min(9, hF - 10));
+        break;
+      case 'space':                                                                                                   // ілюмінатори
+        [[16, t0 + 13], [w - 17, t0 + 13]].forEach(([px, py]) => { disc(g, px, py, 5, 'd'); disc(g, px, py, 4, 'e'); disc(g, px, py, 3, n % 2 ? 'n' : 'z'); R(g, px - 2, py - 2, 2, 1, 'w'); });
+        break;
+      case 'neon':                                                                                                    // неонові смуги вздовж поверху й по краях
+        neonLine(g, 9, fy - 2, w - 18, 1, n % 2 ? 'T' : 'f'); neonLine(g, 11, t0 + 5, 1, hF - 9, n % 2 ? 'f' : 'T'); neonLine(g, w - 12, t0 + 5, 1, hF - 9, n % 2 ? 'T' : 'f');
+        break;
+    }
+  });
+  if (fx === 'eco' && es.flat && level >= 3) [34, w - 40].forEach(tx => {                                              // вітряки на даху
+    R(g, tx, top - 16, 1, 16, 'd'); R(g, tx - 5, top - 17, 5, 1, 'w'); R(g, tx + 1, top - 17, 5, 1, 'w'); R(g, tx, top - 22, 1, 5, 'w'); R(g, tx, top - 17, 1, 2, 'd');
+  });
 }
 
 /* ---------- Вивіска й дах: окремий вигляд під кожну епоху ---------- */
@@ -6873,7 +6929,7 @@ function drawCinemaMovie() {
     Rr(0, 6, W, H - 6, 'n'); for (let i = 0; i < 14; i++) { const wx = ((i * 16 - t * 18) % W + W) % W; Rr(wx, 7 + (i % 3) * 2, 6, 1, 'a'); }
     const bx = W * 0.55 + Math.sin(t * 1.5) * 6, by = 4 + Math.sin(t * 3) * 1; Rr(bx, by + 2, 11, 2, 'r'); Rr(bx + 5, by - 3, 1, 5, 'd'); Rr(bx + 6, by - 3, 4, 4, 'w');
   }
-  ctx.globalAlpha = 0.12 + 0.05 * Math.sin(t * 40); R(ctx, x0, y0, W, H, 'w'); ctx.globalAlpha = 1;      // мерехтіння плівки
+  ctx.globalAlpha = 0.1 + 0.025 * Math.sin(t * 11); R(ctx, x0, y0, W, H, 'w'); ctx.globalAlpha = 1;      // мерехтіння плівки
   if (u < 0.35) { ctx.globalAlpha = 1 - u / 0.35; R(ctx, x0, y0, W, H, 'k'); ctx.globalAlpha = 1; }          // затемнення між сценами
   Rr(Math.floor(((t * 53) % 1) * W), 0, 1, H, 'w'); ctx.globalAlpha = 0.5; Rr(0, 0, 3, H, 'k'); Rr(W - 3, 0, 3, H, 'k'); ctx.globalAlpha = 1;   // рівні краї «кіноплівки»
   ctx.restore();
@@ -7033,13 +7089,19 @@ function buildShopCanvas(level, tiers) {
     const dir = e.xHigh > e.xLow ? 1 : -1, hi = floors[e.hi];
     const ox = dir > 0 ? e.xHigh - 14 : e.xHigh - 1;
     R(b, ox, hi.fy, 16, 3, 'd');                                                  // отвір у перекритті
+    // посадкові майданчики з жовтою смугою безпеки (знизу й нагорі)
+    R(b, e.xLow - dir * 3 - (dir > 0 ? 0 : 2), e.yLow, 5, 2, 'y'); R(b, e.xHigh + dir * 1 - (dir > 0 ? 0 : 4), e.yHigh, 5, 2, 'y');
     for (let i = 0; i <= e.run; i++) {
       const x = e.xLow + dir * i, y = e.yLow - Math.round(i * e.rise / e.run);
-      R(b, x, y, 1, 3, (i % 4 < 2) ? 'e' : 'E'); R(b, x, y + 3, 1, 2, 'd');       // сходинки й підпорка
-      b.globalAlpha = 0.35; R(b, x, y - 9, 1, 8, 'S'); b.globalAlpha = 1;          // скляна огорожа
-      R(b, x, y - 9, 1, 1, 'd'); R(b, x, y - 8, 1, 1, 'h');                          // поручень
+      R(b, x, y + 3, 1, 5, 'e'); R(b, x, y + 7, 1, 1, 'd');                              // корпус-ферма під сходинками
+      R(b, x, y, 1, 1, (i % 4 === 0) ? 'w' : 'l');                                       // світла кромка сходинки
+      R(b, x, y + 1, 1, 2, (i % 4 < 2) ? 'e' : 'E');                                    // підступінок і протектор
+      R(b, x, y + 2, 1, 1, 'd');
+      b.globalAlpha = 0.38; R(b, x, y - 8, 1, 7, 'S'); b.globalAlpha = 0.16; R(b, x, y - 8, 1, 2, 'w'); b.globalAlpha = 1;   // скляна огорожа з відблиском
+      R(b, x, y - 10, 1, 1, 'd'); R(b, x, y - 9, 1, 2, (i % 7 === 3) ? 'h' : 'E'); R(b, x, y - 7, 1, 1, 'd');             // товстий поручень (стрічка) з рухомою позначкою
+      if (i % 12 === 0) R(b, x, y - 8, 1, 8, 'd');                                      // стійки огорожі
     }
-    R(b, e.xLow, e.yLow - 9, 1, 9, 'd'); R(b, e.xHigh, e.yHigh - 9, 1, 9, 'd');
+    R(b, e.xLow, e.yLow - 11, 2, 11, 'd'); R(b, e.xLow, e.yLow - 10, 1, 9, 'e'); R(b, e.xHigh - (dir > 0 ? 1 : 0), e.yHigh - 11, 2, 11, 'd'); R(b, e.xHigh - (dir > 0 ? 0 : 0), e.yHigh - 10, 1, 9, 'e');
   });
 
   /* ========== ФАСАД (front) ========== */
@@ -7120,6 +7182,7 @@ function buildShopCanvas(level, tiers) {
   roofProp(g, es, w, look.top, level, pL); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, pR);
   shopRoofExtras(g, es, w, look.top, level);       // примітні деталі на даху по боках від вивіски
   epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
+  epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB);
   if (!skinShop) shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, shopVariant(level));
   if (skinShop) skinShopDeco(g, skinOn('shop'), w, h, look, yG, door);
   gD.save(); gD.globalCompositeOperation = 'destination-out'; gD.fillStyle = '#000'; gD.fillRect(K.x, K.y, K.w, K.h); gD.restore();
@@ -7140,18 +7203,13 @@ function buildShopCanvas(level, tiers) {
   glassRects.forEach(r => {
     if (r[2] > 30) {                                                                                           // інтер'єр: тепле світло, крізь яке все ще видно звірят
       lg.globalAlpha = 0.2; R(lg, r[0], r[1], r[2], r[3], 'y'); lg.globalAlpha = 0.12; R(lg, r[0], r[1], r[2], 3, 'w'); R(lg, r[0], r[1] + r[3] - 5, r[2], 5, 'h');
-      lg.globalAlpha = 1; for (let bx = r[0] + 5; bx < r[0] + r[2] - 3; bx += 12) { R(lg, bx, r[1] + 1, 3, 2, 'w'); lg.globalAlpha = 0.28; R(lg, bx - 2, r[1] + 3, 7, 6, 'y'); lg.globalAlpha = 1; }          // лампи під стелею з конусом світла
+      lg.globalAlpha = 1;                                                                                // лампочки під стелею прибрано: лишається м'яке природне світло інтер'єру
     }
     else { R(lg, r[0], r[1], r[2], r[3], 'y'); R(lg, r[0], r[1] + r[3] - 3, r[2], 3, 'h'); }                 // ліхтарики й дрібні вікна світяться яскраво
   });
   lg.clearRect(door.x - 3, door.y - 3, door.w + 6, door.h + 3);                                                                  // двері лишаються без підсвітки — вночі їх чітко видно
   lg.globalAlpha = 0.5; R(lg, door.x - 3, door.y - 4, door.w + 6, 1, 'h'); lg.globalAlpha = 1;                                 // тонка лампа над дверима
-  shelfLights.forEach(([x, y]) => {                                                                                               // вночі прилавки підсвічені теплим жовтим світлом (не надто яскравим)
-    lg.globalAlpha = 0.1; R(lg, x - 4, y - 7, 44, 31, 'y');
-    lg.globalAlpha = 0.28; R(lg, x - 1, y - 2, 36, 21, 'y');
-    lg.globalAlpha = 0.6; R(lg, x + 1, y - 4, 32, 2, 'h'); R(lg, x + 2, y - 3, 30, 1, 'y');
-    lg.globalAlpha = 1;
-  });
+  // окремі «квадрати» світла над прилавками прибрано: вночі лишається лише м'яке фонове світло інтер'єру
   if (lastRoofSign) { lg.globalAlpha = 0.1; R(lg, lastRoofSign.x + 1, lastRoofSign.y + 1, lastRoofSign.w - 2, lastRoofSign.h - 2, 'y'); lg.globalAlpha = 1; }          // вивіска «CAPYTAP» світиться вночі
   lg.globalAlpha = 0.28; R(lg, 7, look.top + 10, w - 14, 13, 'y'); lg.globalAlpha = 1;                                                                                       // і назва магазину теж
   glassRects = null;
@@ -8018,6 +8076,7 @@ function expandShop() {
   layoutScene();
   updateUI();
   saveGame();
+  setTimeout(() => { try { capySay(); } catch (e) { /* не страшно */ } }, 900);          // Капі сама коментує нове розширення
 }
 
 //#part 178_offline.js
@@ -8486,12 +8545,11 @@ let chatterTimer = 20;
 function actorHome(m) {
   const s = m.spot;
   if (s.x === null) {
-    if (mobileMQ.matches) { const cp = LAYOUT.capy; return cp ? Math.max(cp.x + 27, Math.min(cp.x + 50, visR() - 24)) : shop.x + shop.door.x + shop.door.w / 2 + 40; }   // на телефоні їжак теж праворуч від Капі, впритул до краю екрана (каса — ліворуч від нього, її частково затуляє Капі)
-    const cp = LAYOUT.capy; return Math.min(worldR() - 24, cp.x + 14 + 62);          // на ПК їжак із касою стоїть праворуч від Капі, не впритул
+    if (mobileMQ.matches) { const cp = LAYOUT.capy; return cp ? Math.max(cp.x + 50, Math.min(cp.x + 58, visR() - 24)) : shop.x + shop.door.x + shop.door.w / 2 + 40; }   // на телефоні їжак теж праворуч від Капі, впритул до краю екрана (каса — ліворуч від нього, її частково затуляє Капі)
+    const cp = LAYOUT.capy; return Math.min(worldR() - 24, cp.x + 14 + 66);          // на ПК їжак із касою стоїть праворуч від Капі, не впритул
   }
-  // решта звіряток розставлені по всій ширині вулиці (f — частка ширини); на широкому екрані відстані більші
-  const sc = Math.max(1, Math.min(1.3, (view.w - 36) / 284));
-  return LAYOUT.centerX + (s.f - 0.5) * 284 * sc;
+  // решта звіряток розставлені рівномірно по ВСІЙ вулиці (f — частка ширини світу), а не лише біля магазину
+  return worldL() + 16 + s.f * (worldR() - worldL() - 32);
 }
 // Узгоджує список звіряток на сцені зі станом (хто найнятий — той на вулиці)
 function syncActors() {
@@ -8502,10 +8560,17 @@ function syncActors() {
     else if (!has && idx >= 0) actors.splice(idx, 1);
   });
 }
+// Позаду Капі й упритул до неї нікому не місце: у смузі ±34 px від неї ходять лише попереду (нижче на 24 px)
+function capyAvoid(o, dt) {
+  const cp = LAYOUT.capy; if (!cp) return;
+  const lim = cp.footY + 24;
+  if (Math.abs(o.x - (cp.x + 14)) < 34 && o.y < lim && o.y > cp.footY - 46) o.y = Math.min(lim, o.y + 48 * dt);
+}
 function updateActors(dt) {
   actors.forEach(a => {
     const s = TEAM[a.i].spot;
     a.t += dt;
+    if (a.mode !== 'sit' && s.x !== null) capyAvoid(a, dt);
     a.hop = Math.max(0, a.hop - dt * 4);
     // влітку звірятка час від часу зупиняються перепочити й попити водички
     if (theme.season === 'summer' && animOn()) {
@@ -8513,8 +8578,7 @@ function updateActors(dt) {
       else {
         a.restIn -= dt;
         if (a.restIn <= 0) {
-          a.rest = CONFIG.SUMMER_REST_SECONDS;
-          if (Math.random() < 0.6 && Object.keys(bubbleEls).length < 1) showBubble('t' + a.i, t('summerSay_' + Math.floor(Math.random() * 5)), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 }));
+          a.rest = CONFIG.SUMMER_REST_SECONDS;      // звірятко зупиняється перепочити (без самовільних реплік: говорять лише по тапу й на лавочці)
         }
       }
     } else a.rest = 0;
@@ -8550,26 +8614,23 @@ function updateActors(dt) {
       if (a.mode === 'toBench' && a.bench) {
         a.mode = 'sit'; a.sitT = rand(9, 16); a.y = a.bench.y - 3; a.dir = a.x < LAYOUT.centerX ? 1 : -1;
         if (Object.keys(bubbleEls).length < 1) showBubble('t' + a.i, t('team_' + TEAM[a.i].id + '_sit_' + Math.floor(Math.random() * 2)), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 }));
-      } else { a.mode = 'idle'; a.wait = rand(1, 5); }
+      } else { a.mode = 'idle'; a.wait = rand(0.6, 3); }
     } else {
       a.x += dx / d * step; a.y += dy / d * step; a.moving = true;
       if (Math.abs(dx) > 0.5) a.dir = dx > 0 ? 1 : -1;
     }
   });
-  // час від часу хтось сам щось каже
-  chatterTimer -= dt;
-  if (chatterTimer <= 0) {
-    chatterTimer = rand(CONFIG.CHATTER_MIN, CONFIG.CHATTER_MAX);
-    if (actors.length && Object.keys(bubbleEls).length < 1) { const a = actors[Math.floor(Math.random() * actors.length)]; actorSay(a); }
-  }
+  // звірята самі більше не базікають: репліка лише по тапу (250_tap.js) і коли сіли на лавочку (вище)
 }
 
 // Випадкова точка, куди піти: недалеко від свого місця, але подалі від інших звіряток
 function pickWanderTarget(a) {
   const home = actorHome(TEAM[a.i]);
-  let best = null, bestD = -1;
-  for (let k = 0; k < 6; k++) {
-    const tx = Math.max(worldL() + 14, Math.min(worldR() - 14, home + rand(-85, 85)));
+  let best = null, bestD = -Infinity;
+  // звірята розходяться по всій видимій вулиці, а не купчаться біля магазину
+  const L = worldL() + 14, R = worldR() - 14;
+  for (let k = 0; k < 8; k++) {
+    const tx = Math.max(L, Math.min(R, Math.random() < 0.2 ? rand(L, R) : home + rand(-160, 160)));
     const ty = rand(LAYOUT.streetTop + 8, roadFloor());
     let md = 1e9;
     actors.forEach(o => {
@@ -8577,6 +8638,8 @@ function pickWanderTarget(a) {
       const walking = o.mode === 'walk' || o.mode === 'toBench';
       md = Math.min(md, Math.hypot(tx - (walking ? o.tx : o.x), (ty - (walking ? o.ty : o.y)) * 1.6));
     });
+    md += Math.min(60, Math.abs(tx - LAYOUT.centerX)) * 0.3;               // трохи подалі від входу в магазин
+    { const cpp = LAYOUT.capy; if (cpp && Math.abs(tx - (cpp.x + 14)) < 30 && ty > cpp.footY - 34) md -= 200; }       // і не лізти на Капі
     if (md > bestD) { bestD = md; best = [tx, ty]; }
   }
   a.tx = best[0]; a.ty = best[1];
@@ -8587,10 +8650,10 @@ function drawTeamProp(prop, x, y, t, dir) {
   const ph = Math.floor(t * 3) % 2;
   switch (prop) {
     case 'register': {   // прилавок з касою стоїть збоку (ліворуч від їжака), щоб Голка було повністю видно, а не лише голову
-      const rx = x - 27;
-      R(ctx, rx, y - 7, 17, 7, 'b'); R(ctx, rx, y - 7, 17, 1, 'l'); R(ctx, rx, y - 1, 17, 1, 'd');
-      R(ctx, rx + 2, y - 11, 7, 4, 'e'); R(ctx, rx + 3, y - 10, 5, 2, 'g'); R(ctx, rx + 11, y - 9, 4, 2, 'h');
-      if (Math.floor(t * 1.2) % 3 === 0) R(ctx, rx + 12, y - 12 - ph, 2, 2, 'y');
+      const rx = x - 11;                                  // прилавок по центру, перед їжаком: закриває лише живіт, не лице
+      R(ctx, rx, y - 6, 22, 6, 'b'); R(ctx, rx, y - 6, 22, 1, 'l'); R(ctx, rx, y - 1, 22, 1, 'd'); R(ctx, rx + 7, y - 5, 1, 4, 'd'); R(ctx, rx + 14, y - 5, 1, 4, 'd');
+      R(ctx, rx + 15, y - 9, 6, 3, 'e'); R(ctx, rx + 16, y - 8, 4, 1, 'g'); R(ctx, rx + 1, y - 8, 4, 2, 'h');                       // каса справа, зошит зліва
+      if (Math.floor(t * 1.2) % 3 === 0) R(ctx, rx + 18, y - 11 - ph, 2, 2, 'y');
       break;
     }
     case 'hammer': {     // молоток і дошка
@@ -8674,19 +8737,21 @@ function actorPose(a) {
   const waddle = a.moving ? Math.floor(a.t * 5) % 2 : 0;
   const idleBob = !a.moving && !sitting && Math.sin(a.t * 2.4 + a.i) > 0.7 ? 1 : 0;
   const hopY = Math.round(Math.sin(Math.min(1, a.hop) * Math.PI) * 4);
-  let flip = a.moving ? waddle === 1 : false;
+  let flip = a.moving && a.dir < 0;                 // дзеркалення лише за напрямком руху (раніше блимало з кожним кроком і розмивало очі); крок — підстрибування на 1 px
   if (m.id === 'tonya') flip = Math.floor(a.t / 3) % 2 === 1;   // охоронниця виглядає то вліво, то вправо
   return { m, x: Math.round(a.x), y: a.y, sitting, waddle, idleBob, hopY, flip, bob: waddle + idleBob + hopY };
 }
 function drawActor(a) {
   const x0 = Math.round(a.x), y0 = a.y, k = actorK(a), p = actorPose(a);
   const scaled = fn => { ctx.save(); ctx.translate(x0, y0); ctx.scale(k, k); ctx.translate(-x0, -y0); fn(); ctx.restore(); };
-  scaled(() => { ctx.globalAlpha = 0.32; R(ctx, p.x - 7, p.y, 14, 2, 'd'); ctx.globalAlpha = 1; });
+  scaled(() => { ctx.globalAlpha = 0.3; R(ctx, p.x - 8, p.y, 16, 2, 'd'); ctx.globalAlpha = 0.18; R(ctx, p.x - 5, p.y + 2, 10, 1, 'd'); ctx.globalAlpha = 1; });
+  const behindProp = false;          // каса малюється ПІСЛЯ фігури: їжак стоїть за нею, але вона низька й лице не закриває
+  if (behindProp && !p.sitting) scaled(() => drawTeamProp('register', p.x, p.y - p.waddle - p.idleBob - p.hopY, a.t, a.dir));
   drawCrispFigure(teamSprite(p.m.id), p.x, p.y, p.bob, p.flip);
   scaled(() => {
     const { m, x, y, sitting, waddle, idleBob, hopY } = p;
     if (hasHats()) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);
-    if (!sitting) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, a.dir);
+    if (!sitting && !behindProp) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, a.dir);
     if (a.rest > 0) drawDrink(x, y - hopY, a.t);
     if (hasScarves()) drawScarf(x, y - 16 - waddle - idleBob - hopY, a.i);
   });
@@ -8729,8 +8794,8 @@ function bubbleBounds() {
   return { l: visL(), r: visR(), t: top + 2, b: top + sceneH / sceneUnit, il: visL() + 38 / sceneUnit, ir: visR() - 40 / sceneUnit, it: top + (tbh + 6) / sceneUnit };
 }
 // Ставить бульбашку так, щоб вона повністю лишалась у кадрі
-function placeBubble(el, x, y) {
-  const bb = bubbleBounds(), hw = (el._w || (el._w = el.offsetWidth)) / 2 / sceneUnit + 2, hh = (el._h || (el._h = el.offsetHeight)) / sceneUnit + 6;
+function placeBubble(el, x, y, bb0) {
+  const bb = bb0 || bubbleBounds(), hw = (el._w || (el._w = el.offsetWidth)) / 2 / sceneUnit + 2, hh = (el._h || (el._h = el.offsetHeight)) / sceneUnit + 6;
   const cx = Math.max(bb.il + hw, Math.min(bb.ir - hw, x)), cy = Math.max(bb.it + hh, Math.min(bb.b - 4, y));
   el._cx = cx;
   el.style.left = Math.round((cx + view.offX) * sceneUnit) + 'px'; el.style.top = Math.round((cy + view.offY) * sceneUnit) + 'px';
@@ -8767,11 +8832,11 @@ function updateBubbles() {
   const bb = bubbleBounds();
   Object.keys(bubbleEls).forEach(k => {
     const el = bubbleEls[k];
-    if (!el._follow) { if (el._x < bb.l + 3 || el._x > bb.r - 3) { dropBubble(k); return; } placeBubble(el, el._x, el._y); return; }
+    if (!el._follow) { if (el._x < bb.l + 3 || el._x > bb.r - 3) { dropBubble(k); return; } placeBubble(el, el._x, el._y, bb); return; }
     const p = el._follow();
     if (!p) { dropBubble(k); return; }
     if (p.x < bb.l + 3 || p.x > bb.r - 3) { dropBubble(k); return; }        // звірятко пішло за межі кадру (або камеру посунули) — репліка зникає
-    placeBubble(el, p.x, Math.max(24, p.y));
+    placeBubble(el, p.x, Math.max(24, p.y), bb);
   });
 }
 // Репліку обирає ситуація: взимку часто «холодні» фрази, часом — загальна репліка епохи, інакше — власна фраза звірятка; та сама фраза підряд не повторюється
@@ -8851,7 +8916,6 @@ function hireOrUpgrade(i) {
     spawnDust(a.x, a.y - 2, 6);
     showToast(t('teamHired', name), 'big');
     playSfx('hire');
-    actorSay(a);
   } else {
     showToast(t('teamUpgraded', name, lvl + 1), 'good');
     playSfx('upgrade');
@@ -8862,24 +8926,33 @@ function hireOrUpgrade(i) {
 /* ---------- Покупці ---------- */
 function customerTarget() {
   if (state.cps <= 0) return 2;
-  return Math.min(CONFIG.MAX_CUSTOMERS + 4, 4 + Math.floor(Math.log10(state.cps + 1) * 2));      // трохи більше покупців, ніж раніше
+  const base = Math.min(CONFIG.MAX_CUSTOMERS + 4, 4 + Math.floor(Math.log10(state.cps + 1) * 2));      // трохи більше покупців, ніж раніше
+  const wide = (worldR() - worldL()) / Math.max(320, visR() - visL());                                  // вулиця широка: покупців більше, щоб їх було видно скрізь
+  return Math.round(base * Math.max(1, Math.min(2.2, wide)));
 }
 // Куди йде звіреня, що покидає сцену: трохи за краєм того, що видно (світ широкий, тож до його краю йти надто довго)
-function passEdge(dir) { return dir > 0 ? Math.min(worldR() + 16, visR() + 30 + rand(0, 120)) : Math.max(worldL() - 16, visL() - 30 - rand(0, 120)); }
+function passEdge(dir) { return dir > 0 ? worldR() + 16 : worldL() - 16; }                       // ідуть до самого краю вулиці, а не зникають одразу за краєм екрана
+// Де з'являється покупець: частина — на краях вулиці, решта — у випадкових місцях по всій вулиці поза межами видимого
+function spawnX(fromLeft) {
+  const W0 = worldL(), W1 = worldR();
+  if (Math.random() < 0.35) return fromLeft ? W0 - 14 : W1 + 14;
+  for (let k = 0; k < 8; k++) { const x = rand(W0 + 10, W1 - 10); if (x < visL() - 24 || x > visR() + 24) return x; }
+  return fromLeft ? W0 - 14 : W1 + 14;
+}
 function spawnCustomer() {
   const fromLeft = Math.random() < 0.5;
   const lane = rand(LAYOUT.lane.min, Math.max(LAYOUT.lane.min + 4, roadFloor()));
-  const goesShopping = Math.random() < 0.7;
+  const goesShopping = Math.random() < 0.55;
   const c = {
     type: CUSTOMER_TYPES[Math.floor(Math.random() * CUSTOMER_TYPES.length)],
-    x: fromLeft ? Math.max(worldL() - 14, visL() - 20 - rand(0, 110)) : Math.min(worldR() + 14, visR() + 20 + rand(0, 110)),
+    x: spawnX(fromLeft),
     y: lane, lane,
     dir: fromLeft ? 1 : -1,
     speed: rand(16, 26),
     anim: rand(0, 2),
     mode: goesShopping ? 'toDoor' : 'pass',
     doorX: shop.x + shop.door.x + shop.door.w / 2 + rand(-4, 4),
-    passTo: fromLeft ? Math.min(worldR() + 16, visR() + 30 + rand(0, 160)) : Math.max(worldL() - 16, visL() - 30 - rand(0, 160)),
+    passTo: fromLeft ? worldR() + 16 : worldL() - 16,
     alpha: 1, t: 0, stay: 0,
     bag: null
   };
@@ -8982,7 +9055,8 @@ function fearSay(c, ghost) {
 function curbLift(y) { const a = LAYOUT.curbY - 5, b = LAYOUT.curbY + 9; return y > a && y < b ? Math.sin((y - a) / (b - a) * Math.PI) * 3.4 : 0; }
 function updateCustomers(dt) {
   vipTimer -= dt;
-  if (vipTimer <= 0) { vipTimer = rand(100, 160) * evMult() / (1 + 0.15 * wsLevel('goldenFreq')); if (!customers.some(c => c.vip) && state.story.done >= 2 && animOn() && !dialog.active) spawnVip(); }
+  if (vipTimer <= 0) { vipTimer = rand(100, 160) * evMult() * (shnyrPerk() ? 0.75 : 1) / (1 + 0.15 * wsLevel('goldenFreq')); if (!customers.some(c => c.vip) && state.story.done >= 2 && animOn() && !dialog.active) spawnVip(); }
+  if (shnyrPerk()) customers.forEach(c => { if (c.vip && !c.vipDone && c.x > visL() + 6 && c.x < visR() - 6) { c.auto = (c.auto || 0) + dt; if (c.auto > 1.6) { hitVip({ x: c.x, y: c.y - 10 }); showToast(t('shnyrCatch'), 'good'); } } });       // Шнирь сам ловить золотого
   customers.forEach(c => { if (c.vip && !c.said && !c.vipDone && c.x > visL() + 10 && c.x < visR() - 10) { c.said = true; showBubble('vip', t('vipWish', deptName(c.wish)), c.x, c.y - 34, () => ({ x: c.x, y: c.y - 34 })); } });
   customerTimer -= dt;
   if (customerTimer <= 0) {
@@ -8994,6 +9068,7 @@ function updateCustomers(dt) {
     c.anim += dt;
     const step = c.speed * dt;
     if (c.fear) { updateFear(c, dt); continue; }
+    if (c.mode === 'pass' || c.mode === 'toDoor' || c.mode === 'toHome' || c.mode === 'homeDown') capyAvoid(c, dt);
     if ((c.mode === 'pass' || c.mode === 'toDoor' || c.mode === 'toHome') && animOn()) { const hz = roadDanger(c); if (hz) { startFear(c, hz); continue; } }
     switch (c.mode) {
       case 'pass':
@@ -9140,9 +9215,9 @@ function updateInside(c, dt) {
 }
 // Чи піде покупець додому: обираємо двері будиночка недалеко від магазину (не за самим магазином)
 function pickHome(c) {
-  if (!houseDoors.length || Math.random() > 0.55) return null;
+  if (!houseDoors.length || Math.random() > 0.7) return null;
   const cx = shop.x + shop.w / 2;
-  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8 && Math.abs(d.x - c.x) < 340);
+  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8);                    // усі двері вздовж вулиці, не лише найближчі
   return cand.length ? cand[Math.floor(Math.random() * cand.length)] : null;
 }
 // Коли магазин перебудовується, усі, хто всередині, виходять надвір
@@ -10299,7 +10374,12 @@ Object.assign(SFX, {
   cutClick() { const t = audio.ctx.currentTime + 0.01; noiseHit(audio.sfxGain, t, 0.06, 0.4, 'bandpass', 2400); tone(audio.sfxGain, 'square', 900, t, 0.08, 0.2, 380); },
   cutChain(i) { tone(audio.sfxGain, 'triangle', noteFreq(['C5', 'E5', 'G5', 'C6'][i % 4]), audio.ctx.currentTime + 0.01, 0.2, 0.3); },
   cutWord(i) { melody('square', [[['G5', 'B5', 'D6'][i % 3], 0.07], [['C6', 'E6', 'G6'][i % 3], 0.14]], 0.2); },
-  cutTock() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'square', 190, t, 0.06, 0.2, 80); noiseHit(audio.sfxGain, t, 0.05, 0.25, 'bandpass', 1900); },
+  cutTock() {       // тік-так годинника: два трохи різні м'які удари (верхній і нижній), короткий клац і дзвінкий відгук
+    const t = audio.ctx.currentTime + 0.01, hi = (audio._tock = (audio._tock || 0) + 1) % 2;
+    tone(audio.sfxGain, 'sine', hi ? 1560 : 1040, t, 0.07, 0.14, hi ? 1180 : 760);
+    tone(audio.sfxGain, 'triangle', hi ? 3120 : 2080, t, 0.025, 0.05);
+    noiseHit(audio.sfxGain, t, 0.018, 0.16, 'highpass', 3200);
+  },
   cutDoor() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'sine', 880, t, 0.25, 0.2, 880); tone(audio.sfxGain, 'sine', 1175, t + 0.18, 0.4, 0.18, 1175); }
 });
 const CUT_EV = [[CT.ting1, 'cutTing'], [CT.ting2, 'cutTing'], [CT.pick, 'cutPick'], [CT.fly0, 'cutWhoosh'], [CT.charge, 'cutCharge'], [CT.flash, 'cutBoom'], [16.2, 'cutThud'], [17.0, 'cutThud'], [17.8, 'cutThud'], [18.6, 'cutThud'], [CT.asm1, 'cutDone'], [CT.fin + 0.4, 'cutDoor'],
@@ -11230,7 +11310,13 @@ function updateWarp(dt) {
     if (viewOnly) return;
     // новий сюжетний фрагмент епохи
     const storyNo = ((state.epoch - 1) % EPOCHS.length) + 1, label = (state.epoch % EPOCHS.length) + 1;
-    playEpochIntro(state.epoch, () => { if (!state.story.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); });      // історія — лише вперше, далі тільки заставка
+    playEpochIntro(state.epoch, () => {
+      setTimeout(() => { try { capySay(); } catch (e) { /* не страшно */ } }, 700);
+      const ek = state.epoch % EPOCHS.length, st = state.story, guestStory = () => { if (!st.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); };
+      // нова епоха: спершу відкривається її ПЕРША глава, а гість зі своїми речами приходить одразу після неї
+      if (ek >= 1 && EPOCH_CHAPTERS[ek] && !((st.epDone && st.epDone[ek]) || 0)) { startDialogue(1, false, 'ec', 1, ek); if (dialog.active) dialog.after = guestStory; else guestStory(); }
+      else guestStory();
+    });      // історія — лише вперше, далі тільки заставка
   }
 }
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
@@ -11767,6 +11853,13 @@ function updateSkinsUI() {
   const sig = [state.skinsMask, state.skinsMask2, state.crystals >= SKIN_PRICE, SKIN_TYPES.map(ty => state.skins[ty]).join(), JSON.stringify(skinPage), state.lang, state.shopLevel, viewEpoch(), state.settings.gender, seasonNow()].join('|');
   if (sig === skinsSig) return;
   skinsSig = sig;
+  // список перебудовується повністю: запам'ятовуємо прокрутку, щоб після вибору скіна гравця не кидало на початок
+  let sc = ui.skinsList.parentElement;
+  while (sc && sc !== document.body) { const cs = getComputedStyle(sc); if (/(auto|scroll)/.test(cs.overflowY) && sc.scrollHeight > sc.clientHeight + 2) break; sc = sc.parentElement; }
+  if (sc === document.body) sc = null;
+  const keepTop = sc ? sc.scrollTop : 0, keepH = ui.skinsList.offsetHeight;
+  if (keepH) ui.skinsList.style.minHeight = keepH + 'px';
+  Promise.resolve().then(() => { ui.skinsList.style.minHeight = ''; if (sc) sc.scrollTop = keepTop; });
   ui.skinsList.innerHTML = '';
   [['capy', false], ['shop', false], ['weather', false], ['street', false], ['hero', false]].forEach(([type, epochGroup]) => {
     const card = document.createElement('div');
@@ -12532,7 +12625,9 @@ function rainbowCanvas(R0) {                                    // перема�
 // Велика веселка: дуга сягає майже верху неба, тож видно над високими будинками і на ПК, і на телефоні
 function rainbowGeom() {
   const cy = LAYOUT.curbY + 14, top = -view.offY + 10;
-  return { R0: Math.round(Math.max(120, Math.min((cy - top) * 0.93, 240))), cy, px: LAYOUT.centerX };
+  const base = Math.max(120, Math.min((cy - top) * 0.93, 240));
+  const need = shop ? Math.max(cy - shop.y + 26, shop.w * 0.62 + 20) : 0;                 // дуга охоплює магазин будь-якого рівня (вежу й ширину ТЦ), а не ховається за ним
+  return { R0: Math.round(Math.max(base, Math.min(need, (cy - top) * 1.25, 330))), cy, px: LAYOUT.centerX };
 }
 function drawRainbowSkin() {                                  // веселка — лише як скін погоди: позаду будинків, велика, видна над ними
   const a = (1 - sky.night) * (1 - weather.rain * 0.7);
@@ -12682,12 +12777,21 @@ function seedSkyExtra() {
   const ep = viewEpoch() % 8, wide = Math.max(1, view.w / 320), top = 8 - view.offY;
   SKYX.ep = ep; SKYX.items = []; SKYX.banner = null; SKYX.tBanner = rand(3, 8); SKYX.meteors = []; SKYX.tMeteor = rand(0.3, 1);
   if (ep === 0) {                                                       // повітряні кулі: рідко (одна на ~260 px світу), рівномірно по світу, летять в один бік з близькою швидкістю, тож не збиваються докупи
-    const n = Math.max(3, Math.round((worldR() - worldL()) / 210)), step = (worldR() - worldL()) / n, dir = Math.random() < 0.5 ? -1 : 1;
-    for (let i = 0; i < n; i++) SKYX.items.push({ k: 'hab', x: worldL() + step * (i + 0.5) + rand(-step * 0.15, step * 0.15), y: Math.max(top + 16, LAYOUT.horizonY - 134 - [0, 12, 24, 6, 18][i % 5] + rand(-4, 4)), r: [11, 9, 7][i % 3], vx: dir * rand(1.2, 1.6), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['p', 'w'], ['h', 'n']][i % 5] });
+    const n = Math.max(4, Math.round((worldR() - worldL()) / 165)), step = (worldR() - worldL()) / n, dir = Math.random() < 0.5 ? -1 : 1;
+    for (let i = 0; i < n; i++) SKYX.items.push({ k: 'hab', x: worldL() + step * (i + 0.5) + rand(-step * 0.15, step * 0.15), y: Math.max(top + 16, LAYOUT.horizonY - 134 - [0, 12, 24, 6, 18][i % 5] + rand(-4, 4)), r: [13, 11, 9][i % 3], vx: dir * rand(1.2, 1.6), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['p', 'w'], ['h', 'n']][i % 5] });
   }
-  if (ep === 3) for (let i = 0; i < Math.round(5 * wide); i++) SKYX.items.push(skyxTetris(true));
-  if (ep === 4) for (let i = 0; i < Math.round(4 * wide); i++) SKYX.items.push({ k: 'drn', x: rand(worldL(), worldR()), y: rand(top + 8, 66), vx: rand(8, 15) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), box: i % 3 !== 2 });
-  if (ep === 5) for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'isl', x: rand(worldL() + 30, worldR() - 30), y: rand(top + 26, 54), w: rand(26, 36), vx: rand(0.6, 1.4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
+  if (ep === 0) for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'kite', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 14, 58), vx: rand(0.8, 1.8) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['y', 'n'], ['g', 'w']][i % 3] });
+  if (ep === 1) {
+    const nP = Math.max(3, Math.round((worldR() - worldL()) / 260));                                   // пропелерні літаки різних кольорів: на екрані завжди хоча б один
+    for (let i = 0; i < nP; i++) SKYX.items.push({ k: 'ppl', x: worldL() + (worldR() - worldL()) * (i + rand(0.2, 0.8)) / nP, y: rand(top + 20, 70), vx: rand(16, 26) * (i % 2 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['o', 'w']][i % 4] });
+    for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'sput', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 12, 52), vx: rand(2, 4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
+  }
+  if (ep === 2) for (let i = 0; i < Math.max(7, Math.round(8 * wide)); i++) SKYX.items.push({ k: 'note', x: rand(worldL() + 10, worldR() - 10), x0: 0, y: rand(top + 16, 128), vy: -rand(6, 10), ph: rand(0, 6.28), amp: rand(5, 11), c: ['f', 'T', 'y', 'p', 'a'][i % 5], g: i % 3 });
+  if (ep === 3) for (let i = 0; i < Math.round(9 * wide); i++) SKYX.items.push(skyxTetris(true));
+  if (ep === 3) for (let i = 0; i < Math.max(2, Math.round(3 * wide)); i++) SKYX.items.push({ k: 'inv', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 10, 46), vx: rand(6, 11) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), v: i % 3 });
+  if (ep === 4) for (let i = 0; i < Math.round(6 * wide); i++) SKYX.items.push({ k: 'drn', x: rand(worldL(), worldR()), y: rand(top + 8, 66), vx: rand(8, 15) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), box: i % 3 !== 2 });
+  if (ep === 5) for (let i = 0; i < Math.round(5 * wide); i++) SKYX.items.push({ k: 'bfly', x: rand(worldL(), worldR()), y: rand(top + 30, 112), vx: rand(5, 10) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), c: [['o', 'y'], ['f', 'w'], ['a', 'S'], ['p', 'w']][i % 4] });
+  if (ep === 5) for (let i = 0; i < Math.max(3, Math.round(3.5 * wide)); i++) SKYX.items.push({ k: 'isl', v: i % 3, x: rand(worldL() + 30, worldR() - 30), y: rand(top + 30, 62), w: [44, 36, 54, 40][i % 4] + Math.round(rand(0, 6)), vx: rand(0.6, 1.4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
 }
 function updateSkyExtra(dt) {
   if (SKYX.ep !== viewEpoch() % 8) seedSkyExtra();
@@ -12697,11 +12801,17 @@ function updateSkyExtra(dt) {
     if (f.k === 'hab') { f.x += f.vx * dt; f.ph += dt * 0.6; }
     else if (f.k === 'drn') { f.x += f.vx * dt; f.ph += dt * 3; if (f.x < worldL() - 8) f.vx = Math.abs(f.vx); if (f.x > worldR() + 8) f.vx = -Math.abs(f.vx); }
     else if (f.k === 'isl') { f.x += f.vx * dt; f.ph += dt * 0.5; }
+    else if (f.k === 'kite') { f.x += f.vx * dt; f.ph += dt * 1.2; }
+    else if (f.k === 'note') { f.y += f.vy * dt; f.ph += dt * 1.1; if (f.y < top - 6) { f.y = 130; f.x = rand(worldL() + 10, worldR() - 10); f.ph = rand(0, 6.28); } }
+    else if (f.k === 'ppl') { f.x += f.vx * dt; f.ph += dt; }
+    else if (f.k === 'sput') { f.x += f.vx * dt; f.ph += dt * 1.4; }
+    else if (f.k === 'inv') { f.x += f.vx * dt; f.ph += dt; if (f.x > worldR() + 12) f.vx = -Math.abs(f.vx); if (f.x < worldL() - 12) f.vx = Math.abs(f.vx); }
+    else if (f.k === 'bfly') { f.x += f.vx * dt; f.y += Math.sin(f.ph * 1.7) * 6 * dt; f.ph += dt * 3; if (f.y < top + 24) f.y += 10 * dt; if (f.y > 122) f.y -= 10 * dt; }
     else if (f.k === 'tet') { f.y += f.vy * dt; f.rt -= dt; if (f.rt <= 0) { f.rt = rand(1, 2.2); f.rot = (f.rot + 1) % 4; } if (f.y > 96) Object.assign(f, skyxTetris(false)); }
-    if (f.k !== 'tet' && f.k !== 'drn') { if (f.x > worldR() + 60) f.x = worldL() - 60; else if (f.x < worldL() - 60) f.x = worldR() + 60; }
+    if (f.k !== 'tet' && f.k !== 'drn' && f.k !== 'note' && f.k !== 'inv') { if (f.x > worldR() + 60) f.x = worldL() - 60; else if (f.x < worldL() - 60) f.x = worldR() + 60; }
   });
   if (SKYX.ep === 1) {
-    if (SKYX.banner) { SKYX.banner.x += SKYX.banner.vx * dt; if (SKYX.banner.x > worldR() + 90) { SKYX.banner = null; SKYX.tBanner = rand(14, 28); } }
+    if (SKYX.banner) { SKYX.banner.x += SKYX.banner.vx * dt; if (SKYX.banner.x > worldR() + 90) { SKYX.banner = null; SKYX.tBanner = rand(5, 11); } }
     else { SKYX.tBanner -= dt; if (SKYX.tBanner <= 0) SKYX.banner = { x: worldL() - 90, y: rand(top + 12, 44), vx: rand(38, 52) }; }
   }
   if (SKYX.ep === 6) {
@@ -12773,6 +12883,170 @@ function skyxIsland(x, y, w, ph) {
   R(ctx, x - 4, y - 16, 3, 15, 'b'); disc(ctx, x - 3, y - 19, 8, 'd'); disc(ctx, x - 3, y - 19, 7, 'G'); disc(ctx, x - 5, y - 21, 5, 'g'); R(ctx, x - 6, y - 23, 2, 1, 'm');
   R(ctx, x + 7, y - 5, 3, 3, 'r'); R(ctx, x + 8, y - 8, 1, 3, 'G');
   const wx = x + hw - 6, fl = Math.floor(animClock * 10); R(ctx, wx, y + 6, 3, 18, 'S'); for (let k = 0; k < 6; k++) R(ctx, wx + ((k + fl) % 3), y + 6 + ((k * 3 + fl) % 18), 1, 2, 'w'); R(ctx, wx - 1, y + 24, 5, 1, 'w');
+}
+// ---------- Якісніші прикраси неба: кеш-спрайти зі світлом зверху-ліворуч і тінню знизу-праворуч (як у куль) ----------
+const skyBlockCache = {}, islandCache = {}, droneCache = {};
+function skyHash(x, y) { const q = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return q - Math.floor(q); }
+function skyxBlock(c) {                                           // блок тетрісу 6×6: темний контур, скошені грані, відблиск
+  if (skyBlockCache[c]) return skyBlockCache[c];
+  const h = PALETTE[c] || c, cv = document.createElement('canvas'); cv.width = 6; cv.height = 6; const g = cv.getContext('2d');
+  g.fillStyle = '#1c1630'; g.fillRect(0, 0, 6, 6);
+  g.fillStyle = mixHex(h, '#272048', 0.5); g.fillRect(1, 1, 4, 4);
+  g.fillStyle = h; g.fillRect(1, 1, 3, 3);
+  g.fillStyle = mixHex(h, '#ffffff', 0.55); g.fillRect(1, 1, 3, 1); g.fillRect(1, 1, 1, 3);
+  g.fillStyle = '#ffffff'; g.fillRect(2, 2, 1, 1);
+  return (skyBlockCache[c] = cv);
+}
+function islandCanvas(w, v) {                                      // літаючий острів: каміння з прошарками, трава, об'ємне дерево/кущі, квіти
+  const key = w + '_' + v; if (islandCache[key]) return islandCache[key];
+  const hw = Math.round(w / 2), depth = Math.round(w * 0.55), treeH = 30, W = w + 14, H = treeH + 6 + depth + 4, cx = W / 2, ty = treeH + 3;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const rock = ['#d2b494', '#b5977a', '#977a62', '#765d4d', '#52413a'], gr = ['#b8e86a', '#7cc84a', '#4e9a38', '#357a30', '#245626'];
+  const px = (x, y, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), 1, 1); };
+  // каміння: округла «морква» з нерівним низом, світло зверху-ліворуч, прошарки
+  for (let y = 0; y < depth; y++) {
+    const u = y / depth, half = Math.max(1, Math.round(hw * (1 - Math.pow(u, 1.55) * 0.93)) + (skyHash(y, v) > 0.7 ? 1 : 0));
+    for (let x = -half; x <= half; x++) {
+      const nx = x / Math.max(1, half), n = skyHash(x + 40, y + v * 9);
+      let sh = 0.34 + (nx + 1) * 0.2 + u * 0.38 + (n - 0.5) * 0.18;
+      if (y % 6 === 4 && n > 0.25) sh += 0.14;                                  // прошарок
+      const ci = sh < 0.3 ? 0 : sh < 0.5 ? 1 : sh < 0.7 ? 2 : sh < 0.9 ? 3 : 4;
+      px(cx + x, ty + 2 + y, rock[ci]);
+    }
+  }
+  // трава зверху: ламана кромка зі «шторкою» над каменем
+  for (let x = -hw; x <= hw; x++) {
+    const n = skyHash(x, 77 + v), dh = n > 0.8 ? 3 : n > 0.4 ? 2 : 1;
+    for (let k = -1; k < dh + 1; k++) px(cx + x, ty + k, k < 0 ? gr[0] : k === 0 ? gr[1] : gr[2 + Math.min(1, k - 1)]);
+    if (n > 0.55) px(cx + x, ty - 2 - (n > 0.9 ? 1 : 0), gr[1]);              // травинки
+  }
+  const crown = (ox, oy, r) => {                                             // об'ємна крона-куля з напівтоном
+    for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+      const d = Math.hypot(x + 0.5, y + 0.5); if (d > r) continue;
+      const nx = x / r, ny = y / r, nz = Math.sqrt(Math.max(0.02, 1 - nx * nx - ny * ny)), lum = -nx * 0.55 - ny * 0.6 + nz * 0.58;
+      let q = 0.62 - lum * 0.55 + ((x + y) & 1 ? 0.04 : 0) + (skyHash(x + ox, y + oy) - 0.5) * 0.16;
+      if (d > r - 1.1) q += 0.12;
+      px(cx + ox + x, oy + y, gr[q < 0.18 ? 0 : q < 0.4 ? 1 : q < 0.62 ? 2 : q < 0.82 ? 3 : 4]);
+    }
+  };
+  const trunk = (ox, h2) => { g.fillStyle = '#3c2a22'; g.fillRect(cx + ox - 1, ty - h2, 3, h2 + 1); g.fillStyle = '#8a5e3a'; g.fillRect(cx + ox - 1, ty - h2, 1, h2 + 1); };
+  if (v === 0) { trunk(-4, 11); crown(-4, ty - 17, 9); crown(3, ty - 12, 6); }
+  else if (v === 1) { trunk(-6, 9); crown(-6, ty - 14, 7); crown(5, ty - 5, 5); crown(11, ty - 3, 3); }
+  else { trunk(-8, 8); crown(-8, ty - 12, 6); trunk(4, 10); crown(4, ty - 16, 8); }
+  for (let k = 0; k < 5; k++) { const fx = cx - hw + 3 + Math.round(skyHash(k, v + 3) * (w - 6)); px(fx, ty - 1, k % 2 ? '#ff7a8a' : '#ffe27a'); }     // квіточки
+  // контур: темний 1 px навколо силуету
+  const id = g.getImageData(0, 0, W, H), d = id.data, solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 40, out = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!solid(x, y) && (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1))) out.push([x, y]);
+  g.fillStyle = '#2a1f2e'; out.forEach(([x, y]) => g.fillRect(x, y, 1, 1));
+  cv.cx = cx; cv.ty = ty;
+  return (islandCache[key] = cv);
+}
+function skyxIsland2(x, y, w, v, ph) {
+  const cv = islandCanvas(w, v || 0); x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
+  ctx.drawImage(cv, Math.round(x - cv.cx), y - cv.ty);
+  const hw = Math.round(w / 2), wx = x + hw - Math.max(5, Math.round(w * 0.16)), fl = Math.floor(animClock * 10), wy = y + 7;     // водоспад зі шлейфом бризок
+  R(ctx, wx, wy, 3, 20, 'S'); R(ctx, wx, wy, 1, 20, 'w');
+  for (let k = 0; k < 6; k++) R(ctx, wx + ((k + fl) % 3), wy + ((k * 3 + fl) % 18), 1, 2, 'w');
+  ctx.globalAlpha = 0.45; R(ctx, wx - 2, wy + 20, 7, 1, 'w'); R(ctx, wx - 1, wy + 21, 5, 1, 'w'); ctx.globalAlpha = 1;
+}
+function droneBody(box) {                                          // корпус дрона 17×14 з об'ємом: світлий верх, темний низ, мотори, вантаж на стропі
+  const key = box ? 1 : 0; if (droneCache[key]) return droneCache[key];
+  const cv = document.createElement('canvas'); cv.width = 17; cv.height = 15; const g = cv.getContext('2d');
+  const P = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  P(2, 4, 13, 1, '#1c1630'); P(2, 5, 13, 1, '#8890b8'); P(2, 6, 13, 1, '#6a7098');                            // рами-промені
+  P(1, 3, 3, 3, '#1c1630'); P(2, 4, 1, 1, '#4a4468'); P(13, 3, 3, 3, '#1c1630'); P(14, 4, 1, 1, '#4a4468');     // мотори
+  P(5, 2, 7, 6, '#1c1630'); P(6, 3, 5, 4, '#e9edf7'); P(6, 3, 5, 1, '#ffffff'); P(6, 6, 5, 1, '#9aa3c4'); P(10, 3, 1, 4, '#b4bcd8');   // корпус
+  P(7, 4, 3, 2, '#2b3566'); P(8, 4, 1, 1, '#7fe3ff');                                                         // камера-«очко»
+  P(4, 8, 1, 2, '#1c1630'); P(12, 8, 1, 2, '#1c1630');                                                         // шасі
+  if (box) { P(8, 8, 1, 2, '#1c1630'); P(5, 10, 7, 5, '#1c1630'); P(6, 11, 5, 3, '#c98a4a'); P(6, 11, 5, 1, '#ffd07a'); P(8, 11, 1, 3, '#f4e6c8'); }
+  return (droneCache[key] = cv);
+}
+function skyxDrone2(x, y, ph, box) {
+  const cv = droneBody(box); x = Math.round(x); y = Math.round(y + Math.sin(ph * 0.7) * 1.5);
+  ctx.drawImage(cv, x - 8, y - 4);
+  const bl = Math.floor(ph * 3) % 2 ? 4 : 2;                                                                    // пропелери: короткі «розмиті» лопаті
+  R(ctx, x - 8 - bl + 1, y - 5, bl * 2 + 1, 1, 'w'); R(ctx, x + 7 - bl, y - 5, bl * 2 + 1, 1, 'w');
+  ctx.globalAlpha = 0.25; R(ctx, x - 10, y - 4, 7, 1, 'w'); R(ctx, x + 4, y - 4, 7, 1, 'w'); ctx.globalAlpha = 1;
+  R(ctx, x - 7, y + 2, 1, 1, Math.floor(animClock * 2 + ph) % 2 ? 'r' : 'd'); R(ctx, x + 7, y + 2, 1, 1, Math.floor(animClock * 2 + ph) % 2 ? 'd' : 'g');   // бортові вогні
+}
+function skyxKite(x, y, ph, c) {                                   // повітряний змій-ромб із хвостом і бантиками
+  x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
+  const rp = c.map(b => { const h = PALETTE[b] || b; return [mixHex(h, '#ffffff', 0.4), h, mixHex(h, '#272048', 0.45)]; });
+  for (let j = -8; j <= 8; j++) { const half = Math.round(6 * (1 - Math.abs(j) / 9) + (j < 0 ? 1 : 0)); for (let i = -half; i <= half; i++) { const left = i < 0, top = j < 0; R(ctx, x + i, y + j, 1, 1, i === 0 ? '#2a1f2e' : (left === top ? rp[0][top ? 1 : 0] : rp[1][1])); } }
+  R(ctx, x, y - 9, 1, 18, '#2a1f2e'); R(ctx, x - 6, y, 13, 1, '#2a1f2e');
+  for (let k = 1; k <= 20; k++) { const tx = x + Math.round(Math.sin(ph * 1.5 - k * 0.5) * (1 + k * 0.28)), ty = y + 8 + k; R(ctx, tx, ty, 1, 1, '#2a1f2e'); if (k % 5 === 0) { R(ctx, tx - 2, ty, 5, 1, rp[1][1]); R(ctx, tx, ty - 2, 1, 5, rp[0][1]); } }
+}
+const noteCache = {};
+function noteCanvas(c, g) {                                         // нота-спрайт: заливка з відблиском, темний контур і м'яке сяйво кольору
+  const key = c + g; if (noteCache[key]) return noteCache[key];
+  const hex = PALETTE[c] || c, W = 30, H = 36, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const q = cv.getContext('2d');
+  const sx = 11, by = 27, put = (x, y, w, h, col) => { q.fillStyle = col; q.fillRect(x, y, w, h); };
+  const body = document.createElement('canvas'); body.width = W; body.height = H; const b = body.getContext('2d');
+  const bp = (x, y, w, h, col) => { b.fillStyle = col; b.fillRect(x, y, w, h); };
+  const head = (hx, hy) => { for (let dy = -3; dy <= 3; dy++) for (let dx = -4; dx <= 4; dx++) { const v = (dx * 0.92 + dy * 0.28) * (dx * 0.92 + dy * 0.28) / 16 + (dy * 0.92 - dx * 0.28) * (dy * 0.92 - dx * 0.28) / 9.6; if (v <= 1) bp(hx + dx, hy + dy, 1, 1, (dx < 0 && dy < 0) ? mixHex(hex, '#ffffff', 0.55) : (dx > 1 && dy > 0) ? mixHex(hex, '#272048', 0.35) : hex); } };
+  if (g === 0) { head(sx, by); bp(sx + 3, by - 18, 2, 18, hex); bp(sx + 3, by - 18, 1, 18, mixHex(hex, '#ffffff', 0.5)); bp(sx + 5, by - 18, 2, 3, hex); bp(sx + 6, by - 15, 3, 3, hex); bp(sx + 7, by - 12, 2, 4, hex); bp(sx + 6, by - 9, 2, 2, hex); }
+  else if (g === 1) { head(sx - 2, by); head(sx + 10, by - 2); bp(sx + 1, by - 18, 2, 18, hex); bp(sx + 13, by - 20, 2, 18, hex); bp(sx + 1, by - 18, 14, 3, hex); bp(sx + 1, by - 18, 14, 1, mixHex(hex, '#ffffff', 0.55)); }
+  else { head(sx, by); bp(sx + 3, by - 19, 2, 19, hex); bp(sx + 3, by - 19, 1, 19, mixHex(hex, '#ffffff', 0.5)); head(sx, by); }
+  const id = b.getImageData(0, 0, W, H).data, solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && id[(y * W + x) * 4 + 3] > 40;
+  // м'яке сяйво, потім контур, потім заливка
+  const grd = q.createRadialGradient(W / 2, H / 2, 2, W / 2, H / 2, 17); grd.addColorStop(0, mixHex(hex, '#ffffff', 0.4).replace('rgb', 'rgba').replace(')', ',0.5)')); grd.addColorStop(1, 'rgba(255,255,255,0)');
+  q.fillStyle = grd; q.fillRect(0, 0, W, H);
+  q.fillStyle = '#2a1f2e';
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!solid(x, y) && (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1) || solid(x - 1, y - 1) || solid(x + 1, y + 1))) q.fillRect(x, y, 1, 1);
+  q.drawImage(body, 0, 0);
+  return (noteCache[key] = cv);
+}
+function skyxNote(x, y, ph, c, g, amp) {                            // нота пливе вгору по м'якій хвилі (дві гармоніки), з появою й згасанням
+  const cv = noteCanvas(c, g), wob = Math.sin(ph) * (amp || 7) + Math.sin(ph * 2.3 + 1) * 2;
+  x = Math.round(x + wob); y = Math.round(y);
+  const top = 8 - view.offY, fade = Math.max(0, Math.min(1, (y - top) / 26)) * Math.max(0, Math.min(1, (132 - y) / 16));
+  if (fade <= 0.02) return;
+  ctx.globalAlpha = 0.92 * fade; ctx.drawImage(cv, x - 15, y - 27); ctx.globalAlpha = 1;
+}
+const planeCache = {};
+function skyxPlane(x, y, ph, c, dir) {                              // пропелерний літак 50-х: корпус, крило, хвіст, кабіна, пропелер і слід
+  const key = c.join() + dir; let cv = planeCache[key];
+  if (!cv) {
+    const S = 1.5; cv = document.createElement('canvas'); cv.width = 45; cv.height = 21; const g = cv.getContext('2d');
+    const h1 = PALETTE[c[0]], h2 = PALETTE[c[1]], P = (px, py, w, h, col) => { const X = Math.round(px * S), Wd = Math.max(1, Math.round(w * S)); g.fillStyle = col; g.fillRect(dir > 0 ? X : 45 - X - Wd, Math.round(py * S), Wd, Math.max(1, Math.round(h * S))); };
+    P(5, 5, 20, 5, '#2a1f2e'); P(6, 6, 18, 3, h1); P(6, 6, 18, 1, mixHex(h1, '#ffffff', 0.5)); P(6, 8, 18, 1, mixHex(h1, '#272048', 0.35));   // корпус
+    P(21, 4, 5, 2, '#2a1f2e'); P(22, 4, 3, 1, h2); P(1, 8, 6, 3, '#2a1f2e'); P(2, 8, 4, 2, h2);                                                // кабіна й хвіст
+    P(12, 2, 8, 3, '#2a1f2e'); P(13, 3, 6, 1, h2); P(11, 10, 9, 2, '#2a1f2e'); P(12, 10, 7, 1, h2);                                              // крила (біплан)
+    P(15, 3, 1, 8, '#2a1f2e'); P(25, 7, 2, 2, '#2a1f2e'); P(26, 7, 1, 2, '#c0c8e0');                                                              // стійка й капот
+    P(22, 6, 3, 2, '#bfe9ff'); P(22, 6, 1, 1, '#ffffff');                                                                                         // скло
+    planeCache[key] = cv;
+  }
+  x = Math.round(x); y = Math.round(y + Math.sin(ph * 1.3) * 1.5);
+  ctx.drawImage(cv, x - 22, y - 11);
+  const px = x + dir * 20, bl = Math.floor(animClock * 20) % 2 ? 7 : 4;                                                                            // пропелер
+  R(ctx, px, y - bl, 2, bl * 2 + 1, 'w'); ctx.globalAlpha = 0.35; R(ctx, px, y - 9, 2, 19, 'w'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.5; for (let k = 1; k <= 14; k++) { ctx.globalAlpha = 0.5 * (1 - k / 15); R(ctx, x - dir * (24 + k * 3), y + 1 + (k >> 3), 3, 1, 'w'); } ctx.globalAlpha = 1;      // слід
+}
+function skyxSputnik(x, y, ph) {                                    // перший супутник: блискуча куля з чотирма вусами, миготливий вогник
+  x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
+  for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.hypot(dx, dy); if (d > 4.3) continue; const sh = (-dx - dy) / 8; R(ctx, x + dx, y + dy, 1, 1, d > 3.4 ? 'd' : sh > 0.35 ? 'w' : sh > -0.05 ? 'E' : 'e'); }
+  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => { for (let k = 5; k <= 13; k++) R(ctx, x + sx * k, y + sy * Math.round(k * 0.45), 1, 1, k > 11 ? 'w' : 'd'); });
+  if (Math.floor(animClock * 2 + ph) % 2) { ctx.globalAlpha = 0.4; disc(ctx, x + 3, y - 3, 3, 'r'); ctx.globalAlpha = 1; R(ctx, x + 3, y - 3, 1, 1, 'r'); }
+}
+const INV_ART = [
+  ['..#....#..', '...#..#...', '..######..', '.##.##.##.', '##########', '#.######.#', '#.#....#.#', '...##.##..'],
+  ['...####...', '.########.', '##########', '###..##..#', '##########', '..##..##..', '.##.##.##.', '##......##'],
+  ['..#....#..', '#..#..#..#', '#.######.#', '###.##.###', '##########', '.########.', '..#....#..', '.#......#.']];
+function skyxInvader(x, y, ph, v) {                                // піксельний прибулець: двокадрова анімація, ступінчастий рух
+  const art = INV_ART[v % 3], step = Math.floor(ph * 2) % 2, col = ['g', 'f', 'T'][v % 3];
+  x = Math.round(x / 2) * 2; y = Math.round(y);
+  const at = (i, j) => { const sx = (step && j >= 6) ? (i < 5 ? -1 : 1) : 0; return [x - 5 + i + sx, y + j]; };       // нижні «ніжки» розходяться на другому кадрі
+  art.forEach((row, j) => { for (let i = 0; i < 10; i++) if (row[i] === '#') { const p = at(i, j); R(ctx, p[0] + 1, p[1] + 1, 1, 1, 'd'); } });
+  art.forEach((row, j) => { for (let i = 0; i < 10; i++) if (row[i] === '#') { const p = at(i, j); R(ctx, p[0], p[1], 1, 1, col); } });
+  R(ctx, x - 3, y + 3, 1, 1, 'd'); R(ctx, x + 2, y + 3, 1, 1, 'd');
+}
+function skyxButterfly(x, y, ph, c) {                              // метелик: крила змахують, опускаючись і піднімаючись
+  x = Math.round(x); y = Math.round(y);
+  const f = Math.floor(ph * 3) % 3, wH = [4, 2, 0][f];
+  R(ctx, x, y - 1, 1, 3, 'd');
+  R(ctx, x - 3, y - wH, 3, wH + 1, c[0]); R(ctx, x + 1, y - wH, 3, wH + 1, c[0]);
+  R(ctx, x - 2, y + 1, 2, 1, c[1]); R(ctx, x + 1, y + 1, 2, 1, c[1]);
+  R(ctx, x - 3, y - wH, 3, 1, 'd'); R(ctx, x + 1, y - wH, 3, 1, 'd');
 }
 // Планета з кільцем і місяць: малюються один раз піксель за пікселем зі світлом зверху зліва (опукла куля, терминатор, відбите світло, тінь кільця)
 let SPACE_PL = null;
@@ -12885,9 +13159,9 @@ function drawSkyExtra(time) {
     for (let i = 0; i < 6; i++) { const sx = Math.round(worldL() + 20 + i * (view.w - 40) / 5), sy = top + 6 + (i * 13) % 34, v = Math.sin(time * 2.4 + i * 1.7); if (v > 0.3) sparkPlus(sx, sy, (v - 0.3) / 0.7, i % 2 ? '#fff6b0' : '#ffd0f0'); }
   }
   if (ep === 6) {                                                         // Космос: планета з кільцем і місяць
-    const spl = spacePlanets(), cxw = (worldL() + worldR()) / 2, dlt = (visL() + visR()) / 2 - cxw, vw = visR() - visL();     // dlt — на скільки камера зсунута від центру світу
-    const pxp = Math.round(cxw + (0.74 - 0.5) * vw + 0.75 * dlt), pyp = top + 40;                                          // планета далеко: зсувається за камерою лише на 25%
-    const mxp = Math.round(cxw + (0.2 - 0.5) * vw + 0.7 * dlt), myp = top + 22;                                           // місяць ближче: на 40%
+    const spl = spacePlanets(), wl = worldL(), ww = worldR() - worldL();
+    const pxp = Math.round(wl + ww * 0.6), pyp = top + 40;                                   // планета й місяць прикріплені до світу: при русі камери стоять на місці, як будинки
+    const mxp = Math.round(wl + ww * 0.4), myp = top + 22;
     ctx.drawImage(spl.planet, pxp - spl.planetCx, pyp - spl.planetCy);
     ctx.drawImage(spl.moon, mxp - spl.moonCx, myp - spl.moonCy);
     if (!noFly) SKYX.meteors.forEach(m => { const a = Math.max(0, 1 - m.life / 1.1); for (let k = 0; k < 16; k++) { ctx.globalAlpha = a * (1 - k / 16); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k), 1, 1, k < 4 ? 'w' : 'y'); R(ctx, Math.round(m.x - m.vx * 0.012 * k), Math.round(m.y - m.vy * 0.012 * k) + 1, 1, 1, 'o'); } ctx.globalAlpha = a; R(ctx, Math.round(m.x), Math.round(m.y), 3, 2, 'w'); ctx.globalAlpha = 1; });
@@ -12901,9 +13175,15 @@ function drawSkyExtra(time) {
   }
   (noFly ? [] : SKYX.items).forEach(f => {
     if (f.k === 'hab') skyxBalloon(f.x, f.y, f.r, f.c[0], f.c[1], f.ph);
-    else if (f.k === 'drn') skyxDrone(f.x, f.y, f.ph, f.box);
-    else if (f.k === 'isl') skyxIsland(f.x, f.y, f.w, f.ph);
-    else if (f.k === 'tet') { f.cells.forEach(([i0, j0]) => { let i = i0, j = j0; for (let r = 0; r < f.rot; r++) { const ni = -j, nj = i; i = ni; j = nj; } const cx = Math.round(f.x + i * 5), cy = Math.round(f.y + j * 5); R(ctx, cx, cy, 5, 5, 'k'); R(ctx, cx + 1, cy + 1, 3, 3, f.c); R(ctx, cx + 1, cy + 1, 3, 1, 'w'); }); }
+    else if (f.k === 'drn') skyxDrone2(f.x, f.y, f.ph, f.box);
+    else if (f.k === 'isl') skyxIsland2(f.x, f.y, f.w, f.v, f.ph);
+    else if (f.k === 'kite') skyxKite(f.x, f.y, f.ph, f.c);
+    else if (f.k === 'note') skyxNote(f.x, f.y, f.ph, f.c, f.g, f.amp);
+    else if (f.k === 'ppl') skyxPlane(f.x, f.y, f.ph, f.c, f.vx > 0 ? 1 : -1);
+    else if (f.k === 'sput') skyxSputnik(f.x, f.y, f.ph);
+    else if (f.k === 'inv') skyxInvader(f.x, f.y, f.ph, f.v);
+    else if (f.k === 'bfly') skyxButterfly(f.x, f.y, f.ph, f.c);
+    else if (f.k === 'tet') { f.cells.forEach(([i0, j0]) => { let i = i0, j = j0; for (let r = 0; r < f.rot; r++) { const ni = -j, nj = i; i = ni; j = nj; } const cx = Math.round(f.x + i * 6), cy = Math.round(f.y + j * 6); ctx.drawImage(skyxBlock(f.c), cx, cy); }); }
   });
 }
 
@@ -13172,7 +13452,7 @@ function updateShootingStar(dt) {
   if (shootingStar) {
     const q = shootingStar;
     q.t += dt; q.x += q.vx * dt; q.y += q.vy * dt;
-    if (q.t >= q.life) { shootingStar = null; shootTimer = rand(8, 22); }
+    if (q.t >= q.life) { shootingStar = null; shootTimer = rand(2.5, 8); }
   } else {
     shootTimer -= dt;
     if (shootTimer <= 0) shootingStar = { x: rand(view.w * 0.1, view.w * 0.8), y: rand(4, view.offY + 40), vx: rand(110, 160), vy: rand(40, 70), t: 0, life: 0.7 };
@@ -13987,7 +14267,12 @@ function drawHagGame() {
 /* ---- логіка ---- */
 function circusStopX() { return mailBoxX() + 150; }   // стоїть на дорозі прямо над поштоматом (так, щоб шатра повністю його закрили) — прив'язаний до дороги, а не до екрана
 function circusStartX() { return circus.sx !== undefined ? circus.sx : Math.max(visR() + 90, circusStopX() + 150); }   // звідки в'їжджає: трохи правіше від того, що видно в момент тапу, далі їде по дорозі
-function bangPos() { return { x: Math.min(visR() - 14, shop.x + shop.w + 50), y: LAYOUT.streetTop + 9 }; }   // «!» стоїть далеко праворуч від магазину, щоб не заважав обзору й тапам   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
+function bangPos() {
+  const hi = TEAM.findIndex(m => m.spot && m.spot.x === null), hx = hi >= 0 ? actorHome(TEAM[hi]) : 0;      // «!» стоїть правіше за їжака з касою, щоб не перекривати його
+  let x = Math.max(shop.x + shop.w + 50, hx + 36);
+  if (x > visR() - 12) x = Math.max(visL() + 14, shop.x - 36);                                        // справа немає місця (телефон): ліворуч від магазину
+  return { x, y: LAYOUT.streetTop + 9 };
+}   // «!» стоїть далеко праворуч від магазину, щоб не заважав обзору й тапам   // «!» стоїть біля самого магазину, на тротуарі біля правої стіни
 function circusY() { return mailRoadY() + 2; }
 function circusQuiet() { return !dialog.active && !epochIntro.active && !build && !trouble && !ghostHunt && ui.modal.hidden && ui.wheelModal.hidden && ui.letterModal.hidden && ui.circusModal.hidden; }
 function updateCircus(dt) {
@@ -15087,7 +15372,7 @@ function initEvents() {
    СЮЖЕТ І ДІАЛОГИ
    ===================================================================== */
 
-const dialog = { active: false, kind: 'ch', chapter: 0, labelNo: 0, replay: false, pages: [], page: 0, shown: 0, text: '', after: null };
+const dialog = { active: false, kind: 'ch', chapter: 0, labelNo: 0, epk: 0, replay: false, pages: [], page: 0, shown: 0, text: '', after: null };
 let storyTimer = 1;           // перша перевірка через секунду після старту
 const cameos = [];            // гості-камео на вулиці (Шнирь, що тікає з печивом)
 
@@ -15108,6 +15393,8 @@ function speakerName(sp) {
   return t('team_' + sp);
 }
 function pageText(p) {
+  if (p.speaker === 'title' && dialog.kind === 'ec') return t('epochTitle_' + dialog.epk) + ' · ' + t('chapterLabel', dialog.labelNo) + '\n' + t('ec' + dialog.epk + '_' + dialog.chapter + '_title');
+  if (p.speaker === 'title' && dialog.kind === 'ch') return t('epochTitle_0') + ' · ' + t('chapterLabel', dialog.labelNo) + '\n' + t('ch' + dialog.chapter + '_title');
   if (p.speaker === 'title') return t(dialog.kind === 'ep' ? 'epochLabel' : 'chapterLabel', dialog.labelNo) + '\n' + t(dialog.kind + dialog.chapter + '_title');
   return t(p.key, HELP_NEED);
 }
@@ -15172,17 +15459,18 @@ function showDialogPage() {
 
 // Запускає главу n (kind 'ch'), фрагмент епохи (kind 'ep') або туторіал (kind 'tut').
 // replay — перечитування з вкладки «Історія» (без наслідків для гри); labelNo — номер, що пишеться в заголовку
-function startDialogue(n, replay = false, kind = 'ch', labelNo = n) {
-  const def = kind === 'ch' ? CHAPTERS[n - 1] : (kind === 'ep' || kind === 'thx') ? EPOCH_STORIES[n - 1] : TUTORIAL;
+function startDialogue(n, replay = false, kind = 'ch', labelNo = n, epk = 0) {
+  const def = kind === 'ec' ? (EPOCH_CHAPTERS[epk] || [])[n - 1] : kind === 'ch' ? CHAPTERS[n - 1] : (kind === 'ep' || kind === 'thx') ? EPOCH_STORIES[n - 1] : TUTORIAL;
   if (!def || dialog.active) return;
   dialog.after = null;
   dialog.active = true;
   dialog.kind = kind;
   dialog.chapter = n;
   dialog.labelNo = labelNo;
+  dialog.epk = epk;
   dialog.replay = replay;
   dialog.page = 0;
-  const prefix = kind === 'tut' ? 'tut' + n : kind + n;
+  const prefix = kind === 'tut' ? 'tut' + n : kind === 'ec' ? 'ec' + epk + '_' + n : kind + n;
   dialog.choosing = false;
   if (kind === 'ep') {
     // історія епохи: вступ → вибір Капі (жарт чи серйозно) → відповідь → завершення. При перечитуванні вибір береться зі збереженого
@@ -15209,7 +15497,7 @@ function advanceDialog() {
 
 function endDialogue() {
   if (!dialog.active) return;
-  const n = dialog.chapter, replay = dialog.replay, kind = dialog.kind;
+  const n = dialog.chapter, replay = dialog.replay, kind = dialog.kind, epk = dialog.epk;
   dialog.active = false;
   dialog.choosing = false;
   ui.dlgChoices.hidden = true;
@@ -15218,10 +15506,15 @@ function endDialogue() {
   if (kind === 'thx') { if (!replay) { state.story.thx[n - 1] = 1; saveGame(); } if (after) after(); return; }
   if (replay) return;
   if (kind === 'tut') { state.tutorialDone = true; storyTimer = 1; saveGame(); return; }
+  if (kind === 'ec') {                                                                    // глава епохи 2–8
+    const st = state.story; if (!st.epDone) st.epDone = [0, 0, 0, 0, 0, 0, 0, 0];
+    st.epDone[epk] = Math.max(st.epDone[epk] || 0, n);
+    if (epk === 7 && n === 8 && !st.shnyrJoined) joinShnyr();                              // фінал останньої епохи: Шнирь іде в команду
+    storyTimer = 1.5; updateUI(); saveGame(); if (after) after(); return;
+  }
   if (kind === 'ep') {
     const st = state.story;
     if (!st.guests[n - 1]) { st.guests[n - 1] = Math.max(...st.guests) + 1; syncGuests(n - 1); nextGhostAt = Date.now() + 25000; }       // гість лишається жити в місті; перші істоти для його прохання з’являться за пів хвилини
-    if (n === 7 && !st.shnyrJoined) { st.shnyrJoined = true; showToast(t('shnyrJoined'), 'big'); }   // у Неоновій епосі Шнирь стає другом і працівником
     storyTimer = 1; updateUI(); saveGame(); return;
   }
   state.story.done = Math.max(state.story.done, n);
@@ -15343,15 +15636,26 @@ function checkStory(dt) {
   if (!ghostHunt) { const late = helpThanksLate(); if (late.length) { playThanksChain(late); return; } }       // гостям минулих епох, яким уже допомогли, подяка одразу
   if (state.story.done >= 1 && !state.tutorialDone) { startDialogue(1, false, 'tut'); return; }   // коротке навчання після першої глави
   if (state.story.done >= 4 && state.tutorialDone && !state.story.guests[8]) { startDialogue(9, false, 'ep', 1); return; }       // гість першої епохи
+  { const ek = state.epoch % EPOCHS.length, st = state.story;                           // глави поточної епохи (з 2-ї): свій сюжет у кожній
+    if (ek >= 1 && EPOCH_CHAPTERS[ek] && st.finale) { const nd = (st.epDone && st.epDone[ek]) || 0; if (nd < 8 && triggerMet(EPOCH_CHAPTERS[ek][nd].trigger, state)) { startDialogue(nd + 1, false, 'ec', nd + 1, ek); return; } } }
   const next = state.story.done;
   if (next >= CHAPTERS.length) return;
   if (triggerMet(CHAPTERS[next].trigger, state)) startDialogue(next + 1);
 }
 
+// Шнирь іде в команду: одразу найнятий і отримує особливу здібність — сам ловить золотих відвідувачів
+function shnyrIdx() { return TEAM.findIndex(m => m.id === 'shnyr'); }
+function shnyrPerk() { const i = shnyrIdx(); return !!(state.story.shnyrJoined && i >= 0 && state.team[i] > 0); }
+function joinShnyr() {
+  state.story.shnyrJoined = true; const i = shnyrIdx();
+  if (i >= 0 && !(state.team[i] > 0)) state.team[i] = 1;
+  try { recalcIncome(); syncActors(); } catch (e) { /* не страшно */ }
+  showToast(t('shnyrJoined'), 'big'); showToast(t('shnyrPerk'), 'good');
+}
 // Вкладка «Історія»: відкриті глави з кнопкою «Читати»
 function updateStoryUI() {
   if (ui.paneStory.hidden) return;
-  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels + '|' + state.story.guests[8] + '|' + state.story.help.join() + '|' + state.story.thx.join();
+  const sig = state.story.done + '|' + state.lang + '|' + state.stats.timeTravels + '|' + state.story.guests[8] + '|' + state.story.help.join() + '|' + state.story.thx.join() + '|' + (state.story.epDone || []).join();
   if (uiCache.storySig === sig) return;
   uiCache.storySig = sig;
   ui.storyList.innerHTML = '';
@@ -15361,7 +15665,24 @@ function updateStoryUI() {
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('introCutBtn');
     btn.addEventListener('click', () => startIntroCutscene(true));
     card.append(num, title, btn); ui.storyList.appendChild(card); }
-  for (let n = 1; n <= Math.min(state.story.done, CHAPTERS.length); n++) {
+  const curEp = state.epoch % EPOCHS.length;
+  if (!uiCache.storyOpen) uiCache.storyOpen = {};
+  const isOpen = ek => (uiCache.storyOpen[ek] !== undefined ? uiCache.storyOpen[ek] : ek === curEp);        // за замовчуванням розкрита лише поточна епоха
+  const sectionHead = (ek, nd) => {                                                           // заголовок розділу епохи (тап — згорнути/розкрити): назва · скільки глав прочитано
+    if (nd === 0 && ek !== curEp) {                                                            // епоха ще не відкрита: заголовок із замком
+      const lk = document.createElement('div'); lk.className = 'card chapter-card'; const ln = document.createElement('div'); ln.className = 'num'; ln.textContent = '🔒';
+      const lt = document.createElement('div'); lt.className = 'title'; lt.textContent = t('epochTitle_' + ek) + ' · 0/8'; lk.style.opacity = '0.6'; lk.append(ln, lt); ui.storyList.appendChild(lk); return;
+    }
+    const head = document.createElement('button'); head.type = 'button'; head.className = 'card chapter-card'; head.style.cssText = 'width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;';
+    head.setAttribute('aria-expanded', String(isOpen(ek)));
+    const hn = document.createElement('div'); hn.className = 'num'; hn.textContent = ek === curEp ? '★' : '⏳';
+    const ht = document.createElement('div'); ht.className = 'title'; ht.textContent = (isOpen(ek) ? '[−] ' : '[+] ') + t('epochTitle_' + ek) + ' · ' + nd + '/8';
+    head.addEventListener('click', () => { uiCache.storyOpen[ek] = !isOpen(ek); uiCache.storySig = ''; updateStoryUI(); });
+    head.append(hn, ht); ui.storyList.appendChild(head);
+  };
+  const lockCard = () => { const lock = document.createElement('div'); lock.className = 'card dept locked'; lock.textContent = t('storyLocked'); ui.storyList.appendChild(lock); };
+  sectionHead(0, Math.min(state.story.done, CHAPTERS.length));
+  for (let n = 1; n <= (isOpen(0) ? Math.min(state.story.done, CHAPTERS.length) : 0); n++) {
     const card = document.createElement('div');
     card.className = 'card chapter-card';
     const num = document.createElement('div'); num.className = 'num'; num.textContent = n;
@@ -15370,6 +15691,21 @@ function updateStoryUI() {
     btn.addEventListener('click', () => startDialogue(n, true));
     card.append(num, title, btn);
     ui.storyList.appendChild(card);
+  }
+  // глави епох 2–8: окремий розділ на кожну епоху
+  for (let ek = 1; ek < EPOCHS.length; ek++) {
+    const nd = Math.min(8, (state.story.epDone && state.story.epDone[ek]) || 0);
+    sectionHead(ek, nd);
+    if (!isOpen(ek) || (nd === 0 && ek !== curEp)) continue;
+    for (let n = 1; n <= nd; n++) {
+      const card = document.createElement('div'); card.className = 'card chapter-card';
+      const num = document.createElement('div'); num.className = 'num'; num.textContent = n;
+      const title = document.createElement('div'); title.className = 'title'; title.textContent = t('ec' + ek + '_' + n + '_title');
+      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
+      btn.addEventListener('click', () => startDialogue(n, true, 'ec', n, ek));
+      card.append(num, title, btn); ui.storyList.appendChild(card);
+    }
+    if (ek === curEp && nd < 8) lockCard();
   }
   // фрагменти епох (відкриваються подорожами в часі)
   const epEntries = [];
@@ -15415,13 +15751,21 @@ function syncGuests(arrive) {
   for (let i = guestWalkers.length - 1; i >= 0; i--) if (!met.includes(guestWalkers[i].k)) guestWalkers.splice(i, 1);
   met.forEach(k => {
     if (guestWalkers.some(g => g.k === k)) return;
-    guestWalkers.push({ k, id: GUEST_IDS[k], x: arrive === k ? worldL() - 12 : rand(worldL() + 20, worldR() - 20), y: rand(LAYOUT.streetTop + 10, roadFloor()),
-      dir: 1, t: rand(0, 10), mode: 'idle', wait: rand(0.3, 2), speed: rand(12, 20), moving: false, tx: 0, ty: 0, sayIn: rand(15, 40) });
+    const fresh = arrive === k;
+    guestWalkers.push({ k, id: GUEST_IDS[k], x: fresh ? Math.max(worldL() - 12, visL() - 14) : rand(worldL() + 20, worldR() - 20), y: fresh ? roadFloor() - 4 : rand(LAYOUT.streetTop + 10, roadFloor()),
+      dir: 1, t: rand(0, 10), mode: 'idle', wait: fresh ? 0.1 : rand(0.3, 2), speed: fresh ? 34 : rand(12, 20), moving: false, tx: 0, ty: 0, sayIn: rand(15, 40) });
+    if (fresh && typeof guestArrived === 'function') guestArrived(k);                           // місце гостя з'явиться, коли він дійде
   });
 }
 function updateGuests(dt) {
   guestWalkers.forEach(g => {
     g.t += dt;
+    if (typeof standPending !== 'undefined' && standPending[g.k] !== undefined) {              // новий гість іде до свого місця
+      const st = guestStands(true).find(s => s.k === g.k);
+      if (!st || Math.abs(g.x - st.x) < st.w / 2 + 10 || animClock > standPending[g.k]) {
+        delete standPending[g.k]; if (st) { standReveal[g.k] = animClock; try { spawnDust(st.x, st.y, 8); playSfx('upgrade'); } catch (e) { /* не страшно */ } }
+      } else if (g.mode === 'idle' || g.mode === 'walk') { g.tx = st.x; g.ty = Math.min(roadFloor(), st.y + 8); g.mode = 'walk'; g.speed = 34; }
+    }
     g.y = Math.min(g.y, roadFloor());
     if (g.mode === 'idle') {
       g.moving = false; g.wait -= dt;
@@ -15455,7 +15799,7 @@ function hitGuest(p) {
 function drawGuest(g) {                                   // гість такого ж розміру й чіткості, як звірята команди (ACTOR_K)
   const x = Math.round(g.x), y = Math.round(g.y), step = g.moving ? Math.floor(g.t * 5) % 2 : 0, k = ACTOR_K;
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
-  ctx.globalAlpha = 0.22; R(ctx, x - 6, y, 12, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.24; R(ctx, x - 7, y, 14, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 4, y + 2, 8, 1, 'd'); ctx.globalAlpha = 1;
   ctx.restore();
   drawCrispFigure('npc_' + g.id, x, y, step, step === 1);
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
@@ -15479,11 +15823,396 @@ function updateCameos(dt) {
 function drawCameo(c) {
   const step = Math.floor(c.t * 8) % 2;
   const x = Math.round(c.x), y = c.y;
-  ctx.globalAlpha = 0.22; R(ctx, x - 6, y, 12, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.24; R(ctx, x - 7, y, 14, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 4, y + 2, 8, 1, 'd'); ctx.globalAlpha = 1;
   drawSprite(ctx, c.sprite, x - 8, y - 16 - step, { flip: step === 1 });
   R(ctx, x + 6, y - 9 - step, 4, 4, 'c'); R(ctx, x + 7, y - 8 - step, 1, 1, 'd'); R(ctx, x + 8, y - 7 - step, 1, 1, 'd');   // печиво
 }
 
+//#part 241_epoch_story.js
+/* =====================================================================
+   СЮЖЕТ ЕПОХ 2–8: у кожної епохи свій розділ із 8 глав (епоха 1 «Відродження» має класичні CHAPTERS).
+   Рядок: [хто говорить, текст uk, текст en]. Особливі імена: 'S' — Шнирь у костюмі цієї епохи, 'G' — гість цієї епохи,
+   'narr' — оповідач, capy / spike / clock / tonya / zoya / kria — як завжди.
+   Прогрес: state.story.epDone[індекс епохи]; діалог kind 'ec'; тексти ec{епоха}_{глава}_{k} збираються в translations нижче.
+   ===================================================================== */
+translations.uk.shnyrPerk = 'Особливість Шниря: сам ловить золотих відвідувачів, і вони заходять на чверть частіше.';
+translations.en.shnyrPerk = 'Shnyr perk: he catches golden customers himself, and they visit a quarter more often.';
+translations.uk.shnyrCatch = 'Шнирь упіймав золотого відвідувача!';
+translations.en.shnyrCatch = 'Shnyr caught a golden customer!';
+const EC_TRIGGERS = [{}, { level: 2 }, { level: 2, eeSec: 240 }, { level: 3 }, { level: 4 }, { level: 5 }, { level: 6 }, { level: 6, near: true }];
+const EC_DATA = {
+  /* ---- 1. РЕТРО: закусочна й джубокс (гість Піп) ---- */
+  1: [
+    { t: ["Платівка, що заїла", "The Record That Got Stuck"], L: [
+      ["narr", "Місто раптом стало схожим на листівку з минулого: смугасті навіси, хромовані столики й ледь чутне «шур-шур» голок.", "The town suddenly looks like a postcard from the past: striped awnings, chrome tables and the soft hiss of record needles."],
+      ["G", "Привіт! Я Піп, господар закусочної. Мій джубокс грає одну й ту саму пісню вже третю добу.", "Hi! I'm Pip, I run the diner. My jukebox has played the same song for three days straight."],
+      ["capy", "Може, його просто треба розговорити?", "Maybe it just needs someone to talk to?"],
+      ["G", "Я пробував. Він лише підспівує. Нижчим голосом. З придихом.", "I tried. It just sings along. In a lower voice. Breathily."],
+      ["narr", "З джубокса долинуло глухе чхання. Піп відступив на крок, а Капі присіла послухати уважніше.", "A muffled sneeze came from the jukebox. Pip stepped back, and Capy crouched down to listen closer."] ] },
+    { t: ["Діджей із джубокса", "The DJ in the Jukebox"], L: [
+      ["narr", "Кришка джубокса відкинулась, і звідти виліз єнот у картатому піджаку з гребінцем у кишені.", "The jukebox lid flipped open and a raccoon in a checkered jacket climbed out, a comb sticking from his pocket."],
+      ["S", "Тихо! Я не злодій, я діджей. Просто платівка була така красива, що я її позичив. На навіки.", "Shh! I'm not a thief, I'm a DJ. The record was so pretty I borrowed it. Forever."],
+      ["spike", "Позичив без розписки. Це розкрадання. Рахую збитки.", "Borrowed without a receipt. That's theft. Calculating damages."],
+      ["capy", "Шнирю, давай домовимось: платівку повертаєш, а ми не рахуємо збитки.", "Shnyr, let's make a deal: the record goes back and we skip the damages."],
+      ["S", "Домовились. Але діджеїв не звільняють, щоб ви знали.", "Deal. But DJs don't get fired, just so you know."] ] },
+    { t: ["Коктейль №13", "Milkshake Number 13"], L: [
+      ["G", "Видатна подія: втрачено рецепт мого фірмового коктейлю. Лишилось тринадцять інгредієнтів, а чотирнадцятий — таємниця.", "Disaster: I've lost my signature milkshake recipe. Thirteen ingredients remain, the fourteenth was a secret."],
+      ["spike", "Я перерахував ціни: чотирнадцятий інгредієнт, імовірно, коштує нуль монет. Підозріло.", "I ran the numbers: the fourteenth ingredient probably costs zero coins. Suspicious."],
+      ["capy", "Нуль монет... Може, це не продукт, а те, як його подають?", "Zero coins... maybe it isn't an ingredient but how it's served?"],
+      ["G", "Усмішка! Саме так: я завжди ставив склянку з усмішкою. А втратив її разом із рецептом!", "A smile! That's it: I always handed the glass over with a smile. I lost it along with the recipe!"],
+      ["narr", "Піп усміхнувся, і коктейль знову вийшов таким, як треба. Черга стояла аж до другого кварталу.", "Pip smiled, and the milkshake came out just right. The queue stretched to the next block."] ] },
+    { t: ["Літак із помилкою", "The Plane With a Typo"], L: [
+      ["narr", "Над вулицею пролетів біплан із довгим банером. Всі задерли голови й прочитали вголос.", "A biplane flew over the street trailing a long banner. Everyone looked up and read it aloud."],
+      ["zoya", "«ЗНИЖКИ НА САЛАТ». Але ж ми не продаємо салат...", "“SALAD SALE.” But we don't sell salad..."],
+      ["spike", "Це не друкарська помилка, це інвестиція в зелень. До вечора сюди прийде весь район.", "That's not a typo, that's an investment in greens. By evening the whole district will be here."],
+      ["capy", "Тоді діставайте з комори все, що хоч трохи зелене!", "Then fetch everything even slightly green from the storeroom!"],
+      ["S", "У мене є зелена шапка. Продається. Недорого.", "I've got a green hat. For sale. Cheap."] ] },
+    { t: ["Біп-біп із неба", "Beep-Beep From the Sky"], L: [
+      ["narr", "Увечері над дахами прокотилась маленька блискуча зірочка. Вона писнула: «біп-біп» — і сховалась за хмарою.", "That evening a tiny shiny star rolled across the rooftops. It went “beep-beep” and hid behind a cloud."],
+      ["G", "Це що, новий дзвінок? Я не замовляв!", "Is that a new doorbell? I didn't order one!"],
+      ["tonya", "Невідомий об'єкт у повітрі. Охороні сподобалось, що він блимає у ритм.", "Unknown object in the air. Security likes that it blinks in rhythm."],
+      ["capy", "Схоже, хтось далеко звідси привітався з нами першим.", "Looks like someone far away just said hello to us first."],
+      ["clock", "(цок... цок...) Я чув цей сигнал у майбутньому. Там він гучніший.", "(tick... tick...) I've heard that signal in the future. It's louder there."] ] },
+    { t: ["Танцювальний марафон", "The Dance Marathon"], L: [
+      ["G", "Сьогодні в нас марафон: хто довше танцює, той отримує безкоштовний коктейль. Нагороджую пожиттєво!", "Tonight's the marathon: whoever dances longest gets a free milkshake. For life!"],
+      ["kria", "Я танцюю вже четверту годину! У мене лапи гудуть, але я не здамся.", "I've been dancing for four hours! My feet are buzzing but I won't quit."],
+      ["S", "Я вдавав, що знепритомнів, а сам їв попкорн. Не кажіть нікому.", "I pretended to faint and ate popcorn. Don't tell anyone."],
+      ["spike", "Підрахував: переможця визначено за кількістю обертів. Це Капі. З великим відривом.", "I've counted: the winner is decided by spins. It's Capy, by a wide margin."],
+      ["capy", "Я просто обертаюсь, коли нервую. Дякую, всім.", "I just spin when I'm nervous. Thanks, everyone."] ] },
+    { t: ["Грозова ніч", "The Stormy Night"], L: [
+      ["narr", "Гроза вдарила так, що в усьому кварталі погасли вивіски. Закусочна занурилась у темряву.", "A storm hit so hard that every sign in the block went dark. The diner sank into the dark."],
+      ["G", "Без світла мій джубокс німий, а я без нього сам не свій.", "Without power my jukebox is mute, and without it I'm lost."],
+      ["capy", "Запалимо свічки. Зараз буде тепліше і навіть романтичніше.", "Let's light candles. It'll be warmer and even a bit romantic."],
+      ["S", "Я розкладу свічки по столах. Лише з двох столів, бо решту мав на меті забрати.", "I'll put candles on the tables. Two of them, anyway, the rest I'd planned to pocket."],
+      ["clock", "Зверніть увагу: в темряві мене чути краще. Цок. Цок. Цок.", "Notice: in the dark you can hear me better. Tick. Tock. Tick."] ] },
+    { t: ["Годинник у джубоксі", "The Watch in the Jukebox"], L: [
+      ["narr", "Коли світло повернулось, на екрані джубокса замість назви пісні було написано: «ЦОК».", "When the lights came back, the jukebox screen showed not a song title but: “TICK.”"],
+      ["clock", "Це була чудова епоха, Капі. Мені сподобались шейки, коктейлі й ті біплани.", "That was a lovely era, Capy. I liked the shakes, the milkshakes and those biplanes."],
+      ["capy", "Ми ще не закінчили. Піпу ще треба допомогти зі столиками.", "We're not done yet. Pip still needs help with the tables."],
+      ["clock", "Допоможи. Я зачекаю. Хвилина більше, хвилина менше, я ж Годинник.", "Help him. I'll wait. A minute more or less, I'm the Watch."],
+      ["narr", "Піп поставив нову платівку. Вона була про дорогу, яка веде далі, ніж вмієш уявити.", "Pip put on a new record. It was about a road that goes further than you can imagine."] ] }
+  ],
+  /* ---- 2. ДИСКО: дзеркальна куля й танцпол (гість Зіна) ---- */
+  2: [
+    { t: ["Куля, що впала", "The Ball That Fell"], L: [
+      ["narr", "У місті зацвіли ліхтарики кольору цукерок. На розі хтось репетирував мелодію, яка не вимикається з голови.", "The town bloomed with candy-colored lights. On the corner someone rehearsed a tune that won't leave your head."],
+      ["G", "Я Зіна! Мою дзеркальну кулю зірвало вітром, і вона розбилась. Сьогодні вечірка, а я без блиску!", "I'm Zina! The wind tore down my mirror ball and it shattered. Tonight's the party and I've got no sparkle!"],
+      ["capy", "Ми зберемо кожен уламок. Без блиску вечірок не буває.", "We'll gather every shard. There's no party without sparkle."],
+      ["spike", "Збір уламків оцінюю в чотири монети й одну подряпину.", "Shard collection: four coins and one scratch, I estimate."],
+      ["G", "Тільки не забирайте нічого собі. Особливо єнота.", "Just don't keep any for yourselves. Especially the raccoon."] ] },
+    { t: ["Смугасте непорозуміння", "A Stripy Misunderstanding"], L: [
+      ["narr", "Зіна вийшла на вулицю, і всі завмерли: її смуги стали різнокольоровими, наче веселка вирішила стати зеброю.", "Zina stepped outside and everyone froze: her stripes had turned rainbow, as if a rainbow had decided to be a zebra."],
+      ["G", "Я ж просила тільки трохи кольору! Хто розмалював мене?!", "I only asked for a little color! Who painted me?!"],
+      ["S", "Я. Це безкоштовний бонус до пакета «Блиск». Дякую за довіру.", "That was me. A free bonus with the Sparkle package. Thanks for trusting me."],
+      ["capy", "Шнирю. Ти змінив колір цілій зебрі?", "Shnyr. You changed a whole zebra's color?"],
+      ["S", "Не всю. Лише ті ділянки, до яких дотягнувся.", "Not all of her. Only the parts I could reach."] ] },
+    { t: ["Мозаїка з мільйона шматочків", "A Mosaic of a Million Pieces"], L: [
+      ["G", "Нова куля складається з тисячі дзеркалець. Склеювати треба по одному. Наберіться терпіння.", "The new ball is made of a thousand tiny mirrors. They have to be glued on one by one. Be patient."],
+      ["spike", "Порахував: потрібно вісімсот дзеркалець. Ще двісті я вписав «про запас».", "I counted: eight hundred mirrors needed. Another two hundred I wrote down as a spare."],
+      ["kria", "А якщо я приклею догори дриґом? Блиск же однаково блищить!", "What if I glue one upside down? Sparkle still sparkles!"],
+      ["capy", "Тоді куля гратиме у навпаки. І нам це навіть пасує.", "Then the ball will play in reverse. Honestly that suits us too."],
+      ["narr", "До ранку куля стала схожою на велику зірку, що спустилась перепочити.", "By morning the ball looked like a big star that had come down for a rest."] ] },
+    { t: ["Танцпол, який оживає", "The Dance Floor Comes Alive"], L: [
+      ["narr", "Плитки на тротуарі світилися по черзі: рожева, блакитна, жовта. Хтось ступив — і весь тротуар загудів басом.", "The sidewalk tiles lit up in turn: pink, blue, yellow. Someone stepped, and the whole pavement hummed with bass."],
+      ["G", "Це мій танцпол! Він живе власним життям і любить, коли на нього танцюють.", "That's my dance floor! It has a life of its own and loves being danced on."],
+      ["tonya", "Попереджаю: порушники ритму будуть оштрафовані... музикою.", "Warning: offenders of rhythm will be fined... in music."],
+      ["S", "А я винайшов техніку «тихенько по краю». Без штрафів і без пригод.", "I invented the 'quietly along the edge' technique. No fines, no adventures."],
+      ["capy", "Усі на танцпол! Хто не вміє, той навчиться за три такти.", "Everyone to the floor! Who can't dance will learn in three beats."] ] },
+    { t: ["Конкурс кльошів", "The Flares Contest"], L: [
+      ["G", "Сьогодні конкурс: у кого ширші штанини! Журі: я, Тоня і ваш бухгалтер.", "Today's contest: whose trouser legs are widest! Judges: me, Tonya and your accountant."],
+      ["spike", "Я не маю штанів. Це дискваліфікація чи привілей?", "I have no trousers. Is that a disqualification or a privilege?"],
+      ["tonya", "Це спостереження. Я ж бачу, що штани в єнота на розмір більші, ніж треба.", "That's an observation. I can see the raccoon's trousers are a size bigger than needed."],
+      ["S", "У них дві запасні кишені. Це не штани, це склад.", "They've got two spare pockets. They're not trousers, they're a warehouse."],
+      ["capy", "Виграли всі. А найширші штани дісталися стійці з вішаками. Вона просто стояла там.", "Everyone won. The widest trousers went to the clothes rack. It was just standing there."] ] },
+    { t: ["Тиха дискотека", "The Silent Disco"], L: [
+      ["narr", "Увечері в усьому кварталі вимкнули світло. Музика зникла разом із ним.", "That evening the whole block lost power. The music vanished along with it."],
+      ["G", "Без колонок я безпорадна... Ні, зачекайте. У нас же є ліхтарики, які можна гойдати.", "Without speakers I'm helpless... no, wait. We have flashlights that can be swung."],
+      ["capy", "Танцюймо без музики. Кожен слухає свій ритм у серці.", "Let's dance without music. Everyone listens to their own beat inside."],
+      ["kria", "У мене в серці зараз марш. Це припустимо?", "My heart is playing a march right now. Is that allowed?"],
+      ["narr", "У темряві рухались сотні вогників і ніхто не наступив нікому на ногу. Диво дня.", "In the dark hundreds of little lights moved and nobody stepped on anyone's foot. The wonder of the day."] ] },
+    { t: ["Остання пісня вечора", "The Last Song of the Night"], L: [
+      ["G", "Остання пісня має бути особливою. Я хочу, щоб її вибрала Капі.", "The last song has to be special. I want Capy to pick it."],
+      ["capy", "Я не знаю жодної... Окрім тієї, що наспівує годинник у моїй кишені.", "I don't know any... except the one the watch in my pocket hums."],
+      ["clock", "(цок-цок, цок-цок-цок) Пам-пам, пам-па-рам.", "(tick-tock, tick-tock-tock) Bum-bum, bum-ba-dum."],
+      ["G", "Це ж справжній диско-біт! Годинник, а в тебе талант.", "That's a proper disco beat! Watch, you've got talent."],
+      ["narr", "Увесь квартал танцював під цокання аж до світанку. Хтось навіть записав його на плівку.", "The whole block danced to the ticking until dawn. Someone even recorded it on tape."] ] },
+    { t: ["Світанок над танцполом", "Dawn Over the Dance Floor"], L: [
+      ["narr", "На світанку дзеркальна куля зловила перший промінь і розсипала по стінах тисячу зайчиків.", "At dawn the mirror ball caught the first ray and scattered a thousand bright spots across the walls."],
+      ["G", "Це була найкраща вечірка з усіх. Дякую, Капі. Тепер у мене є куля і є друзі.", "That was the best party ever. Thank you, Capy. Now I have a ball and friends."],
+      ["clock", "Мої вітання. Диско добігає кінця, як будь-яка хороша мелодія.", "Congratulations. Disco is coming to an end, like any good tune."],
+      ["capy", "А що далі?", "And what comes next?"],
+      ["clock", "Далі — світ, що живе в маленьких пікселях. Збирайся, щойно зможеш.", "Next comes a world that lives in tiny pixels. Pack up as soon as you can."] ] }
+  ],
+  /* ---- 3. АРКАДИ: пікселі й рекорди (гість Макс) ---- */
+  3: [
+    { t: ["Вставте монетку", "Insert Coin"], L: [
+      ["narr", "Світ став квадратним, голосним і трохи блимаючим. Над дверима горить напис: INSERT COIN.", "The world became square, loud and a little flashy. Above the door a sign glows: INSERT COIN."],
+      ["G", "Я Макс! Тримаю найкращу аркаду у місті. Для старту вона просить монетку, а в мене лишилась тільки віра.", "I'm Max! I run the best arcade in town. It wants a coin to start, and all I have left is faith."],
+      ["capy", "Ось монетка. Тільки дай перший хід мені.", "Here's a coin. Just let me take the first turn."],
+      ["G", "Ого, вона спрацювала з першого разу! Це талант чи просто удача?", "Wow, it worked the first time! Is that talent or just luck?"],
+      ["narr", "Екран спалахнув: «PLAYER 1: CAPY». Пішов відлік першого рівня.", "The screen flashed: “PLAYER 1: CAPY.” The first level began counting down."] ] },
+    { t: ["Рекорд, якого не було", "A Record That Never Happened"], L: [
+      ["narr", "На таблиці рекордів сяяло нове ім'я: «ЄНТ — 999999». Усі повільно повернули голови.", "On the high-score board a new name shone: “RAC — 999999.” Everyone slowly turned their heads."],
+      ["G", "Я цю гру проходив сто разів і ніколи не бачив стільки очок. Звідки?", "I've beaten this game a hundred times and never saw that many points. Where from?"],
+      ["S", "Я просто дуже старанний. І трохи вмію працювати з відвертками.", "I'm just really diligent. And a bit handy with screwdrivers."],
+      ["spike", "Сума очок перевищує суму всіх монет міста. Це математично нечесно.", "That score exceeds all the coins in the city. Mathematically unfair."],
+      ["capy", "Шнирю, відкрутив назад — і ми забудемо про цей рекорд. Домовились?", "Shnyr, screw it back and we'll forget about this record. Deal?"] ] },
+    { t: ["Рівень із привидами", "The Level With Ghosts"], L: [
+      ["narr", "На екрані з'явився лабіринт, а в залі — повітряні кульки з очима. Вони пливли повз столи й сміялись.", "A maze appeared on the screen and balloon-like blobs with eyes floated between the machines, giggling."],
+      ["G", "Це ж привиди з першого рівня! Вони вилізли з гри, а я їх не просив.", "Those are the ghosts from level one! They climbed out of the game and I never asked them to."],
+      ["tonya", "Ловити їх зручніше, коли вони синього кольору. Це я з досвіду.", "It's easier to catch them when they turn blue. I know from experience."],
+      ["capy", "Усі до автоматів! Хто з'їсть більше крапок, той і звільняє зал!", "Everyone to the machines! Whoever eats the most dots frees the hall!"],
+      ["S", "А я з'їм усе, що не прибито. Крапки — це смачно?", "I'll eat anything that isn't nailed down. Are dots tasty?"] ] },
+    { t: ["Падаючі блоки", "Falling Blocks"], L: [
+      ["narr", "Із неба поволі спускались різнокольорові фігурки, а пересмикнуті лінії з'їдали їх по рядочку.", "Colorful shapes slowly descended from the sky while lines swallowed them row by row."],
+      ["G", "Це ж тетріс! Треба скласти їх у рівні ряди, інакше завалять усю вулицю.", "That's Tetris! We have to fit them into neat rows or they'll bury the whole street."],
+      ["spike", "Прямокутні — на ліву сторону, косі — на праву. Я позначив мапою кольорів.", "Rectangles to the left, slanted ones to the right. I've mapped it out with colors."],
+      ["capy", "Командо, повертайте блоки! Хто стоїть без діла — стає стержнем!", "Team, rotate the blocks! Whoever stands idle becomes a rod!"],
+      ["narr", "Ряди зникали один за одним, і вулиця раптом стала світлішою, мов після прибирання.", "Rows vanished one by one and the street suddenly looked brighter, as if just cleaned."] ] },
+    { t: ["Секретний код", "The Secret Code"], L: [
+      ["G", "Я знаю секрет: вгору-вгору-вниз-вниз-вліво-вправо... і три рази В. Він дає безкінечні життя.", "I know a secret: up-up-down-down-left-right... and B three times. It gives infinite lives."],
+      ["spike", "Це шахрайство. Чесним шляхом такі життя оцінюються у вісімдесят монет.", "That's cheating. By honest means such lives would cost eighty coins."],
+      ["S", "А я знаю секрет кращий: «вгору, вправо, ще раз вправо — і ззаду у каси». Там завжди хтось забуває здачу.", "I know a better one: 'up, right, right again, behind the till.' Someone always forgets their change there."],
+      ["capy", "Ніяких секретних кодів. Будемо проходити по-справжньому.", "No secret codes. We play it for real."],
+      ["narr", "Макс зітхнув, але вперше за вечір усміхнувся. Чесна гра дає більше задоволення, ніж підказки.", "Max sighed but smiled for the first time that night. An honest game is more fun than any hint."] ] },
+    { t: ["Бос рівня", "The Level Boss"], L: [
+      ["narr", "У кінці довгого коридору стояв величезний пікселізований монстр із табличкою: «ПОДАТКОВА ІНСПЕКЦІЯ».", "At the end of a long corridor stood a huge pixelated monster with a sign: 'TAX OFFICE'."],
+      ["spike", "Ага. Це мій старий знайомий. Дозвольте, я з ним поговорю мовою цифр.", "Aha. An old acquaintance. Let me talk to it in the language of numbers."],
+      ["capy", "Ми з тобою, Колючко. Кожен кидає в нього по монетці й по ідеї.", "We're with you, Spike. Each of us throws a coin and an idea."],
+      ["S", "Я відверну його увагу. Запитаю, чи чекає він на подарунок.", "I'll distract him. I'll ask if he's expecting a gift."],
+      ["narr", "Бос завмер, моргнув і розсипався на двісті квадратиків із написом: «ЗНИЖКА 20%».", "The boss froze, blinked and broke into two hundred squares labeled: '20% OFF'."] ] },
+    { t: ["Game over?", "Game Over?"], L: [
+      ["narr", "Раптом усі екрани в залі мигнули й погасли. Лише один рядок ще світився: GAME OVER.", "Suddenly every screen in the hall flickered and went dark. Only one line still glowed: GAME OVER."],
+      ["G", "Ні... Усе пропало? Це кінець моєї аркади?", "No... Is everything gone? Is this the end of my arcade?"],
+      ["capy", "Ні, Максе. Дивись, нижче дрібним шрифтом: «CONTINUE? 10... 9... 8...»", "No, Max. Look below in small print: 'CONTINUE? 10... 9... 8...'"],
+      ["G", "Тиснемо «Так»! Всі разом! Три, два, один!", "Press Yes! All together! Three, two, one!"],
+      ["narr", "Екрани запалились знову, ще яскравіше, ніж раніше. Макс схопив Капі в обійми.", "The screens lit up again, brighter than before. Max grabbed Capy in a hug."] ] },
+    { t: ["Продовжити?", "Continue?"], L: [
+      ["narr", "Коли гості розійшлись, на головному автоматі лишилось єдине повідомлення. Воно блимало ритмічно, як цокання.", "When the guests left, one message remained on the main machine. It blinked rhythmically, like ticking."],
+      ["clock", "«CONTINUE?» — це я питаю, Капі. У нас попереду ще багато рівнів.", "'CONTINUE?' That's me asking, Capy. We have plenty of levels ahead."],
+      ["capy", "А ти точно не бос рівня?", "Are you sure you're not a level boss?"],
+      ["clock", "Я більше схожий на фінальний екран. Тільки з бонусами.", "I'm more like the final screen. Only with bonuses."],
+      ["narr", "Максів автомат тихенько заграв музику нового рівня, а десь у кишені Капі відгукнувся годинник.", "Max's machine softly played the next level's music, and somewhere in Capy's pocket the watch answered."] ] }
+  ],
+  /* ---- 4. ІНТЕРНЕТ: мережа й дрони (гість Бітик) ---- */
+  4: [
+    { t: ["Пароль від Wi-Fi", "The Wi-Fi Password"], L: [
+      ["narr", "У місті з'явилась мережа. Над дахами миготіли значки сигналу, а дроти лежали вздовж вулиць, мов гірлянди.", "The town got a network. Signal icons blinked above the roofs and cables lay along the streets like garlands."],
+      ["G", "Привіт, я Бітик! Я налаштовую зв'язок. Пароль від мережі — «копійка123». Тільки нікому.", "Hi, I'm Bitik! I set up connections. The network password is 'penny123'. Don't tell anyone."],
+      ["spike", "Ви щойно сказали вголос пароль. Тепер він не пароль, а оголошення.", "You just said the password out loud. It's now an announcement, not a password."],
+      ["capy", "Нічого, ми його змінимо. На «копійка124».", "No problem, we'll change it. To 'penny124'."],
+      ["narr", "Це був перший інтернет у їхньому житті, і він одразу вирішив розповісти їм усе про котів.", "It was their first internet ever and it immediately decided to tell them everything about cats."] ] },
+    { t: ["Магазин у мережі", "The Shop Online"], L: [
+      ["G", "Давайте відкриємо сайт. Кожен зможе купити капібарин товар, не виходячи з дому.", "Let's open a website. Anyone could buy Capy's goods without leaving home."],
+      ["capy", "А як вони підуть по печиво, якщо печиво буде на екрані?", "How will they get cookies if the cookies live on a screen?"],
+      ["G", "Приїде дрон. Він доставляє в межах півтори хвилини і завжди каже «дякую».", "A drone will come. It delivers within ninety seconds and always says thanks."],
+      ["S", "Я вже замовив собі ліхтарик. Він приїхав... до сусіда. Ліхтарик нині його.", "I already ordered myself a flashlight. It arrived... at the neighbor's. The flashlight is his now."],
+      ["narr", "До вечора на сайті було сто відвідувачів, п'ятдесят «обране» й один відгук: «Смачно».", "By evening the site had a hundred visitors, fifty favorites and one review: 'Tasty.'"] ] },
+    { t: ["Кіт, що став зіркою", "The Cat Who Became a Star"], L: [
+      ["narr", "Хтось виклав фото сплячого кота в капібариному кошику. За годину його побачило півміста.", "Someone posted a photo of a cat asleep in Capy's basket. Within an hour half the town had seen it."],
+      ["G", "Лайків уже п'ять тисяч! Це називається вірусним. Тепер кіт відомий.", "Five thousand likes already! That's called viral. The cat is famous now."],
+      ["tonya", "У нього з'явилась охорона із шести хом'яків. Я не при чому.", "He now has a security detail of six hamsters. Nothing to do with me."],
+      ["spike", "Кіт заробляє більше, ніж наша каса. Прошу переглянути умови договору.", "The cat earns more than our till. Please revise the contract terms."],
+      ["capy", "Нехай спить. Він приносить більше людей, ніж будь-яка реклама.", "Let him sleep. He brings more people than any ad."] ] },
+    { t: ["Лавина листів", "An Avalanche of Mail"], L: [
+      ["narr", "Скринька не мовчала: сотня листів, тисяча сповіщень і лист від принца, якому терміново потрібна допомога.", "The inbox never stopped: a hundred letters, a thousand notifications and a message from a prince in urgent need of help."],
+      ["G", "Це спам! Не відкривайте, поки я не поставлю фільтр.", "That's spam! Don't open anything until I set up a filter."],
+      ["S", "Принц просив лише п'ять монет. Я вже відправив десять. Щоб точно дійшло.", "The prince only wanted five coins. I already sent ten. To be sure it arrives."],
+      ["spike", "Шнирю. Ти щойно подарував принцеві десять монет.", "Shnyr. You just gifted the prince ten coins."],
+      ["capy", "Так, фільтр потрібен нам усім. Навіть тобі, Шнирю.", "Right, we all need a filter. Even you, Shnyr."] ] },
+    { t: ["Чотири з половиною зірки", "Four and a Half Stars"], L: [
+      ["G", "Перші відгуки прийшли! Читайте вголос: «Смачно. Дуже. Шкода, що вдома».", "The first reviews are in! Read aloud: 'Tasty. Very. Pity it's at home.'"],
+      ["kria", "А тут: «Дуже ввічливий дрон, але розбив одне яйце». Це я просто так.", "And here: 'A very polite drone but it broke one egg.' Just saying."],
+      ["spike", "Середня оцінка: 4,6. Це нижче, ніж 4,7. Але вище, ніж 4,5. Тішуся.", "Average rating: 4.6. Lower than 4.7 but higher than 4.5. I rejoice."],
+      ["capy", "Подякуємо всім. І додамо до відділу дроніків маленьку подушку для яєць.", "We'll thank everyone. And give the drone department a tiny pillow for eggs."],
+      ["narr", "Наступного ранку над містом пролетів дрон із милою наклейкою «обережно, яйця».", "Next morning a drone flew over town wearing a cute sticker: 'careful, eggs'."] ] },
+    { t: ["Хмара, що не з води", "A Cloud That Isn't Water"], L: [
+      ["G", "Усі наші дані зберігаються у хмарі. Дивіться, он вона, на горизонті!", "All our data is kept in the cloud. Look, there it is, on the horizon!"],
+      ["capy", "Це ж звичайна хмара. З неї ще й дощ іде.", "That's just an ordinary cloud. It's even raining."],
+      ["G", "Так, але там усередині — сервер. Одна крапля дощу — це одне замовлення.", "Yes, but inside there's a server. One raindrop is one order."],
+      ["S", "Якщо я зловлю хмару, то можу прочитати чужі замовлення? Питаю суто з інтересу.", "If I catch the cloud, can I read other people's orders? Asking purely out of interest."],
+      ["tonya", "Не можеш. І більше не питай.", "You can't. And don't ask again."] ] },
+    { t: ["Оновлення 4.0", "Update 4.0"], L: [
+      ["narr", "На екрані з'явився рядок: «Оновлення. Не вимикайте магазин». Усі завмерли, як перед уколом.", "A line appeared on the screen: 'Updating. Do not switch off the store.' Everyone froze as if before a shot."],
+      ["G", "Це займе максимум хвилину. 20%... 40%... 99%...", "It'll take a minute at most. 20%... 40%... 99%..."],
+      ["spike", "Звідки оця 99% тягнеться вже десять хвилин?", "Why has this 99% been dragging on for ten minutes?"],
+      ["capy", "Просто вибач йому. Він думає, що так у нього більше шансів вразити нас.", "Just forgive it. It thinks that gives it a better chance to impress us."],
+      ["narr", "Оновлення завершилось. Усе працювало так само, але кнопки тепер були на два піксели правіше.", "The update finished. Everything worked the same, but the buttons were now two pixels further right."] ] },
+    { t: ["Перезавантаження", "Reboot"], L: [
+      ["narr", "Увечері Бітик підійшов до Капі з надзвичайно серйозним виглядом і поставив перед нею паперову ромашку.", "In the evening Bitik approached Capy with an exceptionally serious look and set a paper daisy before her."],
+      ["G", "Я знаю, що ти скоро поїдеш далі. Я зробив для тебе резервну копію нашої дружби.", "I know you'll soon move on. I made a backup copy of our friendship for you."],
+      ["capy", "Бітику... Це найкраща резервна копія, яку я бачила.", "Bitik... that's the best backup I've ever seen."],
+      ["clock", "Нагадую: коли час підійде, мене достатньо завести. Перезавантаження займе мить.", "A reminder: when the time comes, just wind me. A reboot takes a moment."],
+      ["narr", "Над містом спалахнуло мільйон вогників, і здавалось, що це хтось набрав «до побачення» на всіх екранах.", "A million lights flashed over the city and it looked as if someone typed 'goodbye' on every screen."] ] }
+  ],
+  /* ---- 5. ЕКО: дерева й вітряки (гість Лесик) ---- */
+  5: [
+    { t: ["Дерево на даху", "A Tree on the Roof"], L: [
+      ["narr", "Дахи вкрились зеленню, а повітря стало прозорішим. Десь поруч шумів вітряк і пахло нагрітою травою.", "Rooftops turned green and the air grew clearer. A windmill whirred nearby and the smell of warm grass was everywhere."],
+      ["G", "Я Лесик! Маю на дахах цілий сад. Але одне дерево не росте. Воно просто сидить і дивиться.", "I'm Lesyk! I keep a whole garden on the roofs. But one tree won't grow. It just sits and stares."],
+      ["capy", "Може, йому бракує компанії?", "Maybe it's just missing company?"],
+      ["G", "Ти диви! Може. Принесемо друзів: ромашок, кульбаб і кропиву — для різноманіття.", "Hey, maybe! We'll bring it friends: daisies, dandelions and some nettle for variety."],
+      ["narr", "Наступного ранку на дереві виросла перша гілка. Лесик так зрадів, що поцілував її в листочок.", "By morning the tree had its first branch. Lesyk was so happy he kissed it on a leaf."] ] },
+    { t: ["Компост для всіх", "Compost for Everyone"], L: [
+      ["G", "Усе, що ми викидаємо, перетворюється на ґрунт. Це компост: смердить, зате корисно.", "Everything we throw away turns into soil. That's compost: it stinks but it's good."],
+      ["S", "Я продавав його за ціною золота. Один пан купив відро, понюхав і збідів.", "I sold it at gold prices. One gentleman bought a bucket, sniffed it and went broke."],
+      ["spike", "Це не збідніння, це інвестиція в аромат. Тільки у гіршу сторону.", "That's not going broke, that's an investment in aroma. Just the worse sort."],
+      ["capy", "Шнирю, повертай гроші. А компост віднесемо туди, де він справді потрібен.", "Shnyr, give the money back. We'll take the compost where it's actually needed."],
+      ["narr", "На городі за тиждень виросли такі морквини, що їх довелось викопувати удвох.", "Within a week the garden grew carrots so big it took two to dig them out."] ] },
+    { t: ["Сонячна панель", "The Solar Panel"], L: [
+      ["narr", "На даху магазину з'явилась велика синя панель. Вона повільно вмикала лампочки по всій вулиці.", "A big blue panel appeared on the shop roof. Slowly it switched on the lamps along the whole street."],
+      ["G", "Це власна електрика сонця. Безкоштовна, чесна і без рахунків.", "That's the sun's own electricity. Free, honest and billless."],
+      ["spike", "Я роздратований: у мене тепер немає рахунків. Чим мені займатись?", "I'm annoyed: now I have no bills. What am I supposed to do?"],
+      ["capy", "Рахуй промені. Їх дуже багато, і вони не втомлюються.", "Count the rays. There are many and they never tire."],
+      ["narr", "Колючка просидів весь день на даху, записуючи кожен промінь у блокнот. І був вельми щасливий, бо рахувати промені — його мрія.", "Spike sat on the roof all day writing each ray into a notebook. And was most happy."] ] },
+    { t: ["Бджоли-партнери", "Bee Partners"], L: [
+      ["narr", "Над вуликом на даху загудів рій. Перші бджоли вилетіли на розвідку й повернулись із повними лапками пилку.", "A swarm began humming above the rooftop hive. The first scouts flew out and returned with paws full of pollen."],
+      ["G", "Вони партнери, не працівники. У них є профспілка і вимоги: більше квітів, менше метушні.", "They're partners, not workers. They have a union and demands: more flowers, less fuss."],
+      ["zoya", "Я прошу їх про мед для відділу випічки. Вони обіцяли розглянути.", "I asked them for honey for the bakery. They promised to consider it."],
+      ["S", "А я їм запропонував угоду: я охороняю вулик, а вони не жалять мене.", "I offered them a deal: I guard the hive, they don't sting me."],
+      ["capy", "Бджоли, до речі, вже підписали. Ось. Гудуть підпис.", "The bees already signed, by the way. See? Humming a signature."] ] },
+    { t: ["Ярмарок врожаю", "The Harvest Fair"], L: [
+      ["G", "Давайте влаштуємо ярмарок! Кожен принесе по одній корисній речі та одній смачній.", "Let's hold a fair! Everyone brings one useful thing and one tasty thing."],
+      ["kria", "Я принесла кошик грибів і шарф. Шарф корисний, гриби смачні.", "I brought a basket of mushrooms and a scarf. The scarf is useful, the mushrooms tasty."],
+      ["S", "Я принесу гроші, які ви принесете. Це стратегія.", "I'll bring the money you bring. That's a strategy."],
+      ["spike", "Це не стратегія, це податок із загальної ніжності.", "That's not a strategy, that's a tax on general warmth."],
+      ["narr", "Ярмарок працював до пізнього вечора. Найсмачнішим виявився пиріг з яблук — і ніхто не хотів його ділити.", "The fair ran until late evening. The tastiest was the apple pie and nobody wanted to share it."] ] },
+    { t: ["Дощова ніч", "A Rainy Night"], L: [
+      ["narr", "Перший за кілька тижнів дощ барабанив по даху, а в бочках дзвеніли краплі. Лесик вискочив у нічній сорочці.", "The first rain in weeks drummed on the roof and drops rang in the barrels. Lesyk ran out in his nightshirt."],
+      ["G", "Дощ! Дощ! Дивіться, як росте трава, мабуть, дві іглинки за секунду!", "Rain! Rain! Look at the grass grow, must be two blades a second!"],
+      ["capy", "Лесику, ти змокнеш. І застудишся. І сам почнеш рости.", "Lesyk, you'll get soaked. And catch a cold. And start growing yourself."],
+      ["G", "Це моя мрія. Нехай рогами вгору.", "That's my dream. Antlers up."],
+      ["narr", "Вранці у калюжі відбивалось сонце, а на листочках сиділи сотні крапельок, схожих на намисто.", "In the morning the sun shone in the puddles and hundreds of droplets sat on the leaves like beads."] ] },
+    { t: ["Остання крапля", "The Last Drop"], L: [
+      ["narr", "Одного ранку струмок за містом пересох. Вода, що живила всі сади, зникла зовсім.", "One morning the stream outside town ran dry. The water that fed all the gardens was gone."],
+      ["G", "Це біда. Без води моє дерево, мої ромашки, мої... мій чайник.", "This is trouble. Without water my tree, my daisies, my... my kettle."],
+      ["capy", "Шукаймо джерело. Хтось мусить знати, куди воно поділось.", "Let's look for the spring. Someone must know where it went."],
+      ["S", "Я бачив, як вночі барсук ніс відро. Куди — не знаю. Але шляхом, де лежить камінь.", "I saw a badger carrying a bucket at night. Where, I don't know. But along the path with the rock."],
+      ["narr", "Під каменем знайшлось джерело. Хтось лише поставив на нього відро, щоб воно не втекло.", "Under the rock they found the spring. Someone had simply put a bucket on it so it wouldn't run away."] ] },
+    { t: ["Дерево зацвіло", "The Tree Blooms"], L: [
+      ["narr", "Дерево на даху розцвіло рожевими квітами за одну ніч. Усі збіглися дивитись.", "The tree on the roof bloomed with pink flowers overnight. Everyone ran to see."],
+      ["G", "Воно чекало. Чекало, що ми будемо поруч, коли воно вирішить розцвісти.", "It was waiting. Waiting for us to be near when it decided to bloom."],
+      ["capy", "Лесику, це чудово. Я так рада, що ми були поруч.", "Lesyk, it's wonderful. I'm so glad we were here."],
+      ["clock", "Чудова епоха. Пахне медом і теплим деревом. Але попереду — зірки.", "A lovely era. Smells of honey and warm wood. But the stars lie ahead."],
+      ["narr", "Пелюстки літали над вулицею, і хтось у кишені Капі тихо цокав у ритм вітру.", "Petals flew over the street and something in Capy's pocket ticked softly to the wind's rhythm."] ] }
+  ],
+  /* ---- 6. КОСМОС: зорі й ракети (гість Орбіт) ---- */
+  6: [
+    { t: ["Сигнал із космосу", "A Signal From Space"], L: [
+      ["narr", "Над дахами замість зірок майорять станції, а де-не-де повільно пропливають рожеві планети. Ввімкнули гравітацію.", "Above the roofs stations replace the stars and pink planets drift by. Gravity was switched on."],
+      ["G", "Я Орбіт, старший оператор зв'язку! Перехопив сигнал: «біп-біп-біп-біп-біп-біп-біп-біп».", "I'm Orbit, senior comms operator! I picked up a signal: 'beep-beep-beep-beep-beep-beep-beep-beep'."],
+      ["capy", "Це схоже на те, що ми чули в Ретро-епосі.", "That's like what we heard in the Retro era."],
+      ["G", "Саме так! Той самий супутник. Він усі ці роки вертівся й чекав, коли ми відповімо.", "Exactly! The same satellite. All these years it kept spinning and waiting for our reply."],
+      ["capy", "Тоді відповімо: «біп».", "Then we'll reply: 'beep'."] ] },
+    { t: ["Скафандр для Шниря", "A Spacesuit for Shnyr"], L: [
+      ["narr", "Шнирь вийшов на вулицю в надувному скафандрі з банкою замість шолома. Банка була від огірків.", "Shnyr stepped outside in an inflatable spacesuit with a jar for a helmet. The jar was a pickle jar."],
+      ["S", "Я готовий до зовнішніх завдань. Лише ніхто не пояснив, що в банці немає повітря.", "I'm ready for external missions. Nobody explained there's no air in the jar."],
+      ["G", "Банку треба відкрити! Інакше ти там заціпенієш на третій хвилині.", "You need to open the jar! Otherwise you'll go numb in three minutes."],
+      ["spike", "Шолом із рахунком: чотири монети й один огірок. Беру в зарплату.", "Helmet with receipt: four coins and one pickle. Taking it from his salary."],
+      ["capy", "Шнирю, давай обміняємо банку на справжній шолом. Це вигідніше.", "Shnyr, let's swap the jar for a real helmet. It's a better deal."] ] },
+    { t: ["Невагомість у відділі", "Zero Gravity in the Aisles"], L: [
+      ["narr", "Раптом усе, що не прикручене, повільно здійнялось у повітря: пакети, цукерки, окуляри Колючки.", "Suddenly everything not screwed down floated up: bags, sweets, Spike's glasses."],
+      ["spike", "Мої окуляри! Вони відлітають до стелі! Це порушення законів фізики й моєї фізіономії.", "My glasses! They're floating to the ceiling! A violation of the laws of physics and my face."],
+      ["G", "Це збій гравітаційного поля. Вимикаю, вмикаю. Не допомагає. Тоді просто плюю на нього.", "Gravitational field glitch. Off, on. Doesn't help. Then I'll just spit on it."],
+      ["capy", "Ловимо все по черзі! Хто перший — отримує безкоштовну цукерку.", "Catch everything in turn! First one gets a free candy."],
+      ["S", "Я вже зловив двадцять цукерок. Вони в мене в кишені. Не питайте, звідки там місце.", "I've already caught twenty candies. They're in my pocket. Don't ask how there's room."] ] },
+    { t: ["Метеоритний дощ", "Meteor Shower"], L: [
+      ["narr", "Нічне небо перекреслили довгі світлі смуги. Хтось у натовпі прошепотів: «Загадуй бажання».", "Long bright streaks crossed the night sky. Someone in the crowd whispered: 'Make a wish.'"],
+      ["G", "Це метеорити! Дрібні, але яскраві. Збираю в сумку на пам'ять.", "Meteorites! Tiny but bright. I'm collecting them in a bag as souvenirs."],
+      ["kria", "Я загадала, щоб усі були здорові й щоб у касі лишалась дрібниця.", "I wished that everyone's healthy and that the till keeps some change."],
+      ["S", "Я загадав, щоб метеорит упав мені на ногу, але легенько. І не на мою.", "I wished a meteor would fall on my foot, gently. And not on mine."],
+      ["capy", "Моє бажання таке: щоб ми дійшли до кінця й нікого не згубили по дорозі.", "My wish is that we reach the end and lose no one along the way."] ] },
+    { t: ["Місяць у вітрині", "The Moon in the Window"], L: [
+      ["G", "Сьогодні Місяць найближче до Землі! Бачите? Він ледь не торкається вітрини нашого магазину.", "Tonight the Moon is the closest to Earth! See? It nearly touches our shop window."],
+      ["capy", "Цікаво, що він думає про наш магазин.", "I wonder what it thinks of our shop."],
+      ["spike", "Скаже: «Оренда місця мені не потрібна. Беруся за сир».", "It'll say: 'I don't need rent. I'll take the cheese.'"],
+      ["S", "Я спробував відкусити шматок. Це не сир. Це ніби прогоріла біла цегла.", "I tried to bite a piece. It's not cheese. It's like a burnt white brick."],
+      ["narr", "Місяць повільно моргнув у відповідь, і всі вирішили, що це був жест вибачення.", "The Moon slowly blinked in reply and everyone decided that was an apology."] ] },
+    { t: ["Інопланетний покупець", "The Alien Customer"], L: [
+      ["narr", "Двері магазину відчинились із легким шиплячим звуком. Усередину увійшла фіолетова істота з трьома очима.", "The shop door opened with a soft hiss. A violet creature with three eyes stepped inside."],
+      ["G", "Це інопланетянин! Він, мабуть, із дуже далекої планети. Скажіть йому щось привітне.", "That's an alien! He's probably from a very distant planet. Say something friendly."],
+      ["capy", "Доброго дня! Бажаєте купити щось на пам'ять про Землю?", "Good day! Would you like to buy something to remember Earth by?"],
+      ["narr", "Істота показала на пакет цукерок, видихнула сяючу хмаринку й розрахувалась камінцем, що світиться.", "The creature pointed at a bag of candy, exhaled a glowing puff and paid with a shining pebble."],
+      ["spike", "Це найцінніша валюта, яку я бачив. Прошу не подавати здачу відрами.", "That's the most valuable currency I've seen. Please don't hand back change by the bucket."] ] },
+    { t: ["Зворотний відлік", "The Countdown"], L: [
+      ["narr", "На найвищому даху ожила ракета. Навколо неї збирались усі: жителі, гості, навіть кіт-зірка.", "On the highest roof a rocket came to life. Everyone gathered around: residents, guests, even the cat star."],
+      ["G", "Усе готово! Лишилось лише відлік: десять, дев'ять, вісім...", "Everything is ready! Only the countdown left: ten, nine, eight..."],
+      ["capy", "Орбіте, а ти полетиш?", "Orbit, will you fly?"],
+      ["G", "Я залишаюсь тут, доки ви не повернетесь. Хтось же має вмикати світло.", "I'm staying here until you're back. Someone has to turn on the lights."],
+      ["narr", "Ракета здійнялась у небо і розсипалась на мільйон іскор. Насправді то були вогники свята.", "The rocket soared and burst into a million sparks. In fact it was festival fireworks."] ] },
+    { t: ["Остання зірка", "The Last Star"], L: [
+      ["narr", "Вночі Капі довго дивилась на небо. Між зірками висіла одна, яка раз у раз блимала у такт цокання.", "At night Capy gazed at the sky for a long time. Among the stars hung one that blinked in time with ticking."],
+      ["clock", "Це я. Точніше, мій колега з майбутнього. Він шле нам привіт.", "That's me. Rather, my colleague from the future. He's sending us regards."],
+      ["capy", "Тобі там не самотньо?", "Aren't you lonely up there?"],
+      ["clock", "Я ж Годинник. Для мене самотність — це коли ніхто не питає, котра година.", "I'm a Watch. For me loneliness is when nobody asks the time."],
+      ["narr", "Орбіт вручив Капі маленьку зірочку на пам'ять. «Світитиме, якщо буде треба», — сказав він.", "Orbit gave Capy a tiny star as a keepsake. 'It will glow if you need it,' he said."] ] }
+  ],
+  /* ---- 7. НЕОН: місто без сну (гість Лумі) ---- */
+  7: [
+    { t: ["Місто, що не спить", "The City That Never Sleeps"], L: [
+      ["narr", "Вулиці засяяли рожевим і бірюзовим, а над дахами пливли голограми, що розповідали про вигідні знижки.", "The streets glowed pink and turquoise and holograms drifted over the roofs telling of great discounts."],
+      ["G", "Я Лумі! Світлячок із вічною нічною зміною. Допомагаю неоновим вивіскам не втомлюватись.", "I'm Lumi! A firefly on a permanent night shift. I help the neon signs not get tired."],
+      ["capy", "У вас тут ніколи не темно?", "Is it never dark here?"],
+      ["G", "Тільки коли ми вмикаємо «режим затишку». Тоді всі просто світяться тихіше.", "Only when we turn on 'cozy mode'. Then everyone simply glows quieter."],
+      ["narr", "Над головою мигнуло літаюче авто, і вітер пахнув озоном та жуйкою.", "A flying car flickered overhead and the wind smelled of ozone and bubblegum."] ] },
+    { t: ["Голограма Капі", "Capy's Hologram"], L: [
+      ["narr", "Над магазином спалахнула гігантська голограма Капі з усмішкою та написом «ВАШ ЩАСЛИВИЙ ПРОДАВЕЦЬ».", "Above the shop a giant hologram of Capy flared up with a smile and the words 'YOUR LUCKY SELLER'."],
+      ["capy", "Це не я. Я не маю таких вусів.", "That's not me. I don't have such whiskers."],
+      ["S", "Я лише трохи підправив. Тепер ви схожі на кіно-зірку. Це безкоштовно.", "I only touched it up a bit. Now you look like a movie star. It's free."],
+      ["spike", "Я перерахував: вона збільшила потік клієнтів на двадцять відсотків. Незрозуміло, чому саме вуса.", "I did the math: it raised customer traffic by twenty percent. Unclear why whiskers in particular."],
+      ["capy", "Нехай поки що висить. Але наступного разу — без вусів.", "Let it hang for now. But next time, no whiskers."] ] },
+    { t: ["Роботи-охоронці", "Robot Guards"], L: [
+      ["narr", "Біля входу поставили двох роботів із яскравими лінзами. Вони синхронно вклонялись усім відвідувачам.", "Two robots with bright lenses were placed at the entrance. They bowed in sync to every visitor."],
+      ["tonya", "Я їх навчила стояти, не позіхаючи. Це найважче, що я робила в житті.", "I taught them to stand without yawning. It's the hardest thing I've ever done."],
+      ["G", "Вони бачать усе в інфрачервоному. Особливо мають слабкість до єнота.", "They see everything in infrared. They have a particular weakness for the raccoon."],
+      ["S", "Вони мене підозрюють. Навіть коли я не роблю нічого незаконного. Це дискримінація.", "They suspect me. Even when I'm doing nothing illegal. That's discrimination."],
+      ["capy", "Просто не носи на собі вісім пакетів кави з сусідньої крамниці.", "Just don't carry eight bags of coffee from the neighboring shop."] ] },
+    { t: ["Літаючі таксі", "Flying Taxis"], L: [
+      ["narr", "Над вулицею проносились таксі з напівпрозорими куполами. Кожне світилось своїм кольором і голосно клацало дверима.", "Taxis with translucent domes whooshed down the street. Each glowed its own color and slammed doors loudly."],
+      ["G", "Є ще вільне! Сідай, Капі: до торгового центру — три хвилини.", "There's a free one! Hop in, Capy: three minutes to the mall."],
+      ["capy", "Три хвилини? Я ж можу дійти за дві.", "Three minutes? I can walk it in two."],
+      ["G", "Так, але в таксі грає музика і подають гарячий чай.", "True, but the taxi has music and serves hot tea."],
+      ["narr", "Капі їхала, пила чай і дивилась на неонові ріки під собою. Вперше за довгий час вона нікуди не поспішала.", "Capy rode, drank tea and watched the neon rivers below. For the first time in ages she wasn't in a hurry."] ] },
+    { t: ["Нічний ринок", "The Night Market"], L: [
+      ["G", "Раз на місяць у нас відкривається нічний ринок. Продають усе: від світлячків у банках до зоряного пилу.", "Once a month our night market opens. They sell everything from fireflies in jars to stardust."],
+      ["S", "Я вже знайшов стенд зі «справжніми підробками». Це чесний бізнес: чесно підробляють.", "I already found a 'genuine fakes' stand. Honest business: honestly forged."],
+      ["spike", "Прошу всіх зберігати чеки. На ринку чеків не дають, тому записуємо вручну.", "Everyone please keep receipts. The market doesn't give any, so we note them by hand."],
+      ["capy", "Дивіться, яка лампа! Вона світиться різними кольорами залежно від настрою.", "Look at that lamp! It glows different colors depending on your mood."],
+      ["narr", "Лампа в руках Капі стала м'яко-золотою. «Спокій», — прочитав продавець.", "In Capy's hands the lamp turned soft gold. 'Calm,' the seller read."] ] },
+    { t: ["Хакер у масці", "The Masked Hacker"], L: [
+      ["narr", "Раптом усі вивіски в місті показали одне й те саме: усміхнене єнотове обличчя з написом «ВИТАЮ».", "Suddenly every sign in the city showed the same thing: a smiling raccoon face with the word 'HELLO'."],
+      ["G", "Нас зламали! Хтось розсилає на вивіски власні жарти!", "We've been hacked! Someone's sending their own jokes to the signs!"],
+      ["S", "Це не я. Я лише дав комусь пароль. За невеликий гонорар.", "It wasn't me. I only gave someone a password. For a small fee."],
+      ["capy", "Шнирю, чий це пароль?", "Shnyr, whose password was it?"],
+      ["S", "Ну... мій. Я його дуже люблю. «Копійка123». Я його щойно придумав.", "Well... mine. I love it. 'penny123'. I just came up with it."] ] },
+    { t: ["Темрява", "The Blackout"], L: [
+      ["narr", "Місто миттєво померкло. Вивіски, голограми, літаючі авто: усе завмерло, мов хтось вимкнув світ.", "The city went dark in an instant. Signs, holograms, flying cars: all froze as if someone switched off the world."],
+      ["G", "Я знаю, що робити! Усі світлячки — до мене! Ми запалимо вулицю самі.", "I know what to do! All fireflies to me! We'll light the street ourselves."],
+      ["narr", "Тисячі маленьких вогників здійнялись над дахами. Вони були не такі яскраві, як неон, зате теплі.", "Thousands of tiny lights rose above the roofs. Not as bright as neon, but warm."],
+      ["capy", "Дивіться. Місто світиться саме по собі.", "Look. The city glows all by itself."],
+      ["S", "Я нікому не казав, але мені подобається така вулиця. З нею хочеться залишитись.", "I never said it to anyone, but I like the street like this. It makes me want to stay."] ] },
+    { t: ["Шнирь у команді", "Shnyr Joins the Team"], L: [
+      ["narr", "Світло повернулось на світанку. Шнирь стояв перед Капі, переминаючись із лапи на лапу, і тримав у руках весь свій «трофейний» скарб.", "Light returned at dawn. Shnyr stood before Capy, shifting from paw to paw, holding all his 'trophy' treasures."],
+      ["S", "Ось. Усе, що я колись «позичив». Забирайте. А мене беріть у команду. Чесно.", "Here. Everything I ever 'borrowed'. Take it. And take me into the team. Honestly."],
+      ["spike", "Ти ж не гратимеш із касою?", "You're not going to play with the till, are you?"],
+      ["S", "Я перестав. Мені більше подобається, коли ми разом рахуємо монетки.", "I stopped. I like it better when we count coins together."],
+      ["capy", "Ласкаво просимо в команду, Шнирю. Тепер золоті відвідувачі від тебе нікуди не дінуться.", "Welcome to the team, Shnyr. Now golden customers can't get away from you."],
+      ["clock", "Це була остання епоха кола. Але подорож у часі — це спіраль. Нове коло починається.", "That was the last era of the circle. But time travel is a spiral. A new circle begins."] ] }
+  ]
+};
+// Дані → описи глав (для сюжетного двигуна) і тексти (для translations)
+const EPOCH_CHAPTERS = {};
+(function () {
+  Object.keys(EC_DATA).forEach(k => {
+    const ek = +k, guest = GUEST_IDS[ek - 1];
+    EPOCH_CHAPTERS[ek] = EC_DATA[k].map((ch, n) => {
+      const lines = ch.L.map(r => (r[0] === 'S' ? 'shnyr' + ek : r[0] === 'G' ? guest : r[0]));
+      translations.uk['ec' + ek + '_' + (n + 1) + '_title'] = ch.t[0]; translations.en['ec' + ek + '_' + (n + 1) + '_title'] = ch.t[1];
+      ch.L.forEach((r, i) => { translations.uk['ec' + ek + '_' + (n + 1) + '_' + i] = r[1]; translations.en['ec' + ek + '_' + (n + 1) + '_' + i] = r[2]; });
+      return { id: n + 1, trigger: EC_TRIGGERS[n], lines };
+    });
+  });
+})();
 //#part 245_stands.js
 /* =====================================================================
     МІСЦЯ ГОСТЕЙ ЕПОХ: біля магазину ліворуч кожен гість має своє місце (джубокс і бар, колонки, автомат-хапалка тощо).
@@ -15811,20 +16540,39 @@ const STANDS = {};
 })();
 
 // Які місця гостей видно зараз (лише для гостей, яких уже зустріли, і лише в їхній епосі): [{ k, id, x, y, w, h }]
-function guestStands() {
+const standPending = {}, standReveal = {};            // k → час (animClock), до якого місце ще не з'явилось / з якого воно «виростає»
+translations.uk.guestArrive = '{0} прийшов у місто! Подивись, що він приніс.'; translations.en.guestArrive = '{0} has come to town! See what they brought.';
+function guestArrived(k) {                              // новий гість: іде з краю екрана, камера показує його місце, а саме місце з'являється, коли він дійде
+  standPending[k] = animClock + 16;
+  try { showToast(t('guestArrive', t('speaker_' + GUEST_IDS[k])), 'big'); } catch (e) { /* не страшно */ }
+  setTimeout(() => { try { const st = guestStands(true).find(s => s.k === k); if (st) { const base = view.offX + (CONFIG.SCENE_W - viewCrop.w) / 2; cam.goal = st.x + view.offX - viewCrop.w / 2 - base; panBy(0); } } catch (e) { /* не страшно */ } }, 400);
+}
+function guestStands(all) {
   const out = [];
   if (!shop || typeof GUEST_IDS === 'undefined') return out;
   const e = viewEpoch() % 8;
   let slot = 0;
   GUEST_IDS.forEach((id, k) => {
-    if (GUEST_STAND_EPOCH[id] !== e || !(state.story.guests[k] > 0) || !STANDS[id]) return;
-    const S = STANDS[id], x = Math.max(worldL() + S.w / 2 + 6, shop.x - 14 - S.w / 2 - slot * 70);
+    if (GUEST_STAND_EPOCH[id] !== e || !(state.story.guests[k] > 0) || !STANDS[id]) return;      // місце з'являється разом із гостем (за сюжетом), а не на початку епохи
+    if (!all && standPending[k] !== undefined) return;                                            // гість ще йде до свого місця
+    const S = STANDS[id], phone = mobileMQ.matches, n = Math.floor(slot / 2);
+    // ЗАКРІПЛЕНО у світі відносно магазину (не залежить від камери й екрана): перший гість — ліворуч, другий (у Відродженні їх двоє) — праворуч;
+    // на телефоні магазин займає майже весь екран, тому місце стоїть біля його кута (щоб було видно без прокручування)
+    const left = phone ? shop.x + S.w / 2 + 4 + n * 70 : shop.x - 14 - S.w / 2 - n * 70;
+    const right = phone ? shop.x + shop.w - S.w / 2 - 4 - n * 70 : shop.x + shop.w + 14 + S.w / 2 + n * 70;
+    const x = Math.max(worldL() + S.w / 2 + 6, Math.min(worldR() - S.w / 2 - 6, slot % 2 === 0 ? left : right));
     out.push({ k, id, x: Math.round(x), y: LAYOUT.streetTop + 24, w: S.w, h: S.h });
     slot++;
   });
   return out;
 }
-function drawGuestStand(st) { STANDS[st.id].draw(ctx, st.x, st.y, animOn() ? animClock : 0); }
+function drawGuestStand(st) {
+  let p = 1; const rv = standReveal[st.k];
+  if (rv !== undefined) { p = Math.min(1, (animClock - rv) / 1.3); if (p >= 1) delete standReveal[st.k]; }       // місце «виростає» знизу вгору
+  if (p < 1) { ctx.save(); ctx.beginPath(); ctx.rect(st.x - st.w / 2 - 8, st.y - st.h * p - 2, st.w + 16, st.h * p + 10); ctx.clip(); }
+  STANDS[st.id].draw(ctx, st.x, st.y, animOn() ? animClock : 0);
+  if (p < 1) ctx.restore();
+}
 //#part 246_help.js
 /* =====================================================================
    ДОПОМОГА ГОСТЯМ ЕПОХ
@@ -16455,7 +17203,7 @@ function render(time) {
 
   if (shop && shop.level >= 6 && !build) withShopScale(getShopScale(), drawClockTower);      // вежа стискається разом з магазином
   // магазин: тінь + спрайт зі стисканням (або будівництво)
-  ctx.globalAlpha = 0.22; R(ctx, shop.x - 2, LAYOUT.curbY + 1, shop.w + 4, 3, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.22; R(ctx, shop.x - 2, LAYOUT.curbY + 1, shop.w + 4, 3, 'd'); ctx.globalAlpha = 0.1; R(ctx, shop.x - 6, LAYOUT.curbY + 4, shop.w + 12, 2, 'd'); ctx.globalAlpha = 1;
   if (build) {
     renderBuild();
   } else {
@@ -16475,7 +17223,7 @@ function render(time) {
   // Капі та покупці — від дальніх до ближніх (за положенням ніг)
   const cp = LAYOUT.capy;
   const items = customers.filter(c => !c.inside).map(c => ({ y: c.y, draw: () => drawCustomer(c) }));       // ті, хто всередині, малюються разом з магазином
-  actors.forEach(a => items.push({ y: a.y, draw: () => drawActor(a) }));
+  actors.forEach(a => items.push({ y: (Math.abs(a.x - (cp.x + 14)) < 24 && a.y > cp.footY - 10 && a.y < cp.footY + 26) ? cp.footY - 0.5 : a.y, draw: () => drawActor(a) }));       // поруч із Капі звірятко завжди позаду неї, не перекриває її
   cameos.forEach(c => items.push({ y: c.y, draw: () => drawCameo(c) }));
   guestWalkers.forEach(g => items.push({ y: g.y, draw: () => drawGuest(g) }));
   guestStands().forEach(st => items.push({ y: st.y, draw: () => drawGuestStand(st) }));

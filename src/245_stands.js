@@ -325,17 +325,36 @@ const STANDS = {};
 })();
 
 // Які місця гостей видно зараз (лише для гостей, яких уже зустріли, і лише в їхній епосі): [{ k, id, x, y, w, h }]
-function guestStands() {
+const standPending = {}, standReveal = {};            // k → час (animClock), до якого місце ще не з'явилось / з якого воно «виростає»
+translations.uk.guestArrive = '{0} прийшов у місто! Подивись, що він приніс.'; translations.en.guestArrive = '{0} has come to town! See what they brought.';
+function guestArrived(k) {                              // новий гість: іде з краю екрана, камера показує його місце, а саме місце з'являється, коли він дійде
+  standPending[k] = animClock + 16;
+  try { showToast(t('guestArrive', t('speaker_' + GUEST_IDS[k])), 'big'); } catch (e) { /* не страшно */ }
+  setTimeout(() => { try { const st = guestStands(true).find(s => s.k === k); if (st) { const base = view.offX + (CONFIG.SCENE_W - viewCrop.w) / 2; cam.goal = st.x + view.offX - viewCrop.w / 2 - base; panBy(0); } } catch (e) { /* не страшно */ } }, 400);
+}
+function guestStands(all) {
   const out = [];
   if (!shop || typeof GUEST_IDS === 'undefined') return out;
   const e = viewEpoch() % 8;
   let slot = 0;
   GUEST_IDS.forEach((id, k) => {
-    if (GUEST_STAND_EPOCH[id] !== e || !(state.story.guests[k] > 0) || !STANDS[id]) return;
-    const S = STANDS[id], x = Math.max(worldL() + S.w / 2 + 6, shop.x - 14 - S.w / 2 - slot * 70);
+    if (GUEST_STAND_EPOCH[id] !== e || !(state.story.guests[k] > 0) || !STANDS[id]) return;      // місце з'являється разом із гостем (за сюжетом), а не на початку епохи
+    if (!all && standPending[k] !== undefined) return;                                            // гість ще йде до свого місця
+    const S = STANDS[id], phone = mobileMQ.matches, n = Math.floor(slot / 2);
+    // ЗАКРІПЛЕНО у світі відносно магазину (не залежить від камери й екрана): перший гість — ліворуч, другий (у Відродженні їх двоє) — праворуч;
+    // на телефоні магазин займає майже весь екран, тому місце стоїть біля його кута (щоб було видно без прокручування)
+    const left = phone ? shop.x + S.w / 2 + 4 + n * 70 : shop.x - 14 - S.w / 2 - n * 70;
+    const right = phone ? shop.x + shop.w - S.w / 2 - 4 - n * 70 : shop.x + shop.w + 14 + S.w / 2 + n * 70;
+    const x = Math.max(worldL() + S.w / 2 + 6, Math.min(worldR() - S.w / 2 - 6, slot % 2 === 0 ? left : right));
     out.push({ k, id, x: Math.round(x), y: LAYOUT.streetTop + 24, w: S.w, h: S.h });
     slot++;
   });
   return out;
 }
-function drawGuestStand(st) { STANDS[st.id].draw(ctx, st.x, st.y, animOn() ? animClock : 0); }
+function drawGuestStand(st) {
+  let p = 1; const rv = standReveal[st.k];
+  if (rv !== undefined) { p = Math.min(1, (animClock - rv) / 1.3); if (p >= 1) delete standReveal[st.k]; }       // місце «виростає» знизу вгору
+  if (p < 1) { ctx.save(); ctx.beginPath(); ctx.rect(st.x - st.w / 2 - 8, st.y - st.h * p - 2, st.w + 16, st.h * p + 10); ctx.clip(); }
+  STANDS[st.id].draw(ctx, st.x, st.y, animOn() ? animClock : 0);
+  if (p < 1) ctx.restore();
+}

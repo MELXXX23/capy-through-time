@@ -367,7 +367,7 @@ function drawBenchBack(b) {        // спинка й сидіння (малює
 }
 function drawBenchFront(b) {       // передня планка й ніжки (малюється ПІСЛЯ того, хто сидить — ніби він сидить на лавці)
   const x = b.x, y = b.y;
-  ctx.globalAlpha = 0.2; R(ctx, x - 16, y, 32, 2, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.22; R(ctx, x - 17, y, 34, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 14, y + 2, 28, 1, 'd'); ctx.globalAlpha = 1;
   const [fb, fl] = benchColors();
   R(ctx, x - 16, y - 7, 32, 3, fb); R(ctx, x - 16, y - 7, 32, 1, fl); R(ctx, x - 16, y - 5, 32, 1, 'd');
   R(ctx, x - 15, y - 4, 3, 4, 'd'); R(ctx, x + 12, y - 4, 3, 4, 'd');
@@ -393,6 +393,7 @@ function lampPositions() {
   return list;
 }
 function drawLamp(g, x) {
+  g.globalAlpha = 0.22; R(g, x - 6, 134, 14, 2, 'd'); g.globalAlpha = 0.12; R(g, x - 3, 136, 8, 1, 'd'); g.globalAlpha = 1;        // тінь біля основи ліхтаря
   R(g, x, 94, 2, 40, 'd');
   R(g, x - 2, 130, 6, 4, 'd');
   R(g, x - 4, 92, 10, 2, 'd');

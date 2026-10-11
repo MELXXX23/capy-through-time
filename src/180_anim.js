@@ -426,12 +426,11 @@ let chatterTimer = 20;
 function actorHome(m) {
   const s = m.spot;
   if (s.x === null) {
-    if (mobileMQ.matches) { const cp = LAYOUT.capy; return cp ? Math.max(cp.x + 27, Math.min(cp.x + 50, visR() - 24)) : shop.x + shop.door.x + shop.door.w / 2 + 40; }   // на телефоні їжак теж праворуч від Капі, впритул до краю екрана (каса — ліворуч від нього, її частково затуляє Капі)
-    const cp = LAYOUT.capy; return Math.min(worldR() - 24, cp.x + 14 + 62);          // на ПК їжак із касою стоїть праворуч від Капі, не впритул
+    if (mobileMQ.matches) { const cp = LAYOUT.capy; return cp ? Math.max(cp.x + 50, Math.min(cp.x + 58, visR() - 24)) : shop.x + shop.door.x + shop.door.w / 2 + 40; }   // на телефоні їжак теж праворуч від Капі, впритул до краю екрана (каса — ліворуч від нього, її частково затуляє Капі)
+    const cp = LAYOUT.capy; return Math.min(worldR() - 24, cp.x + 14 + 66);          // на ПК їжак із касою стоїть праворуч від Капі, не впритул
   }
-  // решта звіряток розставлені по всій ширині вулиці (f — частка ширини); на широкому екрані відстані більші
-  const sc = Math.max(1, Math.min(1.3, (view.w - 36) / 284));
-  return LAYOUT.centerX + (s.f - 0.5) * 284 * sc;
+  // решта звіряток розставлені рівномірно по ВСІЙ вулиці (f — частка ширини світу), а не лише біля магазину
+  return worldL() + 16 + s.f * (worldR() - worldL() - 32);
 }
 // Узгоджує список звіряток на сцені зі станом (хто найнятий — той на вулиці)
 function syncActors() {
@@ -442,10 +441,17 @@ function syncActors() {
     else if (!has && idx >= 0) actors.splice(idx, 1);
   });
 }
+// Позаду Капі й упритул до неї нікому не місце: у смузі ±34 px від неї ходять лише попереду (нижче на 24 px)
+function capyAvoid(o, dt) {
+  const cp = LAYOUT.capy; if (!cp) return;
+  const lim = cp.footY + 24;
+  if (Math.abs(o.x - (cp.x + 14)) < 34 && o.y < lim && o.y > cp.footY - 46) o.y = Math.min(lim, o.y + 48 * dt);
+}
 function updateActors(dt) {
   actors.forEach(a => {
     const s = TEAM[a.i].spot;
     a.t += dt;
+    if (a.mode !== 'sit' && s.x !== null) capyAvoid(a, dt);
     a.hop = Math.max(0, a.hop - dt * 4);
     // влітку звірятка час від часу зупиняються перепочити й попити водички
     if (theme.season === 'summer' && animOn()) {
@@ -453,8 +459,7 @@ function updateActors(dt) {
       else {
         a.restIn -= dt;
         if (a.restIn <= 0) {
-          a.rest = CONFIG.SUMMER_REST_SECONDS;
-          if (Math.random() < 0.6 && Object.keys(bubbleEls).length < 1) showBubble('t' + a.i, t('summerSay_' + Math.floor(Math.random() * 5)), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 }));
+          a.rest = CONFIG.SUMMER_REST_SECONDS;      // звірятко зупиняється перепочити (без самовільних реплік: говорять лише по тапу й на лавочці)
         }
       }
     } else a.rest = 0;
@@ -490,26 +495,23 @@ function updateActors(dt) {
       if (a.mode === 'toBench' && a.bench) {
         a.mode = 'sit'; a.sitT = rand(9, 16); a.y = a.bench.y - 3; a.dir = a.x < LAYOUT.centerX ? 1 : -1;
         if (Object.keys(bubbleEls).length < 1) showBubble('t' + a.i, t('team_' + TEAM[a.i].id + '_sit_' + Math.floor(Math.random() * 2)), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 }));
-      } else { a.mode = 'idle'; a.wait = rand(1, 5); }
+      } else { a.mode = 'idle'; a.wait = rand(0.6, 3); }
     } else {
       a.x += dx / d * step; a.y += dy / d * step; a.moving = true;
       if (Math.abs(dx) > 0.5) a.dir = dx > 0 ? 1 : -1;
     }
   });
-  // час від часу хтось сам щось каже
-  chatterTimer -= dt;
-  if (chatterTimer <= 0) {
-    chatterTimer = rand(CONFIG.CHATTER_MIN, CONFIG.CHATTER_MAX);
-    if (actors.length && Object.keys(bubbleEls).length < 1) { const a = actors[Math.floor(Math.random() * actors.length)]; actorSay(a); }
-  }
+  // звірята самі більше не базікають: репліка лише по тапу (250_tap.js) і коли сіли на лавочку (вище)
 }
 
 // Випадкова точка, куди піти: недалеко від свого місця, але подалі від інших звіряток
 function pickWanderTarget(a) {
   const home = actorHome(TEAM[a.i]);
-  let best = null, bestD = -1;
-  for (let k = 0; k < 6; k++) {
-    const tx = Math.max(worldL() + 14, Math.min(worldR() - 14, home + rand(-85, 85)));
+  let best = null, bestD = -Infinity;
+  // звірята розходяться по всій видимій вулиці, а не купчаться біля магазину
+  const L = worldL() + 14, R = worldR() - 14;
+  for (let k = 0; k < 8; k++) {
+    const tx = Math.max(L, Math.min(R, Math.random() < 0.2 ? rand(L, R) : home + rand(-160, 160)));
     const ty = rand(LAYOUT.streetTop + 8, roadFloor());
     let md = 1e9;
     actors.forEach(o => {
@@ -517,6 +519,8 @@ function pickWanderTarget(a) {
       const walking = o.mode === 'walk' || o.mode === 'toBench';
       md = Math.min(md, Math.hypot(tx - (walking ? o.tx : o.x), (ty - (walking ? o.ty : o.y)) * 1.6));
     });
+    md += Math.min(60, Math.abs(tx - LAYOUT.centerX)) * 0.3;               // трохи подалі від входу в магазин
+    { const cpp = LAYOUT.capy; if (cpp && Math.abs(tx - (cpp.x + 14)) < 30 && ty > cpp.footY - 34) md -= 200; }       // і не лізти на Капі
     if (md > bestD) { bestD = md; best = [tx, ty]; }
   }
   a.tx = best[0]; a.ty = best[1];
@@ -527,10 +531,10 @@ function drawTeamProp(prop, x, y, t, dir) {
   const ph = Math.floor(t * 3) % 2;
   switch (prop) {
     case 'register': {   // прилавок з касою стоїть збоку (ліворуч від їжака), щоб Голка було повністю видно, а не лише голову
-      const rx = x - 27;
-      R(ctx, rx, y - 7, 17, 7, 'b'); R(ctx, rx, y - 7, 17, 1, 'l'); R(ctx, rx, y - 1, 17, 1, 'd');
-      R(ctx, rx + 2, y - 11, 7, 4, 'e'); R(ctx, rx + 3, y - 10, 5, 2, 'g'); R(ctx, rx + 11, y - 9, 4, 2, 'h');
-      if (Math.floor(t * 1.2) % 3 === 0) R(ctx, rx + 12, y - 12 - ph, 2, 2, 'y');
+      const rx = x - 11;                                  // прилавок по центру, перед їжаком: закриває лише живіт, не лице
+      R(ctx, rx, y - 6, 22, 6, 'b'); R(ctx, rx, y - 6, 22, 1, 'l'); R(ctx, rx, y - 1, 22, 1, 'd'); R(ctx, rx + 7, y - 5, 1, 4, 'd'); R(ctx, rx + 14, y - 5, 1, 4, 'd');
+      R(ctx, rx + 15, y - 9, 6, 3, 'e'); R(ctx, rx + 16, y - 8, 4, 1, 'g'); R(ctx, rx + 1, y - 8, 4, 2, 'h');                       // каса справа, зошит зліва
+      if (Math.floor(t * 1.2) % 3 === 0) R(ctx, rx + 18, y - 11 - ph, 2, 2, 'y');
       break;
     }
     case 'hammer': {     // молоток і дошка
@@ -614,19 +618,21 @@ function actorPose(a) {
   const waddle = a.moving ? Math.floor(a.t * 5) % 2 : 0;
   const idleBob = !a.moving && !sitting && Math.sin(a.t * 2.4 + a.i) > 0.7 ? 1 : 0;
   const hopY = Math.round(Math.sin(Math.min(1, a.hop) * Math.PI) * 4);
-  let flip = a.moving ? waddle === 1 : false;
+  let flip = a.moving && a.dir < 0;                 // дзеркалення лише за напрямком руху (раніше блимало з кожним кроком і розмивало очі); крок — підстрибування на 1 px
   if (m.id === 'tonya') flip = Math.floor(a.t / 3) % 2 === 1;   // охоронниця виглядає то вліво, то вправо
   return { m, x: Math.round(a.x), y: a.y, sitting, waddle, idleBob, hopY, flip, bob: waddle + idleBob + hopY };
 }
 function drawActor(a) {
   const x0 = Math.round(a.x), y0 = a.y, k = actorK(a), p = actorPose(a);
   const scaled = fn => { ctx.save(); ctx.translate(x0, y0); ctx.scale(k, k); ctx.translate(-x0, -y0); fn(); ctx.restore(); };
-  scaled(() => { ctx.globalAlpha = 0.32; R(ctx, p.x - 7, p.y, 14, 2, 'd'); ctx.globalAlpha = 1; });
+  scaled(() => { ctx.globalAlpha = 0.3; R(ctx, p.x - 8, p.y, 16, 2, 'd'); ctx.globalAlpha = 0.18; R(ctx, p.x - 5, p.y + 2, 10, 1, 'd'); ctx.globalAlpha = 1; });
+  const behindProp = false;          // каса малюється ПІСЛЯ фігури: їжак стоїть за нею, але вона низька й лице не закриває
+  if (behindProp && !p.sitting) scaled(() => drawTeamProp('register', p.x, p.y - p.waddle - p.idleBob - p.hopY, a.t, a.dir));
   drawCrispFigure(teamSprite(p.m.id), p.x, p.y, p.bob, p.flip);
   scaled(() => {
     const { m, x, y, sitting, waddle, idleBob, hopY } = p;
     if (hasHats()) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);
-    if (!sitting) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, a.dir);
+    if (!sitting && !behindProp) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, a.dir);
     if (a.rest > 0) drawDrink(x, y - hopY, a.t);
     if (hasScarves()) drawScarf(x, y - 16 - waddle - idleBob - hopY, a.i);
   });
@@ -669,8 +675,8 @@ function bubbleBounds() {
   return { l: visL(), r: visR(), t: top + 2, b: top + sceneH / sceneUnit, il: visL() + 38 / sceneUnit, ir: visR() - 40 / sceneUnit, it: top + (tbh + 6) / sceneUnit };
 }
 // Ставить бульбашку так, щоб вона повністю лишалась у кадрі
-function placeBubble(el, x, y) {
-  const bb = bubbleBounds(), hw = (el._w || (el._w = el.offsetWidth)) / 2 / sceneUnit + 2, hh = (el._h || (el._h = el.offsetHeight)) / sceneUnit + 6;
+function placeBubble(el, x, y, bb0) {
+  const bb = bb0 || bubbleBounds(), hw = (el._w || (el._w = el.offsetWidth)) / 2 / sceneUnit + 2, hh = (el._h || (el._h = el.offsetHeight)) / sceneUnit + 6;
   const cx = Math.max(bb.il + hw, Math.min(bb.ir - hw, x)), cy = Math.max(bb.it + hh, Math.min(bb.b - 4, y));
   el._cx = cx;
   el.style.left = Math.round((cx + view.offX) * sceneUnit) + 'px'; el.style.top = Math.round((cy + view.offY) * sceneUnit) + 'px';
@@ -707,11 +713,11 @@ function updateBubbles() {
   const bb = bubbleBounds();
   Object.keys(bubbleEls).forEach(k => {
     const el = bubbleEls[k];
-    if (!el._follow) { if (el._x < bb.l + 3 || el._x > bb.r - 3) { dropBubble(k); return; } placeBubble(el, el._x, el._y); return; }
+    if (!el._follow) { if (el._x < bb.l + 3 || el._x > bb.r - 3) { dropBubble(k); return; } placeBubble(el, el._x, el._y, bb); return; }
     const p = el._follow();
     if (!p) { dropBubble(k); return; }
     if (p.x < bb.l + 3 || p.x > bb.r - 3) { dropBubble(k); return; }        // звірятко пішло за межі кадру (або камеру посунули) — репліка зникає
-    placeBubble(el, p.x, Math.max(24, p.y));
+    placeBubble(el, p.x, Math.max(24, p.y), bb);
   });
 }
 // Репліку обирає ситуація: взимку часто «холодні» фрази, часом — загальна репліка епохи, інакше — власна фраза звірятка; та сама фраза підряд не повторюється
@@ -791,7 +797,6 @@ function hireOrUpgrade(i) {
     spawnDust(a.x, a.y - 2, 6);
     showToast(t('teamHired', name), 'big');
     playSfx('hire');
-    actorSay(a);
   } else {
     showToast(t('teamUpgraded', name, lvl + 1), 'good');
     playSfx('upgrade');
@@ -802,24 +807,33 @@ function hireOrUpgrade(i) {
 /* ---------- Покупці ---------- */
 function customerTarget() {
   if (state.cps <= 0) return 2;
-  return Math.min(CONFIG.MAX_CUSTOMERS + 4, 4 + Math.floor(Math.log10(state.cps + 1) * 2));      // трохи більше покупців, ніж раніше
+  const base = Math.min(CONFIG.MAX_CUSTOMERS + 4, 4 + Math.floor(Math.log10(state.cps + 1) * 2));      // трохи більше покупців, ніж раніше
+  const wide = (worldR() - worldL()) / Math.max(320, visR() - visL());                                  // вулиця широка: покупців більше, щоб їх було видно скрізь
+  return Math.round(base * Math.max(1, Math.min(2.2, wide)));
 }
 // Куди йде звіреня, що покидає сцену: трохи за краєм того, що видно (світ широкий, тож до його краю йти надто довго)
-function passEdge(dir) { return dir > 0 ? Math.min(worldR() + 16, visR() + 30 + rand(0, 120)) : Math.max(worldL() - 16, visL() - 30 - rand(0, 120)); }
+function passEdge(dir) { return dir > 0 ? worldR() + 16 : worldL() - 16; }                       // ідуть до самого краю вулиці, а не зникають одразу за краєм екрана
+// Де з'являється покупець: частина — на краях вулиці, решта — у випадкових місцях по всій вулиці поза межами видимого
+function spawnX(fromLeft) {
+  const W0 = worldL(), W1 = worldR();
+  if (Math.random() < 0.35) return fromLeft ? W0 - 14 : W1 + 14;
+  for (let k = 0; k < 8; k++) { const x = rand(W0 + 10, W1 - 10); if (x < visL() - 24 || x > visR() + 24) return x; }
+  return fromLeft ? W0 - 14 : W1 + 14;
+}
 function spawnCustomer() {
   const fromLeft = Math.random() < 0.5;
   const lane = rand(LAYOUT.lane.min, Math.max(LAYOUT.lane.min + 4, roadFloor()));
-  const goesShopping = Math.random() < 0.7;
+  const goesShopping = Math.random() < 0.55;
   const c = {
     type: CUSTOMER_TYPES[Math.floor(Math.random() * CUSTOMER_TYPES.length)],
-    x: fromLeft ? Math.max(worldL() - 14, visL() - 20 - rand(0, 110)) : Math.min(worldR() + 14, visR() + 20 + rand(0, 110)),
+    x: spawnX(fromLeft),
     y: lane, lane,
     dir: fromLeft ? 1 : -1,
     speed: rand(16, 26),
     anim: rand(0, 2),
     mode: goesShopping ? 'toDoor' : 'pass',
     doorX: shop.x + shop.door.x + shop.door.w / 2 + rand(-4, 4),
-    passTo: fromLeft ? Math.min(worldR() + 16, visR() + 30 + rand(0, 160)) : Math.max(worldL() - 16, visL() - 30 - rand(0, 160)),
+    passTo: fromLeft ? worldR() + 16 : worldL() - 16,
     alpha: 1, t: 0, stay: 0,
     bag: null
   };
@@ -922,7 +936,8 @@ function fearSay(c, ghost) {
 function curbLift(y) { const a = LAYOUT.curbY - 5, b = LAYOUT.curbY + 9; return y > a && y < b ? Math.sin((y - a) / (b - a) * Math.PI) * 3.4 : 0; }
 function updateCustomers(dt) {
   vipTimer -= dt;
-  if (vipTimer <= 0) { vipTimer = rand(100, 160) * evMult() / (1 + 0.15 * wsLevel('goldenFreq')); if (!customers.some(c => c.vip) && state.story.done >= 2 && animOn() && !dialog.active) spawnVip(); }
+  if (vipTimer <= 0) { vipTimer = rand(100, 160) * evMult() * (shnyrPerk() ? 0.75 : 1) / (1 + 0.15 * wsLevel('goldenFreq')); if (!customers.some(c => c.vip) && state.story.done >= 2 && animOn() && !dialog.active) spawnVip(); }
+  if (shnyrPerk()) customers.forEach(c => { if (c.vip && !c.vipDone && c.x > visL() + 6 && c.x < visR() - 6) { c.auto = (c.auto || 0) + dt; if (c.auto > 1.6) { hitVip({ x: c.x, y: c.y - 10 }); showToast(t('shnyrCatch'), 'good'); } } });       // Шнирь сам ловить золотого
   customers.forEach(c => { if (c.vip && !c.said && !c.vipDone && c.x > visL() + 10 && c.x < visR() - 10) { c.said = true; showBubble('vip', t('vipWish', deptName(c.wish)), c.x, c.y - 34, () => ({ x: c.x, y: c.y - 34 })); } });
   customerTimer -= dt;
   if (customerTimer <= 0) {
@@ -934,6 +949,7 @@ function updateCustomers(dt) {
     c.anim += dt;
     const step = c.speed * dt;
     if (c.fear) { updateFear(c, dt); continue; }
+    if (c.mode === 'pass' || c.mode === 'toDoor' || c.mode === 'toHome' || c.mode === 'homeDown') capyAvoid(c, dt);
     if ((c.mode === 'pass' || c.mode === 'toDoor' || c.mode === 'toHome') && animOn()) { const hz = roadDanger(c); if (hz) { startFear(c, hz); continue; } }
     switch (c.mode) {
       case 'pass':
@@ -1080,9 +1096,9 @@ function updateInside(c, dt) {
 }
 // Чи піде покупець додому: обираємо двері будиночка недалеко від магазину (не за самим магазином)
 function pickHome(c) {
-  if (!houseDoors.length || Math.random() > 0.55) return null;
+  if (!houseDoors.length || Math.random() > 0.7) return null;
   const cx = shop.x + shop.w / 2;
-  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8 && Math.abs(d.x - c.x) < 340);
+  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8);                    // усі двері вздовж вулиці, не лише найближчі
   return cand.length ? cand[Math.floor(Math.random() * cand.length)] : null;
 }
 // Коли магазин перебудовується, усі, хто всередині, виходять надвір

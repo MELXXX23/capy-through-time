@@ -964,7 +964,12 @@ Object.assign(SFX, {
   cutClick() { const t = audio.ctx.currentTime + 0.01; noiseHit(audio.sfxGain, t, 0.06, 0.4, 'bandpass', 2400); tone(audio.sfxGain, 'square', 900, t, 0.08, 0.2, 380); },
   cutChain(i) { tone(audio.sfxGain, 'triangle', noteFreq(['C5', 'E5', 'G5', 'C6'][i % 4]), audio.ctx.currentTime + 0.01, 0.2, 0.3); },
   cutWord(i) { melody('square', [[['G5', 'B5', 'D6'][i % 3], 0.07], [['C6', 'E6', 'G6'][i % 3], 0.14]], 0.2); },
-  cutTock() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'square', 190, t, 0.06, 0.2, 80); noiseHit(audio.sfxGain, t, 0.05, 0.25, 'bandpass', 1900); },
+  cutTock() {       // тік-так годинника: два трохи різні м'які удари (верхній і нижній), короткий клац і дзвінкий відгук
+    const t = audio.ctx.currentTime + 0.01, hi = (audio._tock = (audio._tock || 0) + 1) % 2;
+    tone(audio.sfxGain, 'sine', hi ? 1560 : 1040, t, 0.07, 0.14, hi ? 1180 : 760);
+    tone(audio.sfxGain, 'triangle', hi ? 3120 : 2080, t, 0.025, 0.05);
+    noiseHit(audio.sfxGain, t, 0.018, 0.16, 'highpass', 3200);
+  },
   cutDoor() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'sine', 880, t, 0.25, 0.2, 880); tone(audio.sfxGain, 'sine', 1175, t + 0.18, 0.4, 0.18, 1175); }
 });
 const CUT_EV = [[CT.ting1, 'cutTing'], [CT.ting2, 'cutTing'], [CT.pick, 'cutPick'], [CT.fly0, 'cutWhoosh'], [CT.charge, 'cutCharge'], [CT.flash, 'cutBoom'], [16.2, 'cutThud'], [17.0, 'cutThud'], [17.8, 'cutThud'], [18.6, 'cutThud'], [CT.asm1, 'cutDone'], [CT.fin + 0.4, 'cutDoor'],

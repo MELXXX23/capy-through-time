@@ -185,7 +185,7 @@ function corniceG(g, w, y, trim) {                  // карниз під да�
 // awning — 'scallop' (зубчики) чи 'flat' (пряма стрічка з підсвіткою); fx — особливий декор епохи
 const EPOCH_SHOP = [
   { flat: false, roofPal: { r: 't' }, trim: null, col: ['b', 'l'], frame: ['d', 'h'], glass: 'S', base: 'e', band: null, awning: 'scallop', inner: null, fx: 'renaissance', roofs: [0, 1, 1, 4, 4, 1] },
-  { flat: false, roofPal: { r: 'p', n: 'T' }, trim: 'q', col: ['T', 'a'], frame: ['d', 'T'], glass: 'q', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['q', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 3] },
+  { flat: false, roofPal: { r: 'T', n: 'r' }, trim: 'w', col: ['T', 'a'], frame: ['d', 'T'], glass: 'S', base: 'E', band: ['checker', 'w'], awning: 'scallop', inner: ['w', 'm', 'y'], fx: 'retro', roofs: [2, 2, 2, 3, 3, 3] },
   { flat: false, roofPal: { r: 'J', n: 'P' }, trim: 'P', col: ['P', 'J'], frame: ['d', 'f'], glass: 'j', base: 'P', band: ['dots', 'y'], awning: 'scallop', inner: ['J', 'j', 'P'], fx: 'disco', roofs: [2, 2, 3, 3, 6, 3] },
   { flat: true, roofPal: { r: 'v', n: 'V' }, trim: 'V', col: ['V', 'v'], frame: ['k', 'T'], glass: 'v', base: 'V', band: ['checker', 'v'], awning: 'flat', inner: ['V', 'P', 'v'], fx: 'arcade' },
   { flat: true, roofPal: { r: 'n', n: 'e' }, trim: 'a', col: ['e', 'E'], frame: ['n', 'a'], glass: 'a', base: 'e', band: ['dots', 'n'], awning: 'flat', inner: ['a', 'w', 'S'], fx: 'internet' },
@@ -198,7 +198,7 @@ function epochShopStyle() { return EPOCH_SHOP[viewEpoch() % EPOCH_SHOP.length]; 
 // Варіант вигляду магазину: залежить від епохи й рівня, тож усі магазини схожі за стилем епохи, але не однакові
 function shopVariant(level) { return hash2(viewEpoch() * 17 + level * 5 + 3, 7) % 4; }
 const EPOCH_AWN = [
-  [['r', 'w'], ['g', 'w'], ['n', 'y'], ['u', 'w']], [['p', 'w'], ['q', 'w'], ['y', 'w'], ['T', 'w']], [['f', 'y'], ['J', 'w'], ['u', 'y'], ['T', 'f']], [['T', 'f'], ['v', 'y'], ['r', 'k'], ['y', 'k']],
+  [['r', 'w'], ['g', 'w'], ['n', 'y'], ['u', 'w']], [['r', 'w'], ['T', 'w'], ['y', 'w'], ['T', 'r']], [['f', 'y'], ['J', 'w'], ['u', 'y'], ['T', 'f']], [['T', 'f'], ['v', 'y'], ['r', 'k'], ['y', 'k']],
   [['n', 'w'], ['a', 'w'], ['e', 'w'], ['S', 'n']], [['g', 'y'], ['m', 'w'], ['G', 'c'], ['o', 'w']], [['e', 'w'], ['n', 'S'], ['z', 'w'], ['S', 'e']], [['f', 'T'], ['T', 'k'], ['v', 'f'], ['f', 'k']]
 ];
 const EPOCH_STREET = [['bench', 'planter', 'aboard'], ['aboard', 'bench', 'bike'], ['planter', 'parasol', 'aboard'], ['bike', 'aboard', 'bin'], ['bin', 'bench', 'bike'], ['planter', 'bin', 'bike'], ['bin', 'planter', 'aboard'], ['aboard', 'bench', 'parasol']];
@@ -408,7 +408,7 @@ function hologram(g, x, y, w, h, c) { g.globalAlpha = 0.35; R(g, x, y, w, h, c);
 function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
   const top = look.top, f0 = floors[0], yb = h - 7, big = level >= 4;
   const L0 = 11, L1 = door.x - 6, R0 = door.x + door.w + 6, R1 = w - 12;           // вільні місця біля дверей на нижньому поверсі
-  const slotsL = 1, slotsR = 1;                         // лише по одній тематичній деталі з кожного боку від дверей
+  const slotsL = level >= 3 ? 2 : 1, slotsR = level >= 3 ? 2 : 1;                         // по одній (рівні 1–2) чи по дві (з 3-го) тематичні деталі з кожного боку від дверей
   const flat = es.flat;
   switch (es.fx) {
     case 'renaissance': {                              // таверна: дерев'яні балки, діжки, вивіска з кухлем
@@ -476,6 +476,58 @@ function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
       break;
     }
   }
+}
+
+
+// Додаткові тематичні деталі на верхніх поверхах і біля вивіски: щоб магазини різних епох не були однаковими
+function epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB) {
+  if (level < 2) return;
+  const fx = es.fx, ups = floors.filter(fl => fl.f >= 1), yb = h - 7, top = look.top;
+  const colL = 12, colR = w - 22, art = (x, y, rows, cm) => rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] !== '.') R(g, x + i, y + j, 1, 1, cm ? cm[row[i]] || row[i] : row[i]); });
+  const INV = ['..#...#..', '...#.#...', '..#####..', '.##.#.##.', '#########', '#.#####.#', '#.#...#.#'];
+  if (fx === 'renaissance' && level >= 3) [9, w - 16].forEach(bx => {                                                // знамена під вивіскою
+    const by = top + 26; R(g, bx, by, 7, 12, 'd'); R(g, bx + 1, by + 1, 5, 10, 'r'); R(g, bx + 3, by + 1, 1, 10, 'y');
+    R(g, bx + 1, by + 12, 5, 1, 'r'); R(g, bx + 2, by + 13, 3, 1, 'r'); R(g, bx + 3, by + 14, 1, 1, 'r');
+  });
+  if (fx === 'retro' && level >= 2) {                                                                                  // смугастий стовпчик перукарні біля дверей
+    const px = door.x - 5; R(g, px - 1, yb - 20, 5, 20, 'd'); R(g, px, yb - 19, 3, 18, 'w');
+    for (let k = 0; k < 18; k += 4) R(g, px, yb - 19 + k, 3, 2, 'r'); R(g, px - 1, yb - 22, 5, 2, 'd'); R(g, px, yb - 21, 3, 1, 'y');
+  }
+  ups.forEach((fl, n) => {
+    const t0 = fl.top, fy = fl.fy, hF = fy - t0;
+    switch (fx) {
+      case 'renaissance':                                                                                              // ящики з квітами на підвіконнях
+        [colL, colR].forEach((x, k) => { R(g, x, fy - 3, 10, 3, 'd'); R(g, x + 1, fy - 2, 8, 1, 'b'); for (let i = 0; i < 5; i++) { R(g, x + 1 + i * 2, fy - 5 - (i & 1), 1, 3, 'G'); R(g, x + 1 + i * 2, fy - 6 - (i & 1), 1, 1, ['r', 'y', 'p', 'w', 'r'][(i + k + n) % 5]); } });
+        break;
+      case 'retro':                                                                                                   // вінілові платівки й зірки на стіні
+        disc(g, 18, t0 + 13, 6, 'd'); disc(g, 18, t0 + 13, 5, 'k'); disc(g, 18, t0 + 13, 2, n % 2 ? 'p' : 'y'); R(g, 14, t0 + 9, 3, 1, 'w');
+        disc(g, w - 18, t0 + 13, 5, 'd'); disc(g, w - 18, t0 + 13, 4, 'y'); disc(g, w - 18, t0 + 13, 2, 'r');
+        break;
+      case 'disco':                                                                                                   // світлова доріжка вздовж підлоги
+        for (let x = 9; x < w - 9; x += 2) { R(g, x, fy - 2, 2, 1, (x >> 1) % 2 ? 'w' : 'S'); if ((x >> 1) % 4 === n % 4) R(g, x, fy - 3, 2, 1, ['f', 'T', 'y', 'p'][(x >> 3) % 4]); }
+        break;
+      case 'arcade':                                                                                                  // піксельні прибульці на стінах
+        art(11, t0 + 6, INV, { '#': ['g', 'f', 'T'][n % 3] }); art(w - 20, t0 + 6, INV, { '#': ['T', 'g', 'f'][n % 3] });
+        break;
+      case 'internet': {                                                                                              // ряд іконок застосунків і QR-код
+        for (let r2 = 0; r2 < 2; r2++) for (let c2 = 0; c2 < 3; c2++) { R(g, 11 + c2 * 5, t0 + 6 + r2 * 5, 4, 4, 'd'); R(g, 12 + c2 * 5, t0 + 7 + r2 * 5, 2, 2, ['a', 'g', 'f', 'y', 'T', 'n'][(c2 + r2 * 3 + n) % 6]); }
+        const qx = w - 20, qy = t0 + 6; R(g, qx - 1, qy - 1, 10, 10, 'w'); for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) if (((i * 7 + j * 13 + n * 5) % 5) < 2 || (i < 2 && j < 2)) R(g, qx + i, qy + j, 1, 1, 'k');
+        break;
+      }
+      case 'eco':                                                                                                     // зелена стіна: ліани й горщики
+        vinesG(g, 13, t0 + 3, Math.min(16, hF - 8)); vinesG(g, w - 15, t0 + 3, Math.min(14, hF - 8)); vinesG(g, 19, t0 + 3, Math.min(9, hF - 10));
+        break;
+      case 'space':                                                                                                   // ілюмінатори
+        [[16, t0 + 13], [w - 17, t0 + 13]].forEach(([px, py]) => { disc(g, px, py, 5, 'd'); disc(g, px, py, 4, 'e'); disc(g, px, py, 3, n % 2 ? 'n' : 'z'); R(g, px - 2, py - 2, 2, 1, 'w'); });
+        break;
+      case 'neon':                                                                                                    // неонові смуги вздовж поверху й по краях
+        neonLine(g, 9, fy - 2, w - 18, 1, n % 2 ? 'T' : 'f'); neonLine(g, 11, t0 + 5, 1, hF - 9, n % 2 ? 'f' : 'T'); neonLine(g, w - 12, t0 + 5, 1, hF - 9, n % 2 ? 'T' : 'f');
+        break;
+    }
+  });
+  if (fx === 'eco' && es.flat && level >= 3) [34, w - 40].forEach(tx => {                                              // вітряки на даху
+    R(g, tx, top - 16, 1, 16, 'd'); R(g, tx - 5, top - 17, 5, 1, 'w'); R(g, tx + 1, top - 17, 5, 1, 'w'); R(g, tx, top - 22, 1, 5, 'w'); R(g, tx, top - 17, 1, 2, 'd');
+  });
 }
 
 /* ---------- Вивіска й дах: окремий вигляд під кожну епоху ---------- */
@@ -859,7 +911,7 @@ function drawCinemaMovie() {
     Rr(0, 6, W, H - 6, 'n'); for (let i = 0; i < 14; i++) { const wx = ((i * 16 - t * 18) % W + W) % W; Rr(wx, 7 + (i % 3) * 2, 6, 1, 'a'); }
     const bx = W * 0.55 + Math.sin(t * 1.5) * 6, by = 4 + Math.sin(t * 3) * 1; Rr(bx, by + 2, 11, 2, 'r'); Rr(bx + 5, by - 3, 1, 5, 'd'); Rr(bx + 6, by - 3, 4, 4, 'w');
   }
-  ctx.globalAlpha = 0.12 + 0.05 * Math.sin(t * 40); R(ctx, x0, y0, W, H, 'w'); ctx.globalAlpha = 1;      // мерехтіння плівки
+  ctx.globalAlpha = 0.1 + 0.025 * Math.sin(t * 11); R(ctx, x0, y0, W, H, 'w'); ctx.globalAlpha = 1;      // мерехтіння плівки
   if (u < 0.35) { ctx.globalAlpha = 1 - u / 0.35; R(ctx, x0, y0, W, H, 'k'); ctx.globalAlpha = 1; }          // затемнення між сценами
   Rr(Math.floor(((t * 53) % 1) * W), 0, 1, H, 'w'); ctx.globalAlpha = 0.5; Rr(0, 0, 3, H, 'k'); Rr(W - 3, 0, 3, H, 'k'); ctx.globalAlpha = 1;   // рівні краї «кіноплівки»
   ctx.restore();
@@ -1019,13 +1071,19 @@ function buildShopCanvas(level, tiers) {
     const dir = e.xHigh > e.xLow ? 1 : -1, hi = floors[e.hi];
     const ox = dir > 0 ? e.xHigh - 14 : e.xHigh - 1;
     R(b, ox, hi.fy, 16, 3, 'd');                                                  // отвір у перекритті
+    // посадкові майданчики з жовтою смугою безпеки (знизу й нагорі)
+    R(b, e.xLow - dir * 3 - (dir > 0 ? 0 : 2), e.yLow, 5, 2, 'y'); R(b, e.xHigh + dir * 1 - (dir > 0 ? 0 : 4), e.yHigh, 5, 2, 'y');
     for (let i = 0; i <= e.run; i++) {
       const x = e.xLow + dir * i, y = e.yLow - Math.round(i * e.rise / e.run);
-      R(b, x, y, 1, 3, (i % 4 < 2) ? 'e' : 'E'); R(b, x, y + 3, 1, 2, 'd');       // сходинки й підпорка
-      b.globalAlpha = 0.35; R(b, x, y - 9, 1, 8, 'S'); b.globalAlpha = 1;          // скляна огорожа
-      R(b, x, y - 9, 1, 1, 'd'); R(b, x, y - 8, 1, 1, 'h');                          // поручень
+      R(b, x, y + 3, 1, 5, 'e'); R(b, x, y + 7, 1, 1, 'd');                              // корпус-ферма під сходинками
+      R(b, x, y, 1, 1, (i % 4 === 0) ? 'w' : 'l');                                       // світла кромка сходинки
+      R(b, x, y + 1, 1, 2, (i % 4 < 2) ? 'e' : 'E');                                    // підступінок і протектор
+      R(b, x, y + 2, 1, 1, 'd');
+      b.globalAlpha = 0.38; R(b, x, y - 8, 1, 7, 'S'); b.globalAlpha = 0.16; R(b, x, y - 8, 1, 2, 'w'); b.globalAlpha = 1;   // скляна огорожа з відблиском
+      R(b, x, y - 10, 1, 1, 'd'); R(b, x, y - 9, 1, 2, (i % 7 === 3) ? 'h' : 'E'); R(b, x, y - 7, 1, 1, 'd');             // товстий поручень (стрічка) з рухомою позначкою
+      if (i % 12 === 0) R(b, x, y - 8, 1, 8, 'd');                                      // стійки огорожі
     }
-    R(b, e.xLow, e.yLow - 9, 1, 9, 'd'); R(b, e.xHigh, e.yHigh - 9, 1, 9, 'd');
+    R(b, e.xLow, e.yLow - 11, 2, 11, 'd'); R(b, e.xLow, e.yLow - 10, 1, 9, 'e'); R(b, e.xHigh - (dir > 0 ? 1 : 0), e.yHigh - 11, 2, 11, 'd'); R(b, e.xHigh - (dir > 0 ? 0 : 0), e.yHigh - 10, 1, 9, 'e');
   });
 
   /* ========== ФАСАД (front) ========== */
@@ -1106,6 +1164,7 @@ function buildShopCanvas(level, tiers) {
   roofProp(g, es, w, look.top, level, pL); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, pR);
   shopRoofExtras(g, es, w, look.top, level);       // примітні деталі на даху по боках від вивіски
   epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
+  epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB);
   if (!skinShop) shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, shopVariant(level));
   if (skinShop) skinShopDeco(g, skinOn('shop'), w, h, look, yG, door);
   gD.save(); gD.globalCompositeOperation = 'destination-out'; gD.fillStyle = '#000'; gD.fillRect(K.x, K.y, K.w, K.h); gD.restore();
@@ -1126,18 +1185,13 @@ function buildShopCanvas(level, tiers) {
   glassRects.forEach(r => {
     if (r[2] > 30) {                                                                                           // інтер'єр: тепле світло, крізь яке все ще видно звірят
       lg.globalAlpha = 0.2; R(lg, r[0], r[1], r[2], r[3], 'y'); lg.globalAlpha = 0.12; R(lg, r[0], r[1], r[2], 3, 'w'); R(lg, r[0], r[1] + r[3] - 5, r[2], 5, 'h');
-      lg.globalAlpha = 1; for (let bx = r[0] + 5; bx < r[0] + r[2] - 3; bx += 12) { R(lg, bx, r[1] + 1, 3, 2, 'w'); lg.globalAlpha = 0.28; R(lg, bx - 2, r[1] + 3, 7, 6, 'y'); lg.globalAlpha = 1; }          // лампи під стелею з конусом світла
+      lg.globalAlpha = 1;                                                                                // лампочки під стелею прибрано: лишається м'яке природне світло інтер'єру
     }
     else { R(lg, r[0], r[1], r[2], r[3], 'y'); R(lg, r[0], r[1] + r[3] - 3, r[2], 3, 'h'); }                 // ліхтарики й дрібні вікна світяться яскраво
   });
   lg.clearRect(door.x - 3, door.y - 3, door.w + 6, door.h + 3);                                                                  // двері лишаються без підсвітки — вночі їх чітко видно
   lg.globalAlpha = 0.5; R(lg, door.x - 3, door.y - 4, door.w + 6, 1, 'h'); lg.globalAlpha = 1;                                 // тонка лампа над дверима
-  shelfLights.forEach(([x, y]) => {                                                                                               // вночі прилавки підсвічені теплим жовтим світлом (не надто яскравим)
-    lg.globalAlpha = 0.1; R(lg, x - 4, y - 7, 44, 31, 'y');
-    lg.globalAlpha = 0.28; R(lg, x - 1, y - 2, 36, 21, 'y');
-    lg.globalAlpha = 0.6; R(lg, x + 1, y - 4, 32, 2, 'h'); R(lg, x + 2, y - 3, 30, 1, 'y');
-    lg.globalAlpha = 1;
-  });
+  // окремі «квадрати» світла над прилавками прибрано: вночі лишається лише м'яке фонове світло інтер'єру
   if (lastRoofSign) { lg.globalAlpha = 0.1; R(lg, lastRoofSign.x + 1, lastRoofSign.y + 1, lastRoofSign.w - 2, lastRoofSign.h - 2, 'y'); lg.globalAlpha = 1; }          // вивіска «CAPYTAP» світиться вночі
   lg.globalAlpha = 0.28; R(lg, 7, look.top + 10, w - 14, 13, 'y'); lg.globalAlpha = 1;                                                                                       // і назва магазину теж
   glassRects = null;
