@@ -232,6 +232,20 @@ const SFX = {
     [[110, 0.5], [220, 0.28], [330, 0.17], [440, 0.09]].forEach(([f, v]) => tone(audio.sfxGain, 'sine', f, t0, 1.8, v));
     tone(audio.sfxGain, 'triangle', 165, t0, 1.2, 0.12); noiseHit(audio.sfxGain, t0, 0.05, 0.3, 'bandpass', 1800);
   },
+  clockTap() {     // тап по годиннику: клац шестерні й світлий дзвін «дін-дон» (чутний і на телефоні, де низькі тони зникають)
+    const ac = audio.ctx, t0 = ac.currentTime + 0.01;
+    if (t0 - (SFX._clockLast || 0) < 0.3) return;                                  // не частіше ~3 разів на секунду
+    SFX._clockLast = t0;
+    const bell = (f, t, vol, dur) => [[1, 1], [2.01, 0.55], [2.76, 0.4], [4.07, 0.22], [5.43, 0.12]].forEach(([r, a], k) => {
+      const osc = ac.createOscillator(), g = ac.createGain(), d = dur / (1 + k * 0.7);
+      osc.type = 'sine'; osc.frequency.value = f * r;
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol * a, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      osc.connect(g); g.connect(audio.sfxGain); osc.start(t); osc.stop(t + d + 0.05);
+    });
+    noiseHit(audio.sfxGain, t0, 0.02, 0.22, 'highpass', 3500); noiseHit(audio.sfxGain, t0 + 0.05, 0.02, 0.16, 'highpass', 2800);
+    bell(988, t0 + 0.07, 0.16, 1.1);       // дін
+    bell(659, t0 + 0.42, 0.2, 1.7);        // дон
+  },
   paper() { const ac = audio.ctx, t0 = ac.currentTime + 0.01; noiseHit(audio.sfxGain, t0, 0.14, 0.32, 'bandpass', 3200); noiseHit(audio.sfxGain, t0 + 0.08, 0.1, 0.22, 'highpass', 5200); },
   buildTheme() {   // бадьорий будівельний марш (≈8 с): мелодія на квадраті, бас і стукіт молотків
     const ac = audio.ctx, beat = 0.5, t0 = ac.currentTime + 0.05;

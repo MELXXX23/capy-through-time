@@ -224,6 +224,7 @@ function shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, sv) {
 const SHOP_SKINS = {
   candy: { roofPal: { r: 'f', n: 'q' }, trim: 'q', col: ['f', 'w'], frame: ['d', 'q'], glass: 'q', base: 'p', band: ['dots', 'w'], awningCols: ['f', 'w'], signFill: 'f' },
   gold:  { roofPal: { r: 'h', n: 'y' }, trim: 'h', col: ['h', 'y'], frame: ['h', 'y'], glass: 'y', base: 'h', band: ['checker', 'y'], awningCols: ['r', 'h'], signFill: 'k' },
+  diamond: { roofPal: { r: 'a', n: 's' }, trim: 'S', col: ['a', 'w'], frame: ['n', 'a'], glass: 'S', base: 's', band: ['checker', 'w'], awningCols: ['a', 'w'], signFill: 'n' },
   ice:   { roofPal: { r: 'S', n: 'a' }, trim: 'a', col: ['a', 'w'], frame: ['n', 'a'], glass: 'a', base: 'a', band: ['dots', 'w'], awningCols: ['a', 'w'], signFill: 'n' },
   wood:  { roofPal: { r: 'b', n: 'l' }, trim: 'l', col: ['b', 'c'], frame: ['d', 'c'], glass: 'y', base: 'b', band: ['dots', 'c'], awningCols: ['r', 'w'], signFill: 'b' },
   garden: { roofPal: { r: 'g', n: 'G' }, trim: 'g', col: ['G', 'm'], frame: ['G', 'm'], glass: 'm', base: 'G', band: ['leaf', 'm'], awningCols: ['m', 'w'], signFill: 'G' },
@@ -282,7 +283,38 @@ function butterflyG(g, x, y, c1, c2) { R(g, x, y + 1, 1, 3, 'd'); R(g, x - 3, y,
 function sunflowerG(g, x, yb) { R(g, x, yb - 14, 1, 14, 'G'); R(g, x + 1, yb - 7, 3, 1, 'g'); R(g, x - 3, yb - 10, 3, 1, 'g'); disc(g, x, yb - 17, 4, 'd'); disc(g, x, yb - 17, 3, 'h'); disc(g, x, yb - 17, 1, 'b'); R(g, x - 4, yb - 17, 1, 1, 'y'); R(g, x + 4, yb - 17, 1, 1, 'y'); R(g, x, yb - 21, 1, 1, 'y'); }
 function hayBaleG(g, x, yb) { R(g, x, yb - 9, 14, 9, 'd'); R(g, x + 1, yb - 8, 12, 7, 'h'); R(g, x + 1, yb - 8, 12, 1, 'y'); for (let k = 3; k < 13; k += 4) R(g, x + k, yb - 8, 1, 7, 'o'); R(g, x + 1, yb - 4, 12, 1, 'c'); }
 function cornG(g, x, yb) { R(g, x, yb - 14, 1, 14, 'G'); R(g, x + 1, yb - 9, 3, 1, 'g'); R(g, x - 3, yb - 11, 3, 1, 'g'); R(g, x - 1, yb - 9, 4, 6, 'd'); R(g, x, yb - 8, 2, 4, 'h'); R(g, x, yb - 8, 1, 4, 'y'); R(g, x - 1, yb - 3, 1, 1, 'g'); R(g, x + 1, yb - 14, 1, 1, 'y'); }
+function ghostG(g, x, y) {                          // маленький привид: біле тіло, хвилястий низ, чорні очі
+  R(g, x - 3, y, 7, 8, 'd'); R(g, x - 2, y - 1, 5, 1, 'd'); R(g, x - 2, y, 5, 8, 'w'); R(g, x - 3, y + 1, 7, 6, 'w'); R(g, x - 3, y + 1, 1, 5, 'S');
+  R(g, x - 2, y + 8, 1, 1, 'd'); R(g, x, y + 8, 1, 1, 'd'); R(g, x + 2, y + 8, 1, 1, 'd'); R(g, x - 1, y + 7, 1, 1, 'w'); R(g, x + 1, y + 7, 1, 1, 'w');
+  R(g, x - 2, y + 2, 1, 2, 'k'); R(g, x + 1, y + 2, 1, 2, 'k'); R(g, x - 1, y + 5, 2, 1, 'k');
+}
+function cauldronG(g, x, yb) {                       // казанок із зеленим варивом і пухирцями
+  R(g, x - 6, yb - 8, 13, 6, 'd'); R(g, x - 5, yb - 7, 11, 5, 'k'); R(g, x - 5, yb - 8, 11, 2, 'm'); R(g, x - 4, yb - 8, 3, 1, 'y');
+  R(g, x - 5, yb - 2, 2, 2, 'd'); R(g, x + 4, yb - 2, 2, 2, 'd'); R(g, x - 7, yb - 7, 1, 2, 'd'); R(g, x + 7, yb - 7, 1, 2, 'd');
+  R(g, x - 2, yb - 11, 2, 2, 'm'); R(g, x + 2, yb - 13, 1, 1, 'm'); R(g, x + 1, yb - 10, 1, 1, 'y');
+}
+function batG(g, x, y) { R(g, x - 3, y, 2, 1, 'k'); R(g, x + 2, y, 2, 1, 'k'); R(g, x - 4, y + 1, 3, 1, 'k'); R(g, x + 2, y + 1, 3, 1, 'k'); R(g, x - 1, y, 3, 2, 'k'); R(g, x - 1, y - 1, 1, 1, 'k'); R(g, x + 1, y - 1, 1, 1, 'k'); R(g, x - 3, y + 2, 1, 1, 'k'); R(g, x + 3, y + 2, 1, 1, 'k'); R(g, x, y, 1, 1, 'r'); }
+function bunnyG(g, x, yb) {                          // кролик-статуетка: вуха, мордочка, хвостик
+  R(g, x - 3, yb - 14, 2, 6, 'd'); R(g, x + 1, yb - 14, 2, 6, 'd'); R(g, x - 2, yb - 13, 1, 5, 'q'); R(g, x + 1, yb - 13, 1, 5, 'q');
+  R(g, x - 4, yb - 9, 9, 7, 'd'); R(g, x - 3, yb - 8, 7, 5, 'w'); R(g, x - 2, yb - 7, 1, 1, 'k'); R(g, x + 1, yb - 7, 1, 1, 'k'); R(g, x - 1, yb - 5, 2, 1, 'p');
+  R(g, x - 5, yb - 4, 11, 4, 'd'); R(g, x - 4, yb - 3, 9, 3, 'w'); R(g, x + 5, yb - 3, 2, 2, 'w');
+}
+function scarecrowG(g, x, yb) {                      // опудало: стовп, соломяні руки, сорочка в латках, гарбузова голова й капелюх
+  R(g, x, yb - 22, 1, 22, 'd'); R(g, x - 7, yb - 15, 15, 2, 'd'); R(g, x - 6, yb - 15, 13, 1, 'b');
+  R(g, x - 3, yb - 16, 7, 7, 'd'); R(g, x - 2, yb - 15, 5, 5, 'r'); R(g, x - 1, yb - 13, 2, 2, 'h'); R(g, x - 2, yb - 11, 5, 1, 'b');
+  R(g, x - 9, yb - 15, 2, 4, 'y'); R(g, x + 8, yb - 15, 2, 4, 'y'); R(g, x - 3, yb - 9, 2, 3, 'y'); R(g, x + 2, yb - 9, 2, 3, 'y');
+  disc(g, x, yb - 21, 4, 'd'); disc(g, x, yb - 21, 3, 'o'); R(g, x - 2, yb - 22, 1, 1, 'k'); R(g, x + 1, yb - 22, 1, 1, 'k'); R(g, x - 1, yb - 19, 3, 1, 'k');
+  R(g, x - 5, yb - 25, 11, 1, 'd'); R(g, x - 3, yb - 29, 7, 4, 'd'); R(g, x - 3, yb - 26, 7, 1, 'h');
+}
+function mushroomG(g, x, yb) { R(g, x - 1, yb - 3, 3, 3, 'd'); R(g, x, yb - 3, 1, 3, 'w'); R(g, x - 3, yb - 6, 7, 3, 'd'); R(g, x - 2, yb - 5, 5, 2, 'r'); R(g, x - 1, yb - 5, 1, 1, 'w'); R(g, x + 1, yb - 4, 1, 1, 'w'); }
+function tulipG(g, x, yb, c) { R(g, x, yb - 4, 1, 4, 'G'); R(g, x - 1, yb - 7, 3, 3, 'd'); R(g, x, yb - 6, 1, 2, c); R(g, x - 1, yb - 6, 1, 1, c); R(g, x + 1, yb - 6, 1, 1, c); }
 function arrowShine(g, x, y, big) { skinGlints.push([x, y, big ? 1 : 0]); }
+function crystalG(g, x, yb, hh) {                  // кристал-стовпчик з гострою верхівкою: світла ліва грань, темна права
+  R(g, x, yb - hh, 1, 1, 'n');
+  R(g, x - 1, yb - hh + 1, 3, 1, 'n'); R(g, x, yb - hh + 1, 1, 1, 'w');
+  for (let y = yb - hh + 2; y < yb; y++) { R(g, x - 2, y, 5, 1, 'n'); R(g, x - 1, y, 1, 1, 'w'); R(g, x, y, 1, 1, 'S'); R(g, x + 1, y, 1, 1, 's'); }
+  R(g, x - 1, yb, 3, 1, 'n');
+}
 
 function skinShopDeco(g, skin, w, h, look, yG, door) {
   const top = look.top, rb = top + 3;
@@ -295,6 +327,10 @@ function skinShopDeco(g, skin, w, h, look, yG, door) {
     candyCaneG(g, door.x - 8, h - 7, 10); candyCaneG(g, door.x + door.w + 6, h - 7, 8);
     R(g, 4, top + 14, 1, 14, 'd'); R(g, 5, top + 24, 7, 8, 'd'); R(g, 6, top + 25, 5, 6, 'r'); R(g, 6, top + 25, 5, 1, 'w');             // шкарпетка біля краю
     snowCap(g.canvas, top + 4);
+    for (let x = 6; x < w - 6; x += 5) { if (x > door.x - 8 && x < door.x + door.w + 8) continue; const c = ['r', 'y', 'g', 'n'][(x / 5 | 0) % 4]; R(g, x, top + 6, 2, 2, c); R(g, x, top + 6, 1, 1, 'w'); R(g, x, top + 5, 1, 1, 'd'); }           // вогники по краю даху
+    [3, w - 8].forEach(cx => { for (let y = top + 12; y < h - 12; y += 6) R(g, cx + 1, y, 1, 1, 'y'); });                                            // золоті вогники на колонах
+    for (let x = 4; x < w - 4; x += 9) { if (x > door.x - 6 && x < door.x + door.w + 6) continue; R(g, x, h - 9, 5, 2, 'w'); R(g, x + 1, h - 10, 3, 1, 'w'); }   // замети під вітриною
+    if (w - 14 > door.x + door.w + 28) snowmanG(g, w - 14, h - 7);
   } else if (skin === 'halloween') {
     pumpkinG(g, door.x - 12, h - 7, 5); pumpkinG(g, door.x + door.w + 11, h - 7, 4);
     tombstoneG(g, 14, h - 7); tombstoneG(g, w - 12, h - 7); candleG(g, 24, h - 7); candleG(g, w - 22, h - 7);
@@ -302,6 +338,10 @@ function skinShopDeco(g, skin, w, h, look, yG, door) {
     for (let x = 6; x < w - 6; x += 9) { R(g, x, yG + 10, 2, 2 + ((x * 3) % 4), 'm'); }                                               // слиз із навісу
     g.globalAlpha = 0.85; lineG(g, 3, top + 6, 17, top + 6, 'w'); lineG(g, 3, top + 6, 3, top + 20, 'w'); lineG(g, 3, top + 6, 14, top + 17, 'w'); lineG(g, 3, top + 10, 10, top + 10, 'w'); lineG(g, 3, top + 14, 7, top + 14, 'w'); g.globalAlpha = 1;
     [[w - 20, top + 3], [w - 12, top + 7]].forEach(([bx, by]) => { R(g, bx, by, 5, 1, 'k'); R(g, bx - 1, by - 1, 2, 2, 'k'); R(g, bx + 4, by - 1, 2, 2, 'k'); R(g, bx + 2, by + 1, 1, 1, 'k'); });
+    ghostG(g, w - 22, top + 18); ghostG(g, 26, yG + 6);
+    if (door.x - 20 > 10) cauldronG(g, door.x - 18, h - 7);
+    batG(g, Math.round(w * 0.3), top + 14); batG(g, Math.round(w * 0.7), top + 10); batG(g, door.x + door.w + 20, yG + 8);
+    for (let x = 8; x < w - 8; x += 6) R(g, x, top + 6, 2, 1, x % 12 ? 'o' : 'P');                                                              // оранжево-фіолетовий ряд по даху
   } else if (skin === 'spring') {
     lineG(g, 2, top + 5, 26, top + 12, 'b'); lineG(g, 2, top + 6, 26, top + 13, 'd');
     for (let i = 0; i < 16; i++) { const px = 4 + ((i * 7) % 24), py = top + 6 + Math.round(px * 0.28) + ((i * 5) % 7) - 3; R(g, px, py, 2, 2, i % 3 ? 'p' : 'q'); R(g, px, py, 1, 1, 'w'); }
@@ -311,6 +351,11 @@ function skinShopDeco(g, skin, w, h, look, yG, door) {
     butterflyG(g, 24, top + 22, 'p', 'w'); butterflyG(g, w - 24, top + 18, 'y', 'o');
     R(g, 8, h - 13, 12, 6, 'd'); R(g, 9, h - 12, 10, 4, 'b'); for (let i = 0; i < 4; i++) { R(g, 10 + i * 2, h - 15, 2, 3, i % 2 ? 'f' : 'p'); R(g, 10 + i * 2, h - 13, 1, 1, 'g'); }       // ящик із тюльпанами
     R(g, w - 20, h - 12, 10, 5, 'd'); R(g, w - 19, h - 11, 8, 3, 'w'); R(g, w - 16, h - 14, 4, 3, 'w'); R(g, w - 15, h - 15, 2, 1, 'd'); R(g, w - 14, h - 13, 1, 1, 'f');                   // великодній кошик
+    lineG(g, w - 3, top + 5, w - 27, top + 12, 'b'); lineG(g, w - 3, top + 6, w - 27, top + 13, 'd');                                      // друга гілка з цвітом справа
+    for (let i = 0; i < 14; i++) { const px = w - 5 - ((i * 7) % 24), py = top + 6 + Math.round((w - px) * 0.28) + ((i * 5) % 7) - 3; R(g, px, py, 2, 2, i % 3 ? 'q' : 'w'); R(g, px, py, 1, 1, 'p'); }
+    for (let x = 5; x < w - 5; x += 7) { if (x > door.x - 4 && x < door.x + door.w + 4) continue; tulipG(g, x, h - 7, ['f', 'p', 'y', 'q', 'o'][(x / 7 | 0) % 5]); }   // клумба з тюльпанами
+    if (w - 18 > door.x + door.w + 26) bunnyG(g, w - 18, h - 7);
+    butterflyG(g, Math.round(w * 0.5), top + 14, 'q', 'f');
   } else if (skin === 'autumn') {
     for (let x = 5; x < w - 8; x += 8) { const c = ['o', 'r', 'h'][(x >> 3) % 3]; R(g, x, top + 8, 3, 2, c); R(g, x + 1, top + 10, 1, 1, 'b'); }
     pumpkinG(g, door.x + door.w + 12, h - 7, 4); leafPileG(g, door.x - 14, h - 7); leafPileG(g, w - 12, h - 7);
@@ -319,6 +364,10 @@ function skinShopDeco(g, skin, w, h, look, yG, door) {
     R(g, w - 30, h - 12, 12, 6, 'd'); R(g, w - 29, h - 11, 10, 4, 'b'); for (let i = 0; i < 4; i++) { disc(g, w - 27 + i * 3, h - 13, 2, 'd'); disc(g, w - 27 + i * 3, h - 13, 1, i % 2 ? 'r' : 'J'); }     // ящик яблук
     for (let x = 6; x < w - 6; x += 4) R(g, x, yG + 12 + ((x >> 2) & 1), 2, 2, ['o', 'r', 'h'][(x >> 2) % 3]);                          // гірлянда з листя
     R(g, door.x + 1, yG + 11, door.w - 2, 1, 'r'); R(g, door.x + 2, yG + 12, door.w - 4, 1, 'o');
+    if (w - 14 > door.x + door.w + 30) scarecrowG(g, w - 14, h - 7);
+    mushroomG(g, 40, h - 7); mushroomG(g, 46, h - 7); if (door.x + door.w + 12 < w - 40) mushroomG(g, door.x + door.w + 10, h - 7);
+    [3, w - 8].forEach((cx, i) => { for (let y = top + 10; y < h - 12; y += 5) R(g, cx + (y % 2), y, 2, 1, ['o', 'r', 'h'][((y / 5 | 0) + i) % 3]); });         // листя на колонах
+    for (let x = 7; x < w - 7; x += 11) R(g, x, top + 6, 3, 1, ['o', 'r', 'h'][(x / 11 | 0) % 3]);
   }
   else if (skin === 'candy') {
     const colTop = top + 8;
@@ -351,6 +400,16 @@ function skinShopDeco(g, skin, w, h, look, yG, door) {
     for (let i = 0; i < 10; i++) { const rx = w - 29 + ((i * 5) % 13), ry = yG + 13 + ((i * 7) % 18); R(g, rx, ry, 3, 3, 'd'); R(g, rx, ry, 2, 2, i % 2 ? 'r' : 'f'); R(g, rx, ry, 1, 1, 'q'); R(g, rx + 3, ry + 2, 2, 1, 'g'); }
     R(g, door.x - 14, h - 11, 8, 5, 'd'); R(g, door.x - 13, h - 10, 6, 3, 'Y'); R(g, door.x - 7, h - 13, 4, 1, 'd'); R(g, door.x - 5, h - 12, 1, 2, 'd'); R(g, door.x - 17, h - 12, 3, 1, 'd');       // лійка
     butterflyG(g, 30, top + 22, 'o', 'y'); butterflyG(g, w - 38, top + 16, 'v', 'a'); butterflyG(g, 44, h - 24, 'p', 'q');
+  } else if (skin === 'diamond') {
+    R(g, door.x - 3, yG + 10, door.w + 6, 1, 'w'); R(g, door.x - 2, yG + 11, 1, 22, 'a'); R(g, door.x + door.w + 1, yG + 11, 1, 22, 'a');      // кришталева рамка дверей
+    gemG(g, door.x + (door.w >> 1) - 2, yG + 5, 'N', 'a');                                                                                // діамант над дверима
+    for (let x = 6; x < w - 6; x += 6) { R(g, x, yG + 11, 1, 3, 'S'); R(g, x, yG + 14, 1, 1, 'w'); R(g, x + 3, yG + 11, 1, 2, 'a'); }       // кришталеві підвіски під навісом
+    [3, w - 8].forEach(cx => { R(g, cx + 1, top + 8, 1, h - 16 - top, 'w'); R(g, cx + 2, top + 8, 1, h - 16 - top, 'S'); });                 // блиск на колонах
+    for (let x = 4; x < w - 4; x += 7) { R(g, x, h - 6, 1, 3, 'S'); R(g, x + 1, h - 6, 1, 1, 'w'); }                                       // кришталевий цоколь
+    crystalG(g, 12, h - 7, 9); crystalG(g, 18, h - 7, 6); crystalG(g, door.x - 8, h - 7, 7);
+    crystalG(g, w - 24, h - 7, 6); crystalG(g, w - 17, h - 7, 11); crystalG(g, w - 10, h - 7, 7);
+    gemG(g, 6, yG + 18, 'N', 'a'); gemG(g, w - 11, yG + 18, 'S', 'w'); gemG(g, 6, yG + 30, 'a', 'w'); gemG(g, w - 11, yG + 30, 'N', 'a');         // самоцвіти на колонах
+    [[8, top + 9, 1], [w - 9, top + 9, 1], [8, yG + 20, 0], [w - 9, yG + 20, 0], [8, yG + 32, 1], [w - 9, yG + 32, 0], [door.x + (door.w >> 1), yG + 6, 1], [12, h - 17, 0], [w - 17, h - 19, 1], [door.x - 8, h - 15, 0], [4, h - 20, 0], [w - 6, h - 26, 0]].forEach(([x, y, b]) => arrowShine(g, x, y, b));
   } else if (skin === 'gold') {
     R(g, door.x - 3, yG + 10, door.w + 6, 1, 'y'); R(g, door.x - 2, yG + 11, 1, 22, 'h'); R(g, door.x + door.w + 1, yG + 11, 1, 22, 'h');   // позолочена рамка дверей
     R(g, door.x - 3, yG + 10, door.w + 6, 1, 'w'); gemG(g, door.x + (door.w >> 1) - 2, yG + 5, 'N', 'a');                                       // діамант над дверима

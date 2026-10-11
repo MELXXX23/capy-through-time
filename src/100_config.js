@@ -1193,6 +1193,8 @@ function composeTeamSkin(id, kind) {
   else if (kind === 'chef') { body = 'w'; legs = 'E'; deco = 'buttons'; decoC = 'r'; }
   else if (kind === 'wizard') { body = 'v'; legs = 'u'; deco = 'dots'; decoC = 'y'; }
   else if (kind === 'royal') { body = 'r'; legs = 'w'; deco = 'collar'; decoC = 'w'; }
+  else if (kind === 'gold') { body = 'h'; legs = 'y'; deco = 'buttons'; decoC = 'w'; }
+  else if (kind === 'diamond') { body = 'a'; legs = 's'; deco = 'dots'; decoC = 'w'; }
   else if (kind === 'santa') { body = 'r'; legs = 'k'; deco = 'belt'; decoC = 'k'; }
   else if (kind === 'witch') { body = 'V'; legs = 'P'; deco = 'dots'; decoC = 'o'; }
   else { body = 'z'; legs = 'n'; deco = 'belt'; decoC = 'r'; }
@@ -1214,6 +1216,10 @@ function composeTeamSkin(id, kind) {
     hat(['.......ww.......', '......rrrr......', '.....rrrrrr.....', '....wwwwwwww....']);
   } else if (kind === 'witch') {                                  // капелюх відьми з помаранчевою стрічкою
     hat(['.......VV.......', '......VVVV......', '....oooooooo....', '...VVVVVVVVVV...']);
+  } else if (kind === 'gold') {                                   // світла золота корона з самоцвітами
+    hat(['...y..y..y..y...', '...yyyyyyyyyy...', '...yNyyyyyyNy...']);
+  } else if (kind === 'diamond') {                                // кришталева корона-«кластер»
+    hat(['...N..N..N..N...', '...NaaNaaNaaN...', '...aw1aaaa1wa...']);
   } else if (kind === 'royal') {                                  // золота корона з рубінами
     hat(['...h..h..h..h...', '...hhhhhhhhhh...', '...hrhhhhhhrh...', '................']);
   } else {                                                        // капюшон ніндзя з червоною пов'язкою, маска на нижній частині морди
@@ -1225,7 +1231,7 @@ function composeTeamSkin(id, kind) {
   teamEyes(g, base0);
   return g.map(r => r.join(''));
 }
-['party', 'ninja', 'chef', 'wizard', 'royal', 'santa', 'witch'].forEach(kind => TEAM.forEach(m => { SPRITES['team_' + m.id + '_sk_' + kind] = { rows: composeTeamSkin(m.id, kind) }; }));
+['party', 'ninja', 'chef', 'wizard', 'royal', 'santa', 'witch', 'gold', 'diamond'].forEach(kind => TEAM.forEach(m => { SPRITES['team_' + m.id + '_sk_' + kind] = { rows: composeTeamSkin(m.id, kind) }; }));
 function teamSprite(id) { const s = skinOn('hero'); return s ? 'team_' + id + '_sk_' + s : 'team_' + id + '_e' + (viewEpoch() % 8); }
 Object.keys(NPC_PARTS).forEach(id => { SPRITES['npc_' + id] = { rows: composeChibi(NPC_PARTS[id]) }; });
 SPRITES.npc_clock = { rows: CLOCK_ROWS };
@@ -1544,6 +1550,20 @@ function makeCapyNewRows(kind) {
     for (let x = -1; x <= 17; x++) { const t = (x - 8) / 9, y = 5 + t * t * -2.2 + 2.2; put(x, y, x < 8 ? '#' : '9'); put(x, y + 1, '@'); }
     put(-1, 4, '9'); put(17, 4, '9');
     outlineAll('%#9@bd');
+  } else if (kind === 'gold' || kind === 'diamond') {
+    const fur0 = grid.map(r => r.map(c => c === 'B' || c === 'L')), spot0 = grid.map(r => r.map(c => c === 'L'));
+    const fm = (x, y) => !!(fur0[y] && fur0[y][x]), sp = (x, y) => !!(spot0[y] && spot0[y][x]);
+    if (kind === 'gold') {
+      dye(0, 26, 0, 23, (x, y) => sp(x, y) ? '8' : (!fm(x, y - 1) || !fm(x - 1, y)) ? 'y' : (!fm(x, y + 1) || !fm(x + 1, y)) ? '8' : (x * 2 + y * 3) % 17 === 0 ? 'w' : ((x * 3 + y * 5) % 11 === 0 ? '7' : 'h'));
+      art(5, 0, ['y..y..y.', 'yyyyyyyy', 'y7y6y7yy', '88888888']); put(8, 2, 'N'); put(5, 2, 'J'); put(12, 2, 'J');
+      outlineAll('yh78', 'O');
+      [[26, 4], [30, 7], [20, 0], [3, 1], [29, 15]].forEach(([x, y]) => { put(x, y, 'y'); put(x - 1, y, 'w'); put(x + 1, y, 'w'); put(x, y - 1, 'w'); put(x, y + 1, 'w'); });
+    } else {
+      dye(0, 26, 0, 23, (x, y) => { if (sp(x, y)) return 's'; if (!fm(x, y - 1) || !fm(x - 1, y)) return '1'; if (!fm(x, y + 1) || !fm(x + 1, y)) return 'n'; const f = (Math.floor((x + y) / 3) + Math.floor((x - y + 40) / 3)) % 4; return f === 0 ? 'S' : f === 1 ? 'a' : f === 2 ? 's' : 'w'; });
+      art(5, 0, ['N..N..N.', 'NaN1N1Na', 'a1a1a1a1', 'sssssss.']); put(8, 2, 'w');
+      outlineAll('NaS1sw', 'O');
+      [[26, 4], [30, 7], [20, 0], [3, 1], [29, 15], [31, 11]].forEach(([x, y]) => { put(x, y, 'N'); put(x - 1, y, '1'); put(x + 1, y, '1'); put(x, y - 1, '1'); put(x, y + 1, '1'); });
+    }
   } else if (kind === 'fairy') {
     const wing = (cx, cy, rx, ry, rot) => { for (let y = Math.floor(cy - ry - 4); y <= Math.ceil(cy + ry + 4); y++) for (let x = Math.floor(cx - rx - 4); x <= Math.ceil(cx + rx + 4); x++) { const dx = x - cx, dy = y - cy, c = Math.cos(rot), s = Math.sin(rot), u = (dx * c + dy * s) / rx, v = (-dx * s + dy * c) / ry, d = u * u + v * v; if (d > 1 || at(x, y) !== '.') continue; put(x, y, d > 0.68 ? 'f' : d < 0.12 ? 'w' : (u * 0.6 + v * 0.8 < -0.1 ? 'q' : 'p')); } };
     wing(22, 3.5, 7, 3, -0.7); wing(25.5, 8, 5.2, 2.3, -0.2); wing(17.5, 2.5, 4.5, 2.2, -1.1);
@@ -1591,7 +1611,7 @@ function makeCapyNewRows(kind) {
   return grid.map(row => '.' + row.slice(0, maxX + 1).reverse().join(''));
 }
 
-['knight', 'hero', 'cowboy', 'fairy', 'viking', 'pilot'].forEach(k => { SPRITES['capy_' + k] = { rows: makeCapyNewRows(k), variants: { blink: { K: PALETTE.B } } }; });
+['knight', 'hero', 'cowboy', 'fairy', 'viking', 'pilot', 'gold', 'diamond'].forEach(k => { SPRITES['capy_' + k] = { rows: makeCapyNewRows(k), variants: { blink: { K: PALETTE.B } } }; });
 SPRITES.capy_mel = { canvas: SPRITES.foxcub_0.canvas }; SPRITES.capy_nika = { canvas: SPRITES.bunny_0.canvas };      // скіни розробників: лисеня (MEL) і зайчик (NIKA) з гри
 for (let e = 0; e < 8; e++) SPRITES['capy_ep' + e] = { rows: makeCapySkinRows('ep' + e), variants: { blink: { K: PALETTE.B } } };   // по скіну Капі на кожну епоху
 // Старі скіни Капі, детальна версія (як супергерой): еліпси з освітленням, 2–3 тони, чіткі деталі; замінює спрайти зі старої makeCapySkinRows

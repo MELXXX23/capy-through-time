@@ -235,7 +235,7 @@ function hitClock(p) {
   if (!shop || shop.level < 6 || build || warp) return false;
   const G = clockTowerGeom();
   if (p.x < G.cx - 17 || p.x > G.cx + 17 || p.y < G.top - 4 || p.y > G.bottom) return false;
-  clockFx.chime = Math.max(clockFx.chime, 0.6); clockFx.rings.push({ t: 0 }); playSfx('clockBong');
+  clockFx.chime = Math.max(clockFx.chime, 0.6); clockFx.rings.push({ t: 0 }); playSfx('clockTap');
   if (!state.story.finale) showToast(t('clockWait'), 'good');
   else if (prestigeGain() < 1) showToast(t('clockNoGain'), 'good');
   else askTimeTravel();

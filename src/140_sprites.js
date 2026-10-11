@@ -467,6 +467,20 @@ function cobbleExtra(g, X0, Y0, W, H, style) {                       // нові
     }
     return true;
   }
+  if (style === 'diamond') {                                     // діамантова дорога: кожна плитка — гранований самоцвіт (насичені діагональні грані, призматичні відтінки, зірочки)
+    RH(X0, Y0, W, H, '#1c2766');
+    const SETS = [['#243a8c', '#3f6fe0', '#86ccff', '#e8fbff'], ['#1f4f86', '#2f98d8', '#7fe8ff', '#f0ffff'], ['#3e2a8a', '#6f55e0', '#c3a4ff', '#f6ecff'], ['#1f3a7a', '#3d86e8', '#9fdcff', '#ffffff']];
+    for (let r = 0, y = Y0; y < Y0 + H; r++, y += 6) for (let x = Math.floor((X0 - 12) / 12) * 12 + (r % 2) * 6 - 12; x < X0 + W; x += 12) {
+      const hs = hash2(x, r), P = SETS[hs % 4], off = (hs >>> 3) % 8, fl = (hs >>> 7) & 1;
+      for (let py = 0; py < 5; py++) for (let px = 0; px < 11; px++) {
+        const v = ((fl ? 10 - px : px) + py * 2 + off) % 8;
+        RH(x + 1 + px, y + 1 + py, 1, 1, P[[0, 1, 2, 3, 2, 1, 0, 1][v]]);
+      }
+      RH(x + 1, y + 1, 11, 1, '#d6f4ff'); RH(x + 1, y + 5, 11, 1, '#121a4c'); RH(x + 11, y + 2, 1, 4, '#16205a'); RH(x + 1, y + 2, 1, 3, '#a8dcff');
+      if (hs % 5 === 0) { RH(x + 5, y + 3, 1, 1, '#ffffff'); RH(x + 4, y + 3, 1, 1, '#8ff0ff'); RH(x + 6, y + 3, 1, 1, '#8ff0ff'); RH(x + 5, y + 2, 1, 1, '#8ff0ff'); RH(x + 5, y + 4, 1, 1, '#8ff0ff'); }
+    }
+    return true;
+  }
   if (style === 'gold') {                                        // золота цегляна дорога
     RH(X0, Y0, W, H, '#9a6a1e');
     for (let r = 0, y = Y0; y < Y0 + H; r++, y += 6) for (let x = Math.floor((X0 - 12) / 12) * 12 + (r % 2) * 6 - 12; x < X0 + W; x += 12) {

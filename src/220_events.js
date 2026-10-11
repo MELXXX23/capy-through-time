@@ -751,6 +751,8 @@ function drawLightningFront() {                                // спалах �
 function updateDecorFx(dt) {
   updateLightning(dt);
   updateCloudSkinFx(dt);
+  updateShopSkinFx(dt);
+  updateSkinDust(dt);
   if (!animOn()) return;
   snow.forEach(f => { f.y += f.vy * dt; if (f.y > worldB()) { f.y = -view.offY - 2; f.x = rand(worldL(), worldR()); } });
   bats.forEach(b => {

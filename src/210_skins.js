@@ -4,6 +4,116 @@
    ===================================================================== */
 const SKIN_ICONS = { capy: '🎩', shop: '🏪', weather: '🌈', street: '🧱', hero: '🐾' };
 let skinsSig = '';
+/* ---- Літаючі прикраси навколо скінів магазину: цукерки / золоті монетки / кристали. Повільно спливають угору, гойдаються
+        й м'яко підстрибують при тапі разом із магазином (пружина shopAnim) ---- */
+const shopFx = { list: [], acc: 0 };
+const SHOP_FX = { candy: { max: 18, rate: 3.4 }, gold: { max: 15, rate: 3 }, diamond: { max: 17, rate: 3.2 }, xmas: { max: 22, rate: 4.2, fall: 1 }, halloween: { max: 12, rate: 2.2 }, spring: { max: 16, rate: 3, fall: 1 }, autumn: { max: 18, rate: 3.2, fall: 1 } };
+const FX_CANDY_COLS = ['f', 'y', 'm', 'u', 'o', 's', 'q'];
+function updateShopSkinFx(dt) {
+  const sk = skinOn('shop'), cfg = SHOP_FX[sk];
+  if (!cfg || !shop || !animOn() || build || !layoutReady) { shopFx.list.length = 0; return; }
+  const cap = ecoOn() ? cfg.max >> 1 : cfg.max;
+  shopFx.acc += dt * cfg.rate;
+  while (shopFx.acc >= 1) {
+    shopFx.acc -= 1;
+    if (shopFx.list.length >= cap) continue;
+    const w = shop.w, h = shop.h, side = Math.random(), L = shop.level || 1;
+    let x, y;
+    if (side < 0.25) { x = rand(-18, 8); y = rand(h * 0.2, h - 6); }                    // ліворуч від магазину
+    else if (side < 0.5) { x = rand(w - 8, w + 18); y = rand(h * 0.2, h - 6); }        // праворуч
+    else { x = rand(2, w - 2); y = rand(-12, h * 0.2); }                                // над дахом і по верху фасаду
+    if (cfg.fall) { x = rand(-16, w + 16); y = rand(-24, h * 0.3); }
+    shopFx.list.push({ fall: cfg.fall ? 1 : 0, x, y, age: 0, life: cfg.fall ? rand(6, 10) : rand(5, 9), vy: cfg.fall ? rand(5, 10) : rand(1.2, 3.6), amp: rand(1.5, 4.5), f: rand(0.7, 1.6), ph: rand(0, 6.28), kind: Math.floor(Math.random() * 3), col: Math.floor(Math.random() * 7), spin: rand(0, 4), j: rand(0.6, 1.5) });
+  }
+  for (let i = shopFx.list.length - 1; i >= 0; i--) { const p = shopFx.list[i]; p.age += dt; if (p.age >= p.life) shopFx.list.splice(i, 1); }
+}
+/* ---- Золотий / діамантовий пил: дрібні пікселі й хрестики-блиски на магазині, Капі та героях ---- */
+const skinDust = [];
+const DUST_COLS = { gold: ['#fff6b0', '#ffd24a', '#ffffff', '#f2b84b'], diamond: ['#ffffff', '#d8f6ff', '#9be8ff', '#b4a8ff'] };
+let dustAcc = { shop: 0, capy: 0, hero: 0 };
+function dustKind(type) { const s = skinOn(type); return (s === 'gold' || s === 'diamond') ? s : null; }
+function updateSkinDust(dt) {
+  if (!animOn() || build || !layoutReady) { skinDust.length = 0; return; }
+  const cap = ecoOn() ? 50 : 110, mk = (kind, x, y, big) => { if (skinDust.length < cap) skinDust.push({ kind, x, y, vx: rand(-3, 3), vy: rand(-7, -1.5), age: 0, life: rand(0.9, 2.2), c: Math.floor(Math.random() * 4), big, ph: rand(0, 6.28) }); };
+  const sk = dustKind('shop');
+  if (sk && shop) { dustAcc.shop += dt * 26; while (dustAcc.shop >= 1) { dustAcc.shop -= 1; const e = Math.random(); mk(sk, shop.x + rand(-10, shop.w + 10), shop.y + rand(-8, shop.h - 4), e < 0.18); } }
+  const ck = dustKind('capy'), cp = LAYOUT.capy;
+  if (ck && cp) { dustAcc.capy += dt * 12; while (dustAcc.capy >= 1) { dustAcc.capy -= 1; mk(ck, cp.x + 14 + rand(-21, 21), cp.footY - rand(2, 38), Math.random() < 0.3); } }
+  const hk = dustKind('hero');
+  if (hk) { dustAcc.hero += dt * 2.2 * actors.length; while (dustAcc.hero >= 1 && actors.length) { dustAcc.hero -= 1; const a = actors[Math.floor(Math.random() * actors.length)]; mk(hk, a.x + rand(-9, 9), a.y - rand(2, 24), Math.random() < 0.3); } }
+  for (let i = skinDust.length - 1; i >= 0; i--) { const p = skinDust[i]; p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.age >= p.life) skinDust.splice(i, 1); }
+}
+function drawSkinDust() {
+  if (!skinDust.length || !animOn() || build) return;
+  skinDust.forEach(p => {
+    const k = p.age / p.life, a = Math.sin(k * Math.PI), col = DUST_COLS[p.kind][p.c], x = Math.round(p.x), y = Math.round(p.y);
+    ctx.globalAlpha = a;
+    if (p.big) { R(ctx, x, y, 1, 1, '#ffffff'); ctx.globalAlpha = a * 0.8; R(ctx, x - 1, y, 3, 1, col); R(ctx, x, y - 1, 1, 3, col); if (a > 0.7) { ctx.globalAlpha = (a - 0.7) / 0.3; R(ctx, x - 2, y, 5, 1, '#ffffff'); R(ctx, x, y - 2, 1, 5, '#ffffff'); } }
+    else { R(ctx, x, y, 1, 1, col); if (Math.sin(p.age * 14 + p.ph) > 0.5) { ctx.globalAlpha = a * 0.6; R(ctx, x + 1, y, 1, 1, '#ffffff'); } }
+  });
+  ctx.globalAlpha = 1;
+}
+const FX_CRYSTALS = [
+  ['...n...', '..nwn..', '.nwSan.', 'nwSSasn', 'nSSaasn', '.nSaan.', '..nsn..', '...n...'],
+  ['..n..', '.nwn.', 'nwSan', 'nSasn', '.nan.', '..n..'],
+  ['..N..', '..w..', 'NwwwN', '..w..', '..N..']
+];
+const FX_CRYSTAL_COLS = [{ S: 'S', a: 'a', s: 's' }, { S: 'q', a: 'p', s: 'J' }, { S: 'S', a: 'm', s: 'g' }, { S: 'a', a: 'v', s: 'u' }];
+function fxRows(rows, x0, y0, map) {
+  rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) { const c = r[i]; if (c !== '.') R(ctx, x0 + i, y0 + j, 1, 1, map[c] || c); } });
+}
+function drawShopSkinFx() {
+  const sk = skinOn('shop');
+  if (!SHOP_FX[sk] || !shop || !animOn() || build) return;
+  const hop = shopAnim.squash * 12;                                                     // тап: спершу присідають разом із магазином, потім пружно злітають
+  shopFx.list.forEach(p => {
+    const k = p.age / p.life, a = Math.min(1, k * 5, (1 - k) * 3.5);
+    const x = Math.round(shop.x + p.x + Math.sin(p.age * p.f + p.ph) * p.amp), y = Math.round(shop.y + p.y + (p.fall ? 1 : -1) * p.age * p.vy + hop * p.j);
+    ctx.globalAlpha = a;
+    if (sk === 'candy') {
+      const c = FX_CANDY_COLS[p.col], c2 = FX_CANDY_COLS[(p.col + 3) % 7];
+      if (p.kind === 0) {                                                               // цукерка в обгортці з крильцями
+        R(ctx, x - 3, y - 2, 7, 5, 'd'); R(ctx, x - 2, y - 1, 5, 3, c); R(ctx, x - 2, y - 1, 2, 1, 'w');
+        R(ctx, x - 6, y - 2, 1, 5, c2); R(ctx, x - 5, y - 1, 2, 3, c2); R(ctx, x + 4, y - 2, 1, 5, c2); R(ctx, x + 3, y - 1, 2, 3, c2); R(ctx, x + 5, y - 3, 1, 1, c2); R(ctx, x - 6, y + 3, 1, 1, c2);
+      } else if (p.kind === 1) {                                                        // мармеладка-кулька
+        disc(ctx, x, y, 3, 'd'); disc(ctx, x, y, 2, c); R(ctx, x - 1, y - 1, 1, 1, 'w'); R(ctx, x + 1, y + 1, 1, 1, c2);
+      } else {                                                                          // льодяник на паличці
+        R(ctx, x, y + 3, 1, 6, 'd'); R(ctx, x, y + 3, 1, 5, 'w');
+        disc(ctx, x, y, 4, 'd'); disc(ctx, x, y, 3, c); R(ctx, x - 2, y, 5, 1, c2); R(ctx, x, y - 2, 1, 5, c2); R(ctx, x - 2, y - 2, 1, 1, 'w');
+      }
+    } else if (sk === 'xmas') {                                                         // сніжинки й зірочки
+      if (p.kind === 0) { R(ctx, x, y - 2, 1, 5, 'w'); R(ctx, x - 2, y, 5, 1, 'w'); R(ctx, x - 1, y - 1, 1, 1, 'S'); R(ctx, x + 1, y + 1, 1, 1, 'S'); R(ctx, x - 1, y + 1, 1, 1, 'S'); R(ctx, x + 1, y - 1, 1, 1, 'S'); }
+      else if (p.kind === 1) { R(ctx, x, y, 2, 2, 'w'); R(ctx, x + 1, y + 1, 1, 1, 'S'); }
+      else { R(ctx, x, y - 2, 1, 5, 'y'); R(ctx, x - 2, y, 5, 1, 'y'); R(ctx, x - 1, y - 1, 3, 3, 'y'); R(ctx, x, y, 1, 1, 'w'); }
+    } else if (sk === 'halloween') {                                                    // кажани, привиди-димки й помаранчеві іскри
+      const fl = Math.floor(p.age * 7) % 2;
+      if (p.kind === 0) { R(ctx, x - 1, y, 3, 2, 'k'); R(ctx, x - 1, y - 1, 1, 1, 'k'); R(ctx, x + 1, y - 1, 1, 1, 'k'); if (fl) { R(ctx, x - 4, y - 2, 3, 1, 'k'); R(ctx, x + 2, y - 2, 3, 1, 'k'); R(ctx, x - 5, y - 1, 1, 1, 'k'); R(ctx, x + 5, y - 1, 1, 1, 'k'); } else { R(ctx, x - 4, y + 1, 3, 1, 'k'); R(ctx, x + 2, y + 1, 3, 1, 'k'); R(ctx, x - 5, y + 2, 1, 1, 'k'); R(ctx, x + 5, y + 2, 1, 1, 'k'); } R(ctx, x, y, 1, 1, 'r'); }
+      else if (p.kind === 1) { R(ctx, x - 2, y - 2, 5, 5, 'w'); R(ctx, x - 1, y - 3, 3, 1, 'w'); R(ctx, x - 2, y + 3, 1, 1, 'w'); R(ctx, x, y + 3, 1, 1, 'w'); R(ctx, x + 2, y + 3, 1, 1, 'w'); R(ctx, x - 1, y - 1, 1, 2, 'k'); R(ctx, x + 1, y - 1, 1, 2, 'k'); }
+      else { R(ctx, x, y, 2, 2, 'o'); R(ctx, x, y, 1, 1, 'y'); R(ctx, x + 2, y - 1, 1, 1, 'y'); }
+    } else if (sk === 'spring') {                                                       // пелюстки й метелики
+      const fl = Math.floor(p.age * 6) % 2;
+      if (p.kind === 0) { R(ctx, x, y, 3, 2, 'q'); R(ctx, x + 1, y, 1, 1, 'p'); }
+      else if (p.kind === 1) { R(ctx, x, y - 1, 1, 3, 'd'); const c = ['f', 'y', 'o', 'v'][p.col % 4]; if (fl) { R(ctx, x - 3, y - 2, 3, 2, c); R(ctx, x + 1, y - 2, 3, 2, c); R(ctx, x - 2, y, 2, 1, 'w'); R(ctx, x + 1, y, 2, 1, 'w'); } else { R(ctx, x - 3, y - 1, 3, 3, c); R(ctx, x + 1, y - 1, 3, 3, c); } }
+      else { R(ctx, x - 1, y, 3, 1, 'w'); R(ctx, x, y - 1, 1, 3, 'w'); R(ctx, x, y, 1, 1, 'y'); }
+    } else if (sk === 'autumn') {                                                       // листя, що кружляє
+      const fl = Math.floor(p.age * 3 + p.spin) % 2, c = ['o', 'r', 'h', 'y', 't'][p.col % 5];
+      if (p.kind === 2) { R(ctx, x - 1, y - 1, 3, 3, 'b'); R(ctx, x - 1, y - 2, 3, 1, 'd'); R(ctx, x, y + 2, 1, 1, 'd'); }
+      else if (fl) { R(ctx, x - 2, y, 5, 2, c); R(ctx, x - 1, y - 1, 3, 1, c); R(ctx, x - 1, y, 1, 1, 'y'); R(ctx, x + 3, y + 1, 1, 1, 'b'); }
+      else { R(ctx, x - 1, y - 2, 2, 5, c); R(ctx, x, y - 3, 1, 1, c); R(ctx, x, y, 1, 1, 'y'); R(ctx, x, y + 3, 1, 1, 'b'); }
+    } else if (sk === 'gold') {                                                         // золота монета, що крутиться (не залежить від епохи)
+      const ph = Math.floor(p.age * 7 + p.spin) % 4, w = [7, 5, 3, 5][ph], x0 = x - (w >> 1);
+      R(ctx, x0, y - 3, w, 7, 'd');
+      if (w >= 5) { R(ctx, x0 + 1, y - 2, w - 2, 5, 'h'); R(ctx, x0 + 1, y - 2, 1, 5, 'y'); R(ctx, x0 + 1, y - 2, w - 2, 1, 'y'); if (w === 7) R(ctx, x - 1, y, 3, 1, 'y'); }
+      else R(ctx, x, y - 2, 1, 5, 'h');
+      if (Math.sin(p.age * 5 + p.ph) > 0.8) { R(ctx, x + 4, y - 5, 1, 1, '#ffffff'); R(ctx, x + 3, y - 5, 3, 1, '#fff6b0'); R(ctx, x + 4, y - 6, 1, 3, '#fff6b0'); }
+    } else {                                                                            // кристали: ромби різних кольорів
+      const rows = FX_CRYSTALS[p.kind % 3], map = FX_CRYSTAL_COLS[p.col % 4];
+      fxRows(rows, x - (rows[0].length >> 1), y - (rows.length >> 1), map);
+      if (p.kind % 3 !== 2 && Math.sin(p.age * 4 + p.ph) > 0.8) { R(ctx, x + 4, y - 5, 1, 3, '#ffffff'); R(ctx, x + 3, y - 4, 3, 1, '#ffffff'); }
+    }
+  });
+  ctx.globalAlpha = 1;
+}
 const skinPage = {};                 // яку «сторінку» (по 3 скіни) показано в кожній групі
 function refreshTeamPortraits() {
   document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => { const c2 = cv.getContext('2d'); c2.clearRect(0, 0, 16, 16); c2.drawImage(getSpriteCanvas(teamSprite(cv.dataset.tid)), 0, 0); });
