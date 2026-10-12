@@ -19168,17 +19168,35 @@ function frame(now) {
     for (let k = x; k < x + w; k += 4) P(g, k, y + 1, 1, 1, TILE[3]);
     if (drop) A(g, 0.3, () => P(g, x - 1, y + 4, w + 2, 3, '#000000'));
   }
-  function capRoof(g, x, w, yb, hgt) {                  // дах-шапка: чотирисхилий, з коником і золотими прикрасами
-    for (let i = 0; i < hgt; i++) {
-      const inset = Math.round((hgt - 1 - i) * 1.5), lx = x - 5 + inset, rw = w + 10 - 2 * inset, y = yb - hgt + i + 1;
-      P(g, lx, y, rw, 1, i === 0 ? TILE[3] : (i % 2 ? TILE[1] : TILE[0]));
-      if (i % 2 && i > 0) for (let k = lx + 1 + (i % 4 ? 0 : 2); k < lx + rw - 1; k += 4) P(g, k, y, 1, 1, TILE[2]);
-      P(g, lx, y, 1, 1, TILE[3]); P(g, lx + rw - 1, y, 1, 1, TILE[3]);
+  /* дах у японському стилі: вигнутий профіль «сорі» (стрімкий біля коника, пологий до карниза), задерті краї, чорепиця з рядами,
+     коник із золотими прикрасами-сьатіхоко на кінцях. Малюється по колонках: верхня межа — крива, нижня — пряма лінія карниза. */
+  function jpRoofCols(g, xs, wr, yRidge, yEave, thick, ridgeF, tipLen, tipLift, snow) {
+    const cxm = (wr - 1) / 2, yb = yEave;
+    for (let i = 0; i < wr; i++) {
+      const d = Math.abs(i - cxm) / cxm, u = Math.max(0, Math.min(1, (d - ridgeF) / (1 - ridgeF)));
+      const drop = Math.round(Math.max(0, yEave - thick - yRidge) * (1 - Math.pow(1 - u, 2.2)));
+      const e = Math.min(i, wr - 1 - i), lift = e < tipLen ? Math.round(tipLift * Math.pow(1 - e / tipLen, 1.3)) : 0;
+      const yt = yRidge + drop - lift;
+      for (let y = yt; y <= yb; y++) {
+        const r = y - yt, row = yb - y;
+        let c = row % 2 ? TILE[1] : TILE[0];
+        if (r === 0) c = TILE[3];
+        else if (y === yb) c = TILE[3];
+        else if (row === 1) c = TILE[2];
+        else if (row % 2 && (i + (row % 4 === 1 ? 0 : 2)) % 4 === 0) c = TILE[2];       // шви між рядами черепиці
+        else if (u === 0 && r === 1) c = TILE[2];                                       // блиск на коникові
+        if (snow && r < 3) c = r === 0 ? '#ffffff' : '#eaf2fc';
+        g.fillStyle = hxc(c); g.fillRect(xs + i, y, 1, 1);
+      }
     }
-    P(g, x - 8, yb - 2, 4, 2, TILE[1]); P(g, x - 9, yb - 4, 2, 2, TILE[1]); P(g, x + w + 4, yb - 2, 4, 2, TILE[1]); P(g, x + w + 7, yb - 4, 2, 2, TILE[1]);
-    P(g, x - 5, yb, w + 10, 1, TILE[3]);
-    const rl = x - 5 + Math.round((hgt - 1) * 1.5);
-    P(g, rl - 1, yb - hgt - 2, 3, 3, '#e8b030'); P(g, rl + (w + 10 - 2 * Math.round((hgt - 1) * 1.5)) - 2, yb - hgt - 2, 3, 3, '#e8b030'); P(g, rl, yb - hgt - 3, 1, 1, '#ffe08a');
+    const iL = Math.round(cxm - ridgeF * cxm), iR = Math.round(cxm + ridgeF * cxm), gold = '#e8b030';   // кінці коника: золоті «хвости» сьатіхоко
+    [[iL, -1], [iR, 1]].forEach(([ii, s]) => {
+      const bx = xs + ii;
+      P(g, bx - 1, yRidge - 2, 3, 2, gold); P(g, bx - 1 + s, yRidge - 4, 2, 2, gold); P(g, bx + 2 * s, yRidge - 5, 1, 2, '#ffe08a'); P(g, bx - 1, yRidge - 2, 1, 1, '#ffe08a');
+    });
+  }
+  function capRoof(g, x, w, yb, hgt, snow) {            // дах будинку: коник на 34% напівширини, задерті краї, виступ 6 px
+    jpRoofCols(g, x - 6, w + 12, yb - hgt + 1, yb, 3, 0.34, 6, 2, snow);
   }
   function house(g, spec, lamps) {
     const { x, w, h } = spec, base = LAYOUT.horizonY, top = base - h, hs = hash2(x + 17, h), S = WOOD[(hs >>> 3) % WOOD.length];
@@ -19193,34 +19211,40 @@ function frame(now) {
     const roofK = hs % 5, rx = x + 6 + ((hs >>> 5) % Math.max(1, w - 30));
     if (roofK === 1) { P(g, rx + 4, tb - 10, 1, 12, DKW); P(g, rx, tb - 8, 9, 1, DKW); P(g, rx + 1, tb - 5, 7, 1, DKW); }
     else if (roofK === 3) { P(g, rx, tb - 2, 12, 3, '#d9d3c4'); }
-    capRoof(g, x, w, top - 4, CAP);
-    if (winter) { for (let i = 0; i < CAP; i++) { const inset = Math.round((CAP - 1 - i) * 1.5), lx = x - 5 + inset, rw = w + 10 - 2 * inset; P(g, lx + 1, top - 4 - CAP + i + 1, rw - 2, 1, i < 3 ? '#ffffff' : '#eaf2fc'); } }
+    capRoof(g, x, w, top - 4, CAP, winter);
     const floors = Math.max(2, Math.floor((h - 6) / 18)), doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 7 - 3);
+    /* вивіски рахуємо ДО вікон: вікна обходять їх, а не лежать під ними */
+    const kb = KANBAN[(hs >>> 7) % KANBAN.length], kh = KANBAN[(hs >>> 14) % KANBAN.length], wh = WORDS_H[(hs >>> 17) % WORDS_H.length];
+    const gy = base - 23, gw = Math.min(w - 8, wh.length * 11 + 8), gx = x + 4 + ((w - 8 - gw) >> 1), gsz = Math.max(7, Math.min(11, Math.floor((gw - 6) / wh.length)));
+    const kLeft = !((hs >>> 2) % 2), sy = top + 6 + ((hs >>> 9) % 12), kMax = Math.min(4, Math.floor((gy - 5 - sy - 5) / 10));
+    const wordsV = WORDS_V.filter(wd => wd.length <= kMax), word = wordsV.length ? wordsV[(hs >>> 11) % wordsV.length] : '', n = word.length, sh = n * 10 + 5;
+    const hasK = h > 66 && n >= 2, sx = kLeft ? x + 2 : x + w - 16, ky0 = sy - 7, ky1 = sy + sh + 2;
     for (let f = 0; f < floors; f++) {
-      const y0 = base - 6 - (floors - f) * 18 + 4, cols = Math.max(1, Math.floor((w - 8) / 15)), sp = (w - 8) / cols;
+      const y0 = base - 6 - (floors - f) * 18 + 4;
+      let ax0 = x + 4, aw = w - 8;
+      if (hasK && y0 - 1 < ky1 && y0 + 18 > ky0) { aw -= 17; if (kLeft) ax0 += 17; }         // стовпчик вертикальної вивіски на цьому поверсі
+      const cols = aw < 13 ? 0 : Math.max(1, Math.floor(aw / 15)), sp = cols ? aw / cols : 0;
       if (f > 0) { P(g, x + 3, y0 - 5, w - 6, 2, '#3a2418'); P(g, x + 3, y0 - 5, w - 6, 1, S[1]); }
       if (f > 0 && f % 2 === 1) eave(g, x + 1, y0 - 9, w - 2, true);
       if (f > 0 && (hs >>> 12) % 3 === f % 3) { P(g, x + 4, y0 - 3, w - 8, 14, PLASTER[0]); P(g, x + w - 9, y0 - 3, 5, 14, PLASTER[1]); }
       for (let c = 0; c < cols; c++) {
-        const wx = Math.round(x + 4 + c * sp + (sp - 11) / 2), lit = hash2(wx, y0) % 3 === 0, glass = hash2(wx + 7, y0) % 4 === 0;
+        const wx = Math.round(ax0 + c * sp + (sp - 11) / 2), lit = hash2(wx, y0) % 3 === 0, glass = hash2(wx + 7, y0) % 4 === 0;
         if (f === floors - 1 && wx + 11 >= doorX - 3 && wx <= doorX + 13) continue;
+        if (f === floors - 1 && wx + 12 >= gx - 1 && wx - 1 <= gx + gw + 1) continue;       // нижній поверх: горизонтальна вивіска над дверима
+        const underSign = f === floors - 2 && wx + 12 >= gx - 1 && wx - 1 <= gx + gw + 1;       // знизу вікна лежать вивіска: кондиціонери/квіти пропускаємо
         P(g, wx - 1, y0 - 1, 13, 12, DKW);
         if (glass) { P(g, wx, y0, 11, 10, lit ? '#ffd45c' : '#8fb8d8'); P(g, wx, y0, 11, 3, lit ? '#ffe9a0' : '#bfe3f2'); P(g, wx + 5, y0, 1, 10, DKW); }
         else { P(g, wx, y0, 11, 10, lit ? '#ffd45c' : '#f3e8c4'); A(g, 0.8, () => { for (let k = 2; k < 11; k += 3) P(g, wx + k, y0, 1, 10, '#4a3020'); for (let k = 3; k < 10; k += 3) P(g, wx, y0 + k, 11, 1, '#4a3020'); }); if (lit) A(g, 0.35, () => P(g, wx, y0, 11, 10, '#ffffff')); }
         P(g, wx - 1, y0 + 10, 13, 2, S[2]); houseGlass.push([wx, y0, 11, 10]);
-        const k = hash2(wx + 3, y0 + 5) % 8;
+        const k = underSign ? -1 : hash2(wx + 3, y0 + 5) % 8;
         if (k === 0) { P(g, wx + 1, y0 + 12, 7, 4, '#e8e8ea'); P(g, wx + 1, y0 + 12, 7, 1, '#fff'); P(g, wx + 2, y0 + 14, 4, 1, '#7a7a82'); }
         else if (k === 1) { P(g, wx - 1, y0 + 12, 13, 1, DKW); P(g, wx + 1, y0 + 13, 3, 4, '#f26a8b'); P(g, wx + 5, y0 + 13, 3, 5, '#fff'); P(g, wx + 9, y0 + 13, 2, 4, '#5f9fc9'); }
         else if (k === 2) { P(g, wx + 2, y0 + 12, 8, 1, DKW); P(g, wx + 3, y0 + 10, 2, 2, '#4f9a3a'); P(g, wx + 7, y0 + 10, 2, 2, '#ef8fa3'); }
         else if (k === 3) { P(g, wx + 2, y0 + 12, 1, 5, '#d3342c'); D(g, wx + 2, y0 + 15, 2, '#d3342c'); D(g, wx + 2, y0 + 15, 1, '#ffd45c'); }
       }
     }
-    const kb = KANBAN[(hs >>> 7) % KANBAN.length], word = WORDS_V[(hs >>> 11) % WORDS_V.length], n = Math.min(4, word.length), sh = n * 10 + 5;
-    const sx = (hs >>> 2) % 2 ? x + w - 16 : x + 2, sy = top + 6 + ((hs >>> 9) % 12);
-    if (h > 66) { P(g, sx - 1, sy - 1, 16, sh + 2, DKW); P(g, sx, sy, 14, sh, kb[0]); P(g, sx, sy, 14, 1, '#ffffff'); P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); vtext(g, word.slice(0, n), sx + 2, sy + 3, kb[1], 11, true); }
-    const kh = KANBAN[(hs >>> 14) % KANBAN.length], wh = WORDS_H[(hs >>> 17) % WORDS_H.length];
-    const gy = base - 26, gw = Math.min(w - 8, wh.length * 11 + 8), gx = x + 4 + ((w - 8 - gw) >> 1), gsz = Math.max(7, Math.min(11, Math.floor((gw - 6) / wh.length)));
-    eave(g, gx - 1, gy - 6, gw + 2, true);
+    if (hasK) { P(g, sx - 1, sy - 1, 16, sh + 2, DKW); P(g, sx, sy, 14, sh, kb[0]); P(g, sx, sy, 14, 1, '#ffffff'); P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); vtext(g, word, sx + 2, sy + 3, kb[1], 11, true); }
+    P(g, gx - 2, gy - 3, gw + 4, 2, TILE[1]); P(g, gx - 2, gy - 3, gw + 4, 1, TILE[2]); P(g, gx - 3, gy - 4, 1, 2, TILE[1]); P(g, gx + gw + 2, gy - 4, 1, 2, TILE[1]);   // тонкий навіс над вивіскою (нижче вікон верхнього поверху)
     P(g, gx - 1, gy - 1, gw + 2, 16, DKW); P(g, gx, gy, gw, 14, kh[0]); P(g, gx, gy, gw, 1, '#ffffff'); A(g, 0.25, () => P(g, gx, gy + 13, gw, 1, '#000000')); text(g, wh, gx + 3, gy + 1 + ((11 - gsz) >> 1), kh[1], gsz, true);
     houseDoors.push({ x: doorX + 5, y: base });
     P(g, doorX, base - 14, 10, 14, DKW); P(g, doorX + 1, base - 13, 8, 13, '#e8dcb8'); A(g, 0.7, () => { P(g, doorX + 4, base - 13, 1, 13, '#4a3020'); for (let k = -10; k < 0; k += 3) P(g, doorX + 1, base + k, 8, 1, '#4a3020'); });
@@ -19271,12 +19295,13 @@ function frame(now) {
   }
   const LANT = [[0.07, 0.35, 1], [0.2, 0.62, 0], [0.31, 0.22, 2], [0.43, 0.5, 0], [0.55, 0.3, 1], [0.67, 0.58, 0], [0.78, 0.2, 2], [0.9, 0.46, 1], [0.97, 0.7, 0]];
   function drawLanterns(g, t, wl, wr, top, span) {
-    const W = wr - wl;
-    LANT.forEach(([u, v, k], i) => {
+    const W = wr - wl, N = Math.max(LANT.length, Math.round(W / 105));            // ліхтарі розвішані по ВСЬОМУ світу (камера їх не тягне за собою)
+    for (let i = 0; i < N; i++) {
+      const [u0, v, k] = LANT[i % LANT.length], u = (i + u0) / N;
       const x = wl + W * u + Math.sin(t * 0.35 + i * 1.7) * 7, y = top + 10 + span * v + Math.sin(t * 0.6 + i) * 3 - ((t * 1.5 + i * 11) % 10);
       const s = lanternSprite(k, i); g.globalAlpha = 0.14; D(g, Math.round(x), Math.round(y + 3), 8 + k * 2, '#ffd45c'); g.globalAlpha = 1;
       g.drawImage(s, Math.round(x - s.width / 2), Math.round(y - s.height / 2));
-    });
+    }
   }
   let headSp = null;
   function headSprite() {                               // голова дракона (дивиться ліворуч)
@@ -19324,9 +19349,10 @@ function frame(now) {
     const px = hx + dir * 36, py = hy + 8 + Math.sin(t * 2) * 2; g.globalAlpha = 0.25; D(g, Math.round(px), Math.round(py), 7, '#fff2b0'); g.globalAlpha = 1; g.drawImage(ball(3, '#ffffff'), Math.round(px - 5), Math.round(py - 5));
   }
   function skyExtra(time, noFly) {
-    const g = ctx, wl = visL(), wr = visR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
+    const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
     if (!noFly) { dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }
-    for (let i = 0; i < 90; i++) { const hs = hash2(i * 13, 5), px = wl + ((hs % 1000) / 1000 * W + time * (6 + hs % 5)) % W, py = top + 8 + (((hs >>> 10) % 1000) / 1000 * 170 + time * (8 + hs % 6)) % 170; P(g, Math.round(px), Math.round(py), 2, 1, '#ffc9d4'); P(g, Math.round(px) + (hs % 2), Math.round(py) + 1, 1, 1, '#ef8fa3'); }
+    const nP = Math.min(420, Math.round(90 * Math.max(1, W / Math.max(200, visR() - visL()))));      // лепестки теж у світі; щільність на екрані та сама
+    for (let i = 0; i < nP; i++) { const hs = hash2(i * 13, 5), px = wl + ((hs % 1000) / 1000 * W + time * (6 + hs % 5)) % W, py = top + 8 + (((hs >>> 10) % 1000) / 1000 * 170 + time * (8 + hs % 6)) % 170; P(g, Math.round(px), Math.round(py), 2, 1, '#ffc9d4'); P(g, Math.round(px) + (hs % 2), Math.round(py) + 1, 1, 1, '#ef8fa3'); }
   }
 
   /* ---------- магазин: чотирисхилий дах-ірімоя, навіси між поверхами, шодзі, торії-вхід ---------- */
@@ -19348,20 +19374,8 @@ function frame(now) {
     P(g, x + 2, yb - 7, 8, 3, '#1a1a1a'); P(g, x + 8, yb - 10, 2, 2, '#ffd45c');
   }
   function shopRoof(g, style, w, top, look) {
-    const y1 = top + 3, y0 = 2, cx = w >> 1;
-    for (let y = y0; y <= y1; y++) {
-      const t2 = (y - y0) / (y1 - y0), half = (w * 0.34) + t2 * (w / 2 - 1 - w * 0.34), lx = Math.round(cx - half), rw = Math.round(half * 2);
-      P(g, lx, y, rw, 1, (y - y0) % 2 ? TILE[1] : TILE[0]);
-      if ((y - y0) % 2) for (let k = lx + 2 + ((y - y0) % 4 ? 0 : 2); k < lx + rw - 2; k += 5) P(g, k, y, 1, 1, TILE[2]);
-      P(g, lx, y, 1, 1, TILE[3]); P(g, lx + rw - 1, y, 1, 1, TILE[3]);
-    }
-    P(g, Math.round(cx - w * 0.34), y0, Math.round(w * 0.68), 1, '#e8b030');
-    P(g, 0, y1, 4, 1, TILE[1]); P(g, 0, y1 - 1, 2, 1, TILE[1]); P(g, w - 4, y1, 4, 1, TILE[1]); P(g, w - 2, y1 - 1, 2, 1, TILE[1]);
-    const gw = Math.min(56, Math.round(w * 0.3));
-    for (let i = 0; i < 10; i++) { const half = Math.round(gw / 2 - i * 1.2); P(g, cx - half, y1 - 10 + i, half * 2, 1, i % 2 ? TILE[1] : TILE[0]); }
-    P(g, cx - Math.round(gw / 2), y1 - 1, gw, 1, TILE[3]);
-    P(g, cx - Math.round(gw / 2) - 3, y1 - 2, 3, 2, TILE[1]); P(g, cx + Math.round(gw / 2), y1 - 2, 3, 2, TILE[1]);
-    [Math.round(cx - w * 0.34) - 2, Math.round(cx + w * 0.34) - 1].forEach(sx => { P(g, sx, y0 - 2, 3, 5, '#e8b030'); P(g, sx - 1, y0 - 2, 2, 2, '#ffd24a'); P(g, sx + 2, y0 - 2, 2, 2, '#ffd24a'); P(g, sx, y0, 1, 1, DKW); });
+    const y1 = top + 3, cx = w >> 1;
+    jpRoofCols(g, 0, w, 6, y1, Math.min(6, Math.max(4, Math.round((y1 - 6) * 0.35))), 0.26, 9, 3, false);   // вигнутий дах-ірімоя на всю ширину (нижній ряд суцільний)
     roofSignG(g, cx, Math.max(0, y1 - 13), false);                       // вивіска CAPYTAP на фронтоні
   }
   function shopDeco(g, es, w, h, look, level, floors, yG, door, yB) {
