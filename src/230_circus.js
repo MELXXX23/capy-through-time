@@ -9,7 +9,7 @@ const CIRCUS_SECTORS = (function () {
   return [cr(1, 14, 'u'), sk('capy', 'c', 'hat'), cr(2, 9, 'v'), sk('shop', 'q', 'house'), cr(1, 14, 'u'), sk('weather', 'S', 'cloud'), cr(3, 5, 'P'), sk('street', 'E', 'brick'), cr(1, 14, 'u'), sk('hero', 'w', 'paw'), cr(2, 9, 'v'), sk('capy', 'c', 'hat')];
 })();
 const WEATHER_ORDER = ['rainbow', 'lightning', 'lightninggreen', 'lightningred', 'cottoncloud', 'goldcloud', 'starcloud'];     // порядок у вкладці: хмари в кінці
-const SKIN_HIDDEN = ['street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_wood', 'shop_garden'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
+const SKIN_HIDDEN = ['street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_wood', 'shop_garden', 'shop_spring', 'shop_autumn'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
 const SKIN_TYPES = ['capy', 'shop', 'weather', 'street', 'hero'];   // групи скінів: Капі, магазин, погода, герої
 const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_lightning', 'hero_party', 'hero_ninja', 'capy_ep0', 'capy_ep1', 'capy_ep2', 'capy_ep3', 'capy_ep4', 'capy_ep5', 'capy_ep6', 'capy_ep7', 'capy_wizard', 'capy_chef', 'capy_explorer', 'capy_detective', 'capy_sailor', 'shop_ice', 'shop_wood', 'shop_garden', 'weather_cottoncloud', 'weather_goldcloud', 'weather_starcloud', 'hero_chef', 'hero_wizard', 'hero_royal', 'street_wood', 'street_brick', 'capy_santa', 'capy_witch', 'capy_flower', 'capy_beach', 'capy_autumn', 'hero_santa', 'hero_witch', 'shop_xmas', 'shop_halloween', 'shop_spring', 'shop_autumn', 'street_snow', 'street_leaves', 'capy_mel', 'capy_nika', 'capy_knight', 'capy_hero', 'capy_cowboy', 'capy_fairy', 'capy_viking', 'capy_pilot', 'weather_lightninggreen', 'weather_lightningred', 'street_moss', 'street_gold', 'capy_gold', 'capy_diamond', 'hero_gold', 'hero_diamond', 'shop_diamond', 'street_diamond', 'weather_diamondcloud'];
 const SKIN_SEASON = { capy_santa: '🎄', capy_witch: '🎃', capy_flower: '🌸', capy_beach: '🏖️', capy_autumn: '🍂', hero_santa: '🎄', hero_witch: '🎃', shop_xmas: '🎄', shop_halloween: '🎃', shop_spring: '🌸', shop_autumn: '🍂', street_snow: '❄️', street_leaves: '🍂' };   // сезонні скіни
@@ -757,7 +757,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 18;
+const NEWS_VERSION = 19;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -921,9 +921,11 @@ const NP_GUIDE = {
 };
 const NP_SOON = {
   uk: { head: 'Скоро в грі', sub: 'Те, що ми готуємо. Ще не вийшло, але вже майже.', items: [
+    ['Бонусні епохи', 'Після проходження всіх 8 епох відкриватимуться бонусні, першою буде Японія. У кожної свій перехід-анімація, новий сюжет, нове звірятко в команді, гість за темою й нові літаючі прикраси.'],
     ['Застосунки для магазинів', 'Готуємо версії гри для телефона й комп’ютера в магазинах застосунків.']
   ] },
   en: { head: 'Coming soon', sub: 'What we are working on. Not out yet, but almost.', items: [
+    ['Bonus eras', 'After you finish all 8 eras, bonus ones will open, Japan first. Each has its own travel animation, a new story, a new helper in the team, a themed guest and new flying decorations.'],
     ['App store versions', 'We are preparing versions of the game for phones and computers in app stores.']
   ] }
 };

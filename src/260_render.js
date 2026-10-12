@@ -139,9 +139,10 @@ function drawShopShine(sc) {                                    // золоти�
   if (show) {
     if (shineTmp.width !== w || shineTmp.height !== h) { shineTmp.width = w; shineTmp.height = h; }
     const g = shineTmp.getContext('2d'); g.imageSmoothingEnabled = false; g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, w, h);
-    g.drawImage(shop.canvas, 0, 0); g.globalCompositeOperation = 'source-atop';
     const x0 = (cyc / 0.8) * (w + h * 0.7 + 24) - 12;
     for (let y = 0; y < h; y++) { const x = Math.round(x0 - y * 0.7); g.fillStyle = dia ? 'rgba(205,240,255,0.5)' : 'rgba(255,248,210,0.42)'; g.fillRect(x, y, 8, 1); g.fillStyle = 'rgba(255,255,255,0.8)'; g.fillRect(x + 2, y, 3, 1); }
+    g.globalCompositeOperation = 'destination-in'; g.drawImage(shop.canvas, 0, 0);               // лише блиск, обрізаний за формою фасаду (сам фасад не малюємо, щоб не закривати двері й покупців)
+    g.globalCompositeOperation = 'destination-out'; if (shop.door) g.fillRect(shop.door.x, shop.door.y, shop.door.w, shop.door.h);
     g.globalCompositeOperation = 'source-over';
   }
   withShopScale(sc, () => {

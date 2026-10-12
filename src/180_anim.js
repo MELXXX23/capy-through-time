@@ -177,7 +177,12 @@ function cloudCanvas(kind, tint) {
     diamond: ['#ffffff', '#e0f6ff', '#b4e2fa', '#82c2ec', '#5a98d0'],
     star: ['#cdbdf2', '#a995e0', '#8670c4', '#6650a4', '#463683'],
     star2: ['#c4f0f4', '#94d8ec', '#6cb4dc', '#4a8ac0', '#33609a'],
-    star3: ['#f4cdee', '#e0a0d8', '#c078c4', '#9a52a4', '#703a86']
+    star3: ['#f4cdee', '#e0a0d8', '#c078c4', '#9a52a4', '#703a86'],
+    sp_blue: ['#c6d8ff', '#95b4f4', '#6a8ede', '#4a68b8', '#334a8a'],
+    sp_green: ['#d2f8c8', '#a2e89a', '#72cc6c', '#4ca24c', '#337a3a'],
+    sp_gold: ['#fff6c0', '#ffe388', '#f5c750', '#d9a030', '#b0782a'],
+    sp_orange: ['#ffe0c4', '#ffbe8a', '#f59a5a', '#d46e3a', '#a84a28'],
+    sp_red: ['#ffd0d8', '#ff9aa8', '#e86a82', '#c04464', '#8c2c48']
   }[tint] || ['#f4f7fb', '#d6dfec', '#adbacd', '#8795ad', '#66748e'];
   const puffs = [
     [[14, 19, 10], [27, 13, 13], [42, 16, 11], [53, 20, 8], [22, 21, 10], [36, 21, 11], [47, 22, 8]],
@@ -203,7 +208,7 @@ function cloudCanvas(kind, tint) {
     if (sh < 0.3 && (x * 7 + y * 13) % 9 === 0) litPts.push([x, y]);
   }
   for (let x = 0; x < W; x++) if (inCl(x, bot) && x % 2) { g.fillStyle = T[4]; g.fillRect(x, bot + 1, 1, 1); }     // розмитий нижній край
-  if (tint === 'star' || tint === 'star2' || tint === 'star3') { g.fillStyle = '#ffe08a'; for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) if (inCl(x, y) && (x * 31 + y * 17) % 29 === 0) { g.fillRect(x, y, 1, 1); starPts.push([x, y]); } }   // зорі в хмарах
+  if (tint === 'star' || tint === 'star2' || tint === 'star3' || /^sp_/.test(tint)) { g.fillStyle = '#ffe08a'; for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) if (inCl(x, y) && (x * 31 + y * 17) % 29 === 0) { g.fillRect(x, y, 1, 1); starPts.push([x, y]); } }   // зорі в хмарах
   c.litPts = litPts; c.starPts = starPts; c.topY = top; c.botY = bot;
   return (cloudCache[key] = c);
 }
@@ -224,14 +229,12 @@ function drawCloudsLayer() {
   clouds.forEach(c => {
     const tint = tint0 || c.v || '', sc = c.big ? 1.5 : 1, o = { sx: sc, sy: sc }, cv = cloudCanvas(c.kind || 0, tint);
     if (sk === 'starcloud' && animOn()) {
-      const b = cloudBox(c), cx = b.x + b.w / 2, cy = b.y + b.h * 0.55, pu = 0.5 + 0.5 * Math.sin(animClock * 1.3 + c.x * 0.03);
-      for (let i = 0; i < 3; i++) { ctx.globalAlpha = (0.05 + 0.04 * pu) * (3 - i) / 3 * 1.6; disc(ctx, Math.round(cx), Math.round(cy), Math.round(b.h * (0.95 - i * 0.2) + b.w * 0.12), '#b49cff'); }     // мерехтливий ореол
+      const b = cloudBox(c), SPEC = ['star', 'sp_blue', 'star2', 'sp_green', 'sp_gold', 'sp_orange', 'sp_red', 'star3'];
+      const u = (((animClock * 0.14 + c.x * 0.0035) % 1) + 1) % 1 * SPEC.length, i0 = Math.floor(u) % SPEC.length, fr = u - Math.floor(u), sm = fr * fr * (3 - 2 * fr);        // повільний перелив усім спектром
       ctx.globalAlpha = 1;
-      drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), o);
-      const m = 0.5 + 0.5 * Math.sin(animClock * 0.7 + c.x * 0.02), m2 = 0.5 + 0.5 * Math.sin(animClock * 0.7 + c.x * 0.02 + 2.1);                // колір «дихає»: бузковий → бірюзовий → рожевий
-      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, 'star2'), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: m * 0.85 });
-      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, 'star3'), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: m2 * 0.6 * (1 - m * 0.5) });
-      cv.starPts.forEach(([px, py], i) => {                                                                                                          // зорі мерехтять хрестиками
+      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[i0]), Math.round(c.x), Math.round(c.y), o);
+      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[(i0 + 1) % SPEC.length]), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: sm });
+      cloudCanvas(c.kind || 0, 'star').starPts.forEach(([px, py], i) => {                                                                                                          // зорі мерехтять хрестиками
         const v = Math.sin(animClock * 2.6 + i * 1.9 + c.x * 0.013); if (v < 0.35) return;
         sparkPlus(b.x + Math.round(px * sc), b.y + Math.round(py * sc), (v - 0.35) / 0.65, '#ffe9a0');
       });

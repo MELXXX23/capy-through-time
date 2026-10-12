@@ -342,8 +342,8 @@ function guestStands(all) {
     if (!all && standPending[k] !== undefined) return;                                            // гість ще йде до свого місця
     const S = STANDS[id], phone = mobileMQ.matches, n = Math.floor(slot / 2);
     // ЗАКРІПЛЕНО у світі відносно магазину (не залежить від камери й екрана): перший гість — ліворуч, другий (у Відродженні їх двоє) — праворуч;
-    // на телефоні магазин займає майже весь екран, тому місце стоїть біля його кута (щоб було видно без прокручування)
-    const left = phone ? shop.x + S.w / 2 + 4 + n * 70 : shop.x - 14 - S.w / 2 - n * 70;
+    // на телефоні (вертикально) магазин займає майже весь екран: місце стоїть біля його лівого краю, більше вліво, щоб не заважало
+    const left = phone ? shop.x - S.w / 2 + 10 - n * 70 : shop.x - 14 - S.w / 2 - n * 70;       // телефон (вертикально): місце лівіше, щоб не заважало перед магазином
     const right = phone ? shop.x + shop.w - S.w / 2 - 4 - n * 70 : shop.x + shop.w + 14 + S.w / 2 + n * 70;
     const x = Math.max(worldL() + S.w / 2 + 6, Math.min(worldR() - S.w / 2 - 6, slot % 2 === 0 ? left : right));
     out.push({ k, id, x: Math.round(x), y: LAYOUT.streetTop + 24, w: S.w, h: S.h });

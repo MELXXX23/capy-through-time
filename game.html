@@ -8395,7 +8395,12 @@ function cloudCanvas(kind, tint) {
     diamond: ['#ffffff', '#e0f6ff', '#b4e2fa', '#82c2ec', '#5a98d0'],
     star: ['#cdbdf2', '#a995e0', '#8670c4', '#6650a4', '#463683'],
     star2: ['#c4f0f4', '#94d8ec', '#6cb4dc', '#4a8ac0', '#33609a'],
-    star3: ['#f4cdee', '#e0a0d8', '#c078c4', '#9a52a4', '#703a86']
+    star3: ['#f4cdee', '#e0a0d8', '#c078c4', '#9a52a4', '#703a86'],
+    sp_blue: ['#c6d8ff', '#95b4f4', '#6a8ede', '#4a68b8', '#334a8a'],
+    sp_green: ['#d2f8c8', '#a2e89a', '#72cc6c', '#4ca24c', '#337a3a'],
+    sp_gold: ['#fff6c0', '#ffe388', '#f5c750', '#d9a030', '#b0782a'],
+    sp_orange: ['#ffe0c4', '#ffbe8a', '#f59a5a', '#d46e3a', '#a84a28'],
+    sp_red: ['#ffd0d8', '#ff9aa8', '#e86a82', '#c04464', '#8c2c48']
   }[tint] || ['#f4f7fb', '#d6dfec', '#adbacd', '#8795ad', '#66748e'];
   const puffs = [
     [[14, 19, 10], [27, 13, 13], [42, 16, 11], [53, 20, 8], [22, 21, 10], [36, 21, 11], [47, 22, 8]],
@@ -8421,7 +8426,7 @@ function cloudCanvas(kind, tint) {
     if (sh < 0.3 && (x * 7 + y * 13) % 9 === 0) litPts.push([x, y]);
   }
   for (let x = 0; x < W; x++) if (inCl(x, bot) && x % 2) { g.fillStyle = T[4]; g.fillRect(x, bot + 1, 1, 1); }     // розмитий нижній край
-  if (tint === 'star' || tint === 'star2' || tint === 'star3') { g.fillStyle = '#ffe08a'; for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) if (inCl(x, y) && (x * 31 + y * 17) % 29 === 0) { g.fillRect(x, y, 1, 1); starPts.push([x, y]); } }   // зорі в хмарах
+  if (tint === 'star' || tint === 'star2' || tint === 'star3' || /^sp_/.test(tint)) { g.fillStyle = '#ffe08a'; for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) if (inCl(x, y) && (x * 31 + y * 17) % 29 === 0) { g.fillRect(x, y, 1, 1); starPts.push([x, y]); } }   // зорі в хмарах
   c.litPts = litPts; c.starPts = starPts; c.topY = top; c.botY = bot;
   return (cloudCache[key] = c);
 }
@@ -8442,14 +8447,12 @@ function drawCloudsLayer() {
   clouds.forEach(c => {
     const tint = tint0 || c.v || '', sc = c.big ? 1.5 : 1, o = { sx: sc, sy: sc }, cv = cloudCanvas(c.kind || 0, tint);
     if (sk === 'starcloud' && animOn()) {
-      const b = cloudBox(c), cx = b.x + b.w / 2, cy = b.y + b.h * 0.55, pu = 0.5 + 0.5 * Math.sin(animClock * 1.3 + c.x * 0.03);
-      for (let i = 0; i < 3; i++) { ctx.globalAlpha = (0.05 + 0.04 * pu) * (3 - i) / 3 * 1.6; disc(ctx, Math.round(cx), Math.round(cy), Math.round(b.h * (0.95 - i * 0.2) + b.w * 0.12), '#b49cff'); }     // мерехтливий ореол
+      const b = cloudBox(c), SPEC = ['star', 'sp_blue', 'star2', 'sp_green', 'sp_gold', 'sp_orange', 'sp_red', 'star3'];
+      const u = (((animClock * 0.14 + c.x * 0.0035) % 1) + 1) % 1 * SPEC.length, i0 = Math.floor(u) % SPEC.length, fr = u - Math.floor(u), sm = fr * fr * (3 - 2 * fr);        // повільний перелив усім спектром
       ctx.globalAlpha = 1;
-      drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), o);
-      const m = 0.5 + 0.5 * Math.sin(animClock * 0.7 + c.x * 0.02), m2 = 0.5 + 0.5 * Math.sin(animClock * 0.7 + c.x * 0.02 + 2.1);                // колір «дихає»: бузковий → бірюзовий → рожевий
-      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, 'star2'), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: m * 0.85 });
-      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, 'star3'), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: m2 * 0.6 * (1 - m * 0.5) });
-      cv.starPts.forEach(([px, py], i) => {                                                                                                          // зорі мерехтять хрестиками
+      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[i0]), Math.round(c.x), Math.round(c.y), o);
+      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[(i0 + 1) % SPEC.length]), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: sm });
+      cloudCanvas(c.kind || 0, 'star').starPts.forEach(([px, py], i) => {                                                                                                          // зорі мерехтять хрестиками
         const v = Math.sin(animClock * 2.6 + i * 1.9 + c.x * 0.013); if (v < 0.35) return;
         sparkPlus(b.x + Math.round(px * sc), b.y + Math.round(py * sc), (v - 0.35) / 0.65, '#ffe9a0');
       });
@@ -14198,7 +14201,7 @@ const CIRCUS_SECTORS = (function () {
   return [cr(1, 14, 'u'), sk('capy', 'c', 'hat'), cr(2, 9, 'v'), sk('shop', 'q', 'house'), cr(1, 14, 'u'), sk('weather', 'S', 'cloud'), cr(3, 5, 'P'), sk('street', 'E', 'brick'), cr(1, 14, 'u'), sk('hero', 'w', 'paw'), cr(2, 9, 'v'), sk('capy', 'c', 'hat')];
 })();
 const WEATHER_ORDER = ['rainbow', 'lightning', 'lightninggreen', 'lightningred', 'cottoncloud', 'goldcloud', 'starcloud'];     // порядок у вкладці: хмари в кінці
-const SKIN_HIDDEN = ['street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_wood', 'shop_garden'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
+const SKIN_HIDDEN = ['street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_wood', 'shop_garden', 'shop_spring', 'shop_autumn'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
 const SKIN_TYPES = ['capy', 'shop', 'weather', 'street', 'hero'];   // групи скінів: Капі, магазин, погода, герої
 const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_lightning', 'hero_party', 'hero_ninja', 'capy_ep0', 'capy_ep1', 'capy_ep2', 'capy_ep3', 'capy_ep4', 'capy_ep5', 'capy_ep6', 'capy_ep7', 'capy_wizard', 'capy_chef', 'capy_explorer', 'capy_detective', 'capy_sailor', 'shop_ice', 'shop_wood', 'shop_garden', 'weather_cottoncloud', 'weather_goldcloud', 'weather_starcloud', 'hero_chef', 'hero_wizard', 'hero_royal', 'street_wood', 'street_brick', 'capy_santa', 'capy_witch', 'capy_flower', 'capy_beach', 'capy_autumn', 'hero_santa', 'hero_witch', 'shop_xmas', 'shop_halloween', 'shop_spring', 'shop_autumn', 'street_snow', 'street_leaves', 'capy_mel', 'capy_nika', 'capy_knight', 'capy_hero', 'capy_cowboy', 'capy_fairy', 'capy_viking', 'capy_pilot', 'weather_lightninggreen', 'weather_lightningred', 'street_moss', 'street_gold', 'capy_gold', 'capy_diamond', 'hero_gold', 'hero_diamond', 'shop_diamond', 'street_diamond', 'weather_diamondcloud'];
 const SKIN_SEASON = { capy_santa: '🎄', capy_witch: '🎃', capy_flower: '🌸', capy_beach: '🏖️', capy_autumn: '🍂', hero_santa: '🎄', hero_witch: '🎃', shop_xmas: '🎄', shop_halloween: '🎃', shop_spring: '🌸', shop_autumn: '🍂', street_snow: '❄️', street_leaves: '🍂' };   // сезонні скіни
@@ -14946,7 +14949,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 18;
+const NEWS_VERSION = 19;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -15110,9 +15113,11 @@ const NP_GUIDE = {
 };
 const NP_SOON = {
   uk: { head: 'Скоро в грі', sub: 'Те, що ми готуємо. Ще не вийшло, але вже майже.', items: [
+    ['Бонусні епохи', 'Після проходження всіх 8 епох відкриватимуться бонусні, першою буде Японія. У кожної свій перехід-анімація, новий сюжет, нове звірятко в команді, гість за темою й нові літаючі прикраси.'],
     ['Застосунки для магазинів', 'Готуємо версії гри для телефона й комп’ютера в магазинах застосунків.']
   ] },
   en: { head: 'Coming soon', sub: 'What we are working on. Not out yet, but almost.', items: [
+    ['Bonus eras', 'After you finish all 8 eras, bonus ones will open, Japan first. Each has its own travel animation, a new story, a new helper in the team, a themed guest and new flying decorations.'],
     ['App store versions', 'We are preparing versions of the game for phones and computers in app stores.']
   ] }
 };
@@ -16783,8 +16788,8 @@ function guestStands(all) {
     if (!all && standPending[k] !== undefined) return;                                            // гість ще йде до свого місця
     const S = STANDS[id], phone = mobileMQ.matches, n = Math.floor(slot / 2);
     // ЗАКРІПЛЕНО у світі відносно магазину (не залежить від камери й екрана): перший гість — ліворуч, другий (у Відродженні їх двоє) — праворуч;
-    // на телефоні магазин займає майже весь екран, тому місце стоїть біля його кута (щоб було видно без прокручування)
-    const left = phone ? shop.x + S.w / 2 + 4 + n * 70 : shop.x - 14 - S.w / 2 - n * 70;
+    // на телефоні (вертикально) магазин займає майже весь екран: місце стоїть біля його лівого краю, більше вліво, щоб не заважало
+    const left = phone ? shop.x - S.w / 2 + 10 - n * 70 : shop.x - 14 - S.w / 2 - n * 70;       // телефон (вертикально): місце лівіше, щоб не заважало перед магазином
     const right = phone ? shop.x + shop.w - S.w / 2 - 4 - n * 70 : shop.x + shop.w + 14 + S.w / 2 + n * 70;
     const x = Math.max(worldL() + S.w / 2 + 6, Math.min(worldR() - S.w / 2 - 6, slot % 2 === 0 ? left : right));
     out.push({ k, id, x: Math.round(x), y: LAYOUT.streetTop + 24, w: S.w, h: S.h });
@@ -17546,9 +17551,10 @@ function drawShopShine(sc) {                                    // золоти�
   if (show) {
     if (shineTmp.width !== w || shineTmp.height !== h) { shineTmp.width = w; shineTmp.height = h; }
     const g = shineTmp.getContext('2d'); g.imageSmoothingEnabled = false; g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, w, h);
-    g.drawImage(shop.canvas, 0, 0); g.globalCompositeOperation = 'source-atop';
     const x0 = (cyc / 0.8) * (w + h * 0.7 + 24) - 12;
     for (let y = 0; y < h; y++) { const x = Math.round(x0 - y * 0.7); g.fillStyle = dia ? 'rgba(205,240,255,0.5)' : 'rgba(255,248,210,0.42)'; g.fillRect(x, y, 8, 1); g.fillStyle = 'rgba(255,255,255,0.8)'; g.fillRect(x + 2, y, 3, 1); }
+    g.globalCompositeOperation = 'destination-in'; g.drawImage(shop.canvas, 0, 0);               // лише блиск, обрізаний за формою фасаду (сам фасад не малюємо, щоб не закривати двері й покупців)
+    g.globalCompositeOperation = 'destination-out'; if (shop.door) g.fillRect(shop.door.x, shop.door.y, shop.door.w, shop.door.h);
     g.globalCompositeOperation = 'source-over';
   }
   withShopScale(sc, () => {
