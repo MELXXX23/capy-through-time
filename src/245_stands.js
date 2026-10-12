@@ -3,7 +3,7 @@
     МІСЦЯ ГОСТЕЙ ЕПОХ: біля магазину ліворуч кожен гість має своє місце (джубокс і бар, колонки, автомат-хапалка тощо).
     STANDS[id] = { w, h, draw(g, x, y, t) } — x центр, y земля, t — годинник анімації (с).
    ===================================================================== */
-const GUEST_STAND_EPOCH = { pietro: 0, bruno: 0, pip: 1, zina: 2, maks: 3, bitik: 4, lesyk: 5, orbit: 6, lumi: 7 };   // в якій епосі гість стоїть на своєму місці
+const GUEST_STAND_EPOCH = { pietro: 0, bruno: 0, pip: 1, zina: 2, maks: 3, bitik: 4, lesyk: 5, orbit: 6, lumi: 7, sora: 8 };   // в якій епосі гість стоїть на своєму місці
 const STANDS = {};
 (function () {
   const rr = Math.round;
@@ -335,7 +335,7 @@ function guestArrived(k) {                              // новий гість
 function guestStands(all) {
   const out = [];
   if (!shop || typeof GUEST_IDS === 'undefined') return out;
-  const e = viewEpoch() % 8;
+  const e = viewEpoch() % EPOCHS.length;
   let slot = 0;
   GUEST_IDS.forEach((id, k) => {
     if (GUEST_STAND_EPOCH[id] !== e || !(state.story.guests[k] > 0) || !STANDS[id]) return;      // місце з'являється разом із гостем (за сюжетом), а не на початку епохи

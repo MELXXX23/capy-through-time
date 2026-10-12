@@ -275,7 +275,7 @@ function updateProgressionUI() {
   updateSettingsUI();
   updateSeasonsUI();
   updateSkinsUI();
-  setText(ui.statEpoch, t('epoch_' + (state.epoch % EPOCHS.length)), 'statEpoch');
+  setText(ui.statEpoch, t('epoch_' + curEpoch()), 'statEpoch');
 }
 
 function setupProgression() {

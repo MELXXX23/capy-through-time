@@ -124,6 +124,7 @@ function newLayer() {
 
 /* ---------- Небо (статичний шар; сонце, місяць і зорі малюються окремо, див. «День і ніч») ---------- */
 function buildSkyLayer() {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.buildSky) return A.buildSky(); }
   const { c, g } = newLayer();
   const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
   const [c1, c2, c3] = currentEpoch().sky;      // три кольори неба залежать від епохи
@@ -188,6 +189,7 @@ function houseRoofExtras(g, spec, top, rh, flat, hs) {
   if ((hs >>> 5) % 3 === 0) for (let lx = x + 4; lx < x + w - 2; lx += 5) R(g, lx, top - 1, 1, 1, ['y', 'r', 'T', 'p'][((lx - x) / 5 | 0) % 4]);      // гірлянда вздовж карниза
 }
 function shopRoofExtras(g, es, w, top, level) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.noRoofExtras) return; }
   const seed = hash2(level * 31 + (es.fx ? es.fx.length : 0), 7), by = top + 4, pref = ROOF_PREF[currentEpoch().id] || [0, 3, 4, 5];
   const ks = lastRoofSign, kl = ks ? ks.x - 20 : w * 0.3, kr = ks ? ks.x + ks.w + 20 : w * 0.68;
   [Math.max(12, Math.min(Math.round(w * 0.3), kl)), Math.min(w - 14, Math.max(Math.round(w * 0.68), kr))].forEach((px, i) => {
@@ -206,7 +208,7 @@ function hslHex(h, sat, l) {
 }
 // п'ять кольорів стін по колу (на кожну епоху свої відтінки), дахи — парні до стін
 function houseColors(i) {
-  const tone = HOUSE_TONE[viewEpoch() % 8] || HOUSE_TONE[0], k = ((i % 5) + 5) % 5, hue = tone[2] + k * 72;
+  const tone = HOUSE_TONE[viewEpoch() % EPOCHS.length] || HOUSE_TONE[0], k = ((i % 5) + 5) % 5, hue = tone[2] + k * 72;
   return { wall: hslHex(hue, tone[0], tone[1]), roof: hslHex(hue + 170 + (k % 2) * 25, tone[0] * 0.8, 0.38) };
 }
 function drawHouse(g, spec, lamps) {
@@ -416,6 +418,7 @@ function drawCrates(g, x) {
   R(g, x + 10, 119, 3, 3, 'g');
 }
 function drawBush(g, x, y) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.bush) return A.bush(g, x, y); }
   disc(g, x, y, 6, 'g');
   disc(g, x - 5, y + 2, 4, 'g');
   disc(g, x + 5, y + 2, 4, 'g');
@@ -426,6 +429,7 @@ function drawBush(g, x, y) {
 /* ---------- Земля: пагорби, будинки, тротуар, бруківка (статичний шар) ---------- */
 // Далекий обрій за будинками: силует міста епохи (вежі, хмарочоси, купола, неонові вежі)
 function farSkyline(g, x0, W) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.farSkyline) return A.farSkyline(g, x0, W); }
   const ep = currentEpoch().id, base = 112, col = { renaissance: 'e', retro: 'S', disco: 'P', arcade: 'V', internet: 'n', eco: 'G', space: 'n', neon: 'V' }[ep] || 'e';
   g.globalAlpha = 0.5;
   for (let x = x0; x < x0 + W; ) {
@@ -806,6 +810,7 @@ function lineG(g, x0, y0, x1, y1, c) {      // лінія з пікселів (�
   }
 }
 function drawStreetTree(g, x, v, season) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.tree) return A.tree(g, x, v, season); }
   const base = LAYOUT.horizonY + 8;
   if (season === 'winter') { drawBareTree(g, x, v, season); return; }
   // Дерево ×1,45 від колишнього: розлогий стовбур із корою й корінням, об'ємна крона з кількох шарів, світло зверху-зліва, тінь знизу-праворуч, сезонні деталі

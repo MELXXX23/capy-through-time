@@ -468,6 +468,7 @@ function solarG(g, x, y, n) { for (let i = 0; i < n; i++) { R(g, x + i * 10, y, 
 function dishG(g, x, y) { for (let a = -5; a <= 5; a++) { const hh = Math.round(Math.sqrt(25 - a * a) * 0.8); R(g, x + a, y - hh, 1, hh + 1, 'E'); } R(g, x, y - 5, 1, 7, 'd'); R(g, x - 3, y + 2, 7, 1, 'd'); R(g, x + 1, y - 6, 1, 1, 'r'); }
 function hologram(g, x, y, w, h, c) { g.globalAlpha = 0.35; R(g, x, y, w, h, c); g.globalAlpha = 1; for (let k = 2; k < h; k += 3) { g.globalAlpha = 0.6; R(g, x, y + k, w, 1, 'w'); g.globalAlpha = 1; } R(g, x, y, w, 1, c); R(g, x, y + h - 1, w, 1, c); R(g, x, y, 1, h, c); R(g, x + w - 1, y, 1, h, c); }
 function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.facadeDeco) return A.facadeDeco(g, es, w, h, look, level, floors, yG, door, yB); }
   const top = look.top, f0 = floors[0], yb = h - 7, big = level >= 4;
   const L0 = 11, L1 = door.x - 6, R0 = door.x + door.w + 6, R1 = w - 12;           // вільні місця біля дверей на нижньому поверсі
   const slotsL = level >= 3 ? 2 : 1, slotsR = level >= 3 ? 2 : 1;                         // по одній (рівні 1–2) чи по дві (з 3-го) тематичні деталі з кожного боку від дверей
@@ -543,6 +544,7 @@ function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
 
 // Додаткові тематичні деталі на верхніх поверхах і біля вивіски: щоб магазини різних епох не були однаковими
 function epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.facadeExtra) return A.facadeExtra(g, es, w, h, look, level, floors, yG, door, yB); }
   if (level < 2) return;
   const fx = es.fx, ups = floors.filter(fl => fl.f >= 1), yb = h - 7, top = look.top;
   const colL = 12, colR = w - 22, art = (x, y, rows, cm) => rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] !== '.') R(g, x + i, y + j, 1, 1, cm ? cm[row[i]] || row[i] : row[i]); });
@@ -595,6 +597,7 @@ function epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB) {
 /* ---------- Вивіска й дах: окремий вигляд під кожну епоху ---------- */
 // Прикраси по краях вивіски (текст лежить посередині, тож малюємо ліворуч і праворуч) та рамка в стилі епохи
 function signMotif(g, es, w, top) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.signMotif) return A.signMotif(g, es, w, top); }
   const y0 = top + 8, y1 = top + 24, mx = [10, w - 10];                       // межі вивіски й центри лівої/правої прикраси
   switch (es.fx) {
     case 'renaissance':                                                        // дерев'яна дошка з гербовими щитами та ланцюгами
@@ -636,6 +639,7 @@ function signMotif(g, es, w, top) {
 }
 // Велика примітна деталь на даху в центрі: те, що одразу видно здалеку
 function roofProp(g, es, w, top, level, cx) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.roofProp) return A.roofProp(g, es, w, top, level, cx); }
   cx = cx || (w >> 1); const y = Math.max(0, top - 8);
   switch (es.fx) {
     case 'renaissance': R(g, cx - 1, y - 2, 2, 12, 'd'); R(g, cx - 5, y + 2, 10, 1, 'd'); [[-5, 0], [4, 0]].forEach(p => R(g, cx + p[0], y + p[1] + 1, 2, 2, 'd')); R(g, cx, y - 3, 6, 3, 'r'); R(g, cx + 5, y - 2, 2, 1, 'y'); break;   // флюгер-півник
@@ -650,6 +654,7 @@ function roofProp(g, es, w, top, level, cx) {
 }
 
 function epochFacadeFx(g, es, w, h, look, level, floors, yG) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.facadeFx) return A.facadeFx(g, es, w, h, look, level, floors, yG); }
   const top = look.top, flatTop = es.flat && level <= 3;
   switch (es.fx) {
     case 'renaissance':
@@ -687,6 +692,7 @@ function epochFacadeFx(g, es, w, h, look, level, floors, yG) {
 
 // Дах: стилі 0..5 (див. SHOP_LOOK). Малює від y=0 до y=top+3; карниз — рядки top+4…top+7
 function drawRoof(g, style, w, top, look) {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.roof) return A.roof(g, style, w, top, look); }
   const cx = w >> 1, y1 = top + 3;
   const tiles = (y, lx, rw, c, odd) => {
     R(g, lx, y, rw, 1, c); R(g, lx, y, 1, 1, 'd'); R(g, lx + rw - 1, y, 1, 1, 'd');
@@ -984,7 +990,7 @@ function openSignG(g, yG) {                                                     
   R(g, ox - 2, oy - 2, 24, 10, 'k'); R(g, ox - 1, oy - 1, 22, 8, 'z'); R(g, ox - 2, oy - 2, 24, 1, 'f'); pixText(g, ox + 1, oy, 'OPEN', 'f', null); glassRects.push([ox - 1, oy - 1, 22, 8]);
 }
 function modernG(g, level, w, h, yG, door, look, yB) {
-  const base = h - 7, L = 12, Rt = w - 33, ep = viewEpoch() % 8;
+  const base = h - 7, L = 12, Rt = w - 33, ep = viewEpoch() % EPOCHS.length;
   if (level > 5) return;
   if (ep === 0) {                                                               // Відродження: дерев'яні ящики з квітами під вітринами
     [[L, 'p'], [Rt + 14, 'y']].forEach(([x, c]) => { R(g, x, base - 4, 17, 5, 'd'); R(g, x + 1, base - 3, 15, 3, 'b'); for (let i = 0; i < 7; i++) { R(g, x + 2 + i * 2, base - 7 + (i % 2), 2, 3, i % 2 ? c : 'q'); R(g, x + 2 + i * 2, base - 5, 1, 1, 'g'); } });
@@ -1008,6 +1014,10 @@ function modernG(g, level, w, h, yG, door, look, yB) {
   if (level === 5) {                                                            // зарядка для електрокарів
     const ex = Rt + 16, ey = base - 15; R(g, ex, ey, 6, 15, 'd'); R(g, ex + 1, ey + 1, 4, 13, 'w'); R(g, ex + 1, ey + 2, 4, 4, 'k'); R(g, ex + 2, ey + 3, 2, 2, 'g'); R(g, ex + 6, ey + 6, 3, 1, 'k'); R(g, ex + 8, ey + 6, 1, 6, 'k'); glassRects.push([ex + 2, ey + 3, 2, 2]);
   }
+}
+function roofTopOf(cv, w) {                                          // рядок, де біля центру починається дах (на нього ставимо годинникову вежу)
+  try { const x0 = Math.max(0, (w >> 1) - 20), n = Math.min(40, w - x0), d = cv.getContext('2d').getImageData(x0, 0, n, Math.min(70, cv.height)).data; for (let y = 0; y < Math.min(70, cv.height); y++) for (let x = 0; x < n; x++) if (d[(y * n + x) * 4 + 3] > 40) return y; } catch (e) { /* без цього теж працює */ }
+  return 0;
 }
 function buildShopCanvas(level, tiers) {
   glassRects = []; skinGlints = [];
@@ -1236,7 +1246,7 @@ function buildShopCanvas(level, tiers) {
   }
   gD.save(); gD.globalCompositeOperation = 'destination-out'; gD.fillStyle = '#000'; gD.fillRect(K.x, K.y, K.w, K.h); gD.restore();
   g = gFront; g.drawImage(dcv, 0, 0);
-  if (level <= 2 && viewEpoch() % 8 !== 0) openSignG(g, yG);                      // у Відродженні вивіски OPEN немає
+  if (level <= 2 && viewEpoch() % EPOCHS.length !== 0) openSignG(g, yG);                      // у Відродженні вивіски OPEN немає
   if (pendingSign) roofSignG(g, pendingSign[0], pendingSign[1], pendingSign[2]);
 
   if (seasonNow() === 'winter') snowCap(front, look.top + 4);      // взимку на даху лежить сніг
@@ -1264,7 +1274,7 @@ function buildShopCanvas(level, tiers) {
   glassRects = null;
 
   return {
-    canvas, back, front, w, h, lit, yB, roofSign: lastRoofSign, glints: skinGlints,
+    canvas, back, front, w, h, lit, yB, roofSign: lastRoofSign, glints: skinGlints, roofTop: (level >= 6 ? roofTopOf(front, w) : 0),
     sign: { x: 7, y: look.top + 10, w: w - 14, h: 13 },
     door, floors, escalators, cinema: (floors.find(f => f.cinema) || {}).screen || null
   };

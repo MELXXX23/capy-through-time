@@ -148,7 +148,7 @@ function updateBirds(dt) {
 }
 function drawBirds() {
   if (!state.settings.birds || state.settings.noFly || ecoOn()) return;
-  if (viewEpoch() % 8 >= 1 && !state.settings.birdsLate) return;                     // з 2-ї епохи птахів не видно, доки гравець не ввімкне їх у налаштуваннях
+  if (viewEpoch() % EPOCHS.length >= 1 && !state.settings.birdsLate) return;                     // з 2-ї епохи птахів не видно, доки гравець не ввімкне їх у налаштуваннях
   const vis = 1 - Math.min(1, sky.night * 1.5);
   if (vis <= 0.05 || !birds.length) return;
   birds.forEach(b => {
@@ -726,7 +726,7 @@ function updateBubbles() {
 }
 // Репліку обирає ситуація: взимку часто «холодні» фрази, часом — загальна репліка епохи, інакше — власна фраза звірятка; та сама фраза підряд не повторюється
 function pickLine(id, own, cold, nCold) {
-  const winter = theme.season === 'winter', ep = viewEpoch() % 8;
+  const winter = theme.season === 'winter', ep = viewEpoch() % EPOCHS.length;
   for (let k = 0; k < 4; k++) {
     const r = Math.random();
     let key;

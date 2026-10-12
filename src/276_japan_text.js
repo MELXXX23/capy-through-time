@@ -1,0 +1,103 @@
+//#part 276_japan_text.js
+/* =====================================================================
+   ТЕКСТИ БОНУСНОЇ ЕПОХИ «ЯПОНІЯ»: назви, товари, репліки гостя Сори (лисиця-кіцуне), героїні Нари, історія гостя (ep10), подяка (thx10)
+   Сюжет із 8 глав — у 241_epoch_story.js (EC_DATA[8]).
+   ===================================================================== */
+(function () {
+  const UK = {
+    epoch_8: 'Японія', epochTitle_8: 'Країна вранішнього сонця', epochSub_8: 'Сакура, паперові ліхтарі й дракон над дахами.',
+    crt_8: 'Журавлик Орігамі',
+    good_8_0: 'Чайні набори', good_8_1: 'Онігірі й рис', good_8_2: 'Хвилясті прапори', good_8_3: 'Віяла й парасольки', good_8_4: 'Мило й пудра',
+    good_8_5: 'Моті й данго', good_8_6: 'Рамен', good_8_7: 'Кімоно', good_8_8: 'Дерев’яні сандалі', good_8_9: 'Паперові ліхтарі', good_8_10: 'Суші-бар', good_8_11: 'Театр кабукі',
+    epoch_say_8_0: 'Сакура осипається так тихо, що чутно, як вона думає.', epoch_say_8_1: 'Ліхтарі пливуть угору, а ціни ні. Принцип.', epoch_say_8_2: 'Дракон знову над дахами. Мабуть, перевіряє знижки.',
+    epoch_say_8_3: 'Чай, рис і спокій. Ось це торгівля.', epoch_say_8_4: 'Дерев’яні сандалі стукають, як серце магазину.', epoch_say_8_5: 'Торії біля входу: заходь, а гроші лишай біля каси.',
+    skinSay_capy_ep8: 'Кімоно, капелюх і чай із пряниками. Бізнес по-японськи!',
+    team_nara: 'Олениця Нара', team_nara_role: 'Тиха охоронниця', team_nara_trait: 'Знає, де час іде повільніше. Додає трохи до всього доходу за кожен рівень.',
+    team_nara_sit_0: 'Сядь, подивимось на сакуру.', team_nara_sit_1: 'Я посиджу. Лише хвилинку. Або годину.',
+    team_nara_say_0: 'Тихо. Саме в тиші чути, як росте сакура.', team_nara_say_1: 'Я з лісу за містом. Тут шумно, але затишно.', team_nara_say_2: 'Не поспішай: у чайній час іде повільніше.',
+    team_nara_say_3: 'Роги в мене золоті, а гроші ні. Мені достатньо.', team_nara_say_4: 'Люблю ліхтарі. Вони як зорі, що спустилися нижче.', team_nara_say_5: 'Кланяюсь кожному гостю. Інакше незручно.',
+    team_nara_say_6: 'Дракон слухає мене, бо я ніколи не перебиваю.', team_nara_say_7: 'У лісі я не рахувала монети. Тут рахую. Цікаво.', team_nara_say_8: 'Пелюстки падають і не питають, куди.',
+    team_nara_say_9: 'Чай із ромашкою? Я візьму ще одну чашку.', team_nara_say_10: 'Дерев’яні сандалі стукають, як серце магазину.', team_nara_say_11: 'Обережно: у мене міцні копита і м’яка вдача.',
+    team_nara_say_12: 'Інколи я просто стою. І це теж робота.', team_nara_say_13: 'Мій секрет прибутку: спокійно дивитись на касу.', team_nara_say_14: 'Якщо тобі сумно, просто постій поруч зі мною.',
+    team_nara_say_15: 'Я з Нари. Там усі олені вклоняються. Я не виняток.',
+    team_nara_cold_0: 'Сніг на рогах: чудова прикраса.', team_nara_cold_1: 'Тепла шаль? Дякую. Я пахну чаєм.', team_nara_cold_2: 'Холод тут лагідний. Я звикла.',
+    naraJoined: 'Нара тепер у команді. Подивись вкладку «Команда»: вона додає трохи до всього доходу.',
+    bonusAvail: '🎌 Доступні бонусні глави! Наступна подорож у часі відкриє бонусну епоху: Японію.',
+    routeNextBonus: 'Далі: бонусна епоха «{0}»',
+    speaker_sora: 'Лисиця Сора', guestDat_sora: 'Сорі',
+    guestSay_sora_0: 'Чай заварюється рівно стільки, скільки треба. Поспіх додає лише гіркоти.', guestSay_sora_1: 'Журавлик — це просто аркуш паперу, який повірив у себе.',
+    guestSay_sora_2: 'Дракон зазирає в мій будиночок. Каже, що по чай. Я не вірю.', guestSay_sora_3: 'Ліхтарі тут світять до ранку. Інколи й до обіду.',
+    guestSay_sora_4: 'Сакура осипається так тихо, що чутно, як вона думає.', guestSay_sora_5: 'Лисиця вміє багато чого. Окрім як упіймати власний чайник.',
+    guestAsk_sora_0: 'Лови журавликів: вони розлетілися з мого чаю. Тап!', guestAsk_sora_1: 'Ще кілька журавликів, і чайник знову заспіває.',
+    guestDone_sora: 'Усі журавлики вдома. Чай гарячий, а дракон задоволений. Дякую!',
+    ep10_title: 'Країна вранішнього сонця',
+    ep10_0: 'Годинник цокнув, і вулицю залило рожевим світлом. Над дахами пливуть паперові ліхтарі, а біля чайного будиночка лисиця безпорадно дивиться на перекинутий чайник.',
+    ep10_1: 'Доброго ранку! Я Сора. Це мій чайний будиночок. Усі чайні листочки втекли, коли я відвернулась на секунду.',
+    ep10_2: 'Чайні листочки втекли? Листя ж не бігає.',
+    ep10_3: 'Бігає, ще й як. Я бачив: такі зелені, з крильцями. Я, звісно, нікого не чіпав. Нікому нічого не продавав.',
+    ep10_4: 'Це журавлики орігамі! Вони складені з моїх чайних пакетиків і розлетілися по місту. Допоможи зловити {0}: тапай по кожному, поки вони не сіли на дах.',
+    ep10_5: 'Ловимо. Лічильник угорі покаже, скільки вже в кошику.',
+    ep10_o1: 'Влаштуймо перегони під барабани тайко: хто зловить більше, той першим п’є чай.',
+    ep10_o2: 'Шнирю, віддай пакетики, які ти «позичив», а журавликів ловитимемо разом.',
+    ep10_r1: 'Тайко? Я вмію бити в барабан. Двічі. Одночасно з паузою.',
+    ep10_r2: 'Пакетики? Ну... вони були дуже пахучі. Решту віддам.',
+    ep10_6: 'Я чекатиму біля чайного будиночка. Упіймаєш {0} журавликів — отримаєш подяку й найкращий чай у місті.',
+    ep10_7: 'Домовились. Чай мій, а ви ловіть. Тобто разом.',
+    ep10_8: 'Ми разом, Шнирю. Ходімо.',
+    ep10_9: 'Тік-так. Допоможи Сорі за цю епоху. Якщо не встигнеш, подорож усе одно чекає, лише подяки не буде.',
+    thx10_0: 'Усі листочки вдома! Чай знову гарячий, а на столі така духмяність, що дракон спустився послухати. Дякую, друже.',
+    thx10_1: 'Дракон? Він що, п’є чай?',
+    thx10_2: 'Він п’є лише з блюдця. Хай мандрує, а коли повернешся, перша чашка за мною.'
+  };
+  const EN = {
+    epoch_8: 'Japan', epochTitle_8: 'Land of the Rising Sun', epochSub_8: 'Sakura, paper lanterns and a dragon above the roofs.',
+    crt_8: 'Origami Crane',
+    good_8_0: 'Tea Sets', good_8_1: 'Onigiri & Rice', good_8_2: 'Wave Flags', good_8_3: 'Fans & Parasols', good_8_4: 'Soap & Powder',
+    good_8_5: 'Mochi & Dango', good_8_6: 'Ramen', good_8_7: 'Kimonos', good_8_8: 'Wooden Sandals', good_8_9: 'Paper Lanterns', good_8_10: 'Sushi Bar', good_8_11: 'Kabuki Theatre',
+    epoch_say_8_0: 'Sakura falls so quietly you can hear it think.', epoch_say_8_1: 'Lanterns float up, prices don’t. Principle.', epoch_say_8_2: 'The dragon is over the roofs again. Probably checking the discounts.',
+    epoch_say_8_3: 'Tea, rice and calm. Now that is trade.', epoch_say_8_4: 'Wooden sandals clatter like the heartbeat of the shop.', epoch_say_8_5: 'A torii by the door: come in, and leave your money at the till.',
+    skinSay_capy_ep8: 'Kimono, a straw hat and tea with sweets. Business, Japanese style!',
+    team_nara: 'Nara the Doe', team_nara_role: 'Quiet Guardian', team_nara_trait: 'Knows where time moves slower. Adds a bit to all income for every level.',
+    team_nara_sit_0: 'Sit, let’s watch the sakura.', team_nara_sit_1: 'I’ll sit. Just a minute. Or an hour.',
+    team_nara_say_0: 'Shh. In the quiet you can hear sakura grow.', team_nara_say_1: 'I’m from the forest outside town. It’s loud here, but cozy.', team_nara_say_2: 'Don’t rush: time moves slower in the tea house.',
+    team_nara_say_3: 'My antlers are gold, my pockets aren’t. That’s enough.', team_nara_say_4: 'I love lanterns. They’re stars that came down a bit lower.', team_nara_say_5: 'I bow to every guest. Otherwise it feels rude.',
+    team_nara_say_6: 'The dragon listens to me because I never interrupt.', team_nara_say_7: 'In the forest I never counted coins. Here I do. It’s interesting.', team_nara_say_8: 'Petals fall and never ask where.',
+    team_nara_say_9: 'Chamomile tea? I’ll have another cup.', team_nara_say_10: 'Wooden sandals clatter like the heartbeat of the shop.', team_nara_say_11: 'Careful: strong hooves, soft heart.',
+    team_nara_say_12: 'Sometimes I just stand. That’s work too.', team_nara_say_13: 'My profit secret: look calmly at the till.', team_nara_say_14: 'If you’re sad, just stand next to me.',
+    team_nara_say_15: 'I’m from Nara. All deer there bow. I’m no exception.',
+    team_nara_cold_0: 'Snow on antlers is a lovely decoration.', team_nara_cold_1: 'A warm shawl? Thanks. I smell of tea.', team_nara_cold_2: 'The cold here is gentle. I’m used to it.',
+    naraJoined: 'Nara is on the team now. Check the “Team” tab: she adds a bit to all income.',
+    bonusAvail: '🎌 Bonus chapters available! Your next time travel opens the bonus era: Japan.',
+    routeNextBonus: 'Next: the bonus “{0}” era',
+    speaker_sora: 'Sora the Fox', guestDat_sora: 'Sora',
+    guestSay_sora_0: 'Tea steeps exactly as long as it needs. Hurry only adds bitterness.', guestSay_sora_1: 'A crane is just a sheet of paper that believed in itself.',
+    guestSay_sora_2: 'The dragon peeks into my little house. Says he’s here for tea. I don’t believe it.', guestSay_sora_3: 'Lanterns here shine until morning. Sometimes until lunch.',
+    guestSay_sora_4: 'Sakura falls so quietly you can hear it think.', guestSay_sora_5: 'A fox can do many things. Except catch her own teapot.',
+    guestAsk_sora_0: 'Catch the cranes: they flew out of my tea. Tap!', guestAsk_sora_1: 'A few more cranes and the teapot will sing again.',
+    guestDone_sora: 'All the cranes are home. The tea is hot and the dragon is happy. Thank you!',
+    ep10_title: 'Land of the Rising Sun',
+    ep10_0: 'The clock ticked and the street filled with pink light. Paper lanterns drift above the roofs, and by the tea house a fox helplessly stares at a tipped-over teapot.',
+    ep10_1: 'Good morning! I’m Sora. This is my tea house. All the tea leaves ran away when I looked aside for a second.',
+    ep10_2: 'The tea leaves ran away? Leaves don’t run.',
+    ep10_3: 'They do, and how. I saw them: green, with little wings. I didn’t touch anyone, of course. Didn’t sell anything to anybody.',
+    ep10_4: 'They’re origami cranes! Folded from my tea bags, and they flew all over town. Help me catch {0}: tap each one before they land on a roof.',
+    ep10_5: 'We’re on it. The counter at the top will show how many are in the basket.',
+    ep10_o1: 'Let’s race to the taiko drums: whoever catches more drinks the first tea.',
+    ep10_o2: 'Shnyr, give back the tea bags you “borrowed”, and we’ll catch the cranes together.',
+    ep10_r1: 'Taiko? I can hit a drum. Twice. At once, with a pause.',
+    ep10_r2: 'Tea bags? Well... they smelled so good. I’ll give back the rest.',
+    ep10_6: 'I’ll wait by the tea house. Catch {0} cranes and you get my thanks and the best tea in town.',
+    ep10_7: 'Deal. The tea is mine, and you catch. I mean, together.',
+    ep10_8: 'Together, Shnyr. Let’s go.',
+    ep10_9: 'Tick-tock. Help Sora during this era. If you don’t make it, time travel still waits, there just won’t be a thank you.',
+    thx10_0: 'All the leaves are home! The tea is hot again, and the smell was so good the dragon came down to listen. Thank you, friend.',
+    thx10_1: 'The dragon? Does he drink tea?',
+    thx10_2: 'Only from a saucer. Let him wander, and when you come back, the first cup is on me.'
+  };
+  Object.assign(translations.uk, UK); Object.assign(translations.en, EN);
+  // Репліки Капі у скіні епохи (по одній на кожен тап)
+  if (typeof SKIN_LINES !== 'undefined') {
+    SKIN_LINES.uk.capy_ep8 = ['Кімоно дуже гарне, а сандалі муляють. Краса вимагає жертв.', 'Капелюх як ліхтар: нічого не видно, зате затишно.', 'Дракон мені підморгнув. Або це був вітер.', 'Чай, рис і сакура: життя вдалося.'];
+    SKIN_LINES.en.capy_ep8 = ['The kimono is lovely, the sandals pinch. Beauty demands sacrifice.', 'The hat is like a lantern: I can’t see, but it’s cozy.', 'The dragon winked at me. Or maybe it was the wind.', 'Tea, rice and sakura: life is good.'];
+  }
+})();

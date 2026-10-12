@@ -757,7 +757,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 20;
+const NEWS_VERSION = 21;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -921,11 +921,11 @@ const NP_GUIDE = {
 };
 const NP_SOON = {
   uk: { head: 'Скоро в грі', sub: 'Те, що ми готуємо. Ще не вийшло, але вже майже.', items: [
-    ['Бонусні епохи', 'Після проходження всіх 8 епох відкриватимуться бонусні, першою буде Японія. У кожної свій перехід-анімація, новий сюжет, нове звірятко в команді, гість за темою й нові літаючі прикраси.'],
+    ['Нові бонусні епохи', 'Японія вже в грі. Далі будуть нові бонусні епохи, кожна зі своїм переходом, сюжетом, помічником, гостем і літаючими прикрасами.'],
     ['Застосунки для магазинів', 'Готуємо версії гри для телефона й комп’ютера в магазинах застосунків.']
   ] },
   en: { head: 'Coming soon', sub: 'What we are working on. Not out yet, but almost.', items: [
-    ['Bonus eras', 'After you finish all 8 eras, bonus ones will open, Japan first. Each has its own travel animation, a new story, a new helper in the team, a themed guest and new flying decorations.'],
+    ['More bonus eras', 'Japan is already in the game. More bonus eras are coming, each with its own travel animation, story, helper, guest and flying decorations.'],
     ['App store versions', 'We are preparing versions of the game for phones and computers in app stores.']
   ] }
 };
@@ -952,7 +952,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Магазин і будинки тепер у стилі кожної епохи: палаццо з арками у Відродженні, хром і шашки в Ретро, неон в Аркадах, зелені дахи в Еко. Магазин став вищим: на 4-му рівні 3 поверхи над входом, на 5-му 4, у торговому центрі 5, а нагорі кінозал. Вулиця стала ширшою, а на телефоні магазин видно цілком.',
+    newH: 'Що нового', new: 'Бонусна епоха «Японія»! Після Неону час несе в країну вранішнього сонця: дерев’яні будинки з дашками, сакура, паперові ліхтарі й дракон, що літає над містом. У неї свій перехід, 8 нових глав, лисиця Сора з чайним будиночком і новий помічник, олениця Нара. Годинникова вежа тепер у стилі кожної епохи й стоїть просто на даху.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -960,7 +960,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'The shop and the houses now match each era: an arched palazzo in the Renaissance, chrome and checkers in Retro, neon in Arcade, green roofs in Eco. The shop got taller: level 4 has 3 floors above the entrance, level 5 has 4, the mall has 5 with a cinema on top. The street is wider, and on a phone the whole shop is in view.',
+    newH: 'What is new', new: 'The bonus era “Japan”! After Neon, time carries you to the land of the rising sun: wooden houses with little roofs, sakura, paper lanterns and a dragon flying over town. It has its own travel animation, 8 new chapters, Sora the fox with her tea house and a new helper, Nara the doe. The clock tower now matches every era and stands right on the roof.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',

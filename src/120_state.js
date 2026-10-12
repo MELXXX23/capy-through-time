@@ -15,7 +15,7 @@ function createDefaultState() {
     depts: DEPARTMENTS.map(() => 0),   // скільки штук кожного відділу куплено
     team: TEAM.map(() => 0),           // рівень кожного звірятка: 0 — не найняте, 1…10
     teamPlus: TEAM.map(() => 0),       // прокачування звірятка після 10-го рівня (0…30): кожні 10 дають зірку, бонус росте з кожним; скидаються з подорожжю разом із рівнями
-    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, epDone: [0, 0, 0, 0, 0, 0, 0, 0], help: [0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
+    story: { done: 0, shnyrFriend: false, finale: false, nights: 0, guests: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], choices: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], shnyrJoined: false, japanJoined: false, bonusSeen: false, epDone: [0, 0, 0, 0, 0, 0, 0, 0, 0], help: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], thx: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },   // done — скільки глав прочитано; nights — скільки ночей минуло після торгового центру (потрібно 3)
     // Події: час (мс від 1970 р.) наступного розпродажу / неприємності та активні бусти
     events: { nextSale: 0, saleUntil: 0, nextTrouble: 0, incomeBoostUntil: 0, incomeBoostMult: 1, tapBoostUntil: 0, tapBoostMult: 1, nextMail: 0, mailPending: 0 },
     wheel: { lastSpin: 0, streak: 0 },                       // колесо фортуни
@@ -26,7 +26,7 @@ function createDefaultState() {
     epochIntroSeen: -1,                // для якої епохи вже показали заставку-анімацію
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)
     // Подорож у часі: кристали, епоха, покращення майстерні, знайомі звірята
-    crystals: 0, crystalsTotal: 0, shards: 0, shardsTotal: 0, shardsInit: 0, epoch: 0, runStartEarned: 0,
+    crystals: 0, crystalsTotal: 0, shards: 0, shardsTotal: 0, shardsInit: 0, epoch: 0, eid: 0, runStartEarned: 0,
     circus: { next: 0, phase: 0, spun: 0, hag: 0 },   // цирк Фортуни: коли наступний, на якому він етапі, чи вже крутили колесо
     daily: { day: '', k: [0, 0, 0], b: [0, 0, 0], t: [1, 1, 1], c: [0, 0, 0], bonus: 0, seen: '' },     // завдання дня: який вид, з якого значення рахуємо, ціль, забрано чи ні
     lastExport: 0, exportNag: 0,              // коли востаннє копіювали код збереження / показали нагадування (мс)
@@ -38,7 +38,7 @@ function createDefaultState() {
     newsSeen: 0,                              // остання прочитана новина з червоної скриньки
     skinsSeen: 0,                             // які з виграних скінів гравець уже бачив у вкладці (для мигаючої точки)
     skins: { capy: -2, shop: -1, weather: -1, street: -1, hero: -1 },   // який скін зараз вдягнено в кожній групі (номер у SKIN_POOL, -1 — звичайний вигляд)
-    epochEarned: [0, 0, 0, 0, 0, 0, 0, 0],   // зароблено монет у кожній епосі
+    epochEarned: [0, 0, 0, 0, 0, 0, 0, 0, 0],   // зароблено монет у кожній епосі
     warpSeen: 0,                             // чи бачив гравець повну анімацію подорожі (потім її можна пропустити дотиком)
     epochSeen: -1, activeEpoch: -1,          // до якої суми заробіток уже розписано по епохах; обрана епоха (-1 — поточна)
     ws: WORKSHOP.map(() => 0),

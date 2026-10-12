@@ -368,15 +368,67 @@ const EC_DATA = {
       ["S", "Я перестав. Мені більше подобається, коли ми разом рахуємо монетки.", "I stopped. I like it better when we count coins together."],
       ["capy", "Ласкаво просимо в команду, Шнирю. Тепер золоті відвідувачі від тебе нікуди не дінуться.", "Welcome to the team, Shnyr. Now golden customers can't get away from you."],
       ["clock", "Це була остання епоха кола. Але подорож у часі — це спіраль. Нове коло починається.", "That was the last era of the circle. But time travel is a spiral. A new circle begins."] ] }
+  ],
+  /* ---- 8. ЯПОНІЯ (бонусна епоха): чайний будиночок, дракон і ліхтарі (гостя Сора, лисиця-кіцуне) ---- */
+  8: [
+    { t: ["Чайник, що втік", "The Teapot That Ran Away"], L: [
+      ["narr", "Над чайним будиночком здіймалась пара, схожа на маленьку хмаринку. Коло дверей топталась лисиця й дивилась на порожню полицю.", "Steam rose above the tea house like a tiny cloud. A fox hovered by the door, staring at an empty shelf."],
+      ["G", "Привіт, я Сора. Мій найкращий чайник пішов гуляти сам. Я шукала його всюди, а він, певно, шукає мене.", "Hi, I'm Sora. My best teapot went for a walk by itself. I looked everywhere, and it's probably looking for me."],
+      ["spike", "Чайник без квитанції про вихід? Це порушення. Рахую збитки.", "A teapot leaving without a receipt? That's a violation. Calculating damages."],
+      ["capy", "Спокійно. Хто бачив, куди він покотився?", "Easy. Who saw where it rolled?"],
+      ["S", "Я бачив. Він котився за ліхтарем до мосту. Я тільки йшов у тому ж напрямку. Випадково. З мішком.", "I saw. It rolled after a lantern toward the bridge. I was only walking the same way. By chance. With a sack."] ] },
+    { t: ["Дракон просить чаю", "The Dragon Wants Tea"], L: [
+      ["narr", "Над дахами завис довгий зелений дракон і з цікавістю зазирнув у вікно чайного будиночка.", "A long green dragon hung above the roofs and peered curiously into the tea house window."],
+      ["G", "Він приходить щоранку. Я наливаю йому чай у блюдце. Він п'є, а потім обдаровує всю вулицю вітерцем.", "He comes every morning. I pour his tea into a saucer. He drinks, then rewards the whole street with a breeze."],
+      ["zoya", "Дракон п'є з блюдця? Це найелегантніший гість, якого я бачила.", "A dragon drinking from a saucer? The most elegant guest I've ever seen."],
+      ["capy", "А як він дякує?", "And how does he say thanks?"],
+      ["narr", "Дракон зробив повільне коло над вулицею, і з його вусів посипалися дрібні блискітки. Усі аж присіли від захвату.", "The dragon made a slow loop above the street and tiny sparkles fell from his whiskers. Everyone gasped with delight."] ] },
+    { t: ["Свято ліхтарів", "The Lantern Festival"], L: [
+      ["narr", "У місті готувались до свята. На кожному даху гойдалися паперові ліхтарі, а звірята вигадували, яке б загадати бажання.", "The town was preparing for a festival. Paper lanterns swayed on every roof, and the animals were thinking up wishes."],
+      ["kria", "Двадцять ліхтарів зірвалися з мотузки. Я підмела всі, а вони самі полетіли знову.", "Twenty lanterns slipped off the rope. I swept them all up, but they just floated away again."],
+      ["G", "Це нормально: ліхтарі люблять висоту. Просто не відпускайте їх без бажання всередині.", "That's normal: lanterns love height. Just don't let them go without a wish inside."],
+      ["capy", "Тоді нехай кожен загадає, і ми разом відпустимо їх над вулицею.", "Then let everyone make a wish, and we'll release them together above the street."],
+      ["S", "Я загадав одне бажання. Нікому не скажу. Воно стосується ліхтарів. І мішка.", "I made one wish. I won't tell anyone. It's about lanterns. And a sack."] ] },
+    { t: ["Кіт, що махає", "The Waving Cat"], L: [
+      ["narr", "Біля каси стояв білий кіт-манекі з піднятою лапою. Лапа махала вже третю добу й не збиралась зупинятись.", "A white lucky cat stood by the till with a raised paw. The paw had been waving for three days and showed no sign of stopping."],
+      ["spike", "Кожен помах — це монета, що не дійшла до каси. Я вимірював. Тепер маю цифри.", "Every wave is a coin that never reached the till. I measured. Now I have numbers."],
+      ["G", "Він махає, бо чекає когось. Кіт-манекі махає, поки його не помітять по-справжньому.", "He waves because he's waiting for someone. A lucky cat waves until someone notices him properly."],
+      ["tonya", "Тоді усміхніться йому, і хай зупиниться.", "Then smile at him and let him stop."],
+      ["narr", "Усі усміхнулися коту. Лапа сповільнилась, опустилась, і кіт задоволено заплющив очі. Монети в касі задзвеніли самі.", "Everyone smiled at the cat. The paw slowed, lowered, and the cat contentedly closed his eyes. Coins in the till jingled on their own."] ] },
+    { t: ["Автомат із сюрпризом", "The Vending Machine of Surprises"], L: [
+      ["narr", "На розі стояв автомат, що видавав щоразу інший напій: матчу, лимонад, каву з сакурою й бульбашкову содову.", "On the corner stood a vending machine that gave a different drink every time: matcha, lemonade, sakura latte, bubble soda."],
+      ["S", "Я кинув одну монету, а він видав чотири банки й подякував. Це не я. Він сам.", "I put in one coin and it gave four cans and thanked me. It wasn't me. It did it itself."],
+      ["spike", "Автомат у збитку. Хто його обслуговує?", "The machine runs at a loss. Who maintains it?"],
+      ["G", "Ніхто. Він просто любить, коли хтось усміхається при кожному напої.", "Nobody. He just likes it when someone smiles with every drink."],
+      ["capy", "Тоді він наш найкращий співробітник. Не плати йому, лише усміхайся.", "Then he's our best employee. Don't pay him, just smile."] ] },
+    { t: ["Сакура, що не цвіла", "The Sakura That Wouldn't Bloom"], L: [
+      ["narr", "Біля мосту стояла стара сакура з голими гілками. Усі інші дерева давно цвіли, а вона мовчала.", "By the bridge stood an old sakura with bare branches. All the other trees had bloomed long ago, but she stayed silent."],
+      ["G", "Їй сумно. Колись із нею сиділи щодня, а тепер усі поспішають повз.", "She's sad. People used to sit with her every day, and now everyone hurries past."],
+      ["kria", "Тоді принесу лавку й чай, посидимо.", "Then I'll bring a bench and tea, and we'll sit."],
+      ["capy", "Посидьмо всі разом. Хоч п'ять хвилин. Без каси.", "Let's all sit together. Just five minutes. No till."],
+      ["narr", "Вони посиділи. А тоді на гілці з'явився перший рожевий бутон, і другий, і десятий. До вечора дерево стояло в рожевій хмарі.", "They sat. Then a first pink bud appeared on a branch, and a second, and a tenth. By evening the tree stood in a pink cloud."] ] },
+    { t: ["Нічний ринок", "The Night Market"], L: [
+      ["narr", "На вулицю вийшов нічний ринок: кіоски з їжею, ліхтарі, стукіт дерев'яних сандалій. Пахло смаженими кульками й карамеллю.", "The night market came out: food stalls, lanterns, the clatter of wooden sandals. It smelled of fried dumplings and caramel."],
+      ["zoya", "Тут так багато смачного, що я забула про дієту. І про те, що вона в мене була.", "There's so much tasty food I forgot about my diet. And that I had one."],
+      ["S", "Я тільки перевіряв, чи не отруєні кульки. Три штуки. Для безпеки.", "I was only checking whether the dumplings were poisoned. Three of them. For safety."],
+      ["G", "Увага! Скоро феєрверк. Дивіться на небо й загадуйте бажання.", "Attention! Fireworks soon. Look at the sky and make a wish."],
+      ["narr", "Небо спалахнуло золотом і червоним. Дракон пройшов поміж вогнів, і всім здалося, що це він запускає феєрверк.", "The sky burst into gold and red. The dragon passed between the lights, and everyone thought he was setting off the fireworks himself."] ] },
+    { t: ["Нара, що прийшла", "Nara Arrives"], L: [
+      ["narr", "Вранці до чайного будиночка тихо підійшла олениця. Біла шерсть, золоті роги й спокійні очі, які бачили багато весен.", "In the morning a doe quietly approached the tea house. White fur, golden antlers, and calm eyes that had seen many springs."],
+      ["G", "Це Нара. Вона з тих лісів, що за містом. Давно хотіла побачити, що ви тут робите.", "This is Nara. She's from the forests outside town. She's wanted to see what you do here for ages."],
+      ["capy", "Ласкаво просимо, Наро. У нас є чай, ліхтарі й каса, що не вміє мовчати.", "Welcome, Nara. We have tea, lanterns and a till that doesn't know how to be quiet."],
+      ["spike", "Додатковий співробітник, що нічого не бере без дозволу. Приймаю.", "An extra employee who takes nothing without asking. Accepted."],
+      ["narr", "Нара вклонилась і стала біля дверей, наче стояла там завжди. Ліхтарі спалахнули трохи теплішим світлом.", "Nara bowed and stood by the door as if she'd always been there. The lanterns flared with a slightly warmer glow."],
+      ["clock", "Це була бонусна епоха. Але спіраль триває: попереду нове коло.", "That was a bonus era. But the spiral goes on: a new circle lies ahead."] ] }
   ]
 };
 // Дані → описи глав (для сюжетного двигуна) і тексти (для translations)
 const EPOCH_CHAPTERS = {};
 (function () {
   Object.keys(EC_DATA).forEach(k => {
-    const ek = +k, guest = GUEST_IDS[ek - 1];
+    const ek = +k, guest = ek === 8 ? 'sora' : GUEST_IDS[ek - 1];
     EPOCH_CHAPTERS[ek] = EC_DATA[k].map((ch, n) => {
-      const lines = ch.L.map(r => (r[0] === 'S' ? 'shnyr' + ek : r[0] === 'G' ? guest : r[0]));
+      const lines = ch.L.map(r => (r[0] === 'S' ? 'shnyr' + (ek === 8 ? 9 : ek) : r[0] === 'G' ? guest : r[0]));
       translations.uk['ec' + ek + '_' + (n + 1) + '_title'] = ch.t[0]; translations.en['ec' + ek + '_' + (n + 1) + '_title'] = ch.t[1];
       ch.L.forEach((r, i) => { translations.uk['ec' + ek + '_' + (n + 1) + '_' + i] = r[1]; translations.en['ec' + ek + '_' + (n + 1) + '_' + i] = r[2]; });
       return { id: n + 1, trigger: EC_TRIGGERS[n], lines };

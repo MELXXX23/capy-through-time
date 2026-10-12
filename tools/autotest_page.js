@@ -38,7 +38,7 @@
     if (seen.size < 14) fail(label + ' → сцена майже порожня (' + seen.size + ' кольорів)');
   };
   const setWorld = (ep, lvl, phase) => {
-    state.epoch = ep; state.activeEpoch = -1; state.shopLevel = lvl; state.dayPhase = phase;
+    state.epoch = ep; state.eid = ep; state.activeEpoch = -1; state.shopLevel = lvl; state.dayPhase = phase;
     state.team = TEAM.map((m, i) => (m.level <= lvl && !m.needs ? 3 : 0));
     state.depts = DEPARTMENTS.map(d => (d.level <= lvl ? 3 : 0));
     state.settings.season = 'summer'; state.story.guests = state.story.guests.map(() => 1);          // усі гості зустрінуті: видно їхні місця
@@ -82,7 +82,7 @@
     });
   };
   const tabIds = TABS.map(x => x.id);
-  const epochsForTabs = QUICK ? [0, 3, 7] : [0, 1, 2, 3, 4, 5, 6, 7];
+  const epochsForTabs = QUICK ? [0, 3, 7, 8] : [0, 1, 2, 3, 4, 5, 6, 7, 8];
   for (const ep of epochsForTabs) {
     setWorld(ep, 4, 0.5); state.shards = 123456; state.crystals = 789;
     for (const id of tabIds) {
@@ -103,7 +103,7 @@
   await check('протікання: лагодження', () => { while (puddles.length) removePuddle(0); }, 300);
   await check('єнот', () => { startRaccoon(); }, 900);
   await check('єнот: кінець', () => { trouble = null; recalcIncome(); }, 200);
-  for (const ep of [1, 3, 6]) {
+  for (const ep of [1, 3, 6, 8]) {
     await check('герої епохи ' + ep, () => { setWorld(ep, 4, 0.5); startGhostHunt(); }, 1200);
     await check('герої епохи ' + ep + ': кінець', () => { endGhostHunt(); }, 200);
   }
@@ -127,7 +127,7 @@
   await check('відгук', () => { closeAll(); openFeedback(); }, 300);
   closeAll();
   for (let ep = 0; ep < EPOCHS.length; ep++) {
-    await check('заставка епохи ' + ep, () => { state.epoch = ep; playEpochIntro(ep, null); }, 1300);
+    await check('заставка епохи ' + ep, () => { state.epoch = ep; state.eid = ep; playEpochIntro(ep, null); }, 1300);
     closeAll();
   }
   // подорож у часі: анімація (демо) для кожної епохи
@@ -140,7 +140,7 @@
   for (let n = 1; n <= 8; n++) await check('глава ' + n, () => { startDialogue(n, true); }, 350).then(() => { try { endDialogue(); } catch (e) { /* нічого */ } closeAll(); });
 
   // історії гостей епох і подяки: усі сторінки з текстом, без сирих ключів; допомога гостю: ловимо істот і рахуємо
-  for (let n = 1; n <= 9; n++) for (const kind of ['ep', 'thx']) {
+  for (let n = 1; n <= 10; n++) for (const kind of ['ep', 'thx']) {
     await check('історія гостя ' + n + ' ' + kind, () => {
       startDialogue(n, true, kind, n);
       if (!dialog.active) throw new Error('діалог не відкрився');

@@ -768,7 +768,7 @@ const SKYX_TET = [[[0, 0], [1, 0], [2, 0], [3, 0]], [[0, 0], [0, 1], [1, 1], [2,
 function skyxLn(g, x0, y0, x1, y1, c) { lineG(g, Math.round(x0), Math.round(y0), Math.round(x1), Math.round(y1), c); }
 function skyxTetris(init) { const top = 8 - view.offY; return { k: 'tet', x: Math.round(rand(worldL() + 10, worldR() - 20)), y: init ? rand(top, 70) : top - 22, vy: rand(5, 9), cells: SKYX_TET[Math.floor(Math.random() * SKYX_TET.length)], c: ['N', 'f', 'y', 'g', 'o', 'v', 'T'][Math.floor(Math.random() * 7)], rt: rand(0.8, 2), rot: 0 }; }
 function seedSkyExtra() {
-  const ep = viewEpoch() % 8, wide = Math.max(1, view.w / 320), top = 8 - view.offY;
+  const ep = viewEpoch() % EPOCHS.length, wide = Math.max(1, view.w / 320), top = 8 - view.offY;
   SKYX.ep = ep; SKYX.items = []; SKYX.banner = null; SKYX.tBanner = rand(3, 8); SKYX.meteors = []; SKYX.tMeteor = rand(0.3, 1);
   if (ep === 0) {                                                       // повітряні кулі: рідко (одна на ~260 px світу), рівномірно по світу, летять в один бік з близькою швидкістю, тож не збиваються докупи
     const n = Math.max(4, Math.round((worldR() - worldL()) / 165)), step = (worldR() - worldL()) / n, dir = Math.random() < 0.5 ? -1 : 1;
@@ -788,7 +788,7 @@ function seedSkyExtra() {
   if (ep === 5) for (let i = 0; i < Math.max(3, Math.round(3.5 * wide)); i++) SKYX.items.push({ k: 'isl', v: i % 3, x: rand(worldL() + 30, worldR() - 30), y: rand(top + 30, 62), w: [44, 36, 54, 40][i % 4] + Math.round(rand(0, 6)), vx: rand(0.6, 1.4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
 }
 function updateSkyExtra(dt) {
-  if (SKYX.ep !== viewEpoch() % 8) seedSkyExtra();
+  if (SKYX.ep !== viewEpoch() % EPOCHS.length) seedSkyExtra();
   if (!animOn()) return;
   const top = 8 - view.offY;
   SKYX.items.forEach(f => {
@@ -1148,6 +1148,7 @@ function discoLamps(time) {
 }
 function drawSkyExtra(time) {
   const ep = SKYX.ep, top = 8 - view.offY, noFly = !!state.settings.noFly;
+  { const A = ARCH[currentEpoch().id]; if (A && A.skyExtra) A.skyExtra(time, noFly); }
   if (ep === 2) {                                                         // Диско: лазерний віяр над дахами
     discoLamps(time);
     for (let i = 0; i < 6; i++) { const sx = Math.round(worldL() + 20 + i * (view.w - 40) / 5), sy = top + 6 + (i * 13) % 34, v = Math.sin(time * 2.4 + i * 1.7); if (v > 0.3) sparkPlus(sx, sy, (v - 0.3) / 0.7, i % 2 ? '#fff6b0' : '#ffd0f0'); }
@@ -1703,6 +1704,8 @@ function makeCreatureCanvas(i) {                              // 18×16, див�
     P(8, 13, 2, 2, '#ef8fa3'); P(11, 13, 2, 2, '#ef8fa3');
     for (let a = 0; a < 360; a += 8) { const r = a * Math.PI / 180; P(Math.round(13 + Math.cos(r) * 5.4), Math.round(8.5 + Math.sin(r) * 5.4), 1, 1, '#b8e3ff'); }
     P(10, 4, 2, 1, '#ffffff'); P(9, 6, 1, 1, '#ffffff');
+  } else if (i === 8) {                                       // Японія: журавлик-орігамі (малюнок у 275_japan.js)
+    drawJapanCrane(g);
   } else {                                                    // Кіт Вивіска: неоновий контур рожевим, темна заливка, блакитні очі
     const body = inE(8, 10, 6.2, 3.6), head = inD(14, 8, 3), ear1 = (x, y) => x >= 12 && x <= 13 && y >= 3 && y <= 5 - (x - 12), ear2 = (x, y) => x >= 15 && x <= 16 && y >= 3 && y <= 4 + (x - 15) * 0,
       legs = (x, y) => y >= 13 && y <= 15 && (x === 4 || x === 5 || x === 10 || x === 11), tail = (x, y) => (x >= 0 && x <= 2 && y >= 5 && y <= 11 && (x === 1 || (x === 2 && y >= 10) || (x === 0 && y <= 6)));

@@ -89,10 +89,11 @@ function updateEpochFx(dt) {
 
 /* ---------- Заставка нової епохи (на весь екран) ---------- */
 const epochIntro = { active: false, timers: [], startedAt: 0, done: null };
-const EPOCH_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+const EPOCH_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
 // Емблема епохи 32×32 пікселі
 function drawEpochEmblem(g, i) {
   g.clearRect(0, 0, 32, 32);
+  if (i === 8) { drawJapanEmblem(g); return; }
   switch (i) {
     case 0:                                            // лавровий вінок і колона
       for (let a = 0.35; a < 2 * Math.PI - 0.35; a += 0.28) { const x = Math.round(16 + Math.cos(a + 1.57) * 13), y = Math.round(16 + Math.sin(a + 1.57) * 13); R(g, x - 1, y - 1, 3, 2, Math.floor(a * 3.5) % 2 ? 'g' : 'G'); }
@@ -256,7 +257,7 @@ function playEpochIntro(epochNo, done) {
   if (epochIntro.active) return;
   epochIntro.active = true; epochIntro.done = done || null; epochIntro.startedAt = performance.now();
   state.epochIntroSeen = epochNo; saveGame();
-  const i = epochNo % EPOCHS.length, ep = EPOCHS[i], box = ui.epochIntro;
+  const i = curEpoch(), ep = EPOCHS[i], box = ui.epochIntro;
   box.dataset.ep = i; epochIntro.idx = i; eiT0 = performance.now(); if (eiRaf) cancelAnimationFrame(eiRaf); eiRaf = requestAnimationFrame(eiLoop);
   box.style.setProperty('--ei1', PALETTE[ep.sky[0]]); box.style.setProperty('--ei2', PALETTE[ep.sky[1]]); box.style.setProperty('--ei3', PALETTE[ep.sky[2]]);
   drawEpochEmblem(ui.eiEmblem.getContext('2d'), i);
@@ -307,7 +308,7 @@ function startWarp(view, demo) {
   cv.width = W; cv.height = H;
   const snap = document.createElement('canvas'); snap.width = W; snap.height = H;
   const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
-  const target = (view === undefined ? state.epoch + 1 : view) % EPOCHS.length;
+  const target = view === undefined ? nextEpochId(curEpoch()) : (view % EPOCHS.length);
   const [fx, fy] = clockFaceFrac();
   clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('clockBong');
   warp = { demo: !!demo, fromEpoch: viewEpoch() % EPOCHS.length, toEpoch: target, t: 0, applied: false, fx, fy, W, H, snap, view, dur: (view === undefined || demo) ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
@@ -316,7 +317,7 @@ function startWarp(view, demo) {
   playSfx('warp', warp.dur, target);
 }
 // Роки епох для анімації «Перемотка»
-const EPOCH_YEARS = [1490, 1957, 1977, 1986, 2001, 2025, 2160, 2099];
+const EPOCH_YEARS = [1490, 1957, 1977, 1986, 2001, 2025, 2160, 2099, 1868];
 function warpSeed(i) { const v = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return v - Math.floor(v); }
 function warpCog(g, x, y, r, teeth, rot, c1, c2, a) {          // шестерня: зубці, тіло, отвір
   g.globalAlpha = a; g.fillStyle = c1;
@@ -373,7 +374,7 @@ function drawWarpTunnel(k) {
 // Варіант 3 «Перемотка»: відеокасета перемотується назад: збої, смуги, шум, роки, а потім картинка розсипається пікселями
 function drawWarpRewind(k) {
   const { g, W, H, sc, diag, seg, ez } = warpSetup();
-  const kg = seg(k, 0, 0.45), kn = seg(k, 0.4, 0.5), kbar = seg(k, 0.5, 0.74), kr = seg(k, 0.74, 1), from = EPOCH_YEARS[(warp.fromEpoch || 0) % 8], to = EPOCH_YEARS[(warp.toEpoch || 0) % 8];
+  const kg = seg(k, 0, 0.45), kn = seg(k, 0.4, 0.5), kbar = seg(k, 0.5, 0.74), kr = seg(k, 0.74, 1), from = EPOCH_YEARS[(warp.fromEpoch || 0) % EPOCHS.length], to = EPOCH_YEARS[(warp.toEpoch || 0) % EPOCHS.length];
   const bh = Math.max(3, Math.round(5 * sc * 0.6));
   if (k < 0.5) {
     for (let y = 0; y < H; y += bh) {                                               // горизонтальні смуги зсуваються, як на зіпсованій плівці
@@ -684,7 +685,7 @@ function updateWarp(dt) {
   if (!warp) return;
   warp.t += dt;
   const k = Math.min(1, warp.t / warp.dur);
-  (WARP_BY_EPOCH[(warp.toEpoch | 0) % 8] || drawWarpGreece)(k);               // у кожної епохи своя анімація подорожі
+  (WARP_BY_EPOCH[(warp.toEpoch | 0) % EPOCHS.length] || drawWarpGreece)(k);               // у кожної епохи своя анімація подорожі
   if ((state.warpSeen || warp.demo) && warp.t > 0.5 && k < 0.7) {                // після першого перегляду анімацію можна пропустити
     const g = ui.warpCanvas.getContext('2d'), sc = warp.W / 160; g.globalAlpha = 0.9; g.textAlign = 'center'; g.textBaseline = 'bottom'; warpFont(g, 4.4 * sc); warpText(g, t('warpSkip'), warp.W / 2, warp.H - 3 * sc, '#fff'); g.globalAlpha = 1;
   }
@@ -696,10 +697,10 @@ function updateWarp(dt) {
     ui.timeWarp.hidden = true;
     if (viewOnly) return;
     // новий сюжетний фрагмент епохи
-    const storyNo = ((state.epoch - 1) % EPOCHS.length) + 1, label = (state.epoch % EPOCHS.length) + 1;
+    const storyNo = guestStoryNoOf(curEpoch()), label = curEpoch() + 1;
     playEpochIntro(state.epoch, () => {
       setTimeout(() => { try { capySay(); } catch (e) { /* не страшно */ } }, 700);
-      const ek = state.epoch % EPOCHS.length, st = state.story, guestStory = () => { if (!st.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); };
+      const ek = curEpoch(), st = state.story, guestStory = () => { if (!st.guests[storyNo - 1]) startDialogue(storyNo, false, 'ep', label); };
       // нова епоха: спершу відкривається її ПЕРША глава, а гість зі своїми речами приходить одразу після неї
       if (ek >= 1 && EPOCH_CHAPTERS[ek] && !((st.epDone && st.epDone[ek]) || 0)) { startDialogue(1, false, 'ec', 1, ek); if (dialog.active) dialog.after = guestStory; else guestStory(); }
       else guestStory();
@@ -715,6 +716,7 @@ function applyTimeTravel() {
   state.stats.timeTravels++;
   state.stats.maxLevel = Math.max(state.stats.maxLevel, state.shopLevel);
   state.epoch++;
+  state.eid = nextEpochId(curEpoch());
   state.activeEpoch = -1;
   state.team.forEach((lv, i) => { if (lv > 0) state.teamKnown[i] = 1; });      // звірятка лишаються знайомими
   state.coins = CONFIG.START_COINS;
@@ -792,11 +794,11 @@ function updateRouteCard(gain) {
   if (!fin) { rows.push([state.shopLevel >= LEVELS.length, t('routeLevel', LEVELS.length)]); rows.push([nights >= 3, t('routeNights', nights)]); }
   rows.push([gain >= 1, t('routeEarn', fmt(Math.floor(run)), fmt(shardThreshold()))]);
   rows.push([false, t('routeGo')]);
-  const next = (state.epoch + 1) % EPOCHS.length;
+  const next = nextEpochId(curEpoch());
   const sig = JSON.stringify(rows) + state.lang + next;
   if (sig === routeSig) return;
   routeSig = sig;
-  ui.routeTitle.textContent = t('routeTitle'); ui.routeNext.textContent = t('routeNext', t('epoch_' + next));
+  ui.routeTitle.textContent = t('routeTitle'); ui.routeNext.textContent = t(next === 8 ? 'routeNextBonus' : 'routeNext', t('epoch_' + next));
   ui.routeList.innerHTML = '';
   rows.forEach(([done, text], i) => {
     const r = document.createElement('div'); r.className = 'route-row' + (done ? ' done' : '');
@@ -905,7 +907,7 @@ function updateStatsUI() {
   if (ui.paneAch.hidden) return;
   const s = state, st = s.stats;
   const vals = {
-    stEpoch: t('epoch_' + (s.epoch % EPOCHS.length)) + ' (' + (s.epoch + 1) + ')',
+    stEpoch: t('epoch_' + epochOf(s)) + ' (' + (epochOf(s) + 1) + ')',
     stPlay: fmtDuration(s.playTime),
     stEarned: fmt(Math.floor(s.totalEarned)),
     stRun: fmt(Math.floor(Math.max(0, s.totalEarned - s.runStartEarned))),
@@ -948,7 +950,7 @@ function applyViewSettings() {
 // Перегляд минулих епох: лише вигляд, прогрес не змінюється
 function setEpochPreview(e) {
   syncEpochEarned();
-  state.activeEpoch = (e === null || e === state.epoch % EPOCHS.length) ? -1 : e;
+  state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e;
   rebuildEpochLayers();
   refreshDeptTexts();
   updateMusic();
@@ -961,7 +963,7 @@ function updateEpochViewUI() {
   if (!card) return;
   card.hidden = false;                              // картка видна завжди; поки пройдено лише одну епоху — одна кнопка
   if (!DEV_OPEN_ALL && state.epoch < 1 && state.activeEpoch >= 0) { state.activeEpoch = -1; rebuildEpochLayers(); }
-  const box = ui.setEpochView, top = DEV_OPEN_ALL ? EPOCHS.length - 1 : Math.min(state.epoch, EPOCHS.length - 1), cur = viewEpoch() % EPOCHS.length, sig = state.lang + '|' + top;
+  const box = ui.setEpochView, top = DEV_OPEN_ALL ? EPOCHS.length - 1 : Math.min(Math.max(state.epoch, curEpoch()), EPOCHS.length - 1), cur = viewEpoch() % EPOCHS.length, sig = state.lang + '|' + top;
   if (box._sig !== sig) {                          // кнопки створюються ОДИН раз (інакше клік губиться, коли вони перемальовуються між натисканням і відпусканням)
     box._sig = sig; box.innerHTML = '';
     for (let e = 0; e <= top; e++) {
@@ -975,7 +977,7 @@ function updateEpochViewUI() {
     }
   }
   box.querySelectorAll('button').forEach(bt => {   // далі оновлюються лише підписи й стан «вибрано»
-    const e = +bt.dataset.ep, txt = '🪙 ' + fmt(Math.floor(e === state.epoch % EPOCHS.length ? state.coins : (state.epochEarned[e] || 0))), n2 = bt.querySelector('.ev-earned');
+    const e = +bt.dataset.ep, txt = '🪙 ' + fmt(Math.floor(e === curEpoch() ? state.coins : (state.epochEarned[e] || 0))), n2 = bt.querySelector('.ev-earned');
     if (n2.textContent !== txt) n2.textContent = txt;
     const on = String(e === cur);
     if (bt.getAttribute('aria-pressed') !== on) bt.setAttribute('aria-pressed', on);
@@ -1120,7 +1122,7 @@ function copyExport() {
 if (/[?&]debug=1/.test(location.search)) window.__show = (L, ep, ph, season, panel) => {
   Storage.prototype.setItem = function () {};
   document.querySelectorAll('button').forEach(b => { if (/Пропустити/.test(b.textContent)) b.click(); }); if (ui.modalBtn) ui.modalBtn.click();
-  state.settings.rain = false; state.settings.season = season || 'summer'; state.epoch = ep; state.activeEpoch = -1; state.shopLevel = L; state.team = state.team.map((v, i) => (i < 8 ? 3 : 0)); state.dayPhase = ph; state.settings.panelOpen = !!panel;
+  state.settings.rain = false; state.settings.season = season || 'summer'; state.epoch = ep; state.eid = ep % EPOCHS.length; state.activeEpoch = -1; state.shopLevel = L; state.team = state.team.map((v, i) => (i < 8 ? 3 : 0)); state.dayPhase = ph; state.settings.panelOpen = !!panel;
   recalcIncome(); try { rebuildEpochLayers(); } catch (e) { /* ок */ } rebuildShop(true); syncActors(); layoutScene(); applyPanel(); document.querySelectorAll('.toast').forEach(e => e.remove()); return 'ok';
 };
 // Режим тестування (?debug=1): швидко перевірити баланс

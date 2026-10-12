@@ -53,4 +53,8 @@
 .np-list li { margin-bottom: 7px; overflow-wrap: break-word; }
 .np-gift { display: block; width: 100%; margin: 8px 0 4px; padding: 10px 6px; font-size: clamp(8px, 2.4vw, 12px); line-height: 1.5; overflow-wrap: break-word; white-space: normal; }
 .np-guide-n { display: inline-block; min-width: 1.6em; color: #7a2230; }
+/* Японія (епоха 8): тепла паперова тема меню, червоний акцент */
+body[data-epoch="8"] { --panel: #f2e4d0; --panel-dark: #d8c1a0; --card: #fff7ea; --honey: #c8102e; --mint: #2c6fbf; --brown: #1c2f5a; --glow: #ffc9d4; }
+body[data-epoch="8"] #sign { color: #fff7ea; text-shadow: 0 0 calc(var(--u) * 2) #ff5f7a, 0 0 calc(var(--u) * 4) #ff2a4a; }
+body[data-epoch="8"] .team-card { --tc-portrait: #f2e4d0; --tc-card: #fff7ea; --tc-btn: #c8102e; --tc-btn-text: #fff7ea; --tc-name: #1c2f5a; --tc-role: #c8102e; --tc-trait: #4a3228; --tc-now: #2c6fbf; }
 </style>

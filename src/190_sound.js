@@ -343,7 +343,7 @@ const SFX = {
   pip()       { tone(audio.sfxGain, 'square', 880, audio.ctx.currentTime, 0.07, 0.15, 1320); },
   click()     { tone(audio.sfxGain, 'square', 660, audio.ctx.currentTime, 0.03, 0.14); },
   warp(dur, ep) {   // подорож: у кожної епохи свій звук (Греція — арфа й дзвіночки, Ретро — перемотка, Диско — ритм, Аркади — чіп-мелодія, Інтернет — модем, Еко — вітер і птахи, Космос — свист і сонар, Неон — синті)
-    const D = dur || 4.4, E = ((ep | 0) % 8 + 8) % 8, t0 = audio.ctx.currentTime + 0.02, tb = t0 + D * 0.74, A = audio.sfxGain;
+    const D = dur || 4.4, E = ((ep | 0) % EPOCHS.length + EPOCHS.length) % EPOCHS.length, t0 = audio.ctx.currentTime + 0.02, tb = t0 + D * 0.74, A = audio.sfxGain;
     const arp = (notes, start, step, wave, len, vol) => notes.forEach((nt, i) => tone(A, wave, noteFreq(nt), start + i * step, len, vol));
     const wind = (start, len, vol) => { for (let j = 0; j < 7; j++) noiseHit(A, start + len * j / 7, len / 3, vol, 'bandpass', 350 + 260 * j); };
     const boom = (vol) => { tone(A, 'sine', 110, tb, 0.8, vol, 38); noiseHit(A, tb, 0.35, vol * 0.8, 'lowpass', 900); };
@@ -388,6 +388,12 @@ const SFX = {
       [0.18, 0.34, 0.5].forEach(p => { tone(A, 'sine', 1200, t0 + D * p, 0.6, 0.1); tone(A, 'sine', 1200, t0 + D * p + 0.22, 0.5, 0.05); });
       tone(A, 'triangle', 3000, tb - 0.25, 0.25, 0.09, 200);
       noiseHit(A, tb - 0.1, 0.5, 0.45, 'highpass', 600); boom(0.5); [392, 523, 784].forEach((fq, k) => tone(A, 'sine', fq, tb + 0.05 + k * 0.07, 1.5, 0.14));
+    } else if (E === 8) {                                                                  // Японія: кото-пентатоніка, барабани тайко, вітряні дзвіночки
+      arp(['D4', 'E4', 'G4', 'A4', 'B4', 'D5', 'E5', 'G5', 'A5', 'B5', 'D6'], t0, D * 0.06, 'triangle', 0.5, 0.14);
+      arp(['D3', 'A3', 'D4', 'A3'], t0 + D * 0.05, D * 0.16, 'sine', 0.7, 0.1);
+      [0.18, 0.3, 0.42, 0.52, 0.6].forEach(p => { tone(A, 'sine', 70, t0 + D * p, 0.25, 0.3, 40); noiseHit(A, t0 + D * p, 0.12, 0.2, 'lowpass', 700); });
+      wind(t0 + D * 0.1, D * 0.5, 0.03);
+      boom(0.35); [587, 740, 880, 1175].forEach((fq, k) => tone(A, 'triangle', fq, tb + 0.02 + k * 0.06, 1.6, 0.12)); tone(A, 'sine', 2349, tb + 0.4, 1.2, 0.06);
     } else {                                                                               // Неон: синтові пилки, лазерні «пью», бас-дроп
       arp(['E3', 'B3', 'E4', 'G4', 'B4', 'E5', 'G5', 'B5', 'E6'], t0, D * 0.055, 'sawtooth', 0.14, 0.09);
       [0.15, 0.25, 0.37, 0.47, 0.57].forEach(p => tone(A, 'square', 2400, t0 + D * p, 0.16, 0.08, 260));

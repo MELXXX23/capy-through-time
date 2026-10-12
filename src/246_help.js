@@ -13,7 +13,7 @@ function helpCount(k) { return Math.min(HELP_NEED, ((state.story.help && state.s
 function helpDone(k) { return helpCount(k) >= HELP_NEED; }
 function helpMetIn(e) {                                         // гості, яких уже зустріли, з епохи e
   const out = [];
-  GUEST_IDS.forEach((id, k) => { if (state.story.guests[k] > 0 && guestEpochOf(k) === ((e % 8) + 8) % 8) out.push(k); });
+  GUEST_IDS.forEach((id, k) => { if (state.story.guests[k] > 0 && guestEpochOf(k) === ((e % EPOCHS.length) + EPOCHS.length) % EPOCHS.length) out.push(k); });
   return out;
 }
 function helpActiveIn(e) { return helpMetIn(e).filter(k => !helpDone(k)); }
@@ -26,19 +26,19 @@ function helpCredit(e) {
     helpChipUntil = Date.now() + 9000;
     if (!helpDone(k)) return;
     state.crystals += 1; state.crystalsTotal += 1;
-    const here = guestEpochOf(k) === state.epoch % 8;
+    const here = guestEpochOf(k) === curEpoch();
     showToast(t(here ? 'helpDoneToast' : 'helpDoneToast2', t('guestDat_' + GUEST_IDS[k])), 'big');
     spawnFloater(shop ? shop.x + (shop.w >> 1) : 100, 120, '+1 ' + GEM_CH);
   });
 }
 
 // Подяка: окрема сцена гостя (kind 'thx'). Перед подорожжю — для гостей поточної епохи; для гостей минулих епох — одразу, щойно допомогу виконано
-function helpThanksNow() { return GUEST_IDS.map((id, k) => k).filter(k => helpDone(k) && !state.story.thx[k] && guestEpochOf(k) === state.epoch % 8); }
-function helpThanksLate() { return GUEST_IDS.map((id, k) => k).filter(k => helpDone(k) && !state.story.thx[k] && guestEpochOf(k) !== state.epoch % 8); }
+function helpThanksNow() { return GUEST_IDS.map((id, k) => k).filter(k => helpDone(k) && !state.story.thx[k] && guestEpochOf(k) === curEpoch()); }
+function helpThanksLate() { return GUEST_IDS.map((id, k) => k).filter(k => helpDone(k) && !state.story.thx[k] && guestEpochOf(k) !== curEpoch()); }
 function playThanksChain(list, after) {
   if (!list.length) { if (after) after(); return; }
   const k = list[0];
-  startDialogue(k + 1, false, 'thx', (guestEpochOf(k) % 8) + 1);
+  startDialogue(k + 1, false, 'thx', guestEpochOf(k) + 1);
   dialog.after = () => playThanksChain(list.slice(1), after);
 }
 function travelWithThanks() {                                   // підтверджена подорож: спершу подяки, потім сама перемотка часу
@@ -50,7 +50,7 @@ function travelWithThanks() {                                   // підтве�
 // Чіпи під рахунком: «Допоможи Піпу: 4/12»
 function helpChips() {
   if (Date.now() > helpChipUntil) return [];
-  const e = viewEpoch() % 8, out = [], ic = EPOCH_CREATURES[e].icon;
+  const e = viewEpoch() % EPOCHS.length, out = [], ic = EPOCH_CREATURES[e].icon;
   helpMetIn(e).forEach(k => {
     const nm = t('guestDat_' + GUEST_IDS[k]);
     if (!helpDone(k)) out.push({ icon: ic, text: t('helpChip', nm, helpCount(k), HELP_NEED) });
@@ -62,7 +62,7 @@ function helpChips() {
 // Тап по гостю чи його місцю: показує, що йому треба (і скільки вже зроблено); коли допомогу виконано — дякує
 const guestTapN = {};
 function guestTapSay(g) {
-  const id = g.id, k = g.k, here = guestEpochOf(k) === viewEpoch() % 8;
+  const id = g.id, k = g.k, here = guestEpochOf(k) === viewEpoch() % EPOCHS.length;
   guestTapN[k] = (guestTapN[k] | 0) + 1;
   let text;
   if (here && !helpDone(k)) text = t('guestAsk_' + id + '_' + (guestTapN[k] % 2)) + ' (' + helpCount(k) + '/' + HELP_NEED + ')';
@@ -73,7 +73,7 @@ function guestTapSay(g) {
 
 // Репліка гостя: поки просить допомоги — часто нагадує про прохання
 function guestLineKey(g) {
-  const id = g.id, k = g.k, here = guestEpochOf(k) === viewEpoch() % 8;
+  const id = g.id, k = g.k, here = guestEpochOf(k) === viewEpoch() % EPOCHS.length;
   if (here && !helpDone(k) && Math.random() < 0.55) return 'guestAsk_' + id + '_' + Math.floor(Math.random() * 2);
   if (here && helpDone(k) && !state.story.thx[k] && Math.random() < 0.5) return 'guestDone_' + id;
   return 'guestSay_' + id + '_' + Math.floor(Math.random() * 6);
