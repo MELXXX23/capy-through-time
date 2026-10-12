@@ -1102,7 +1102,9 @@ function updateInside(c, dt) {
 function pickHome(c) {
   if (!houseDoors.length || Math.random() > 0.7) return null;
   const cx = shop.x + shop.w / 2;
-  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8);                    // усі двері вздовж вулиці, не лише найближчі
+  const lamps = lampPositions();
+  const cand = houseDoors.filter(d => Math.abs(d.x - cx) > shop.w / 2 + 8 &&                      // усі двері вздовж вулиці, не лише найближчі
+    !benches.some(b => Math.abs(b.x - d.x) < 26 || (b.binX != null && Math.abs(b.binX - d.x) < 15)) && !lamps.some(lx => Math.abs(lx - d.x) < 9));      // шлях до дверей не йде крізь лавку, урну чи ліхтар
   return cand.length ? cand[Math.floor(Math.random() * cand.length)] : null;
 }
 // Коли магазин перебудовується, усі, хто всередині, виходять надвір

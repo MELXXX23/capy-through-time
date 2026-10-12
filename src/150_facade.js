@@ -79,8 +79,8 @@ function drawShelf(g, x, y, bayNo, tiers) {
   R(g, x - 1, y, 36, 19, 'b'); R(g, x - 1, y, 1, 19, 'l');
   R(g, x, y + 1, 34, 17, 'w');
   for (let s2 = 0; s2 < 2; s2++) {
-    const dept = bayNo * 2 + s2;
-    if (dept < DEPARTMENTS.length) drawDisplay(g, x + 1 + s2 * 17, y + 1, s2 ? 16 : 15, 16, (EPOCH_GOODS_KINDS[viewEpoch() % EPOCH_GOODS_KINDS.length] || [])[dept] || DEPARTMENTS[dept].display, tiers[dept]);
+    const dept = (bayNo * 2 + s2) % DEPARTMENTS.length;               // нові верхні поверхи показують товари відділів по колу
+    drawDisplay(g, x + 1 + s2 * 17, y + 1, s2 ? 16 : 15, 16, (EPOCH_GOODS_KINDS[viewEpoch() % EPOCH_GOODS_KINDS.length] || [])[dept] || DEPARTMENTS[dept].display, tiers[dept]);
   }
   R(g, x + 16, y + 1, 1, 17, 'b');
   R(g, x - 1, y + 18, 36, 1, 'd');
@@ -193,6 +193,9 @@ const EPOCH_SHOP = [
   { flat: true, roofPal: { r: 'n', n: 'u' }, trim: 'z', col: ['n', 's'], frame: ['z', 'S'], glass: 'n', base: 'z', band: ['dots', 'S'], awning: 'flat', inner: ['z', 'n', 'V'], fx: 'space' },
   { flat: true, roofPal: { r: 'f', n: 'T' }, trim: 'k', col: ['k', 'T'], frame: ['k', 'f'], glass: 'v', base: 'k', band: ['zig', 'T'], awning: 'flat', inner: ['k', 'V', 'z'], fx: 'neon' }
 ];
+// Архітектура під епоху (ARCH[id епохи]): { front(g, C) — увесь фасад (дах, карниз, вивіска, поверхи, навіс, цоколь, двері), deco(g, C) — декор поверх, house(g, spec, lamps) — будинки на вулиці }.
+// Порожньо = звичайний вигляд. C = { es, w, h, look, level, floors, yG, yB, door, innerX, innerW }. Інтер'єр (звірята, покупці) не чіпається: фасад лише лишає в склі прорізи.
+const ARCH = {};
 const FLAT_ROOF = [2, 2, 2, 3, 6, 5];       // який дах у «плоских» епохах для кожного рівня
 function epochShopStyle() { return EPOCH_SHOP[viewEpoch() % EPOCH_SHOP.length]; }
 // Варіант вигляду магазину: залежить від епохи й рівня, тож усі магазини схожі за стилем епохи, але не однакові
@@ -1115,7 +1118,7 @@ function buildShopCanvas(level, tiers) {
       const gw = gp[1] - gp[0];
       if (gw >= 32) {                                                            // у просторі між стелажами — павільйон під тему епохи (його повнота залежить від рівня відділу)
         const pw = Math.min(42, gw - 4), px = Math.round(gp[0] + (gw - pw) / 2), ep = viewEpoch() % EPOCH_SHOP.length;
-        const dI = fl.d0 + (pavNo % Math.max(1, fl.xs.length * 2));
+        const dI = (fl.d0 + (pavNo % Math.max(1, fl.xs.length * 2))) % DEPARTMENTS.length;
         pavilionG(b, PAV_SEQ[ep][(fl.f * 2 + pavNo) % 6], px, fl.fy, pw, hF, ep, (tiers && tiers[dI]) || 0, pavNo + fl.f);
         shelfLights.push([px - 2, fl.fy - 22]);
         pavNo++;
@@ -1146,7 +1149,9 @@ function buildShopCanvas(level, tiers) {
   });
 
   /* ========== ФАСАД (front) ========== */
+  const arch = skinShop ? null : (ARCH[currentEpoch().id] || null), AC = { es, w, h, look, level, floors, yG, yB, door, innerX, innerW };
   deferSign = true; pendingSign = null;
+  if (arch && arch.front) { arch.front(g, AC); deferSign = false; } else {
   withPal(es.roofPal, () => drawRoof(g, look.roof, w, look.top, look));
   deferSign = false;
   corniceG(g, w, look.top + 4, trim);
@@ -1213,11 +1218,13 @@ function buildShopCanvas(level, tiers) {
   if (level >= 3 && level <= 5) floors.forEach(fl => { if (fl.f > 0 && !fl.cafe) { boxG(g, innerX + 3, fl.fy - 4, 'r', 'p'); boxG(g, w - 25, fl.fy - 4, 'p', 'q'); } });
   if (level === 3) { acG(g, w - 22, floors[1].top + 4); }
   modernG(g, level, w, h, yG, door, look, yB);
+  }
 
   // декор даху малюємо на окремому шарі: навколо вивіски «CAPYTAP» лишається вільний проміжок
   const ks = lastRoofSign, K = { x: ks.x - 5, y: ks.y - 4, w: ks.w + 10, h: ks.h + 4 };
   const dcv = mk(), gD = dcv.getContext('2d'); const gFront = g;
   g = gD;
+  if (arch && arch.front) { if (arch.deco) arch.deco(g, AC); } else {
   epochFacadeFx(g, es, w, h, look, level, floors, yG);
   const half = es.fx === 'neon' ? 19 : 8, pL = Math.max(half, Math.min(Math.round(w * 0.16), K.x - half - 2)), pR = Math.min(w - half, Math.max(Math.round(w * 0.84), K.x + K.w + half + 2));
   roofProp(g, es, w, look.top, level, pL); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, pR);
@@ -1226,6 +1233,7 @@ function buildShopCanvas(level, tiers) {
   epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB);
   if (!skinShop) shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, shopVariant(level));
   if (skinShop) skinShopDeco(g, skinOn('shop'), w, h, look, yG, door);
+  }
   gD.save(); gD.globalCompositeOperation = 'destination-out'; gD.fillStyle = '#000'; gD.fillRect(K.x, K.y, K.w, K.h); gD.restore();
   g = gFront; g.drawImage(dcv, 0, 0);
   if (level <= 2 && viewEpoch() % 8 !== 0) openSignG(g, yG);                      // у Відродженні вивіски OPEN немає

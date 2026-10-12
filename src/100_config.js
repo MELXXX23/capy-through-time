@@ -59,8 +59,8 @@ const CONFIG = {
   MAX_VIEW_W: 2600,            // найширша сцена на великому екрані (пікселів сцени)
   MIN_VIEW_W: 296,            // на вузькому вікні масштаб збільшується, а краї «ядра» (до 12 пікселів) можуть не поміститися
   MAX_OFF_Y: 700,             // скільки додаткового неба можна додати зверху на високому екрані
-  WORLD_W: 1400,              // ширина всієї вулиці на ПК (пікселів сцени): її можна гортати стрілками ◀ ▶
-  MOBILE_PAD: 360,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
+  WORLD_W: 1560,              // ширина всієї вулиці на ПК (пікселів сцени): її можна гортати стрілками ◀ ▶
+  MOBILE_PAD: 440,             // на телефоні вулиця ширша за екран на стільки пікселів з кожного боку (гортається пальцем)
   DAY_SECONDS: 300,           // скільки секунд триває повна доба (день + ніч)
   CIRCUS_FIRST_MINUTES: 5,     // перший «!» цирку з'являється через 4 хвилини гри
   CIRCUS_HOURS: 24,            // раз на 24 ігрові години, тобто щодоби гри (CONFIG.DAY_SECONDS)
@@ -226,9 +226,9 @@ const SHOP_LOOK = [
   { w: 154, top: 12, floors: [1], inner: ['q'], wall: 'w', line: 'y', roof: 0, awning: ['r', 'w'], door: 0, signFill: 'd', trim: 'b' },
   { w: 194, top: 24, floors: [2, 0], inner: ['y', 'S'], wall: 'y', line: 'h', roof: 1, awning: ['g', 'w'], door: 0, signFill: 'd', trim: 'b' },
   { w: 234, top: 16, floors: [2, 1, 0], inner: ['S', 'm', 'q'], wall: 'm', line: 'S', roof: 2, awning: ['n', 'w'], door: 1, signFill: 'd', trim: 'n' },
-  { w: 276, top: 22, floors: [2, 2, 0], inner: ['m', 'q', 'S'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
-  { w: 316, top: 28, floors: [2, 3, 0], inner: ['q', 'S', 'm'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
-  { w: 358, top: 30, floors: [2, 2, 1, 0, -1], inner: ['m', 'q', 'S', 'y'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
+  { w: 276, top: 22, floors: [2, 2, 2, 0], inner: ['m', 'q', 'y', 'S'], wall: 'w', line: 'E', roof: 3, awning: ['o', 'w'], door: 2, signFill: 'r', trim: 'e' },
+  { w: 316, top: 28, floors: [2, 3, 2, 2, 0], inner: ['q', 'S', 'y', 'q', 'm'], wall: 'c', line: 'e', roof: 4, awning: ['u', 'w'], door: 3, signFill: 'd', trim: 'l' },
+  { w: 358, top: 30, floors: [2, 2, 1, 2, 0, -1], inner: ['m', 'q', 'S', 'q', 'y', 'm'], wall: 'S', line: 's', roof: 5, awning: ['n', 'S'], door: 4, signFill: 'n', trim: 'n' }
 ];
 const DOOR_WIDTHS = [28, 28, 34, 38, 44];
 

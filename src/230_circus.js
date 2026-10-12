@@ -757,7 +757,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 19;
+const NEWS_VERSION = 20;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -952,6 +952,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
+    newH: 'Що нового', new: 'Магазин і будинки тепер у стилі кожної епохи: палаццо з арками у Відродженні, хром і шашки в Ретро, неон в Аркадах, зелені дахи в Еко. Магазин став вищим: на 4-му рівні 3 поверхи над входом, на 5-му 4, у торговому центрі 5, а нагорі кінозал. Вулиця стала ширшою, а на телефоні магазин видно цілком.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -959,6 +960,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
+    newH: 'What is new', new: 'The shop and the houses now match each era: an arched palazzo in the Renaissance, chrome and checkers in Retro, neon in Arcade, green roofs in Eco. The shop got taller: level 4 has 3 floors above the entrance, level 5 has 4, the mall has 5 with a cinema on top. The street is wider, and on a phone the whole shop is in view.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
@@ -989,6 +991,7 @@ function buildNewsPages() {
   const f = document.createElement('figure'); f.className = 'np-fig'; f.appendChild(newsPic('cover')); cover.appendChild(f);
   pages.push(cover);
   const p2 = document.createElement('div'); p2.className = 'np-in';
+  p2.insertAdjacentHTML('beforeend', '<article><h3>' + W.newH + '</h3><p>' + W.new + '</p></article>');
   p2.insertAdjacentHTML('beforeend', '<article><h3>' + W.nextH + '</h3><p>' + W.next + '</p></article>');
   const a = document.createElement('article'); a.innerHTML = '<h3>' + W.giftH + '</h3>';
   const gb = document.createElement('button'); gb.type = 'button'; gb.className = 'btn go np-gift';

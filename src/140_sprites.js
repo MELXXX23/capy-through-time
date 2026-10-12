@@ -210,6 +210,8 @@ function houseColors(i) {
   return { wall: hslHex(hue, tone[0], tone[1]), roof: hslHex(hue + 170 + (k % 2) * 25, tone[0] * 0.8, 0.38) };
 }
 function drawHouse(g, spec, lamps) {
+  const arch = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null;
+  if (arch && arch.house) return arch.house(g, spec, lamps);
   const { x, w, h, wall, roof } = spec;
   const base = LAYOUT.horizonY, top = base - h;
   const hs = hash2(x + 17, h);

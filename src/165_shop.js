@@ -81,7 +81,8 @@ function layoutScene() {
     const shopH = shop ? shop.h + 6 + (shop.level >= 6 ? CLOCK_H : 0) : 120, skyFrac = ui.app.classList.contains('sheet-open') ? 0.42 : 0.5;     // над дахом лишаємо не менше ~третини екрана неба
     const kSky = availH * dpr * (1 - skyFrac) / (shopH + (H0 - LAYOUT.curbY) + EB + 30);
     const topRelM = Math.min(LAYOUT.horizonY - MAX_HOUSE_H, shop ? LAYOUT.curbY - shop.h - 6 - (shop.level >= 6 ? CLOCK_H : 0) : 999), kHouse = availH * dpr * (1 - (ui.app.classList.contains('sheet-open') ? 0.44 : 0.38)) / (H0 + EB - topRelM);       // і над найвищими будинками лишається небо (з відкритим меню — трохи більше)
-    k = snapK(Math.max(1, Math.min(availW * dpr / (want * 0.9), availH * dpr / H1, kSky, kHouse)));   // можна обрізати до 10%; масштаб дробовий, щоб маркет займав усю ширину й неба було менше
+    const fitK = shop ? (availW - 2 * 38) * dpr / shop.w : Infinity;                 // магазин цілком, з відступом під стрілки ◀ ▶ з обох боків (раніше впирався в краї екрана)
+    k = snapK(Math.max(1, Math.min(availW * dpr / (want * 0.9), availH * dpr / H1, kSky, kHouse, fitK)));   // можна обрізати до 10%; масштаб дробовий, щоб маркет займав усю ширину й неба було менше
     cropW = availW * dpr / k;                                                      // на всю ширину екрана, без смуг по боках
     offX = Math.max(CONFIG.MOBILE_PAD, Math.ceil((cropW - W0) / 2) + 8);
   } else {
