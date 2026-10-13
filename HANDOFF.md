@@ -2,6 +2,10 @@
 
 Прочитай `CLAUDE.md`, `PROGRESS.md` (внизу пункти 60–61) і цей файл. Не перечитуй увесь `game.html` (понад 1,3 МБ): він ЗІБРАНИЙ із частин `src/` (див. `src/README.md`); шукай через Grep по `src/*.js` і читай шматками.
 
+## Раунд 47 (ЛОКАЛЬНО, не випущено; PROGRESS п. 62–63)
+- Космос: усі звірята в скафандрах/шоломах (помічники `composeTeamCostume`, покупці `spaceHelmet`). Чекає «окей» користувачки по знімку; незрозуміла одна фігура з рожевою пов'язкою без шолома (не ідентифіковано).
+- Код розбито на 60 тематичних частин `src/NNN_літера_тема.js` (карта `src/MAP.md`). Точка відкату: git-мітка `before-split-r47`, гілка `refactor/split-parts` злита в main. Правки роби в потрібній частині, не в `game.html`.
+
 ## Де ми зараз (станом на 2026-10-13, кінець раунду 46)
 - ВИПУЩЕНО (сайт https://melxxx23.github.io/capy-through-time/ і exe на столі `CapyTapMarket-Portable-NEW.exe` з режимом бога): усе до коміту `519c342` включно (раунди 43–46). Репозиторій чистий поза `previews/`; `desktop/app/game.html` БЕЗ режиму бога. Zip для itch (`desktop/dist/CapyTapMarket-itch-html.zip`) і itch-exe ще збірки раунду 40–45: за бажанням перезібрати.
 - ВИПУЩЕНО (сайт https://melxxx23.github.io/capy-through-time/ і exe на столі `CapyTapMarket-Portable-NEW.exe` з режимом бога): усе до коміту `ea13184` включно. Репозиторій чистий (поза `previews/`); `desktop/app/game.html` лишено БЕЗ режиму бога.

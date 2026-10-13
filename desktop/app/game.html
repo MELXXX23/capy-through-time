@@ -1640,7 +1640,7 @@ function bootDone() {
   </div>
 </div>
 
-<!--#part 100_config.js-->
+<!--#part 100_a_core_config.js-->
 <script>
 'use strict';
 
@@ -2197,6 +2197,7 @@ const WHEEL_SECTORS = [
   { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3,  color: 'y', icon: 'star' }
 ];
 
+//#part 100_b_music_epochs_customers.js
 // ---- Музика: 8-бітні мелодії як масиви нот ----
 // Токен «нота:довжина» — довжина в 16-х частках (16 = один такт). «.:N» — пауза.
 // Ноти: C4, F#5, Bb3. Канал wave:'noise' — ударні: k бас-барабан, s малий барабан, h тарілка.
@@ -2673,6 +2674,7 @@ const CHIBI = (function () {
   }
   return { make, bag };
 })();
+//#part 100_c_team_costumes_capy.js
 // Пакети з покупками по епохах (SHOPBAG_OPT[епоха].A() → canvas 12×16 з контуром): кошик, паперовий пакет, глітер-пакет, коробка гри, посилка, сітка з овочами, капсула, неонова торба
 (function () {
   const mk = () => { const c = document.createElement('canvas'); c.width = 12; c.height = 16; return c; };
@@ -3159,6 +3161,7 @@ function makeCapySkinRows(kind) {
   }
   return grid.map(row => '.' + row.reverse().join(''));
 }
+//#part 100_d_capy_coins_epoch_state.js
 SPRITES.capy_pirate = { rows: makeCapySkinRows('pirate') };
 SPRITES.capy_astro = { rows: makeCapySkinRows('astro'), variants: { blink: { K: PALETTE.B } } };
 ['wizard', 'chef', 'explorer', 'detective', 'sailor', 'santa', 'witch', 'flower', 'beach', 'autumn'].forEach(k => { SPRITES['capy_' + k] = { rows: makeCapySkinRows(k), variants: { blink: { K: PALETTE.B } } }; });   // незалежні від епохи скіни Капі
@@ -3595,7 +3598,7 @@ function refreshCoinIcon() {
   g.drawImage(getSpriteCanvas(coinSprite()), 0, 0);
 }
 
-//#part 110_texts.js
+//#part 110_a_texts_uk.js
 /* =====================================================================
    ТЕКСТИ (єдиний словник; жодного тексту прямо в коді)
    ===================================================================== */
@@ -4070,6 +4073,7 @@ const translations = {
     setTime: 'Час доби (сонце й місяць рухаються самі, доба триває 5 хвилин):',
     time_morning: '🌅 Ранок', time_day: '☀️ День', time_evening: '🌇 Вечір', time_night: '🌙 Ніч'
   },
+//#part 110_b_texts_en.js
   en: {
     pageTitle: 'CapyTap: Market',
     langLabel: 'Language',
@@ -5111,7 +5115,7 @@ function formatNumber(value, lang, maxDecimals = 0) {
 }
 function fmt(n, dec) { return formatNumber(n, state.lang, dec || 0); }
 
-//#part 140_sprites.js
+//#part 140_a_sprite_core_world_props.js
 /* =====================================================================
    СПРАЙТИ ТА МАЛЮВАННЯ
    ===================================================================== */
@@ -5611,6 +5615,7 @@ function cobbleExtra(g, X0, Y0, W, H, style) {                       // нові
   }
   return false;
 }
+//#part 140_b_ground_houses_layers.js
 function paintCobble(g, X0, Y0, W, H, style) {
   if (cobbleExtra(g, X0, Y0, W, H, style)) return;
   if (style === 'snow' || style === 'leaves') {                    // звичайний булижник + сніг або листя зверху
@@ -6107,7 +6112,7 @@ function buildPropsLayer() {
   return c;
 }
 
-//#part 150_facade.js
+//#part 150_a_facade_items_decor.js
 /* =====================================================================
    ФАСАД МАГАЗИНУ (малюється з прямокутників; росте з рівнем)
    ===================================================================== */
@@ -6534,6 +6539,7 @@ function skinShopDeco(g, skin, w, h, look, yG, door) {
     [[8, top + 9, 1], [w - 9, top + 9, 1], [8, yG + 20, 0], [w - 9, yG + 20, 0], [8, yG + 32, 1], [w - 9, yG + 32, 0], [door.x + (door.w >> 1), yG + 6, 1], [12, h - 14, 0], [w - 30, h - 15, 0], [w - 12, h - 18, 1], [door.x - 8, h - 12, 0], [4, h - 20, 0], [w - 6, h - 26, 0]].forEach(([x, y, b]) => arrowShine(g, x, y, b));
   }
 }
+//#part 150_b_facade_epoch_props_roof.js
 function withPal(map, fn) {                   // тимчасово підміняє кольори палітри на час малювання
   if (!map) { fn(); return; }
   const sv = {}; Object.keys(map).forEach(k => { sv[k] = PALETTE[k]; PALETTE[k] = PALETTE[map[k]]; });
@@ -6905,6 +6911,7 @@ function drawRoof(g, style, w, top, look) {
   if (style !== 3) roofSignG(g, cx, Math.max(0, y1 - 13), false);
 }
 
+//#part 150_c_facade_pavilions_build.js
 // Сніг на даху: верхні два пікселі кожного стовпчика даху стають білими (тонкі стовпчики — прапори, антени — не чіпаємо)
 function snowCap(c, maxY) {
   const g = c.getContext('2d');
@@ -7389,7 +7396,7 @@ function buildShopCanvas(level, tiers) {
   };
 }
 
-//#part 151_arch.js
+//#part 151_a_arch_core_renaissance.js
 /* =====================================================================
    АРХІТЕКТУРА ЕПОХ: магазин (фасад, дах, вивіска, поверхи) і будинки на вулиці під кожну з 8 епох.
    Реєструється в ARCH[id епохи] (див. 150_facade.js: buildShopCanvas і 140_sprites.js: drawHouse).
@@ -7670,6 +7677,7 @@ const AR = (function () {
   ARCH['renaissance'] = { front, deco, house };
 })();
 
+//#part 151_b_arch_retro_disco.js
 // ---- епоха 1: Ретро (хром, шашки, заокруглені вікна)
 (function () {
   const { P, A, D, ramp, mix, rnd } = AR;
@@ -7901,6 +7909,7 @@ const AR = (function () {
   ARCH['disco'] = { front, deco, house };
 })();
 
+//#part 151_c_arch_arcade_internet_eco.js
 // ---- епоха 3: Аркади (неон, прибульці, мемфіс)
 (function () {
   const { P, A, D, ramp, mix, rnd } = AR;
@@ -8222,6 +8231,7 @@ const AR = (function () {
   ARCH['eco'] = { front, deco, house };
 })();
 
+//#part 151_d_arch_space_neon.js
 // ---- епоха 6: Космос (гермомодулі, купол, ракета)
 (function () {
   const { P, A, D, ramp, mix, rnd, txt } = AR;
@@ -9338,7 +9348,7 @@ function claimOffline() {
   saveGame();
 }
 
-//#part 180_anim.js
+//#part 180_a_anim_weather_actors.js
 /* =====================================================================
    АНІМАЦІЇ ТА ЕФЕКТИ
    ===================================================================== */
@@ -9848,6 +9858,7 @@ function updateActors(dt) {
   // звірята самі більше не базікають: репліка лише по тапу (250_tap.js) і коли сіли на лавочку (вище)
 }
 
+//#part 180_b_actor_draw_lines.js
 // Випадкова точка, куди піти: недалеко від свого місця, але подалі від інших звіряток
 function pickWanderTarget(a) {
   const home = actorHome(TEAM[a.i]);
@@ -10088,6 +10099,7 @@ function wornSkinIds() {                                                       /
 }
 // Живі репліки скінів: по 3–8 на скін, вибираються навмання без повтору поспіль (старі skinSay_* лишились запасним варіантом)
 const SKIN_LINES = {"uk":{"capy_pirate":["Папуга знову вкрав моє печиво. Зрадник!","Де скарб? А, ось він. Це каса.","Йо-хо-хо... ой, доброго дня, шановні покупці!","Пов’язка на оці. Тепер бачу лише знижки."],"capy_astro":["Х’юстоне, чуєш? Тут пахне булочками!","У шоломі так тихо... Тільки я і мої думки. О, покупець!","Невагомість — це коли ніхто не просить “ще знижку”.","Один маленький тап для Капі, один гігантський прибуток для магазину."],"capy_wizard":["Абра-кадабра... ні, це не те. Зараз згадаю.","Борода сама росте. Я тут ні до чого. Ну, майже.","Чарівна паличка загубилась. Зате лишились нерви.","Зірки на мантії підморгують. Або мені здається."],"capy_chef":["Щось пахне смачно. То не я, то сусіди!","Ковпак великий, а ложка ще більша. Бачите?","Шеф радить: не їжте товар. Вибір уже зроблений.","Сіль, перець і трохи терпіння. Це весь секрет."],"capy_explorer":["За цим рогом точно щось цікаве. Або кіт.","Бінокль дивиться вгору, а я шукаю печиво.","Рюкзак важкий, зате там три бутерброди!","Мапа показує на північ. А ми на південь. Вибачте."],"capy_santa":["Хо-хо-хо! Хтось тут був чемний. Не будемо називати імен.","Мішок порожній. Усе роздано... мені.","Борода лоскочеться. Це так і має бути?","Кожен день трохи Різдво, коли вдягнеш червоне!"],"capy_witch":["Метла в ремонті. Тепер літаю на надії.","Гарбуз на спині дивиться на мене. Я теж на нього.","Зілля готове! Правда, нічого не пам’ятаю, що там було.","Брррр! Це хтось прошепотів “знижка”?"],"capy_flower":["Метелик сів мені на спину. Тс-с, не рухайтеся.","Квіти пахнуть весною. А я пахну квітами. Гарно!","Вінок трохи з’їхав. Але мені навіть подобається.","Бджоли вже питали, чи можна в нас пожити."],"capy_beach":["Хочу в море. Але тут хоч тінь від магазину.","М’яч на спині не втече. А от я втечу на пляж!","Окуляри темні, настрій світлий.","Лимонад, будь ласка. З льодом. І парасольку!"],"capy_autumn":["Шарф такий довгий, що я за нього чіпляюсь.","Листя шарудить, а в мене кава. Ідеальний ранок.","Осінь пахне корицею. Чи то від мене?","Теплий светр — це як обійми. Тільки трохи кусається."],"capy_ep0":["Береток набік, перо вгору. Ось тепер я митець.","Ця лілія на мантії не проста. Вона дорога!","Лютня десь грає. Хто там, виходьте!","Я весь у ренесансі. А ви?"],"capy_ep1":["Радіо ловить лише одну хвилю. Ну й нехай!","Літера C означає «Супер Капі». Секретна розшифровка.","Бульбашка жуйки... Ой, вона лопнула.","Куртка стара, а настрій новий."],"capy_ep2":["Диско-куля сяє! Я теж трохи сяю.","Окуляри великі, а бачу все. Навіть хто не платить.","Ноги самі просяться в танець!","Блиск, блиск, іще раз блиск!"],"capy_ep3":["Рівень пройдено! Наступний: порожня каса.","Геймпад на грудях. Для швидких рішень.","Один круг монет — і тут уже +1 життя.","Навушники грають восьмибітну музику. Класика!"],"capy_ep4":["Мій телефон на 1%. А настрій на сто!","Wi-Fi знайшов! Тепер можна жити.","Рюкзак повний стікерів. Сорок шість разів “лайк”.","Мене ніхто не підписав. Але я не ображаюсь."],"capy_ep5":["Паросток на рюкзаку підріс на сантиметр. Я пишаюсь!","Дерева ростуть, а ми їм допомагаємо.","Куртка зі старих пляшок. Нова, але з історією!","Дихайте глибоко. Тут майже ліс."],"capy_ep6":["Тиша... Тільки я і зорі. О, це касир кличе.","Шолом запотів, бо я радий!","Невагомість мені подобається. Бо печиво не падає.","Ракета чекає. А я чекаю покупців."],"capy_ep7":["Неон миготить, а я нервово усміхаюсь.","Візор світиться, але бачу гірше. Ох, стиль!","Місто ввечері — це як світломузика.","Кросівки теж світяться. Ходжу, як ліхтарик."],"capy_knight":["Мій меч гострий, а ціни чесні. Принаймні сьогодні.","Шолом великий, а видно тільки носа. Зручно!","Поки я у броні, нікому до мене діла. Мрія.","Хто тут ображає покупців? Назад, лицар уже в дорозі!"],"capy_hero":["Плащ розвівається, а я ні. Контролюю ситуацію.","Моя суперсила: знаходити печиво за три метри.","Маска трохи тисне, але героям так і треба.","Хтось тут кричав? Спокійно, я вже їду!"],"capy_cowboy":["У цьому місті діє закон. І закон каже: купуйте.","Капелюх з’їжджає на очі. Тримаю рівновагу.","Шериф вийшов на вулицю. Тихо!","Хустка пахне пилом і пригодами."],"capy_fairy":["Крильця щекочуть, коли сміюсь. Хі-хі.","Дрібка чарів, і день стає світлішим.","Корона ледь тримається на вухах. Це нормально?","Усі побажання виконую. Окрім “знижка ще більша”."],"capy_viking":["Рогатий шолом зачіпається за двері. Знову.","Щит міцний, а я м’який. Баланс!","На абордаж... тобто на кухню. Там вечеря.","Бородатий вікінг хоче обійми. Хто за?"],"capy_pilot":["Окуляри запотіли. Лечу наосліп, але з любов’ю.","Шарф довгий, а крила короткі. Вирішую по ходу.","Пристебніться! Зараз буде невеличка турбулентність.","Приземлення м’яке, як булочка."],"capy_mel":["Я Мел. Так, лис. Ні, капібарою не стану.","Хвіст пухнастий, а в голові ідей ще пухнастіше!","Хтось казав “хитрий лис”? Я просто думаю наперед.","Мел тут, щоб усе було гарно і смачно.","Дві лапи на клавіатурі, одна на кнопці “зберегти”.","Нашу гру збирали вночі. Тому в ній трохи ночі.","Якщо щось блимає не так, це не баг. Це… задум!","Ніка принесла каву. Я випив. Вона, здається, теж."],"capy_nika":["Я Ніка. Стрибаю, коли хвилююсь.","Бантик на місці, вуха на місці, ідея теж.","Морквину нікому не віддам. Навіть Мелу.","Хтось казав “зайка”? Прийом, ми вже тут!","Зробили гру з любові до міст і до капібар.","Іноді пишу код, іноді малюю, іноді просто ляскаю вухами.","Мел знову плутає тап і клік. Не поправляю.","Дякую, що граєте. Мені аж вушка теплішають."],"shop_candy":["Тут усе липке. Але приємно.","Лоліпоп вищий за мене. Мрія збулась.","Не облизуйте стіни. Я це кажу і собі."],"shop_gold":["Сяє так, що я бачу зайчики.","Золото холодне, а настрій теплий.","Касир носить окуляри від блиску. Правда!"],"shop_ice":["Бр-р-р! Але гарно, як у казці.","Сосулька впала. Не на мене, слава небу.","Знижки тут не тануть. Бо морозні!"],"shop_wood":["Пахне смолою й теплом. Як у лісі.","Дерев’яна хатина тримається міцно. Як я.","Скрип-скрип. Це добре. Це затишок!"],"shop_garden":["Квіти ростуть на даху. Хтось їх поливає?","Тут живе бджола. Ми вже подружились.","Магазин-сад: гуляєш і купуєш. Зручно."],"shop_xmas":["Вогники миготять. Мені теж хочеться.","Під ялинкою точно щось є. Я не дивлюсь... дивлюсь.","У магазині пахне мандаринами. Мрія!"],"shop_halloween":["Хтось ходить на горищі. Не я, чесно.","Гарбуз усміхається ширше за мене.","Цукерки чи жарт? Я вибираю цукерки."],"shop_spring":["Весна прийшла! Навіть у каси.","Пелюстки на даху. Дуже мило.","Птахи співають, а покупці усміхаються."],"shop_autumn":["Листя на даху шарудить, як мишка.","Тепло, затишно, і пахне яблуками.","Осінь у магазині — це як обійми."],"weather_rainbow":["Веселка! Дивіться, дивіться! Ой, зникла.","Кольорів так багато, що я їх не рахую.","Десь під нею точно ховається горщик із печивом."],"weather_lightning":["Бах! Це було гучно, але красиво.","Блискавка фіолетова. Мені подобається.","Тримаю вуха під кепкою. На всяк випадок."],"weather_lightninggreen":["Зелена блискавка! Точно чарівна.","Бах-бах! А чому не червона?","Хтось там у небі грається в неон."],"weather_lightningred":["Червона блискавка! Аж серце тьохнуло.","Вона така яскрава, що я мружусь.","Небо сердиться, але гарно сердиться."],"weather_cottoncloud":["Хмара з цукрової вати. Хто надкусив?","Хочу залізти й поспати. Вона ж солодка!","Дощику з карамелі ще не чекаємо?"],"weather_goldcloud":["Золота хмара! Іноді з неї падають монети.","Небо теж вирішило заробляти. Молодець.","Дивіться вгору. Може, пощастить!"],"weather_starcloud":["Зірки у хмарах мерехтять. Загадаю бажання.","Хмара переливається. Хочу таку шапку.","Тихо, тихо... Чуєте, як вона співає?"],"hero_party":["Свято щодня! Конфеті в кожній кишені.","Помічники в капелюшках. Просто мрія.","Ну що, потанцюємо? Каса почекає."],"hero_ninja":["Хтось пробіг? Ні? Ну, тоді то були ніндзя.","Тихо як тінь. Кажуть, це наші.","Я їх не бачу. І не побачу. Вони молодці."],"hero_chef":["Пахне булочками. Хто там готує?","Помічники-кухарі нагодують і покупців, і мене.","Тільки не їжте товар. Це я собі кажу."],"hero_wizard":["Помічники чаклують! Черга зменшується сама.","Мантії блимають, а я усміхаюсь.","Чарівна паличка в кишені? Мене теж навчіть!"],"hero_royal":["Помічники в коронах. Ваша величносте, каса там!","Король із ковбасою? Це вже вищий рівень.","Королівська команда працює без вихідних."],"hero_santa":["Пакують подарунки так швидко, що я не встигаю.","Червоні шапки скрізь. Свята прийшли!","Хо-хо, це вже не жарт, це команда!"],"hero_witch":["Відьмочки літають між полицями. Тільки б не збили.","Капелюхи гострі. Не підходьте надто близько.","Зілля для швидкого обслуговування. Корисно!"],"street_brick":["Цегляна дорога. Куди вона веде? До каси!","Ходити приємно. Кожна цеглина рівна.","Дорога червона. Як мої щоки зараз."],"street_wood":["Дошки скрипять під лапами. Затишно!","Дерев’яна доріжка пахне лісом.","Скрип-скрип. Наче хтось іде. Ой, це я."],"street_leaves":["Хрум-хрум! Мій улюблений звук осені.","Листя під лапами: як килим із чорного золота.","Хтось розсипав листя. Дякую, добра людино!"],"street_snow":["Сніг! Ні, не їсти. Обійдусь без снігу.","Лапи холодні, а серце тепле.","Скрип-скрип. Сніг — теж музика."],"street_moss":["Мох м’який, як килим. Піду полежу.","Замшіла бруківка пам’ятає багато історій.","У шві росте квіточка. Не наступіть!"],"street_gold":["Золота дорога! Хоч і не з рубінів.","Іду, а під лапами сяє. Приємно.","Цеглина з монети. Не чіпати, не мою."]},"en":{"capy_pirate":["The parrot stole my cookie again. Traitor!","Where's the treasure? Oh, that's the till.","Yo-ho-ho... oh, hello, dear customers!","Eye patch on. Now I only see discounts."],"capy_astro":["Houston, do you smell buns?","So quiet in the helmet... just me and my thoughts. Oh, a customer!","Zero gravity is when nobody asks for 'one more discount'.","One small tap for Capy, one giant profit for the shop."],"capy_wizard":["Abra-ca-dabra... no, wrong one. I'll remember in a sec.","The beard grows on its own. I did nothing. Almost.","I lost my wand. At least my nerves are still here.","The stars on my robe are winking. Or I'm imagining."],"capy_chef":["Something smells great. Not me, it's the neighbours!","Big hat, bigger spoon. See?","The chef advises: don't eat the goods. The choice is made.","Salt, pepper and a little patience. That's the whole secret."],"capy_explorer":["Something interesting is round that corner. Or a cat.","The binoculars look up, I look for cookies.","The backpack is heavy, but it has three sandwiches!","The map says north. We go south. Sorry."],"capy_santa":["Ho-ho-ho! Someone here was good. No names.","The sack is empty. I gave it all... to myself.","The beard tickles. Is it supposed to?","Every day is a bit of Christmas when you wear red!"],"capy_witch":["The broom is being repaired. I fly on hope now.","The pumpkin on my back stares at me. I stare back.","The potion is ready! I just forgot what's in it.","Brrr! Did someone whisper 'discount'?"],"capy_flower":["A butterfly landed on my back. Shh, nobody move.","Flowers smell like spring. And I smell like flowers. Nice!","The wreath slipped a bit. I kind of like it.","The bees already asked if they can live here."],"capy_beach":["I want the sea. But at least here's the shop's shade.","The ball on my back won't run away. I will, to the beach!","Dark glasses, bright mood.","Lemonade, please. With ice. And an umbrella!"],"capy_autumn":["The scarf is so long that I trip on it.","Leaves rustle, I have coffee. Perfect morning.","Autumn smells like cinnamon. Or is it me?","A warm sweater is like a hug. Slightly scratchy."],"capy_ep0":["Beret aside, feather up. Now I'm an artist.","This lily on my cloak isn't plain. It's expensive!","A lute is playing somewhere. Come out, whoever you are!","I'm all Renaissance. And you?"],"capy_ep1":["The radio catches one wave only. Fine!","The C stands for 'Super Capy'. I made it up.","A bubblegum bubble... oh, it popped.","The jacket is old, the mood is new."],"capy_ep2":["The disco ball is shining! I shine a little too.","Big glasses, and I see everything. Even who doesn't pay.","My feet are asking for a dance!","Sparkle, sparkle, one more sparkle!"],"capy_ep3":["Level cleared! Next: an empty till.","A gamepad on my chest. For quick decisions.","One coin lap and that's +1 life.","My headphones play 8-bit music. A classic!"],"capy_ep4":["My phone is at 1%. My mood is at 100!","Found Wi-Fi! Now life can go on.","The backpack is full of stickers. Forty-six likes.","Nobody followed me. But I'm not offended."],"capy_ep5":["The sprout on my backpack grew a centimetre. So proud!","Trees grow, and we help them.","A jacket from old bottles. New, but with a story!","Breathe deeply. It's almost a forest here."],"capy_ep6":["Silence... just me and the stars. Oh, the cashier is calling.","The helmet fogged up because I'm happy!","I like zero gravity. The cookies don't fall.","The rocket is waiting. I'm waiting for customers."],"capy_ep7":["The neon blinks and I smile nervously.","My visor glows, but I see worse. Oh, style!","The city at night is like a light show.","My sneakers glow too. I walk like a lantern."],"capy_knight":["My sword is sharp, my prices are honest. At least today.","Big helmet, only my nose is visible. Handy!","While I'm in armour, nobody bothers me. A dream.","Who's bothering the customers? Step back, I'm ready!"],"capy_hero":["The cape flutters, I don't. Situation under control.","My superpower: finding cookies from three metres away.","The mask is a bit tight, but that's how heroes are.","Did someone shout? Calm down, I'm already coming!"],"capy_cowboy":["There's law in this town. And the law says: buy.","My hat slides over my eyes. Keeping my balance.","The sheriff is on the street. Quiet!","The bandana smells of dust and adventure."],"capy_fairy":["My wings tickle when I laugh. Hee-hee.","A pinch of magic, and the day gets brighter.","The crown barely stays on my ears. Is that normal?","I grant every wish. Except 'an even bigger discount'."],"capy_viking":["The horned helmet snags on the door. Again.","The shield is strong, I'm soft. Balance!","To the boarding... I mean to the kitchen. Dinner's there.","A bearded Viking wants a hug. Who's in?"],"capy_pilot":["My goggles fogged up. Flying blind, but with love.","Long scarf, short wings. I'll figure it out.","Buckle up! A bit of turbulence ahead.","The landing is soft as a bun."],"capy_mel":["I'm Mel. Yes, a fox. No, I won't turn into a capybara.","My tail is fluffy, and my ideas are even fluffier!","Someone said 'sly fox'? I just plan ahead.","Mel is here to keep everything pretty and tasty.","Two paws on the keyboard, one on the 'save' button.","We built this game at night. That's why it has a bit of night.","If something blinks wrong, it's not a bug. It's... a feature!","Nika brought coffee. I drank it. She did too, I think."],"capy_nika":["I'm Nika. I hop when I'm excited.","Bow in place, ears in place, idea in place.","I won't give my carrot to anyone. Not even Mel.","Someone said 'bunny'? Roger, we're here!","We made this game out of love for towns and capybaras.","Sometimes I code, sometimes I draw, sometimes I just flap my ears.","Mel mixes up tap and click again. I don't correct him.","Thanks for playing. My ears get warm."],"shop_candy":["Everything is sticky here. But nice.","The lollipop is taller than me. Dream come true.","Don't lick the walls. I'm telling myself too."],"shop_gold":["It shines so much I see sparkles.","Gold is cold, but the mood is warm.","The cashier wears sunglasses against the glare. True!"],"shop_ice":["Brr! But so pretty, like a fairy tale.","An icicle fell. Not on me, thank goodness.","Discounts don't melt here. They're frozen!"],"shop_wood":["Smells of resin and warmth. Like a forest.","The wooden cabin stands firm. Like me.","Creak-creak. That's good. That's cosy!"],"shop_garden":["Flowers grow on the roof. Who waters them?","A bee lives here. We're already friends.","A shop-garden: stroll and shop. Handy."],"shop_xmas":["The lights blink. I want to blink too.","There's definitely something under the tree. I'm not looking... I'm looking.","The shop smells of tangerines. A dream!"],"shop_halloween":["Someone's walking in the attic. Not me, honest.","The pumpkin smiles wider than me.","Trick or treat? I choose the treat."],"shop_spring":["Spring is here! Even at the till.","Petals on the roof. So sweet.","Birds sing and customers smile."],"shop_autumn":["Leaves on the roof rustle like a mouse.","Warm, cosy, smells of apples.","Autumn in a shop is like a hug."],"weather_rainbow":["A rainbow! Look, look! Oh, gone.","So many colours I stopped counting.","Somewhere under it hides a pot of cookies."],"weather_lightning":["Boom! That was loud, but pretty.","The lightning is purple. I like it.","Keeping my ears under my cap. Just in case."],"weather_lightninggreen":["Green lightning! Definitely magic.","Boom-boom! Why not red?","Someone up there is playing with neon."],"weather_lightningred":["Red lightning! My heart skipped.","It's so bright I squint.","The sky is angry, but in a pretty way."],"weather_cottoncloud":["A cotton candy cloud. Who took a bite?","I want to climb in and nap. It's sweet!","Caramel rain, anyone?"],"weather_goldcloud":["A gold cloud! Sometimes coins fall from it.","The sky decided to earn too. Good job.","Look up. Maybe you'll be lucky!"],"weather_starcloud":["Stars in the clouds are twinkling. Making a wish.","The cloud shimmers. I want that hat.","Hush, hush... Can you hear it singing?"],"hero_party":["A party every day! Confetti in every pocket.","Helpers in party hats. Just a dream.","Shall we dance? The till can wait."],"hero_ninja":["Did someone run by? No? Then it was ninjas.","Quiet as a shadow. They say that's ours.","I didn't see them. And I won't. Good work."],"hero_chef":["Smells like buns. Who's cooking?","Chef helpers will feed the customers and me.","Just don't eat the goods. I'm telling myself."],"hero_wizard":["Helpers are casting spells! The queue shrinks by itself.","Robes blink, and I smile.","A magic wand in your pocket? Teach me too!"],"hero_royal":["Helpers in crowns. Your Majesty, the till is that way!","A king with a sausage? That's the next level.","The royal team works without days off."],"hero_santa":["They wrap gifts so fast I can't keep up.","Red hats everywhere. The holidays are here!","Ho-ho, that's not a joke, that's a team!"],"hero_witch":["Little witches fly between the shelves. Hope nobody gets hit.","The hats are pointy. Don't get too close.","A potion for fast service. Useful!"],"street_brick":["A brick road. Where does it lead? To the till!","Nice to walk on. Every brick is straight.","The road is red. Like my cheeks right now."],"street_wood":["Boards creak under my paws. Cosy!","A wooden path smells of the forest.","Creak-creak. Like someone's coming. Oh, it's me."],"street_leaves":["Crunch-crunch! My favourite autumn sound.","Leaves under paws: a carpet of dark gold.","Someone scattered leaves. Thanks, kind soul!"],"street_snow":["Snow! No, don't eat it. I'm stopping myself too.","My paws are cold, my heart is warm.","Crunch-crunch. Snow is music too."],"street_moss":["Moss is soft like a carpet. Going to lie down.","Mossy cobbles remember many stories.","A little flower grows in the crack. Don't step on it!"],"street_gold":["A golden road! Not made of rubies though.","I walk and it sparkles under my paws. Nice.","A brick made from coins. Not touching, not mine."]}};
+//#part 180_c_customers_updates.js
 const skinLineLast = {};
 function skinLine(id) {
   const arr = (SKIN_LINES[state.lang] || SKIN_LINES.en)[id]; if (!arr || !arr.length) return null;
@@ -10651,7 +10663,7 @@ function spawnFloater(x, y, text) {
   while (ui.floaters.childElementCount > CONFIG.MAX_FLOATERS) ui.floaters.firstChild.remove();
 }
 
-//#part 190_sound.js
+//#part 190_a_audio_music_cutscene.js
 /* =====================================================================
    ЗВУК: 8-бітна музика та ефекти через Web Audio API (без аудіофайлів)
    ===================================================================== */
@@ -11151,6 +11163,7 @@ function cutCapyHi() {
   SPRITES['cut_' + key] = { rows: rows.map(r => r.join('')) };
   return cutHi('cut_' + key);
 }
+//#part 190_b_cutscene_draw.js
 // Лице на спрайті ×4 (око ≈ (80,36), мордочка праворуч); координати в пікселях ×4
 function cutFace(g, e) {
   const ex = 80, ey = 36, dk = '#2a1a14', R_ = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
@@ -11510,6 +11523,7 @@ function cutRenderWorld(T) {
   g.setTransform(1, 0, 0, 1, 0, 0);
   cut.shopRectW = [sx0, sy0, cut.shopW, cut.shopH]; cut.L = L; cut.shift = shift;
 }
+//#part 190_c_cutscene_panel_tour_sfx.js
 function cutCache(k, fn) { return cut.cache[k] || (cut.cache[k] = fn()); }
 function cutW2S(wx, wy, z, f) { const sx = wx - cut.camX, sy = wy + cut.shift; return [(sx - f[0]) * z + f[0], (sy - f[1]) * z + f[1]]; }
 function cutDrawFrame(T) {
@@ -11874,7 +11888,7 @@ function setupSound() {
   updateSoundUI();
 }
 
-//#part 200_travel_settings.js
+//#part 200_a_travel_ui_warp_base.js
 /* =====================================================================
    ПОДОРОЖ У ЧАСІ, МАЙСТЕРНЯ, ДОСЯГНЕННЯ, СТАТИСТИКА, НАЛАШТУВАННЯ
    ===================================================================== */
@@ -12284,6 +12298,7 @@ function drawWarpRewind(k) {
     g.restore();
   }
 }
+//#part 200_b_warp_epoch_animations.js
 // ===== Анімації подорожі під кожну епоху (за епохою, КУДИ ми потрапляємо) =====
 function warpPix(g, snap, W, H, b) {                             // знімок сцени, укрупнений до блоків b×b
   if (!warp.px) warp.px = document.createElement('canvas');
@@ -12583,6 +12598,7 @@ function updateWarp(dt) {
     });      // історія — лише вперше, далі тільки заставка
   }
 }
+//#part 200_c_time_travel_workshop_stats.js
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
 function applyTimeTravel() {
   syncEpochEarned();
@@ -13381,7 +13397,7 @@ function setupProgression() {
   applyViewSettings();
 }
 
-//#part 220_events.js
+//#part 220_a_events_weather.js
 /* =====================================================================
    ПОДІЇ: СВЯТА, РОЗПРОДАЖІ, НЕПРИЄМНОСТІ, МІНІ-ІГРИ
    ===================================================================== */
@@ -13990,6 +14006,7 @@ function buildRainbow(R0, bw, M, secondary) {
   }
   return c;
 }
+//#part 220_b_rainbow_lightning_skyx.js
 const RAINBOW_M = 56;
 let rainbowM = RAINBOW_M, rainbowBw = 4;
 function rainbowCanvas(R0) {                                    // перемальовується лише коли змінюється розмір магазину
@@ -14405,6 +14422,7 @@ function skyxSputnik(x, y, ph) {                                    // перш�
   [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => { for (let k = 5; k <= 13; k++) R(ctx, x + sx * k, y + sy * Math.round(k * 0.45), 1, 1, k > 11 ? 'w' : 'd'); });
   if (Math.floor(animClock * 2 + ph) % 2) { ctx.globalAlpha = 0.4; disc(ctx, x + 3, y - 3, 3, 'r'); ctx.globalAlpha = 1; R(ctx, x + 3, y - 3, 1, 1, 'r'); }
 }
+//#part 220_c_epoch_sky_fx.js
 const INV_ART = [
   ['..#....#..', '...#..#...', '..######..', '.##.##.##.', '##########', '#.######.#', '#.#....#.#', '...##.##..'],
   ['...####...', '.########.', '##########', '###..##..#', '##########', '..##..##..', '.##.##.##.', '##......##'],
@@ -14864,6 +14882,7 @@ function drawSkyBody(kind, x, y) {
     ctx.globalAlpha = 1;
   }
 }
+//#part 220_d_night_garlands_halloween.js
 // Небо цілком (координати полотна, до зсуву сцени): шар неба, сутінки, зорі, сонце й місяць
 function drawSkyScreen(time) {
   ctx.drawImage(skyLayer, 0, 0);
@@ -15341,7 +15360,7 @@ function drawGhostHunt() {
 }
 
 
-//#part 230_circus.js
+//#part 230_a_skins_circus_hag.js
 /* =====================================================================
    ЦИРК ФОРТУНИ: раз на 24 години в правому куті з'являється червоний «!», який мигає й грає марш.
    Тап по ньому → цирк-причіп їде справа наліво ~5 с → тап по цирку → вікно з колесом на 12 секторів і клоуном Бубоном.
@@ -15813,6 +15832,7 @@ const HAG_ART = (function () {
   }
   return { draw, window: window_ };
 })();
+//#part 230_b_circus_loot_letters.js
 const circusCanvas = document.createElement('canvas'); circusCanvas.width = 160; circusCanvas.height = 84;
 function drawCircus() {
   const c = state.circus; if (c.phase < 2) return;
@@ -16239,6 +16259,7 @@ function newsPic(kind) {
   }
   return c;
 }
+//#part 230_c_news_wheel_events.js
 let npI = 0, npN = 0, npDrag = null;
 function newsPortrait(spr, bg) {                                                 // маленький піксельний портрет редактора
   const { c, g } = picCanvas(32, 32); R(g, 0, 0, 32, 32, bg); R(g, 0, 26, 32, 6, 'b');
