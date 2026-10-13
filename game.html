@@ -3176,7 +3176,7 @@ function makeCapySkinRows(kind) {
     dye(12, 25, 9, 17, 'w');
     for (let x = 12; x <= 25; x++) { if (at(x, 9) === 'w') put(x, 9, 'n'); if (at(x, 10) === 'w') put(x, 10, 'n'); if (at(x, 16) === 'w') put(x, 16, 'n'); }
     for (let x = 13; x <= 24; x += 3) put(x, 12, 'n');
-    cellsOf(6, 14, ['rrrr', '.rr.']);
+    cellsOf(7, 14, ['rrrrrr', '.rrrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));
     around(cellsOf(4, 2, ['..wwwwww..', '.wwwwwwww.', 'wwwwnnwwww']));
     cellsOf(3, 5, ['nnnnnnnnnn']);
   }
@@ -3335,7 +3335,7 @@ function makeCapyOldDetail(kind) {
     for (let x = 12; x <= 25; x++) put(x, 9, x % 2 ? 'h' : 'r');
     rect(13, 25, 14, 14, 'k'); art(18, 13, ['hh', 'hh']); put(18, 14, 'k');                                  // чорний пояс із пряжкою
     [10, 11, 12].forEach(y => { put(14, y, 'h'); put(16, y, 'h'); });                                          // золоті ґудзики
-    art(11, 9, ['ww', 'wE']); art(5, 13, ['rrrrr', '.rrr.', '..r..']);                                          // жабо й хустка
+    art(11, 9, ['ww', 'wE']); art(7, 14, ['rrrrrr', '.rrrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));     // жабо й хустка (з темним контуром, щоб не скидалась на язик)
     art(19, 3, ['..rr.', '.rkrr', 'yrrr.', '.gggg', '.gnng', '..gg.']);                                         // зелений папуга
     ell(8.2, 5.2, 7, 3.7, ['4', 'k', 'k'], true, 1, 7);                                                         // трикутний капелюх
     rect(1, 15, 6, 6, 'k'); rect(0, 16, 7, 7, 'k'); put(0, 6, 'k'); put(16, 6, 'k'); rect(2, 14, 7, 7, 'h'); put(3, 7, 'y'); put(4, 7, 'y');
@@ -3366,7 +3366,7 @@ function makeCapyOldDetail(kind) {
   } else if (kind === 'chef') {
     suit(['1', 'w', 'w', 'w', 'w', 'w', 'w', 'E', 'E'], '1', 'E');
     [11, 13, 15].forEach(y => { put(15, y, 'k'); put(19, y, 'k'); }); for (let y = 10; y <= 17; y++) put(17, y, 'E');
-    art(5, 13, ['rrrrr', '.rwr.', '..r..']);
+    art(7, 14, ['rrrrrr', '.rwrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));
     art(21, 11, ['EEE', 'EEE']); put(22, 10, 'n');
     art(21, 3, ['l', 'c', 'c', 'c', 'c', 'c']); ell(21, 2, 1.7, 1.9, ['y', 'c', 'l'], true);                       // дерев'яна ложка на спині
     ell(5.2, 3.2, 3.2, 2.9, ['1', 'w', 'E'], true); ell(8.6, 2.4, 3.4, 2.6, ['1', 'w', 'E'], true); ell(12, 3.4, 3, 2.7, ['1', 'w', 'E'], true);
@@ -3377,7 +3377,7 @@ function makeCapyOldDetail(kind) {
     suit(['%', 'c', 'c', 'c', 'c', 'c', 'c', 'l', 'b'], null, 'l');
     art(14, 11, ['bbbb', 'bccb', 'bbbb']); art(20, 11, ['bbbb', 'bccb', 'bbbb']); put(15, 11, 'h'); put(21, 11, 'h');
     for (let x = 12; x <= 25; x++) put(x, 14, 'b');
-    art(5, 13, ['rrrrr', '.rwr.', '..r..']);                                                                    // хустка на шиї
+    art(7, 14, ['rrrrrr', '.rwrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));                       // хустка на шиї (з темним контуром)
     rect(19, 24, 2, 9, 'g'); rect(19, 24, 2, 2, 'm'); rect(24, 24, 3, 9, 'G'); rect(19, 24, 9, 9, 'G'); rect(19, 24, 5, 5, 'G'); put(21, 6, 'y'); put(22, 6, 'y');   // рюкзак із клапаном
     rect(18, 25, -1 + 1, 1, 'c'); put(18, 0, '.'); rect(18, 25, 0, 0, '%'); rect(18, 25, 1, 1, 'l'); put(19, 1, 'b'); put(23, 1, 'b');                              // згорнутий килимок
     ell(8.2, 5.2, 7.2, 3.6, ['%', 'c', 'l'], true, 1, 7);
@@ -7466,7 +7466,9 @@ const AR = (function () {
   const FONT3 = {"0":["###","#.#","#.#","#.#","###"],"1":[".#.","##.",".#.",".#.","###"],"2":["##.","..#",".#.","#..","###"],"3":["##.","..#",".#.","..#","##."],"4":["#.#","#.#","###","..#","..#"],"5":["###","#..","##.","..#","##."],"6":[".##","#..","###","#.#","###"],"7":["###","..#",".#.",".#.",".#."],"8":["###","#.#","###","#.#","###"],"9":["###","#.#","###","..#","##."],"A":[".#.","#.#","###","#.#","#.#"],"B":["##.","#.#","##.","#.#","##."],"C":[".##","#..","#..","#..",".##"],"D":["##.","#.#","#.#","#.#","##."],"E":["###","#..","##.","#..","###"],"F":["###","#..","##.","#..","#.."],"G":[".##","#..","#.#","#.#",".##"],"H":["#.#","#.#","###","#.#","#.#"],"I":["###",".#.",".#.",".#.","###"],"J":["..#","..#","..#","#.#",".#."],"K":["#.#","#.#","##.","#.#","#.#"],"L":["#..","#..","#..","#..","###"],"M":["#.#","###","###","#.#","#.#"],"N":["##.","#.#","#.#","#.#","#.#"],"O":[".#.","#.#","#.#","#.#",".#."],"P":["##.","#.#","##.","#..","#.."],"Q":[".#.","#.#","#.#","##.",".##"],"R":["##.","#.#","##.","#.#","#.#"],"S":[".##","#..",".#.","..#","##."],"T":["###",".#.",".#.",".#.",".#."],"U":["#.#","#.#","#.#","#.#","###"],"V":["#.#","#.#","#.#","#.#",".#."],"W":["#.#","#.#","###","###","#.#"],"X":["#.#","#.#",".#.","#.#","#.#"],"Y":["#.#","#.#",".#.",".#.",".#."],"Z":["###","..#",".#.","#..","###"],"-":["...","...","###","...","..."],".":["...","...","...","...",".#."],"!":[".#.",".#.",".#.","...",".#."]," ":["...","...","...","...","..."],"@":["###","#.#","###","#..","###"]};
   function txt(g, x, y, str, color) { let cx = x; [...String(str).toUpperCase()].forEach(ch => { const gl = FONT3[ch]; if (gl) gl.forEach((row, j) => { for (let i = 0; i < 3; i++) if (row[i] === '#') P(g, cx + i, y + j, 1, 1, color); }); cx += 4; }); return cx - x; }
   const rnd = (a, b) => hash2(a * 31 + 7, b * 17 + 3);
-  return { txt, P, A, D, rgb, hex, mix, ramp, block, masonry, lineH, rnd, hxc };
+  // двері будинку стоять під колонкою вікон (непарна кількість колонок — під середньою, парна — під однією із двох середніх): вікна й двері на одній сітці
+  function doorGrid(x, w, hs, K, pad, off) { const cols = Math.max(1, Math.floor((w - pad) / K)), sp = (w - pad) / cols, dc = cols % 2 ? (cols - 1) >> 1 : cols / 2 - ((hs >>> 4) & 1); return { cols, sp, dc, cx: x + off + dc * sp + sp / 2 }; }
+  return { txt, P, A, D, rgb, hex, mix, ramp, block, masonry, lineH, rnd, hxc, doorGrid };
 })();
 
 // ---- епоха 0: Відродження (палаццо, арки, купол)
@@ -7850,13 +7852,13 @@ const AR = (function () {
     else if (roofK === 2 && w >= 38) { const bx = x + w - 26; for (let i = 0; i < 12; i++) P(g, bx + i, top - 5 - Math.round(Math.sqrt(36 - (i - 5.5) * (i - 5.5)) * 0.8), 1, Math.round(Math.sqrt(36 - (i - 5.5) * (i - 5.5)) * 0.8) + 1, CH[2]); P(g, bx, top - 5, 12, 1, CH[3]); P(g, bx + 4, top - 12, 4, 8, CH[1]); P(g, bx + 4, top - 12, 4, 1, CH[0]); }
     else if (roofK === 3 && w >= 36) { const nx = x + 4 + (hs >>> 6) % Math.max(1, w - 36); const word = ['EAT', 'BAR', 'SODA', 'DINER'][(hs >>> 8) % 4], sw = word.length * 4 + 4; P(g, nx + 2, top - 14, 1, 10, CH[3]); P(g, nx + sw - 3, top - 14, 1, 10, CH[3]); P(g, nx, top - 17, sw, 13, BK); P(g, nx + 1, top - 16, sw - 2, 11, RD[2]); AR.txt(g, nx + 3, top - 14, word, 'w'); P(g, nx + 1, top - 16, sw - 2, 1, RD[0]); }
     // поверхи: широкі панорамні вікна по два
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 24, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 24)), sp = (w - 4) / cols;
       if (f > 0) { P(g, x, y0 - 5, w, 1, '#ffffff'); P(g, x, y0 - 4, w, 2, TQ[2]); P(g, x, y0 - 2, w, 1, wp[4]); }
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 20) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 20 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 10) - DG.cx) < 22) continue;
         P(g, wx - 1, y0 - 1, 22, 13, CH[0]); P(g, wx - 1, y0 + 11, 22, 1, CH[3]); P(g, wx, y0, 20, 11, lit ? '#ffd45c' : '#9fd6ec');
         if (!lit) { P(g, wx, y0, 20, 3, '#cfeefa'); P(g, wx + 2, y0 + 1, 2, 1, '#ffffff'); P(g, wx + 5, y0 + 2, 1, 1, '#ffffff'); }
         P(g, wx + 9, y0, 2, 11, CH[1]); P(g, wx + 9, y0, 1, 11, CH[0]);
@@ -7964,12 +7966,12 @@ const AR = (function () {
     if (roofK === 0) { const bx = x + 8 + (hs >>> 5) % Math.max(1, w - 16); P(g, bx, top - 14, 1, 6, '#9aa4b8'); mirrorBall(g, bx, top - 16, 4); sparkle(g, bx + 6, top - 20, '#ffffff'); }
     else if (roofK === 1 && w >= 30) { const wd = ['DISCO', 'FUNK', 'SOUL', 'GO GO'][(hs >>> 8) % 4], sw = wd.length * 4 + 5, sx = x + Math.max(2, Math.min(w - sw - 2, 4 + (hs >>> 9) % Math.max(1, w - sw))); P(g, sx, top - 15, sw, 6, DK); P(g, sx + 1, top - 14, sw - 2, 4, MG[2]); AR.txt(g, sx + 3, top - 13, wd, 'w'); }
     // поверхи з круглими вікнами
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 15, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 15)), sp = (w - 4) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = x + 2 + c * sp + sp / 2, cy = y0 + 5, lit = hash2(Math.round(wx), y0) % 3 === 0;
-        if (f === floors - 1 && wx + 6 >= (doorOk ? doorX : -9999) - 2 && wx - 6 <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs(wx - DG.cx) < 17) continue;
         D(g, wx, cy, 6, DK); D(g, wx, cy, 5, c % 2 ? OR[2] : YL[2]); D(g, wx, cy, 4, lit ? '#ffd45c' : '#9fd6ec');
         if (!lit) { P(g, wx - 3, cy - 3, 2, 1, '#ffffff'); P(g, wx - 2, cy - 2, 1, 1, '#ffffff'); } else { A(g, 0.3, () => D(g, wx, cy, 3, '#ffffff')); }
         P(g, wx - 1, cy - 4, 1, 9, DK); P(g, wx - 4, cy, 9, 1, DK);
@@ -8070,12 +8072,12 @@ const AR = (function () {
     if (roofK === 0 && w >= 30) { const wd = WORDS[(hs >>> 5) % WORDS.length], sw = wd.length * 4 + 5, sx = x + 2 + (hs >>> 6) % Math.max(1, w - sw - 2); P(g, sx + 2, top - 10, 1, 6, '#444'); P(g, sx + sw - 3, top - 10, 1, 6, '#444'); P(g, sx, top - 17, sw, 8, BK); neonBox(g, sx, top - 17, sw, 8, NEON[(hs >>> 8) % 5]); AR.txt(g, sx + 3, top - 15, wd, NEON[(hs >>> 8) % 5]); }
     else if (roofK === 1) { const ax = x + 6 + (hs >>> 5) % Math.max(1, w - 18); for (let a = -5; a <= 5; a++) { const hh = Math.round(Math.sqrt(25 - a * a) * 0.9); P(g, ax + 6 + a, top - 5 - hh, 1, hh + 1, '#8a8aa0'); } P(g, ax + 6, top - 5, 1, 5, '#555'); P(g, ax + 6, top - 12, 1, 1, PK); }
     // поверхи: вікна з неоновим контуром
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 17, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 17)), sp = (w - 4) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 8) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 9 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 4) - DG.cx) < 16) continue;
         neonBox(g, wx - 1, y0 - 1, 10, 13, NEON[(c + f + hs) % 5]); P(g, wx, y0, 8, 11, lit ? '#ffd45c' : '#173a5a');
         if (!lit) { P(g, wx + 1, y0 + 1, 2, 1, '#6a9ac8'); } P(g, wx + 4, y0, 1, 11, BK); P(g, wx, y0 + 5, 8, 1, BK);
         houseGlass.push([wx, y0, 8, 11]);
@@ -8171,13 +8173,13 @@ const AR = (function () {
     else if (rk === 1) { const ax = x + 6 + (hs >>> 5) % Math.max(1, w - 24); P(g, ax, top - 7, 10, 4, ST[2]); P(g, ax, top - 7, 10, 1, WH[0]); P(g, ax + 2, top - 6, 6, 2, ST[3]); P(g, ax + 14, top - 6, 8, 3, ST[2]); }
     else if (rk === 2) mast(g, x + 8 + (hs >>> 5) % Math.max(1, w - 18), top - 3, 12, 0);
     // поверхи: стрічкові скляні вікна з білою перемичкою
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 14, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 14)), sp = (w - 4) / cols;
       P(g, x + 1, y0 - 4, w - 2, 1, WH[0]); P(g, x + 1, y0 - 3, w - 2, 1, ST[2]);
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 10) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 11 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 5) - DG.cx) < 17) continue;
         P(g, wx - 1, y0 - 1, 12, 13, ST[3]); P(g, wx, y0, 10, 11, lit ? '#ffe9a0' : '#7ab4e0');
         if (!lit) { P(g, wx, y0, 10, 4, '#a8d4f2'); P(g, wx + 1, y0 + 1, 3, 1, '#ffffff'); P(g, wx + 2, y0 + 2, 1, 1, '#ffffff'); P(g, wx, y0 + 7, 10, 4, '#5a98cc'); }
         P(g, wx + 4, y0, 1, 11, ST[3]);
@@ -8286,12 +8288,12 @@ const AR = (function () {
     if (hs % 3 === 0) solar(g, x + 6 + (hs >>> 5) % Math.max(1, w - 34), top - rh - 5, 24);
     else if (hs % 3 === 1 && w >= 36) turbine(g, x + 8 + (hs >>> 5) % Math.max(1, w - 18), top - rh - 12);
     // вікна з ящиками рослин
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 17, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 17)), sp = (w - 4) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 9) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 10 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 4.5) - DG.cx) < 16) continue;
         P(g, wx - 1, y0 - 1, 11, 12, WK[3]); P(g, wx, y0, 9, 10, lit ? '#ffe9a0' : '#a8dccc'); if (!lit) { P(g, wx, y0, 9, 3, '#d0f2e4'); P(g, wx + 1, y0 + 1, 2, 1, '#ffffff'); }
         P(g, wx + 4, y0, 1, 10, WK[3]); P(g, wx - 1, y0 + 11, 11, 1, WD[1]);
         planter(g, wx - 1, y0 + 9, 11, wx + f); houseGlass.push([wx, y0, 9, 10]);
@@ -8401,12 +8403,12 @@ const AR = (function () {
     else { P(g, x + (w >> 1) - 5, top - 6, 10, 6, WH[2]); P(g, x + (w >> 1) - 5, top - 6, 10, 1, WH[0]); P(g, x + (w >> 1) - 3, top - 4, 6, 2, DK[2]); }
     if (winter) P(g, x + 3, top - 1, w - 6, 2, '#ffffff');
     // ілюмінатори
-    const floors = Math.max(1, Math.floor((h - 12) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 12) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 16, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 16)), sp = (w - 4) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 10) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 11 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 5) - DG.cx) < 17) continue;
         cham(g, wx - 1, y0 - 1, 12, 13, DK[2], 3); cham(g, wx, y0, 10, 11, lit ? '#ffe9a0' : mix('#6ab4f0', tr, 0.2), 3);
         if (!lit) { P(g, wx + 2, y0 + 2, 3, 1, '#ffffff'); P(g, wx + 2, y0 + 3, 1, 1, '#ffffff'); }
         houseGlass.push([wx + 1, y0 + 1, 8, 9]);
@@ -8506,12 +8508,12 @@ const AR = (function () {
     // труби по стіні
     if ((hs >>> 9) % 2) { P(g, x + w - 5, top + 6, 2, h - 14, '#3a3e50'); P(g, x + w - 5, top + 6, 1, h - 14, '#5a5e72'); for (let y = top + 14; y < base - 8; y += 18) P(g, x + w - 6, y, 4, 1, '#1a1e2c'); }
     // вікна
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 14, 6, 3), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 6) / 14)), sp = (w - 6) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 3 + c * sp + (sp - 7) / 2), r = hash2(wx, y0), lit = r % 3 !== 0, col = NE[(r >>> 4) % 4];
-        if (f === floors - 1 && wx + 8 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 3.5) - DG.cx) < 15) continue;
         P(g, wx - 1, y0 - 1, 9, 12, '#05050c'); P(g, wx, y0, 7, 10, lit ? mix(col, '#000000', 0.45) : '#0a1a2a');
         if (lit) { P(g, wx, y0, 7, 3, mix(col, '#000000', 0.15)); A(g, 0.5, () => P(g, wx + 1, y0 + 1, 2, 1, WH)); } else { P(g, wx + 1, y0 + 1, 2, 1, '#2a5a8a'); }
         P(g, wx - 1, y0 + 10, 9, 1, ne);
@@ -19533,7 +19535,7 @@ function frame(now) {
     if (roofK === 1) { P(g, rx + 4, tb - 10, 1, 12, DKW); P(g, rx, tb - 8, 9, 1, DKW); P(g, rx + 1, tb - 5, 7, 1, DKW); }
     else if (roofK === 3) { P(g, rx, tb - 2, 12, 3, '#d9d3c4'); }
     capRoof(g, x, w, top - 4, CAP, winter);
-    const floors = Math.max(2, Math.floor((h - 6) / 18)), doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 7 - 3);
+    const floors = Math.max(2, Math.floor((h - 6) / 18)), doorX = x + (w >> 1) - 5;
     /* вивіски рахуємо ДО вікон: вікна обходять їх, а не лежать під ними */
     const kb = KANBAN[(hs >>> 7) % KANBAN.length], kh = KANBAN[(hs >>> 14) % KANBAN.length], wh = WORDS_H[(hs >>> 17) % WORDS_H.length];
     const gy = base - 23, gw = Math.min(w - 8, wh.length * 11 + 8), gx = x + 4 + ((w - 8 - gw) >> 1), gsz = Math.max(7, Math.min(11, Math.floor((gw - 6) / wh.length)));
@@ -19550,7 +19552,7 @@ function frame(now) {
       if (f > 0 && (hs >>> 12) % 3 === f % 3) { P(g, x + 4, y0 - 3, w - 8, 14, PLASTER[0]); P(g, x + w - 9, y0 - 3, 5, 14, PLASTER[1]); }
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(ax0 + c * sp + (sp - 11) / 2), lit = hash2(wx, y0) % 3 === 0, glass = hash2(wx + 7, y0) % 4 === 0;
-        if (f === floors - 1 && wx + 11 >= doorX - 3 && wx <= doorX + 13) continue;
+        if (f === floors - 1 && wx + 11 >= doorX - 6 && wx <= doorX + 16) continue;
         if (f === floors - 1 && wx + 12 >= gx - 1 && wx - 1 <= gx + gw + 1) continue;       // нижній поверх: горизонтальна вивіска над дверима
         const underSign = f === floors - 2 && wx + 12 >= gx - 1 && wx - 1 <= gx + gw + 1;       // знизу вікна лежать вивіска: кондиціонери/квіти пропускаємо
         P(g, wx - 1, y0 - 1, 13, 12, DKW);

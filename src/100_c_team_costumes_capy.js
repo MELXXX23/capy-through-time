@@ -488,7 +488,7 @@ function makeCapySkinRows(kind) {
     dye(12, 25, 9, 17, 'w');
     for (let x = 12; x <= 25; x++) { if (at(x, 9) === 'w') put(x, 9, 'n'); if (at(x, 10) === 'w') put(x, 10, 'n'); if (at(x, 16) === 'w') put(x, 16, 'n'); }
     for (let x = 13; x <= 24; x += 3) put(x, 12, 'n');
-    cellsOf(6, 14, ['rrrr', '.rr.']);
+    cellsOf(7, 14, ['rrrrrr', '.rrrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));
     around(cellsOf(4, 2, ['..wwwwww..', '.wwwwwwww.', 'wwwwnnwwww']));
     cellsOf(3, 5, ['nnnnnnnnnn']);
   }

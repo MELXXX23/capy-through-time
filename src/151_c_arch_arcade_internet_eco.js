@@ -83,12 +83,12 @@
     if (roofK === 0 && w >= 30) { const wd = WORDS[(hs >>> 5) % WORDS.length], sw = wd.length * 4 + 5, sx = x + 2 + (hs >>> 6) % Math.max(1, w - sw - 2); P(g, sx + 2, top - 10, 1, 6, '#444'); P(g, sx + sw - 3, top - 10, 1, 6, '#444'); P(g, sx, top - 17, sw, 8, BK); neonBox(g, sx, top - 17, sw, 8, NEON[(hs >>> 8) % 5]); AR.txt(g, sx + 3, top - 15, wd, NEON[(hs >>> 8) % 5]); }
     else if (roofK === 1) { const ax = x + 6 + (hs >>> 5) % Math.max(1, w - 18); for (let a = -5; a <= 5; a++) { const hh = Math.round(Math.sqrt(25 - a * a) * 0.9); P(g, ax + 6 + a, top - 5 - hh, 1, hh + 1, '#8a8aa0'); } P(g, ax + 6, top - 5, 1, 5, '#555'); P(g, ax + 6, top - 12, 1, 1, PK); }
     // поверхи: вікна з неоновим контуром
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 17, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 17)), sp = (w - 4) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 8) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 9 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 4) - DG.cx) < 16) continue;
         neonBox(g, wx - 1, y0 - 1, 10, 13, NEON[(c + f + hs) % 5]); P(g, wx, y0, 8, 11, lit ? '#ffd45c' : '#173a5a');
         if (!lit) { P(g, wx + 1, y0 + 1, 2, 1, '#6a9ac8'); } P(g, wx + 4, y0, 1, 11, BK); P(g, wx, y0 + 5, 8, 1, BK);
         houseGlass.push([wx, y0, 8, 11]);
@@ -184,13 +184,13 @@
     else if (rk === 1) { const ax = x + 6 + (hs >>> 5) % Math.max(1, w - 24); P(g, ax, top - 7, 10, 4, ST[2]); P(g, ax, top - 7, 10, 1, WH[0]); P(g, ax + 2, top - 6, 6, 2, ST[3]); P(g, ax + 14, top - 6, 8, 3, ST[2]); }
     else if (rk === 2) mast(g, x + 8 + (hs >>> 5) % Math.max(1, w - 18), top - 3, 12, 0);
     // поверхи: стрічкові скляні вікна з білою перемичкою
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 14, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 14)), sp = (w - 4) / cols;
       P(g, x + 1, y0 - 4, w - 2, 1, WH[0]); P(g, x + 1, y0 - 3, w - 2, 1, ST[2]);
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 10) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 11 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 5) - DG.cx) < 17) continue;
         P(g, wx - 1, y0 - 1, 12, 13, ST[3]); P(g, wx, y0, 10, 11, lit ? '#ffe9a0' : '#7ab4e0');
         if (!lit) { P(g, wx, y0, 10, 4, '#a8d4f2'); P(g, wx + 1, y0 + 1, 3, 1, '#ffffff'); P(g, wx + 2, y0 + 2, 1, 1, '#ffffff'); P(g, wx, y0 + 7, 10, 4, '#5a98cc'); }
         P(g, wx + 4, y0, 1, 11, ST[3]);
@@ -299,12 +299,12 @@
     if (hs % 3 === 0) solar(g, x + 6 + (hs >>> 5) % Math.max(1, w - 34), top - rh - 5, 24);
     else if (hs % 3 === 1 && w >= 36) turbine(g, x + 8 + (hs >>> 5) % Math.max(1, w - 18), top - rh - 12);
     // вікна з ящиками рослин
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 17, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 17)), sp = (w - 4) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 9) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 10 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 4.5) - DG.cx) < 16) continue;
         P(g, wx - 1, y0 - 1, 11, 12, WK[3]); P(g, wx, y0, 9, 10, lit ? '#ffe9a0' : '#a8dccc'); if (!lit) { P(g, wx, y0, 9, 3, '#d0f2e4'); P(g, wx + 1, y0 + 1, 2, 1, '#ffffff'); }
         P(g, wx + 4, y0, 1, 10, WK[3]); P(g, wx - 1, y0 + 11, 11, 1, WD[1]);
         planter(g, wx - 1, y0 + 9, 11, wx + f); houseGlass.push([wx, y0, 9, 10]);

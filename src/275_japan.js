@@ -145,7 +145,7 @@
     if (roofK === 1) { P(g, rx + 4, tb - 10, 1, 12, DKW); P(g, rx, tb - 8, 9, 1, DKW); P(g, rx + 1, tb - 5, 7, 1, DKW); }
     else if (roofK === 3) { P(g, rx, tb - 2, 12, 3, '#d9d3c4'); }
     capRoof(g, x, w, top - 4, CAP, winter);
-    const floors = Math.max(2, Math.floor((h - 6) / 18)), doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 7 - 3);
+    const floors = Math.max(2, Math.floor((h - 6) / 18)), doorX = x + (w >> 1) - 5;
     /* вивіски рахуємо ДО вікон: вікна обходять їх, а не лежать під ними */
     const kb = KANBAN[(hs >>> 7) % KANBAN.length], kh = KANBAN[(hs >>> 14) % KANBAN.length], wh = WORDS_H[(hs >>> 17) % WORDS_H.length];
     const gy = base - 23, gw = Math.min(w - 8, wh.length * 11 + 8), gx = x + 4 + ((w - 8 - gw) >> 1), gsz = Math.max(7, Math.min(11, Math.floor((gw - 6) / wh.length)));
@@ -162,7 +162,7 @@
       if (f > 0 && (hs >>> 12) % 3 === f % 3) { P(g, x + 4, y0 - 3, w - 8, 14, PLASTER[0]); P(g, x + w - 9, y0 - 3, 5, 14, PLASTER[1]); }
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(ax0 + c * sp + (sp - 11) / 2), lit = hash2(wx, y0) % 3 === 0, glass = hash2(wx + 7, y0) % 4 === 0;
-        if (f === floors - 1 && wx + 11 >= doorX - 3 && wx <= doorX + 13) continue;
+        if (f === floors - 1 && wx + 11 >= doorX - 6 && wx <= doorX + 16) continue;
         if (f === floors - 1 && wx + 12 >= gx - 1 && wx - 1 <= gx + gw + 1) continue;       // нижній поверх: горизонтальна вивіска над дверима
         const underSign = f === floors - 2 && wx + 12 >= gx - 1 && wx - 1 <= gx + gw + 1;       // знизу вікна лежать вивіска: кондиціонери/квіти пропускаємо
         P(g, wx - 1, y0 - 1, 13, 12, DKW);

@@ -92,12 +92,12 @@
     else { P(g, x + (w >> 1) - 5, top - 6, 10, 6, WH[2]); P(g, x + (w >> 1) - 5, top - 6, 10, 1, WH[0]); P(g, x + (w >> 1) - 3, top - 4, 6, 2, DK[2]); }
     if (winter) P(g, x + 3, top - 1, w - 6, 2, '#ffffff');
     // ілюмінатори
-    const floors = Math.max(1, Math.floor((h - 12) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 12) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 16, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 16)), sp = (w - 4) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 2 + c * sp + (sp - 10) / 2), lit = hash2(wx, y0) % 3 === 0;
-        if (f === floors - 1 && wx + 11 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 5) - DG.cx) < 17) continue;
         cham(g, wx - 1, y0 - 1, 12, 13, DK[2], 3); cham(g, wx, y0, 10, 11, lit ? '#ffe9a0' : mix('#6ab4f0', tr, 0.2), 3);
         if (!lit) { P(g, wx + 2, y0 + 2, 3, 1, '#ffffff'); P(g, wx + 2, y0 + 3, 1, 1, '#ffffff'); }
         houseGlass.push([wx + 1, y0 + 1, 8, 9]);
@@ -197,12 +197,12 @@
     // труби по стіні
     if ((hs >>> 9) % 2) { P(g, x + w - 5, top + 6, 2, h - 14, '#3a3e50'); P(g, x + w - 5, top + 6, 1, h - 14, '#5a5e72'); for (let y = top + 14; y < base - 8; y += 18) P(g, x + w - 6, y, 4, 1, '#1a1e2c'); }
     // вікна
-    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
+    const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 14, 6, 3), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 6) / 14)), sp = (w - 6) / cols;
       for (let c = 0; c < cols; c++) {
         const wx = Math.round(x + 3 + c * sp + (sp - 7) / 2), r = hash2(wx, y0), lit = r % 3 !== 0, col = NE[(r >>> 4) % 4];
-        if (f === floors - 1 && wx + 8 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
+        if (f === floors - 1 && doorOk && Math.abs((wx + 3.5) - DG.cx) < 15) continue;
         P(g, wx - 1, y0 - 1, 9, 12, '#05050c'); P(g, wx, y0, 7, 10, lit ? mix(col, '#000000', 0.45) : '#0a1a2a');
         if (lit) { P(g, wx, y0, 7, 3, mix(col, '#000000', 0.15)); A(g, 0.5, () => P(g, wx + 1, y0 + 1, 2, 1, WH)); } else { P(g, wx + 1, y0 + 1, 2, 1, '#2a5a8a'); }
         P(g, wx - 1, y0 + 10, 9, 1, ne);
