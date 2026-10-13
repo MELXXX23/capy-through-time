@@ -288,6 +288,7 @@ function hagPos(c) {                                          // де зараз
   return { x: Math.round(x), y: Math.round(y) };
 }
 function hagClick(e) {
+  if (state.circus.noodle) { noodleClick(); return; }
   const G = hagGame; if (G.phase !== 'pick') return;
   const cv = ui.circusWheel, r = cv.getBoundingClientRect(), lx = (e.clientX - r.left) * cv.width / r.width, ly = (e.clientY - r.top) * cv.height / r.height;
   let best = -1, bd = 1e9; G.c.forEach((c, i) => { const p = hagPos(c), d = Math.abs(lx - p.x); if (d < 21 && ly > 40 && d < bd) { bd = d; best = i; } });
@@ -369,7 +370,7 @@ function updateCircus(dt) {
     if (c.phase === 3) circus.setup = 1;
   }
   if (c.phase === 0) {
-    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * (1.0 + 0.6 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : 'circusBang'), 'good'); saveGame(); }
+    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * (1.0 + 0.6 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; c.noodle = (!c.hag && curEpoch() === 8) ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : c.noodle ? 'noodleTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : c.noodle ? 'noodleBang' : 'circusBang'), 'good'); saveGame(); }
   } else if (c.phase === 1) {                      // «!» чекає на тап, а з часом зникає (гравець сам вирішує, чи тикати)
     circus.bangT += dt;
     if (circus.bangT > CONFIG.CIRCUS_BANG_SECONDS) { c.phase = 0; saveGame(); }
@@ -386,7 +387,7 @@ function updateCircus(dt) {
   } else if (c.phase === 2.7) {                    // шатро розкладається: колеса й платформа зникають, вилазять три куполи, виходить клоун
     circus.setupT += dt; circus.x = circusStopX();
     circus.setup = Math.min(1, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
-    if (circus.setup >= 1) { c.phase = 3; showToast(t(c.hag ? 'hagArrived' : 'circusArrived'), 'good'); playSfx('wheelWin'); saveGame(); }
+    if (circus.setup >= 1) { c.phase = 3; showToast(t(c.hag ? 'hagArrived' : c.noodle ? 'noodleArrived' : 'circusArrived'), 'good'); playSfx('wheelWin'); saveGame(); }
   } else if (c.phase === 3) {
     circus.x = circusStopX(); circus.setup = 1;
   } else if (c.phase === 3.5) {                    // збирається назад
@@ -400,7 +401,8 @@ function updateCircus(dt) {
   updateHagFly(dt);
   updateCircusSpin(dt);
   if (c.hag) updateHagGame(dt);
-  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
+  if (c.noodle) updateNoodleGame(dt);
+  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
 }
 /* ---- Баба Яга ---- */
 const hagFly = { on: false, x: 0, y: 0, dir: -1, t: 0, wait: 0, fast: false };            // Баба Яга в ступі летить небом

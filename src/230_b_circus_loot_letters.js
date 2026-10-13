@@ -3,7 +3,7 @@ const circusCanvas = document.createElement('canvas'); circusCanvas.width = 160;
 function drawCircus() {
   const c = state.circus; if (c.phase < 2) return;
   const s = circus.setup === undefined ? 0 : circus.setup, moving = c.phase === 2.5 || c.phase === 4;
-  const g = circusCanvas.getContext('2d'); if (c.hag) HAG_ART.draw(g, circus.t, s, moving); else CIRCUS_ART.draw(g, circus.t, s, moving);
+  const g = circusCanvas.getContext('2d'); if (c.hag) HAG_ART.draw(g, circus.t, s, moving); else if (c.noodle) NOODLE_ART.draw(g, circus.t, s, moving); else CIRCUS_ART.draw(g, circus.t, s, moving);
   const x = Math.round(circus.x) - 80, y = circusY();
   ctx.globalAlpha = 0.25; R(ctx, x + 6 + Math.round(8 * s), y - 2, 128 - Math.round(8 * s) * 2 + (s < 0.5 ? -30 + Math.round(60 * s) : 0), 3, 'd'); ctx.globalAlpha = 1;
   ctx.drawImage(circusCanvas, x, y - 76);
@@ -72,21 +72,28 @@ function drawCircusWheel() {
   g.clearRect(0, 0, 128, 140); g.save(); g.translate(64, 76); g.rotate(circus.angle); g.drawImage(circus.tex, -64, -64); g.restore();
   for (let i = 0; i < 12; i++) { R(g, 64 - (12 - i), 2 + i, (12 - i) * 2, 1, 'd'); if (i > 1) R(g, 64 - (12 - i) + 2, 2 + i, (12 - i) * 2 - 4, 1, 'r'); }
 }
-function circusBusy() { return !!circus.anim || (!!state.circus.hag && ['show', 'shuffle', 'pick', 'reveal'].includes(hagGame.phase)); }
+function circusBusy() { return !!circus.anim || (!!state.circus.hag && ['show', 'shuffle', 'pick', 'reveal'].includes(hagGame.phase)) || (!!state.circus.noodle && ['cook', 'reveal'].includes(noodleGame.phase)); }
 function openCircus() {
   if (dialog.active) return;
-  const hag = !!state.circus.hag;
-  ui.circusModal.classList.toggle('hag', hag);
-  if (hag) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
+  const hag = !!state.circus.hag, nd = !!state.circus.noodle;
+  ui.circusModal.classList.toggle('hag', hag || nd);
+  if (nd) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (noodleGame.phase === 'idle' || noodleGame.phase === 'done') noodleReset(); if (state.circus.spun) noodleGame.phase = 'done'; }
+  else if (hag) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
   ui.circusModal.hidden = false;
-  ui.circusTitle.textContent = t(hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(hag ? 'hagSub' : 'circusSub');
-  ui.circusClose.textContent = t(state.circus.spun ? (hag ? 'hagDone' : 'circusDone') : 'wheelClose');
+  ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
+  ui.circusClose.textContent = t(state.circus.spun ? (nd ? 'noodleDone' : hag ? 'hagDone' : 'circusDone') : 'wheelClose');
   ui.circusResult.textContent = '';
   updateCircusButtons();
 }
 function updateCircusButtons() {
-  const hag = !!state.circus.hag;
+  const hag = !!state.circus.hag, nd = !!state.circus.noodle;
+  if (nd) {
+    const cook = noodleGame.phase === 'cook';
+    ui.circusBtn.textContent = t(cook ? 'noodleTake' : 'noodleStart');
+    ui.circusBtn.disabled = cook ? false : (circusBusy() || !!state.circus.spun);
+    return;
+  }
   ui.circusBtn.textContent = t(hag ? 'hagStart' : 'circusSpin');
   ui.circusBtn.disabled = circusBusy() || !!state.circus.spun;
 }
@@ -117,6 +124,7 @@ function applyCircusSector(sec, now) {
   return { text, skin: skinPick };
 }
 function circusSpin() {
+  if (state.circus.noodle) { if (noodleGame.phase === 'cook') noodleTake(); else noodleStart(); return; }
   if (circusBusy() || state.circus.spun) return;
   if (state.circus.hag) { hagStart(); return; }
   const now = Date.now(), { sec, idx } = rollCircusSector(false), pr = applyCircusSector(sec, now), text = pr.text, skinPick = pr.skin;

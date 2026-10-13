@@ -63,6 +63,7 @@ const DESC = {
   '270_loop.js': 'ігровий цикл',
   '275_japan.js': 'епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі',
   '276_japan_text.js': 'епоха 9 Японія: тексти',
+  '277_japan_noodle.js': 'Японія: лапшична діда Рьо замість цирку (візок, портрет, гра «Звари лапшу», тексти)',
   '280_launch.js': 'запуск: ініціалізація, </script>'
 };
 const files = fs.readdirSync(dir).filter(f => /^\d+_.+\.(html|css|js)$/.test(f)).sort();

@@ -143,7 +143,7 @@ function noiseHit(dest, t0, dur, vol, filterType, freq) {
   src.start(t0, Math.random() * 0.5); src.stop(t0 + dur + 0.02);
 }
 function drum(dest, kind, t0, vol) {
-  if (kind === 'k') tone(dest, 'triangle', 150, t0, 0.13, vol * 1.6, 45);
+  if (kind === 'k') { tone(dest, 'sine', 118, t0, 0.11, vol * 0.85, 48); noiseHit(dest, t0, 0.025, vol * 0.18, 'lowpass', 900); }   // бас-барабан: м'який, без гострої «ноти» (було triangle 150 Гц ×1,6)
   else if (kind === 's') noiseHit(dest, t0, 0.12, vol, 'bandpass', 1800);
   else if (kind === 'h') noiseHit(dest, t0, 0.05, vol * 0.7, 'highpass', 7000);
   else if (kind === 'o') noiseHit(dest, t0, 0.16, vol * 0.55, 'highpass', 6500);                                                  // відкритий хет
@@ -250,6 +250,10 @@ const SFX = {
       bar.forEach(([n, len]) => { tone(audio.sfxGain, 'square', noteFreq(n), t + b * beat, len * beat * 0.8, 0.12); b += len; });
       for (let k = 0; k < 4; k++) { if (k % 2 === 0) tone(audio.sfxGain, 'triangle', noteFreq(ROOTS[bi]), t + k * beat, beat * 0.7, 0.3); else tone(audio.sfxGain, 'square', noteFreq(ROOTS[bi]) * 3, t + k * beat, beat * 0.25, 0.07); }
     });
+  },
+  noodleTheme() {  // короткий мотив кото: пентатоніка, щипки з довгим згасанням
+    const t0 = audio.ctx.currentTime + 0.05;
+    [['D5', 0], ['E5', .16], ['G5', .32], ['A5', .52], ['G5', .72], ['E5', .88], ['D5', 1.04], ['A4', 1.3]].forEach(([n, dt]) => tone(audio.sfxGain, 'triangle', noteFreq(n), t0 + dt, 0.5, 0.22, null, 'pluck'));
   },
   clockBong() {    // глибокий удар дзвону: основний тон і обертони з довгим згасанням
     const ac = audio.ctx, t0 = ac.currentTime + 0.01;

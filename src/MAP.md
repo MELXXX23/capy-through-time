@@ -42,7 +42,7 @@
 | `180_a_anim_weather_actors.js` | 38 | анімації: погода, хмари, звірята-помічники (actorHome, syncActors, updateActors) | shopAnim, capyAnim, fx, clouds, weather, raindrops, updateWeather, rainSpotCache |
 | `180_b_actor_draw_lines.js` | 44 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, ACTOR_K, actorK, evenScaleCache, evenScaled, crispFigCache, crispFigure |
 | `180_c_customers_updates.js` | 36 | покупці (spawnCustomer, drawCustomer, spaceHelmet), updateAnimations, спливаючі числа | skinLineLast, skinLine, capySay, buyStar, hireOrUpgrade, customerTarget, passEdge, spawnX |
-| `190_a_audio_music_cutscene.js` | 40 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
+| `190_a_audio_music_cutscene.js` | 41 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
 | `190_b_cutscene_draw.js` | 41 | кат-сцена: малювання | cutFace, cutMark, cutEmo, cutTextPx, cutPopText, cutSpark, cutBubble, cutSayState |
 | `190_c_cutscene_panel_tour_sfx.js` | 38 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |
 | `190_d_epoch_tunes.js` | 14 | музика епох 1–8: EPOCH_TUNES (дві мелодії на епоху, акорди), epochTrackDef/epochTrackKey | TUNE_Q, ARP_FAST, ARP_SOFT, LEAD_VOL, BASS_VOL, ARP_VOL, EPOCH_TUNES, chordInfo |
@@ -54,8 +54,8 @@
 | `220_b_rainbow_lightning_skyx.js` | 46 | райдуга, блискавки, прикраси неба (skyx*) | RAINBOW_M, rainbowM, rainbowCanvas, rainbowGeom, drawRainbowSkin, bolts, boltTimer, boltPath |
 | `220_c_epoch_sky_fx.js` | 39 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, discoLamps, drawSkyExtra |
 | `220_d_night_garlands_halloween.js` | 38 | нічне небо, гірлянди, Хелловін (привиди, туман) | drawSkyScreen, drawNightShade, SEASON_MOOD, BULB_SETS, bulbColors, awningBulbs, garlandSpans, garlandY |
-| `230_a_skins_circus_hag.js` | 46 | СКІНИ: пули, ціни, володіння; цирк і відьма | CIRCUS_SECTORS, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON, skinHas, skinGrant |
-| `230_b_circus_loot_letters.js` | 39 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawCircusIcon, buildCircusWheelTexture, drawCircusWheel, circusBusy |
+| `230_a_skins_circus_hag.js` | 47 | СКІНИ: пули, ціни, володіння; цирк і відьма | CIRCUS_SECTORS, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON, skinHas, skinGrant |
+| `230_b_circus_loot_letters.js` | 40 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawCircusIcon, buildCircusWheelTexture, drawCircusWheel, circusBusy |
 | `230_c_news_wheel_events.js` | 39 | газета (сторінки), «Барабан фортуни», updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
 | `230_d_circus_themes.js` | 30 | цирк по епохах: CIRCUS_THEMES (палітра, деталі, гірлянда), малює CIRCUS_ART з 230_a | CIRCUS_THEMES, circusGarland |
 | `240_story.js` | 41 | сюжет: діалоги, гості, камео | dialog, storyTimer, cameos, speakerSprite, speakerName, pageText, renderDialogText, buildChoiceButtons |
@@ -67,4 +67,5 @@
 | `270_loop.js` | 2 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frame |
 | `275_japan.js` | 45 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `276_japan_text.js` | 15 | епоха 9 Японія: тексти |  |
+| `277_japan_noodle.js` | 19 | Японія: лапшична діда Рьо замість цирку (візок, портрет, гра «Звари лапшу», тексти) | NOODLE_BUST, noodleGame, NOODLE_ZH, NOODLE_ART, noodleReset, noodleStart, noodleTake, updateNoodleGame |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |
