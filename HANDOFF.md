@@ -2,6 +2,9 @@
 
 Прочитай `CLAUDE.md`, `PROGRESS.md` (внизу пункти 62–67) і цей файл. Не перечитуй увесь `game.html` (понад 1,3 МБ): він ЗІБРАНИЙ із частин `src/` (див. `src/README.md`); шукай через Grep по `src/*.js` і читай шматками.
 
+## Раунд 49 (ЛОКАЛЬНО, не випущено; PROGRESS п. 68; відкат: мітка before-balconies)
+- Балкони Відродження переписані (`balconyG` у `151_a_arch_core_renaissance.js`): прив'язані до вікон, більше, два стилі, камінь/ковка. Чекає окей користувачки на знімки `previews/r49/after2.png`, `scene.png`.
+
 ## Раунд 48 (ЛОКАЛЬНО, не випущено; PROGRESS п. 65–67; відкат: мітки before-retro-sky, before-god-build, before-even-eyes; копії у backups/game_before_round48_*.html)
 - Ретро (п. 65): супутники й дрібні літаки замінено кеш-спрайтами ракета/вертоліт/авіалайнер (`skyxRocket`, `skyxHeli`, `skyxPlane`, kinds `rkt`/`heli`/`ppl` у `src/220_b_rainbow_lightning_skyx.js`, буксир SALE в `220_c_epoch_sky_fx.js`). Користувачка: «ретро окей».
 - Режим бога (п. 66): картка «👑 Режим бога» у Налаштуваннях з кнопкою ВИМК/УВІМК (прапорець `capyGodPause`, діє і на exe; `GOD_OWNER/GOD_PAUSED/GOD_ON` у `100_a_core_config.js`, `toggleGodMode` у `200_c_*`). У DEBUG: кнопки «→ N. рівень» показують анімацію будівництва без витрат (`debugBuild`, `buildPreview`, `finishBuild`), перемикач «повернути/лишити рівень».

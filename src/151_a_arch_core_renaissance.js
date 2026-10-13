@@ -217,6 +217,41 @@ const AR = (function () {
     if (!warm) { P(g, wx + 1, wy + 2, 1, 1, '#ffffff'); P(g, wx + 5, wy + 7, 1, 1, '#d8f0ff'); }
     P(g, wx - 2, wy + 11, 12, 2, SL[1]); P(g, wx - 2, wy + 11, 12, 1, SL[0]); P(g, wx - 2, wy + 13, 12, 1, ST[3]);
   }
+  function balconyG(g, wxs, y0, hx, hw, long, iron, seed, snow) {              // балкони однієї «стрічки» вікон: суцільний на весь фасад або окремі «французькі» під кожним вікном
+    const DK = '#2a2038', segs = long ? [[hx + 3, hx + hw - 4]] : wxs.map(wx => [wx - 3, wx + 10]);
+    const clothC = ['#b8312a', '#2a4a8c', '#e0b030', '#4f7a45'][seed % 4];
+    segs.forEach(([a, b], si) => {
+      const W = b - a + 1, posts = [a, b - 1];
+      if (long) for (let i = 0; i < wxs.length - 1; i++) { const gx = Math.round((wxs[i] + 8 + wxs[i + 1]) / 2) - 1; if (gx > a + 4 && gx < b - 5) posts.push(gx); }
+      // нижня стрічка-консолі під плитою
+      for (let k = a + 1; k < b; k += 3) P(g, k, y0 + 14, 1, 1, ST[3]);
+      A(g, 0.28, () => P(g, a + 1, y0 + 15, W - 2, 1, '#000000'));
+      // плита балкона
+      P(g, a - 1, y0 + 11, W + 2, 1, snow ? '#ffffff' : SL[0]); P(g, a - 1, y0 + 12, W + 2, 1, ST[2]); P(g, a - 1, y0 + 13, W + 2, 1, ST[3]);
+      // балюстрада: поручень, бальки, нижня планка
+      if (iron) {
+        P(g, a, y0 + 6, W, 1, DK); P(g, a, y0 + 10, W, 1, DK);
+        for (let k = a + 3; k < b - 2; k += 3) { P(g, k, y0 + 7, 1, 3, DK); P(g, k, y0 + 7, 1, 1, GOLD[2]); }
+        A(g, 0.45, () => P(g, a, y0 + 6, W, 1, '#7a6a88'));
+      } else {
+        P(g, a, y0 + 6, W, 1, snow ? '#eaf2fc' : SL[0]); P(g, a, y0 + 7, W, 1, ST[2]); P(g, a, y0 + 10, W, 1, ST[3]);
+        for (let k = a + 2; k < b - 1; k += 2) { P(g, k, y0 + 8, 1, 2, ST[1]); P(g, k, y0 + 9, 1, 1, ST[2]); }
+      }
+      // стовпці з кулями й консолі під ними
+      posts.forEach(p => {
+        if (iron) { P(g, p, y0 + 4, 2, 7, DK); P(g, p, y0 + 4, 1, 7, '#5a4a68'); P(g, p, y0 + 2, 2, 2, GOLD[1]); P(g, p, y0 + 2, 1, 1, GOLD[0]); P(g, p + 1, y0 + 3, 1, 1, GOLD[3]); }
+        else { P(g, p, y0 + 4, 2, 7, ST[1]); P(g, p, y0 + 4, 1, 7, SL[0]); P(g, p + 1, y0 + 4, 1, 7, ST[3]); P(g, p - 1, y0 + 3, 4, 1, ST[0]); P(g, p, y0 + 1, 2, 2, SL[1]); P(g, p, y0 + 1, 1, 1, SL[0]); }
+        P(g, p - 1, y0 + 14, 4, 1, ST[2]); P(g, p, y0 + 15, 2, 1, ST[3]); P(g, p, y0 + 16, 2, 1, ST[4]);
+      });
+      // горщики з квітами (за ознакою від зерна) і одна тканина-стяг на поручні
+      wxs.forEach((wx, i) => {
+        if (wx + 5 < a || wx + 2 > b) return;
+        const sd = hash2(seed + i * 7 + si, wx);
+        if (sd % 3 === 0) { const px = wx + 2; P(g, px, y0 + 9, 3, 1, '#d98a5a'); P(g, px, y0 + 10, 3, 1, '#b8603a'); P(g, px, y0 + 8, 3, 1, '#4f9a63'); P(g, px + 1, y0 + 7, 1, 1, '#4f9a63'); P(g, px, y0 + 7, 1, 1, ['#e8353a', '#ffd84f', '#ff8fd0'][(sd >>> 4) % 3]); P(g, px + 2, y0 + 7, 1, 1, ['#ffd84f', '#ff8fd0', '#e8353a'][(sd >>> 4) % 3]); }
+        else if (sd % 3 === 1 && (seed >>> 5) % 2 === 0) { const cx0 = wx + 2; P(g, cx0, y0 + 6, 4, 5, clothC); P(g, cx0, y0 + 6, 4, 1, mix(clothC, '#ffffff', 0.35)); P(g, cx0 + 1, y0 + 8, 1, 3, mix(clothC, '#ffffff', 0.25)); P(g, cx0 + 1, y0 + 10, 1, 1, GOLD[1]); P(g, cx0 + 3, y0 + 10, 1, 1, GOLD[1]); }
+      });
+    });
+  }
   function house(g, spec, lamps) {
     const { x, w, h } = spec, base = LAYOUT.horizonY, top = base - h, hs = hash2(x + 17, h), wp = ramp(WALLS[(hs >>> 3) % WALLS.length]);
     lamps = lamps || [];
@@ -252,6 +287,7 @@ const AR = (function () {
     }
     // вікна
     const doorW = 10, doorX = x + (w >> 1) - 5 + ((hs >>> 4) % 9 - 4), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps), shut = hs % 2 === 0, pedF = (hs >>> 9) % 2;
+    const winX = [];
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 4) / 17)), sp = (w - 4) / cols;
       if (f > 0) { P(g, x, y0 - 6, w, 1, SL[0]); P(g, x, y0 - 5, w, 1, SL[2]); P(g, x, y0 - 4, w, 1, ST[3]); }         // поясок між поверхами
@@ -260,11 +296,20 @@ const AR = (function () {
         if (f === floors - 1 && wx + 9 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
         winArch(g, wx, y0, ((c + f + x) % 4 === 0), shut && f < floors - 1, pedF && f % 2 === 1);
         houseGlass.push([wx + 1, y0 + 1, 6, 9]);
+        (winX[f] = winX[f] || []).push(wx);
       }
-      if (f === 1 && floors >= 3 && hs % 4 === 1) {                               // балкон з балюстрадою
-        const bx = x + 3, bw = Math.min(w - 6, 30), by = y0 + 13;
-        P(g, bx, by, bw, 1, SL[0]); P(g, bx, by + 1, bw, 2, ST[2]); for (let k = bx + 1; k < bx + bw - 1; k += 3) P(g, k, by - 4, 2, 4, ST[1]); P(g, bx, by - 5, bw, 1, SL[0]);
-      }
+    }
+    // балкони: кожен другий поверх (над першим — ближче до землі), вікна на ньому виходять на балюстраду
+    if (floors >= 2) {
+      const hb = hash2(x * 5 + 9, h + 23), par = hb & 1, mode = (hb >>> 1) % 3, iron = ((hb >>> 4) & 1) === 1;
+      const pick = [];
+      for (let f = floors - 2; f >= 0; f--) if (((floors - 2 - f) % 2) === par) pick.push(f);
+      if (!pick.length) pick.push(floors - 2);                                    // низький будинок: хоча б один балкон
+      pick.forEach((f, k) => {
+        const wxs = winX[f]; if (!wxs || !wxs.length) return;
+        const y0 = base - 6 - (floors - f) * 19 + 3, long = mode === 0 || (mode === 2 && k === 0);
+        balconyG(g, wxs, y0, x, w, long, iron, hash2(hb + f * 13, x), winter);
+      });
     }
     if (doorOk) {                                                                  // арочні двері з замковим каменем
       houseDoors.push({ x: doorX + 5, y: base });
