@@ -511,7 +511,7 @@ function drawGuest(g) {                                   // гість тако
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
   ctx.globalAlpha = 0.24; R(ctx, x - 7, y, 14, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 4, y + 2, 8, 1, 'd'); ctx.globalAlpha = 1;
   ctx.restore();
-  drawCrispFigure('npc_' + g.id, x, y, step, step === 1);
+  drawCrispFigure(guestSpriteName(g.id), x, y, step, step === 1);
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
   if (hasHats()) drawHat(x, y - 13 - step, 20 + g.k);
   if (hasScarves()) drawScarf(x, y - 16 - step, g.k);
