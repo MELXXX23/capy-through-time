@@ -1,9 +1,9 @@
 # Передача між чатами (оновлюй перед кожним переходом)
 
-Прочитай `CLAUDE.md`, `PROGRESS.md` (внизу пункти 59–60) і цей файл. Не перечитуй увесь `game.html` (понад 1,3 МБ): він ЗІБРАНИЙ із частин `src/` (див. `src/README.md`); шукай через Grep по `src/*.js` і читай шматками.
+Прочитай `CLAUDE.md`, `PROGRESS.md` (внизу пункти 60–61) і цей файл. Не перечитуй увесь `game.html` (понад 1,3 МБ): він ЗІБРАНИЙ із частин `src/` (див. `src/README.md`); шукай через Grep по `src/*.js` і читай шматками.
 
-## Де ми зараз (станом на 2026-10-12, кінець раунду 45)
-- ВИПУЩЕНО (сайт, exe на столі `CapyTapMarket-Portable-NEW.exe` з режимом бога, zip для itch `desktop/dist/CapyTapMarket-itch-html.zip`): усе до коміту `5974074` включно (раунди 43–45). Репозиторій чистий поза `previews/`.
+## Де ми зараз (станом на 2026-10-13, кінець раунду 46)
+- ВИПУЩЕНО (сайт https://melxxx23.github.io/capy-through-time/ і exe на столі `CapyTapMarket-Portable-NEW.exe` з режимом бога): усе до коміту `519c342` включно (раунди 43–46). Репозиторій чистий поза `previews/`; `desktop/app/game.html` БЕЗ режиму бога. Zip для itch (`desktop/dist/CapyTapMarket-itch-html.zip`) і itch-exe ще збірки раунду 40–45: за бажанням перезібрати.
 - ВИПУЩЕНО (сайт https://melxxx23.github.io/capy-through-time/ і exe на столі `CapyTapMarket-Portable-NEW.exe` з режимом бога): усе до коміту `ea13184` включно. Репозиторій чистий (поза `previews/`); `desktop/app/game.html` лишено БЕЗ режиму бога.
 - Раунд 39 (випущено): зірки помічників за 10 прокачувань, лавки з урнами, об'ємні кулі, перемикач «Прибрати літаючі об'єкти», помічники 80% Капі, газета «Про нас» / «Поради». SAVE_VERSION=18.
 - Раунд 40 (випущено): `ACTOR_K`=1,4 (звірята й гості на 10% менші, одного розміру; прибрано світний контур, чіткий контур 1 px через `crispFigure`/`drawCrispFigure` у `src/180_anim.js`); прибрано прямокутний нічний ореол магазину (`drawNightLights`, `src/220_events.js`); їжак Голка: каса збоку, на телефоні праворуч від Капі (`actorHome`); монетка в кат-сцені без хреста (`cutCoin`, `src/190_sound.js`); нова іконка (Капі на монетці-німбі, нічне небо): `docs/icons`, `desktop/build/icon.ico`, `desktop/app/icon.ico`, `store/icons`; генератор `previews/r40/make_icons.js`.
