@@ -1183,13 +1183,15 @@ function teamEyes(g, base) { for (let y = 4; y <= 7; y++) for (let x = 0; x < 16
 // Костюм героя в епосі: тулуб, капелюх і прикраси (кожен герой одягнений по-своєму)
 function composeTeamCostume(id, epoch) {
   const p = TEAM_PARTS[id], k = Object.keys(TEAM_PARTS).indexOf(id), cs = TEAM_COSTUMES[epoch % TEAM_COSTUMES.length];
-  const o = cs.outfits[(k * 5 + 1) % cs.outfits.length], hat = cs.hats[(k * 2 + (k >> 2)) % cs.hats.length];
+  const space = epoch % TEAM_COSTUMES.length === 6;                // Космос: усі звірята в скафандрі зі скляним шоломом
+  const o = space ? { b: 'w', l: 'E', d: ['belt', 'stripes', 'buttons', 'collar'][k % 4], c: ['o', 'T', 'f', 'v', 'r', 'n'][k % 6] } : cs.outfits[(k * 5 + 1) % cs.outfits.length];
+  const hat = space ? 'bubble' : cs.hats[(k * 2 + (k >> 2)) % cs.hats.length];
   const lower = CHIBI_LOWER.map(row => row.replace(/1/g, o.b).replace(/2/g, o.l).replace(/3/g, p.feet));
   const g = [...p.top, ...lower].map(row => (row + row.split('').reverse().join('')).split(''));
   const base0 = g.map(r => r.slice());
   const put = (x, y, c) => { if (y >= 0 && y < 16 && x >= 0 && x < 16) g[y][x] = c; };
   teamDeco(o.d, o.c, put);
-  if (id === 'spike') { /* їжак без капелюха: колючки лишаються видимими */ }
+  if (id === 'spike' && !space) { /* їжак без капелюха: колючки лишаються видимими */ }
   else if (Array.isArray(hat)) hat.forEach((row, i) => row.split('').forEach((c, x) => { if (c !== '.') put(x, i, c); }));
   else if (hat === 'headphones') {
     for (let x = 4; x <= 11; x++) put(x, 0, 'k');
