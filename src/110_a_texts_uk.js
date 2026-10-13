@@ -417,7 +417,7 @@ const translations = {
     dbgHour: '+1 година часу', dbgX100: '×100 монеток', dbgCircus: 'Цирк зараз',
     shareBtn: 'Надіслати',
     saveSummary: 'У збереженні: «{0}», відділів куплено: {1}, звірят: {2}, кристалів: {3}, зароблено: {4}',
-    panelHide: 'Сховати меню', panelShow: 'Відкрити меню',
+    panelHide: 'Сховати меню', panelShow: 'Відкрити меню', buildTapHint: 'Тапай по екрану — команда працюватиме швидше!', cleanHide: 'Сховати написи й лічильники', cleanShow: 'Показати написи й лічильники',
     setGender: 'Хто ти?', setGenderNote: 'Гра звертатиметься до тебе так, як обереш.',
     gender_f: 'Дівчина', gender_m: 'Хлопець',
     setDayNightOn: 'День і ніч: УВІМК.', setDayNightOff: 'День і ніч: ВИМК.', swAnim: 'Анімації', swDayNight: 'День і ніч', swBirds: 'Птахи', swNoFly: 'Прибрати літаючі об’єкти', swBirdsLate: 'Птахи в пізніх епохах', swClouds: 'Хмари', swSteam: 'Пара з люків', swRain: 'Дощ', swBig: 'Великий текст', swVib: 'Вібрація', setBirdsOn: 'Птахи: УВІМК.', setBirdsOff: 'Птахи: ВИМК.', setCloudsOn: 'Хмари: УВІМК.', setCloudsOff: 'Хмари: ВИМК.', setSteamOn: 'Пара з люків: УВІМК.', setSteamOff: 'Пара з люків: ВИМК.', setBigOn: 'Великий текст: УВІМК.', setBigOff: 'Великий текст: ВИМК.', setVibOn: 'Вібрація: УВІМК.', setVibOff: 'Вібрація: ВИМК.', setEvents0: 'Події: звичайно', setEvents1: 'Події: рідше', setEvents2: 'Події: мінімум', setEventsNote: 'Події — це цирк, звірята-герої, привиди, розпродажі й неприємності. «Рідше» — у 2,5 раза рідше, «мінімум» — у 5 разів.',

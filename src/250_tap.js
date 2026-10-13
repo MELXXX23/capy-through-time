@@ -50,6 +50,7 @@ function setupInput() {
   const sceneTap = e => {
     if (ui.app.classList.contains('sheet-open')) setSheet(false);          // телефон: дотик до гри ховає меню
     const p = toScenePoint(e.clientX, e.clientY);
+    if (build) { build.boost = Math.min(0.6, (build.boost || 0) + 0.1); buildSparks(p.x, p.y, 4, ['y', 'w', 'h']); }      // тап під час будівництва прискорює команду (до ×1,6)
     if (handleEventTap(p)) return;              // калюжа або єнот
     if (hitGhost(p)) return;                    // привид (Хелловін)
     if (hitClock(p)) return;                    // годинникова вежа торгового центру
@@ -91,6 +92,9 @@ function setupInput() {
   ui.panR.addEventListener('click', e => { e.stopPropagation(); panBy(viewCrop.w * 0.6); });
   document.addEventListener('keydown', e => { if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.target.closest('input,textarea') && ui.modal.hidden && ui.wheelModal.hidden && ui.circusModal.hidden && ui.letterModal.hidden) panBy((e.key === 'ArrowLeft' ? -1 : 1) * viewCrop.w * 0.3); });
   ui.panelToggle.addEventListener('click', () => { state.settings.panelOpen = !state.settings.panelOpen; applyPanel(); saveGame(); });
+  // «Порожній режим»: маленький − унизу зліва ховає лічильник, написи, бонуси й репліки (на горизонтальному екрані при закритому меню); + повертає все
+  ui.cleanToggle.addEventListener('pointerdown', e => e.stopPropagation());
+  ui.cleanToggle.addEventListener('click', e => { e.stopPropagation(); ui.app.classList.toggle('clean-ui'); updatePanelToggle(); });
   // з клавіатури: Enter або пробіл тапають по магазину
   ui.scene.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) {

@@ -190,6 +190,8 @@ function updatePanelToggle() {
     ui.panelToggle.title = label;
   }
   ui.panelToggle.classList.toggle('alert', !open && (hasAffordableAction() || hasTeamAction()));
+  const clean = ui.app.classList.contains('clean-ui'), cl = t(clean ? 'cleanShow' : 'cleanHide');       // «порожній режим»: підпис кнопки − / +
+  if (uiCache.cleanLabel !== cl) { uiCache.cleanLabel = cl; ui.cleanToggle.setAttribute('aria-label', cl); ui.cleanToggle.title = cl; ui.cleanToggle.setAttribute('aria-pressed', String(clean)); }
 }
 
 // Підбирає розмір шрифту, щоб напис вмістився на вивісці (в один або два рядки)

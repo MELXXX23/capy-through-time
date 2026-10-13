@@ -369,6 +369,34 @@ const SFX = {
   },
   typing(pitch) { tone(audio.sfxGain, 'square', pitch || 500, audio.ctx.currentTime, 0.03, 0.1); },
   pip()       { tone(audio.sfxGain, 'square', 880, audio.ctx.currentTime, 0.07, 0.15, 1320); },
+  themeArrive(ep) {   // прильот команди тематичного будівництва: коротка «візитка» епохи
+    const ac = audio.ctx, t = ac.currentTime + 0.02, g = audio.sfxGain;
+    switch (ep % 9) {
+      case 0: melody('triangle', [['C5', 0.12], ['E5', 0.12], ['G5', 0.12], ['C6', 0.45]], 0.22); melody('sine', [['G6', 0.1], ['C7', 0.4]], 0.08); break;       // ангельський передзвін
+      case 1: noiseHit(g, t, 0.6, 0.18, 'bandpass', 900); melody('sawtooth', [['G3', 0.2], ['C4', 0.4]], 0.12); break;                                          // дирижабль
+      case 2: for (let i = 0; i < 4; i++) { tone(g, 'sine', 125, t + i * 0.25, 0.2, 0.26, 45); noiseHit(g, t + i * 0.25 + 0.125, 0.04, 0.12, 'highpass', 6000); } break;   // бочка й хет
+      case 3: melody('square', [['C5', 0.06], ['E5', 0.06], ['G5', 0.06], ['C6', 0.06], ['E6', 0.14]], 0.16); break;                                            // чіптюн
+      case 4: for (let i = 0; i < 6; i++) tone(g, 'square', i % 2 ? 2100 : 1300, t + i * 0.06, 0.05, 0.07); noiseHit(g, t + 0.4, 0.5, 0.06, 'bandpass', 3000); break;   // модем
+      case 5: for (let i = 0; i < 4; i++) tone(g, 'sine', 2100 + i * 250, t + i * 0.12, 0.09, 0.1, 3000 + i * 150); break;                                      // пташки
+      case 6: noiseHit(g, t, 0.8, 0.14, 'bandpass', 500); tone(g, 'sine', 120, t, 0.8, 0.2, 520); tone(g, 'sine', 880, t + 0.7, 0.12, 0.1); break;              // тарілка
+      case 7: tone(g, 'sawtooth', 70, t, 0.6, 0.14, 700); tone(g, 'square', 1500, t + 0.55, 0.1, 0.08, 400); break;                                              // синті-гул
+      default: tone(g, 'sine', 95, t, 0.35, 0.3, 50); tone(g, 'sine', 95, t + 0.4, 0.35, 0.3, 50); melody('triangle', [['D5', 0.1], ['A5', 0.1], ['D6', 0.3]], 0.14);   // тайко й кото
+    }
+  },
+  themeHit(ep) {      // один «стук» команди епохи (грає ритмічно, поки будується)
+    const ac = audio.ctx, t = ac.currentTime + 0.01, g = audio.sfxGain;
+    switch (ep % 9) {
+      case 0: tone(g, 'sine', 1568, t, 0.14, 0.1); tone(g, 'sine', 2093, t + 0.02, 0.1, 0.06); break;
+      case 1: noiseHit(g, t, 0.05, 0.3, 'bandpass', 2600); tone(g, 'square', 220, t, 0.06, 0.12, 110); break;
+      case 2: tone(g, 'sine', 115, t, 0.14, 0.24, 48); break;
+      case 3: tone(g, 'square', 988, t, 0.05, 0.1); tone(g, 'square', 1319, t + 0.05, 0.1, 0.1); break;
+      case 4: noiseHit(g, t, 0.02, 0.3, 'highpass', 4000); tone(g, 'square', 1500, t, 0.03, 0.08); break;
+      case 5: tone(g, 'triangle', 620, t, 0.14, 0.16, 420); break;
+      case 6: tone(g, 'sawtooth', 300, t, 0.08, 0.09, 1200); noiseHit(g, t, 0.05, 0.1, 'highpass', 5000); break;
+      case 7: tone(g, 'sawtooth', 1500, t, 0.08, 0.09, 300); break;
+      default: noiseHit(g, t, 0.04, 0.3, 'bandpass', 1200); tone(g, 'triangle', 520, t, 0.1, 0.16, 300);
+    }
+  },
   click()     { tone(audio.sfxGain, 'square', 660, audio.ctx.currentTime, 0.03, 0.14); },
   warp(dur, ep) {   // подорож: у кожної епохи свій звук (Греція — арфа й дзвіночки, Ретро — перемотка, Диско — ритм, Аркади — чіп-мелодія, Інтернет — модем, Еко — вітер і птахи, Космос — свист і сонар, Неон — синті)
     const D = dur || 4.4, E = ((ep | 0) % EPOCHS.length + EPOCHS.length) % EPOCHS.length, t0 = audio.ctx.currentTime + 0.02, tb = t0 + D * 0.74, A = audio.sfxGain;

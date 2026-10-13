@@ -18,7 +18,7 @@ const ui = {
   buyModes: $('buyModes'), deptList: $('deptList'),
   paneTeam: $('pane-team'), teamList: $('teamList'), bubbles: $('bubbles'),
   paneStory: $('pane-story'), storyList: $('storyList'),
-  panL: $('panL'), panR: $('panR'), eventBanner: $('eventBanner'), boosts: $('boosts'), wheelOpen: $('wheelOpen'),
+  panL: $('panL'), panR: $('panR'), cleanToggle: $('cleanToggle'), eventBanner: $('eventBanner'), boosts: $('boosts'), wheelOpen: $('wheelOpen'),
   wheelModal: $('wheelModal'), wheelCanvas: $('wheelCanvas'), wheelStreak: $('wheelStreak'), wheelResult: $('wheelResult'),
   lootModal: $('lootModal'), lootCanvas: $('lootCanvas'), lootName: $('lootName'), lootType: $('lootType'), lootTag: $('lootTag'), lootWear: $('lootWear'), lootClose: $('lootClose'),
   circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),

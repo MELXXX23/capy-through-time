@@ -311,6 +311,7 @@ function drawBeaverBuilder(b, p) {
   }
 }
 function renderBuild() {
+  if (buildThemeRender()) return;                 // тематична анімація епохи (src/278_build_themes.js)
   const b = build, p = b.t / b.dur, o = b.old;
   if (p < BUILD_A) drawCanvasSprite(ctx, o.canvas, o.x, o.y, {});                // старий магазин лишається, поки його не накрило шатро
   if (p >= BUILD_C) ctx.drawImage(shop.canvas, shop.x, shop.y);                  // новий магазин показується лише коли шатро знімається: ніяких «поверхів, що вкладаються»

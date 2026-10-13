@@ -403,7 +403,7 @@
     dbgHour: '+1 hour of time', dbgX100: '×100 coins', dbgCircus: 'Circus now',
     shareBtn: 'Share',
     saveSummary: 'Save contains: "{0}", departments bought: {1}, animals: {2}, crystals: {3}, earned: {4}',
-    panelHide: 'Hide menu', panelShow: 'Show menu',
+    panelHide: 'Hide menu', panelShow: 'Show menu', buildTapHint: 'Tap the screen to make the crew work faster!', cleanHide: 'Hide counters and labels', cleanShow: 'Show counters and labels',
     setGender: 'Who are you?', setGenderNote: 'The game will talk to you the way you choose.',
     gender_f: 'Girl', gender_m: 'Boy',
     setDayNightOn: 'Day & night: ON', setDayNightOff: 'Day & night: OFF', swAnim: 'Animations', swDayNight: 'Day & night', swBirds: 'Birds', swNoFly: 'Remove flying objects', swBirdsLate: 'Birds in later eras', swClouds: 'Clouds', swSteam: 'Manhole steam', swRain: 'Rain', swBig: 'Large text', swVib: 'Vibration', setBirdsOn: 'Birds: ON', setBirdsOff: 'Birds: OFF', setCloudsOn: 'Clouds: ON', setCloudsOff: 'Clouds: OFF', setSteamOn: 'Manhole steam: ON', setSteamOff: 'Manhole steam: OFF', setBigOn: 'Large text: ON', setBigOff: 'Large text: OFF', setVibOn: 'Vibration: ON', setVibOff: 'Vibration: OFF', setEvents0: 'Events: normal', setEvents1: 'Events: rarer', setEvents2: 'Events: minimal', setEventsNote: 'Events are the circus, era animals, ghosts, sales and mishaps. “Rarer” is 2.5 times less often, “minimal” is 5 times.',

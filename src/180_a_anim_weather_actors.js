@@ -320,7 +320,8 @@ function startBuild(old) {
   ejectInside();
   const style = (state.shopLevel + 1) % 3;                       // три способи будівництва по черзі: молоток, кран, дошки
   playSfx('buildTheme');
-  build = { t: 0, dur: CONFIG.BUILD_SECONDS * (state.shopLevel >= 4 ? 0.72 : 1), old, dustTimer: 0, burst: false, style, r: 0, shake: 0, hitT: 0, lastSfx: 0, bx: old.x - 30, by: LAYOUT.curbY + 4, bdir: 1, fw: 0, fwT: 0, landed: -1, bands: 0, fin: false };
+  if (!buildPreview) showToast(t('buildTapHint'), 'good');
+  build = { t: 0, dur: CONFIG.BUILD_SECONDS, boost: 0, hitSfx: 0, old, dustTimer: 0, burst: false, style, r: 0, shake: 0, hitT: 0, lastSfx: 0, bx: old.x - 30, by: LAYOUT.curbY + 4, bdir: 1, fw: 0, fwT: 0, landed: -1, bands: 0, fin: false };
   ui.shopOverlay.style.visibility = 'hidden';
 }
 function finishBuild() {
@@ -355,7 +356,10 @@ function buildSfx(b, n) { if (b.t - b.lastSfx > n) { b.lastSfx = b.t; playSfx('b
 function buildSparks(x, y, n, cols) { for (let i = 0; i < n; i++) { const a = rand(0, Math.PI * 2), sp = rand(20, 55); fx.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 22, age: 0, life: rand(0.35, 0.65), col: cols[i % cols.length] }); } }
 function buildBands() { return Math.max(4, Math.ceil(shop.h / 6)); }
 function updateBuild(dt) {
-  const b = build; b.t += dt;
+  const b = build;
+  b.boost = Math.max(0, (b.boost || 0) - dt * 0.4);      // тап-прискорення згасає, якщо не тапати
+  dt *= 1 + b.boost;
+  b.t += dt;
   const p = b.t / b.dur, o = b.old, cx = shop.x + shop.w / 2;
   b.shake = Math.max(0, b.shake - dt * 3);
   let tx = cx, ty = LAYOUT.curbY + 4, run = false;
@@ -372,13 +376,15 @@ function updateBuild(dt) {
   else if (p < BUILD_C) b.truckX = b.parkX;
   else { const u = Math.max(0, (p - BUILD_C) / (1 - BUILD_C)); b.truckX = b.parkX + (endX - b.parkX) * u * u; b.truckMoving = u > 0.02; }
   b.pour = p >= BUILD_A && p < BUILD_A + 0.3;
-  if (!b.sArr && p > 0.005) { b.sArr = true; playSfx('truckDrive', BUILD_A * b.dur * 0.9); }              // приїзд
-  if (!b.sPour && p >= BUILD_A) { b.sPour = true; playSfx('concrete'); }                                // бетон із жолоба
-  if (!b.sLeave && p >= BUILD_C + 0.03) { b.sLeave = true; playSfx('truckDrive', 2.2); }                 // від'їзд
+  const themed = !!BTH.list[viewEpoch() % BTH.list.length];                                              // у тематичній анімації немає вантажівок — звуки епохи
+  if (!b.sArr && p > 0.005) { b.sArr = true; playSfx(themed ? 'themeArrive' : 'truckDrive', themed ? viewEpoch() : BUILD_A * b.dur * 0.9); }   // приїзд
+  if (!b.sPour && p >= BUILD_A) { b.sPour = true; if (!themed) playSfx('concrete'); }                  // бетон із жолоба
+  if (!b.sLeave && p >= BUILD_C + 0.03) { b.sLeave = true; if (!themed) playSfx('truckDrive', 2.2); }       // від'їзд
+  if (themed && p >= BUILD_A && p < BUILD_C && b.t - b.hitSfx > 0.55) { b.hitSfx = b.t; playSfx('themeHit', viewEpoch()); }   // ритмічний «стук» епохи
   b.build = false; b.carry = false;
   if (p < BUILD_A) {                                           // Боді вибігає назустріч вантажівці, старий магазин ховається під шатро й розсипається
     b.r = 0; run = true; tx = (visL() - 20) + (b.parkX - 10 - (visL() - 20)) * smooth01(p / BUILD_A); b.bx = tx;
-    if (p > 0.115 && !b.crumbled) { b.crumbled = true; b.shake = 0.9; playSfx('hammer'); playSfx('truckBrake'); for (let i = 0; i < 16; i++) spawnDust(o.x - 6 + (i / 15) * (o.w + 12), LAYOUT.curbY + 2, 1); buildSparks(o.x + o.w / 2, o.y + 8, 6, ['w', 'E']); }      // шатро лягло на магазин
+    if (p > 0.115 && !b.crumbled) { b.crumbled = true; b.shake = 0.9; playSfx('hammer'); if (!themed) playSfx('truckBrake'); for (let i = 0; i < 16; i++) spawnDust(o.x - 6 + (i / 15) * (o.w + 12), LAYOUT.curbY + 2, 1); buildSparks(o.x + o.w / 2, o.y + 8, 6, ['w', 'E']); }      // шатро лягло на магазин
   } else if (p < BUILD_C) {
     b.r = 0;                                                     // новий магазин лишається під шатром до самого кінця
     const ph = ((b.t - BUILD_A * b.dur) / 1.5) % 1, siteX = shop.x + shop.w * 0.24, pileX = b.parkX - 8;
