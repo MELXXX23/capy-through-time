@@ -23,7 +23,7 @@ function buyDept(i) {
 
 function expandShop() {
   const next = nextLevelDef();
-  if (!next || !requirementsMet(next) || state.coins < expandCost(next)) return;
+  if (!next || build || buildPreview || !requirementsMet(next) || state.coins < expandCost(next)) return;
   const old = { canvas: shop.canvas, x: shop.x, y: shop.y, w: shop.w, h: shop.h };
   state.coins -= expandCost(next);
   state.shopLevel += 1;

@@ -253,6 +253,7 @@ function applyTranslations() {
   if (shop) updateSignText();
   ui.dlgSkip.textContent = t('storySkip');
   updateSoundUI();
+  if (typeof refreshGodCard === 'function' && ui.godToggle) refreshGodCard();
   refreshDialogLanguage();
   for (const k in uiCache) delete uiCache[k];
   updateUI();

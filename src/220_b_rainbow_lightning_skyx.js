@@ -168,9 +168,10 @@ function seedSkyExtra() {
   }
   if (ep === 0) for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'kite', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 14, 58), vx: rand(0.8, 1.8) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['y', 'n'], ['g', 'w']][i % 3] });
   if (ep === 1) {
-    const nP = Math.max(3, Math.round((worldR() - worldL()) / 260));                                   // пропелерні літаки різних кольорів: на екрані завжди хоча б один
-    for (let i = 0; i < nP; i++) SKYX.items.push({ k: 'ppl', x: worldL() + (worldR() - worldL()) * (i + rand(0.2, 0.8)) / nP, y: rand(top + 20, 70), vx: rand(16, 26) * (i % 2 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['o', 'w']][i % 4] });
-    for (let i = 0; i < Math.max(2, Math.round(2 * wide)); i++) SKYX.items.push({ k: 'sput', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 12, 52), vx: rand(2, 4) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
+    const nP = Math.max(3, Math.round((worldR() - worldL()) / 380));                                   // пропелерні літаки різних кольорів: на екрані завжди хоча б один
+    for (let i = 0; i < nP; i++) SKYX.items.push({ k: 'ppl', x: worldL() + (worldR() - worldL()) * (i + rand(0.2, 0.8)) / nP, y: rand(top + 16, Math.max(top + 34, 8)), vx: rand(16, 26) * (i % 2 ? -1 : 1), ph: rand(0, 6), c: [['r', 'w'], ['n', 'y'], ['g', 'w'], ['o', 'w']][i % 4] });
+    for (let i = 0; i < Math.max(1, Math.round((worldR() - worldL()) / 700)); i++) SKYX.items.push({ k: 'rkt', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 14, Math.max(top + 30, 0)), vx: rand(7, 12) * (Math.random() < 0.5 ? -1 : 1), ph: rand(0, 6) });
+    for (let i = 0; i < Math.max(2, Math.round((worldR() - worldL()) / 420)); i++) SKYX.items.push({ k: 'heli', x: rand(worldL() + 20, worldR() - 20), y: rand(top + 24, Math.max(top + 44, 14)), vx: rand(9, 15) * (i % 2 ? -1 : 1), ph: rand(0, 6) });
   }
   if (ep === 2) for (let i = 0; i < Math.max(7, Math.round(8 * wide)); i++) SKYX.items.push({ k: 'note', x: rand(worldL() + 10, worldR() - 10), x0: 0, y: rand(top + 16, 128), vy: -rand(6, 10), ph: rand(0, 6.28), amp: rand(5, 11), c: ['f', 'T', 'y', 'p', 'a'][i % 5], g: i % 3 });
   if (ep === 3) for (let i = 0; i < Math.round(9 * wide); i++) SKYX.items.push(skyxTetris(true));
@@ -190,7 +191,8 @@ function updateSkyExtra(dt) {
     else if (f.k === 'kite') { f.x += f.vx * dt; f.ph += dt * 1.2; }
     else if (f.k === 'note') { f.y += f.vy * dt; f.ph += dt * 1.1; if (f.y < top - 6) { f.y = 130; f.x = rand(worldL() + 10, worldR() - 10); f.ph = rand(0, 6.28); } }
     else if (f.k === 'ppl') { f.x += f.vx * dt; f.ph += dt; }
-    else if (f.k === 'sput') { f.x += f.vx * dt; f.ph += dt * 1.4; }
+    else if (f.k === 'rkt') { f.x += f.vx * dt; f.ph += dt * 1.2; }
+    else if (f.k === 'heli') { f.x += f.vx * dt; f.ph += dt * 1.6; }
     else if (f.k === 'inv') { f.x += f.vx * dt; f.ph += dt; if (f.x > worldR() + 12) f.vx = -Math.abs(f.vx); if (f.x < worldL() - 12) f.vx = Math.abs(f.vx); }
     else if (f.k === 'bfly') { f.x += f.vx * dt; f.y += Math.sin(f.ph * 1.7) * 6 * dt; f.ph += dt * 3; if (f.y < top + 24) f.y += 10 * dt; if (f.y > 122) f.y -= 10 * dt; }
     else if (f.k === 'tet') { f.y += f.vy * dt; f.rt -= dt; if (f.rt <= 0) { f.rt = rand(1, 2.2); f.rot = (f.rot + 1) % 4; } if (f.y > 96) Object.assign(f, skyxTetris(false)); }
@@ -389,28 +391,126 @@ function skyxNote(x, y, ph, c, g, amp) {                            // нота 
   if (fade <= 0.02) return;
   ctx.globalAlpha = 0.92 * fade; ctx.drawImage(cv, x - 15, y - 27); ctx.globalAlpha = 1;
 }
-const planeCache = {};
-function skyxPlane(x, y, ph, c, dir) {                              // пропелерний літак 50-х: корпус, крило, хвіст, кабіна, пропелер і слід
-  const key = c.join() + dir; let cv = planeCache[key];
-  if (!cv) {
-    const S = 1.5; cv = document.createElement('canvas'); cv.width = 45; cv.height = 21; const g = cv.getContext('2d');
-    const h1 = PALETTE[c[0]], h2 = PALETTE[c[1]], P = (px, py, w, h, col) => { const X = Math.round(px * S), Wd = Math.max(1, Math.round(w * S)); g.fillStyle = col; g.fillRect(dir > 0 ? X : 45 - X - Wd, Math.round(py * S), Wd, Math.max(1, Math.round(h * S))); };
-    P(5, 5, 20, 5, '#2a1f2e'); P(6, 6, 18, 3, h1); P(6, 6, 18, 1, mixHex(h1, '#ffffff', 0.5)); P(6, 8, 18, 1, mixHex(h1, '#272048', 0.35));   // корпус
-    P(21, 4, 5, 2, '#2a1f2e'); P(22, 4, 3, 1, h2); P(1, 8, 6, 3, '#2a1f2e'); P(2, 8, 4, 2, h2);                                                // кабіна й хвіст
-    P(12, 2, 8, 3, '#2a1f2e'); P(13, 3, 6, 1, h2); P(11, 10, 9, 2, '#2a1f2e'); P(12, 10, 7, 1, h2);                                              // крила (біплан)
-    P(15, 3, 1, 8, '#2a1f2e'); P(25, 7, 2, 2, '#2a1f2e'); P(26, 7, 1, 2, '#c0c8e0');                                                              // стійка й капот
-    P(22, 6, 3, 2, '#bfe9ff'); P(22, 6, 1, 1, '#ffffff');                                                                                         // скло
-    planeCache[key] = cv;
-  }
-  x = Math.round(x); y = Math.round(y + Math.sin(ph * 1.3) * 1.5);
-  ctx.drawImage(cv, x - 22, y - 11);
-  const px = x + dir * 20, bl = Math.floor(animClock * 20) % 2 ? 7 : 4;                                                                            // пропелер
-  R(ctx, px, y - bl, 2, bl * 2 + 1, 'w'); ctx.globalAlpha = 0.35; R(ctx, px, y - 9, 2, 19, 'w'); ctx.globalAlpha = 1;
-  ctx.globalAlpha = 0.5; for (let k = 1; k <= 14; k++) { ctx.globalAlpha = 0.5 * (1 - k / 15); R(ctx, x - dir * (24 + k * 3), y + 1 + (k >> 3), 3, 1, 'w'); } ctx.globalAlpha = 1;      // слід
+// ---------- Ретро: ракета, вертоліт, авіалайнер (кеш-спрайти: світло зверху-ліворуч, 5 відтінків, темний контур 1 px) ----------
+const retroCache = {};
+function retroCanvas(W, H) { const cv = document.createElement('canvas'); cv.width = W; cv.height = H; return cv; }
+function retroOutline(cv) {                                          // темний контур навколо силуету
+  const W = cv.width, H = cv.height, g = cv.getContext('2d'), d = g.getImageData(0, 0, W, H).data, out = [];
+  const solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 40;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!solid(x, y) && (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1))) out.push([x, y]);
+  g.fillStyle = '#2a1f2e'; out.forEach(([x, y]) => g.fillRect(x, y, 1, 1));
 }
-function skyxSputnik(x, y, ph) {                                    // перший супутник: блискуча куля з чотирма вусами, миготливий вогник
-  x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
-  for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.hypot(dx, dy); if (d > 4.3) continue; const sh = (-dx - dy) / 8; R(ctx, x + dx, y + dy, 1, 1, d > 3.4 ? 'd' : sh > 0.35 ? 'w' : sh > -0.05 ? 'E' : 'e'); }
-  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => { for (let k = 5; k <= 13; k++) R(ctx, x + sx * k, y + sy * Math.round(k * 0.45), 1, 1, k > 11 ? 'w' : 'd'); });
-  if (Math.floor(animClock * 2 + ph) % 2) { ctx.globalAlpha = 0.4; disc(ctx, x + 3, y - 3, 3, 'r'); ctx.globalAlpha = 1; R(ctx, x + 3, y - 3, 1, 1, 'r'); }
+const RT_WHITE = ['#ffffff', '#f2eee8', '#d8d0c8', '#b3a9a8', '#8a8296'];
+const RT_RED = ['#ff9478', '#ec5640', '#c63a2c', '#982a26', '#6a1c20'];
+const RT_STEEL = ['#eef2fa', '#c9d1e2', '#9aa5c0', '#6f7a99', '#4d5673'];
+const RT_TEAL = ['#c4f5ea', '#84dccb', '#52bba9', '#31908a', '#216a6c'];
+const RT_GLASS = ['#f2fcff', '#c4eefa', '#92d3ea', '#68b0cf', '#4b8ba9'];
+function rtPick(ramp, u) { return ramp[Math.max(0, Math.min(ramp.length - 1, Math.floor(u * ramp.length)))]; }
+
+function rocketCanvas(dir) {                                         // ретро-ракета з плавниками (дивиться праворуч; dir<0 — дзеркально)
+  const key = 'rk' + dir; if (retroCache[key]) return retroCache[key];
+  const W = 66, H = 28, cy = 14, cv = retroCanvas(W, H), g = cv.getContext('2d');
+  const P = (x, y, c) => { g.fillStyle = c; g.fillRect(dir > 0 ? x : W - 1 - x, y, 1, 1); };
+  const half = x => x < 6 ? 0 : x < 11 ? 3 + (x - 6) * 0.5 : x < 44 ? 5.5 : 5.5 * Math.sqrt(Math.max(0, 1 - ((x - 44) / 18) * ((x - 44) / 18)));
+  for (let x = 6; x < 63; x++) {
+    const h = half(x); if (h <= 0.3) continue;
+    for (let y = Math.round(cy - h); y < Math.round(cy + h); y++) {
+      const u = ((y + 0.5 - cy) / h + 1) / 2 + ((x + y) % 2 ? 0.05 : 0);
+      let ramp = x >= 47 ? RT_RED : RT_WHITE;
+      if (x >= 36 && x <= 38) ramp = RT_RED;                                                  // пояс
+      if (x === 35 || x === 39) ramp = RT_STEEL;
+      if (x >= 40 && x <= 44 && ((x + y) & 1)) ramp = RT_STEEL;                              // шахова смужка
+      P(x, y, rtPick(ramp, u * 0.95));
+    }
+  }
+  [[22, cy - 1]].forEach(([cx, py]) => {                                        // ілюмінатори
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) P(cx + dx, py + dy, '#243a66');
+    P(cx, py, '#9fdcff'); P(cx - 1, py - 1, '#ffffff');
+  });
+  for (let x = 28; x <= 33; x += 2) { P(x, cy - 1, '#243a66'); P(x, cy, '#9fdcff'); }   // ряд малих віконець
+  for (let x = 3; x <= 17; x++) {                                                            // плавники: верхній світліший, нижній темніший
+    const ytop = 1 + Math.round((x - 3) * 0.5), hb = Math.max(3, half(x));
+    for (let y = ytop; y < Math.round(cy - hb); y++) P(x, y, rtPick(RT_RED, 0.1 + (y - ytop) / 14 + (x > 14 ? 0.15 : 0)));
+    for (let y = Math.round(cy + hb); y < 2 * cy - ytop; y++) P(x, y, rtPick(RT_RED, 0.55 + (2 * cy - ytop - y) / -20 + 0.3));
+  }
+  for (let y = cy - 2; y <= cy + 2; y++) for (let x = 3; x < 7; x++) P(x, y, y === cy - 2 ? '#b8bcc8' : '#6a6e7a');   // сопло
+  retroOutline(cv);
+  return (retroCache[key] = cv);
+}
+function skyxRocket(x, y, ph, dir, g) {
+  g = g || ctx; const cv = rocketCanvas(dir); x = Math.round(x); y = Math.round(y + Math.sin(ph * 0.8) * 1.5);
+  g.drawImage(cv, x - 33, y - 14);
+  const tx = x - dir * 30, L = 9 + (Math.floor(animClock * 14) % 3) * 3;                      // язик полум'я
+  for (let k = 0; k < L; k++) { const h = Math.max(0, Math.round(3.2 * (1 - k / L))); R(g, tx - dir * (1 + k) - (dir < 0 ? 0 : 0), y - h, 1, h * 2 + 1, k < L * 0.5 ? 'y' : 'o'); }
+  R(g, tx - dir * 2, y - 1, 3, 3, 'w');
+  for (let i = 0; i < 6; i++) { g.globalAlpha = 0.55 * (1 - i / 6); disc(g, tx - dir * (L + 4 + i * 6), y + Math.round(Math.sin(ph * 2 + i) * 1.5), 1 + (i >> 1), 'w'); }   // димок
+  g.globalAlpha = 1;
+}
+
+function heliCanvas(dir) {                                           // вертоліт 50-х: скляна «бульба», хвіст, лижі
+  const key = 'hl' + dir; if (retroCache[key]) return retroCache[key];
+  const W = 48, H = 26, cv = retroCanvas(W, H), g = cv.getContext('2d');
+  const P = (x, y, c) => { g.fillStyle = c; g.fillRect(dir > 0 ? x : W - 1 - x, y, 1, 1); };
+  const cx = 31, cy = 14, rx = 12, ry = 8.5;
+  for (let x = 3; x < 22; x++) {                                                             // хвостова балка (звужується) і хвостове оперення
+    const th = x < 12 ? 2 : 3, y0 = 12 + (x < 12 ? 0 : 0);
+    for (let y = y0; y < y0 + th; y++) P(x, y, rtPick(RT_TEAL, (y - y0) / th * 0.9));
+  }
+  for (let x = 3; x <= 8; x++) for (let y = 4 + Math.floor((x - 3) * 0.5); y < 12; y++) P(x, y, rtPick(RT_RED, 0.15 + (y - 4) / 14 + (x - 3) * 0.04));
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {                                  // корпус-еліпс
+    const dx = (x + 0.5 - cx) / rx, dy = (y + 0.5 - cy) / ry; if (dx * dx + dy * dy > 1) continue;
+    const u = (dy + 1) / 2 - dx * 0.08;
+    if (x >= cx - 2 && dy < 0.25) P(x, y, rtPick(RT_GLASS, Math.max(0, Math.min(0.99, u * 1.1))));   // скло спереду й зверху
+    else P(x, y, rtPick(RT_TEAL, Math.max(0, Math.min(0.99, u))));
+    if (Math.abs(dy - 0.45) < 0.1 && dx < 0.9) P(x, y, rtPick(RT_RED, u * 0.8));              // червона смуга
+  }
+  for (let y = 4; y < 14; y++) { P(cx - 8, y, '#1f6a68'); if (y > 5) P(cx - 7, y, '#4b8ba9'); }  // стійка скла (вертикальна рамка)
+  P(cx - 5, cy - 6, '#ffffff'); P(cx - 4, cy - 7, '#ffffff'); P(cx + 4, cy - 5, '#ffffff'); // відблиски
+  for (let y = 3; y <= 6; y++) P(cx - 1, y, '#3a3248'); P(cx - 1, 6, '#6a6e7a'); P(cx, 6, '#6a6e7a');   // щогла гвинта
+  for (let x = 22; x <= 41; x++) P(x, 23, '#3a3248'); P(22, 22, '#3a3248'); P(41, 22, '#3a3248');       // лижі
+  P(26, 20, '#3a3248'); P(26, 21, '#3a3248'); P(26, 22, '#3a3248'); P(36, 20, '#3a3248'); P(36, 21, '#3a3248'); P(36, 22, '#3a3248');
+  retroOutline(cv);
+  return (retroCache[key] = cv);
+}
+function skyxHeli(x, y, ph, dir, g) {
+  g = g || ctx; const cv = heliCanvas(dir); x = Math.round(x); y = Math.round(y + Math.sin(ph * 1.1) * 1.5);
+  g.drawImage(cv, x - 24, y - 13);
+  const f = Math.floor(animClock * 24) % 2, hx = x + dir * (31 - 24) , hy = y - 13 + 2;       // головний гвинт: розмите коло з двома лопатями
+  g.globalAlpha = 0.28; R(g, hx - 17, hy, 35, 1, 'w'); g.globalAlpha = 1;
+  R(g, hx - (f ? 17 : 12), hy, f ? 13 : 11, 1, '#3a3248'); R(g, hx + (f ? 5 : 2), hy, f ? 13 : 11, 1, '#3a3248');
+  const tx = x - dir * (24 - 3) + (dir > 0 ? 0 : 0), tg = Math.floor(animClock * 30) % 2;      // хвостовий гвинт
+  R(g, tx, y - 13 + 6 + tg, 1, 5, '#3a3248');
+}
+
+function airlinerCanvas(c, dir) {                                    // повітряний лайнер 50-х: сріблястий, з хвостом і смугою кольору, два двигуни з гвинтами
+  const key = 'al' + c.join() + dir; if (retroCache[key]) return retroCache[key];
+  const W = 60, H = 26, cy = 11, cv = retroCanvas(W, H), g = cv.getContext('2d');
+  const P = (x, y, col) => { g.fillStyle = col; g.fillRect(dir > 0 ? x : W - 1 - x, y, 1, 1); };
+  const liv = PALETTE[c[0]], acc = PALETTE[c[1]] || '#ffffff';
+  const livRamp = [mixHex(liv, '#ffffff', 0.4), mixHex(liv, '#ffffff', 0.12), liv, mixHex(liv, '#272048', 0.32), mixHex(liv, '#272048', 0.55)];
+  const half = x => x < 12 ? 1.6 + (x - 5) * 0.22 : x < 40 ? 3.3 : 3.3 * Math.sqrt(Math.max(0, 1 - ((x - 40) / 13) * ((x - 40) / 13)));
+  for (let x = 5; x < 53; x++) {                                                             // фюзеляж
+    const h = half(x); if (h <= 0.4) continue;
+    for (let y = Math.round(cy - h); y < Math.round(cy + h); y++) P(x, y, rtPick(RT_STEEL, ((y + 0.5 - cy) / h + 1) / 2 * 0.95 - 0.04 * (x > 20 ? 1 : 0)));
+  }
+  for (let x = 8; x < 50; x++) { P(x, cy, rtPick(livRamp, 0.45)); if (x < 46) P(x, cy + 1, rtPick(livRamp, 0.7)); }   // смуга-«cheat line»
+  for (let x = 17; x <= 37; x += 3) { P(x, cy - 2, '#26335e'); P(x, cy - 3, '#b8e4ff'); }   // ілюмінатори
+  P(45, cy - 2, '#7fd0ff'); P(46, cy - 2, '#7fd0ff'); P(47, cy - 2, '#b8e4ff'); P(44, cy - 2, '#26335e');   // кабіна
+  for (let x = 5; x <= 15; x++) {                                                            // кіль
+    const ytop = cy - 9 + Math.round((x - 5) * 0.55);
+    for (let y = ytop; y < cy - 1; y++) P(x, y, rtPick(livRamp, 0.3 + (y - ytop) / 18));
+  }
+  for (let x = 5; x <= 12; x++) P(x, cy + 1 - (x > 9 ? 1 : 0), '#6f7a99');                 // стабілізатор
+  for (let r = 0; r < 6; r++) for (let x = 31 - r * 2; x <= 39 - r * 2; x++) P(x, cy + 3 + r, rtPick(RT_STEEL, 0.2 + r * 0.1));   // крило, що йде вниз у перспективі
+    [[34, 4], [23, 8]].forEach(([ex, ey]) => { for (let x = ex; x < ex + 9; x++) for (let y = 0; y < 3; y++) P(x, cy + ey + y, rtPick(RT_STEEL, 0.15 + y * 0.35)); P(ex + 8, cy + ey + 1, '#3a3248'); });
+  retroOutline(cv);
+  
+  return (retroCache[key] = cv);
+}
+function skyxPlane(x, y, ph, c, dir, g) {                           // літак із пропелерами (4 кольори лівреї), слід
+  g = g || ctx; const cv = airlinerCanvas(c, dir); x = Math.round(x); y = Math.round(y + Math.sin(ph * 1.3) * 1.5);
+  g.drawImage(cv, x - 30, y - 11);
+  const bl = Math.floor(animClock * 20) % 2 ? 4 : 2;
+  [[43, 5], [32, 9]].forEach(([ex, ey]) => { const px = x + dir * (ex - 30) + (dir > 0 ? 1 : -1), py = y - 11 + 11 + ey; g.globalAlpha = 0.45; R(g, px, py - 4, 1, 9, 'w'); g.globalAlpha = 1; R(g, px, py - bl, 1, bl * 2 + 1, '#3a3248'); });
+  for (let k = 1; k <= 14; k++) { g.globalAlpha = 0.5 * (1 - k / 15); R(g, x - dir * (34 + k * 3), y + 1 + (k >> 3), 3, 1, 'w'); } g.globalAlpha = 1;   // слід
 }

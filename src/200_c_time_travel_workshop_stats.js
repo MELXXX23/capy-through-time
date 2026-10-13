@@ -417,6 +417,36 @@ if (/[?&]debug=1/.test(location.search)) window.__show = (L, ep, ph, season, pan
   state.settings.rain = false; state.settings.season = season || 'summer'; state.epoch = ep; state.eid = ep % EPOCHS.length; state.activeEpoch = -1; state.shopLevel = L; state.team = state.team.map((v, i) => (i < 8 ? 3 : 0)); state.dayPhase = ph; state.settings.panelOpen = !!panel;
   recalcIncome(); try { rebuildEpochLayers(); } catch (e) { /* ок */ } rebuildShop(true); syncActors(); layoutScene(); applyPanel(); document.querySelectorAll('.toast').forEach(e => e.remove()); return 'ok';
 };
+// Кнопка «Режим бога ВИМК/УВІМК» у Налаштуваннях (лише власнику): зберігає гру, ставить/знімає прапорець паузи й перезавантажує
+function toggleGodMode() {
+  try { saveGame(); if (GOD_PAUSED) localStorage.removeItem('capyGodPause'); else localStorage.setItem('capyGodPause', '1'); } catch (e) { showToast(t('importNoStorage'), 'bad'); return; }
+  savingDisabled = true;
+  showToast(t(GOD_PAUSED ? 'godOn' : 'godOff'), 'good');
+  setTimeout(() => location.reload(), 700);
+}
+// Підписи кнопок режиму бога: стан, рівні для показу будівництва й «повернути/лишити рівень»
+let dbgBuildKeep = false;
+function refreshGodCard() {
+  ui.godToggle.textContent = t(GOD_PAUSED ? 'godToggleOff' : 'godToggleOn');
+  ui.godToggle.classList.toggle('danger', !GOD_PAUSED);
+  ui.dbgBuildBtns.querySelectorAll('button').forEach(b => { b.textContent = '→ ' + b.dataset.lvl + '. ' + t('levelName_' + b.dataset.lvl); });
+  ui.dbgBuildKeep.textContent = t(dbgBuildKeep ? 'dbgBuildKeepOn' : 'dbgBuildKeepOff');
+}
+// Режим бога: показати анімацію будівництва переходу на рівень L (без витрат і вимог). Після показу рівень повертається, якщо не ввімкнено «лишити»
+function debugBuild(L) {
+  if (build || buildPreview || !shop) { showToast(t('dbgBuildBusy'), 'bad'); return; }
+  closeAllOverlaysForBuild();
+  const back = state.shopLevel;
+  buildPreview = { back, keep: dbgBuildKeep };
+  state.shopLevel = L - 1; rebuildShop(true);
+  const old = { canvas: shop.canvas, x: shop.x, y: shop.y, w: shop.w, h: shop.h };
+  state.shopLevel = L; rebuildShop(true);
+  startBuild(old);
+  playSfx('build'); updateMusic(); layoutScene(); updateUI();
+}
+function closeAllOverlaysForBuild() {                                      // вкладку з меню на телефоні ховаємо, щоб було видно сцену
+  try { if (mobileMQ.matches && state.settings.panelOpen) { state.settings.panelOpen = false; applyPanel(); } } catch (e) { /* не страшно */ }
+}
 // Режим тестування (?debug=1): швидко перевірити баланс
 function debugHour() {
   const add = state.cps * 3600;

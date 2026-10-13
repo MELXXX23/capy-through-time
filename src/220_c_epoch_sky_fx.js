@@ -140,10 +140,10 @@ function drawSkyExtra(time) {
   }
   if (ep === 1 && SKYX.banner && !noFly) {                                          // Ретро: літак тягне полотнище SALE
     const b = SKYX.banner, x = Math.round(b.x), y = Math.round(b.y + Math.sin(time * 1.5) * 1);
-    R(ctx, x, y, 14, 4, 'w'); R(ctx, x + 14, y + 1, 3, 2, 'e'); R(ctx, x + 3, y - 2, 6, 2, 'r'); R(ctx, x + 4, y + 4, 4, 2, 'r'); R(ctx, x + 12, y, 2, 1, 'S'); R(ctx, x - 2, y + 1, 2, 2, 'e'); R(ctx, x + 17, y + 1, 1, 2, Math.floor(time * 30) % 2 ? 'd' : 'e');
-    skyxLn(ctx, x - 2, y + 2, x - 8, y + 4, 'd');
-    for (let i = 0; i < 40; i++) { const yy = y + 4 - 3 + Math.round(Math.sin(time * 5 + i * 0.35) * 1); R(ctx, x - 8 - 40 + i, yy, 1, 13, i < 1 || i > 38 ? 'r' : 'w'); R(ctx, x - 8 - 40 + i, yy, 1, 1, 'r'); R(ctx, x - 8 - 40 + i, yy + 12, 1, 1, 'r'); }
-    wordBig(ctx, x - 8 - 36, y + 4 - 3 + 3, 'SALE', 'r');
+    skyxPlane(x, y, 0, ['r', 'w'], 1);
+    skyxLn(ctx, x - 31, y + 1, x - 40, y + 4, 'd');
+    for (let i = 0; i < 40; i++) { const yy = y + 4 - 3 + Math.round(Math.sin(time * 5 + i * 0.35) * 1); R(ctx, x - 40 - 40 + i, yy, 1, 13, i < 1 || i > 38 ? 'r' : 'w'); R(ctx, x - 40 - 40 + i, yy, 1, 1, 'r'); R(ctx, x - 40 - 40 + i, yy + 12, 1, 1, 'r'); }
+    wordBig(ctx, x - 40 - 36, y + 4 - 3 + 3, 'SALE', 'r');
   }
   (noFly ? [] : SKYX.items).forEach(f => {
     if (f.k === 'hab') skyxBalloon(f.x, f.y, f.r, f.c[0], f.c[1], f.ph);
@@ -152,7 +152,8 @@ function drawSkyExtra(time) {
     else if (f.k === 'kite') skyxKite(f.x, f.y, f.ph, f.c);
     else if (f.k === 'note') skyxNote(f.x, f.y, f.ph, f.c, f.g, f.amp);
     else if (f.k === 'ppl') skyxPlane(f.x, f.y, f.ph, f.c, f.vx > 0 ? 1 : -1);
-    else if (f.k === 'sput') skyxSputnik(f.x, f.y, f.ph);
+    else if (f.k === 'rkt') skyxRocket(f.x, f.y, f.ph, f.vx > 0 ? 1 : -1);
+    else if (f.k === 'heli') skyxHeli(f.x, f.y, f.ph, f.vx > 0 ? 1 : -1);
     else if (f.k === 'inv') skyxInvader(f.x, f.y, f.ph, f.v);
     else if (f.k === 'bfly') skyxButterfly(f.x, f.y, f.ph, f.c);
     else if (f.k === 'tet') { f.cells.forEach(([i0, j0]) => { let i = i0, j = j0; for (let r = 0; r < f.rot; r++) { const ni = -j, nj = i; i = ni; j = nj; } const cx = Math.round(f.x + i * 6), cy = Math.round(f.y + j * 6); ctx.drawImage(skyxBlock(f.c), cx, cy); }); }

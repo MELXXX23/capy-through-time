@@ -359,6 +359,17 @@ function setupProgression() {
   ui.debugCard.hidden = !isDebug();
   ui.dbgHour.addEventListener('click', debugHour);
   ui.dbgX100.addEventListener('click', debugX100);
+  ui.godCard.hidden = !(GOD_OWNER || DEV_OPEN_BUILD);                                  // кнопка бачить лише власник (код GOD або збірка exe)
+  ui.godToggle.addEventListener('click', toggleGodMode);
+  ui.dbgBuildBtns.innerHTML = '';
+  for (let L = 2; L <= LEVELS.length; L++) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn wide'; b.dataset.lvl = String(L);
+    b.addEventListener('click', () => debugBuild(L));
+    ui.dbgBuildBtns.appendChild(b);
+  }
+  ui.dbgBuildKeep.addEventListener('click', () => { dbgBuildKeep = !dbgBuildKeep; refreshGodCard(); });
+  refreshGodCard();
   document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length);
   applyViewSettings();
 }

@@ -35,7 +35,9 @@ function sha256hex(str) {
   }
   return H.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
 }
-const GOD_ON = (() => { try { return localStorage.getItem('capyGod') === GOD_HASH; } catch (e) { return false; } })();
+const GOD_OWNER = (() => { try { return localStorage.getItem('capyGod') === GOD_HASH; } catch (e) { return false; } })();     // на цьому пристрої введено код власника
+const GOD_PAUSED = (() => { try { return localStorage.getItem('capyGodPause') === '1'; } catch (e) { return false; } })();   // кнопка «Режим бога ВИМК» у Налаштуваннях (діє й на exe)
+const GOD_ON = GOD_OWNER && !GOD_PAUSED;
 
 /* =====================================================================
    КОНФІГИ (усі ігрові дані — тут, на початку скрипту)

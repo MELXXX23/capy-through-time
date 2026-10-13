@@ -206,7 +206,7 @@ function nativeMirror(json) {
 const SAVE_BAK_KEY = CONFIG.SAVE_KEY + '_bak';      // друга копія збереження
 let lastBakAt = 0, forceBakNext = false, restoredFromBak = false, hadBak = false;
 function saveGame() {
-  if (savingDisabled) return;
+  if (savingDisabled || buildPreview) return;                  // під час показу будівництва в режимі бога рівень тимчасовий — не зберігаємо
   try {
     syncEpochEarned();
     state.savedAt = Date.now();

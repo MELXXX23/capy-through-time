@@ -443,7 +443,7 @@ function drawCustomer(c) {
   if (c.vip) {
     const pulse = animOn() ? Math.sin(animClock * 5) : 0;
     ctx.globalAlpha = (0.2 + 0.08 * pulse) * c.alpha; disc(ctx, sx + 9, sy + 8, 21, 'y'); ctx.globalAlpha = 1;
-    drawCanvasSprite(ctx, goldCanvas(c.type, frame), sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: 1.56, sy: 1.56 });
+    drawCanvasSprite(ctx, evenScaled(goldCanvas(c.type, frame), 1.56), sx, sy, { flip: c.dir < 0, alpha: c.alpha });
     for (let k = 0; k < 3; k++) { const a = animClock * 2.2 + k * 2.1, px = Math.round(sx + 9 + Math.cos(a) * 13), py = Math.round(sy + 7 + Math.sin(a * 1.3) * 12); if (Math.floor(animClock * 6 + k) % 2) { R(ctx, px, py - 1, 1, 3, 'y'); R(ctx, px - 1, py, 3, 1, 'y'); } }
     if (!c.vipDone) { const by = sy - 13 + (animOn() ? Math.round(Math.sin(animClock * 4)) : 0); R(ctx, sx + 7, by + 2, 5, 3, 'd'); R(ctx, sx + 8, by + 1, 3, 1, 'd'); R(ctx, sx + 8, by + 2, 3, 2, 'h'); R(ctx, sx + 9, by, 1, 1, 'y'); }
   } else { const sc = c.scale || 1; drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc, sy: sc }); }

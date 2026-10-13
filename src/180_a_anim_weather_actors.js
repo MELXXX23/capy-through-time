@@ -292,7 +292,8 @@ function seedClouds() {
     clouds.push({ x: rand(worldL(), worldR()), y: rand(4 - view.offY, 46), speed: b.speed * rand(0.8, 1.3), v, kind: i % 3, big: cfg[0] > 1.2 && i % 3 === 0 });
   }
 }
-let build = null;                                 // триває будівництво нового рівня
+let build = null;
+let buildPreview = null;                           // режим бога: показ будівництва без зміни прогресу ({ back: рівень, який повернути, keep })                                 // триває будівництво нового рівня
 const customers = [];
 let customerTimer = 1;
 
@@ -328,6 +329,13 @@ function finishBuild() {
   ui.shopOverlay.style.visibility = '';
   shopAnim.vel = 6;
   playSfx('levelup');
+  if (buildPreview) {                                                      // показ у режимі бога: повертаємо справжній рівень (або лишаємо новий, якщо так обрано)
+    const bp = buildPreview; buildPreview = null;
+    if (!bp.keep && state.shopLevel !== bp.back) { state.shopLevel = bp.back; rebuildShop(true); }
+    recalcIncome(); layoutScene(); updateMusic(); updateUI(); saveGame();
+    showToast(t(bp.keep ? 'dbgBuildKept' : 'dbgBuildDone'), 'good');
+    return;
+  }
   showToast(t('buildDone', t('levelName_' + state.shopLevel)), 'big');
   const opened = DEPARTMENTS.map((d, i) => d.level === state.shopLevel ? deptName(i) : null).filter(Boolean);
   if (opened.length) showToast(t('newDepts', opened.join(', ')), 'good');

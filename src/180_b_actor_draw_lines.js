@@ -88,15 +88,70 @@ const ACTOR_K = 1.4;                                   // звірята-пра�
 function actorK(a) { return ACTOR_K; }
 // Чітка «фігурка»: спрайт спершу масштабується (nearest) і лише потім обводиться — контур завжди рівно 1 px,
 // без світного німба й без розмитих країв, які давав масштаб 1,56 прямо на сцені.
+// Рівне масштабування спрайта в k разів (k ≥ 1). Звичайне «nearest» дає то 1, то 2 пікселі на кожен піксель оригіналу,
+// тому два однакових ока виходили різного розміру. Тут зайві колонки дублюються ЛИШЕ симетричними парами (ліве й праве око завжди однакові),
+// а дублюються колонки/рядки з найменшою кількістю деталей (очі, ніс, рот лишаються по 1 пікселю на піксель оригіналу).
+const evenScaleCache = new WeakMap();
+function evenScaled(src, k) {
+  let memo = evenScaleCache.get(src); if (!memo) { memo = {}; evenScaleCache.set(src, memo); }
+  if (memo[k]) return memo[k];
+  const W = src.width, H = src.height, d = src.getContext('2d').getImageData(0, 0, W, H).data;
+  const same = (a, b) => { const i = a * 4, j = b * 4; if (d[i + 3] < 8 && d[j + 3] < 8) return true; return d[i] === d[j] && d[i + 1] === d[j + 1] && d[i + 2] === d[j + 2] && d[i + 3] === d[j + 3]; };
+  const cs = new Array(W).fill(0), rs = new Array(H).fill(0);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const i = y * W + x;
+    if (x + 1 < W && !same(i, i + 1)) { cs[x]++; cs[x + 1]++; rs[y]++; }
+    if (y + 1 < H && !same(i, i + W)) { rs[y]++; rs[y + 1]++; cs[x]++; }
+  }
+  const extraX = Math.max(0, Math.round(W * k) - W), extraY = Math.max(0, Math.round(H * k) - H);
+  const dc = new Array(W).fill(0), dr = new Array(H).fill(0);
+  let pairs = Math.floor(extraX / 2);
+  if (W % 2 === 1 && extraX % 2 === 1) dc[(W - 1) >> 1] = 1;                                   // непарна ширина: центральна колонка симетрична сама собі
+  for (let n = 0; n < pairs; n++) {
+    let best = -1, bc = 1e9;
+    for (let i = 0; i < (W >> 1); i++) {
+      if (dc[i]) continue;
+      const c = cs[i] + cs[W - 1 - i] + ((i > 0 && dc[i - 1]) || (dc[i + 1]) ? 4 : 0) + (i === 0 ? 3 : 0);          // подвійні колонки поруч — погано; крайню (контур) краще лишити
+      if (c < bc) { bc = c; best = i; }
+    }
+    if (best < 0) break;
+    dc[best] = 1; dc[W - 1 - best] = 1;
+  }
+  for (let n = 0; n < extraY; n++) {
+    let best = -1, bc = 1e9;
+    for (let y = 0; y < H; y++) {
+      if (dr[y]) continue;
+      const c = rs[y] + ((y > 0 && dr[y - 1]) || (y + 1 < H && dr[y + 1]) ? 4 : 0) + (y === 0 || y === H - 1 ? 3 : 0);
+      if (c < bc) { bc = c; best = y; }
+    }
+    if (best < 0) break;
+    dr[best] = 1;
+  }
+  const Wt = W + dc.reduce((a, b) => a + b, 0), Ht = H + dr.reduce((a, b) => a + b, 0);
+  const out = document.createElement('canvas'); out.width = Wt; out.height = Ht;
+  const og = out.getContext('2d'), od = og.createImageData(Wt, Ht), o = od.data;
+  let oy = 0;
+  for (let y = 0; y < H; y++) {
+    const ry = 1 + dr[y]; let ox = 0;
+    for (let x = 0; x < W; x++) {
+      const rx = 1 + dc[x], s = (y * W + x) * 4;
+      for (let yy = 0; yy < ry; yy++) for (let xx = 0; xx < rx; xx++) { const t = ((oy + yy) * Wt + ox + xx) * 4; o[t] = d[s]; o[t + 1] = d[s + 1]; o[t + 2] = d[s + 2]; o[t + 3] = d[s + 3]; }
+      ox += rx;
+    }
+    oy += ry;
+  }
+  og.putImageData(od, 0, 0);
+  return (memo[k] = out);
+}
 const crispFigCache = new Map();
 function crispFigure(name, flip) {
   const key = name + '|' + (flip ? 1 : 0) + '|' + ACTOR_K;
   let c = crispFigCache.get(key); if (c) return c;
-  const src = getSpriteCanvas(name), w = Math.round(src.width * ACTOR_K), h = Math.round(src.height * ACTOR_K);
+  const src = evenScaled(getSpriteCanvas(name), ACTOR_K), w = src.width, h = src.height;
   const body = document.createElement('canvas'); body.width = w; body.height = h;
   const bg = body.getContext('2d'); bg.imageSmoothingEnabled = false;
   if (flip) { bg.translate(w, 0); bg.scale(-1, 1); }
-  bg.drawImage(src, 0, 0, w, h);
+  bg.drawImage(src, 0, 0);
   const sil = document.createElement('canvas'); sil.width = w; sil.height = h;
   const sg = sil.getContext('2d'); sg.drawImage(body, 0, 0); sg.globalCompositeOperation = 'source-in'; sg.fillStyle = PALETTE.k; sg.fillRect(0, 0, w, h);
   c = document.createElement('canvas'); c.width = w + 2; c.height = h + 2;
