@@ -211,9 +211,25 @@ function houseColors(i) {
   const tone = HOUSE_TONE[viewEpoch() % EPOCHS.length] || HOUSE_TONE[0], k = ((i % 5) + 5) % 5, hue = tone[2] + k * 72;
   return { wall: hslHex(hue, tone[0], tone[1]), roof: hslHex(hue + 170 + (k % 2) * 25, tone[0] * 0.8, 0.38) };
 }
+const HOUSE_EDGE_W = 2;        // товщина темного контуру на правому боці будинку (ліворуч 1 px; px сцени): межі між сусідніми будинками добре видно
+function houseEdges(g, spec) {     // темний контур по боках будинку: окремо від стін епохи, щоб будинки не зливались у суцільну стіну
+  const x = spec.x, w = spec.w, top = LAYOUT.horizonY - spec.h + 4, hh = LAYOUT.horizonY - top;
+  if (hh <= 0) return;
+  let lum = 255;                                    // яскравість стіни збоку: на темних будинках контур світлий (сталевий кант), на світлих — темний
+  try { const d = g.getImageData(x + HOUSE_EDGE_W + 1, top + 6, 1, Math.min(30, hh - 8)).data; let sum = 0, n = 0; for (let i = 0; i + 3 < d.length; i += 4) { if (d[i + 3] < 200) continue; sum += d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11; n++; } if (n) lum = sum / n; } catch (e) { }
+  if (lum < 85) {
+    g.fillStyle = '#07050f'; g.fillRect(x, top, 1, hh); g.fillRect(x + w - 1, top, 1, hh);
+    g.fillStyle = '#7b75a0'; g.fillRect(x + 1, top, 1, hh); g.fillRect(x + w - 2, top, 1, hh);
+    g.globalAlpha = 0.4; g.fillStyle = '#000000'; g.fillRect(x + 2, top, 1, hh); g.fillRect(x + w - 3, top, 1, hh); g.globalAlpha = 1;
+    return;
+  }
+  g.fillStyle = '#2a2038';
+  g.fillRect(x, top, 1, hh); g.fillRect(x + w - HOUSE_EDGE_W, top, HOUSE_EDGE_W, hh);                    // світло зліва: ліва межа тонша, права товстіша
+  g.globalAlpha = 0.35; g.fillStyle = '#000000'; g.fillRect(x + 1, top, 1, hh); g.fillRect(x + w - HOUSE_EDGE_W - 1, top, 1, hh); g.globalAlpha = 1;
+}
 function drawHouse(g, spec, lamps) {
   const arch = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null;
-  if (arch && arch.house) return arch.house(g, spec, lamps);
+  if (arch && arch.house) { arch.house(g, spec, lamps); houseEdges(g, spec); return; }
   const { x, w, h, wall, roof } = spec;
   const base = LAYOUT.horizonY, top = base - h;
   const hs = hash2(x + 17, h);

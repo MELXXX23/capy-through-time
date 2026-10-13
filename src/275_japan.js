@@ -23,6 +23,14 @@
     return str.length * size;
   }
   function vtext(g, str, x, y, color, size, bold) { [...str].forEach((ch, i) => text(g, ch, x, y + i * (size - 1), color, size, bold)); }
+  function neonBox(g, x, y, w, h, c) {                  // неонова вивіска: темний короб, світла трубка по краю, м'яке сяйво навколо
+    A(g, 0.14, () => P(g, x - 3, y - 3, w + 6, h + 6, c)); A(g, 0.22, () => P(g, x - 2, y - 2, w + 4, h + 4, c));
+    P(g, x - 1, y - 1, w + 2, h + 2, '#0c0a18'); P(g, x, y, w, h, mixc(c, '#0a0818', 0.86));
+    P(g, x, y, w, 1, c); P(g, x, y + h - 1, w, 1, c); P(g, x, y, 1, h, c); P(g, x + w - 1, y, 1, h, c);
+    A(g, 0.5, () => { P(g, x + 1, y + 1, w - 2, 1, c); P(g, x + 1, y + h - 2, w - 2, 1, c); P(g, x + 1, y + 1, 1, h - 2, c); P(g, x + w - 2, y + 1, 1, h - 2, c); });
+    P(g, x, y, 1, 1, '#ffffff'); P(g, x + w - 1, y + h - 1, 1, 1, '#ffffff');
+  }
+  function neonText(g, draw, c) { A(g, 0.32, () => { draw(-1, 0, c); draw(1, 0, c); draw(0, 1, c); }); draw(0, 0, mixc(c, '#ffffff', 0.6)); }   // літери: сяйво навколо + світла серцевина
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   function buildSky() {
@@ -92,7 +100,7 @@
   /* ---------- дерев'яні будинки з дашками ---------- */
   const WOOD = [['#b9743c', '#93572b', '#6a3a1c'], ['#cc8a4c', '#a46a34', '#7a4a24'], ['#8f4a2c', '#6e3620', '#4e2414'], ['#c4532f', '#9c3b1d', '#762810'], ['#dcbc8c', '#bb9866', '#8e6c40'], ['#6a4a36', '#523828', '#3a281c'], ['#a8683a', '#845028', '#5e381a']];
   const PLASTER = ['#f1e8d3', '#d6caae', '#b0a488'];
-  const KANBAN = [['#c8102e', '#ffffff'], ['#1c4fa0', '#ffffff'], ['#f2c200', '#1a1a1a'], ['#0f8a5f', '#ffffff'], ['#23233a', '#ffd24a'], ['#e0559a', '#ffffff'], ['#ff7a1a', '#ffffff'], ['#7a3ec8', '#ffffff']];
+  const KANBAN = ['#ff3ea5', '#35e6ff', '#ffe84a', '#4dff88', '#ff8a2a', '#b46cff', '#ff4560', '#6aa0ff'].map(c => [c, mixc(c, '#ffffff', 0.6)]);   // неонові вивіски: [колір трубки, колір літер]
   const WORDS_V = ['ラーメン', '居酒屋', 'カフェ', '薬局', '旅館', '寿司', 'ゲーム', '焼肉', '書店', '喫茶', '電器', 'パン', '銭湯', '花屋', 'カラオケ', '麺屋'];
   const WORDS_H = ['ラーメン', '居酒屋', 'カフェ', 'ドラッグ', '本屋', 'ゲーム', '焼肉', 'コンビニ', 'そば', '寿司', 'ホテル'];
   function eave(g, x, y, w, drop) {                     // навіс-хісасі з черепиці, кінці загнуті вгору
@@ -176,9 +184,9 @@
         else if (k === 3) { P(g, wx + 2, y0 + 12, 1, 5, '#d3342c'); D(g, wx + 2, y0 + 15, 2, '#d3342c'); D(g, wx + 2, y0 + 15, 1, '#ffd45c'); }
       }
     }
-    if (hasK) { P(g, sx - 1, sy - 1, 16, sh + 2, DKW); P(g, sx, sy, 14, sh, kb[0]); P(g, sx, sy, 14, 1, '#ffffff'); P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); vtext(g, word, sx + 2, sy + 3, kb[1], 11, true); }
+    if (hasK) { P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); neonBox(g, sx, sy, 14, sh, kb[0]); neonText(g, (dx, dy, col) => vtext(g, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]); }
     P(g, gx - 2, gy - 3, gw + 4, 2, TILE[1]); P(g, gx - 2, gy - 3, gw + 4, 1, TILE[2]); P(g, gx - 3, gy - 4, 1, 2, TILE[1]); P(g, gx + gw + 2, gy - 4, 1, 2, TILE[1]);   // тонкий навіс над вивіскою (нижче вікон верхнього поверху)
-    P(g, gx - 1, gy - 1, gw + 2, 16, DKW); P(g, gx, gy, gw, 14, kh[0]); P(g, gx, gy, gw, 1, '#ffffff'); A(g, 0.25, () => P(g, gx, gy + 13, gw, 1, '#000000')); text(g, wh, gx + 3, gy + 1 + ((11 - gsz) >> 1), kh[1], gsz, true);
+    neonBox(g, gx, gy, gw, 14, kh[0]); neonText(g, (dx, dy, col) => text(g, wh, gx + 3 + dx, gy + 1 + ((11 - gsz) >> 1) + dy, col, gsz, true), kh[0]);
     houseDoors.push({ x: doorX + 5, y: base });
     P(g, doorX, base - 14, 10, 14, DKW); P(g, doorX + 1, base - 13, 8, 13, '#e8dcb8'); A(g, 0.7, () => { P(g, doorX + 4, base - 13, 1, 13, '#4a3020'); for (let k = -10; k < 0; k += 3) P(g, doorX + 1, base + k, 8, 1, '#4a3020'); });
     ['#1c3a78', '#f4ece0', '#1c3a78'].forEach((c, i) => { P(g, doorX - 1 + i * 4, base - 17, 4, 6, c); P(g, doorX - 1 + i * 4, base - 17, 4, 1, DKW); });
