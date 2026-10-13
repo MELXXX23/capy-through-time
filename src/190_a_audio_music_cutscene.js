@@ -100,19 +100,36 @@ function applyVolumes(instant) {
 }
 
 /* ---------- Інструменти ---------- */
-// Одна нота з простою обвідною (щоб не клацало)
-function tone(dest, wave, f0, t0, dur, vol, f1) {
+// Одна нота з простою обвідною (щоб не клацало). env: 'pluck' — щипок із довгим згасанням (кото, лютня, гітара), 'soft' — м'який вступ; vib — вібрато (флейта, сякухачі)
+function tone(dest, wave, f0, t0, dur, vol, f1, env, vib) {
   const ac = audio.ctx;
   const osc = ac.createOscillator(), g = ac.createGain();
   osc.type = wave;
   osc.frequency.setValueAtTime(f0, t0);
   if (f1) osc.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + dur);
+  let end = dur;
   g.gain.setValueAtTime(0.0001, t0);
-  g.gain.linearRampToValueAtTime(vol, t0 + 0.006);
-  g.gain.setValueAtTime(vol, t0 + Math.max(0.007, dur * 0.65));
-  g.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+  if (env === 'pluck') {
+    end = Math.min(1.4, Math.max(dur * 1.8, 0.28));
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + end);
+  } else if (env === 'soft') {
+    end = dur + 0.05;
+    g.gain.linearRampToValueAtTime(vol, t0 + Math.min(0.05, dur * 0.3));
+    g.gain.setValueAtTime(vol, t0 + Math.max(0.06, dur * 0.6));
+    g.gain.linearRampToValueAtTime(0.0001, t0 + end);
+  } else {
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.006);
+    g.gain.setValueAtTime(vol, t0 + Math.max(0.007, dur * 0.65));
+    g.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+  }
+  if (vib) {
+    const lfo = ac.createOscillator(), lg = ac.createGain();
+    lfo.frequency.value = 5.2; lg.gain.value = 14;
+    lfo.connect(lg); lg.connect(osc.detune); lfo.start(t0); lfo.stop(t0 + end + 0.03);
+  }
   osc.connect(g); g.connect(dest);
-  osc.start(t0); osc.stop(t0 + dur + 0.03);
+  osc.start(t0); osc.stop(t0 + end + 0.03);
 }
 // Сплеск шуму крізь фільтр — ударні, плюскіт, цокіт молотка
 function noiseHit(dest, t0, dur, vol, filterType, freq) {
@@ -129,6 +146,11 @@ function drum(dest, kind, t0, vol) {
   if (kind === 'k') tone(dest, 'triangle', 150, t0, 0.13, vol * 1.6, 45);
   else if (kind === 's') noiseHit(dest, t0, 0.12, vol, 'bandpass', 1800);
   else if (kind === 'h') noiseHit(dest, t0, 0.05, vol * 0.7, 'highpass', 7000);
+  else if (kind === 'o') noiseHit(dest, t0, 0.16, vol * 0.55, 'highpass', 6500);                                                  // відкритий хет
+  else if (kind === 'c') { noiseHit(dest, t0, 0.04, vol * 0.9, 'bandpass', 1500); noiseHit(dest, t0 + 0.015, 0.09, vol * 0.8, 'bandpass', 1500); }   // хлопок
+  else if (kind === 'T') { tone(dest, 'sine', 120, t0, 0.45, vol * 1.1, 48); noiseHit(dest, t0, 0.08, vol * 0.35, 'lowpass', 400); }   // тайко
+  else if (kind === 'w') { tone(dest, 'triangle', 1100, t0, 0.05, vol * 1.1, 700); noiseHit(dest, t0, 0.02, vol * 0.5, 'bandpass', 2800); }   // дерев'яний блок
+  else if (kind === 'g') { tone(dest, 'sine', 1568, t0, 0.5, vol * 0.8, null, 'pluck'); tone(dest, 'sine', 2349, t0, 0.4, vol * 0.4, null, 'pluck'); }   // дзвіночок
 }
 
 /* ---------- Музика ---------- */
@@ -136,7 +158,9 @@ function desiredTrack() {
   if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music]) return theme.holiday.music;
   if (theme.season === 'halloween' && MUSIC.halloween) return 'halloween';
   const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
-  return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + (viewEpoch() % EPOCH_MUSIC.length);
+  const ep = viewEpoch() % EPOCH_MUSIC.length;
+  if (ep > 0 && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
+  return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + ep;
 }
 // Перемикає мелодію плавно: стара стихає, нова наростає
 function updateMusic() {
@@ -172,7 +196,7 @@ function tickMusic() {
       if (t > horizon) break;
       if (t > ac.currentTime - 0.05 && ev.tok !== '.') {
         if (ch.wave === 'noise') drum(tr.gain, ev.tok, t, ch.vol);
-        else tone(tr.gain, ch.wave, noteFreq(ev.tok), t, ev.len * stepDur * 0.92, ch.vol);
+        else tone(tr.gain, ch.wave, noteFreq(ev.tok), t, ev.len * stepDur * 0.92, ch.vol, null, ch.env, ch.vib);
       }
       p.idx++;
       if (p.idx >= ch.events.length) { p.idx = 0; p.loop++; }

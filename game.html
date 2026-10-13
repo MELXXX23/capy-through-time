@@ -2365,6 +2365,7 @@ function parseTokens(text) {
 }
 // Мелодія для пари (базова мелодія, епоха): темп, тональність, тембри й ударні змінюються (результат кешується)
 function trackDef(key) {
+  if (key.startsWith('ep') && typeof epochTrackDef === 'function') return epochTrackDef(key);      // власні мелодії епох: 190_d_epoch_tunes.js
   const [baseId, epStr] = key.split('#');
   if (epStr === undefined) return MUSIC_PARSED[baseId];
   const ep = Number(epStr), prof = EPOCH_MUSIC[ep], base = MUSIC_PARSED[baseId];
@@ -10932,19 +10933,36 @@ function applyVolumes(instant) {
 }
 
 /* ---------- Інструменти ---------- */
-// Одна нота з простою обвідною (щоб не клацало)
-function tone(dest, wave, f0, t0, dur, vol, f1) {
+// Одна нота з простою обвідною (щоб не клацало). env: 'pluck' — щипок із довгим згасанням (кото, лютня, гітара), 'soft' — м'який вступ; vib — вібрато (флейта, сякухачі)
+function tone(dest, wave, f0, t0, dur, vol, f1, env, vib) {
   const ac = audio.ctx;
   const osc = ac.createOscillator(), g = ac.createGain();
   osc.type = wave;
   osc.frequency.setValueAtTime(f0, t0);
   if (f1) osc.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + dur);
+  let end = dur;
   g.gain.setValueAtTime(0.0001, t0);
-  g.gain.linearRampToValueAtTime(vol, t0 + 0.006);
-  g.gain.setValueAtTime(vol, t0 + Math.max(0.007, dur * 0.65));
-  g.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+  if (env === 'pluck') {
+    end = Math.min(1.4, Math.max(dur * 1.8, 0.28));
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + end);
+  } else if (env === 'soft') {
+    end = dur + 0.05;
+    g.gain.linearRampToValueAtTime(vol, t0 + Math.min(0.05, dur * 0.3));
+    g.gain.setValueAtTime(vol, t0 + Math.max(0.06, dur * 0.6));
+    g.gain.linearRampToValueAtTime(0.0001, t0 + end);
+  } else {
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.006);
+    g.gain.setValueAtTime(vol, t0 + Math.max(0.007, dur * 0.65));
+    g.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+  }
+  if (vib) {
+    const lfo = ac.createOscillator(), lg = ac.createGain();
+    lfo.frequency.value = 5.2; lg.gain.value = 14;
+    lfo.connect(lg); lg.connect(osc.detune); lfo.start(t0); lfo.stop(t0 + end + 0.03);
+  }
   osc.connect(g); g.connect(dest);
-  osc.start(t0); osc.stop(t0 + dur + 0.03);
+  osc.start(t0); osc.stop(t0 + end + 0.03);
 }
 // Сплеск шуму крізь фільтр — ударні, плюскіт, цокіт молотка
 function noiseHit(dest, t0, dur, vol, filterType, freq) {
@@ -10961,6 +10979,11 @@ function drum(dest, kind, t0, vol) {
   if (kind === 'k') tone(dest, 'triangle', 150, t0, 0.13, vol * 1.6, 45);
   else if (kind === 's') noiseHit(dest, t0, 0.12, vol, 'bandpass', 1800);
   else if (kind === 'h') noiseHit(dest, t0, 0.05, vol * 0.7, 'highpass', 7000);
+  else if (kind === 'o') noiseHit(dest, t0, 0.16, vol * 0.55, 'highpass', 6500);                                                  // відкритий хет
+  else if (kind === 'c') { noiseHit(dest, t0, 0.04, vol * 0.9, 'bandpass', 1500); noiseHit(dest, t0 + 0.015, 0.09, vol * 0.8, 'bandpass', 1500); }   // хлопок
+  else if (kind === 'T') { tone(dest, 'sine', 120, t0, 0.45, vol * 1.1, 48); noiseHit(dest, t0, 0.08, vol * 0.35, 'lowpass', 400); }   // тайко
+  else if (kind === 'w') { tone(dest, 'triangle', 1100, t0, 0.05, vol * 1.1, 700); noiseHit(dest, t0, 0.02, vol * 0.5, 'bandpass', 2800); }   // дерев'яний блок
+  else if (kind === 'g') { tone(dest, 'sine', 1568, t0, 0.5, vol * 0.8, null, 'pluck'); tone(dest, 'sine', 2349, t0, 0.4, vol * 0.4, null, 'pluck'); }   // дзвіночок
 }
 
 /* ---------- Музика ---------- */
@@ -10968,7 +10991,9 @@ function desiredTrack() {
   if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music]) return theme.holiday.music;
   if (theme.season === 'halloween' && MUSIC.halloween) return 'halloween';
   const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
-  return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + (viewEpoch() % EPOCH_MUSIC.length);
+  const ep = viewEpoch() % EPOCH_MUSIC.length;
+  if (ep > 0 && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
+  return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + ep;
 }
 // Перемикає мелодію плавно: стара стихає, нова наростає
 function updateMusic() {
@@ -11004,7 +11029,7 @@ function tickMusic() {
       if (t > horizon) break;
       if (t > ac.currentTime - 0.05 && ev.tok !== '.') {
         if (ch.wave === 'noise') drum(tr.gain, ev.tok, t, ch.vol);
-        else tone(tr.gain, ch.wave, noteFreq(ev.tok), t, ev.len * stepDur * 0.92, ch.vol);
+        else tone(tr.gain, ch.wave, noteFreq(ev.tok), t, ev.len * stepDur * 0.92, ch.vol, null, ch.env, ch.vib);
       }
       p.idx++;
       if (p.idx >= ch.events.length) { p.idx = 0; p.loop++; }
@@ -12055,6 +12080,181 @@ function setupSound() {
   updateSoundUI();
 }
 
+//#part 190_d_epoch_tunes.js
+/* =====================================================================
+   МУЗИКА ЕПОХ: у кожної епохи 1…8 (Ретро … Японія) свої дві мелодії (A — перші рівні магазину, B — пізні) й акорди,
+   а три стилі гри (класична, пригодницька, спокійна) грають їх по-своєму: інший темп, тембри, рисунок баса, арпеджіо й ударних.
+   Відродження (0) і свята лишаються на старих мелодіях (MUSIC у 100_b). Ключ треку: ep<епоха>:<A|B>:<повний 0|1>:<стиль>.
+   Токени як у MUSIC: «нота:кроки» (16 кроків = такт), «.» — пауза. Бас: R корінь, r вище, F квінта, T терція, S секста, l нижня квінта;
+   арпеджіо: цифри 1…8 — звуки акорда знизу вгору. Ударні: k бас-барабан, s малий, h хет, o відкритий хет, c хлопок, T тайко, w дерев'яний блок, g дзвіночок.
+   ===================================================================== */
+const TUNE_Q = { '': [0, 4, 7], m: [0, 3, 7], '7': [0, 4, 7, 10], m7: [0, 3, 7, 10], M7: [0, 4, 7, 11], dim: [0, 3, 6], sus: [0, 5, 7], '5': [0, 7, 12] };
+const ARP_FAST = '1:1 2:1 3:1 4:1 3:1 2:1 3:1 4:1 1:1 2:1 3:1 4:1 3:1 2:1 3:1 4:1';
+const ARP_SOFT = '1:4 3:4 2:4 3:4';
+const LEAD_VOL = { square: 0.09, triangle: 0.16, sine: 0.15, sawtooth: 0.065 };
+const BASS_VOL = { triangle: 0.22, sine: 0.28, sawtooth: 0.12, square: 0.07 };
+const ARP_VOL = { square: 0.034, triangle: 0.07, sine: 0.08, sawtooth: 0.02 };
+
+const EPOCH_TUNES = {
+  /* 1. РЕТРО (1957): ду-воп I–vi–IV–V, хитка свінгова пульсація, ходячий бас */
+  1: {
+    bpm: 100, lead: { wave: 'triangle' },
+    arp: { wave: 'square', pat: '.:2 2:1 3:1 .:2 4:2 .:2 2:1 3:1 .:2 4:2' },
+    bass: { wave: 'triangle', pat: 'R:4 T:4 F:4 S:4', soft: 'R:8 F:8' },
+    drums: { main: ['k:3 h:1 h:4 s:3 h:1 h:4'], chip: ['k:2 h:2 s:2 h:2 k:2 k:2 s:2 h:2'], soft: ['k:8 .:8', '.:4 h:4 .:4 h:4'] },
+    A: { ch: ['C', 'Am', 'F', 'G', 'C', 'Am', 'Dm', 'G'], mel: [
+      'G5:3 E5:1 G5:3 E5:1 C5:4 .:4', 'A5:3 G5:1 E5:3 C5:1 A4:4 .:4', 'A5:3 F5:1 A5:3 F5:1 C6:4 .:4', 'B5:3 G5:1 D6:3 B5:1 G5:8',
+      'G5:3 E5:1 G5:3 E5:1 C6:4 G5:4', 'E5:3 A5:1 E5:3 C5:1 A4:8', 'D5:3 F5:1 A5:3 F5:1 D6:4 A5:4', 'G5:2 A5:2 B5:2 D6:2 G5:8'] },
+    B: { ch: ['F', 'G', 'C', 'Am', 'F', 'G', 'C', 'C'], mel: [
+      'C6:4 A5:4 F5:4 A5:4', 'D6:4 B5:4 G5:4 B5:4', 'E6:6 C6:2 G5:4 E5:4', 'A5:4 C6:4 E6:4 C6:4',
+      'F6:3 E6:1 D6:4 C6:4 A5:4', 'G5:3 A5:1 B5:4 D6:4 B5:4', 'C6:3 B5:1 C6:4 E6:4 G6:4', 'C6:12 .:4'] }
+  },
+  /* 2. ДИСКО (1977): ля мінор, чотири долі, октавний бас, синкопований ріф, стаби на «і» */
+  2: {
+    bpm: 116, lead: { wave: 'sawtooth' },
+    arp: { wave: 'square', pat: '.:2 3:1 .:1 .:2 3:1 .:1 .:2 3:1 .:1 .:2 3:1 .:1' },
+    bass: { wave: 'triangle', pat: 'R:2 r:2 R:2 r:2 R:2 r:2 R:2 r:2', soft: 'R:4 .:4 F:4 .:4' },
+    drums: { main: ['k:4 k:4 k:4 k:4', '.:4 c:4 .:4 c:4', '.:2 o:2 .:2 o:2 .:2 o:2 .:2 o:2'], chip: ['k:4 k:4 k:4 k:4', '.:4 s:4 .:4 s:4', '.:2 h:2 .:2 h:2 .:2 h:2 .:2 h:2'], soft: ['k:8 k:8', '.:4 h:4 .:4 h:4'] },
+    A: { ch: ['Am7', 'Dm7', 'G7', 'CM7', 'FM7', 'Bdim', 'E7', 'Am7'], mel: [
+      'A5:2 .:1 C6:1 E6:2 C6:2 A5:2 .:2 E5:2 G5:2', 'D6:2 .:1 F6:1 A6:2 F6:2 D6:2 .:2 A5:2 C6:2', 'G5:2 .:1 B5:1 D6:2 B5:2 G5:2 .:2 F5:2 G5:2', 'E6:4 D6:2 C6:2 B5:4 G5:4',
+      'F6:2 .:1 E6:1 C6:2 A5:2 C6:2 .:2 E6:2 F6:2', 'D6:2 .:1 F6:1 B5:2 D6:2 F6:2 .:2 D6:4', 'G#5:2 .:1 B5:1 E6:2 B5:2 G#5:2 .:2 D6:2 B5:2', 'A5:4 C6:4 E6:4 A6:4'] },
+    B: { ch: ['Am7', 'Am7', 'Dm7', 'Dm7', 'G7', 'CM7', 'FM7', 'E7'], mel: [
+      'A5:6 G5:2 E5:4 A5:4', 'C6:6 B5:2 A5:8', 'D6:6 C6:2 A5:4 F5:4', 'F5:2 A5:2 D6:4 C6:8',
+      'B5:6 A5:2 G5:4 D5:4', 'E6:6 D6:2 C6:4 G5:4', 'A5:4 C6:4 F6:4 E6:4', 'G#5:4 B5:4 E6:6 .:2'] }
+  },
+  /* 3. АРКАДИ (1986): чіптюн, ми мінор, стрімкі арпеджіо-пробіжки, швидкий темп */
+  3: {
+    bpm: 148, lead: { wave: 'square' },
+    arp: { wave: 'square', pat: ARP_FAST },
+    bass: { wave: 'triangle', pat: 'R:2 R:2 r:2 R:2 R:2 R:2 r:2 R:2', soft: 'R:4 R:4 F:4 R:4' },
+    drums: { main: ['k:2 h:2 s:2 h:2 k:2 k:2 s:2 h:2'], chip: ['k:2 h:1 h:1 s:2 h:1 h:1 k:2 h:1 h:1 s:2 h:1 h:1'], soft: ['k:8 .:8', '.:4 h:4 .:4 h:4'] },
+    A: { ch: ['Em', 'C', 'G', 'D', 'Em', 'C', 'D', 'B7'], mel: [
+      'E5:1 G5:1 B5:1 E6:1 B5:1 G5:1 B5:1 E6:1 G6:4 E6:4', 'C5:1 E5:1 G5:1 C6:1 G5:1 E5:1 G5:1 C6:1 E6:4 C6:4', 'B4:1 D5:1 G5:1 B5:1 G5:1 D5:1 G5:1 B5:1 D6:4 B5:4', 'A4:1 D5:1 F#5:1 A5:1 F#5:1 D5:1 F#5:1 A5:1 D6:4 A5:4',
+      'G5:4 E5:2 G5:2 B5:4 G5:4', 'E5:4 C5:2 E5:2 G5:4 E5:4', 'F#5:4 D5:2 F#5:2 A5:4 F#5:4', 'D#5:2 F#5:2 B5:2 F#5:2 A5:2 F#5:2 D#5:2 B4:2'] },
+    B: { ch: ['Am', 'B7', 'Em', 'C', 'Am', 'B7', 'Em', 'Em'], mel: [
+      'A5:2 A5:2 C6:2 A5:2 E6:4 C6:4', 'B5:2 B5:2 D#6:2 B5:2 F#6:4 D#6:4', 'E6:2 E6:2 G6:2 E6:2 B5:4 G5:4', 'C6:2 C6:2 E6:2 C6:2 G5:4 E5:4',
+      'A5:1 C6:1 E6:1 C6:1 A5:1 C6:1 E6:1 A6:1 E6:8', 'F#5:1 A5:1 B5:1 D#6:1 F#6:1 D#6:1 B5:1 A5:1 F#5:8', 'G5:2 B5:2 E6:2 G6:2 E6:4 B5:4', 'E6:12 .:4'] }
+  },
+  /* 4. ІНТЕРНЕТ (2001): транс/євроденс, ля мінор, «супер-пила» й гейтові арпеджіо, ходовий бас */
+  4: {
+    bpm: 128, lead: { wave: 'sawtooth' },
+    arp: { wave: 'square', pat: '.:1 1:1 .:1 2:1 .:1 3:1 .:1 2:1 .:1 1:1 .:1 2:1 .:1 3:1 .:1 2:1' },
+    bass: { wave: 'sawtooth', pat: '.:1 R:1 R:1 R:1 .:1 R:1 R:1 R:1 .:1 R:1 R:1 R:1 .:1 R:1 R:1 R:1', soft: 'R:8 F:8' },
+    drums: { main: ['k:4 k:4 k:4 k:4', '.:4 c:4 .:4 c:4', '.:2 h:2 .:2 h:2 .:2 h:2 .:2 h:2'], chip: ['k:2 h:2 s:2 h:2 k:2 k:2 s:2 h:2'], soft: ['k:8 k:8', '.:4 h:4 .:4 h:4'] },
+    A: { ch: ['Am', 'F', 'C', 'G', 'Am', 'F', 'G', 'G'], mel: [
+      'E6:4 C6:2 E6:2 A5:8', 'F6:4 C6:2 F6:2 A5:8', 'E6:4 G6:2 E6:2 C6:8', 'D6:4 B5:2 D6:2 G5:8',
+      'A5:2 C6:2 E6:2 A6:2 G6:4 E6:4', 'F6:2 A5:2 C6:2 F6:2 E6:4 C6:4', 'D6:2 G5:2 B5:2 D6:2 G6:8', 'D6:4 B5:4 G5:8'] },
+    B: { ch: ['F', 'C', 'G', 'Am', 'F', 'C', 'G', 'G'], mel: [
+      'A5:8 C6:8', 'G5:8 E6:8', 'D6:8 B5:8', 'C6:4 E6:4 A5:8',
+      'F6:6 E6:2 C6:8', 'E6:6 D6:2 C6:8', 'B5:6 D6:2 G6:8', 'G6:4 D6:4 B5:4 D6:4'] }
+  },
+  /* 5. ЕКО (2025): акустична пастораль, соль мажор, пентатоніка, перебір «кальвінг» і легкий шейкер */
+  5: {
+    bpm: 88, lead: { wave: 'triangle', env: 'pluck', vol: 0.2 },
+    arp: { wave: 'sine', pat: '1:2 3:2 4:2 3:2 1:2 3:2 4:2 3:2' },
+    bass: { wave: 'sine', pat: 'R:8 F:4 T:4', soft: 'R:16' },
+    drums: { main: ['.:2 h:2 .:2 h:2 .:2 h:2 .:2 h:2'], chip: ['k:4 .:4 s:4 .:4', 'h:2 h:2 h:2 h:2 h:2 h:2 h:2 h:2'], soft: ['.:4 h:4 .:4 h:4'] },
+    leadSoft: { wave: 'sine', env: 'pluck', vol: 0.2 },
+    A: { ch: ['G', 'D', 'Em', 'C', 'G', 'D', 'C', 'D'], mel: [
+      'B5:4 D6:4 B5:2 A5:2 G5:4', 'A5:4 D6:4 A5:2 G5:2 A5:4', 'G5:4 B5:4 E6:4 B5:4', 'E6:4 D6:4 C6:4 G5:4',
+      'B5:4 D6:4 G6:4 D6:4', 'A5:4 D6:4 F#6:4 D6:4', 'E6:6 D6:2 C6:4 E6:4', 'D6:8 A5:4 .:4'] },
+    B: { ch: ['C', 'G', 'Am', 'D', 'C', 'G', 'D', 'G'], mel: [
+      'G5:2 E6:6 D6:4 C6:4', 'D6:6 B5:2 G5:8', 'C6:4 E6:4 A5:4 C6:4', 'A5:4 D6:4 F#6:8',
+      'E6:4 G6:4 E6:4 C6:4', 'D6:4 B5:4 D6:4 G6:4', 'A5:4 F#5:4 A5:4 D6:4', 'G5:12 .:4'] }
+  },
+  /* 6. КОСМОС (2160): повільний амбієнт, ре мінор → ліддійський, довгі звуки з вібрато, «бліпи» арпеджіо, бас-гул */
+  6: {
+    bpm: 72, lead: { wave: 'sine', env: 'soft', vib: 1, vol: 0.13 },
+    arp: { wave: 'sine', env: 'pluck', oct: 1, pat: '1:1 .:3 3:1 .:3 4:1 .:3 3:1 .:3', vol: 0.07 },
+    bass: { wave: 'sine', pat: 'R:16', soft: 'R:16', vol: 0.2 },
+    drums: { main: ['.:8 g:8'], chip: ['k:4 .:4 s:4 .:4', 'h:2 h:2 h:2 h:2 h:2 h:2 h:2 h:2'], soft: ['g:16'] },
+    leadSoft: { wave: 'sine', env: 'soft', vib: 1, vol: 0.17 },
+    A: { ch: ['Dm', 'Bb', 'F', 'C', 'Dm', 'Bb', 'Gm', 'A'], mel: [
+      'D6:8 .:2 A5:2 F5:4', 'D6:6 F6:2 Bb5:8', 'A5:8 C6:4 F6:4', 'E6:8 G5:4 C6:4',
+      'D6:6 F6:2 E6:8', 'D6:8 F6:4 D6:4', 'G5:6 Bb5:2 D6:8', 'C#6:8 E6:4 A5:4'] },
+    B: { ch: ['FM7', 'G', 'FM7', 'Em', 'Dm7', 'Bb', 'C', 'C'], mel: [
+      'A5:12 C6:4', 'B5:6 D6:2 G6:8', 'C6:8 E6:4 A5:4', 'B5:8 G5:4 E5:4',
+      'F5:4 A5:4 D6:8', 'F6:6 D6:2 Bb5:8', 'G5:4 C6:4 E6:8', 'D6:8 C6:8'] }
+  },
+  /* 7. НЕОН (2099): синтвейв, до мінор, довгі «пилкові» ноти над пульсуючим басом, гейтований малий барабан */
+  7: {
+    bpm: 104, lead: { wave: 'sawtooth', vol: 0.09 },
+    arp: { wave: 'square', pat: '1:1 .:1 3:1 .:1 2:1 .:1 3:1 .:1 1:1 .:1 3:1 .:1 2:1 .:1 3:1 .:1' },
+    bass: { wave: 'sawtooth', pat: 'R:2 R:2 R:2 R:2 R:2 R:2 R:2 R:2', soft: 'R:8 F:8', vol: 0.16 },
+    drums: { main: ['k:4 .:4 k:4 .:4', '.:4 s:4 .:4 s:4', 'h:2 h:2 h:2 h:2 h:2 h:2 h:2 h:2'], chip: ['k:2 h:2 s:2 h:2 k:2 k:2 s:2 h:2'], soft: ['k:8 .:8', '.:4 h:4 .:4 h:4'] },
+    A: { ch: ['Cm', 'Ab', 'Eb', 'Bb', 'Cm', 'Ab', 'Eb', 'Bb'], mel: [
+      'G5:6 .:2 Eb5:4 G5:4', 'Ab5:6 .:2 C6:4 Ab5:4', 'G5:6 .:2 Bb5:4 G5:4', 'F5:6 .:2 Bb5:4 D6:4',
+      'C6:4 D6:2 Eb6:2 G6:8', 'Eb6:4 C6:4 Ab5:8', 'Bb5:4 G5:4 Eb5:4 G5:4', 'D6:8 F6:4 D6:4'] },
+    B: { ch: ['Ab', 'Eb', 'Bb', 'Cm', 'Ab', 'Eb', 'Bb', 'Cm'], mel: [
+      'C6:8 Eb6:8', 'Bb5:8 G6:8', 'F6:6 D6:2 Bb5:8', 'Eb6:6 C6:2 G5:8',
+      'C6:4 Eb6:4 C6:8', 'Bb5:4 Eb6:4 G6:8', 'F6:4 D6:4 F6:4 D6:4', 'G5:12 .:4'] }
+  },
+  /* 8. ЯПОНІЯ (1868): гірадзьосі (ля, сі, до, мі, фа), кото-щипки з паузами, дрон флейти-сякухачі з вібрато, тайко й дерев'яний блок */
+  8: {
+    bpm: 76, lead: { wave: 'triangle', env: 'pluck', vol: 0.24 },
+    arp: { wave: 'sine', env: 'soft', vib: 1, pat: '2:8 3:8', vol: 0.06 },
+    bass: { wave: 'sine', pat: 'R:12 F:4', soft: 'R:16', vol: 0.2 },
+    drums: { main: ['T:8 .:4 T:2 T:2', '.:2 w:2 .:4 .:2 w:2 .:4'], chip: ['T:4 .:4 T:4 w:2 w:2'], soft: ['g:16'] },
+    leadSoft: { wave: 'sine', env: 'pluck', vib: 0, vol: 0.2 },
+    A: { ch: ['Am', 'Am', 'F', 'E5', 'Am', 'F', 'E5', 'Am'], mel: [
+      'A5:4 .:2 E5:2 C5:4 E5:4', 'F5:4 .:2 E5:2 C5:4 B4:4', 'A4:4 C5:4 E5:4 F5:4', 'E5:8 C5:4 B4:4',
+      'A5:2 B5:2 C6:4 B5:2 A5:2 F5:4', 'E5:4 F5:4 E5:2 C5:2 B4:4', 'C5:2 E5:2 A5:4 F5:4 E5:4', 'A4:12 .:4'] },
+    B: { ch: ['Am', 'Am', 'F', 'E5', 'Am', 'F', 'E5', 'Am'], mel: [
+      'A5:1 A5:1 A5:1 A5:1 C6:4 E6:4 C6:4', 'B5:2 C6:2 B5:2 A5:2 E5:8', 'F5:2 A5:2 C6:2 A5:2 F6:4 C6:4', 'E6:4 C6:4 B5:4 E5:4',
+      'A5:2 C6:2 E6:2 C6:2 A5:2 C6:2 E6:4', 'F6:4 E6:2 C6:2 A5:4 F5:4', 'B5:4 C6:2 B5:2 A5:4 E5:4', 'A5:8 E5:4 A4:4'] }
+  }
+};
+
+// «Am7» → { root: 'A', iv: [0,3,7,10] }
+function chordInfo(name) {
+  const m = /^([A-G])([#b]?)(.*)$/.exec(name), iv = TUNE_Q[m[3]] || TUNE_Q[''];
+  return { letter: m[1], acc: m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0, iv };
+}
+function midiNote(midi) { return SHARP_NAMES[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1); }
+// один такт патерну: літери/цифри замінюються на ноти акорда
+function tuneBar(pat, ci, kind, octShift) {
+  const base = NOTE_INDEX[ci.letter] + ci.acc;
+  const root = kind === 'bass' ? base + (NOTE_INDEX[ci.letter] >= 5 ? 3 : 4) * 12 : base + 5 * 12 + (octShift || 0) * 12;   // бас: F2…B2 і C3…E3; арпеджіо: від C4
+  return pat.split(/\s+/).map(tok => {
+    const [n, len] = tok.split(':');
+    let v = null;
+    if (n === '.') return '.:' + len;
+    if (kind === 'bass') {
+      v = { R: root, r: root + 12, F: root + 7, T: root + (ci.iv[1] || 4), S: root + 9, l: root - 5 }[n];
+    } else {
+      const i = Number(n) - 1; v = root + ci.iv[i % ci.iv.length] + 12 * Math.floor(i / ci.iv.length);
+    }
+    return midiNote(v) + ':' + len;
+  }).join(' ');
+}
+function epochTrackKey(ep, level, styleId) {
+  const lvl = Math.max(1, Math.min(6, level | 0));
+  return 'ep' + ep + ':' + (lvl <= 4 ? 'A' : 'B') + ':' + (lvl >= 3 ? 1 : 0) + ':' + styleId;
+}
+function epochTrackDef(key) {
+  if (MUSIC_PARSED[key]) return MUSIC_PARSED[key];
+  const [epS, tuneId, fullS, style] = key.split(':'), ep = Number(epS.slice(2)), P = EPOCH_TUNES[ep];
+  if (!P) return trackDef('calm');
+  const tune = P[tuneId], full = fullS === '1', chords = tune.ch.map(chordInfo), bars = tune.mel.length;
+  const chill = style === 'chill', chip = style === 'chip';
+  // тембри ролей за стилем
+  const lead = Object.assign({}, P.lead, chip ? { wave: 'square', env: null, vib: 0, vol: LEAD_VOL.square } : chill ? Object.assign({ wave: 'triangle', env: 'soft', vib: 0, vol: LEAD_VOL.triangle }, P.leadSoft || {}) : {});
+  if (!lead.vol) lead.vol = LEAD_VOL[lead.wave];
+  const arp = chip ? { wave: 'square', pat: P.arpFast || ARP_FAST, vol: ARP_VOL.square } : chill ? { wave: 'sine', env: 'soft', pat: P.arpSoft || ARP_SOFT, vol: ARP_VOL.sine, vib: 0 } : Object.assign({}, P.arp);
+  if (!arp.vol) arp.vol = ARP_VOL[arp.wave];
+  const bass = chip ? { wave: 'triangle', pat: P.bass.pat } : chill ? { wave: 'triangle', pat: P.bass.soft } : P.bass;
+  const bvol = (!chip && !chill && P.bass.vol) || BASS_VOL[bass.wave];
+  const drums = chill || !full ? P.drums.soft : chip ? P.drums.chip : P.drums.main;
+  const mk = (kind, o) => parseTokens(chords.map(ci => tuneBar(o.pat, ci, kind, o.oct || 0)).join(' '));
+  const melody = parseTokens(tune.mel.join(' '));
+  const channels = [{ wave: lead.wave, vol: lead.vol, env: lead.env || null, vib: lead.vib || 0, events: melody.events, total: melody.total }];
+  if (full || chill) { const a = mk('arp', { pat: arp.pat, oct: arp.oct || 0 }); channels.push({ wave: arp.wave, vol: arp.vol, env: arp.env || null, vib: arp.vib || 0, events: a.events, total: a.total }); }
+  const b = mk('bass', { pat: bass.pat });
+  channels.push({ wave: bass.wave, vol: bvol, env: null, vib: 0, events: b.events, total: b.total });
+  drums.forEach((d, i) => { const p = parseTokens(Array(bars).fill(d).join(' ')); channels.push({ wave: 'noise', vol: i ? 0.26 : 0.3, events: p.events, total: p.total }); });
+  const bpmK = chip ? 1.15 : chill ? 0.8 : 1;
+  return (MUSIC_PARSED[key] = { bpm: P.bpm * bpmK, channels, total: melody.total });
+}
 //#part 200_a_travel_ui_warp_base.js
 /* =====================================================================
    ПОДОРОЖ У ЧАСІ, МАЙСТЕРНЯ, ДОСЯГНЕННЯ, СТАТИСТИКА, НАЛАШТУВАННЯ
@@ -15698,12 +15898,13 @@ function skinOwned(i) {
 function skinName(i) { const id = SKIN_POOL[i], m = /^capy_ep(\d)$/.exec(id); return m ? t('skinEpoch', t('epoch_' + m[1])) : t('skin_' + id); }   // номер у списку = біт у state.skinsMask; перша частина — тип скіна
 const circus = { x: 0, drive: 0, t: 0, bangT: 0, anim: null, angle: 0, tex: null, setup: 1, setupT: 0 };
 
-/* ---- малюнок: шатро-причіп із колесом та клоуном (кольорові коди, окремий canvas 120×80) ---- */
+/* ---- малюнок: шатро-причіп із колесом та клоуном (кольорові коди, окремий canvas 120×80); вигляд залежить від епохи: CIRCUS_THEMES (230_d_circus_themes.js) ---- */
 const CIRCUS_ART = (function () {
   const D = '#4a3228', DD = '#2a1d1a', RED = '#c4553d', CR = '#fff4dc', YEL = '#ffe08a', GLD = '#f2b84b', BR = '#7a4f35', OUT = '#3a1f1a';
   const SEG = ['#c4553d', '#ffe08a', '#4f9a63', '#3d5a8c', '#ef8fa3', '#e8863c', '#8b6bb0', '#8ed4a6', '#f2b84b', '#86cfe8', '#ffc9d4', '#ff5fa2'];
   const rr = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
   const dsc = (g, cx, cy, r, c) => { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r + r * 0.4) rr(g, cx + x, cy + y, 1, 1, c); };
+  const stamp = (g, x0, y0, rows, pal) => rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) { const c = pal[row[i]]; if (c) rr(g, x0 + i, y0 + j, 1, 1, c); } });
   const GL = {
     'Ц': ['#..#.', '#..#.', '#..#.', '#####', '....#'], 'И': ['#...#', '#..##', '#.#.#', '##..#', '#...#'], 'Р': ['####.', '#...#', '####.', '#....', '#....'],
     'К': ['#...#', '#..#.', '###..', '#..#.', '#...#'], 'Ф': ['..#..', '.###.', '#.#.#', '.###.', '..#..'], 'О': ['.###.', '#...#', '#...#', '#...#', '.###.'],
@@ -15713,53 +15914,78 @@ const CIRCUS_ART = (function () {
     'R': ['####.', '#...#', '####.', '#..#.', '#...#'], 'S': ['.####', '#....', '.###.', '....#', '####.']
   };
   // довгий прапор-стрічка з назвою; кожен стовпчик іде хвилею
-  function flag(g, x0, y0, len, t, fill, ink, text) {
+  function flag(g, x0, y0, len, t, fill, ink, text, edge) {
     const pix = {}; let cx = 3;
     for (const ch of text) { if (ch === ' ') { cx += 3; continue; } const gl = GL[ch]; if (!gl) continue; gl.forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') (pix[cx + rx] = pix[cx + rx] || []).push(ry); }); cx += 6; }
     for (let i = 0; i < len; i++) {
       const amp = 0.4 + 1.8 * (i / len), off = Math.round(Math.sin(i * 0.32 - t * 5) * amp), top = y0 + off, h = 9;
       const notch = i > len - 6 ? i - (len - 6) : 0;
-      for (let y = 0; y < h; y++) { if (notch && Math.abs(y - 4) < Math.min(notch, 4) && i > len - notch) continue; rr(g, x0 + i, top + y, 1, 1, (y === 0 || y === h - 1) ? CR : fill); }
+      for (let y = 0; y < h; y++) { if (notch && Math.abs(y - 4) < Math.min(notch, 4) && i > len - notch) continue; rr(g, x0 + i, top + y, 1, 1, (y === 0 || y === h - 1) ? edge : fill); }
       (pix[i] || []).forEach(ry => rr(g, x0 + i, top + 2 + ry, 1, 1, ink));
     }
   }
-  function wheelF(g, cx, cy, rad, t) {
+  // колесо фортуни: сектори (SEG) не змінюються, під епоху міняються лампочки обода, втулка й стрілка
+  function wheelF(g, cx, cy, rad, t, th) {
     const rot = t * 0.4;
     for (let y = -rad - 2; y <= rad + 2; y++) for (let x = -rad - 2; x <= rad + 2; x++) {
       const r = Math.sqrt(x * x + y * y); if (r > rad + 1.6) continue; let col;
       if (r > rad - 0.6) col = D;
-      else if (r > rad - 2.4) { const a = Math.atan2(y, x) + rot; col = (Math.floor(a / 0.4488) + Math.floor(t * 3)) % 2 ? YEL : CR; }
-      else if (r < 2.4) col = r < 1.4 ? GLD : D;
+      else if (r > rad - 2.4) { const a = Math.atan2(y, x) + rot; col = (Math.floor(a / 0.4488) + Math.floor(t * 3)) % 2 ? th.rim[0] : th.rim[1]; }
+      else if (r < 2.4) col = r < 1.4 ? th.hub : D;
       else { const a = Math.atan2(y, x) + rot + Math.PI * 2, k = Math.floor(a / (Math.PI * 2 / 12)) % 12; col = SEG[k]; const fr = (a / (Math.PI * 2 / 12)) % 1; if (fr < 0.1 || fr > 0.93) col = D; }
       rr(g, cx + x, cy + y, 1, 1, col);
     }
-    rr(g, cx - 2, cy - rad - 3, 5, 1, GLD); rr(g, cx - 2, cy - rad - 2, 5, 1, D); rr(g, cx - 1, cy - rad - 1, 3, 1, RED); rr(g, cx, cy - rad, 1, 2, RED);
+    rr(g, cx - 2, cy - rad - 3, 5, 1, th.hub); rr(g, cx - 2, cy - rad - 2, 5, 1, D); rr(g, cx - 1, cy - rad - 1, 3, 1, th.ptr); rr(g, cx, cy - rad, 1, 2, th.ptr);
   }
-  function clown(g, ox, by, t) {
-    const arm = Math.floor(t * 3) % 2;
-    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, RED); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 7, by - 2, 3, 1, RED);
-    rr(g, ox + 1, by - 7, 3, 5, '#4f9a63'); rr(g, ox + 7, by - 7, 3, 5, YEL);
-    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, '#8b6bb0');
-    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, YEL));
-    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, CR); rr(g, ox + 4, by - 14, 3, 1, '#ef8fa3');
-    if (arm) { rr(g, ox - 2, by - 13, 3, 2, D); rr(g, ox - 3, by - 17, 2, 5, D); rr(g, ox - 2, by - 16, 1, 4, '#8b6bb0'); rr(g, ox - 4, by - 18, 2, 2, CR); rr(g, ox + 9, by - 12, 3, 5, D); rr(g, ox + 10, by - 11, 1, 4, '#8b6bb0'); }
-    else { rr(g, ox - 2, by - 12, 3, 5, D); rr(g, ox - 1, by - 11, 1, 4, '#8b6bb0'); rr(g, ox + 9, by - 13, 3, 2, D); rr(g, ox + 11, by - 17, 2, 5, D); rr(g, ox + 11, by - 16, 1, 4, '#8b6bb0'); rr(g, ox + 12, by - 18, 2, 2, CR); }
-    dsc(g, ox + 5, by - 20, 5, D); dsc(g, ox + 5, by - 20, 4, CR);
-    dsc(g, ox - 1, by - 21, 2, D); dsc(g, ox - 1, by - 21, 1, '#e8863c'); dsc(g, ox + 11, by - 21, 2, D); dsc(g, ox + 11, by - 21, 1, '#e8863c');
-    rr(g, ox + 3, by - 21, 1, 2, DD); rr(g, ox + 7, by - 21, 1, 2, DD);
-    rr(g, ox + 4, by - 19, 3, 2, RED); rr(g, ox + 5, by - 20, 1, 1, '#ff8a7a');
-    rr(g, ox + 3, by - 17, 5, 1, RED); rr(g, ox + 2, by - 18, 1, 1, RED); rr(g, ox + 8, by - 18, 1, 1, RED);
-    rr(g, ox + 3, by - 28, 5, 1, D); rr(g, ox + 4, by - 27, 3, 2, '#3d5a8c'); rr(g, ox + 3, by - 25, 5, 1, '#3d5a8c'); rr(g, ox + 2, by - 24, 7, 1, D); rr(g, ox + 5, by - 29, 1, 1, YEL);
+  // головний убір клоуна (hy — центр голови); карти 11 колонок, '.' порожньо, D контур, h основний колір, a акцент, w білий
+  const HATS = {
+    top: { y: -9, rows: ['.....a.....', '...DDDDD...', '....hhh....', '....hhh....', '...hhhhh...', '..DDDDDDD..'] },
+    jester: { y: -9, rows: ['a.........a', 'Dh.......hD', '.Dh.....hD.', '..DhhhhhD..', '..DhahahD..', '..DDDDDDD..'] },
+    visor: { y: -8, rows: ['...DDDDD...', '..DhhhhhD..', '..DhhhhhD..', '..DhaaahDDD', '..DDDDDDD..'] },
+    cap: { y: -7, rows: ['...DDDDD...', '..DwwwwwD..', '..DwhhhwD..', '..DDDDDDD..'] },
+    phones: { y: -8, rows: ['...DDDDD...', '..D.....D..', '.D.......D.', '.D.......D.', 'D.........D', 'D.........D', 'DD.......DD', 'DhD.....DhD', 'DhD.....DhD', 'DD.......DD'] },
+    leaf: { y: -8, rows: ['...h...h...', '..hhh.hhh..', '.hhDhhhDhh.', '.hhhhahhhh.', '..hhhhhhh..'] },
+    kasa: { y: -8, rows: ['.....D.....', '....DhD....', '...DhhhD...', '..DhhahhD..', '.DhhhhhhhD.', 'DDDDDDDDDDD'] }
+  };
+  function hatG(g, ox, hy, c) {
+    const k = c.kind;
+    if (k === 'helmet') {                                                  // скляна куля скафандра
+      for (let y = -9; y <= 9; y++) for (let x = -3; x <= 13; x++) { const d = Math.sqrt((x - 5) * (x - 5) + y * y); if (d >= 6.4 && d < 7.6) rr(g, ox + x, hy + y, 1, 1, c.hat); else if (d >= 7.6 && d < 8.6) rr(g, ox + x, hy + y, 1, 1, D); }
+      rr(g, ox + 1, hy - 5, 1, 1, '#ffffff'); rr(g, ox + 2, hy - 6, 2, 1, '#ffffff'); rr(g, ox + 4, hy + 8, 3, 1, '#c9d6e8'); return;
+    }
+    if (k === 'afro') {                                                    // пишна зачіска
+      for (let y = -9; y <= 5; y++) for (let x = -3; x <= 13; x++) { const d = Math.sqrt((x - 5) * (x - 5) + (y + 2) * (y + 2)), f = (x - 5) * (x - 5) + y * y; if (d <= 7.4 && f > 25.4) rr(g, ox + x, hy + y, 1, 1, (x + y) % 3 ? c.hat : '#8a5a2a'); }
+      return;
+    }
+    const H = HATS[k] || HATS.top; stamp(g, ox, hy + H.y, H.rows, { D, h: c.hat, a: c.tip, w: CR });
+  }
+  // клоун на вулиці (by — лінія землі)
+  function clown(g, ox, by, t, th) {
+    const c = th.cl, arm = Math.floor(t * 3) % 2, hy = by - 20;
+    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, c.shoe); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 7, by - 2, 3, 1, c.shoe);
+    rr(g, ox + 1, by - 7, 3, 5, c.legA); rr(g, ox + 7, by - 7, 3, 5, c.legB);
+    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, c.suit);
+    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, c.star));
+    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, c.ruff); rr(g, ox + 4, by - 14, 3, 1, c.ruff2);
+    if (arm) { rr(g, ox - 2, by - 13, 3, 2, D); rr(g, ox - 3, by - 17, 2, 5, D); rr(g, ox - 2, by - 16, 1, 4, c.suit); rr(g, ox - 4, by - 18, 2, 2, CR); rr(g, ox + 9, by - 12, 3, 5, D); rr(g, ox + 10, by - 11, 1, 4, c.suit); }
+    else { rr(g, ox - 2, by - 12, 3, 5, D); rr(g, ox - 1, by - 11, 1, 4, c.suit); rr(g, ox + 9, by - 13, 3, 2, D); rr(g, ox + 11, by - 17, 2, 5, D); rr(g, ox + 11, by - 16, 1, 4, c.suit); rr(g, ox + 12, by - 18, 2, 2, CR); }
+    dsc(g, ox + 5, hy, 5, D); dsc(g, ox + 5, hy, 4, CR);
+    dsc(g, ox - 1, hy - 1, 2, D); dsc(g, ox - 1, hy - 1, 1, c.wig); dsc(g, ox + 11, hy - 1, 2, D); dsc(g, ox + 11, hy - 1, 1, c.wig);
+    rr(g, ox + 3, hy - 1, 1, 2, DD); rr(g, ox + 7, hy - 1, 1, 2, DD);
+    if (c.shades) { rr(g, ox + 2, hy - 1, 7, 2, '#1a0f2a'); rr(g, ox + 3, hy - 1, 1, 1, '#7ad8ff'); rr(g, ox + 7, hy - 1, 1, 1, '#7ad8ff'); }
+    rr(g, ox + 4, hy + 1, 3, 2, RED); rr(g, ox + 5, hy, 1, 1, '#ff8a7a');
+    rr(g, ox + 3, hy + 3, 5, 1, RED); rr(g, ox + 2, hy + 2, 1, 1, RED); rr(g, ox + 8, hy + 2, 1, 1, RED);
+    hatG(g, ox, hy, c);
   }
   // шатро: гострий верх, смуги віялом, фестончасті стінки, темний вхід (кожне малюється один раз)
   function makeTent(o) {
     const W = o.w, H = o.h, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
-    const cx = o.cx, ay = o.ay, roofB = o.roofB, floor = o.floor, scallop = o.scallop, c1 = o.c1, c2 = o.c2, cap = '#7a2f2f', shade = '#c9bfb0', fan = o.fan;
+    const cx = o.cx, ay = o.ay, roofB = o.roofB, floor = o.floor, scallop = o.scallop, c1 = o.c1, c2 = o.c2, cap = o.cap, shade = o.shade, fan = o.fan;
     const hwRoof = y => 3 + (o.hw - 3) * Math.pow((y - ay) / (roofB - ay), 1.7);
     const edge = x => roofB + 2 - Math.round(o.sc * Math.sin(Math.PI * ((((x - cx + 600) % scallop) / scallop))));
+    const hwAt = y => y <= roofB + 2 ? Math.round(hwRoof(Math.min(y, roofB))) : o.hw + 3 - Math.round(2 * Math.sin((y - roofB) / (floor - roofB) * Math.PI));
     for (let y = ay; y <= floor; y++) {
-      const inRoof = y <= roofB + 2;
-      const hw = inRoof ? Math.round(hwRoof(Math.min(y, roofB))) : o.hw + 3 - Math.round(2 * Math.sin((y - roofB) / (floor - roofB) * Math.PI));
+      const hw = hwAt(y);
       for (let x = cx - hw; x <= cx + hw; x++) {
         const e = edge(x); let col;
         if (y < e) { if (y < ay + o.capH && Math.abs(x - cx) < 4 + (y - ay) * 0.2) col = cap; else col = Math.floor(((x - cx) / Math.max(2, y - ay + 2)) * fan + 200) % 2 ? c1 : c2; }
@@ -15769,32 +15995,41 @@ const CIRCUS_ART = (function () {
     }
     [[cx - 2, ay + 6], [cx + 1, ay + 8], [cx - 1, ay + 4]].forEach(p => rr(g, p[0], p[1], 1, 1, CR));
     if (o.door) {
-      for (let y = 48; y <= floor; y++) { const hw = y < 52 ? 3 + (y - 48) * 1.5 : 9; for (let x = Math.round(cx - hw); x <= Math.round(cx + hw); x++) rr(g, x, y, 1, 1, '#1d1410'); }
-      for (let y = 50; y <= floor; y++) { rr(g, cx - 10 - Math.floor((y - 50) / 8), y, 2, 1, CR); rr(g, cx + 9 + Math.floor((y - 50) / 8), y, 2, 1, CR); }
+      for (let y = 48; y <= floor; y++) { const hw = y < 52 ? 3 + (y - 48) * 1.5 : 9; for (let x = Math.round(cx - hw); x <= Math.round(cx + hw); x++) rr(g, x, y, 1, 1, o.doorC); }
+      for (let y = 50; y <= floor; y++) { rr(g, cx - 10 - Math.floor((y - 50) / 8), y, 2, 1, o.trim); rr(g, cx + 9 + Math.floor((y - 50) / 8), y, 2, 1, o.trim); }
     } else {
-      for (let y = floor - 9; y <= floor; y++) { const hw = y < floor - 6 ? 2 : 4; for (let x = cx - hw; x <= cx + hw; x++) rr(g, x, y, 1, 1, '#1d1410'); }
+      for (let y = floor - 9; y <= floor; y++) { const hw = y < floor - 6 ? 2 : 4; for (let x = cx - hw; x <= cx + hw; x++) rr(g, x, y, 1, 1, o.doorC); }
     }
+    if (o.paint) o.paint(g, o.kind, { cx, ay, roofB, floor, fan, stripe: o.stripe, scallop, capH: o.capH, edge, hwAt });
     const d = g.getImageData(0, 0, W, H).data, has = (x, y) => x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 0;
-    const out = document.createElement('canvas'); out.width = W; out.height = H; const og = out.getContext('2d'); og.fillStyle = OUT;
+    const out = document.createElement('canvas'); out.width = W; out.height = H; const og = out.getContext('2d'); og.fillStyle = o.out;
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!has(x, y) && (has(x - 1, y) || has(x + 1, y) || has(x, y - 1) || has(x, y + 1))) og.fillRect(x, y, 1, 1);
     og.drawImage(cv, 0, 0);
     return out;
   }
-  let tents = null;
+  const tentSets = {};
+  function tentSet(th) {
+    if (tentSets[th.id]) return tentSets[th.id];
+    const base = { cap: th.cap, shade: th.shade, trim: th.trim, doorC: th.door, out: th.out, paint: th.paint };
+    return tentSets[th.id] = {
+      main: makeTent(Object.assign({ kind: 'main', w: 160, h: 84, cx: 80, ay: 14, roofB: 44, floor: 62, hw: 31, scallop: 12, sc: 3, fan: 5, stripe: 6, capH: 12, c1: th.c1, c2: th.c2, door: true }, base)),
+      side: makeTent(Object.assign({ kind: 'side', w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: th.c1, c2: th.c2, door: false }, base)),
+      side2: makeTent(Object.assign({ kind: 'side', w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: th.c2, c2: th.c1, door: false }, base))
+    };
+  }
   const clamp01 = v => Math.max(0, Math.min(1, v)), eo = k => 1 - (1 - k) * (1 - k), back = k => { const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
   const lerp = (a, b, k) => a + (b - a) * k;
+  const themeOf = eid => CIRCUS_THEMES[eid === undefined ? viewEpoch() : eid] || CIRCUS_THEMES[0];
   // s: 0 — їде причіпом, 1 — розкладений: платформа й колеса зникли, шатро сіло на землю, виросли два малі шатра, клоун вийшов і махає
-  function draw(g, t, s, moving) {
-    if (!tents) tents = {
-      main: makeTent({ w: 160, h: 84, cx: 80, ay: 14, roofB: 44, floor: 62, hw: 31, scallop: 12, sc: 3, fan: 5, stripe: 6, capH: 12, c1: RED, c2: CR, door: true }),
-      side: makeTent({ w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: RED, c2: CR, door: false }),
-      side2: makeTent({ w: 48, h: 44, cx: 24, ay: 3, roofB: 22, floor: 38, hw: 18, scallop: 8, sc: 2, fan: 4, stripe: 4, capH: 8, c1: CR, c2: RED, door: false })
-    };
+  function draw(g, t, s, moving, eid) {
+    const th = themeOf(eid), ts = tentSet(th), P = th.plat;
     g.clearRect(0, 0, 160, 84);
     const e = (a, b) => clamp01((s - a) / (b - a)), GY = 76;
     const bob = moving ? Math.floor(t * 6) % 2 : 0, sink = 14 * eo(e(0.10, 0.45)), platA = 1 - eo(e(0.0, 0.30));
+    const u = { rr, dsc, e, s, sink, bob, GY, moving };
+    if (th.back) th.back(g, t, s, u);
     // малі шатра виростають із землі (з відскоком) і здіймають пил
-    [[tents.side, 30, e(0.30, 0.58)], [tents.side2, 130, e(0.45, 0.72)]].forEach(([cv, cx, k]) => {
+    [[ts.side, 30, e(0.30, 0.58)], [ts.side2, 130, e(0.45, 0.72)]].forEach(([cv, cx, k]) => {
       if (k <= 0) return;
       const sc = Math.max(0.05, back(k)), sx = 0.6 + 0.4 * Math.min(1, sc);
       g.save(); g.translate(cx, GY); g.scale(sx, sc); g.drawImage(cv, -24, -38); g.restore();
@@ -15803,26 +16038,34 @@ const CIRCUS_ART = (function () {
     });
     // головне шатро (разом зі щоглою й прапором) осідає на землю
     g.save(); g.translate(0, bob + sink);
-    g.drawImage(tents.main, 0, 0);
-    rr(g, 80, 3, 1, 12, OUT); flag(g, 81, 3, 70, t, RED, CR, circusFlagText());
+    g.drawImage(ts.main, 0, 0);
+    if (th.post) { th.post(g, t, 64); th.post(g, t, 91); }
+    if (th.top) th.top(g, t, s, u);
+    rr(g, 80, 3, 1, 12, th.out); flag(g, 81, 3, 70, t, th.flag[0], th.flag[1], circusFlagText(), th.flag[2]);
     g.restore();
-    // платформа й колеса візка зникають
+    circusGarland(g, th, t, u);
+    // платформа й колеса візка (у космосі — двигуни) зникають
     if (platA > 0.02) {
       g.save(); g.globalAlpha = platA; g.translate(0, bob + (1 - platA) * 10);
-      rr(g, 38, 62, 84, 6, D); rr(g, 39, 63, 82, 4, BR); rr(g, 39, 63, 82, 1, '#a8703f'); rr(g, 39, 67, 82, 1, '#5a3a28');
-      for (let x = 42; x < 122; x += 6) rr(g, x, 65, 2, 1, YEL);
-      rr(g, 34, 65, 5, 2, D); rr(g, 34, 64, 2, 1, GLD);
-      for (let x = 40; x <= 124; x += 4) rr(g, x, 61, 2, 1, (Math.floor(t * 3) + (x - 40) / 4) % 2 ? YEL : '#4f9a63');
+      rr(g, 38, 62, 84, 6, P.d); rr(g, 39, 63, 82, 4, P.m); rr(g, 39, 63, 82, 1, P.hi); rr(g, 39, 67, 82, 1, P.lo);
+      for (let x = 42; x < 122; x += 6) rr(g, x, 65, 2, 1, P.dash);
+      rr(g, 34, 65, 5, 2, P.d); rr(g, 34, 64, 2, 1, P.hitch);
+      for (let x = 40; x <= 124; x += 4) rr(g, x, 61, 2, 1, (Math.floor(t * 3) + (x - 40) / 4) % 2 ? P.lt[0] : P.lt[1]);
       g.restore();
       g.save(); g.globalAlpha = platA; g.translate(0, (1 - platA) * 12);
-      [48, 110].forEach(wx => { const wy = 71; dsc(g, wx, wy, 5, DD); dsc(g, wx, wy, 4, '#6a5a50'); dsc(g, wx, wy, 1, GLD); for (let k = 0; k < 4; k++) { const a = t * 6 * platA + k * Math.PI / 2; for (let i = 1; i < 4; i++) rr(g, wx + Math.cos(a) * i, wy + Math.sin(a) * i, 1, 1, CR); } });
+      [48, 110].forEach(wx => {
+        const wy = 71, Y = th.tyre;
+        if (th.hover) { const h = 3 + Math.floor(t * 14) % 3; rr(g, wx - 4, 68, 9, 2, '#5a6a8a'); rr(g, wx - 3, 70, 7, h, '#7ad8ff'); rr(g, wx - 1, 70, 3, h - 1, '#ffffff'); return; }
+        dsc(g, wx, wy, 5, Y[0]); dsc(g, wx, wy, 4, Y[1]); dsc(g, wx, wy, 1, Y[2]);
+        for (let k = 0; k < 4; k++) { const a = t * 6 * platA + k * Math.PI / 2; for (let i = 1; i < 4; i++) rr(g, wx + Math.cos(a) * i, wy + Math.sin(a) * i, 1, 1, Y[3]); }
+      });
       g.restore();
       g.globalAlpha = 1;
     }
     // колесо фортуни їде з платформи на землю, ближче до малого шатра
     const wk = eo(e(0.10, 0.60)), wx = lerp(50, 108, wk), wy = lerp(52 + bob, 64, wk);
     if (wy + 10 < GY) rr(g, wx - 1, wy + 10, 3, GY - wy - 10, D);
-    wheelF(g, Math.round(wx), Math.round(wy), 11, t);
+    wheelF(g, Math.round(wx), Math.round(wy), 11, t, th);
     // клоун: стоїть на платформі → заходить у шатро → виходить на землю й махає рукою
     const walkIn = e(0.12, 0.30), walkOut = e(0.62, 0.84);
     let cxp = 96, vis = 1;
@@ -15830,32 +16073,34 @@ const CIRCUS_ART = (function () {
     else if (s < 0.62) { cxp = 75; vis = 0; }
     else cxp = lerp(75, 52, eo(walkOut));
     if (s > 0.26 && s <= 0.34) vis = 1 - e(0.26, 0.34); else if (s >= 0.56 && s < 0.64) vis = e(0.56, 0.64);
-    if (vis > 0.02) { g.globalAlpha = vis; clown(g, Math.round(cxp), Math.round(62 + sink + bob * (s < 0.3 ? 1 : 0)), t); g.globalAlpha = 1; }
+    if (vis > 0.02) { g.globalAlpha = vis; clown(g, Math.round(cxp), Math.round(62 + sink + bob * (s < 0.3 ? 1 : 0)), t, th); g.globalAlpha = 1; }
   }
   // клоун у вікні колеса: жонглює, підстрибує, моргає (canvas 72×40)
-  function clownWindow(g, t) {
-    g.clearRect(0, 0, 72, 40); rr(g, 0, 0, 72, 40, '#c4ebf5');
-    for (let x = 0; x < 72; x += 6) { g.globalAlpha = 0.25; rr(g, x, 0, 3, 40, '#ffffff'); g.globalAlpha = 1; }
-    rr(g, 0, 34, 72, 6, RED); rr(g, 0, 34, 72, 1, CR);
-    for (let i = 0; i < 12; i++) rr(g, i * 6 + 1, 36, 2, 2, i % 2 ? YEL : CR);
-    const hop = Math.abs(Math.sin(t * 3)) * 3, by = 33 - hop, ox = 30;
-    ['#c4553d', YEL, '#4f9a63'].forEach((c, k) => { const a = t * 4 + k * 2.09, bx = ox + 5 + Math.cos(a) * 16, byb = by - 28 - Math.sin(a) * 10; dsc(g, bx, byb, 2, D); dsc(g, bx, byb, 1, c); });
-    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, RED); rr(g, ox + 7, by - 2, 3, 1, RED);
-    rr(g, ox + 1, by - 7, 3, 5, '#4f9a63'); rr(g, ox + 7, by - 7, 3, 5, YEL);
-    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, '#8b6bb0');
-    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, YEL));
-    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, CR); rr(g, ox + 4, by - 14, 3, 1, '#ef8fa3');
+  function clownWindow(g, t, eid) {
+    const th = themeOf(eid), W = th.win, c = th.cl;
+    g.clearRect(0, 0, 72, 40); rr(g, 0, 0, 72, 40, W.sky);
+    for (let x = 0; x < 72; x += 6) { g.globalAlpha = 0.25; rr(g, x, 0, 3, 40, W.beam); g.globalAlpha = 1; }
+    rr(g, 0, 34, 72, 6, W.floor); rr(g, 0, 34, 72, 1, W.line);
+    for (let i = 0; i < 12; i++) rr(g, i * 6 + 1, 36, 2, 2, i % 2 ? W.dot[0] : W.dot[1]);
+    if (W.extra) W.extra(g, t);
+    const hop = Math.abs(Math.sin(t * 3)) * 3, by = 33 - hop, ox = 30, hy = by - 20;
+    [W.conf[0], W.conf[1], W.conf[2]].forEach((col, k) => { const a = t * 4 + k * 2.09, bx = ox + 5 + Math.cos(a) * 16, byb = by - 28 - Math.sin(a) * 10; dsc(g, bx, byb, 2, D); dsc(g, bx, byb, 1, col); });
+    rr(g, ox, by - 2, 5, 2, D); rr(g, ox + 6, by - 2, 5, 2, D); rr(g, ox + 1, by - 2, 3, 1, c.shoe); rr(g, ox + 7, by - 2, 3, 1, c.shoe);
+    rr(g, ox + 1, by - 7, 3, 5, c.legA); rr(g, ox + 7, by - 7, 3, 5, c.legB);
+    rr(g, ox + 1, by - 14, 9, 8, D); rr(g, ox + 2, by - 13, 7, 7, c.suit);
+    [[3, 11], [6, 9], [4, 8], [7, 12], [5, 13]].forEach(q => rr(g, ox + q[0], by - q[1], 1, 1, c.star));
+    rr(g, ox + 1, by - 15, 9, 2, D); rr(g, ox + 2, by - 14, 7, 1, c.ruff); rr(g, ox + 4, by - 14, 3, 1, c.ruff2);
     const up = Math.floor(t * 4) % 2;
-    rr(g, ox - 2, by - (up ? 17 : 12), 3, 5, D); rr(g, ox - 1, by - (up ? 16 : 11), 1, 4, '#8b6bb0');
-    rr(g, ox + 10, by - (up ? 12 : 17), 3, 5, D); rr(g, ox + 11, by - (up ? 11 : 16), 1, 4, '#8b6bb0');
-    const hy = by - 20;
+    rr(g, ox - 2, by - (up ? 17 : 12), 3, 5, D); rr(g, ox - 1, by - (up ? 16 : 11), 1, 4, c.suit);
+    rr(g, ox + 10, by - (up ? 12 : 17), 3, 5, D); rr(g, ox + 11, by - (up ? 11 : 16), 1, 4, c.suit);
     dsc(g, ox + 5, hy, 5, D); dsc(g, ox + 5, hy, 4, CR);
-    dsc(g, ox - 1, hy - 1, 2, D); dsc(g, ox - 1, hy - 1, 1, '#e8863c'); dsc(g, ox + 11, hy - 1, 2, D); dsc(g, ox + 11, hy - 1, 1, '#e8863c');
+    dsc(g, ox - 1, hy - 1, 2, D); dsc(g, ox - 1, hy - 1, 1, c.wig); dsc(g, ox + 11, hy - 1, 2, D); dsc(g, ox + 11, hy - 1, 1, c.wig);
     if ((t % 2.4) > 2.25) { rr(g, ox + 3, hy - 1, 2, 1, DD); rr(g, ox + 7, hy - 1, 2, 1, DD); } else { rr(g, ox + 3, hy - 1, 1, 2, DD); rr(g, ox + 7, hy - 1, 1, 2, DD); }
+    if (c.shades) { rr(g, ox + 2, hy - 1, 7, 2, '#1a0f2a'); rr(g, ox + 3, hy - 1, 1, 1, '#7ad8ff'); rr(g, ox + 7, hy - 1, 1, 1, '#7ad8ff'); }
     rr(g, ox + 4, hy + 1, 3, 2, RED); rr(g, ox + 5, hy, 1, 1, '#ff8a7a');
     const sm = Math.floor(t * 2) % 2; rr(g, ox + 3, hy + 3 + sm, 5, 1, RED); rr(g, ox + 2, hy + 2 + sm, 1, 1, RED); rr(g, ox + 8, hy + 2 + sm, 1, 1, RED);
-    rr(g, ox + 3, hy - 8, 5, 1, D); rr(g, ox + 4, hy - 7, 3, 2, '#3d5a8c'); rr(g, ox + 3, hy - 5, 5, 1, '#3d5a8c'); rr(g, ox + 2, hy - 4, 7, 1, D); rr(g, ox + 5, hy - 9, 1, 1, YEL);
-    for (let i = 0; i < 8; i++) { const x = (i * 9 + t * 8) % 72, y = (i * 7 + t * 14) % 34; rr(g, x, y, 1, 1, ['#ef8fa3', YEL, '#4f9a63', '#3d5a8c'][i % 4]); }
+    hatG(g, ox, hy, c);
+    for (let i = 0; i < 8; i++) { const x = (i * 9 + t * 8) % 72, y = (i * 7 + t * 14) % 34; rr(g, x, y, 1, 1, W.conf[i % 4]); }
   }
   // червоний «!» (12×26)
   let bang = null;
@@ -17082,6 +17327,376 @@ function initEvents() {
   }
 }
 
+//#part 230_d_circus_themes.js
+/* =====================================================================
+   ЦИРК ПО ЕПОХАХ: у кожної з 9 епох (0 Відродження … 8 Японія) цирк має свої кольори й тематичні деталі.
+   Колесо фортуни лишається (змінено лише лампочки по ободу, втулку й стрілку).
+   Тема: c1/c2 смуги шатра, cap верхівка, shade тінь фестонів, trim оздоба входу, door вхід, out контур, flag [тло, літери, край],
+   plat платформа (d, m, hi, lo, dash, hitch, lt лампочки), tyre колеса, rim/hub/ptr колесо, cl костюм клоуна, win вікно колеса,
+   gl гірлянда між шатрами, paint(g, kind, h) — малюнок на шатрі (один раз), post(g, t, x0) — «стовпчик» біля входу (5 px),
+   top(g, t, s, u) — рухомі деталі (у групі шатра), back(g, t, s, u) — позаду шатра. Малює CIRCUS_ART (230_a_skins_circus_hag.js).
+   ===================================================================== */
+const CIRCUS_THEMES = (function () {
+  const D = '#4a3228', CR = '#fff4dc', YEL = '#ffe08a', GLD = '#f2b84b';
+  const rr = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+  const px = (g, x, y, c) => rr(g, x, y, 1, 1, c);
+  const dsc = (g, cx, cy, r, c) => { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r + r * 0.4) rr(g, cx + x, cy + y, 1, 1, c); };
+  const stamp = (g, x0, y0, rows, pal) => rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) { const c = pal[row[i]]; if (c) rr(g, x0 + i, y0 + j, 1, 1, c); } });
+  const cross = (g, x, y, c) => { px(g, x, y - 1, c); rr(g, x - 1, y, 3, 1, c); px(g, x, y + 1, c); };
+  const HEART = ['.#.#.', '#####', '.###.', '..#..'];
+  const heart = (g, x, y, c) => stamp(g, Math.round(x), Math.round(y), HEART, { '#': c });
+  const T = [];
+
+  /* 0. ВІДРОДЖЕННЯ: ярмарок — винний і пергаментний, герби, смолоскипи, прапорці */
+  T.push({
+    id: 'renaissance',
+    c1: '#9b2f3a', c2: '#f4e4b8', cap: '#b8862f', shade: '#cdbb94', trim: '#e8c860', door: '#24140f', out: '#3a1f1a',
+    flag: ['#7a1f2e', '#f2d27a', '#e8c860'],
+    plat: { d: '#3a2a1c', m: '#7a5230', hi: '#a8703f', lo: '#4a2f1a', dash: '#e8c860', hitch: GLD, lt: ['#f2b84b', '#9b2f3a'] },
+    tyre: ['#2a1d1a', '#5a4636', '#f2b84b', CR], rim: ['#f2d27a', CR], hub: '#c99a3c', ptr: '#9b2f3a',
+    cl: { kind: 'jester', suit: '#9b2f3a', legA: '#2f6a4a', legB: '#e8c860', shoe: '#7a4f35', wig: '#c99a3c', star: '#e8c860', ruff: CR, ruff2: '#e8c860', hat: '#9b2f3a', tip: '#e8c860' },
+    win: { sky: '#d6e6ee', beam: '#ffffff', floor: '#7a1f2e', line: '#e8c860', dot: ['#e8c860', '#f4e4b8'], conf: ['#9b2f3a', '#e8c860', '#2f6a4a', '#f4e4b8'],
+      extra(g) { for (let x = 0; x < 72; x += 4) { const y = 3 + Math.round(2 * Math.sin(x / 72 * Math.PI * 3)), c = ['#9b2f3a', '#e8c860', '#2f6a4a'][(x / 4) % 3]; px(g, x, y, '#3a2a1c'); rr(g, x - 1, y + 1, 3, 1, c); px(g, x, y + 2, c); } } },
+    gl: { kind: 'flag', cols: ['#9b2f3a', '#e8c860', '#f4e4b8'], str: '#3a2a1c' },
+    paint(g, kind) {
+      if (kind !== 'main') return;
+      stamp(g, 76, 28, ['DDDDDDDDD', 'DgggRgggD', 'DgggRgggD', 'DRRRRRRRD', 'DgggRgggD', 'DgggRgggD', '.DggRggD.', '..DgRgD..', '...DRD...', '....D....'], { D: '#3a1f1a', g: '#e8c860', R: '#9b2f3a' });
+    },
+    post(g, t, x0) {                                                       // смолоскип
+      const f = Math.floor(t * 8) % 3;
+      g.globalAlpha = 0.25; dsc(g, x0 + 2, 53, 4, '#ffb347'); g.globalAlpha = 1;
+      rr(g, x0 + 2, 56, 1, 6, '#4a2f1a'); rr(g, x0 + 1, 55, 3, 1, '#2a1d1a');
+      rr(g, x0 + 1, 53, 3, 2, '#ff8a3d'); rr(g, x0 + 2, 51 - (f === 0 ? 1 : 0), 1, 3, '#ffb347'); px(g, x0 + 2, 53, '#ffe08a');
+    },
+    top(g) { rr(g, 79, 0, 3, 3, '#e8c860'); px(g, 79, 0, CR); }
+  });
+
+  /* 1. РЕТРО (50-ті): бірюза й корал, атомні зірки, шахова смуга, платівка */
+  T.push({
+    id: 'retro',
+    c1: '#2fb5ab', c2: '#fff4dc', cap: '#e5546b', shade: '#bfe0dc', trim: '#e5546b', door: '#1d2a30', out: '#1d3a40',
+    flag: ['#e5546b', '#fff4dc', '#fff4dc'],
+    plat: { d: '#1d2a30', m: '#e9e4d6', hi: '#ffffff', lo: '#8fa3a8', dash: '#e5546b', hitch: '#c0c8cc', lt: ['#e5546b', '#2fb5ab'] },
+    tyre: ['#1d2a30', '#fff4dc', '#c0c8cc', '#8fa3a8'], rim: ['#e5546b', CR], hub: '#e5546b', ptr: '#2fb5ab',
+    cl: { kind: 'cap', suit: '#e5546b', legA: '#2fb5ab', legB: '#fff4dc', shoe: '#1d2a30', wig: '#2fb5ab', star: '#fff4dc', ruff: '#fff4dc', ruff2: '#2fb5ab', hat: '#e5546b', tip: '#2fb5ab' },
+    win: { sky: '#bfe8e3', beam: '#ffffff', floor: '#1d2a30', line: '#e5546b', dot: ['#e5546b', '#fff4dc'], conf: ['#e5546b', '#ffe08a', '#2fb5ab', '#fff4dc'],
+      extra(g, t) {
+        for (let i = 0; i < 18; i++) for (let r = 0; r < 2; r++) rr(g, i * 4, 34 + r * 3, 4, 3, (i + r) % 2 ? '#1d2a30' : '#fff4dc');
+        [[8, 8], [62, 9], [50, 22], [16, 24]].forEach((p, i) => { const c = (Math.floor(t * 2) + i) % 2 ? '#e5546b' : '#ffffff'; cross(g, p[0], p[1], c); px(g, p[0] - 2, p[1] - 2, c); px(g, p[0] + 2, p[1] - 2, c); px(g, p[0] - 2, p[1] + 2, c); px(g, p[0] + 2, p[1] + 2, c); });
+      } },
+    gl: { kind: 'bulb', cols: ['#e5546b', '#ffe08a', '#2fb5ab', '#fff4dc'], str: '#1d3a40' },
+    paint(g, kind, h) {
+      if (kind === 'main') {
+        const cx = 80, cy = 33, C = '#e5546b';
+        for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; for (let r = 3; r <= 6; r++) px(g, cx + Math.cos(a) * r, cy + Math.sin(a) * r, C); }
+        dsc(g, cx, cy, 2, '#3a1f2a'); dsc(g, cx, cy, 1, C);
+        const hw = h.hwAt(58);                                              // шахова смуга внизу стін
+        for (let x = 80 - hw + 1; x < 80 + hw; x += 2) { if (x > 68 && x < 92) continue; for (let r = 0; r < 2; r++) rr(g, x, 58 + r * 2, 2, 2, (((x / 2) | 0) + r) % 2 ? '#1d2a30' : '#fff4dc'); }
+      } else { cross(g, 24, 14, '#e5546b'); px(g, 22, 12, '#e5546b'); px(g, 26, 12, '#e5546b'); px(g, 22, 16, '#e5546b'); px(g, 26, 16, '#e5546b'); }
+    },
+    post(g, t, x0) {                                                       // атомний ліхтар
+      const c = Math.floor(t * 3) % 2 ? '#e5546b' : '#ffe08a';
+      rr(g, x0 + 2, 52, 1, 10, '#8fa3a8'); rr(g, x0 + 1, 61, 3, 1, '#1d2a30');
+      rr(g, x0, 50, 5, 1, c); rr(g, x0 + 2, 48, 1, 5, c); px(g, x0 + 1, 49, c); px(g, x0 + 3, 49, c); px(g, x0 + 1, 51, c); px(g, x0 + 3, 51, c); px(g, x0 + 2, 50, '#fff4dc');
+    },
+    top(g, t) {                                                            // платівка, що крутиться
+      const vx = 60, vy = 17, a = t * 3;
+      dsc(g, vx, vy, 5, '#1d2a30'); dsc(g, vx, vy, 4, '#2b3b44'); dsc(g, vx, vy, 1, '#e5546b');
+      for (let k = 0; k < 2; k++) px(g, vx + Math.cos(a + k * Math.PI) * 3, vy + Math.sin(a + k * Math.PI) * 3, '#8fa3a8');
+      px(g, vx, vy, '#ffffff');
+    }
+  });
+
+  /* 2. ДИСКО: фіолетовий і рожевий, дзеркальна куля, танцпідлога, колонки, промені */
+  T.push({
+    id: 'disco',
+    c1: '#7a2fb0', c2: '#ff7ac0', cap: '#ffd34d', shade: '#d3b0e6', trim: '#ffd34d', door: '#150a24', out: '#2a1048',
+    flag: ['#7a2fb0', '#ffe08a', '#ffd34d'],
+    plat: { d: '#241036', m: '#3a1f5c', hi: '#b86bff', lo: '#150a24', dash: '#ff7ac0', hitch: '#ffd34d', lt: ['#ff7ac0', '#7ad8ff'] },
+    tyre: ['#150a24', '#5a3d78', '#ffd34d', '#ff7ac0'], rim: ['#ff7ac0', '#7ad8ff'], hub: '#ffd34d', ptr: '#7a2fb0',
+    cl: { kind: 'afro', suit: '#ff7ac0', legA: '#7a2fb0', legB: '#7ad8ff', shoe: '#ffd34d', wig: '#ffd34d', star: '#ffffff', ruff: '#ffd34d', ruff2: '#7a2fb0', hat: '#6a3a1a', tip: '#ffd34d', shades: true },
+    win: { sky: '#2a1248', beam: '#b86bff', floor: '#150a24', line: '#ffd34d', dot: ['#ff7ac0', '#7ad8ff'], conf: ['#ff7ac0', '#7ad8ff', '#ffd34d', '#b86bff'],
+      extra(g, t) {
+        for (let i = 0; i < 12; i++) for (let r = 0; r < 2; r++) rr(g, i * 6, 34 + r * 3, 6, 3, ['#ff7ac0', '#7ad8ff', '#ffd34d', '#b86bff'][(i + r * 2 + Math.floor(t * 3)) % 4]);
+        rr(g, 59, 0, 1, 5, '#cfd8e3'); dsc(g, 59, 9, 4, '#aab4c8');
+        for (let y = -4; y <= 4; y++) for (let x = -4; x <= 4; x++) if (x * x + y * y <= 17 && (x + y + 8) % 2 === 0) px(g, 59 + x, 9 + y, '#e8eefc');
+        const k = Math.floor(t * 5); px(g, 57 + (k % 3), 7 + (k % 2), '#ffffff');
+        [[-7, -3], [7, -4], [-6, 5], [8, 4]].forEach((p, i) => { if ((k + i) % 3 === 0) cross(g, 59 + p[0], 9 + p[1], '#ffd34d'); });
+      } },
+    gl: { kind: 'bulb', cols: ['#ff7ac0', '#7ad8ff', '#ffd34d', '#b86bff'], str: '#2a1048' },
+    paint(g, kind) {
+      const pts = kind === 'main' ? [[71, 30], [89, 31], [75, 38], [86, 40]] : [[24, 14]];
+      pts.forEach(p => { cross(g, p[0], p[1], '#ffd34d'); px(g, p[0], p[1], '#ffffff'); });
+    },
+    post(g, t, x0) {                                                       // колонка
+      const beat = Math.floor(t * 6) % 2;
+      rr(g, x0, 50, 5, 12, '#241036'); rr(g, x0, 50, 5, 1, '#ff7ac0'); rr(g, x0, 61, 5, 1, '#150a24');
+      dsc(g, x0 + 2, 53, 1, beat ? '#ffffff' : '#7ad8ff'); dsc(g, x0 + 2, 58, beat ? 2 : 1, '#5a3d78'); px(g, x0 + 2, 58, '#150a24');
+    },
+    back(g, t, s, u) {                                                     // промені з верхівки
+      const ax = 80, ay = 8 + u.sink + u.bob;
+      g.globalAlpha = 0.3;
+      [['#ff7ac0', 0], ['#7ad8ff', 2.1], ['#ffd34d', 4.2]].forEach(([c, ph]) => {
+        const a = -Math.PI / 2 + Math.sin(t * 1.4 + ph) * 1.2;
+        for (let r = 4; r < 46; r++) { const w = 1 + Math.floor(r / 14); rr(g, ax + Math.cos(a) * r - (w >> 1), ay + Math.sin(a) * r - (w >> 1), w, w, c); }
+      });
+      g.globalAlpha = 1;
+    },
+    top(g, t) {                                                            // дзеркальна куля в дверях
+      const bx = 80, by = 56, k = Math.floor(t * 5);
+      rr(g, bx, 48, 1, 4, '#cfd8e3'); dsc(g, bx, by, 4, '#aab4c8');
+      for (let y = -4; y <= 4; y++) for (let x = -4; x <= 4; x++) if (x * x + y * y <= 17 && (x + y + 8) % 2 === 0) px(g, bx + x, by + y, '#e8eefc');
+      px(g, bx - 2 + (k % 3), by - 2 + (k % 2), '#ffffff');
+      [[-8, -3], [8, -4], [-7, 5], [7, 6]].forEach((p, i) => { if ((k + i) % 3 === 0) cross(g, bx + p[0], by + p[1], '#ffd34d'); });
+    }
+  });
+
+  /* 3. АРКАДИ: пікселі — малиновий і фіолетовий, інопланетянин, пакмен, автомат, життя-серця */
+  T.push({
+    id: 'arcade',
+    c1: '#e63a9a', c2: '#2c2468', cap: '#3be0e8', shade: '#8a7fc8', trim: '#3be0e8', door: '#0e0a24', out: '#0a0618',
+    flag: ['#2c2468', '#ffe14a', '#3be0e8'],
+    plat: { d: '#0a0618', m: '#2c2468', hi: '#3be0e8', lo: '#0a0618', dash: '#e63a9a', hitch: '#ffe14a', lt: ['#3be0e8', '#e63a9a'] },
+    tyre: ['#0a0618', '#3a3a6a', '#ffe14a', '#3be0e8'], rim: ['#ffe14a', '#3be0e8'], hub: '#e63a9a', ptr: '#ffe14a',
+    cl: { kind: 'visor', suit: '#3be0e8', legA: '#e63a9a', legB: '#ffe14a', shoe: '#2c2468', wig: '#3be0e8', star: '#ffe14a', ruff: '#ffe14a', ruff2: '#e63a9a', hat: '#e63a9a', tip: '#ffe14a' },
+    win: { sky: '#0e0a24', beam: '#2c2468', floor: '#2c2468', line: '#3be0e8', dot: ['#e63a9a', '#ffe14a'], conf: ['#e63a9a', '#ffe14a', '#3be0e8', '#7aff7a'],
+      extra(g, t) {
+        for (let dy = 0; dy <= 12; dy++) { const hw = Math.round(Math.sqrt(144 - dy * dy)); if (dy % 4 === 3) continue; rr(g, 56 - hw, 26 - dy, hw * 2, 1, dy < 6 ? '#e63a9a' : '#ffe14a'); }
+        rr(g, 0, 26, 72, 1, '#3be0e8');
+        for (let i = 0; i < 4; i++) rr(g, 0, 27 + Math.round(Math.pow(((i + (t * 0.8) % 1) / 4), 2) * 7), 72, 1, '#2c8aa8');
+        for (let k = -6; k <= 6; k++) for (let y = 27; y < 34; y++) px(g, 56 + k * (1 + (y - 26) * 0.7), y, '#2c8aa8');
+        for (let i = 0; i < 9; i++) if ((Math.floor(t * 3) + i) % 3) px(g, (i * 29) % 72, (i * 11) % 20, '#ffffff');
+      } },
+    gl: { kind: 'pixel', cols: ['#ffe14a', '#3be0e8', '#e63a9a', '#7aff7a'], str: '#0a0618' },
+    paint(g, kind) {
+      if (kind === 'main') {
+        const inv = ['..#.....#..', '...#...#...', '..#######..', '.##.###.##.', '###########', '#.#######.#', '#.#.....#.#', '...##.##...'];
+        stamp(g, 76, 29, inv, { '#': '#0a0618' }); stamp(g, 75, 28, inv, { '#': '#ffe14a' });
+      } else {
+        dsc(g, 24, 15, 3, '#ffe14a'); rr(g, 25, 15, 3, 1, '#0a0618'); rr(g, 26, 14, 2, 1, '#0a0618'); rr(g, 26, 16, 2, 1, '#0a0618'); px(g, 24, 13, '#0a0618');
+      }
+    },
+    post(g, t, x0) {                                                       // міні-автомат
+      rr(g, x0, 50, 5, 12, '#0a0618'); rr(g, x0 + 1, 51, 3, 2, '#e63a9a'); rr(g, x0 + 1, 54, 3, 3, '#3be0e8');
+      px(g, x0 + 1 + Math.floor(t * 4) % 3, 55, '#0a0618'); rr(g, x0 + 1, 58, 3, 1, '#ffe14a'); px(g, x0 + 1, 59, '#e63a9a'); px(g, x0 + 3, 59, '#7aff7a'); rr(g, x0 + 1, 60, 3, 1, '#2c2468');
+    },
+    top(g, t) {                                                            // життя: три серця
+      [0, 1, 2].forEach(i => { if (i === 2 && Math.floor(t * 2) % 2) return; heart(g, 52 + i * 6, 6, '#ff3b5c'); });
+    }
+  });
+
+  /* 4. ІНТЕРНЕТ: блакитний і білий, вікно браузера, вай-фай, сердечка-лайки */
+  T.push({
+    id: 'internet',
+    c1: '#2f7fd6', c2: '#ffffff', cap: '#1d4f9a', shade: '#bcd4f0', trim: '#ffffff', door: '#0f2540', out: '#173a6a',
+    flag: ['#2f7fd6', '#ffffff', '#ffffff'],
+    plat: { d: '#1d2f4a', m: '#cfd8e3', hi: '#ffffff', lo: '#7a8aa0', dash: '#2f7fd6', hitch: '#ff8a3d', lt: ['#4cd964', '#2f7fd6'] },
+    tyre: ['#1d2f4a', '#8a96a8', '#ffffff', '#cfd8e3'], rim: ['#ffffff', '#2f7fd6'], hub: '#ff8a3d', ptr: '#2f7fd6',
+    cl: { kind: 'phones', suit: '#2f7fd6', legA: '#4cd964', legB: '#ffffff', shoe: '#1d4f9a', wig: '#4cd964', star: '#ffffff', ruff: '#ffffff', ruff2: '#ff8a3d', hat: '#1d4f9a', tip: '#4cd964' },
+    win: { sky: '#bfe0ff', beam: '#ffffff', floor: '#2f7fd6', line: '#ffffff', dot: ['#ffffff', '#cfe0f5'], conf: ['#2f7fd6', '#ea4335', '#fbbc05', '#34a853'],
+      extra(g, t) {
+        [[(t * 4) % 90 - 14, 6], [(t * 3 + 40) % 90 - 14, 16]].forEach(p => { rr(g, p[0], p[1] + 2, 12, 3, '#ffffff'); rr(g, p[0] + 2, p[1], 7, 3, '#ffffff'); });
+        [0, 1].forEach(k => { const ph = (t * 0.6 + k * 0.5) % 1; g.globalAlpha = 1 - ph * 0.6; heart(g, 8 + k * 50 + Math.sin(ph * 6) * 3, 31 - ph * 26, '#ff4d6d'); g.globalAlpha = 1; });
+      } },
+    gl: { kind: 'pixel', cols: ['#2f7fd6', '#ea4335', '#fbbc05', '#34a853'], str: '#173a6a' },
+    paint(g, kind) {
+      if (kind === 'main') {
+        rr(g, 70, 31, 21, 11, '#173a6a'); rr(g, 71, 32, 19, 2, '#2f7fd6'); px(g, 72, 32, '#ff5f57'); px(g, 74, 32, '#ffbd2e'); px(g, 76, 32, '#28c940');
+        rr(g, 71, 34, 19, 7, '#ffffff'); rr(g, 72, 35, 17, 2, '#cfe0f5'); rr(g, 72, 38, 9, 1, '#9bb7dc'); rr(g, 72, 40, 6, 1, '#9bb7dc');
+        stamp(g, 83, 37, ['D....', 'DD...', 'DwD..', 'DwwD.', 'DDDD.'], { D: '#173a6a', w: '#ffffff' });
+      } else {
+        dsc(g, 24, 14, 4, '#173a6a');
+        stamp(g, 21, 11, ['.#####.', '#.....#', '..###..', '.#...#.', '...#...'], { '#': '#ffffff' });
+      }
+    },
+    post(g, t, x0) {                                                       // серверна шафа з лампочками
+      rr(g, x0, 50, 5, 12, '#173a6a'); rr(g, x0 + 1, 51, 3, 10, '#2a4468');
+      for (let i = 0; i < 4; i++) { px(g, x0 + 1, 52 + i * 2, (Math.floor(t * 3) + i) % 2 ? '#4cd964' : '#ff8a3d'); px(g, x0 + 2, 52 + i * 2, '#8fb0d8'); px(g, x0 + 3, 52 + i * 2, '#8fb0d8'); }
+      px(g, x0 + 2, 49, '#8fb0d8');
+    },
+    top(g, t, s, u) {                                                      // вай-фай і сердечка-лайки
+      const lv = Math.floor(t * 3) % 4;
+      px(g, 64, 14, '#2f7fd6');
+      [3, 6, 9].forEach((r, i) => { if (lv > i) for (let a = 225; a <= 315; a += 6) px(g, 64 + Math.cos(a * Math.PI / 180) * r, 14 + Math.sin(a * Math.PI / 180) * r, '#2f7fd6'); });
+      if (s > 0.6) [0, 1].forEach(k => { const ph = (t * 0.55 + k * 0.5) % 1; g.globalAlpha = 1 - ph; heart(g, 99 + Math.sin(ph * 6 + k) * 4, 42 - ph * 22, '#ff4d6d'); g.globalAlpha = 1; });
+    }
+  });
+
+  /* 5. ЕКО: зелене й крем, листок, вази з рослинами, вітряк, метелики */
+  T.push({
+    id: 'eco',
+    c1: '#3f9a4d', c2: '#f4efd2', cap: '#2f6a3a', shade: '#c8dcb4', trim: '#e8d27a', door: '#1a2a18', out: '#1f3a22',
+    flag: ['#3f9a4d', '#fff4dc', '#e8d27a'],
+    plat: { d: '#4a3a22', m: '#8a6a3a', hi: '#c8a35a', lo: '#5a4426', dash: '#8ed46a', hitch: '#c8a35a', lt: ['#8ed46a', '#ffe08a'] },
+    tyre: ['#4a3a22', '#a8803f', '#c8a35a', '#6a4a2a'], rim: ['#8ed46a', CR], hub: '#8a6a3a', ptr: '#3f9a4d',
+    cl: { kind: 'leaf', suit: '#7ac26a', legA: '#8a6a3a', legB: '#3f9a4d', shoe: '#5a4426', wig: '#ef8fa3', star: '#fff4dc', ruff: '#f4efd2', ruff2: '#8ed46a', hat: '#4f9a3a', tip: '#ef8fa3' },
+    win: { sky: '#cdeeb8', beam: '#ffffff', floor: '#5fae4f', line: '#8ed46a', dot: ['#ef8fa3', '#ffe08a'], conf: ['#8ed46a', '#ef8fa3', '#ffe08a', '#ffffff'],
+      extra(g, t) {
+        dsc(g, 62, 8, 5, '#ffe08a');
+        [[0, 0, '#ffb347'], [1, 2.4, '#ef8fa3']].forEach(([i, ph, c]) => { const x = 14 + i * 40 + Math.sin(t * 0.9 + ph) * 8, y = 14 + Math.sin(t * 1.7 + ph) * 5, w = Math.floor(t * 8) % 2; rr(g, x - 2, y - w, 2, 2, c); rr(g, x + 1, y - w, 2, 2, c); px(g, x, y + 1, '#2f6a3a'); });
+      } },
+    gl: { kind: 'leaf', cols: ['#8ed46a', '#3f9a4d', '#ef8fa3'], str: '#2f6a3a' },
+    paint(g, kind, h) {
+      if (kind === 'main') {
+        stamp(g, 77, 28, ['...D...', '..DgD..', '.DgvgD.', 'DggvggD', 'DggvggD', '.DgvgD.', '..DvD..', '...v...'], { D: '#1f3a22', g: '#8ed46a', v: '#2f6a3a' });
+        for (let x = 49; x <= 111; x += 5) { if (x > 68 && x < 93) continue; const y = h.edge(x) + 1; rr(g, x, y, 1, 3, '#2f6a3a'); px(g, x + 1, y + 2, '#8ed46a'); }
+      } else { px(g, 24, 14, '#ffe08a'); px(g, 24, 12, '#ffffff'); px(g, 24, 16, '#ffffff'); px(g, 22, 14, '#ffffff'); px(g, 26, 14, '#ffffff'); }
+    },
+    post(g, t, x0) {                                                       // ваза з рослиною
+      const sw = Math.round(Math.sin(t * 2));
+      rr(g, x0, 57, 5, 1, '#7a4f35'); rr(g, x0 + 1, 58, 3, 4, '#a8703f');
+      rr(g, x0 + 2, 50, 1, 7, '#2f6a3a'); rr(g, x0, 52, 2, 2, '#8ed46a'); rr(g, x0 + 3, 50, 2, 2, '#8ed46a'); rr(g, x0 + 1 + sw, 47, 2, 2, '#8ed46a'); px(g, x0 + 2 + sw, 46, '#ef8fa3');
+    },
+    top(g, t) {                                                            // вітряк і метелики
+      rr(g, 58, 25, 1, 13, '#e8ecf4'); px(g, 58, 37, '#8a96a8');
+      const a = t * 3;
+      for (let k = 0; k < 3; k++) { const aa = a + k * Math.PI * 2 / 3; for (let r = 1; r <= 6; r++) { px(g, 58 + Math.cos(aa) * r + 1, 24 + Math.sin(aa) * r + 1, '#8a96a8'); px(g, 58 + Math.cos(aa) * r, 24 + Math.sin(aa) * r, '#f4f4f4'); } }
+      dsc(g, 58, 24, 1, '#c9d6e8');
+      [[0, '#ffb347'], [2.4, '#ef8fa3']].forEach(([ph, c], i) => { const x = 112 + i * 14 + Math.sin(t * 0.9 + ph) * 9, y = 30 + i * 8 + Math.sin(t * 1.7 + ph) * 5, w = Math.floor(t * 8) % 2; rr(g, x - 2, y - w, 2, 2, c); rr(g, x + 1, y - w, 2, 2, c); px(g, x, y + 1, '#2f6a3a'); });
+    }
+  });
+
+  /* 6. КОСМОС: індиго й срібло, планета з кільцем, зорі, НЛО, антена; платформа ширяє на двигунах */
+  T.push({
+    id: 'space',
+    c1: '#3d4a9c', c2: '#c9d6e8', cap: '#8a96a8', shade: '#6a78a0', trim: '#7ad8ff', door: '#070d1c', out: '#0f1838',
+    flag: ['#1d2a5c', '#7ad8ff', '#7ad8ff'], hover: true,
+    plat: { d: '#10182c', m: '#5a6a8a', hi: '#a8b8d0', lo: '#2a3450', dash: '#7ad8ff', hitch: '#e8863c', lt: ['#7ad8ff', '#ffffff'] },
+    tyre: ['#10182c', '#5a6a8a', '#7ad8ff', '#ffffff'], rim: ['#7ad8ff', '#ffffff'], hub: '#e8863c', ptr: '#7ad8ff',
+    cl: { kind: 'helmet', suit: '#e8ecf4', legA: '#c9d6e8', legB: '#e8ecf4', shoe: '#e8863c', wig: '#7ad8ff', star: '#7ad8ff', ruff: '#c9d6e8', ruff2: '#e8863c', hat: '#bfe8ff', tip: '#ffffff' },
+    win: { sky: '#0a1230', beam: '#16215a', floor: '#6a78a0', line: '#a8b8d0', dot: ['#4a5878', '#8a96a8'], conf: ['#7ad8ff', '#ffe08a', '#ffffff', '#ef8fa3'],
+      extra(g, t) {
+        for (let i = 0; i < 14; i++) if ((Math.floor(t * 2) + i) % 4) px(g, (i * 23) % 72, (i * 13) % 30, i % 3 ? '#ffffff' : '#7ad8ff');
+        for (let a = 0; a < 6.28; a += 0.2) if (Math.sin(a) < 0) px(g, 60 + Math.cos(a) * 9, 10 + Math.sin(a) * 2.5, '#ffe08a');
+        dsc(g, 60, 10, 5, '#e8863c'); px(g, 58, 8, '#ffc27a'); rr(g, 61, 12, 3, 2, '#b8581c');
+        for (let a = 0; a < 6.28; a += 0.2) if (Math.sin(a) >= 0) px(g, 60 + Math.cos(a) * 9, 10 + Math.sin(a) * 2.5, '#ffe08a');
+        [[10, 37, 4], [44, 38, 3], [64, 36, 3]].forEach(c => rr(g, c[0], c[1], c[2], 1, '#4a5878'));
+      } },
+    gl: { kind: 'star', cols: ['#ffe08a', '#ffffff', '#7ad8ff'], str: '#6a78a0' },
+    paint(g, kind) {
+      if (kind === 'main') {
+        [[72, 30], [89, 29], [75, 41], [86, 42], [82, 26], [69, 37], [92, 37]].forEach((p, i) => px(g, p[0], p[1], i % 2 ? '#ffffff' : '#7ad8ff'));
+        for (let a = 0; a < 6.28; a += 0.15) if (Math.sin(a) < 0) px(g, 80 + Math.cos(a) * 7, 34 + Math.sin(a) * 2, '#ffe08a');
+        dsc(g, 80, 34, 4, '#e8863c'); px(g, 78, 32, '#ffc27a'); rr(g, 81, 36, 3, 1, '#b8581c');
+        for (let a = 0; a < 6.28; a += 0.15) if (Math.sin(a) >= 0) px(g, 80 + Math.cos(a) * 7, 34 + Math.sin(a) * 2, '#ffe08a');
+      } else { px(g, 20, 14, '#ffffff'); px(g, 28, 12, '#7ad8ff'); px(g, 25, 17, '#ffffff'); dsc(g, 24, 14, 1, '#ffe08a'); }
+    },
+    post(g, t, x0) {                                                       // антена-маяк
+      rr(g, x0 + 2, 52, 1, 10, '#a8b8d0'); rr(g, x0 + 1, 61, 3, 1, '#5a6a8a');
+      rr(g, x0, 51, 5, 1, '#e8ecf4'); px(g, x0, 50, '#e8ecf4'); px(g, x0 + 4, 50, '#e8ecf4');
+      px(g, x0 + 2, 50, Math.floor(t * 2) % 2 ? '#ff4d4d' : '#7ad8ff');
+    },
+    top(g, t) {                                                            // тарілка і маячок
+      const x = 34, y = 12 + Math.round(Math.sin(t * 2) * 2);
+      rr(g, x + 3, y + 3, 11, 1, '#7ad8ff'); rr(g, x, y + 1, 17, 2, '#a8b8d0'); rr(g, x + 3, y, 11, 1, '#c9d6e8'); rr(g, x + 6, y - 2, 5, 2, '#7ad8ff'); px(g, x + 7, y - 2, '#ffffff');
+      for (let i = 0; i < 4; i++) px(g, x + 3 + i * 4, y + 2, (Math.floor(t * 4) + i) % 2 ? '#ffe08a' : '#e8863c');
+      px(g, 80, 2, Math.floor(t * 2) % 2 ? '#ff4d4d' : '#7a1f2e');
+    }
+  });
+
+  /* 7. НЕОН: чорно-фіолетове шатро з неоновим контуром, ринг-вивіска, неонові стовпчики й стрілки */
+  T.push({
+    id: 'neon',
+    c1: '#2b0f55', c2: '#10143a', cap: '#ff3fd0', shade: '#4a2a7a', trim: '#35f0ff', door: '#05020f', out: '#35f0ff',
+    flag: ['#10143a', '#35f0ff', '#ff3fd0'],
+    plat: { d: '#05020f', m: '#1b1033', hi: '#ff3fd0', lo: '#05020f', dash: '#35f0ff', hitch: '#ffe14a', lt: ['#35f0ff', '#ff3fd0'] },
+    tyre: ['#35f0ff', '#1b1033', '#ff3fd0', '#35f0ff'], rim: ['#35f0ff', '#ff3fd0'], hub: '#ffe14a', ptr: '#35f0ff',
+    cl: { kind: 'top', suit: '#2b0f55', legA: '#ff3fd0', legB: '#35f0ff', shoe: '#ffe14a', wig: '#7aff7a', star: '#35f0ff', ruff: '#35f0ff', ruff2: '#ff3fd0', hat: '#35f0ff', tip: '#ff3fd0' },
+    win: { sky: '#10062a', beam: '#1b1033', floor: '#05020f', line: '#ff3fd0', dot: ['#35f0ff', '#ff3fd0'], conf: ['#35f0ff', '#ff3fd0', '#ffe14a', '#7aff7a'],
+      extra(g, t) {
+        [[3, 12, 10], [15, 7, 15], [32, 14, 8], [42, 5, 17], [56, 11, 11], [66, 8, 14]].forEach((b, i) => { const y = 34 - b[2]; rr(g, b[0], y, b[1], b[2], '#1b1033'); for (let k = 0; k < 4; k++) if ((Math.floor(t * 2) + i + k) % 3) px(g, b[0] + 1 + (k % 2) * 3, y + 2 + ((k / 2) | 0) * 4, k % 2 ? '#35f0ff' : '#ff3fd0'); });
+        for (let i = 0; i < 6; i++) if ((Math.floor(t * 3) + i) % 3) px(g, (i * 31) % 72, (i * 7) % 12, '#ffffff');
+      } },
+    gl: { kind: 'bulb', cols: ['#35f0ff', '#ff3fd0'], str: '#7a5cff' },
+    paint(g, kind, h) {
+      const NC = ['#35f0ff', '#ff3fd0'], cx = h.cx;
+      if (kind === 'main') {
+        for (let k = -4; k <= 4; k++) for (let y = h.ay + h.capH; y <= h.roofB + 1; y++) { const x = Math.round(cx + k * (y - h.ay + 2) / h.fan); if (y < h.edge(x)) px(g, x, y, NC[Math.abs(k) % 2]); }
+        for (let x = cx - 34; x <= cx + 34; x++) {
+          const edgeY = h.edge(x);
+          if (Math.floor((x - cx + 200) / h.stripe) !== Math.floor((x - 1 - cx + 200) / h.stripe)) for (let y = edgeY + 1; y <= h.floor; y++) { if (Math.abs(x - cx) >= h.hwAt(y) - 1) break; if (y >= 48 && x > 68 && x < 92) continue; px(g, x, y, NC[Math.floor((x - cx + 200) / h.stripe) % 2]); }
+          if (Math.abs(x - cx) < h.hwAt(edgeY) - 1) px(g, x, edgeY, NC[Math.floor((x - cx + 600) / h.scallop) % 2]);
+        }
+        dsc(g, 80, 32, 5, '#ff3fd0'); dsc(g, 80, 32, 4, '#10143a'); cross(g, 80, 32, '#35f0ff'); px(g, 78, 30, '#35f0ff'); px(g, 82, 30, '#35f0ff'); px(g, 78, 34, '#35f0ff'); px(g, 82, 34, '#35f0ff');
+      } else { cross(g, 24, 14, '#35f0ff'); px(g, 22, 12, '#ff3fd0'); px(g, 26, 12, '#ff3fd0'); px(g, 22, 16, '#ff3fd0'); px(g, 26, 16, '#ff3fd0'); }
+    },
+    post(g, t, x0) {                                                       // неонові трубки
+      const off = Math.floor(t * 7) % 9 === 0;
+      g.globalAlpha = 0.3; rr(g, x0, 49, 5, 13, '#ff3fd0'); g.globalAlpha = 1;
+      rr(g, x0 + 1, 50, 1, 11, off ? '#7a1f6a' : '#ff3fd0'); rr(g, x0 + 3, 50, 1, 11, '#35f0ff'); rr(g, x0, 61, 5, 1, '#05020f');
+    },
+    top(g, t) {                                                            // стрілки до входу й зірка на щоглі
+      [0, 1, 2].forEach(i => {
+        const x = 80, y = 38 + i * 4, on = Math.floor(t * 4) % 3 === i, c = on ? '#ffe14a' : (i % 2 ? '#ff3fd0' : '#35f0ff');
+        for (let k = 0; k <= 3; k++) { px(g, x - 3 + k, y + k, c); px(g, x + 3 - k, y + k, c); }
+      });
+      cross(g, 80, 1, Math.floor(t * 5) % 2 ? '#ffe14a' : '#ff3fd0');
+    }
+  });
+
+  /* 8. ЯПОНІЯ: червоно-біле шатро-«мааку», торії, норен у дверях, кам'яні ліхтарі, пелюстки сакури */
+  T.push({
+    id: 'japan',
+    c1: '#c8322f', c2: '#fff4dc', cap: '#2f3a6a', shade: '#e6c9c0', trim: '#e8c860', door: '#2a1410', out: '#3a1f1a',
+    flag: ['#c8322f', '#fff4dc', '#fff4dc'],
+    plat: { d: '#2a1d1a', m: '#c9a86a', hi: '#e2c98a', lo: '#7a5a30', dash: '#c8322f', hitch: '#e8c860', lt: ['#c8322f', '#fff4dc'] },
+    tyre: ['#2a1d1a', '#7a4f35', '#c8322f', '#e8c860'], rim: ['#c8322f', '#fff4dc'], hub: '#e8c860', ptr: '#c8322f',
+    cl: { kind: 'kasa', suit: '#3d5a8c', legA: '#2a2a2a', legB: '#2a2a2a', shoe: '#c8322f', wig: '#ef8fa3', star: '#fff4dc', ruff: '#e8c860', ruff2: '#c8322f', hat: '#e8d49a', tip: '#c8322f' },
+    win: { sky: '#ffe4ec', beam: '#ffffff', floor: '#a8703f', line: '#7a4f35', dot: ['#c8322f', '#fff4dc'], conf: ['#ef8fa3', '#ffffff', '#c8322f', '#e8c860'],
+      extra(g, t) {
+        dsc(g, 12, 9, 6, '#c8322f');
+        for (let y = 0; y < 14; y++) { const hw = Math.round(2 + y * 0.9); rr(g, 54 - hw, 20 + y, hw * 2, 1, y < 4 ? '#ffffff' : '#7a8fb8'); }
+        for (let i = 0; i < 6; i++) { const ph = (t * 0.35 + i / 6) % 1; px(g, (i * 13 + Math.sin(ph * 9 + i) * 5 + 72) % 72, ph * 36, i % 2 ? '#ef8fa3' : '#ffffff'); }
+      } },
+    gl: { kind: 'lantern', cols: ['#c8322f', '#fff4dc', '#e8c860'], str: '#2a1d1a' },
+    paint(g, kind) {
+      if (kind === 'main') {
+        const K = '#2a1d1a', R = '#e0452f';
+        rr(g, 59, 37, 43, 1, K); rr(g, 59, 36, 1, 1, K); rr(g, 101, 36, 1, 1, K); rr(g, 60, 38, 41, 1, R); rr(g, 60, 39, 41, 1, K);
+        rr(g, 65, 43, 31, 1, K); rr(g, 65, 44, 31, 1, R); rr(g, 65, 45, 31, 1, K);
+        [66, 92].forEach(x => { rr(g, x, 40, 1, 22, K); rr(g, x + 1, 40, 1, 22, R); rr(g, x + 2, 40, 1, 22, K); });
+        rr(g, 73, 50, 15, 1, K); rr(g, 73, 51, 15, 7, '#2f4a8c'); rr(g, 77, 52, 1, 6, '#14224a'); rr(g, 83, 52, 1, 6, '#14224a'); dsc(g, 80, 54, 1, '#ffffff'); rr(g, 73, 57, 15, 1, '#14224a');
+      } else { dsc(g, 24, 15, 1, '#ffe08a'); [[24, 12], [27, 14], [26, 17], [22, 17], [21, 14]].forEach(p => px(g, p[0], p[1], '#ef8fa3')); }
+    },
+    post(g, t, x0) {                                                       // кам'яний ліхтар
+      rr(g, x0 + 1, 49, 3, 1, '#9a9a9a'); rr(g, x0, 50, 5, 1, '#8a8a8a'); rr(g, x0 + 1, 51, 3, 3, '#3a3a3a');
+      px(g, x0 + 2, 52, Math.floor(t * 6) % 3 ? '#ffb347' : '#ffe08a'); g.globalAlpha = 0.25; dsc(g, x0 + 2, 52, 3, '#ffb347'); g.globalAlpha = 1;
+      rr(g, x0, 54, 5, 1, '#8a8a8a'); rr(g, x0 + 2, 55, 1, 4, '#9a9a9a'); rr(g, x0, 59, 5, 2, '#6a6a6a'); px(g, x0 + 2, 48, '#9a9a9a');
+    },
+    top(g, t, s) {                                                         // пелюстки сакури
+      rr(g, 79, 0, 3, 2, '#e8c860');
+      if (s > 0.5) for (let i = 0; i < 7; i++) { const ph = (t * 0.28 + i / 7) % 1, x = 22 + i * 19 + Math.sin(ph * 10 + i) * 5, y = 8 + ph * 66; px(g, x, y, i % 2 ? '#ef8fa3' : '#ffffff'); px(g, x + 1, y + 1, '#ef8fa3'); }
+    }
+  });
+
+  return T;
+})();
+
+// гірлянда від щогли до верхівок малих шатер; u — допоміжні значення з CIRCUS_ART.draw
+function circusGarland(g, th, t, u) {
+  const a = u.e(0.78, 0.98); if (a <= 0.02) return;
+  const G = th.gl, y0 = 15 + u.sink, rr = u.rr;
+  g.globalAlpha = a;
+  [[80, 30], [80, 130]].forEach(([xa, xb], side) => {
+    const n = Math.abs(xb - xa), dir = xb > xa ? 1 : -1, yb = 41;
+    for (let i = 0; i <= n; i++) {
+      const k = i / n, x = xa + dir * i, y = Math.round(y0 + (yb - y0) * k + 6 * Math.sin(Math.PI * k));
+      rr(g, x, y, 1, 1, G.str);
+      if (i % 6 === 3 && i > 3 && i < n - 2) {
+        const j = Math.floor(i / 6) + side, c = G.cols[j % G.cols.length], on = (Math.floor(t * 3) + j) % 3;
+        switch (G.kind) {
+          case 'flag': rr(g, x - 1, y + 1, 3, 1, c); rr(g, x, y + 2, 1, 1, c); break;
+          case 'bulb': g.globalAlpha = a * (on ? 0.5 : 0.2); rr(g, x - 1, y, 4, 4, c); g.globalAlpha = a; rr(g, x, y + 1, 2, 2, G.cols[(j + Math.floor(t * 2)) % G.cols.length]); break;
+          case 'lantern': rr(g, x - 1, y + 1, 3, 1, G.str); rr(g, x - 1, y + 2, 3, 2, c); rr(g, x, y + 2, 1, 1, '#fff4dc'); rr(g, x, y + 4, 1, 1, G.str); break;
+          case 'leaf': rr(g, x, y + 1, 2, 1, c); rr(g, x - 1, y + 2, 2, 1, c); rr(g, x - 1, y + 1, 1, 1, '#2f6a3a'); break;
+          case 'star': rr(g, x, y + 1, 1, 1, c); rr(g, x - 1, y + 2, 3, 1, c); rr(g, x, y + 3, 1, 1, c); break;
+          default: rr(g, x, y + 1, 2, 2, c);
+        }
+      }
+    }
+  });
+  g.globalAlpha = 1;
+}
 //#part 240_story.js
 /* =====================================================================
    СЮЖЕТ І ДІАЛОГИ

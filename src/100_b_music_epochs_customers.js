@@ -154,6 +154,7 @@ function parseTokens(text) {
 }
 // Мелодія для пари (базова мелодія, епоха): темп, тональність, тембри й ударні змінюються (результат кешується)
 function trackDef(key) {
+  if (key.startsWith('ep') && typeof epochTrackDef === 'function') return epochTrackDef(key);      // власні мелодії епох: 190_d_epoch_tunes.js
   const [baseId, epStr] = key.split('#');
   if (epStr === undefined) return MUSIC_PARSED[baseId];
   const ep = Number(epStr), prof = EPOCH_MUSIC[ep], base = MUSIC_PARSED[baseId];
