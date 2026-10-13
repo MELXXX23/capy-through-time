@@ -159,7 +159,7 @@
     const gy = base - 23, gw = Math.min(w - 8, wh.length * 11 + 8), gx = x + 4 + ((w - 8 - gw) >> 1), gsz = Math.max(7, Math.min(11, Math.floor((gw - 6) / wh.length)));
     const kLeft = !((hs >>> 2) % 2), sy = top + 6 + ((hs >>> 9) % 12), kMax = Math.min(4, Math.floor((gy - 5 - sy - 5) / 10));
     const wordsV = WORDS_V.filter(wd => wd.length <= kMax), word = wordsV.length ? wordsV[(hs >>> 11) % wordsV.length] : '', n = word.length, sh = n * 10 + 5;
-    const hasK = h > 66 && n >= 2, sx = kLeft ? x + 2 : x + w - 16, ky0 = sy - 7, ky1 = sy + sh + 2;
+    const hasK = h > 66 && n >= 2, sx = kLeft ? x + 5 : x + w - 19, ky0 = sy - 7, ky1 = sy + sh + 2;
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 18 + 4;
       let ax0 = x + 4, aw = w - 8;

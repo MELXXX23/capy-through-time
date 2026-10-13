@@ -5359,21 +5359,30 @@ function houseColors(i) {
   const tone = HOUSE_TONE[viewEpoch() % EPOCHS.length] || HOUSE_TONE[0], k = ((i % 5) + 5) % 5, hue = tone[2] + k * 72;
   return { wall: hslHex(hue, tone[0], tone[1]), roof: hslHex(hue + 170 + (k % 2) * 25, tone[0] * 0.8, 0.38) };
 }
-const HOUSE_EDGE_W = 2;        // товщина темного контуру на правому боці будинку (ліворуч 1 px; px сцени): межі між сусідніми будинками добре видно
-function houseEdges(g, spec) {     // темний контур по боках будинку: окремо від стін епохи, щоб будинки не зливались у суцільну стіну
-  const x = spec.x, w = spec.w, top = LAYOUT.horizonY - spec.h + 4, hh = LAYOUT.horizonY - top;
-  if (hh <= 0) return;
-  let lum = 255;                                    // яскравість стіни збоку: на темних будинках контур світлий (сталевий кант), на світлих — темний
-  try { const d = g.getImageData(x + HOUSE_EDGE_W + 1, top + 6, 1, Math.min(30, hh - 8)).data; let sum = 0, n = 0; for (let i = 0; i + 3 < d.length; i += 4) { if (d[i + 3] < 200) continue; sum += d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11; n++; } if (n) lum = sum / n; } catch (e) { }
-  if (lum < 85) {
-    g.fillStyle = '#07050f'; g.fillRect(x, top, 1, hh); g.fillRect(x + w - 1, top, 1, hh);
-    g.fillStyle = '#7b75a0'; g.fillRect(x + 1, top, 1, hh); g.fillRect(x + w - 2, top, 1, hh);
-    g.globalAlpha = 0.4; g.fillStyle = '#000000'; g.fillRect(x + 2, top, 1, hh); g.fillRect(x + w - 3, top, 1, hh); g.globalAlpha = 1;
-    return;
-  }
-  g.fillStyle = '#2a2038';
-  g.fillRect(x, top, 1, hh); g.fillRect(x + w - HOUSE_EDGE_W, top, HOUSE_EDGE_W, hh);                    // світло зліва: ліва межа тонша, права товстіша
-  g.globalAlpha = 0.35; g.fillStyle = '#000000'; g.fillRect(x + 1, top, 1, hh); g.fillRect(x + w - HOUSE_EDGE_W - 1, top, 1, hh); g.globalAlpha = 1;
+const HOUSE_COL_W = 4;         // ширина кутової пілястри з кожного боку будинку (px сцени): сусідні будинки не зливаються в одну стіну
+function houseEdges(g, spec) {     // пілястра по боках будинку: чіткий контур, світла грань зліва, тіньова справа; колір береться зі стіни самого будинку
+  const x = spec.x, w = spec.w, base = LAYOUT.horizonY, top = base - spec.h + 4, hh = base - top, CW = HOUSE_COL_W;
+  if (hh < 14 || w < CW * 2 + 6) return;
+  const R_ = [], G_ = [], B_ = [];                                                       // колір стіни: медіана двох колонок поруч із пілястрами (вивіски й вікна далі від краю)
+  try {
+    [x + CW, x + w - CW - 1].forEach(cx => {
+      const d = g.getImageData(cx, top + 6, 1, Math.min(34, hh - 8)).data;
+      for (let i = 0; i + 3 < d.length; i += 4) if (d[i + 3] > 200) { R_.push(d[i]); G_.push(d[i + 1]); B_.push(d[i + 2]); }
+    });
+  } catch (e) { }
+  const med = arr => arr.length ? arr.sort((p, q) => p - q)[arr.length >> 1] : 128;
+  const r = med(R_), gg = med(G_), b = med(B_), n = 1;
+  const hex = AR.hex([r / n, gg / n, b / n]), lum = (r * 0.3 + gg * 0.59 + b * 0.11) / n;
+  const t = Math.max(0, Math.min(1, (lum - 60) / 120)), k = 0.38 - 0.5 * t;           // темні стіни — світла пілястра, світлі — трохи темніша
+  const body = k >= 0 ? AR.mix(hex, '#ffffff', k) : AR.mix(hex, '#000000', -k);
+  const hi = AR.mix(hex, '#ffffff', 0.62), sh = AR.mix(body, '#0a0614', 0.5), line = AR.mix(body, '#0a0614', 0.32), OUT = '#1c1428';
+  const col = (xx, y0, cols) => cols.forEach((c, i) => { g.fillStyle = c; g.fillRect(xx + i, y0, 1, hh); });
+  col(x, top, [OUT, hi, body, line]);                                                   // ліва: контур, світла грань, тіло, внутрішня лінія
+  col(x + w - CW, top, [line, body, sh, OUT]);                                          // права: внутрішня лінія, тіло, тінь, контур
+  [x, x + w - CW].forEach(xx => {                                                       // капітель і основа: пілястра читається окремою колоною
+    g.fillStyle = OUT; g.fillRect(xx, top, CW, 1); g.fillRect(xx, base - 1, CW, 1);
+    g.fillStyle = hi; g.fillRect(xx + 1, top + 1, CW - 2, 1);
+  });
 }
 function drawHouse(g, spec, lamps) {
   const arch = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null;
@@ -7665,7 +7674,7 @@ const AR = (function () {
     P(g, wx - 2, wy + 11, 12, 2, SL[1]); P(g, wx - 2, wy + 11, 12, 1, SL[0]); P(g, wx - 2, wy + 13, 12, 1, ST[3]);
   }
   function balconyG(g, wxs, y0, hx, hw, long, iron, seed, snow) {              // балкони однієї «стрічки» вікон: суцільний на весь фасад або окремі «французькі» під кожним вікном
-    const DK = '#2a2038', segs = long ? [[hx + 3, hx + hw - 4]] : wxs.map(wx => [wx - 3, wx + 10]);
+    const DK = '#2a2038', segs = long ? [[hx + 5, hx + hw - 6]] : wxs.map(wx => [wx - 3, wx + 10]);
     const clothC = ['#b8312a', '#2a4a8c', '#e0b030', '#4f7a45'][seed % 4];
     segs.forEach(([a, b], si) => {
       const W = b - a + 1, posts = [a, b - 1];
@@ -19565,7 +19574,7 @@ function frame(now) {
     const gy = base - 23, gw = Math.min(w - 8, wh.length * 11 + 8), gx = x + 4 + ((w - 8 - gw) >> 1), gsz = Math.max(7, Math.min(11, Math.floor((gw - 6) / wh.length)));
     const kLeft = !((hs >>> 2) % 2), sy = top + 6 + ((hs >>> 9) % 12), kMax = Math.min(4, Math.floor((gy - 5 - sy - 5) / 10));
     const wordsV = WORDS_V.filter(wd => wd.length <= kMax), word = wordsV.length ? wordsV[(hs >>> 11) % wordsV.length] : '', n = word.length, sh = n * 10 + 5;
-    const hasK = h > 66 && n >= 2, sx = kLeft ? x + 2 : x + w - 16, ky0 = sy - 7, ky1 = sy + sh + 2;
+    const hasK = h > 66 && n >= 2, sx = kLeft ? x + 5 : x + w - 19, ky0 = sy - 7, ky1 = sy + sh + 2;
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 18 + 4;
       let ax0 = x + 4, aw = w - 8;

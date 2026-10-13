@@ -220,7 +220,7 @@ const AR = (function () {
     P(g, wx - 2, wy + 11, 12, 2, SL[1]); P(g, wx - 2, wy + 11, 12, 1, SL[0]); P(g, wx - 2, wy + 13, 12, 1, ST[3]);
   }
   function balconyG(g, wxs, y0, hx, hw, long, iron, seed, snow) {              // балкони однієї «стрічки» вікон: суцільний на весь фасад або окремі «французькі» під кожним вікном
-    const DK = '#2a2038', segs = long ? [[hx + 3, hx + hw - 4]] : wxs.map(wx => [wx - 3, wx + 10]);
+    const DK = '#2a2038', segs = long ? [[hx + 5, hx + hw - 6]] : wxs.map(wx => [wx - 3, wx + 10]);
     const clothC = ['#b8312a', '#2a4a8c', '#e0b030', '#4f7a45'][seed % 4];
     segs.forEach(([a, b], si) => {
       const W = b - a + 1, posts = [a, b - 1];
