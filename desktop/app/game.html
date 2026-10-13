@@ -2826,7 +2826,8 @@ const TEAM_COSTUMES = [
 function teamEyes(g, base) { for (let y = 4; y <= 7; y++) for (let x = 0; x < 16; x++) { const c = base[y][x]; if (c === 'X' || c === 'x') g[y][x] = c; } }       // костюм не закриває очі
 // Костюм героя в епосі: тулуб, капелюх і прикраси (кожен герой одягнений по-своєму)
 function composeTeamCostume(id, epoch) {
-  const p = TEAM_PARTS[id], k = Object.keys(TEAM_PARTS).indexOf(id), cs = TEAM_COSTUMES[epoch % TEAM_COSTUMES.length];
+  const p = TEAM_PARTS[id] || NPC_PARTS[id], cs = TEAM_COSTUMES[epoch % TEAM_COSTUMES.length];
+  let k = Object.keys(TEAM_PARTS).indexOf(id); if (k < 0) k = 7 + Math.max(0, Object.keys(NPC_PARTS).indexOf(id));      // гість у костюмі: той самий розрахунок
   const space = epoch % TEAM_COSTUMES.length === 6;                // Космос: усі звірята в скафандрі зі скляним шоломом
   const o = space ? { b: 'w', l: 'E', d: ['belt', 'stripes', 'buttons', 'collar'][k % 4], c: ['o', 'T', 'f', 'v', 'r', 'n'][k % 6] } : cs.outfits[(k * 5 + 1) % cs.outfits.length];
   const hat = space ? 'bubble' : cs.hats[(k * 2 + (k >> 2)) % cs.hats.length];
@@ -2903,6 +2904,14 @@ function composeTeamSkin(id, kind) {
 function teamSprite(id) { const s = skinOn('hero'); return s ? 'team_' + id + '_sk_' + s : 'team_' + id + '_e' + (viewEpoch() % EPOCHS.length); }
 Object.keys(NPC_PARTS).forEach(id => { SPRITES['npc_' + id] = { rows: composeChibi(NPC_PARTS[id]) }; });
 SPRITES.npc_clock = { rows: CLOCK_ROWS };
+// Космос: гості епох теж у скафандрі й шоломі (Орбіт уже в космічному вбранні; спрайт створюється, коли потрібен)
+function guestSpriteName(id) {
+  const base = 'npc_' + id;
+  if (viewEpoch() % EPOCHS.length !== 6 || id === 'orbit' || !NPC_PARTS[id]) return base;
+  const n = base + '_sp';
+  if (!SPRITES[n]) SPRITES[n] = { rows: composeTeamCostume(id, 6) };
+  return n;
+}
 // Капі: 28×24, дивиться вправо (у грі віддзеркалюється). Контур намальований прямо в спрайті.
 // База — 27×21, намальована дивлячись ліворуч: O — контур, B — шерсть, M — морда/вушко, L — світліші плями, K — око.
 // Одяг (капелюшок + вбрання) накладається поверх бази, потім усе віддзеркалюється.
@@ -17286,7 +17295,7 @@ function drawGuest(g) {                                   // гість тако
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
   ctx.globalAlpha = 0.24; R(ctx, x - 7, y, 14, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 4, y + 2, 8, 1, 'd'); ctx.globalAlpha = 1;
   ctx.restore();
-  drawCrispFigure('npc_' + g.id, x, y, step, step === 1);
+  drawCrispFigure(guestSpriteName(g.id), x, y, step, step === 1);
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y);
   if (hasHats()) drawHat(x, y - 13 - step, 20 + g.k);
   if (hasScarves()) drawScarf(x, y - 16 - step, g.k);
