@@ -27,7 +27,8 @@
 | `130_format.js` | 43 | t() — переклади, формат чисел | t, tierSuffix, formatNumber, fmt |
 | `140_a_sprite_core_world_props.js` | 40 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
 | `140_b_ground_houses_layers.js` | 37 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGround, manholeSpots, buildGroundLayer, autumnGroundLeaves, drawRoadG, manholeG |
-| `150_a_facade_items_decor.js` | 48 | магазин: предмети вітрин, прилавки, епохальний декор фасаду | tierOf, drawItem, drawDisplay, drawShelf, posterG, drawDoorLeaves, placeRow, pilasterG |
+| `150_a1_facade_items_decor.js` | 25 | магазин: предмети вітрин, прилавки | tierOf, drawItem, drawDisplay, drawShelf, posterG, drawDoorLeaves, placeRow, pilasterG |
+| `150_a2_facade_items_decor.js` | 24 | магазин: епохальний декор фасаду, skinShopDeco | leafPileG, skinGlints, bigLollipopG, gumdropG, coinStackG, goldBarsG, gemG, snowmanG |
 | `150_b_facade_epoch_props_roof.js` | 34 | магазин: епохальні деталі, вивіски (signMotif), дах (roofProp, drawRoof) | withPal, bandG, vinesG, neonLine, barrelG, crateG, speakerG, cabinetG |
 | `150_c_facade_pavilions_build.js` | 42 | магазин: павільйони поверхів, кінозал, buildShopCanvas | snowCap, PAV_SEQ, PAV_PAL, PAV_BACK, PAV_CANOPY, PAV_TECH, artG, garmentG |
 | `151_a_arch_core_renaissance.js` | 30 | ARCH: примітиви AR + епоха 0 (Відродження) | AR |
@@ -51,15 +52,19 @@
 | `200_c_time_travel_workshop_stats.js` | 25 | подорож (applyTimeTravel), майстерня часу, досягнення, статистика, налаштування | applyTimeTravel, wsEffectText, buildWorkshop, wsNeedTrips, buyWorkshop, routeSig, updateRouteCard, updateWorkshopUI |
 | `210_skins.js` | 30 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust, DUST_COLS |
 | `220_a_events_weather.js` | 39 | події, сезони, погода, райдуга, дощ, блискавки (початок) | theme, snow, bats, puddles, trouble, sackDrop, eventTimer, wheelAnim |
-| `220_b_rainbow_lightning_skyx.js` | 46 | райдуга, блискавки, прикраси неба (skyx*) | RAINBOW_M, rainbowM, rainbowCanvas, rainbowGeom, drawRainbowSkin, bolts, boltTimer, boltPath |
+| `220_b1_rainbow_lightning_skyx.js` | 23 | райдуга, блискавки, прикраси неба (початок) | RAINBOW_M, rainbowM, rainbowCanvas, rainbowGeom, drawRainbowSkin, bolts, boltTimer, boltPath |
+| `220_b2_rainbow_lightning_skyx.js` | 23 | прикраси неба (skyx*), кеш-спрайти | skyxDrone, skyxIsland, skyBlockCache, skyHash, skyxBlock, islandCanvas, skyxIsland2, droneBody |
 | `220_c_epoch_sky_fx.js` | 39 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, discoLamps, drawSkyExtra |
 | `220_d_night_garlands_halloween.js` | 38 | нічне небо, гірлянди, Хелловін (привиди, туман) | drawSkyScreen, drawNightShade, SEASON_MOOD, BULB_SETS, bulbColors, awningBulbs, garlandSpans, garlandY |
-| `230_a_skins_circus_hag.js` | 46 | СКІНИ: пули, ціни, володіння; цирк і відьма | CIRCUS_SECTORS, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON, skinHas, skinGrant |
+| `230_a1_skins_circus_hag.js` | 23 | СКІНИ: пули, ціни, володіння | CIRCUS_SECTORS, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON, skinHas, skinGrant |
+| `230_a2_skins_circus_hag.js` | 23 | цирк (CIRCUS_ART), відьма, хатка | hagReset, hagStart, updateHagGame, hagPos, hagClick, hagCauldron, drawHagGame, circusStopX |
 | `230_b_circus_loot_letters.js` | 40 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawCircusIcon, buildCircusWheelTexture, drawCircusWheel, circusBusy |
 | `230_c_news_wheel_events.js` | 41 | газета (сторінки), «Барабан фортуни», updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
 | `230_d_circus_themes.js` | 30 | цирк по епохах: CIRCUS_THEMES (палітра, деталі, гірлянда), малює CIRCUS_ART з 230_a | CIRCUS_THEMES, circusGarland |
 | `240_story.js` | 41 | сюжет: діалоги, гості, камео | dialog, storyTimer, cameos, speakerSprite, speakerName, pageText, renderDialogText, buildChoiceButtons |
-| `241_epoch_story.js` | 80 | сюжет епох 1–8 (EC_DATA, EC_TRIGGERS) | EC_TRIGGERS, EC_DATA, EPOCH_CHAPTERS |
+| `241_a_epoch_story.js` | 30 | сюжет епох: початок EC_DATA (перші епохи) | EC_TRIGGERS, EC_DATA |
+| `241_b_epoch_story.js` | 19 | сюжет епох: середина EC_DATA |  |
+| `241_c_epoch_story.js` | 31 | сюжет епох: кінець EC_DATA, EC_TRIGGERS | EPOCH_CHAPTERS |
 | `245_stands.js` | 36 | місця гостей біля магазину | GUEST_STAND_EPOCH, STANDS, standPending, guestArrived, guestStands, drawGuestStand |
 | `246_help.js` | 53 | допомога гостям, подяки | helpChipUntil, HELP_NEED, guestEpochOf, helpCount, helpDone, helpMetIn, helpActiveIn, helpCredit |
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
@@ -68,5 +73,7 @@
 | `275_japan.js` | 45 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `276_japan_text.js` | 15 | епоха 9 Японія: тексти |  |
 | `277_japan_noodle.js` | 19 | Японія: лапшична діда Рьо замість цирку (візок, портрет, гра «Звари лапшу», тексти) | NOODLE_BUST, noodleGame, NOODLE_ZH, NOODLE_ART, noodleReset, noodleStart, noodleTake, updateNoodleGame |
-| `278_build_themes.js` | 86 | Тематичне будівництво по епохах (BTH.list[епоха]: будинок росте на очах, герої/помічники/фінал; тап-прискорення — build.boost) | BTH, buildThemeRender |
+| `278_a_build_themes.js` | 31 | Будівництво по епохах: ядро BTH (rnd, помічники, ефекти), перші епохи | BTH, buildThemeRender |
+| `278_b_build_themes.js` | 24 | Будівництво по епохах: середні епохи |  |
+| `278_c_build_themes.js` | 32 | Будівництво по епохах: останні епохи, BTH.render, buildThemeRender (тап-прискорення build.boost) |  |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |

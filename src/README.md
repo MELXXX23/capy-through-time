@@ -20,3 +20,8 @@
 - Нову частину додавай з вільним номером/літерою; не змінюй порядок наявних (const/let/виконувані оператори залежать від порядку).
 - Перевірка розбиття: `node tools/check_parts.js` (текст без маркерів збігається з git HEAD; кожен маркер — справжній коментар).
 - `110_a_texts_uk.js` і `110_b_texts_en.js` — дві половини одного об'єкта `translations`.
+
+## Навігація й розбиття (з раунду 52)
+- Не читай частини цілком: `node tools/c.js find|fn|outline|use|lines` (див. шапку `tools/c.js`).
+- Розрізати велику частину без зміни тексту: `node tools/resplit.js src/<частина>.js <N> [--at "regexp"]`, потім `node tools/build.js && node tools/check_parts.js && node tools/mkmap.js`; нові імена додай у `DESC` у `tools/mkmap.js`.
+- Довідник технічних фактів: `src/ARCH.md`.
