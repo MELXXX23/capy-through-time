@@ -37,3 +37,7 @@
 - `.claude/settings.json` (локально, не в git): заборонено Read для `game.html`, `docs/index.html`, `desktop/app/game.html`, `backups/**`.
 - Додатково (р. 52б): повний `autotest --quick` ЧИСТИЙ (ПК 1920×1080 і 390×844, 0 помилок консолі, 27 епох×рівнів); розрізано ще 110_a/110_b (по 3 частини, за темами) і 246_help (UK/EN) — разом 76 частин; `tools/probe.js` (стан гри як JSON без знімків); `autotest.sh` друкує лише підсумок; `previews/r52/assemble.py` пише в `previews/r52/278_assembled.js`, а не в src; вимкнено конектори Gmail, Canva, everygen (були підключені, ~130 інструментів).
 - Не розрізано свідомо: `275_japan` (один IIFE, 45 КБ), `130_format` (рядки по 22 КБ даних), HTML-завантажувач `040`.
+
+## 77. Скріншоти для публікації (EN) — геймплей + заставки (локально, у git лише інструменти)
+- Готові набори: `previews/r53/final_en/` (9 кадрів геймплею 1920×1080: аркади, неон уночі, Японія, будівництво з НЛО, цирк-диско, лапшична, подорож, скіни, привиди) і `previews/r53/final_en/intro/` (екран завантаження, кат-сцена, заставки епох диско/інтернет/космос/неон/Японія, 3 анімації подорожі). UK-версія геймплею: `previews/r53/final_uk/`. Контактний лист: `previews/r53/final_en_sheet.png`.
+- Скрипти: `previews/r53/shots_uk.js|shots_en.js|shots_b.js|intro_*.js`; запуск через `previews/itch/shots.js` (додано env `CAPY_QUERY`, `CAPY_BOOT_WAIT`, `CAPY_LANG=en-US` для екрана завантаження). `tools/montage.js` — контактний лист із PNG. Окремо: вітрина скінів Капі `previews/r53/showcase.js` → `previews/r53/out/`.
