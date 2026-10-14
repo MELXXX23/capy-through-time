@@ -45,3 +45,8 @@
 ## 78. itch.io: обкладинка, 5 скріншотів, новий ZIP (р. 52)
 - На сторінку (id 5134270) завантажено обкладинку 630×500 і 5 скріншотів EN (`previews/r53/itch_upload/`). Новий архів `desktop/dist/CapyTapMarket-itch-html.zip` (index.html = game.html через ту саму обробку, що й `tools/publish.js`, без режиму бога; `fonts/`, `icons/`, `manifest.webmanifest`; зібрано `tar -a -c`); старий — `backups/CapyTapMarket-itch-html_old.zip`. Завантаження через Claude in Chrome (приховані `input[type=file]` перехоплено патчем `HTMLInputElement.prototype.click`).
 - Галочка «This file will be played in the browser» для нового файлу поставлена, Save натискає користувачка. Опис (Details) і посилання на трейлер лишаються порожніми.
+
+## 79. YouTube: канал, трейлер 16:9 EN (р. 52)
+- Канал: банер 2048×1152 і аватар 800×800 з чистою Капі, опис uk+en, посилання на itch, водяний знак 150×150 — завантажено в чернетку YouTube Studio (публікує користувачка). Файли: `previews/r53/yt/`.
+- Трейлер: `previews/video/CapyTap_trailer_r53_16x9_web.mp4` (1920×1080, 68 с, 23 МБ; зі звуком гри). Сценарій складається `previews/video/gen_trailer.js` → `scn_trailer_r53.src.js` → `build_scn.js` → запис `rec.js` (`CAPY_CW=1280 CAPY_CH=720 CAPY_Z=1.5 CAPY_OW=1920 CAPY_OH=1080 CAPY_LANG=en-US`). Мініатюра 1280×720 і текст метаданих: `previews/video/youtube_thumbnail_1280x720.png`, `youtube_metadata.txt`.
+- Інструменти: `tools/crop.js`, `tools/resize.js`, `tools/montage.js`.
