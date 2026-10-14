@@ -3633,7 +3633,7 @@ function refreshCoinIcon() {
   g.drawImage(getSpriteCanvas(coinSprite()), 0, 0);
 }
 
-//#part 110_a_texts_uk.js
+//#part 110_a1_texts_uk.js
 /* =====================================================================
    ТЕКСТИ (єдиний словник; жодного тексту прямо в коді)
    ===================================================================== */
@@ -3772,6 +3772,7 @@ const translations = {
     team_toma_say_0: "Я нічого не забуваю. Особливо чужі борги.", team_toma_say_1: "Знайшов знижку для складу. Склад поки не знає, що це знижка.", team_toma_say_2: "Слон у справі — усе під контролем. Поки не піде дощ.",
     capy_say_0: "Гарний день для торгівлі. Ще кращий — для мільйонів.", capy_say_1: "Квітку на голові треба поливати. Так, я знаю, як це звучить.", capy_say_2: "Одна монета — і величезні плани. Гірші бізнеси починали з меншого.",
 
+//#part 110_a2_texts_uk.js
     // Сюжет
     storyNote: "Тут усі відкриті глави. Перечитувати можна без витрат.",
     storyRead: 'Читати',
@@ -3945,6 +3946,7 @@ const translations = {
     soundMuteOn: '🔇 Вимкнути звук',
     soundMuteOff: '🔊 Увімкнути звук',
 
+//#part 110_a3_texts_uk.js
     // Етап 7: вкладки, епохи, подорож, майстерня, досягнення, статистика, налаштування
     tab_workshop: 'Годинник', tab_seasons: 'Пори року', setTimeTitle: '🕓 Час доби', tab_achievements: 'Нагороди', tab_settings: 'Налашт.',
     statEpoch: 'Епоха',
@@ -4113,7 +4115,7 @@ const translations = {
     setTime: 'Час доби (сонце й місяць рухаються самі, доба триває 5 хвилин):',
     time_morning: '🌅 Ранок', time_day: '☀️ День', time_evening: '🌇 Вечір', time_night: '🌙 Ніч'
   },
-//#part 110_b_texts_en.js
+//#part 110_b1_texts_en.js
   en: {
     pageTitle: 'CapyTap: Market',
     langLabel: 'Language',
@@ -4242,6 +4244,7 @@ const translations = {
     team_toma_say_0: "I never forget. Especially other people's debts.", team_toma_say_1: "Found a discount for the warehouse. The warehouse doesn't know it's a discount yet.", team_toma_say_2: "An elephant on the job, all under control. Until it rains.",
     capy_say_0: "Good day for trading. Even better for millions.", capy_say_1: "I have to water the flower on my head. Yes, I know how that sounds.", capy_say_2: "One coin and huge plans. Worse businesses started with less.",
 
+//#part 110_b2_texts_en.js
     storyNote: "All the unlocked chapters are here. Re-reading is free.",
     storyRead: 'Read',
     introCutTitle: 'Intro',
@@ -4413,6 +4416,7 @@ const translations = {
     soundMuteOn: '🔇 Mute sound',
     soundMuteOff: '🔊 Unmute sound',
 
+//#part 110_b3_texts_en.js
     tab_workshop: 'Workshop', tab_seasons: 'Seasons', setTimeTitle: '🕓 Time of day', tab_achievements: 'Awards', tab_settings: 'Settings',
     statEpoch: 'Epoch',
     epoch_0: 'Renaissance', epoch_1: 'Retro', epoch_2: 'Disco', epoch_3: 'Arcade', epoch_4: 'Internet', epoch_5: 'Eco', epoch_6: 'Space', epoch_7: 'Neon',
@@ -6182,7 +6186,7 @@ function buildPropsLayer() {
   return c;
 }
 
-//#part 150_a_facade_items_decor.js
+//#part 150_a1_facade_items_decor.js
 /* =====================================================================
    ФАСАД МАГАЗИНУ (малюється з прямокутників; росте з рівнем)
    ===================================================================== */
@@ -6443,6 +6447,7 @@ function treeXmasG(g, x, yb) {                      // ялинка з куль�
   [[0, -17, 'y'], [-3, -12, 'r'], [3, -10, 'n'], [-5, -6, 'f'], [4, -5, 'y'], [0, -8, 'r']].forEach(([dx, dy, c]) => R(g, x + dx, yb + dy, 2, 2, c));
   R(g, x - 1, yb - 24, 3, 3, 'y'); R(g, x, yb - 25, 1, 1, 'y');
 }
+//#part 150_a2_facade_items_decor.js
 function leafPileG(g, x, yb) {                       // купа осіннього листя
   for (let i = 0; i < 40; i++) { const hh = (i * 37 + 11) % 100, dx = (hh % 15) - 7, dy = Math.floor(((i * 53) % 100) / 100 * Math.max(1, 6 - Math.abs(dx) * 0.7)); R(g, x + dx, yb - 1 - dy, 2, 1, ['o', 'r', 'h', 'y', 't'][i % 5]); }
 }
@@ -14467,7 +14472,7 @@ function buildRainbow(R0, bw, M, secondary) {
   }
   return c;
 }
-//#part 220_b_rainbow_lightning_skyx.js
+//#part 220_b1_rainbow_lightning_skyx.js
 const RAINBOW_M = 56;
 let rainbowM = RAINBOW_M, rainbowBw = 4;
 function rainbowCanvas(R0) {                                    // перемальовується лише коли змінюється розмір магазину
@@ -14728,6 +14733,7 @@ function skyxBalloon(x, y, r, c1, c2, ph) {
   ctx.drawImage(cv, x, y);
   if (Math.floor(animClock * 7 + ph * 3) % 3) { const fx = Math.round(x + cv.cx) - 1; R(ctx, fx, y + cv.burnY, 1, 2, 'o'); R(ctx, fx, y + cv.burnY, 1, 1, 'y'); }       // пальник блимає
 }
+//#part 220_b2_rainbow_lightning_skyx.js
 function skyxDrone(x, y, ph, box) {
   x = Math.round(x); y = Math.round(y + Math.sin(ph * 0.7) * 1.5); const bl = Math.floor(ph * 2) % 2 ? 4 : 2;
   R(ctx, x - 5, y, 11, 2, 'e'); R(ctx, x - 3, y - 2, 7, 2, 'z'); R(ctx, x - 8, y - 3, bl * 2, 1, 'w'); R(ctx, x + 8 - bl * 2 + 1, y - 3, bl * 2, 1, 'w'); R(ctx, x - 7, y - 2, 1, 2, 'e'); R(ctx, x + 7, y - 2, 1, 2, 'e'); R(ctx, x - 1, y + 1, 3, 1, 'N');
@@ -15922,7 +15928,7 @@ function drawGhostHunt() {
 }
 
 
-//#part 230_a_skins_circus_hag.js
+//#part 230_a1_skins_circus_hag.js
 /* =====================================================================
    ЦИРК ФОРТУНИ: раз на 24 години в правому куті з'являється червоний «!», який мигає й грає марш.
    Тап по ньому → цирк-причіп їде справа наліво ~5 с → тап по цирку → вікно з колесом на 12 секторів і клоуном Бубоном.
@@ -16170,6 +16176,7 @@ function circusFlagText() { return t('circusFlag'); }
 /* ---- гра Баби Яги: у трьох казанках лежать призи, їх показують, накривають гарбузами-кришками й перемішують; треба вказати казанок з головним призом ---- */
 const HAG_X = [34, 96, 158], HAG_CY = 104;
 const hagGame = { phase: 'idle', t: 0, c: [], si: 0, st: 0, swaps: [], pairs: [], rt: 0, pick: -1, top: 0 };
+//#part 230_a2_skins_circus_hag.js
 function hagReset() {
   const main = rollCircusSector(true).sec, dec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u' }, top = Math.floor(Math.random() * 3);
   hagGame.c = [0, 1, 2].map(i => ({ slot: i, lid: 1, prize: i === top ? main : dec, main: i === top, dim: false }));
@@ -18300,7 +18307,7 @@ function drawCameo(c) {
   R(ctx, x + 6, y - 9 - step, 4, 4, 'c'); R(ctx, x + 7, y - 8 - step, 1, 1, 'd'); R(ctx, x + 8, y - 7 - step, 1, 1, 'd');   // печиво
 }
 
-//#part 241_epoch_story.js
+//#part 241_a_epoch_story.js
 /* =====================================================================
    СЮЖЕТ ЕПОХ 2–8: у кожної епохи свій розділ із 8 глав (епоха 1 «Відродження» має класичні CHAPTERS).
    Рядок: [хто говорить, текст uk, текст en]. Особливі імена: 'S' — Шнирь у костюмі цієї епохи, 'G' — гість цієї епохи,
@@ -18466,6 +18473,7 @@ const EC_DATA = {
       ["clock", "Я більше схожий на фінальний екран. Тільки з бонусами.", "I'm more like the final screen. Only with bonuses."],
       ["narr", "Максів автомат тихенько заграв музику нового рівня, а десь у кишені Капі відгукнувся годинник.", "Max's machine softly played the next level's music, and somewhere in Capy's pocket the watch answered."] ] }
   ],
+//#part 241_b_epoch_story.js
   /* ---- 4. ІНТЕРНЕТ: мережа й дрони (гість Бітик) ---- */
   4: [
     { t: ["Пароль від Wi-Fi", "The Wi-Fi Password"], L: [
@@ -18568,6 +18576,7 @@ const EC_DATA = {
       ["clock", "Чудова епоха. Пахне медом і теплим деревом. Але попереду — зірки.", "A lovely era. Smells of honey and warm wood. But the stars lie ahead."],
       ["narr", "Пелюстки літали над вулицею, і хтось у кишені Капі тихо цокав у ритм вітру.", "Petals flew over the street and something in Capy's pocket ticked softly to the wind's rhythm."] ] }
   ],
+//#part 241_c_epoch_story.js
   /* ---- 6. КОСМОС: зорі й ракети (гість Орбіт) ---- */
   6: [
     { t: ["Сигнал із космосу", "A Signal From Space"], L: [
@@ -19097,7 +19106,7 @@ function drawGuestStand(st) {
   STANDS[st.id].draw(ctx, st.x, st.y, animOn() ? animClock : 0);
   if (p < 1) ctx.restore();
 }
-//#part 246_help.js
+//#part 246_a_help.js
 /* =====================================================================
    ДОПОМОГА ГОСТЯМ ЕПОХ
    Кожен гість просить допомоги, прив’язаної до істот його епохи (EPOCH_CREATURES, лови startGhostHunt):
@@ -19388,6 +19397,7 @@ function guestLineKey(g) {
     guestAsk_pietro_0: "Лови сов, що тягнуть монетки з фонтану! Тап!", guestAsk_pietro_1: "Ще кілька сов, і бажання лишаться у воді.", guestDone_pietro: "Монетки у воді, бажання на місці. Дякую!"
   };
 
+//#part 246_b_help.js
   const EN = {
     helpChip: 'Help {0}: {1}/{2}', helpChipDone: 'Help for {0}: done',
     helpDoneToast: '{0} is helped! Crystal +1 💎. A thank-you scene comes before you travel.', helpDoneToast2: '{0} is helped! Crystal +1 💎',
@@ -20871,7 +20881,7 @@ function drawNoodleGame() {
   };
   Object.assign(translations.uk, UK); Object.assign(translations.en, EN);
 })();
-//#part 278_build_themes.js
+//#part 278_a_build_themes.js
 /* =====================================================================
    ТЕМАТИЧНЕ БУДІВНИЦТВО ПО ЕПОХАХ: будинок росте знизу вгору на очах, команда епохи працює навколо.
    BTH.list[епоха] = { rise?, behind(G), work(G), finale(G) }; G — геометрія кадру (див. BTH.render).
@@ -21220,6 +21230,7 @@ function buildThemeRender() { return BTH.render(); }
   };
 })();
 
+//#part 278_b_build_themes.js
 // Тема 2 — Диско: будинок «танцює» — росте кроками в ритм, диско-куля, прожектори, танцмайданчик, танцюристи на роликах
 (() => {
   const B = BTH, rnd = B.rnd, lerp = B.lerp, c01 = B.clamp01;
@@ -21515,6 +21526,7 @@ function buildThemeRender() { return BTH.render(); }
   };
 })();
 
+//#part 278_c_build_themes.js
 // Тема 5 — Еко: жолудь падає й пускає ліани, будинок «вирощують» лози з квітами, пташки несуть гілочки, дощова хмарка поливає
 (() => {
   const B = BTH, rnd = B.rnd, lerp = B.lerp, c01 = B.clamp01;

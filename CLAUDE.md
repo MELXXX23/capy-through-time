@@ -3,7 +3,7 @@
 Браузерна гра-клікер з піксель-артом, один файл `game.html` (ЗІБРАНИЙ, ~2 МБ). Капібара Капі перетворює крамничку на торговий центр (6 рівнів), гра ходить через 9 епох (подорож у часі = престиж). Телефон і ПК однаково важливі; мови uk + en. Далі планується серія (CapyTap: Hotel, Restaurant) у тому самому стилі.
 
 ## ЕКОНОМІЯ ТОКЕНІВ (головне правило; тижневий ліміт горить від читання файлів)
-1. НІКОЛИ не читай `game.html`, `docs/index.html`, `desktop/app/game.html`, `backups/` (заборонено в `.claude/settings.json`; потрібне з архіву — лише `grep -n … | head` через Bash). Код живе в `src/` (71 частина, кожна ≤ ~30 КБ).
+1. НІКОЛИ не читай `game.html`, `docs/index.html`, `desktop/app/game.html`, `backups/` (заборонено в `.claude/settings.json`; потрібне з архіву — лише `grep -n … | head` через Bash). Код живе в `src/` (76 частин, переважно 20–40 КБ).
 2. Шукай не читанням, а навігатором (виводить лише потрібне, довгі рядки обрізає):
    - `node tools/c.js find "<regexp>" [-f частина] [-n 30]` — де зустрічається;
    - `node tools/c.js fn <ім'я>` — одна функція/const/метод повністю;
@@ -14,19 +14,20 @@
 3. Карта «що де»: `src/MAP.md` (читай рядок потрібної частини, не весь файл через Grep по імені). Технічні факти й підводні камені: `src/ARCH.md` — Grep по ключовому слову або розділ через offset; цілком не читати.
 4. `PROGRESS.md` (4 останні пункти) і `HANDOFF.md` короткі; архів у `archive/` не читати (лише Grep, якщо потрібна стара подробиця).
 5. Grep по `src/` з `head_limit` ≤ 30; пошук з довгими рядками (дані, тексти) — через `tools/c.js find`, інакше один збіг = тисячі символів.
-6. Вивід команд обрізай: `| tail -20`, `| head -30`; `git diff --stat`, не повний diff; автотест — лише `bash tools/autotest.sh --quick | tail -25`.
-7. Перевіряй текстом, не картинками: `read_page`, `javascript_tool`, `preview_logs`; скріншоти — лише коли треба побачити малюнок, один кадр, з `scale` ≤ 0,5 і `zoom` на область. Не знімай «на всяк випадок».
+6. Вивід команд обрізай: `| tail -20`, `| head -30`; `git diff --stat`, не повний diff; автотест `bash tools/autotest.sh --quick` сам друкує лише підсумок (≈15 рядків, також у `tools/autotest_last.txt`).
+7. Перевіряй текстом, не картинками: `env -u ELECTRON_RUN_AS_NODE desktop/node_modules/electron/dist/electron.exe tools/probe.js "<вираз>"` (відкриває гру приховано й друкує JSON зі стану: `state`, `curEpoch()` …), `read_page`, `javascript_tool`, `preview_logs`; скріншоти — лише коли треба побачити малюнок, один кадр, з `scale` ≤ 0,5 і `zoom` на область. Не знімай «на всяк випадок».
 8. Незалежні виклики роби паралельно в одному повідомленні. Не перечитуй те, що вже є в контексті. Не переказуй код у відповіді.
-9. Довгі дослідження («де це і як працює») віддавай агенту `Explore` (дешевша модель), а не читай сам.
+9. Довгі дослідження («де це і як працює») віддавай агенту `Explore` (дешевша модель), а не читай сам. Рутинні правки й перевірки — на середньому рівні зусиль; високий лише для проєктування великих нових систем.
 10. Одна тема = один чат. Закінчив тему (або ~30 повідомлень) — онови HANDOFF.md/PROGRESS.md і починай новий чат (див. «Перехід»). Не веди два чати в одній папці.
-11. Перед великою зміною — план у 3–6 рядках і список файлів; правки мінімальні й точкові.
+11. Не вмикай конектори/плагіни без потреби (Gmail, Canva, everygen вимкнено; кожен додає інструменти до кожного повідомлення).
+12. Перед великою зміною — план у 3–6 рядках і список файлів; правки мінімальні й точкові.
 
 ## Структура
 - `src/NNN_[літера]_тема.js|css|html` — частини гри (порядок за іменем; один спільний скрипт, одна область видимості). Правиш ТІЛЬКИ тут, потім `node tools/build.js` (збирає `game.html`). Якщо правили `game.html` напряму (старі латки `previews/*/lib.js`) — `node tools/split.js`; `node tools/sync.js` бере новішу сторону.
 - Розбиття/перейменування частин: `node tools/resplit.js <частина> <N>` (ріже без зміни тексту), потім `node tools/build.js && node tools/check_parts.js && node tools/mkmap.js`. Нову частину — новим файлом з маркером `//#part ім'я` першим рядком (див. `src/README.md`).
 - `docs/index.html` — копія для GitHub Pages (робить `tools/publish.js`), сайт https://melxxx23.github.io/capy-through-time/ (репозиторій MELXXX23/capy-through-time).
 - `desktop/` — Electron-обгортка (`prepare.js` копіює `game.html` → `desktop/app/game.html`; `serve.js` — локальний сервер, конфіг `capy` у `.claude/launch.json`). Збірки в `desktop/dist/`.
-- `backups/` (копії `game.html`, не в git), `previews/` (зразки/знімки, не в git), `archive/` (старі PROGRESS/HANDOFF/PROMPTS), `tools/` (`autotest.sh [--quick]`, `build/split/sync/resplit/check_parts/mkmap/c.js`, `publish.js`, `shot*.js`, `watch-pages.sh`, `progress_rotate.js`).
+- `backups/` (копії `game.html`, не в git), `previews/` (зразки/знімки, не в git), `archive/` (старі PROGRESS/HANDOFF/PROMPTS), `tools/` (`autotest.sh [--quick]`, `build/split/sync/resplit/check_parts/mkmap/c.js`, `probe.js`, `publish.js`, `shot*.js`, `watch-pages.sh`, `progress_rotate.js`).
 - Дані й ключі: тексти — `translations` (uk/en, частини `110_*`); весь стан — `state`; збереження `localStorage` ключ `capyThroughTime_save` (НЕ МІНЯТИ), нові поля через `SAVE_MIGRATIONS`/`mergeInto`. Номер епохи — `state.eid` (`curEpoch()`), а не `state.epoch % 8`. Деталі — `src/ARCH.md`.
 
 ## Як працювати з користувачем

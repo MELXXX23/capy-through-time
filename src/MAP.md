@@ -2,7 +2,7 @@
 
 Усі JS-частини — ОДИН спільний скрипт (одна область видимості), порядок за іменем файлу. Імена: `NNN_літера_тема.js`.
 Куди дивитись: скіни → `230_a`, `210`; збереження → `125_save`; епохи (дані) → `100_b`; магазин/фасад → `150_*`, `151_*`; помічники → `100_c`, `180_*`; покупці → `100_b`, `180_c`; тексти → `110_*`; сюжет → `240`, `241`; Японія → `275`, `276`.
-Увага: `110_a`/`110_b` — дві половини одного об'єкта `translations` (розрізано між `uk` і `en`).
+Увага: `110_a*`/`110_b*` (по 3 частини) — дві половини одного об'єкта `translations` (розрізано між `uk` і `en`).
 
 | Частина | КБ | Що там | Перші оголошення |
 |---|---|---|---|
@@ -20,8 +20,12 @@
 | `100_b_music_epochs_customers.js` | 44 | музика (MUSIC, EPOCH_MUSIC), майстерня часу, EPOCHS, досягнення, SPRITES, PALETTE, покупці CHIBI | arpBar, DRUMS_CALM, DRUMS_BOUNCE, MUSIC, DRUMS_CHIP, DRUMS_CHILL, MUSIC_STYLES, EPOCH_MUSIC |
 | `100_c_team_costumes_capy.js` | 42 | костюми героїв по епохах (TEAM_COSTUMES, composeTeamCostume, скіни героїв), спрайти Капі | CHIBI_LOWER, composeChibi, TEAM_GLASSES, teamDeco, TEAM_COSTUMES, teamEyes, composeTeamCostume, composeTeamSkin |
 | `100_d_capy_coins_epoch_state.js` | 41 | Капі (нові/старі рядки), монети й кристали епох, curEpoch/nextEpochId/viewEpoch | makeCapyNewRows, makeCapyOldDetail, EPOCH_COIN_ROWS, EPOCH_COIN_COLORS, SHARD_CH, GEM_CH, GEM_ROWS, gemUrls |
-| `110_a_texts_uk.js` | 76 | ТЕКСТИ: translations.uk (початок об'єкта translations) | translations |
-| `110_b_texts_en.js` | 53 | ТЕКСТИ: translations.en (друга половина об'єкта), GENDER_TEXTS, SEASONS | GENDER_TEXTS, SEASONS |
+| `110_a1_texts_uk.js` | 13 | ТЕКСТИ uk (початок translations): назви, рівні, відділи, розширення, офлайн, команда | translations |
+| `110_a2_texts_uk.js` | 33 | ТЕКСТИ uk: сюжет, події, свята, міні-ігри |  |
+| `110_a3_texts_uk.js` | 30 | ТЕКСТИ uk: вкладки, епохи, подорож, майстерня, досягнення, репліки, пори року, лавочка |  |
+| `110_b1_texts_en.js` | 9 | ТЕКСТИ en (початок en-об'єкта): ті самі теми, що 110_a1 |  |
+| `110_b2_texts_en.js` | 23 | ТЕКСТИ en: сюжет, події, свята, міні-ігри |  |
+| `110_b3_texts_en.js` | 22 | ТЕКСТИ en: вкладки, епохи, подорож…, кінець translations, GENDER_TEXTS, SEASONS | GENDER_TEXTS, SEASONS |
 | `120_state.js` | 16 | стан гри (state), множники, зірки, вимоги | createDefaultState, state, milestonesReached, nextMilestone, levelMult, teamLevelOf, STAR_MULT, STAR_HARD_CAP |
 | `125_save.js` | 16 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
 | `130_format.js` | 43 | t() — переклади, формат чисел | t, tierSuffix, formatNumber, fmt |
@@ -66,7 +70,8 @@
 | `241_b_epoch_story.js` | 19 | сюжет епох: середина EC_DATA |  |
 | `241_c_epoch_story.js` | 31 | сюжет епох: кінець EC_DATA, EC_TRIGGERS | EPOCH_CHAPTERS |
 | `245_stands.js` | 36 | місця гостей біля магазину | GUEST_STAND_EPOCH, STANDS, standPending, guestArrived, guestStands, drawGuestStand |
-| `246_help.js` | 53 | допомога гостям, подяки | helpChipUntil, HELP_NEED, guestEpochOf, helpCount, helpDone, helpMetIn, helpActiveIn, helpCredit |
+| `246_a_help.js` | 34 | допомога гостям: логіка, подяки, тексти UK | helpChipUntil, HELP_NEED, guestEpochOf, helpCount, helpDone, helpMetIn, helpActiveIn, helpCredit |
+| `246_b_help.js` | 19 | допомога гостям: тексти EN, підключення |  |
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
 | `260_render.js` | 29 | головний render, будівельна техніка | render, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum, drawTruckWheel |
 | `270_loop.js` | 2 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frame |

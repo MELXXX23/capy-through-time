@@ -3635,7 +3635,7 @@ function refreshCoinIcon() {
   g.drawImage(getSpriteCanvas(coinSprite()), 0, 0);
 }
 
-//#part 110_a_texts_uk.js
+//#part 110_a1_texts_uk.js
 /* =====================================================================
    ТЕКСТИ (єдиний словник; жодного тексту прямо в коді)
    ===================================================================== */
@@ -3774,6 +3774,7 @@ const translations = {
     team_toma_say_0: "Я нічого не забуваю. Особливо чужі борги.", team_toma_say_1: "Знайшов знижку для складу. Склад поки не знає, що це знижка.", team_toma_say_2: "Слон у справі — усе під контролем. Поки не піде дощ.",
     capy_say_0: "Гарний день для торгівлі. Ще кращий — для мільйонів.", capy_say_1: "Квітку на голові треба поливати. Так, я знаю, як це звучить.", capy_say_2: "Одна монета — і величезні плани. Гірші бізнеси починали з меншого.",
 
+//#part 110_a2_texts_uk.js
     // Сюжет
     storyNote: "Тут усі відкриті глави. Перечитувати можна без витрат.",
     storyRead: 'Читати',
@@ -3947,6 +3948,7 @@ const translations = {
     soundMuteOn: '🔇 Вимкнути звук',
     soundMuteOff: '🔊 Увімкнути звук',
 
+//#part 110_a3_texts_uk.js
     // Етап 7: вкладки, епохи, подорож, майстерня, досягнення, статистика, налаштування
     tab_workshop: 'Годинник', tab_seasons: 'Пори року', setTimeTitle: '🕓 Час доби', tab_achievements: 'Нагороди', tab_settings: 'Налашт.',
     statEpoch: 'Епоха',
@@ -4115,7 +4117,7 @@ const translations = {
     setTime: 'Час доби (сонце й місяць рухаються самі, доба триває 5 хвилин):',
     time_morning: '🌅 Ранок', time_day: '☀️ День', time_evening: '🌇 Вечір', time_night: '🌙 Ніч'
   },
-//#part 110_b_texts_en.js
+//#part 110_b1_texts_en.js
   en: {
     pageTitle: 'CapyTap: Market',
     langLabel: 'Language',
@@ -4244,6 +4246,7 @@ const translations = {
     team_toma_say_0: "I never forget. Especially other people's debts.", team_toma_say_1: "Found a discount for the warehouse. The warehouse doesn't know it's a discount yet.", team_toma_say_2: "An elephant on the job, all under control. Until it rains.",
     capy_say_0: "Good day for trading. Even better for millions.", capy_say_1: "I have to water the flower on my head. Yes, I know how that sounds.", capy_say_2: "One coin and huge plans. Worse businesses started with less.",
 
+//#part 110_b2_texts_en.js
     storyNote: "All the unlocked chapters are here. Re-reading is free.",
     storyRead: 'Read',
     introCutTitle: 'Intro',
@@ -4415,6 +4418,7 @@ const translations = {
     soundMuteOn: '🔇 Mute sound',
     soundMuteOff: '🔊 Unmute sound',
 
+//#part 110_b3_texts_en.js
     tab_workshop: 'Workshop', tab_seasons: 'Seasons', setTimeTitle: '🕓 Time of day', tab_achievements: 'Awards', tab_settings: 'Settings',
     statEpoch: 'Epoch',
     epoch_0: 'Renaissance', epoch_1: 'Retro', epoch_2: 'Disco', epoch_3: 'Arcade', epoch_4: 'Internet', epoch_5: 'Eco', epoch_6: 'Space', epoch_7: 'Neon',
@@ -19104,7 +19108,7 @@ function drawGuestStand(st) {
   STANDS[st.id].draw(ctx, st.x, st.y, animOn() ? animClock : 0);
   if (p < 1) ctx.restore();
 }
-//#part 246_help.js
+//#part 246_a_help.js
 /* =====================================================================
    ДОПОМОГА ГОСТЯМ ЕПОХ
    Кожен гість просить допомоги, прив’язаної до істот його епохи (EPOCH_CREATURES, лови startGhostHunt):
@@ -19395,6 +19399,7 @@ function guestLineKey(g) {
     guestAsk_pietro_0: "Лови сов, що тягнуть монетки з фонтану! Тап!", guestAsk_pietro_1: "Ще кілька сов, і бажання лишаться у воді.", guestDone_pietro: "Монетки у воді, бажання на місці. Дякую!"
   };
 
+//#part 246_b_help.js
   const EN = {
     helpChip: 'Help {0}: {1}/{2}', helpChipDone: 'Help for {0}: done',
     helpDoneToast: '{0} is helped! Crystal +1 💎. A thank-you scene comes before you travel.', helpDoneToast2: '{0} is helped! Crystal +1 💎',

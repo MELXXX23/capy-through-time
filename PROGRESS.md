@@ -35,4 +35,5 @@
 - Навігатор `tools/c.js` (find / fn / outline / use / lines): показує лише потрібне, довгі рядки (до 22 КБ) обрізає.
 - Документи: `CLAUDE.md` 23→10 КБ (правила економії токенів зверху), технічний довідник винесено в `src/ARCH.md`, `HANDOFF.md` 30→4 КБ, `PROGRESS.md` 187→~14 КБ (старе в `archive/PROGRESS_*.md`, ротація `node tools/progress_rotate.js`), `PROMPTS.md` → `archive/`.
 - `.claude/settings.json` (локально, не в git): заборонено Read для `game.html`, `docs/index.html`, `desktop/app/game.html`, `backups/**`.
-- Не робилось: повний autotest (код гри не змінювався, лише розрізано на частини).
+- Додатково (р. 52б): повний `autotest --quick` ЧИСТИЙ (ПК 1920×1080 і 390×844, 0 помилок консолі, 27 епох×рівнів); розрізано ще 110_a/110_b (по 3 частини, за темами) і 246_help (UK/EN) — разом 76 частин; `tools/probe.js` (стан гри як JSON без знімків); `autotest.sh` друкує лише підсумок; `previews/r52/assemble.py` пише в `previews/r52/278_assembled.js`, а не в src; вимкнено конектори Gmail, Canva, everygen (були підключені, ~130 інструментів).
+- Не розрізано свідомо: `275_japan` (один IIFE, 45 КБ), `130_format` (рядки по 22 КБ даних), HTML-завантажувач `040`.
