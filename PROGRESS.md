@@ -41,3 +41,7 @@
 ## 77. Скріншоти для публікації (EN) — геймплей + заставки (локально, у git лише інструменти)
 - Готові набори: `previews/r53/final_en/` (9 кадрів геймплею 1920×1080: аркади, неон уночі, Японія, будівництво з НЛО, цирк-диско, лапшична, подорож, скіни, привиди) і `previews/r53/final_en/intro/` (екран завантаження, кат-сцена, заставки епох диско/інтернет/космос/неон/Японія, 3 анімації подорожі). UK-версія геймплею: `previews/r53/final_uk/`. Контактний лист: `previews/r53/final_en_sheet.png`.
 - Скрипти: `previews/r53/shots_uk.js|shots_en.js|shots_b.js|intro_*.js`; запуск через `previews/itch/shots.js` (додано env `CAPY_QUERY`, `CAPY_BOOT_WAIT`, `CAPY_LANG=en-US` для екрана завантаження). `tools/montage.js` — контактний лист із PNG. Окремо: вітрина скінів Капі `previews/r53/showcase.js` → `previews/r53/out/`.
+
+## 78. itch.io: обкладинка, 5 скріншотів, новий ZIP (р. 52)
+- На сторінку (id 5134270) завантажено обкладинку 630×500 і 5 скріншотів EN (`previews/r53/itch_upload/`). Новий архів `desktop/dist/CapyTapMarket-itch-html.zip` (index.html = game.html через ту саму обробку, що й `tools/publish.js`, без режиму бога; `fonts/`, `icons/`, `manifest.webmanifest`; зібрано `tar -a -c`); старий — `backups/CapyTapMarket-itch-html_old.zip`. Завантаження через Claude in Chrome (приховані `input[type=file]` перехоплено патчем `HTMLInputElement.prototype.click`).
+- Галочка «This file will be played in the browser» для нового файлу поставлена, Save натискає користувачка. Опис (Details) і посилання на трейлер лишаються порожніми.
