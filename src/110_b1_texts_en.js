@@ -86,7 +86,6 @@
     bonus_deptIncome: '{0}: income ×{1}',
     bonus_global: 'all income ×{0}',
     bonus_event: 'holidays & sales {0}% stronger',
-    bonus_fix: 'fixes things {0}% faster',
     bonus_deptCost: 'departments {0}% cheaper',
 
     team_spike: 'Spike the Hedgehog', team_spike_role: 'Cashier',

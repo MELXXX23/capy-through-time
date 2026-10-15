@@ -51,7 +51,7 @@ function setupInput() {
     if (ui.app.classList.contains('sheet-open')) setSheet(false);          // телефон: дотик до гри ховає меню
     const p = toScenePoint(e.clientX, e.clientY);
     if (build) { build.boost = Math.min(0.6, (build.boost || 0) + 0.1); buildSparks(p.x, p.y, 4, ['y', 'w', 'h']); }      // тап під час будівництва прискорює команду (до ×1,6)
-    if (handleEventTap(p)) return;              // калюжа або єнот
+    if (handleEventTap(p)) return;              // єнот
     if (hitGhost(p)) return;                    // привид (Хелловін)
     if (hitClock(p)) return;                    // годинникова вежа торгового центру
     if (hitCircus(p)) return;                   // червоний «!» або цирк Фортуни

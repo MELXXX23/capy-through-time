@@ -226,7 +226,6 @@ function bonusText(i, lvl, sm) {
     case 'deptIncome': return t('bonus_deptIncome', b.depts.map(d => deptName(d)).join(', '), fmt(1 + b.per * lvl * sm, 2));
     case 'global': return t('bonus_global', fmt(1 + b.per * lvl * sm, 2));
     case 'event': return t('bonus_event', pct(b.per * lvl * sm));
-    case 'fix': return t('bonus_fix', pct(b.per * lvl * sm));
     case 'deptCost': return t('bonus_deptCost', pct(Math.min(b.per * lvl * sm, cap)));
   }
   return '';

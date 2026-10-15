@@ -73,17 +73,17 @@
     achGot: 'New achievement!',
     achName_taps: 'Tapper', achName_earned: 'Piggy Bank', achName_level: 'Builder', achName_deptsBought: 'Shopper',
     achName_milestones: 'Milestones', achName_teamEver: 'Team Player', achName_teamMax: 'Master Craftsman', achName_raccoons: 'Raccoon Catcher',
-    achName_puddles: 'Puddle Queen', achName_wheel: 'Lucky One', achName_travels: 'Time Traveller', achName_crystals: 'Crystal Collection',
+    achName_wheel: 'Lucky One', achName_travels: 'Time Traveller', achName_crystals: 'Crystal Collection',
     achName_chapters: 'Reader', achName_holidays: 'Holiday Spirit', achName_hours: 'Dedicated Trader',
     achDesc_taps: 'Tap the shop {0} times', achDesc_earned: 'Earn {0} coins in total', achDesc_level: 'Expand the shop to level {0}',
     achDesc_deptsBought: 'Buy {0} departments', achDesc_milestones: 'Reach department milestones: {0}', achDesc_teamEver: 'Meet animals on your team: {0}',
-    achDesc_teamMax: 'Upgrade an animal to level {0}', achDesc_raccoons: 'Catch the raccoon times: {0}', achDesc_puddles: 'Clean up puddles: {0}',
+    achDesc_teamMax: 'Upgrade an animal to level {0}', achDesc_raccoons: 'Catch the raccoon times: {0}', 
     achDesc_wheel: 'Spin the fortune drum times: {0}', achDesc_travels: 'Travel through time: {0}', achDesc_crystals: 'Collect crystals: {0}',
     achDesc_chapters: 'Read story chapters: {0}', achDesc_holidays: 'See holidays in town: {0}', achDesc_hours: 'Play hours: {0}',
 
     stEpoch: 'Epoch', stPlay: 'Play time', stEarned: 'Earned all time', stRun: 'Earned this run', stCps: 'Income',
     stTap: 'Coins per tap', stTaps: 'Taps', stDepts: 'Departments bought', stCrystals: 'Crystals (now / total)', stShards: 'Time shards (now / total)', stTravels: 'Time travels',
-    stRaccoons: 'Raccoons caught / lost', stPuddles: 'Puddles cleaned', stWheel: 'Drum spins', stAch: 'Awards', stChapters: 'Chapters read',
+    stRaccoons: 'Raccoons caught / lost', stWheel: 'Drum spins', stAch: 'Awards', stChapters: 'Chapters read',
     durationFmt: '{0} d {1} h {2} m',
 
     setLang: 'Language', setView: 'Display & sound', setSound: '🔊 Sound settings',
@@ -115,7 +115,7 @@
     team_tonya_say_3: "Slow and steady wins. No guarantees either.", team_tonya_say_4: "I see everything. Even with my eyes closed. Especially then.", team_tonya_say_5: "The shell is tough, the nerves are tougher. Salary: we'll see.",
     team_mikhas_say_3: "I lift the load and still smile. The smile costs extra.", team_mikhas_say_4: "Who said it's heavy? I'm fine. My back isn't.", team_mikhas_say_5: "After this crate, a break. Preferably a long one.",
     team_sonia_say_3: "Debit and credit get along. Though I've seen them fight.", team_sonia_say_4: "I count at night when everyone's asleep. Cheaper for the nerves.", team_sonia_say_5: "A penny saved is a penny earned, and an owl saves you from audits.",
-    team_kria_say_3: "There was a puddle here. Now there isn't. Case closed.", team_kria_say_4: "It's clean where I am. Where I haven't been, they just haven't noticed yet.", team_kria_say_5: "Sweep with the tail, wipe with the feet. No offense.",
+    team_kria_say_3: "It was dirty here. Now it isn't. Case closed.", team_kria_say_4: "It's clean where I am. Where I haven't been, they just haven't noticed yet.", team_kria_say_5: "Sweep with the tail, wipe with the feet. No offense.",
     team_zhuzha_say_3: "Green is the new black. Just trust me.", team_zhuzha_say_4: "I leap after trends faster than anyone. Sometimes ahead of them.", team_zhuzha_say_5: "Everything truly stylish croaks a little.",
     team_leo_say_3: "Let's sync up. And then once more, just in case.", team_leo_say_4: "I have a plan. And a plan in case the plan fails.", team_leo_say_5: "Cunning is just efficiency that put on a tie in time.",
     team_pao_say_3: "Bamboo and discounts bring people together. So do scandals.", team_pao_say_4: "We don't sell things. We sell expectations. Other people's.", team_pao_say_5: "Who said advertising doesn't eat bamboo? Mine does.",
@@ -173,12 +173,11 @@ const GENDER_TEXTS = {
       capy_say_1: "Листочки на голові треба поливати. Так, я знаю, як це звучить.", capy_say_4: "Листочки на голові приносять удачу. Інакше навіщо вони.",
       importFail: 'Код не підійшов. Перевір, що скопіював його повністю.',
       achName_level: 'Забудовник', achName_deptsBought: 'Закупник', achName_travels: 'Мандрівник часом',
-      achName_puddles: 'Король калюж', achName_chapters: 'Читач', achName_hours: 'Завзятий торговець'
+      achName_chapters: 'Читач', achName_hours: 'Завзятий торговець'
     },
     en: {
       ch1_1: "A battered cart rolls onto the square. A capybara peeks out. The look says “I'm here on purpose”.",
-      capy_say_1: "I have to water the leaves on my head. Yes, I know how that sounds.", capy_say_4: "The leaves on my head bring luck. Otherwise, why have them.",
-      achName_puddles: 'Puddle King'
+      capy_say_1: "I have to water the leaves on my head. Yes, I know how that sounds.", capy_say_4: "The leaves on my head bring luck. Otherwise, why have them."
     }
   }
 };

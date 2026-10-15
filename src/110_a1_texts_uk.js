@@ -96,7 +96,6 @@ const translations = {
     bonus_deptIncome: '{0}: дохід ×{1}',
     bonus_global: 'увесь дохід ×{0}',
     bonus_event: 'свята й розпродажі сильніші на {0}%',
-    bonus_fix: 'лагодить швидше на {0}%',
     bonus_deptCost: 'відділи дешевші на {0}%',
 
     team_spike: 'Їжачок Голка', team_spike_role: 'Касир',

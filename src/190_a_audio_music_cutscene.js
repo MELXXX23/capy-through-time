@@ -347,12 +347,6 @@ const SFX = {
     for (let i = 0; i < 6; i++) tone(audio.sfxGain, 'square', 1500 + i * 130, audio.ctx.currentTime + 0.5 + i * 0.05, 0.04, 0.12);
   },
   lose()      { melody('triangle', [['G4', 0.15], ['F4', 0.15], ['D#4', 0.15], ['C4', 0.45]], 0.5); },
-  leak() {    // кап-кап
-    const t = audio.ctx.currentTime;
-    tone(audio.sfxGain, 'triangle', 1000, t, 0.1, 0.5, 320);
-    tone(audio.sfxGain, 'triangle', 800, t + 0.28, 0.1, 0.5, 260);
-    tone(audio.sfxGain, 'triangle', 1100, t + 0.52, 0.1, 0.5, 340);
-  },
   splash() {
     const t = audio.ctx.currentTime;
     noiseHit(audio.sfxGain, t, 0.18, 0.45, 'bandpass', 1200);

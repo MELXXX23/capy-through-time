@@ -37,7 +37,6 @@ function render(time) {
   drawManholeSteam();
   drawDecorGround();
   drawHalloweenFog();
-  puddles.forEach(drawPuddle);
   if (sackDrop) drawSackDrop();
 
   // Капі та покупці — від дальніх до ближніх (за положенням ніг)

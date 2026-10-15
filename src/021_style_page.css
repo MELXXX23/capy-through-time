@@ -116,10 +116,9 @@
 @keyframes wheelPulse { 50% { transform: translateY(-2px); } }
 #wheelOpen.ready::after { content: ''; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; background: var(--red); box-shadow: 0 0 0 2px var(--cream); }
 
-/* Банер подій над сценою (розпродаж, чорна п'ятниця, протікання, міні-гра) */
+/* Банер подій над сценою (розпродаж, чорна п'ятниця, міні-гра) */
 #eventBanner { position: absolute; top: 116px; left: 50%; transform: translateX(-50%); z-index: 8; max-width: 94%; padding: 6px 12px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--dark); background: var(--yellow); box-shadow: 0 0 0 3px var(--dark); pointer-events: none; white-space: nowrap; }
 #eventBanner.bf { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 3px var(--honey); }
-#eventBanner.leak { background: #cfe6f5; box-shadow: 0 0 0 3px #3d5a8c; }
 #eventBanner.game { background: #ffd3c9; box-shadow: 0 0 0 3px var(--red); }
 #eventBanner[hidden] { display: none; }
 

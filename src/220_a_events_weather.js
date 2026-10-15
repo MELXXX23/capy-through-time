@@ -7,8 +7,7 @@
 const theme = { key: null, season: 'spring', layerSeason: null, holiday: null, blackFriday: false, decor: new Set(), skyTint: null, lights: ['r', 'y', 'g', 'n', 'p'] };
 const snow = [];             // сніжинки
 const bats = [];             // кажани
-const puddles = [];          // калюжі від протікання даху
-let trouble = null;          // неприємність, що триває: { type: 'leak' | 'thief', ... }
+let trouble = null;          // неприємність, що триває: { type: 'thief', ... }
 let sackDrop = null;         // мішок, який кинув Шнирь після поразки
 let eventTimer = 0;
 let wheelAnim = null;        // обертання колеса: { t, dur, from, to }
@@ -198,7 +197,7 @@ function fmtTime(sec) {
 function updateBoostsUI() {
   const now = Date.now(), power = eventPowerMult(), items = [];
   const ev = state.events;
-  const bannerBusy = !!ghostHunt || !!(trouble && ((trouble.type === 'thief' && trouble.state === 'run') || trouble.type === 'leak'));   // інакше цю подію вже показує банер — не дублюємо
+  const bannerBusy = !!ghostHunt || !!(trouble && trouble.type === 'thief' && trouble.state === 'run');   // інакше цю подію вже показує банер — не дублюємо
   if (!bannerBusy) { /* банер вище покаже розпродаж / чорну п'ятницю */ }
   else if (theme.blackFriday) items.push({ cls: 'dark', icon: BLACK_FRIDAY.icon, text: t('boost_bf', fmt(1 + (CONFIG.BLACK_FRIDAY_MULT - 1) * power, 2)) });
   else if (ev.saleUntil > now) items.push({ icon: '🏷️', text: t('boost_sale', fmt(1 + (CONFIG.SALE_MULT - 1) * power, 2)) + ' ' + fmtTime((ev.saleUntil - now) / 1000) });
@@ -214,7 +213,6 @@ function updateBoostsUI() {
   if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
    // скільки зібрано до додаткового оберту барабана (самі привиди й кристали лишаються)
-  if (trouble && trouble.type === 'leak') items.push({ cls: 'bad', icon: '💧', text: t('boost_leak', Math.round(CONFIG.LEAK_INCOME_PENALTY * 100)) });
   items.splice(1, 0, ...helpChips());                                                      // «Допоможи Піпу: 4/12»
   const sig = items.map(i => i.icon + i.text).join('|');
   if (uiCache.boostSig === sig) return;
@@ -237,8 +235,6 @@ function updateBanner() {
     kind = 'game'; text = ghostHunt.crt < 0 ? t('banner_ghost', ghostHunt.caught, ghostHunt.total, Math.max(0, Math.ceil(ghostHunt.dur - ghostHunt.t))) : t('banner_crt', EPOCH_CREATURES[ghostHunt.crt].icon, t('crt_' + ghostHunt.crt), ghostHunt.caught, ghostHunt.total, Math.max(0, Math.ceil(ghostHunt.dur - ghostHunt.t)));
   } else if (trouble && trouble.type === 'thief' && trouble.state === 'run') {
     kind = 'game'; text = t('banner_thief', trouble.hits, CONFIG.RACCOON_HITS, Math.max(0, Math.ceil(CONFIG.RACCOON_SECONDS - trouble.t)));
-  } else if (trouble && trouble.type === 'leak') {
-    kind = 'leak'; text = t('banner_leak', CONFIG.LEAK_PUDDLES - puddles.length, CONFIG.LEAK_PUDDLES);
   } else if (theme.blackFriday) {
     kind = 'bf'; text = t('banner_bf', fmt(1 + (CONFIG.BLACK_FRIDAY_MULT - 1) * power, 2), fmtTime(secondsToMidnight()));
   } else if (ev.saleUntil > now) {
@@ -289,33 +285,6 @@ function startTrouble(now) {
     }
     startRaccoon();
   }
-  // «Протікає дах» прибрано (р. 52): друга половина випадків — спокійний проміжок
-}
-
-// --- Протікання даху ---
-function startLeak() {
-  trouble = { type: 'leak', kriaTimer: 0 };
-  puddles.length = 0;
-  const minX = visL() + 24, maxX = visR() - 24;
-  for (let tries = 0; puddles.length < CONFIG.LEAK_PUDDLES && tries < 100; tries++) {
-    const p = { x: Math.round(rand(minX, maxX)), y: Math.round(rand(150, worldB() - 6)), age: rand(0, 3) };
-    if (puddles.every(q => Math.abs(q.x - p.x) > 26 || Math.abs(q.y - p.y) > 9)) puddles.push(p);
-  }
-  recalcIncome();
-  playSfx('leak');
-  showToast(t('leakStart'), 'bad');
-}
-function removePuddle(i) {
-  const p = puddles.splice(i, 1)[0];
-  state.stats.puddlesFixed++;
-  playSfx('splash');
-  for (let k = 0; k < 6; k++) fx.sparks.push({ x: p.x, y: p.y, vx: rand(-40, 40), vy: rand(-60, -20), age: 0, life: rand(0.3, 0.5), col: k % 2 ? 's' : 'S' });
-  if (!puddles.length) {
-    trouble = null;
-    recalcIncome();
-    showToast(t('leakFixed'), 'good');
-  }
-  updateUI();
 }
 
 // --- Єнот Шнирь: міні-гра «Впіймай єнота» ---
@@ -365,20 +334,6 @@ function loseRaccoon() {
 function updateTrouble(dt) {
   if (sackDrop) { sackDrop.t += dt; if (sackDrop.t > 3) sackDrop = null; }
   if (!trouble) return;
-  puddles.forEach(p => { p.age += dt; });
-  if (trouble.type === 'leak') {
-    // Качка Кря сама прибирає калюжі
-    if (teamLevelOf('kria') > 0 && puddles.length) {
-      trouble.kriaTimer += dt;
-      if (trouble.kriaTimer >= CONFIG.KRIA_CLEAN_SECONDS / fixSpeedMult()) {
-        trouble.kriaTimer = 0;
-        const a = actors.find(x => TEAM[x.i].id === 'kria');
-        if (a) { a.hop = 1; showBubble('t' + a.i, t('kriaMop'), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 })); }
-        removePuddle(Math.floor(Math.random() * puddles.length));
-      }
-    }
-    return;
-  }
   const r = trouble;
   r.t += dt;
   r.flash = Math.max(0, r.flash - dt);
@@ -403,31 +358,16 @@ function updateTrouble(dt) {
     if (r.x < worldL() - 24 || r.x > worldR() + 24) { trouble = null; }
   }
 }
-// Тап по калюжі чи єнотові; true — тап «з'їдено» і по магазину не рахується
+// Тап по єнотові; true — тап «з'їдено» і по магазину не рахується
 function handleEventTap(p) {
   if (!trouble) return false;
   if (trouble.type === 'thief' && trouble.state === 'run') {
     if (Math.abs(p.x - trouble.x) <= 17 && p.y >= trouble.y - 28 && p.y <= trouble.y + 5) { hitRaccoon(); return true; }
-  } else if (trouble.type === 'leak') {
-    for (let i = 0; i < puddles.length; i++) {
-      if (Math.abs(p.x - puddles[i].x) <= 13 && Math.abs(p.y - puddles[i].y) <= 9) { removePuddle(i); return true; }
-    }
   }
   return false;
 }
 
 /* ---------- Малювання подій і прикрас ---------- */
-function drawPuddle(p) {
-  for (let dy = -3; dy <= 3; dy++) {
-    const half = Math.round(10 * Math.sqrt(Math.max(0, 1 - Math.pow(dy / 3.6, 2))));
-    R(ctx, p.x - half, p.y + dy, half * 2 + 1, 1, dy === -3 ? 'S' : 's');
-  }
-  R(ctx, p.x - 5, p.y - 1, 3, 1, 'S');
-  const rr = Math.floor((p.age * 7) % 8);
-  if (rr > 1) { R(ctx, p.x - rr, p.y, 1, 1, 'w'); R(ctx, p.x + rr, p.y, 1, 1, 'w'); }
-  const dropPhase = (p.age * 34) % 30;                    // крапля з даху
-  if (dropPhase < 24) R(ctx, p.x, Math.round(p.y - 28 + dropPhase), 1, 3, 'S');
-}
 function drawRaccoon() {
   const r = trouble;
   if (r.flash > 0 && Math.floor(r.flash * 20) % 2) return;

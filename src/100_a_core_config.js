@@ -114,9 +114,6 @@ const CONFIG = {
   // Неприємності (раз на 20–30 хвилин, після 3-ї глави)
   TROUBLE_MIN_MINUTES: 20,
   TROUBLE_MAX_MINUTES: 30,
-  LEAK_INCOME_PENALTY: 0.25,      // протікання: −25% доходу
-  LEAK_PUDDLES: 5,                // скільки калюж натапати
-  KRIA_CLEAN_SECONDS: 10,         // Кря прибирає одну калюжу за стільки секунд (поділити на швидкість ремонту)
   RACCOON_SECONDS: 9,             // скільки Шнирь бігає
   RACCOON_HITS: 5,                // скільки разів треба влучити
   RACCOON_STEAL_SHARE: 0.05,      // краде 5% монеток...

@@ -118,7 +118,6 @@ function offlineMaxHours() { return CONFIG.OFFLINE_MAX_HOURS + teamBonus('offlin
 // Для наступних етапів: шанс появи єнота (Тоня), сила свят (Пао), швидкість ремонту (Кря)
 function thiefChanceMult() { return (1 - teamBonus('thief')) * (1 - 0.1 * wsLevel('thiefLess')); }
 function eventPowerMult() { return 1 + teamBonus('event'); }
-function fixSpeedMult() { return 1 + teamBonus('fix'); }
 
 // Дохід одної штуки відділу (з віхами, рівнем магазину й бонусом звіряток)
 function deptIncomeEach(i) {
@@ -134,7 +133,6 @@ function tempIncomeMult() {
   else if (state.events.saleUntil > now) m *= 1 + (CONFIG.SALE_MULT - 1) * power;
   m *= 1 + holidayGlobalBonus() * power;
   if (state.events.incomeBoostUntil > now) m *= state.events.incomeBoostMult;
-  if (trouble && trouble.type === 'leak') m *= 1 - CONFIG.LEAK_INCOME_PENALTY;
   return m;
 }
 function tapBoostMult() { return state.events.tapBoostUntil > Date.now() ? state.events.tapBoostMult : 1; }

@@ -18,7 +18,7 @@ function applyTimeTravel() {
   state.shopLevel = startLevel();
   state.runStartEarned = state.totalEarned;
   state.events.incomeBoostUntil = 0; state.events.tapBoostUntil = 0;
-  trouble = null; puddles.length = 0; sackDrop = null;
+  trouble = null; sackDrop = null;
   build = null; ui.shopOverlay.style.visibility = '';
   actors.length = 0;
   customers.length = 0;
@@ -151,11 +151,12 @@ function buildAchievements() {
 }
 function updateAchUI() {
   if (ui.paneAch.hidden) return;
-  const done = state.ach.reduce((s, v) => s + v, 0);
+  const done = state.ach.reduce((s, v, i) => s + (ACHIEVEMENTS[i].hidden ? 0 : v), 0);
   setText(ui.achSummary, t('achSummary', done, achTotal()), 'achSum');
   ACHIEVEMENTS.forEach((a, i) => {
     const e = achEls[i], got = state.ach[i] === 1, v = achValue(a);
-    e.card.style.display = achShown(a, i) ? '' : 'none';
+    e.card.style.display = a.hidden ? 'none' : '';
+    if (a.hidden) return;
     if (e.shown !== (got ? 1 : 0)) {
       e.shown = got ? 1 : 0;
       const bc = e.badge.getContext('2d');
@@ -187,7 +188,7 @@ function fmtDuration(sec) {
 }
 function buildStats() {
   ui.statsCard.innerHTML = '';
-  const rows = ['stEpoch', 'stPlay', 'stEarned', 'stRun', 'stCps', 'stTap', 'stTaps', 'stDepts', 'stCrystals', 'stShards', 'stTravels', 'stRaccoons', 'stPuddles', 'stGhosts', 'stWheel', 'stAch', 'stChapters'];
+  const rows = ['stEpoch', 'stPlay', 'stEarned', 'stRun', 'stCps', 'stTap', 'stTaps', 'stDepts', 'stCrystals', 'stShards', 'stTravels', 'stRaccoons', 'stGhosts', 'stWheel', 'stAch', 'stChapters'];
   rows.forEach(k => {
     const row = document.createElement('div');
     row.className = 'stat';
@@ -212,10 +213,9 @@ function updateStatsUI() {
     stShards: SHARD_CH + ' ' + fmt(s.shards || 0) + ' / ' + fmt(s.shardsTotal || 0),
     stTravels: fmt(st.timeTravels),
     stRaccoons: st.raccoonsCaught + ' / ' + st.raccoonsLost,
-    stPuddles: fmt(st.puddlesFixed),
     stGhosts: fmt(st.ghostsCaught),
     stWheel: fmt(st.wheelSpins),
-    stAch: s.ach.reduce((a, b) => a + b, 0) + ' / ' + achTotal(),
+    stAch: s.ach.reduce((a, b, i) => a + (ACHIEVEMENTS[i].hidden ? 0 : b), 0) + ' / ' + achTotal(),
     stChapters: s.story.done + ' / ' + CHAPTERS.length
   };
   Object.keys(statRows).forEach(k => {
