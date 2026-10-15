@@ -442,7 +442,7 @@ function syncEpochEarned() {
 }
 function coinSprite() { return 'coin_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
 // Колір іскор і цифри «+N» при тапі в стилі монети епохи: [іскра 1, іскра 2, цифра] (літери PALETTE)
-const COIN_INK = [['h', 'y', 'y'], ['T', 'w', 'T'], ['f', 'w', 'f'], ['v', 'T', 'T'], ['a', 'w', 'a'], ['g', 'm', 'm'], ['E', 'w', 'E'], ['f', 'T', 'f'], ['h', 'y', 'y']];
+const COIN_INK = [['h', 'y', 'y'], ['T', 'w', 'T'], ['f', 'w', 'f'], ['v', 'T', 'T'], ['a', 'w', 'a'], ['g', 'm', 'm'], ['E', 'w', 'E'], ['f', 'T', 'f'], ['r', 'J', 'r']];
 function coinInk() { return COIN_INK[viewEpoch() % COIN_INK.length] || COIN_INK[0]; }
 function gemSprite() { return 'gem_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
 function refreshCoinIcon() {

@@ -3631,7 +3631,7 @@ function syncEpochEarned() {
 }
 function coinSprite() { return 'coin_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
 // Колір іскор і цифри «+N» при тапі в стилі монети епохи: [іскра 1, іскра 2, цифра] (літери PALETTE)
-const COIN_INK = [['h', 'y', 'y'], ['T', 'w', 'T'], ['f', 'w', 'f'], ['v', 'T', 'T'], ['a', 'w', 'a'], ['g', 'm', 'm'], ['E', 'w', 'E'], ['f', 'T', 'f'], ['h', 'y', 'y']];
+const COIN_INK = [['h', 'y', 'y'], ['T', 'w', 'T'], ['f', 'w', 'f'], ['v', 'T', 'T'], ['a', 'w', 'a'], ['g', 'm', 'm'], ['E', 'w', 'E'], ['f', 'T', 'f'], ['r', 'J', 'r']];
 function coinInk() { return COIN_INK[viewEpoch() % COIN_INK.length] || COIN_INK[0]; }
 function gemSprite() { return 'gem_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
 function refreshCoinIcon() {
@@ -18044,6 +18044,10 @@ function joinShnyr() {
   try { recalcIncome(); syncActors(); } catch (e) { /* не страшно */ }
   showToast(t('shnyrJoined'), 'big'); showToast(t('shnyrPerk'), 'good');
 }
+// Щоденник: кнопка кожної епохи має свій колір (за стилем епохи); у розділі 8 глав + подяка гостя = 9/9
+const DIARY_EP_COL = ['t', 'p', 'P', 'T', 'n', 'g', 'u', 'f', 'r'];                        // літери PALETTE: Відродження, Ретро, Диско, Аркада, Інтернет, Еко, Космос, Неон, Японія (червоний)
+const DIARY_THX = ['pietro', 'pip', 'zina', 'maks', 'bitik', 'lesyk', 'orbit', 'lumi', 'sora'];   // чия подяка закриває розділ епохи
+function diaryInk(hex) { const n = parseInt(hex.slice(1), 16); return (((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 > 150) ? PALETTE.k : PALETTE.w; }   // читабельний колір тексту на кольоровій кнопці
 // Вкладка «Історія»: відкриті глави з кнопкою «Читати»
 function updateStoryUI() {
   if (ui.paneStory.hidden) return;
@@ -18062,78 +18066,50 @@ function updateStoryUI() {
   const curEp = curEpoch();
   if (!uiCache.storyOpen) uiCache.storyOpen = {};
   const isOpen = ek => (uiCache.storyOpen[ek] !== undefined ? uiCache.storyOpen[ek] : ek === curEp);        // за замовчуванням розкрита лише поточна епоха
-  const sectionHead = (ek, nd) => {                                                           // заголовок розділу епохи (тап — згорнути/розкрити): назва · скільки глав прочитано
-    if (nd === 0 && ek !== curEp) {                                                            // епоха ще не відкрита: заголовок із замком
+  const colOf = ek => PALETTE[DIARY_EP_COL[ek]] || PALETTE.r;                                  // колір кнопки епохи (за її стилем)
+  const thxIdx = ek => GUEST_IDS.indexOf(DIARY_THX[ek]);                                        // гість, чия подяка — 9-й пункт епохи
+  const hasThx = ek => { const gi = thxIdx(ek); return gi >= 0 && (god || !!state.story.thx[gi]); };
+  const sectionHead = (ek, nd) => {                                                           // заголовок розділу епохи (тап — згорнути/розкрити): назва · скільки пунктів із 9 (8 глав + подяка гостя)
+    if (nd === 0 && !hasThx(ek) && ek !== curEp) {                                             // епоха ще не відкрита: заголовок із замком
       const lk = document.createElement('div'); lk.className = 'card chapter-card'; const ln = document.createElement('div'); ln.className = 'num'; ln.textContent = '🔒';
-      const lt = document.createElement('div'); lt.className = 'title'; lt.textContent = t('epochTitle_' + ek) + ' · 0/8'; lk.style.opacity = '0.6'; lk.append(ln, lt); ui.storyList.appendChild(lk); return;
+      const lt = document.createElement('div'); lt.className = 'title'; lt.textContent = t('epochTitle_' + ek) + ' · 0/9'; lk.style.opacity = '0.6'; lk.append(ln, lt); ui.storyList.appendChild(lk); return false;
     }
-    const head = document.createElement('button'); head.type = 'button'; head.className = 'card chapter-card'; head.style.cssText = 'width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;';
+    const col = colOf(ek), ink = diaryInk(col);
+    const head = document.createElement('button'); head.type = 'button'; head.className = 'card chapter-card'; head.style.cssText = 'width:100%;text-align:left;cursor:pointer;font:inherit;color:' + ink + ';background:' + col + ';';
     head.setAttribute('aria-expanded', String(isOpen(ek)));
-    const hn = document.createElement('div'); hn.className = 'num'; hn.textContent = ek === curEp ? '★' : '⏳';
-    const ht = document.createElement('div'); ht.className = 'title'; ht.textContent = (isOpen(ek) ? '[−] ' : '[+] ') + t('epochTitle_' + ek) + ' · ' + nd + '/8';
+    const hn = document.createElement('div'); hn.className = 'num'; hn.style.color = ink; hn.textContent = ek === curEp ? '★' : '⏳';
+    const ht = document.createElement('div'); ht.className = 'title'; ht.textContent = (isOpen(ek) ? '[−] ' : '[+] ') + t('epochTitle_' + ek) + ' · ' + (nd + (hasThx(ek) ? 1 : 0)) + '/9';
     head.addEventListener('click', () => { uiCache.storyOpen[ek] = !isOpen(ek); uiCache.storySig = ''; updateStoryUI(); });
     head.append(hn, ht); ui.storyList.appendChild(head);
+    return true;
+  };
+  const chapterCard = (ek, n, title, onRead) => {                                              // глава епохи: номер у кольорі епохи + «Читати»
+    const card = document.createElement('div'); card.className = 'card chapter-card'; card.style.borderLeft = '6px solid ' + colOf(ek);
+    const num = document.createElement('div'); num.className = 'num'; num.style.color = colOf(ek); num.textContent = n;
+    const ttl = document.createElement('div'); ttl.className = 'title'; ttl.textContent = title;
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
+    btn.addEventListener('click', onRead);
+    card.append(num, ttl, btn); ui.storyList.appendChild(card);
+  };
+  const thxCard = ek => {                                                                      // 9-й пункт епохи: подяка гостя (можна перечитати)
+    if (!hasThx(ek)) return;
+    const gi = thxIdx(ek), label = guestEpochOf(gi) + 1;
+    chapterCard(ek, '💌', t('thanksCardTitle', t('speaker_' + GUEST_IDS[gi])), () => startDialogue(gi + 1, true, 'thx', label));
   };
   const lockCard = () => { const lock = document.createElement('div'); lock.className = 'card dept locked'; lock.textContent = t('storyLocked'); ui.storyList.appendChild(lock); };
-  sectionHead(0, mainDone);
-  for (let n = 1; n <= (isOpen(0) ? mainDone : 0); n++) {
-    const card = document.createElement('div');
-    card.className = 'card chapter-card';
-    const num = document.createElement('div'); num.className = 'num'; num.textContent = n;
-    const title = document.createElement('div'); title.className = 'title'; title.textContent = t('ch' + n + '_title');
-    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
-    btn.addEventListener('click', () => startDialogue(n, true));
-    card.append(num, title, btn);
-    ui.storyList.appendChild(card);
+  // епоха 0 (Відродження): 8 глав основного сюжету + подяка П'єтра
+  if (sectionHead(0, mainDone) && isOpen(0)) {
+    for (let n = 1; n <= mainDone; n++) chapterCard(0, n, t('ch' + n + '_title'), () => startDialogue(n, true));
+    thxCard(0);
+    if (!god && state.story.done < CHAPTERS.length) lockCard();
   }
-  // глави епох 2–8: окремий розділ на кожну епоху
+  // епохи 1–8 (Ретро … Країна вранішнього сонця): 8 глав + подяка гостя епохи
   for (let ek = 1; ek < EPOCHS.length; ek++) {
     const nd = god ? 8 : Math.min(8, (state.story.epDone && state.story.epDone[ek]) || 0);
-    sectionHead(ek, nd);
-    if (!isOpen(ek) || (nd === 0 && ek !== curEp)) continue;
-    for (let n = 1; n <= nd; n++) {
-      const card = document.createElement('div'); card.className = 'card chapter-card';
-      const num = document.createElement('div'); num.className = 'num'; num.textContent = n;
-      const title = document.createElement('div'); title.className = 'title'; title.textContent = t('ec' + ek + '_' + n + '_title');
-      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
-      btn.addEventListener('click', () => startDialogue(n, true, 'ec', n, ek));
-      card.append(num, title, btn); ui.storyList.appendChild(card);
-    }
+    if (!sectionHead(ek, nd) || !isOpen(ek)) continue;
+    for (let n = 1; n <= nd; n++) chapterCard(ek, n, t('ec' + ek + '_' + n + '_title'), () => startDialogue(n, true, 'ec', n, ek));
+    thxCard(ek);
     if (ek === curEp && nd < 8) lockCard();
-  }
-  // фрагменти епох (відкриваються подорожами в часі)
-  const epEntries = [];
-  if (god || state.story.guests[8] > 0) epEntries.push(9);                            // історія першої епохи (П'єтро)
-  for (let k = 1; k <= 8; k++) if (god || k <= state.stats.timeTravels) epEntries.push(k);
-  if (god || state.story.guests[9] > 0) epEntries.push(10);                           // історія Японії (Сора)
-  for (const k of epEntries) {
-    const label = guestEpochOf(k - 1) + 1;
-    const card = document.createElement('div');
-    card.className = 'card chapter-card';
-    const num = document.createElement('div'); num.className = 'num'; num.textContent = '⏳';
-    const title = document.createElement('div'); title.className = 'title'; title.textContent = t('epochLabel', label) + ': ' + t('ep' + k + '_title');
-    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn'; btn.textContent = t('storyRead');
-    btn.addEventListener('click', () => startDialogue(k, true, 'ep', label));
-    if (state.story.guests[k - 1] > 0) {                                                 // як іде допомога гостеві
-      const sub = document.createElement('small'); sub.textContent = (helpDone(k - 1) ? '✅ ' + t('helpDiaryDone') : EPOCH_CREATURES[guestEpochOf(k - 1)].icon + ' ' + t('helpDiaryLine', helpCount(k - 1), HELP_NEED));
-      title.appendChild(sub);
-    }
-    card.append(num, title, btn);
-    ui.storyList.appendChild(card);
-    if (state.story.thx[k - 1]) {                                                        // подяку можна перечитати
-      const tc = document.createElement('div'); tc.className = 'card chapter-card';
-      const tn = document.createElement('div'); tn.className = 'num'; tn.textContent = '💌';
-      const tt = document.createElement('div'); tt.className = 'title'; tt.textContent = t('thanksCardTitle', t('speaker_' + GUEST_IDS[k - 1]));
-      const tb = document.createElement('button'); tb.type = 'button'; tb.className = 'btn'; tb.textContent = t('storyRead');
-      tb.addEventListener('click', () => startDialogue(k, true, 'thx', label));
-      tc.append(tn, tt, tb); ui.storyList.appendChild(tc);
-    }
-  }
-  if (!god && state.story.done < CHAPTERS.length) {
-    const lock = document.createElement('div');
-    lock.className = 'card dept locked';
-    lock.textContent = t('storyLocked');
-    ui.storyList.appendChild(lock);
   }
 }
 
@@ -21908,20 +21884,21 @@ function buildThemeRender() { return BTH.render(); }
 /* =====================================================================
    БОНУС-ІГРИ ПІД ЕПОХИ: окрема іконка у верхньому правому куті (там, де був барабан). Цирк Фортуни лишається цирком з колесом.
    Гра відкривається у тому самому вікні, що й цирк (circusModal), у «бонус-режимі» (circus.bonus). Перезарядка 12 год
-   (BONUS_COOLDOWN_MIN) окремо на кожну епоху (state.wheel.mg[eid]). Приз лише скін: ціль goalP виконано → скін і 12 год чекання;
+   (BONUS_COOLDOWN_MIN), один спільний таймер на всі епохи (час виграшу пишеться в state.wheel.mg[eid], діє найпізніший). Приз лише скін: ціль goalP виконано → скін і 12 год чекання;
    не вийшло → можна одразу ще раз (BONUS_RETRY_ON_MISS). Ігри епох 0,1,3,5,6,7 — у 279_c_bonus_games_more.js.
    Реєстр MG_DEFS[номер епохи] → опис гри; їх робить mgMake: таймер (dur), ціль «ідеально» (goalP) і «майже» (goalN),
    рахунок G.score, фази idle → play → reveal → done. Гра задає: init() → стан, tick(G, dt), tap(G, lx, ly) (полотно 192×120),
    draw(g, G, T). Додати гру: mgMake(eid, {...}) + тексти mg<Ім'я>Title/Sub/Start/Done. Лапшична (Японія) і відьма — окремі, на візку.
    ===================================================================== */
-const BONUS_COOLDOWN_MIN = 720;                                      // 12 годин; у кожної епохи свій таймер (state.wheel.mg[eid])
+const BONUS_COOLDOWN_MIN = 720;                                      // 12 годин; один спільний таймер на всі епохи (найпізніший з state.wheel.mg)
 const BONUS_RETRY_ON_MISS = true;                                    // не вийшло — спробуй ще, перезарядка йде лише після виграного скіна
 const MG_DEFS = {};
 const mgGame = { phase: 'idle', t: 0, left: 0, score: 0, rt: 0, res: '', prize: null, main: false, s: null };
 function mgForEpoch(eid) { return MG_DEFS[eid] || null; }
 function mgCur() { return circus.bonusDef; }                         // гра, що зараз у вікні (circus.bonus)
 function bonusCooldownMs() { return BONUS_COOLDOWN_MIN * 60000; }
-function bonusWaitMs(eid = viewEpoch(), now = Date.now()) { return Math.max(0, ((state.wheel.mg && state.wheel.mg[eid]) || 0) + bonusCooldownMs() - now); }
+function bonusLastWin() { return (state.wheel.mg || []).reduce((m, v) => Math.max(m, v || 0), 0); }   // один таймер на всі епохи: береться найпізніший виграш
+function bonusWaitMs(eid = viewEpoch(), now = Date.now()) { return Math.max(0, bonusLastWin() + bonusCooldownMs() - now); }
 function mgSkinSector() {                                            // приз бонус-гри — лише скін (як усі вільні скіни закінчились — 5 кристалів)
   const pool = BONUS_GAME_SKINS.filter(x => circusFreeSkins(x.skin).length);
   if (!pool.length) return { kind: 'crystal', amount: 5, icon: 'gem2', color: 'v', weight: 0 };

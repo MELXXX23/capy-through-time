@@ -2,20 +2,21 @@
 /* =====================================================================
    БОНУС-ІГРИ ПІД ЕПОХИ: окрема іконка у верхньому правому куті (там, де був барабан). Цирк Фортуни лишається цирком з колесом.
    Гра відкривається у тому самому вікні, що й цирк (circusModal), у «бонус-режимі» (circus.bonus). Перезарядка 12 год
-   (BONUS_COOLDOWN_MIN) окремо на кожну епоху (state.wheel.mg[eid]). Приз лише скін: ціль goalP виконано → скін і 12 год чекання;
+   (BONUS_COOLDOWN_MIN), один спільний таймер на всі епохи (час виграшу пишеться в state.wheel.mg[eid], діє найпізніший). Приз лише скін: ціль goalP виконано → скін і 12 год чекання;
    не вийшло → можна одразу ще раз (BONUS_RETRY_ON_MISS). Ігри епох 0,1,3,5,6,7 — у 279_c_bonus_games_more.js.
    Реєстр MG_DEFS[номер епохи] → опис гри; їх робить mgMake: таймер (dur), ціль «ідеально» (goalP) і «майже» (goalN),
    рахунок G.score, фази idle → play → reveal → done. Гра задає: init() → стан, tick(G, dt), tap(G, lx, ly) (полотно 192×120),
    draw(g, G, T). Додати гру: mgMake(eid, {...}) + тексти mg<Ім'я>Title/Sub/Start/Done. Лапшична (Японія) і відьма — окремі, на візку.
    ===================================================================== */
-const BONUS_COOLDOWN_MIN = 720;                                      // 12 годин; у кожної епохи свій таймер (state.wheel.mg[eid])
+const BONUS_COOLDOWN_MIN = 720;                                      // 12 годин; один спільний таймер на всі епохи (найпізніший з state.wheel.mg)
 const BONUS_RETRY_ON_MISS = true;                                    // не вийшло — спробуй ще, перезарядка йде лише після виграного скіна
 const MG_DEFS = {};
 const mgGame = { phase: 'idle', t: 0, left: 0, score: 0, rt: 0, res: '', prize: null, main: false, s: null };
 function mgForEpoch(eid) { return MG_DEFS[eid] || null; }
 function mgCur() { return circus.bonusDef; }                         // гра, що зараз у вікні (circus.bonus)
 function bonusCooldownMs() { return BONUS_COOLDOWN_MIN * 60000; }
-function bonusWaitMs(eid = viewEpoch(), now = Date.now()) { return Math.max(0, ((state.wheel.mg && state.wheel.mg[eid]) || 0) + bonusCooldownMs() - now); }
+function bonusLastWin() { return (state.wheel.mg || []).reduce((m, v) => Math.max(m, v || 0), 0); }   // один таймер на всі епохи: береться найпізніший виграш
+function bonusWaitMs(eid = viewEpoch(), now = Date.now()) { return Math.max(0, bonusLastWin() + bonusCooldownMs() - now); }
 function mgSkinSector() {                                            // приз бонус-гри — лише скін (як усі вільні скіни закінчились — 5 кристалів)
   const pool = BONUS_GAME_SKINS.filter(x => circusFreeSkins(x.skin).length);
   if (!pool.length) return { kind: 'crystal', amount: 5, icon: 'gem2', color: 'v', weight: 0 };
