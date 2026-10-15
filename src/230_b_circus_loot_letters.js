@@ -96,9 +96,10 @@ function drawCircusWheel() {
   g.clearRect(0, 0, 128, 140); g.save(); g.translate(64, 76); g.rotate(circus.angle); g.drawImage(circus.tex, -64, -64); g.restore();
   for (let i = 0; i < 12; i++) { R(g, 64 - (12 - i), 2 + i, (12 - i) * 2, 1, 'd'); if (i > 1) R(g, 64 - (12 - i) + 2, 2 + i, (12 - i) * 2 - 4, 1, 'r'); }
 }
-function circusBusy() { return !!circus.anim || (!!state.circus.hag && ['show', 'shuffle', 'pick', 'reveal'].includes(hagGame.phase)) || (!!state.circus.noodle && ['cook', 'reveal'].includes(noodleGame.phase)); }
+function circusBusy() { return !!circus.anim || (!!circus.bonus && mgBusy()) || (!!state.circus.hag && ['show', 'shuffle', 'pick', 'reveal'].includes(hagGame.phase)) || (!!state.circus.noodle && ['cook', 'reveal'].includes(noodleGame.phase)); }
 function openCircus() {
   if (dialog.active) return;
+  circus.bonus = false;
   const hag = !!state.circus.hag, nd = !!state.circus.noodle;
   ui.circusModal.classList.toggle('hag', hag || nd);
   if (nd) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (noodleGame.phase === 'idle' || noodleGame.phase === 'done') noodleReset(); if (state.circus.spun) noodleGame.phase = 'done'; }
@@ -111,6 +112,7 @@ function openCircus() {
   updateCircusButtons();
 }
 function updateCircusButtons() {
+  if (circus.bonus) { const b = mgButton(); ui.circusBtn.textContent = t(b.key); ui.circusBtn.disabled = b.off; return; }
   const hag = !!state.circus.hag, nd = !!state.circus.noodle;
   if (nd) {
     const cook = noodleGame.phase === 'cook';
@@ -124,6 +126,7 @@ function updateCircusButtons() {
 function closeCircus() {
   if (circusBusy()) return;
   ui.circusModal.hidden = true;
+  if (circus.bonus) { circus.bonus = false; return; }
   if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
 }
 function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_HIDDEN.includes(SKIN_POOL[i]) && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
@@ -150,6 +153,7 @@ function applyCircusSector(sec, now) {
   return { text, skin: skinPick };
 }
 function circusSpin() {
+  if (circus.bonus) { mgAct(); return; }
   if (state.circus.noodle) { if (noodleGame.phase === 'cook') noodleTake(); else noodleStart(); return; }
   if (circusBusy() || state.circus.spun) return;
   if (state.circus.hag) { hagStart(); return; }

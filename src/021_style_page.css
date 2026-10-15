@@ -110,6 +110,13 @@
 .chip.dark { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 2px var(--honey); }
 .chip .ico { font-size: 11px; }
 #topRight { display: flex; align-items: center; gap: 8px; flex: none; }
+#bonusOpen { display: flex; align-items: center; gap: 6px; padding: 5px 8px; }
+#bonusOpen[hidden] { display: none; }
+#bonusOpen.wait { opacity: .75; }
+#bonusOpenT { font-size: 11px; }
+#bonusOpenT:empty { display: none; }
+#bonusOpen.ready { animation: bonusPulse 1.6s ease-in-out infinite; }
+@keyframes bonusPulse { 50% { filter: brightness(1.3); transform: translateY(-1px); } }
 
 /* Банер подій над сценою (розпродаж, чорна п'ятниця, міні-гра) */
 #eventBanner { position: absolute; top: 116px; left: 50%; transform: translateX(-50%); z-index: 8; max-width: 94%; padding: 6px 12px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--dark); background: var(--yellow); box-shadow: 0 0 0 3px var(--dark); pointer-events: none; white-space: nowrap; }

@@ -12,13 +12,13 @@ const NP_GUIDE = {
   uk: { head: 'Поради', sub: 'Кілька підказок, щоб грати легше й розвиватися швидше.', items: [
     ['💰 Як швидше розбагатіти', '<ul class="np-list"><li>Найми Їжачка Голку якомога раніше. Він коштує всього 100 монет, а кожен тап стає сильнішим у 1,5 раза.</li><li>Кнопка «МАКС» у «Відділах» купує стільки, скільки вистачає грошей. Так не треба тиснути «Купити» двадцять разів.</li><li>Дивись на смужку вгорі екрана. Вона завжди підказує наступну ціль, наприклад «Купи “Свічки й сірники”: 7/25».</li></ul>', 'tipRich'],
     ['🏪 Як рости', '<ul class="np-list"><li>Щоб розширити магазин, треба виконати три умови: купити потрібні відділи, прокачати звірят і зібрати монети. Умови видно у вкладці «Відділи», у блоці «Розширення».</li><li>Кожен новий рівень магазину дає ×2 до всього доходу, тому розширюйся при першій нагоді.</li></ul>', 'tipGrow'],
-    ['🎁 Безкоштовні бонуси', '<ul class="np-list"><li>Бонус-ігри: лапшична діда Рьо в Японії й хатка відьми на Хелловін. Саме там виграють скіни.</li><li>Цирк фортуни дає кристали й бонуси, тож не проходь повз намет.</li><li>Нагороди за досягнення. Заглядай у вкладку з кубком, там чекають призи.</li><li>Івенти на вулиці. Червоний «!», сова чи єнот з’являються ненадовго. Встиг тапнути, і отримаєш бонус.</li></ul>', 'tipFree'],
+    ['🎁 Безкоштовні бонуси', '<ul class="np-list"><li>Бонус-ігри: танцпол в епосі Диско, лапшична діда Рьо в Японії й хатка відьми на Хелловін. Саме там виграють скіни.</li><li>Цирк фортуни дає кристали й бонуси, тож не проходь повз намет.</li><li>Нагороди за досягнення. Заглядай у вкладку з кубком, там чекають призи.</li><li>Івенти на вулиці. Червоний «!», сова чи єнот з’являються ненадовго. Встиг тапнути, і отримаєш бонус.</li></ul>', 'tipFree'],
     ['⏳ На майбутнє', 'Подорож у часі скидає магазин, але дає осколки часу, нову епоху й постійний бонус до доходу. Не бійся її: наступне коло пройде набагато швидше.', 'clock']
   ] },
   en: { head: 'Tips', sub: 'A few hints to play easier and grow faster.', items: [
     ['💰 How to get rich faster', '<ul class="np-list"><li>Hire Spike the hedgehog as early as you can. He costs only 100 coins, and every tap becomes 1.5 times stronger.</li><li>The MAX button in Departments buys as much as your money allows. No need to press Buy twenty times.</li><li>Watch the strip at the top of the screen. It always shows the next goal, for example “Buy “Candles and matches”: 7/25”.</li></ul>', 'tipRich'],
     ['🏪 How to grow', '<ul class="np-list"><li>To expand the shop you need three things: buy the required departments, upgrade the animals and collect coins. The conditions are in the Departments tab, in the Expansion block.</li><li>Every new shop level gives ×2 to all income, so expand at the first chance.</li></ul>', 'tipGrow'],
-    ['🎁 Free bonuses', '<ul class="np-list"><li>Bonus games: Grandpa Ryo’s noodle cart in Japan and the witch’s hut at Halloween. That is where skins are won.</li><li>The fortune circus gives crystals and bonuses, so do not walk past the tent.</li><li>Achievement rewards. Look into the tab with the cup, prizes are waiting there.</li><li>Street events. The red “!”, an owl or a raccoon appear only for a moment. Tap in time and you get a bonus.</li></ul>', 'tipFree'],
+    ['🎁 Free bonuses', '<ul class="np-list"><li>Bonus games: the dance floor in the Disco era, Grandpa Ryo’s noodle cart in Japan and the witch’s hut at Halloween. That is where skins are won.</li><li>The fortune circus gives crystals and bonuses, so do not walk past the tent.</li><li>Achievement rewards. Look into the tab with the cup, prizes are waiting there.</li><li>Street events. The red “!”, an owl or a raccoon appear only for a moment. Tap in time and you get a bonus.</li></ul>', 'tipFree'],
     ['⏳ For the future', 'Time travel resets the shop but gives time shards, a new era and a permanent income bonus. Do not be afraid of it: the next round goes much faster.', 'clock']
   ] }
 };
@@ -305,6 +305,7 @@ function initEvents() {
   ui.lootClose.addEventListener('click', () => closeLoot(false));
   ui.circusClose.addEventListener('click', closeCircus);
   ui.circusWheel.addEventListener('click', hagClick);
+  ui.bonusOpen.addEventListener('click', () => openBonus());
   ui.circusModal.addEventListener('click', e => { if (e.target === ui.circusModal) closeCircus(); });
   ui.dbgCircus.addEventListener('click', () => { const c = state.circus; if (c.phase === 0 || c.phase === 4) { c.phase = 0; c.next = Date.now() - 1; } showToast('Цирк скоро!', 'good'); });
   ui.letterBtn.addEventListener('click', claimLetter);

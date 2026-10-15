@@ -121,6 +121,8 @@
   state.settings.season = 'summer'; updateTheme();
   await check('лапшична: гра', () => { const c = state.circus; c.noodle = 1; c.hag = 0; c.phase = 3; c.spun = 0; openCircus(); noodleStart(); }, 600);
   await check('бонус-гра: приз-скін', () => { const pr = applyCircusSector(BONUS_GAME_SKINS[0], Date.now()); if (pr.skin >= 0) openLoot(pr.skin); }, 600);
+  await check('танцпол: гра', () => { closeAll(); const c = state.circus; c.noodle = 1; c.hag = 0; c.phase = 3; c.spun = 0; openBonus(MG_DEFS[2]); circusSpin(); }, 700);
+  await check('спам: гра', () => { closeAll(); state.wheel.lastSpin = 0; openBonus(MG_DEFS[4]); circusSpin(); }, 1500);
   await check('лапшична: закрити', () => { closeAll(); state.circus.noodle = 0; state.circus.phase = 0; state.circus.next = Date.now() + 1e9; }, 200);
   await check('газета', () => { openNews(); }, 700);
   for (let p = 0; p < 6; p++) await check('газета сторінка ' + p, () => { try { npGo(p); } catch (e) { /* менше сторінок */ } }, 160);

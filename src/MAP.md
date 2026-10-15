@@ -61,9 +61,9 @@
 | `220_c_epoch_sky_fx.js` | 39 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, discoLamps, drawSkyExtra |
 | `220_d_night_garlands_halloween.js` | 39 | нічне небо, гірлянди, Хелловін (привиди, туман) | drawSkyScreen, drawNightShade, SEASON_MOOD, BULB_SETS, bulbColors, awningBulbs, garlandSpans, garlandY |
 | `230_a1_skins_circus_hag.js` | 25 | СКІНИ: пули, ціни, володіння | CIRCUS_SECTORS, BONUS_GAME_SKINS, circusFreq, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON |
-| `230_a2_skins_circus_hag.js` | 23 | цирк (CIRCUS_ART), відьма, хатка | hagReset, hagStart, updateHagGame, hagPos, hagClick, hagCauldron, drawHagGame, circusStopX |
-| `230_b_circus_loot_letters.js` | 42 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawWheelIcon, drawCircusIcon, buildCircusWheelTexture, drawCircusWheel |
-| `230_c_news_wheel_events.js` | 28 | газета (сторінки), листи, updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
+| `230_a2_skins_circus_hag.js` | 24 | цирк (CIRCUS_ART), відьма, хатка | hagReset, hagStart, updateHagGame, hagPos, hagClick, hagCauldron, drawHagGame, circusStopX |
+| `230_b_circus_loot_letters.js` | 43 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawWheelIcon, drawCircusIcon, buildCircusWheelTexture, drawCircusWheel |
+| `230_c_news_wheel_events.js` | 29 | газета (сторінки), листи, updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
 | `230_d_circus_themes.js` | 30 | цирк по епохах: CIRCUS_THEMES (палітра, деталі, гірлянда), малює CIRCUS_ART з 230_a | CIRCUS_THEMES, circusGarland |
 | `240_story.js` | 42 | сюжет: діалоги, гості, камео | dialog, storyTimer, cameos, speakerSprite, speakerName, pageText, renderDialogText, buildChoiceButtons |
 | `241_a_epoch_story.js` | 30 | сюжет епох: початок EC_DATA (перші епохи) | EC_TRIGGERS, EC_DATA |
@@ -81,4 +81,5 @@
 | `278_a_build_themes.js` | 31 | Будівництво по епохах: ядро BTH (rnd, помічники, ефекти), перші епохи | BTH, buildThemeRender |
 | `278_b_build_themes.js` | 24 | Будівництво по епохах: середні епохи |  |
 | `278_c_build_themes.js` | 31 | Будівництво по епохах: останні епохи, BTH.render, buildThemeRender (тап-прискорення build.boost) |  |
+| `279_bonus_games.js` | 17 | бонус-ігри під епохи: реєстр MG_DEFS, спільний мінірушій mgMake (таймер, ціль, приз), «Танцпол» (епоха 2), «Спам» (епоха 4) | BONUS_COOLDOWN_MIN, MG_DEFS, mgGame, mgForEpoch, mgCur, bonusCooldownMs, bonusWaitMs, openBonus |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |

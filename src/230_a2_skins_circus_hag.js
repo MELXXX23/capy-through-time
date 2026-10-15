@@ -41,6 +41,7 @@ function hagPos(c) {                                          // де зараз
   return { x: Math.round(x), y: Math.round(y) };
 }
 function hagClick(e) {
+  if (circus.bonus) { mgClick(e); return; }
   if (state.circus.noodle) { noodleClick(); return; }
   const G = hagGame; if (G.phase !== 'pick') return;
   const cv = ui.circusWheel, r = cv.getBoundingClientRect(), lx = (e.clientX - r.left) * cv.width / r.width, ly = (e.clientY - r.top) * cv.height / r.height;
@@ -157,7 +158,8 @@ function updateCircus(dt) {
   updateCircusSpin(dt);
   if (c.hag) updateHagGame(dt);
   if (c.noodle) updateNoodleGame(dt);
-  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
+  updateBonusGame(dt); updateBonusBtn(dt);
+  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); CIRCUS_ART.clownWindow(g, circus.t); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
 }
 /* ---- Баба Яга ---- */
 const hagFly = { on: false, x: 0, y: 0, dir: -1, t: 0, wait: 0, fast: false };            // Баба Яга в ступі летить небом
