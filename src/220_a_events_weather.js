@@ -461,14 +461,6 @@ function drawTree(x, base) {
   });
   if (Math.floor(animClock * 3) % 2) R(ctx, x - 2, base - 35, 5, 5, 'y'); else R(ctx, x - 1, base - 34, 3, 3, 'y');
 }
-function drawPumpkin(x, base) {
-  const glow = Math.floor(animClock * 3 + x) % 4 === 0 ? 'h' : 'y';
-  disc(ctx, x, base - 5, 6, 'o');
-  R(ctx, x - 6, base - 6, 1, 3, 'r'); R(ctx, x + 6, base - 6, 1, 3, 'r'); R(ctx, x, base - 11, 1, 12, 'r');
-  R(ctx, x - 1, base - 12, 3, 3, 'g');
-  R(ctx, x - 4, base - 7, 3, 2, glow); R(ctx, x + 2, base - 7, 3, 2, glow);
-  R(ctx, x - 3, base - 3, 7, 1, glow); R(ctx, x - 2, base - 2, 1, 1, glow); R(ctx, x + 2, base - 2, 1, 1, glow);
-}
 function drawBalloon(x, y, col) {
   disc(ctx, x, y, 5, col);
   R(ctx, x - 2, y - 3, 2, 2, col === 'k' ? 'e' : 'w');
@@ -493,12 +485,7 @@ function drawGarland() {
 function drawDecorGround() {
   if (build) return;
   if (theme.decor.has('tree')) drawTree(Math.max(18, shop.x - 30), LAYOUT.curbY + 2);
-  if (theme.decor.has('pumpkins')) {
-    drawPumpkin(shop.x - 8, LAYOUT.curbY + 5);
-    drawPumpkin(shop.x + shop.w + 8, LAYOUT.curbY + 5);
-    drawPumpkin(Math.min(300, shop.x + shop.w + 40), LAYOUT.curbY + 7);
-  }
-  drawStreetGarlands();
+  drawStreetGarlands();                       // гарбузи тепер під деревами (drawStreetTree → treeHalloweenDecor), а не на бруківці
   if (theme.decor.has('garlands')) drawGarland();
   if (theme.decor.has('balloons')) {
     const bob = Math.round(Math.sin(animClock * 1.5) * 2);
