@@ -436,7 +436,7 @@ const TEAM = [
     spot: { f: 0.17, r: 14, y: 158, move: 'patrol', prop: 'box' } },
   { id: 'sonia',  level: 4, baseCost: 2.3e8,  bonus: { type: 'offline', rate: 0.03, hours: 1 },
     spot: { f: 0.24, y: 146, move: 'stand', prop: 'ledger' } },
-  { id: 'kria',   level: 4, baseCost: 2.6e8,  bonus: { type: 'fix', per: 0.15 },
+  { id: 'kria',   level: 4, baseCost: 2.6e8,  bonus: { type: 'global', per: 0.05 },
     spot: { f: 0.31, r: 14, y: 157, move: 'patrol', prop: 'broom' } },
   { id: 'zhuzha', level: 4, baseCost: 3e8,    bonus: { type: 'deptIncome', depts: [7, 8], per: 0.2 },
     spot: { f: 0.47, y: 156, move: 'stand', prop: 'dress' } },
