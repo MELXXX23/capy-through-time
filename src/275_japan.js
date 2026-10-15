@@ -54,23 +54,35 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
-  function fuji(g, cx, bY, H, hw) {                       // гладкий конус зі сніжною шапкою (рваний край), імла до підніжжя; світло зліва
-    for (let dx = -hw; dx <= hw; dx++) {
-      const a = Math.abs(dx) / hw, hh = Math.min(Math.round(H * 0.985), Math.round(H * Math.pow(Math.max(0, 1 - a), 1.2)));
-      if (hh < 1) continue;
-      const top = bY - hh, lit = dx < 0, ridge = Math.sin(dx * 0.23) + Math.sin(dx * 0.61 + 2) > 1.15;
-      const snowEnd = bY - H * 0.74 + 6 * Math.sin(dx * 0.33) + 4 * Math.sin(dx * 0.12 + 1) + 9 * Math.pow(Math.max(0, Math.sin(dx * 0.55 + 1.3)), 3);
-      for (let y = top; y < bY; y += 2) {
-        const hz = Math.max(0, Math.min(1, (y - (bY - H * 0.34)) / (H * 0.34)));
-        let col = y < snowEnd ? (lit ? '#fbf8ff' : '#dcd7f2') : (lit ? '#8c88c0' : '#6c68ae');
-        if (y >= snowEnd && ridge) col = mixc(col, '#4f4a96', 0.35);
-        P(g, cx + dx, y, 1, Math.min(2, bY - y), mixc(col, '#f0c8dc', hz * 0.6));
+  function fuji(g, cx, bY, H, hw) {                       // піксельна Фудзі (блоки 3×3, обмежена палітра, дизер імли): світло зліва, тіньова грань, видолинки зі сніговими язиками
+    const B = 3, SN = ['#ffffff', '#e6efff', '#bfd1f2', '#93a9da'], RK = ['#8d95cc', '#7079b4', '#5a639d', '#464d86', '#363c6c'], WARM = ['#85799f', '#6c6288', '#575072'];
+    const bay = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+    for (let bx = -hw; bx < hw; bx += B) {
+      const dx = bx + 1, a = Math.abs(dx) / hw, nx = dx / hw;
+      let raw = H * Math.pow(Math.max(0, 1 - a), 1.25);
+      if (a < 0.022) raw = H * 0.985 - (a < 0.008 ? 5 : 0);                 // плоска вершина з кратером
+      raw = Math.min(raw, H * 0.985);
+      const hh = Math.round(raw / B) * B;
+      if (hh < B) continue;
+      const gul = Math.sin(dx * 0.17) * 0.5 + Math.sin(dx * 0.41 + 1.7) * 0.35 + Math.sin(dx * 0.067 + 3) * 0.4;
+      const tongue = 46 * Math.pow(Math.max(0, Math.sin(dx * 0.085 + 0.6)), 2) + 26 * Math.pow(Math.max(0, Math.sin(dx * 0.19 + 2.1)), 3) + 14 * Math.pow(Math.max(0, Math.sin(dx * 0.43 + 0.4)), 2);
+      const snowEnd = bY - H * 0.68 + (nx < 0 ? 1 : 0.45) * tongue + 6 * Math.sin(dx * 0.31);
+      for (let k = 0; k * B < hh; k++) {
+        const y = bY - (k + 1) * B, up = (k * B + B / 2) / H;
+        const sh = 0.38 + nx * 0.4 + (dx > -hw * 0.05 ? 0.2 : -0.05) + gul * 0.14;
+        const ix = sh < 0.2 ? 0 : sh < 0.4 ? 1 : sh < 0.6 ? 2 : 3;
+        let col;
+        if (y + B / 2 < snowEnd) col = SN[Math.min(3, ix)];
+        else col = up < 0.3 ? WARM[Math.min(2, ix)] : RK[Math.min(4, ix + (gul > 0.55 ? 1 : 0))];
+        const hz = Math.max(0, (0.3 - up) / 0.3);
+        if (hz > 0 && bay[(bx / B) & 3 & 3][k & 3] / 16 < hz * 0.95) col = '#f2cade';
+        P(g, cx + bx, y, B, B, col);
       }
     }
   }
   function farSkyline(g, x0, W) {                       // гора Фудзі, телевежа, пагода, високі будинки
     const base = 112;
-    fuji(g, x0 + Math.round(W * 0.5) + 90, LAYOUT.horizonY, 215, 250);        // велика Фудзі за торговим центром і будинками
+    fuji(g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, 285, 540);        // велика Фудзі за торговим центром і будинками
     A(g, 0.45, () => {
       for (let x = x0, i = 0; x < x0 + W; i++) { const hs = hash2(x + 31, 7), bw = 10 + hs % 12, bh = 16 + (hs >>> 4) % 30; P(g, x, base - bh, bw, bh, i % 2 ? '#7a74b8' : '#6a66a8'); if (hs % 3 === 0) P(g, x + (bw >> 1), base - bh - 5, 1, 5, '#6a66a8'); x += bw + 1 + hs % 5; }
       const tx = x0 + Math.round(W * 0.62);
