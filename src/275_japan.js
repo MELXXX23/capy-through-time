@@ -54,29 +54,27 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
-  function fuji(g, cx, bY, H, hw) {                       // піксельна Фудзі (блоки 3×3, обмежена палітра, дизер імли): світло зліва, тіньова грань, видолинки зі сніговими язиками
-    const B = 3, SN = ['#ffffff', '#e6efff', '#bfd1f2', '#93a9da'], RK = ['#8d95cc', '#7079b4', '#5a639d', '#464d86', '#363c6c'], WARM = ['#85799f', '#6c6288', '#575072'];
+  function fuji(g, cx, bY, H, hw) {                       // Фудзі: пікселі 1×1 як усюди в грі, м'які переходи тонів дизером; світло зліва, тіньова грань, вузькі снігові смуги
+    const SN = ['#ffffff', '#eef3ff', '#cdd9f4', '#a6b6e0'], RK = ['#9097cc', '#7b83bb', '#6770a8', '#555d94', '#444a7c'], WARM = ['#8a7fa6', '#776c92', '#645a7e'];
     const bay = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
-    for (let bx = -hw; bx < hw; bx += B) {
-      const dx = bx + 1, a = Math.abs(dx) / hw, nx = dx / hw;
-      let raw = H * Math.pow(Math.max(0, 1 - a), 1.25);
-      if (a < 0.022) raw = H * 0.985 - (a < 0.008 ? 5 : 0);                 // плоска вершина з кратером
-      raw = Math.min(raw, H * 0.985);
-      const hh = Math.round(raw / B) * B;
-      if (hh < B) continue;
-      const gul = Math.sin(dx * 0.17) * 0.5 + Math.sin(dx * 0.41 + 1.7) * 0.35 + Math.sin(dx * 0.067 + 3) * 0.4;
-      const tongue = 46 * Math.pow(Math.max(0, Math.sin(dx * 0.085 + 0.6)), 2) + 26 * Math.pow(Math.max(0, Math.sin(dx * 0.19 + 2.1)), 3) + 14 * Math.pow(Math.max(0, Math.sin(dx * 0.43 + 0.4)), 2);
-      const snowEnd = bY - H * 0.68 + (nx < 0 ? 1 : 0.45) * tongue + 6 * Math.sin(dx * 0.31);
-      for (let k = 0; k * B < hh; k++) {
-        const y = bY - (k + 1) * B, up = (k * B + B / 2) / H;
-        const sh = 0.38 + nx * 0.4 + (dx > -hw * 0.05 ? 0.2 : -0.05) + gul * 0.14;
+    for (let dx = -hw; dx <= hw; dx++) {
+      const a = Math.abs(dx) / hw, nx = dx / hw;
+      let hh = Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - a), 1.3));
+      hh = Math.round(hh);
+      if (hh < 1) continue;
+      const gul = Math.sin(dx * 0.071) * 0.5 + Math.sin(dx * 0.173 + 1.7) * 0.35 + Math.sin(dx * 0.031 + 3) * 0.4;
+      const streak = Math.pow(Math.max(0, Math.sin(dx * 0.13 + 1)), 6) * 26 + Math.pow(Math.max(0, Math.sin(dx * 0.071 + 2.3)), 8) * 34;
+      const snowEnd = bY - H * 0.68 + 9 * Math.sin(dx * 0.045 + 0.6) + 5 * Math.sin(dx * 0.11 + 2) + 3 * Math.sin(dx * 0.27) + (nx < 0.1 ? streak : streak * 0.4);
+      const top = bY - hh;
+      for (let y = top; y < bY; y++) {
+        const th = bay[y & 3][dx & 3], up = (bY - y) / H;
+        const sh = 0.4 + nx * 0.38 + (dx > -hw * 0.04 ? 0.17 : -0.04) + gul * 0.1 + (th / 16 - 0.5) * 0.14;
         const ix = sh < 0.2 ? 0 : sh < 0.4 ? 1 : sh < 0.6 ? 2 : 3;
         let col;
-        if (y + B / 2 < snowEnd) col = SN[Math.min(3, ix)];
-        else col = up < 0.3 ? WARM[Math.min(2, ix)] : RK[Math.min(4, ix + (gul > 0.55 ? 1 : 0))];
-        const hz = Math.max(0, (0.3 - up) / 0.3);
-        if (hz > 0 && bay[(bx / B) & 3 & 3][k & 3] / 16 < hz * 0.95) col = '#f2cade';
-        P(g, cx + bx, y, B, B, col);
+        if (y < snowEnd + (th - 8) * 0.5) col = SN[Math.min(3, ix)];
+        else col = up < 0.28 ? WARM[Math.min(2, ix)] : RK[Math.min(4, ix + (up < 0.5 ? 1 : 0))];
+        if (up < 0.26 && th / 16 < (0.26 - up) / 0.26 * 0.9) col = '#f2cade';
+        g.fillStyle = col; g.fillRect(cx + dx, y, 1, 1);
       }
     }
   }
