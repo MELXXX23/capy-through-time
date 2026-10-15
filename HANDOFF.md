@@ -3,7 +3,8 @@
 Читай: `CLAUDE.md` (правила, економія токенів), цей файл, останні пункти `PROGRESS.md`. Старі HANDOFF — `archive/` (лише Grep).
 
 ## Де ми (2026-10-15, раунд 55; пункти PROGRESS 88–98, відкат `before-minigames`)
-- ВИПУЩЕНО НА САЙТ (2026-10-15, коміт 763a356): усе, включно з Японією, Хелловіном, раундами 54–55 і бонус-іграми всіх епох. ZIP для itch оновлено: `desktop/dist/CapyTapMarket-itch-html.zip` (старий — `backups/…_old.zip`), на itch ще не завантажено. exe на столі СТАРИЙ (до a4448e3): збірка падає, бо `…AppDataLocalelectron-builderCache
+- ВИПУЩЕНО (2026-10-15, коміт 763a356): сайт — усе, включно з Японією, Хелловіном, раундами 54–55 і бонус-іграми всіх епох; exe на столі оновлено (D:/DESKTOP/CapyTapMarket-Portable-NEW.exe — стіл на диску D, не C:/Users/user/Desktop). ZIP для itch: `desktop/dist/CapyTapMarket-itch-html.zip` (старий — `backups/CapyTapMarket-itch-html_old.zip`), на itch ще не завантажено.
+- Збірка exe: кеш electron-builder у профілі зашифровано (EFS), CopyFile у dist падає. Рецепт: копія кешу в `previews/ebcache` (не в git; поновити `node previews/copycache.js`), далі `cd desktop; node prepare.js; ELECTRON_BUILDER_CACHE=C:/GAMES/capy-through-time/previews/ebcache npx electron-builder --win portable --config.electronDist=node_modules/electron/dist --config.electronVersion=33.4.11`, копія на D:/DESKTOP, потім `CAPY_NOGOD=1 node desktop/prepare.js`.
 sis
 sis-3.0.4.1elevate.exe` зашифровано EFS (`cipher /d` на цей файл вирішує; без дозволу не чіпав).
 - Раунд 54, що зроблено:
