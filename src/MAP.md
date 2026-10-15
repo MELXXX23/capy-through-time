@@ -24,7 +24,7 @@
 | `110_a2_texts_uk.js` | 33 | ТЕКСТИ uk: сюжет, події, свята, міні-ігри |  |
 | `110_a3_texts_uk.js` | 30 | ТЕКСТИ uk: вкладки, епохи, подорож, майстерня, досягнення, репліки, пори року, лавочка |  |
 | `110_b1_texts_en.js` | 9 | ТЕКСТИ en (початок en-об'єкта): ті самі теми, що 110_a1 |  |
-| `110_b2_texts_en.js` | 23 | ТЕКСТИ en: сюжет, події, свята, міні-ігри |  |
+| `110_b2_texts_en.js` | 22 | ТЕКСТИ en: сюжет, події, свята, міні-ігри |  |
 | `110_b3_texts_en.js` | 22 | ТЕКСТИ en: вкладки, епохи, подорож…, кінець translations, GENDER_TEXTS, SEASONS | GENDER_TEXTS, SEASONS |
 | `120_state.js` | 16 | стан гри (state), множники, зірки, вимоги | createDefaultState, state, milestonesReached, nextMilestone, levelMult, teamLevelOf, STAR_MULT, STAR_HARD_CAP |
 | `125_save.js` | 16 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
@@ -55,7 +55,7 @@
 | `200_b_warp_epoch_animations.js` | 33 | анімації подорожі для кожної епохи (WARP_BY_EPOCH) | warpPix, warpCapy, warpFont, warpText, drawWarpDisco, WARP_INV, drawWarpArcade, drawWarpNet |
 | `200_c_time_travel_workshop_stats.js` | 25 | подорож (applyTimeTravel), майстерня часу, досягнення, статистика, налаштування | applyTimeTravel, wsEffectText, buildWorkshop, wsNeedTrips, buyWorkshop, routeSig, updateRouteCard, updateWorkshopUI |
 | `210_skins.js` | 30 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust, DUST_COLS |
-| `220_a_events_weather.js` | 39 | події, сезони, погода, райдуга, дощ, блискавки (початок) | theme, snow, bats, puddles, trouble, sackDrop, eventTimer, wheelAnim |
+| `220_a_events_weather.js` | 36 | події, сезони, погода, райдуга, дощ, блискавки (початок) | theme, snow, bats, trouble, sackDrop, eventTimer, wheelAnim, wheelAngle |
 | `220_b1_rainbow_lightning_skyx.js` | 23 | райдуга, блискавки, прикраси неба (початок) | RAINBOW_M, rainbowM, rainbowCanvas, rainbowGeom, drawRainbowSkin, bolts, boltTimer, boltPath |
 | `220_b2_rainbow_lightning_skyx.js` | 23 | прикраси неба (skyx*), кеш-спрайти | skyxDrone, skyxIsland, skyBlockCache, skyHash, skyxBlock, islandCanvas, skyxIsland2, droneBody |
 | `220_c_epoch_sky_fx.js` | 39 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, discoLamps, drawSkyExtra |
@@ -75,10 +75,10 @@
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
 | `260_render.js` | 29 | головний render, будівельна техніка | render, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum, drawTruckWheel |
 | `270_loop.js` | 2 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frame |
-| `275_japan.js` | 45 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
+| `275_japan.js` | 51 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `276_japan_text.js` | 15 | епоха 9 Японія: тексти |  |
 | `277_japan_noodle.js` | 19 | Японія: лапшична діда Рьо замість цирку (візок, портрет, гра «Звари лапшу», тексти) | NOODLE_BUST, noodleGame, NOODLE_ZH, NOODLE_ART, noodleReset, noodleStart, noodleTake, updateNoodleGame |
 | `278_a_build_themes.js` | 31 | Будівництво по епохах: ядро BTH (rnd, помічники, ефекти), перші епохи | BTH, buildThemeRender |
 | `278_b_build_themes.js` | 24 | Будівництво по епохах: середні епохи |  |
-| `278_c_build_themes.js` | 32 | Будівництво по епохах: останні епохи, BTH.render, buildThemeRender (тап-прискорення build.boost) |  |
+| `278_c_build_themes.js` | 30 | Будівництво по епохах: останні епохи, BTH.render, buildThemeRender (тап-прискорення build.boost) |  |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |

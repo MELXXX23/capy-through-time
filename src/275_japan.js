@@ -56,26 +56,47 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
-  function fuji(g, cx, bY, H, hw) {                       // Фудзі: плоскі кольори (сніг білий, гора один колір), чіткий контур 2 px і гори, і снігу; піксель 2×2
-    const B = 2, T = 2 * B, OUT = '#2c2b66', SOUT = '#3d4a9a', ROCK = '#7077b8', SNOW = '#ffffff';
-    const heightAt = dx => Math.round(Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3)) / B) * B;
+  function fuji(g, cx, bY, H, hw) {                       // Фудзі: об'ємна, м'які 9 тонів із легким дизером (як хмари); світло зліва, тінь справа, яри від вершини, снігова шапка, серпанок знизу; піксель 2×2
+    const heightAt = dx => Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3));
     const snowEndAt = dx => {
       const nx = dx / hw, streak = Math.pow(Math.max(0, Math.sin(dx * 0.11 + 1)), 6) * 26 + Math.pow(Math.max(0, Math.sin(dx * 0.061 + 2.3)), 8) * 34;
       return bY - H * 0.7 + 9 * Math.sin(dx * 0.04 + 0.6) + 5 * Math.sin(dx * 0.1 + 2) + (nx < 0.1 ? streak : streak * 0.4);
     };
-    const isSnow = (y, e) => y + B / 2 < e;
-    for (let bx = -hw; bx <= hw; bx += B) {
-      const dx = bx + B / 2, hh = heightAt(dx);
-      if (hh < B) continue;
-      const sE = snowEndAt(dx), sL = snowEndAt(dx - T), sR = snowEndAt(dx + T);
-      for (let y = bY - B; y >= bY - hh; y -= B) {
-        const snow = isSnow(y, sE);
-        let col = snow ? SNOW : ROCK;
-        if (snow && (!isSnow(y + T, sE) || !isSnow(y, sL) || !isSnow(y, sR))) col = SOUT;       // контур снігу 4 px: нижній край і боки язиків
-        if (y < bY - hh + T) col = OUT;                                  // контур силуету гори 4 px
-        g.fillStyle = col; g.fillRect(cx + bx, y, B, B);
+    const hex = c => [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
+    const RL = hex('#c2c8fb'), RS = hex('#454b90'), SL = hex('#ffffff'), SS = hex('#8fa1e6'), HZ = hex('#d0d4f8'), OT = hex('#2c2b66');
+    const RIDGE = 0.26, LEVELS = 9, DITHER = 0.6, HAZE = 0.5, HAZE_H = 70, RIM = 4;
+    const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+    const lerp = (A, B, t) => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
+    const W = hw * 2 + 8, Hc = Math.ceil(H / 2) * 2 + 2, y0 = bY - Hc, x0 = cx - hw - 4;
+    const oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
+    const ox = oc.getContext('2d'), im = ox.createImageData(W, Hc), d = im.data;
+    for (let px = 0; px < W; px += 2) {
+      const dx = px + 1 - hw - 4, hh = heightAt(dx);
+      if (hh < 1) continue;
+      const sE = snowEndAt(dx);
+      for (let py = 0; py < Hc; py += 2) {
+        const y = y0 + py + 1, hgt = bY - y;
+        if (hgt < 0 || hgt > hh) continue;
+        const u = dx / (y - (bY - H) + 46);
+        const ridge = Math.sin(u * 15 + 0.9 * Math.sin(u * 4.3 + 1)) * 0.6 + Math.sin(u * 38 + 2) * 0.25 + Math.sin(u * 7 + 0.4) * 0.4;
+        const nxe = Math.max(-1, Math.min(1, dx / (hw * 0.75) + RIDGE * ridge));
+        let I = Math.max(0, Math.min(1, 0.5 - 0.46 * nxe + 0.1 * (hgt / H)));
+        I = I * I * (3 - 2 * I) * 0.85 + I * 0.15;
+        const bay = [0, 2, 3, 1][((px >> 1) & 1) + 2 * ((py >> 1) & 1)] / 4 - 0.375;
+        I = Math.max(0, Math.min(1, Math.round(I * LEVELS + bay * DITHER) / LEVELS));
+        const sb = sm(-5, 5, sE - y + ridge * 3);                                  // м'який край снігу
+        let c = lerp(lerp(RS, RL, I), lerp(SS, SL, Math.min(1, I * 1.15)), sb);
+        c = lerp(c, HZ, HAZE * Math.pow(Math.max(0, 1 - hgt / HAZE_H), 1.5));      // серпанок біля підніжжя
+        c = lerp(c, OT, Math.max(0, 1 - (hh - hgt) / RIM));                        // темний обідок силуету
+        for (let qy = 0; qy < 2; qy++) for (let qx = 0; qx < 2; qx++) {
+          if (px + qx >= W) continue;
+          const o = ((py + qy) * W + px + qx) * 4;
+          d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255;
+        }
       }
     }
+    ox.putImageData(im, 0, 0);
+    g.drawImage(oc, x0, y0);
   }
   function farSkyline(g, x0, W) {                       // гора Фудзі, телевежа, пагода, високі будинки
     const base = 112;
