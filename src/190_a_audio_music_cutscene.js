@@ -159,7 +159,7 @@ function desiredTrack() {
   if (theme.season === 'halloween' && MUSIC.halloween) return 'halloween';
   const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
   const ep = viewEpoch() % EPOCH_MUSIC.length;
-  if (ep > 0 && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
+  if ((ep > 0 || st.id !== 'classic') && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
   return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + ep;
 }
 // Перемикає мелодію плавно: стара стихає, нова наростає
@@ -214,16 +214,32 @@ function melody(wave, notes, vol, gap = 0) {
     t += d + gap;
   });
 }
-const SFX_TAP_VARIANTS = [['E5', 'B5'], ['G5', 'C6'], ['D5', 'A5'], ['F#5', 'C#6'], ['A4', 'E5']];       // нижче й м'якше, ніж було (високі квадрати «дзвеніли»)
+// Звук тапа: однаково м'який (фільтр зрізає верхи), але в кожної епохи свій інструмент. lp — зріз верхів, n — варіанти пар нот,
+// w1/w2 — тембри, e1/e2 — обвідна (pluck — щипок), d1/d2 — тривалість, v1/v2 — гучність, s1 — на скільки множиться висота першої ноти
+// (ковзання), tick — короткий шумовий «клац» [фільтр, частота, гучність]. Індекс — номер епохи (state.eid).
+const SFX_TAP_PROFILES = [
+  { lp: 1500, n: [['D5', 'A5'], ['E5', 'B5'], ['G5', 'D6'], ['A4', 'E5']], w1: 'triangle', w2: 'sine', e1: 'pluck', e2: 'pluck', d1: 0.07, d2: 0.1, v1: 0.2, v2: 0.12 },                              // Відродження: лютня
+  { lp: 1800, n: [['C5', 'G5'], ['E5', 'A5'], ['G5', 'C6'], ['A4', 'E5']], w1: 'sine', w2: 'triangle', e1: 'pluck', e2: 'pluck', d1: 0.09, d2: 0.12, v1: 0.22, v2: 0.1 },                          // Ретро: електропіаніно
+  { lp: 1300, n: [['A4', 'E5'], ['C5', 'G5'], ['E5', 'A5'], ['D5', 'A5']], w1: 'triangle', w2: 'sine', s1: 1.18, d1: 0.06, d2: 0.08, v1: 0.2, v2: 0.1, tick: ['bandpass', 2400, 0.05] },        // Диско: фанк-«пью» і хет
+  { lp: 1700, n: [['B5', 'E6'], ['G5', 'D6'], ['A5', 'E6'], ['E5', 'B5']], w1: 'square', w2: 'square', d1: 0.04, d2: 0.07, v1: 0.085, v2: 0.06 },                                              // Аркади: м'яка монетка
+  { lp: 1500, n: [['E5', 'B5'], ['G5', 'D6'], ['D5', 'A5'], ['A5', 'E6']], w1: 'sine', w2: 'sine', e1: 'pluck', d1: 0.05, d2: 0.07, v1: 0.2, v2: 0.1, tick: ['highpass', 3200, 0.06] },        // Інтернет: клавіша й пінг
+  { lp: 1300, n: [['D5', 'G5'], ['E5', 'A5'], ['C5', 'G5'], ['G4', 'D5']], w1: 'sine', w2: 'triangle', e1: 'pluck', e2: 'pluck', s1: 1.4, d1: 0.08, d2: 0.1, v1: 0.22, v2: 0.1 },             // Еко: крапля води
+  { lp: 1800, n: [['F5', 'C6'], ['G5', 'D6'], ['A5', 'E6'], ['D5', 'A5']], w1: 'sine', w2: 'sine', e1: 'pluck', e2: 'pluck', d1: 0.14, d2: 0.22, v1: 0.15, v2: 0.1 },                           // Космос: скляний передзвін
+  { lp: 1100, n: [['E5', 'B5'], ['G5', 'D6'], ['D5', 'A5'], ['B4', 'F#5']], w1: 'sawtooth', w2: 'sine', d1: 0.07, d2: 0.1, v1: 0.07, v2: 0.14 },                                              // Неон: синтвейв
+  { lp: 1600, n: [['A4', 'E5'], ['C5', 'E5'], ['B4', 'F5'], ['E5', 'A5'], ['F5', 'C6']], w1: 'triangle', w2: 'sine', e1: 'pluck', e2: 'pluck', d1: 0.1, d2: 0.12, v1: 0.2, v2: 0.1, tick: ['bandpass', 2800, 0.04] }   // Японія: кото
+];
 const SFX = {
   tap() {   // кілька варіантів, щоб не набридало; тріщить усе рідше й тихіше при довгому тапанні
     const ac = audio.ctx, now = ac.currentTime;
     if (now - (SFX._tapLast || 0) < 0.05) return;                                    // не частіше 20 разів на секунду
     SFX._tapRun = now - (SFX._tapAt || 0) < 0.5 ? (SFX._tapRun || 0) + 1 : 0; SFX._tapAt = now; SFX._tapLast = now;
     if (!audio.tapLP) { const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1400; f.Q.value = 0.3; f.connect(audio.sfxGain); audio.tapLP = f; }       // зрізає різкі верхи
-    const v = SFX_TAP_VARIANTS[Math.floor(Math.random() * SFX_TAP_VARIANTS.length)], k = Math.max(0.4, 1 - SFX._tapRun * 0.04), t = now + 0.004;
-    tone(audio.tapLP, 'triangle', noteFreq(v[0]), t, 0.06, 0.2 * k);
-    tone(audio.tapLP, 'sine', noteFreq(v[1]), t + 0.04, 0.1, 0.13 * k);
+    const P = SFX_TAP_PROFILES[(viewEpoch() | 0) % SFX_TAP_PROFILES.length] || SFX_TAP_PROFILES[0];
+    audio.tapLP.frequency.value = P.lp;
+    const v = P.n[Math.floor(Math.random() * P.n.length)], k = Math.max(0.4, 1 - SFX._tapRun * 0.04), t = now + 0.004, f1 = noteFreq(v[0]);
+    tone(audio.tapLP, P.w1, f1, t, P.d1, P.v1 * k, P.s1 ? f1 * P.s1 : null, P.e1);
+    tone(audio.tapLP, P.w2, noteFreq(v[1]), t + 0.04, P.d2, P.v2 * k, null, P.e2);
+    if (P.tick) noiseHit(audio.tapLP, t, 0.02, P.tick[2] * k, P.tick[0], P.tick[1]);
   },
   buy()       { melody('square', [['C5', 0.05], ['E5', 0.05], ['G5', 0.05], ['C6', 0.12]], 0.22); },
   hire()      { melody('square', [['E5', 0.07], ['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.2]], 0.22); },
