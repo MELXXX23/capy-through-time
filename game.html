@@ -5323,15 +5323,17 @@ function buildSkyLayer() {
   const A = hx(c1), B = hx(c2), C = hx(c3), mix = (p, q, t) => p.map((v, i) => Math.round(v + (q[i] - v) * t));
   const col = u => { const lvl = Math.floor(u * 5) / 5; return u < 1 ? mix(A, B, lvl) : mix(B, C, Math.floor((u - 1) * 5) / 5); };
   const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
-  const rows = hor - top;
+  const rows = hor - top, wpx = view.w, img = g.createImageData(wpx, Math.max(1, rows)), px = img.data;       // пікселі пишемо напряму (fillRect на піксель займав ~300 мс при подорожі)
   for (let y = top; y < hor; y++) {
     const f = (y - top) / rows, u = f < 0.45 ? f / 0.45 : 1 + Math.pow((f - 0.45) / 0.55, 0.9), step = 1 / 5, fr = ((u < 1 ? u : u - 1) / step) % 1;
     const c0 = col(u), c1b = col(Math.min(2, u + step * (u < 1 ? 1 : 1)));
-    for (let x = x0; x < x0 + W; x++) {
-      const th = bayer[(y & 3)][(x - x0) & 3] / 16, cc = fr > th ? c1b : c0;
-      g.fillStyle = 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')'; g.fillRect(x, y, 1, 1);
+    let o = (y - top) * wpx * 4;
+    for (let xi = 0; xi < wpx; xi++, o += 4) {
+      const th = bayer[(y & 3)][xi & 3] / 16, cc = fr > th ? c1b : c0;
+      px[o] = cc[0]; px[o + 1] = cc[1]; px[o + 2] = cc[2]; px[o + 3] = 255;
     }
   }
+  g.putImageData(img, x0 + view.offX, top + view.offY);
   // тепле сяйво біля обрію
   for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
   g.globalAlpha = 1;
@@ -6027,8 +6029,22 @@ function lineG(g, x0, y0, x1, y1, c) {      // лінія з пікселів (�
     if (e2 <= dx) { err += dx; y0 += sy; }
   }
 }
+let TREE_CROWN_MASK = null;
+const TREE_CACHE = new Map();       // готові дерева (x, вид, сезон) → полотно: звичайне дерево не залежить від епохи, тож при подорожі береться з кешу, а не малюється заново (~40 мс)
 function drawStreetTree(g, x, v, season) {
   { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.tree) return A.tree(g, x, v, season); }
+  const base = LAYOUT.horizonY + 8, key = x + '|' + v + '|' + season + '|' + base, ox = x - 48, oy = base - 92;
+  let c = TREE_CACHE.get(key);
+  if (!c) {
+    if (TREE_CACHE.size > 80) TREE_CACHE.clear();
+    c = document.createElement('canvas'); c.width = 98; c.height = 112;
+    const cg = c.getContext('2d'); cg.translate(-ox, -oy);
+    drawStreetTreeRaw(cg, x, v, season);
+    TREE_CACHE.set(key, c);
+  }
+  g.drawImage(c, ox, oy);
+}
+function drawStreetTreeRaw(g, x, v, season) {
   const base = LAYOUT.horizonY + 8;
   if (season === 'winter') { drawBareTree(g, x, v, season); return; }
   // Дерево ×1,45 від колишнього: розлогий стовбур із корою й корінням, об'ємна крона з кількох шарів, світло зверху-зліва, тінь знизу-праворуч, сезонні деталі
@@ -6052,7 +6068,14 @@ function drawStreetTree(g, x, v, season) {
   // крона з багатьох кульок (нерівний силует)
   const cy = base - 51;
   const discs = [[0, -3, 17], [-14, 7, 13], [14, 7, 13], [0, 10, 16], [-7, -13, 12], [9, -12, 11], [-22, -1, 9], [22, 0, 9], [0, -19, 9], [-12, 19, 9], [13, 19, 9], [-18, 14, 8], [19, 13, 8]];
-  const inside = (px, py) => discs.some(d => { const dx = px - (x + d[0]), dy = py - (cy + d[1]); return dx * dx + dy * dy <= d[2] * d[2] + 1; });
+  if (!TREE_CROWN_MASK) {                                                                              // форма крони не залежить від x: рахуємо один раз (колись discs.some на кожен піксель з'їдало ~40 мс при подорожі)
+    TREE_CROWN_MASK = new Uint8Array(75 * 67);
+    for (let my = 0; my < 67; my++) for (let mx = 0; mx < 75; mx++) {
+      const px = mx - 37, py = my - 33;
+      TREE_CROWN_MASK[my * 75 + mx] = discs.some(d => { const dx = px - d[0], dy = py - (-51 + 51 + d[1]); return dx * dx + dy * dy <= d[2] * d[2] + 1; }) ? 1 : 0;
+    }
+  }
+  const cm = TREE_CROWN_MASK, inside = (px, py) => { const mx = px - x + 37, my = py - cy + 33; return mx >= 0 && mx < 75 && my >= 0 && my < 67 && cm[my * 75 + mx] === 1; };
   discs.forEach(d => disc(g, x + d[0], cy + d[1], d[2] + 1, pal[3]));                                   // контур
   const band = (py) => season === 'autumn' ? (py < cy - 9 ? 'h' : py < cy + 8 ? 'o' : 'r') : season === 'summer' ? (py < cy - 6 ? 'g' : 'g') : pal[0];     // восени крона від жовтої до червоної
   for (let py = cy - 32; py <= cy + 32; py++) for (let px = x - 36; px <= x + 36; px++) {
@@ -12404,18 +12427,22 @@ function isDebug() {
 function currentEpoch() { return EPOCHS[viewEpoch() % EPOCHS.length]; }
 
 /* ---------- Епохи: зовнішній вигляд міста ---------- */
-function rebuildEpochLayers() {
-  document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length);
-  refreshCoinIcon();
-  skyLayer = buildSkyLayer();
-  groundLayer = buildGroundLayer();
-  theme.key = null;              // змусити updateTheme перерахувати прикраси
-  seedEpochFx();
-  updateTheme();
-  refreshTeamPortraits();
-  drawCapiPortrait();             // скін Капі залежить від епохи
-  if (shop) rebuildShop(true);
+// Етапи перебудови шарів епохи: під час подорожі їх виконуємо по одному на кадр (вир закриває сцену), щоб не було одного довгого провалу
+function epochLayerSteps() {
+  return [
+    () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); skyLayer = buildSkyLayer(); },
+    () => { groundLayer = buildGroundLayer(); },
+    () => {
+      theme.key = null;              // змусити updateTheme перерахувати прикраси
+      seedEpochFx();
+      updateTheme();
+      refreshTeamPortraits();
+      drawCapiPortrait();             // скін Капі залежить від епохи
+    },
+    () => { if (shop) rebuildShop(true); }
+  ];
 }
+function rebuildEpochLayers() { epochLayerSteps().forEach(fn => fn()); }
 function resetEpochFx() {
   stars.length = 0; leaves.length = 0;
   const e = currentEpoch();
@@ -13039,8 +13066,11 @@ function updateWarp(dt) {
   if ((state.warpSeen || warp.demo) && warp.t > 0.5 && k < 0.7) {                // після першого перегляду анімацію можна пропустити
     const g = ui.warpCanvas.getContext('2d'), sc = warp.W / 160; g.globalAlpha = 0.9; g.textAlign = 'center'; g.textBaseline = 'bottom'; warpFont(g, 4.4 * sc); warpText(g, t('warpSkip'), warp.W / 2, warp.H - 3 * sc, '#fff'); g.globalAlpha = 1;
   }
-  if (!warp.applied && k >= 0.5) { warp.applied = true; if (warp.view !== undefined) setEpochPreview(warp.view); else applyTimeTravel(); }
+  if (!warp.applied && k >= 0.5) { warp.applied = true; warp.steps = warp.view !== undefined ? setEpochPreviewSteps(warp.view) : applyTimeTravelSteps(); }
+  if (warp.steps && warp.steps.length) warp.steps.shift()();          // по одному етапу на кадр: вир закриває сцену, тож перебудова епохи не дає провалу
   if (k >= 1) {
+    while (warp.steps && warp.steps.length) warp.steps.shift()();
+    warp.steps = null;
     const viewOnly = warp.view !== undefined;
     if (!warp.demo) state.warpSeen = 1;
     warp = null;
@@ -13059,7 +13089,10 @@ function updateWarp(dt) {
 }
 //#part 200_c_time_travel_workshop_stats.js
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
-function applyTimeTravel() {
+// Подорож у часі по етапах (updateWarp виконує по одному на кадр, поки вир закриває сцену); applyTimeTravel виконує всі одразу
+function applyTimeTravelSteps() {
+  return [
+    () => {
   syncEpochEarned();
   const gain = prestigeGain();
   state.shards += gain;
@@ -13082,17 +13115,24 @@ function applyTimeTravel() {
   actors.length = 0;
   customers.length = 0;
   recalcIncome();
-  rebuildEpochLayers();
+    },
+    ...epochLayerSteps(),
+    () => {
   resetEpochFx();
   rebuildShop(true);
   syncActors();
   syncGuests();
   layoutScene();
+    },
+    () => {
   updateMusic();
   updateUI();
   checkAchievements();
   saveGame();
+    }
+  ];
 }
+function applyTimeTravel() { applyTimeTravelSteps().forEach(fn => fn()); }
 
 /* ---------- Майстерня часу ---------- */
 function wsEffectText(id, L) {
@@ -13300,15 +13340,14 @@ function applyViewSettings() {
   resetEpochFx();
 }
 // Перегляд минулих епох: лише вигляд, прогрес не змінюється
-function setEpochPreview(e) {
-  syncEpochEarned();
-  state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e;
-  rebuildEpochLayers();
-  refreshDeptTexts();
-  updateMusic();
-  updateUI();
-  saveGame();
+function setEpochPreviewSteps(e) {
+  return [
+    () => { syncEpochEarned(); state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e; },
+    ...epochLayerSteps(),
+    () => { refreshDeptTexts(); updateMusic(); updateUI(); saveGame(); }
+  ];
 }
+function setEpochPreview(e) { setEpochPreviewSteps(e).forEach(fn => fn()); }
 function refreshDeptTexts() { uiCache.reqSig = ''; uiCache.boostSig = ''; DEPARTMENTS.forEach((d, i) => { if (deptEls[i]) { deptEls[i].name.textContent = deptName(i); deptEls[i].icon.textContent = deptIcon(i); } }); }
 function updateEpochViewUI() {
   const card = $('epochViewCard');
@@ -18197,10 +18236,13 @@ function updateStoryUI() {
 
 /* ---------- Гості епох: після історії лишаються ходити містом ---------- */
 const guestWalkers = [];
+let guestSyncEpoch = -1;           // епоха, під яку зараз зібрано guestWalkers
 const GUESTS_MAX = 4;             // скільки гостей одночасно гуляє (найновіші)
 // Узгоджує гостей на вулиці зі збереженням; arrive — номер гостя, що тільки-но прийшов (заходить зліва)
 function syncGuests(arrive) {
-  const met = state.story.guests.map((o, k) => [o, k]).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, GUESTS_MAX).map(x => x[1]);
+  const ev = viewEpoch() % EPOCHS.length;                                                    // на вулиці гуляють лише гості ТІЄЇ епохи, яку зараз видно
+  guestSyncEpoch = ev;
+  const met = state.story.guests.map((o, k) => [o, k]).filter(x => x[0] > 0 && GUEST_STAND_EPOCH[GUEST_IDS[x[1]]] === ev).sort((a, b) => b[0] - a[0]).slice(0, GUESTS_MAX).map(x => x[1]);
   for (let i = guestWalkers.length - 1; i >= 0; i--) if (!met.includes(guestWalkers[i].k)) guestWalkers.splice(i, 1);
   met.forEach(k => {
     if (guestWalkers.some(g => g.k === k)) return;
@@ -18211,6 +18253,7 @@ function syncGuests(arrive) {
   });
 }
 function updateGuests(dt) {
+  if (viewEpoch() % EPOCHS.length !== guestSyncEpoch) syncGuests();                         // змінилась епоха (подорож, перегляд) — гості інших епох зникають
   guestWalkers.forEach(g => {
     g.t += dt;
     if (typeof standPending !== 'undefined' && standPending[g.k] !== undefined) {              // новий гість іде до свого місця
@@ -20117,6 +20160,7 @@ function frame(now) {
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   let fujiC = null, fujiT = null, fujiKey = '';
+  const fujiOcCache = {};
   function buildSky() {
     const { c, g } = newLayer();
     const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
@@ -20124,13 +20168,17 @@ function frame(now) {
     const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
     const at = f => { let i = 0; while (i < stops.length - 2 && f > stops[i + 1][0]) i++; const a = stops[i], b = stops[i + 1], t2 = Math.max(0, Math.min(1, (f - a[0]) / (b[0] - a[0]))), A1 = rgb(a[1]), B1 = rgb(b[1]); return A1.map((v, k) => v + (B1[k] - v) * t2); };
     const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], rows = hor - top;
+    const img = g.createImageData(W, Math.max(1, rows)), px = img.data;                    // пікселі напряму (fillRect на піксель — сотні мілісекунд при подорожі)
     for (let y = top; y < hor; y++) {
       const f = (y - top) / rows, col = at(f), lv = 8;
-      for (let x = x0; x < x0 + W; x++) {
-        const th = bayer[y & 3][(x - x0) & 3] / 16, cc = col.map(v => { const q = v / lv, fl = Math.floor(q), fr = q - fl; return Math.min(255, Math.round((fr > th ? fl + 1 : fl) * lv)); });
-        g.fillStyle = 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')'; g.fillRect(x, y, 1, 1);
+      let o = (y - top) * W * 4;
+      for (let xi = 0; xi < W; xi++, o += 4) {
+        const th = bayer[y & 3][xi & 3] / 16;
+        for (let ch = 0; ch < 3; ch++) { const q = col[ch] / lv, fl = Math.floor(q); px[o + ch] = Math.min(255, Math.round((q - fl > th ? fl + 1 : fl) * lv)); }
+        px[o + 3] = 255;
       }
     }
+    g.putImageData(img, x0 + view.offX, top + view.offY);
     { const L2 = newLayer(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, 315, 600); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
@@ -20151,7 +20199,10 @@ function frame(now) {
     const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const lerp = (A, B, t) => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
     const W = hw * 2 + 8, Hc = Math.ceil(H / 2) * 2 + 2, y0 = bY - Hc, x0 = cx - hw - 4;
-    const oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
+    const fk = hw + '|' + H;
+    let oc = fujiOcCache[fk];                                // Фудзі однакова на всіх розмірах екрана з тим самим hw/H: кеш (~30 мс при подорожі)
+    if (!oc) {
+    oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
     const ox = oc.getContext('2d'), im = ox.createImageData(W, Hc), d = im.data;
     for (let px = 0; px < W; px += 2) {
       const dx = px + 1 - hw - 4, hh = heightAt(dx);
@@ -20179,6 +20230,8 @@ function frame(now) {
       }
     }
     ox.putImageData(im, 0, 0);
+    fujiOcCache[fk] = oc;
+    }
     g.drawImage(oc, x0, y0);
   }
   function farSkyline(g, x0, W) {                       // гора Фудзі, телевежа, пагода, високі будинки

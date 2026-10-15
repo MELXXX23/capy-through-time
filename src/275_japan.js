@@ -35,6 +35,7 @@
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   let fujiC = null, fujiT = null, fujiKey = '';
+  const fujiOcCache = {};
   function buildSky() {
     const { c, g } = newLayer();
     const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
@@ -42,13 +43,17 @@
     const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
     const at = f => { let i = 0; while (i < stops.length - 2 && f > stops[i + 1][0]) i++; const a = stops[i], b = stops[i + 1], t2 = Math.max(0, Math.min(1, (f - a[0]) / (b[0] - a[0]))), A1 = rgb(a[1]), B1 = rgb(b[1]); return A1.map((v, k) => v + (B1[k] - v) * t2); };
     const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], rows = hor - top;
+    const img = g.createImageData(W, Math.max(1, rows)), px = img.data;                    // пікселі напряму (fillRect на піксель — сотні мілісекунд при подорожі)
     for (let y = top; y < hor; y++) {
       const f = (y - top) / rows, col = at(f), lv = 8;
-      for (let x = x0; x < x0 + W; x++) {
-        const th = bayer[y & 3][(x - x0) & 3] / 16, cc = col.map(v => { const q = v / lv, fl = Math.floor(q), fr = q - fl; return Math.min(255, Math.round((fr > th ? fl + 1 : fl) * lv)); });
-        g.fillStyle = 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')'; g.fillRect(x, y, 1, 1);
+      let o = (y - top) * W * 4;
+      for (let xi = 0; xi < W; xi++, o += 4) {
+        const th = bayer[y & 3][xi & 3] / 16;
+        for (let ch = 0; ch < 3; ch++) { const q = col[ch] / lv, fl = Math.floor(q); px[o + ch] = Math.min(255, Math.round((q - fl > th ? fl + 1 : fl) * lv)); }
+        px[o + 3] = 255;
       }
     }
+    g.putImageData(img, x0 + view.offX, top + view.offY);
     { const L2 = newLayer(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, 315, 600); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
@@ -69,7 +74,10 @@
     const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const lerp = (A, B, t) => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
     const W = hw * 2 + 8, Hc = Math.ceil(H / 2) * 2 + 2, y0 = bY - Hc, x0 = cx - hw - 4;
-    const oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
+    const fk = hw + '|' + H;
+    let oc = fujiOcCache[fk];                                // Фудзі однакова на всіх розмірах екрана з тим самим hw/H: кеш (~30 мс при подорожі)
+    if (!oc) {
+    oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
     const ox = oc.getContext('2d'), im = ox.createImageData(W, Hc), d = im.data;
     for (let px = 0; px < W; px += 2) {
       const dx = px + 1 - hw - 4, hh = heightAt(dx);
@@ -97,6 +105,8 @@
       }
     }
     ox.putImageData(im, 0, 0);
+    fujiOcCache[fk] = oc;
+    }
     g.drawImage(oc, x0, y0);
   }
   function farSkyline(g, x0, W) {                       // гора Фудзі, телевежа, пагода, високі будинки

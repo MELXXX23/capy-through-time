@@ -1,6 +1,9 @@
 //#part 200_c_time_travel_workshop_stats.js
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
-function applyTimeTravel() {
+// Подорож у часі по етапах (updateWarp виконує по одному на кадр, поки вир закриває сцену); applyTimeTravel виконує всі одразу
+function applyTimeTravelSteps() {
+  return [
+    () => {
   syncEpochEarned();
   const gain = prestigeGain();
   state.shards += gain;
@@ -23,17 +26,24 @@ function applyTimeTravel() {
   actors.length = 0;
   customers.length = 0;
   recalcIncome();
-  rebuildEpochLayers();
+    },
+    ...epochLayerSteps(),
+    () => {
   resetEpochFx();
   rebuildShop(true);
   syncActors();
   syncGuests();
   layoutScene();
+    },
+    () => {
   updateMusic();
   updateUI();
   checkAchievements();
   saveGame();
+    }
+  ];
 }
+function applyTimeTravel() { applyTimeTravelSteps().forEach(fn => fn()); }
 
 /* ---------- Майстерня часу ---------- */
 function wsEffectText(id, L) {
@@ -241,15 +251,14 @@ function applyViewSettings() {
   resetEpochFx();
 }
 // Перегляд минулих епох: лише вигляд, прогрес не змінюється
-function setEpochPreview(e) {
-  syncEpochEarned();
-  state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e;
-  rebuildEpochLayers();
-  refreshDeptTexts();
-  updateMusic();
-  updateUI();
-  saveGame();
+function setEpochPreviewSteps(e) {
+  return [
+    () => { syncEpochEarned(); state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e; },
+    ...epochLayerSteps(),
+    () => { refreshDeptTexts(); updateMusic(); updateUI(); saveGame(); }
+  ];
 }
+function setEpochPreview(e) { setEpochPreviewSteps(e).forEach(fn => fn()); }
 function refreshDeptTexts() { uiCache.reqSig = ''; uiCache.boostSig = ''; DEPARTMENTS.forEach((d, i) => { if (deptEls[i]) { deptEls[i].name.textContent = deptName(i); deptEls[i].icon.textContent = deptIcon(i); } }); }
 function updateEpochViewUI() {
   const card = $('epochViewCard');

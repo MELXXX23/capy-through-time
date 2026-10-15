@@ -280,8 +280,11 @@ function updateWarp(dt) {
   if ((state.warpSeen || warp.demo) && warp.t > 0.5 && k < 0.7) {                // після першого перегляду анімацію можна пропустити
     const g = ui.warpCanvas.getContext('2d'), sc = warp.W / 160; g.globalAlpha = 0.9; g.textAlign = 'center'; g.textBaseline = 'bottom'; warpFont(g, 4.4 * sc); warpText(g, t('warpSkip'), warp.W / 2, warp.H - 3 * sc, '#fff'); g.globalAlpha = 1;
   }
-  if (!warp.applied && k >= 0.5) { warp.applied = true; if (warp.view !== undefined) setEpochPreview(warp.view); else applyTimeTravel(); }
+  if (!warp.applied && k >= 0.5) { warp.applied = true; warp.steps = warp.view !== undefined ? setEpochPreviewSteps(warp.view) : applyTimeTravelSteps(); }
+  if (warp.steps && warp.steps.length) warp.steps.shift()();          // по одному етапу на кадр: вир закриває сцену, тож перебудова епохи не дає провалу
   if (k >= 1) {
+    while (warp.steps && warp.steps.length) warp.steps.shift()();
+    warp.steps = null;
     const viewOnly = warp.view !== undefined;
     if (!warp.demo) state.warpSeen = 1;
     warp = null;

@@ -132,15 +132,17 @@ function buildSkyLayer() {
   const A = hx(c1), B = hx(c2), C = hx(c3), mix = (p, q, t) => p.map((v, i) => Math.round(v + (q[i] - v) * t));
   const col = u => { const lvl = Math.floor(u * 5) / 5; return u < 1 ? mix(A, B, lvl) : mix(B, C, Math.floor((u - 1) * 5) / 5); };
   const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
-  const rows = hor - top;
+  const rows = hor - top, wpx = view.w, img = g.createImageData(wpx, Math.max(1, rows)), px = img.data;       // пікселі пишемо напряму (fillRect на піксель займав ~300 мс при подорожі)
   for (let y = top; y < hor; y++) {
     const f = (y - top) / rows, u = f < 0.45 ? f / 0.45 : 1 + Math.pow((f - 0.45) / 0.55, 0.9), step = 1 / 5, fr = ((u < 1 ? u : u - 1) / step) % 1;
     const c0 = col(u), c1b = col(Math.min(2, u + step * (u < 1 ? 1 : 1)));
-    for (let x = x0; x < x0 + W; x++) {
-      const th = bayer[(y & 3)][(x - x0) & 3] / 16, cc = fr > th ? c1b : c0;
-      g.fillStyle = 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')'; g.fillRect(x, y, 1, 1);
+    let o = (y - top) * wpx * 4;
+    for (let xi = 0; xi < wpx; xi++, o += 4) {
+      const th = bayer[(y & 3)][xi & 3] / 16, cc = fr > th ? c1b : c0;
+      px[o] = cc[0]; px[o + 1] = cc[1]; px[o + 2] = cc[2]; px[o + 3] = 255;
     }
   }
+  g.putImageData(img, x0 + view.offX, top + view.offY);
   // тепле сяйво біля обрію
   for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
   g.globalAlpha = 1;

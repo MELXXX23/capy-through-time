@@ -55,18 +55,22 @@ function isDebug() {
 function currentEpoch() { return EPOCHS[viewEpoch() % EPOCHS.length]; }
 
 /* ---------- Епохи: зовнішній вигляд міста ---------- */
-function rebuildEpochLayers() {
-  document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length);
-  refreshCoinIcon();
-  skyLayer = buildSkyLayer();
-  groundLayer = buildGroundLayer();
-  theme.key = null;              // змусити updateTheme перерахувати прикраси
-  seedEpochFx();
-  updateTheme();
-  refreshTeamPortraits();
-  drawCapiPortrait();             // скін Капі залежить від епохи
-  if (shop) rebuildShop(true);
+// Етапи перебудови шарів епохи: під час подорожі їх виконуємо по одному на кадр (вир закриває сцену), щоб не було одного довгого провалу
+function epochLayerSteps() {
+  return [
+    () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); skyLayer = buildSkyLayer(); },
+    () => { groundLayer = buildGroundLayer(); },
+    () => {
+      theme.key = null;              // змусити updateTheme перерахувати прикраси
+      seedEpochFx();
+      updateTheme();
+      refreshTeamPortraits();
+      drawCapiPortrait();             // скін Капі залежить від епохи
+    },
+    () => { if (shop) rebuildShop(true); }
+  ];
 }
+function rebuildEpochLayers() { epochLayerSteps().forEach(fn => fn()); }
 function resetEpochFx() {
   stars.length = 0; leaves.length = 0;
   const e = currentEpoch();

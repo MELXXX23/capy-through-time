@@ -454,10 +454,13 @@ function updateStoryUI() {
 
 /* ---------- Гості епох: після історії лишаються ходити містом ---------- */
 const guestWalkers = [];
+let guestSyncEpoch = -1;           // епоха, під яку зараз зібрано guestWalkers
 const GUESTS_MAX = 4;             // скільки гостей одночасно гуляє (найновіші)
 // Узгоджує гостей на вулиці зі збереженням; arrive — номер гостя, що тільки-но прийшов (заходить зліва)
 function syncGuests(arrive) {
-  const met = state.story.guests.map((o, k) => [o, k]).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, GUESTS_MAX).map(x => x[1]);
+  const ev = viewEpoch() % EPOCHS.length;                                                    // на вулиці гуляють лише гості ТІЄЇ епохи, яку зараз видно
+  guestSyncEpoch = ev;
+  const met = state.story.guests.map((o, k) => [o, k]).filter(x => x[0] > 0 && GUEST_STAND_EPOCH[GUEST_IDS[x[1]]] === ev).sort((a, b) => b[0] - a[0]).slice(0, GUESTS_MAX).map(x => x[1]);
   for (let i = guestWalkers.length - 1; i >= 0; i--) if (!met.includes(guestWalkers[i].k)) guestWalkers.splice(i, 1);
   met.forEach(k => {
     if (guestWalkers.some(g => g.k === k)) return;
@@ -468,6 +471,7 @@ function syncGuests(arrive) {
   });
 }
 function updateGuests(dt) {
+  if (viewEpoch() % EPOCHS.length !== guestSyncEpoch) syncGuests();                         // змінилась епоха (подорож, перегляд) — гості інших епох зникають
   guestWalkers.forEach(g => {
     g.t += dt;
     if (typeof standPending !== 'undefined' && standPending[g.k] !== undefined) {              // новий гість іде до свого місця

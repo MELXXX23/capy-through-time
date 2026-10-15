@@ -311,8 +311,22 @@ function lineG(g, x0, y0, x1, y1, c) {      // лінія з пікселів (�
     if (e2 <= dx) { err += dx; y0 += sy; }
   }
 }
+let TREE_CROWN_MASK = null;
+const TREE_CACHE = new Map();       // готові дерева (x, вид, сезон) → полотно: звичайне дерево не залежить від епохи, тож при подорожі береться з кешу, а не малюється заново (~40 мс)
 function drawStreetTree(g, x, v, season) {
   { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.tree) return A.tree(g, x, v, season); }
+  const base = LAYOUT.horizonY + 8, key = x + '|' + v + '|' + season + '|' + base, ox = x - 48, oy = base - 92;
+  let c = TREE_CACHE.get(key);
+  if (!c) {
+    if (TREE_CACHE.size > 80) TREE_CACHE.clear();
+    c = document.createElement('canvas'); c.width = 98; c.height = 112;
+    const cg = c.getContext('2d'); cg.translate(-ox, -oy);
+    drawStreetTreeRaw(cg, x, v, season);
+    TREE_CACHE.set(key, c);
+  }
+  g.drawImage(c, ox, oy);
+}
+function drawStreetTreeRaw(g, x, v, season) {
   const base = LAYOUT.horizonY + 8;
   if (season === 'winter') { drawBareTree(g, x, v, season); return; }
   // Дерево ×1,45 від колишнього: розлогий стовбур із корою й корінням, об'ємна крона з кількох шарів, світло зверху-зліва, тінь знизу-праворуч, сезонні деталі
@@ -336,7 +350,14 @@ function drawStreetTree(g, x, v, season) {
   // крона з багатьох кульок (нерівний силует)
   const cy = base - 51;
   const discs = [[0, -3, 17], [-14, 7, 13], [14, 7, 13], [0, 10, 16], [-7, -13, 12], [9, -12, 11], [-22, -1, 9], [22, 0, 9], [0, -19, 9], [-12, 19, 9], [13, 19, 9], [-18, 14, 8], [19, 13, 8]];
-  const inside = (px, py) => discs.some(d => { const dx = px - (x + d[0]), dy = py - (cy + d[1]); return dx * dx + dy * dy <= d[2] * d[2] + 1; });
+  if (!TREE_CROWN_MASK) {                                                                              // форма крони не залежить від x: рахуємо один раз (колись discs.some на кожен піксель з'їдало ~40 мс при подорожі)
+    TREE_CROWN_MASK = new Uint8Array(75 * 67);
+    for (let my = 0; my < 67; my++) for (let mx = 0; mx < 75; mx++) {
+      const px = mx - 37, py = my - 33;
+      TREE_CROWN_MASK[my * 75 + mx] = discs.some(d => { const dx = px - d[0], dy = py - (-51 + 51 + d[1]); return dx * dx + dy * dy <= d[2] * d[2] + 1; }) ? 1 : 0;
+    }
+  }
+  const cm = TREE_CROWN_MASK, inside = (px, py) => { const mx = px - x + 37, my = py - cy + 33; return mx >= 0 && mx < 75 && my >= 0 && my < 67 && cm[my * 75 + mx] === 1; };
   discs.forEach(d => disc(g, x + d[0], cy + d[1], d[2] + 1, pal[3]));                                   // контур
   const band = (py) => season === 'autumn' ? (py < cy - 9 ? 'h' : py < cy + 8 ? 'o' : 'r') : season === 'summer' ? (py < cy - 6 ? 'g' : 'g') : pal[0];     // восени крона від жовтої до червоної
   for (let py = cy - 32; py <= cy + 32; py++) for (let px = x - 36; px <= x + 36; px++) {
