@@ -54,27 +54,32 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
-  function fuji(g, cx, bY, H, hw) {                       // Фудзі: пікселі 1×1 як усюди в грі, м'які переходи тонів дизером; світло зліва, тіньова грань, вузькі снігові смуги
+  function fuji(g, cx, bY, H, hw) {                       // Фудзі: піксель 2×2, м'який дизер, темний контур силуету і контур снігу; світло зліва, тіньова грань, вузькі снігові смуги
+    const B = 2, OUT = '#3b3a78', SOUT = '#6a78b8';
     const SN = ['#ffffff', '#eef3ff', '#cdd9f4', '#a6b6e0'], RK = ['#9097cc', '#7b83bb', '#6770a8', '#555d94', '#444a7c'], WARM = ['#8a7fa6', '#776c92', '#645a7e'];
     const bay = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
-    for (let dx = -hw; dx <= hw; dx++) {
-      const a = Math.abs(dx) / hw, nx = dx / hw;
-      let hh = Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - a), 1.3));
-      hh = Math.round(hh);
-      if (hh < 1) continue;
+    const heightAt = dx => Math.round(Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3)) / B) * B;
+    const snowEndAt = dx => {
+      const nx = dx / hw, streak = Math.pow(Math.max(0, Math.sin(dx * 0.13 + 1)), 6) * 26 + Math.pow(Math.max(0, Math.sin(dx * 0.071 + 2.3)), 8) * 34;
+      return bY - H * 0.68 + 9 * Math.sin(dx * 0.045 + 0.6) + 5 * Math.sin(dx * 0.11 + 2) + 3 * Math.sin(dx * 0.27) + (nx < 0.1 ? streak : streak * 0.4);
+    };
+    for (let bx = -hw; bx <= hw; bx += B) {
+      const dx = bx + B / 2, nx = dx / hw, hh = heightAt(dx);
+      if (hh < B) continue;
       const gul = Math.sin(dx * 0.071) * 0.5 + Math.sin(dx * 0.173 + 1.7) * 0.35 + Math.sin(dx * 0.031 + 3) * 0.4;
-      const streak = Math.pow(Math.max(0, Math.sin(dx * 0.13 + 1)), 6) * 26 + Math.pow(Math.max(0, Math.sin(dx * 0.071 + 2.3)), 8) * 34;
-      const snowEnd = bY - H * 0.68 + 9 * Math.sin(dx * 0.045 + 0.6) + 5 * Math.sin(dx * 0.11 + 2) + 3 * Math.sin(dx * 0.27) + (nx < 0.1 ? streak : streak * 0.4);
-      const top = bY - hh;
-      for (let y = top; y < bY; y++) {
-        const th = bay[y & 3][dx & 3], up = (bY - y) / H;
-        const sh = 0.4 + nx * 0.38 + (dx > -hw * 0.04 ? 0.17 : -0.04) + gul * 0.1 + (th / 16 - 0.5) * 0.14;
+      const sE = snowEndAt(dx), sL = snowEndAt(dx - B), sR = snowEndAt(dx + B), hL = heightAt(dx - B), hR = heightAt(dx + B);
+      for (let y = bY - B; y >= bY - hh; y -= B) {
+        const th = bay[(y / B) & 3][(bx / B) & 3], up = (bY - y) / H, dth = (th - 8) * 0.5;
+        const sh = 0.4 + nx * 0.38 + (dx > -hw * 0.04 ? 0.17 : -0.04) + gul * 0.05 + (th / 16 - 0.5) * 0.14;
         const ix = sh < 0.2 ? 0 : sh < 0.4 ? 1 : sh < 0.6 ? 2 : 3;
+        const snow = y < sE + dth;
         let col;
-        if (y < snowEnd + (th - 8) * 0.5) col = SN[Math.min(3, ix)];
+        if (snow) col = SN[ix];
         else col = up < 0.28 ? WARM[Math.min(2, ix)] : RK[Math.min(4, ix + (up < 0.5 ? 1 : 0))];
         if (up < 0.26 && th / 16 < (0.26 - up) / 0.26 * 0.9) col = '#f2cade';
-        g.fillStyle = col; g.fillRect(cx + dx, y, 1, 1);
+        if (snow && (y + B >= sE + dth || y >= sL + dth || y >= sR + dth)) col = SOUT;           // контур снігу: нижній край і боки язиків
+        if (y === bY - hh || (y >= bY - hh && (hL < hh - 0 && y < bY - hL || hR < hh && y < bY - hR))) col = OUT;     // контур силуету гори
+        g.fillStyle = col; g.fillRect(cx + bx, y, B, B);
       }
     }
   }
