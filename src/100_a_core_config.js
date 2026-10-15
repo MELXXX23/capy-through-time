@@ -404,7 +404,7 @@ const TEAM_PARTS = {
   spike:   { body: 'b', belly: 'c', feet: 'd', top: ['...d.d.d', '..dlldbl', '.dlbdlbd', '.dbldblb', 'dlbbdlbb', 'dbblwwww', 'dbbbwXww', '.dbbwxww', '..dbwwkk', '...dwwwk'] },
   bodya:   { body: 'n', belly: 'y', feet: 'd', top: ['....hhhh', '...hhhhh', '..dhhhhh', '.ddddddd', '..dlllll', '.bdlXlll', '.bdlxlll', '..dlccck', '..dlcccw', '...dllll'] },
   sonia:   { body: 'b', belly: 'c', feet: 'o', top: ['.d......', '.dbd....', '..dbbbbb', '..dbbbbb', '..dyyybb', '..dyXybb', '..dyxybb', '..dyyybo', '...dbbbo', '....dddd'] },
-  tonya:   { body: 'G', belly: 'm', feet: 'g', top: ['....nnnn', '...nnnnn', '..dnnnnh', '.ddddddd', '..dggggg', '..dgXggg', '..dgxggg', '..dgggmm', '..dggggg', '...dgggg'] },
+  tonya:   { body: 'G', belly: 'm', feet: 'g', top: ['....nnnn', '...nnnnn', '..dnnnnh', '.ddddddd', '..dgwwwg', '..dgwXXg', '..dgwxxg', '..dgggmm', '..dggggg', '...dgggg'] },
   zoya:    { body: 'p', belly: 'q', feet: 'w', top: ['..dwd...', '..dqd...', '..dqd...', '..dwdddd', '..dwwwww', '..dwXwww', '..dwxwww', '..dqwwwp', '..dwwwww', '...dwwww'] },
   mikhas:  { body: 'l', belly: 'o', feet: 'b', top: ['.bb.....', '.bbddddd', '..dlllll', '..dlllll', '..dlllll', '..dlXlll', '..dlxlll', '..dlcccc', '..dlccck', '...dllll'] },
   pao:     { body: 'p', belly: 'q', feet: 'k', top: ['.kk.....', '.kkddddd', '..dwwwww', '..dwwwww', '..dwwwww', '..dkwkww', '..dkkkww', '..dwwwwk', '..dwwwww', '...dwwww'] },
@@ -469,7 +469,7 @@ const NPC_PARTS = {
   lumi:  { body: 'y', belly: 'w', feet: 'h', top: ['.f.....f', '..f...f.', '..dddddd', '.dyyyyyy', '.dyyyyyy', '.dyXyyyy', '.dyxyyyy', '.dywwwww', '..dywwww', '...dyyyy'].map(x => x.slice(0, 8)) },
   bruno: { body: 'e', belly: 'E', feet: 'k', top: ['...rrrrr', '..rrrrrr', '..dwwkkw', '..dwwkkw', '..dkwwww', '..dwXwww', '..dwxwww', '..dkkkkk', '..dwwwww', '...dkwww'] },
   // Шнирь у різних ролях (костюми епох)
-  pietro: { body: 'o', belly: 'y', feet: 'h', top: ['......pp', '...nnnnn', '..dnnnnn', '..dwwwww', '..dwwwww', '..dwXwww', '..dwxwwo', '..dwwwwo', '..dwwwwr', '...dwwww'] },
+  pietro: { body: 'o', belly: 'y', feet: 'h', top: ['.....r.r', '...rrrrr', '..dnnnnn', '..dwwwww', '..dwXXww', '..dwxxww', '..dwqwoo', '..dwwwwo', '..dwwwwr', '...dwwww'] },
   shnyr0: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['r..y....', 'rrryyy..', '.dryrddd']) },                // блазень на ярмарку
   shnyr1: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['....yyyy', '...yrrrr', '..dyyyyy']) },        // комівояжер у солом'яному капелюсі
   shnyr2: { body: 'e', belly: 'E', feet: 'k', top: shnyrWith(['.f.ffff.', '.ffd.dff', '.fdeeddd']) },          // діджей із навушниками

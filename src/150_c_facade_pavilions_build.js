@@ -250,7 +250,7 @@ function buildShopCanvas(level, tiers) {
     escalators.push({ k, lo: k, hi: k + 1, xLow, xHigh: left ? xLow + run : xLow - run, yLow: lo.fy, yHigh: hi.fy, run, rise });
   }
   const doorW = DOOR_WIDTHS[look.door], doorX = Math.round((w - doorW) / 2);
-  const door = { x: doorX, w: doorW, y: yG + 13, h: h - 6 - (yG + 13), type: look.door };
+  const door = { x: doorX, w: doorW, y: yG + 13, h: h - 6 - (yG + 13), type: look.door, ep: viewEpoch() % EPOCHS.length };
 
   // --- де стоять стелажі на кожному поверсі (в обхід ескалаторів)
   floors.forEach(fl => {

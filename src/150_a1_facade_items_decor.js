@@ -87,12 +87,67 @@ function drawShelf(g, x, y, bayNo, tiers) {
 }
 function posterG(g, x, y, c) { R(g, x, y, 9, 11, 'd'); R(g, x + 1, y + 1, 7, 9, c); R(g, x + 2, y + 3, 5, 1, 'w'); R(g, x + 2, y + 5, 5, 1, 'w'); R(g, x + 2, y + 7, 3, 1, 'w'); R(g, x + 2, y + 2, 2, 1, 'y'); }
 // Автоматичні розсувні двері: open 0…1 — на скільки роз'їхались стулки (ховаються за рамку)
+// Стулки «дерев'яних» дверей (рівні 1, 2 і 5) під стиль епохи d.ep: 1 ретро, 2 диско, 3 аркади, 4 інтернет, 5 еко, 6 космос, 7 неон, 8 Японія (0 — класична дерев'яна)
+const DOOR_LEAF_STYLES = {
+  1(g, x, y, lw, h, rt) {       // ретро: хромований дайнер, червона нижня панель
+    R(g, x, y, lw, h, 'e'); R(g, x + 1, y + 1, lw - 2, h - 1, 'E');
+    R(g, x + 3, y + 3, lw - 6, 7, 'k'); R(g, x + 4, y + 4, lw - 8, 5, 's'); R(g, x + 4, y + 4, lw - 8, 1, 'S');
+    R(g, x + 1, y + 12, lw - 2, 1, 'w'); R(g, x + 1, y + 14, lw - 2, h - 17, 'r'); R(g, x + 1, y + 14, lw - 2, 1, 'J');
+    R(g, rt ? x + 2 : x + lw - 4, y + 12, 2, 8, 'k');
+  },
+  2(g, x, y, lw, h, rt) {       // диско: сливова з неоновими смугами
+    R(g, x, y, lw, h, 'V'); R(g, x + 1, y + 1, lw - 2, h - 1, 'P');
+    R(g, x + 3, y + 3, lw - 6, 6, 'v'); R(g, x + 4, y + 4, 2, 1, 'w'); R(g, x + lw - 6, y + 7, 2, 1, 'w');
+    R(g, x + 1, y + 11, lw - 2, 1, 'f'); R(g, x + 1, y + 13, lw - 2, 1, 'T'); R(g, x + 1, y + 15, lw - 2, 1, 'h');
+    R(g, x + 3, y + 18, lw - 6, h - 21, 'V'); R(g, rt ? x + 2 : x + lw - 4, y + 9, 2, 3, 'h');
+  },
+  3(g, x, y, lw, h, rt) {       // аркади: темно-синя з кольоровими «пікселями»
+    R(g, x, y, lw, h, 'k'); R(g, x + 1, y + 1, lw - 2, h - 1, 'z');
+    R(g, x + 3, y + 3, lw - 6, 6, 'k'); R(g, x + 4, y + 4, lw - 8, 1, 'T'); R(g, x + 4, y + 6, lw - 8, 1, 'f');
+    for (let i = 0; i < 12; i++) R(g, x + 3 + (i % 4) * Math.floor((lw - 6) / 4), y + 12 + Math.floor(i / 4) * 4, 2, 2, ['r', 'y', 'T', 'f'][(i + (i >> 2)) % 4]);
+    R(g, rt ? x + 2 : x + lw - 4, y + 9, 2, 3, 'y');
+  },
+  4(g, x, y, lw, h, rt) {       // інтернет: сіра рама, скло з відблиском і «схема»
+    R(g, x, y, lw, h, 'e'); R(g, x + 1, y + 1, lw - 2, h - 1, 'a');
+    R(g, x + 2, y + 2, 1, h - 5, 'w'); R(g, x + 3, y + 2, 1, 4, 'w'); R(g, x + 1, y + h - 3, lw - 2, 3, 'e');
+    R(g, x + 4, y + h - 10, lw - 8, 1, 'T'); R(g, x + (lw >> 1), y + h - 13, 1, 4, 'T'); R(g, x + (lw >> 1) - 2, y + h - 13, 2, 1, 'T');
+    R(g, rt ? x + 1 : x + lw - 2, y + 7, 1, 7, 'k');
+  },
+  5(g, x, y, lw, h, rt) {       // еко: бамбуково-зелена з листком
+    R(g, x, y, lw, h, 'G'); R(g, x + 1, y + 1, lw - 2, h - 1, 'g');
+    R(g, x + 3, y + 3, lw - 6, 6, 's'); R(g, x + 3, y + 3, 3, 1, 'S');
+    R(g, x + 3, y + 11, lw - 6, h - 14, 'm');
+    R(g, x + (lw >> 1), y + 13, 1, h - 18, 'G'); for (let k = 0; k < 3; k++) { R(g, x + (lw >> 1) - 2, y + 15 + k * 4, 2, 1, 'G'); R(g, x + (lw >> 1) + 1, y + 17 + k * 4, 2, 1, 'G'); }
+    R(g, rt ? x + 2 : x + lw - 4, y + 9, 2, 3, 'y');
+  },
+  6(g, x, y, lw, h, rt) {       // космос: шлюз з ілюмінатором і смугами небезпеки
+    R(g, x, y, lw, h, 'e'); R(g, x + 1, y + 1, lw - 2, h - 1, 'E');
+    R(g, x + 3, y + 3, lw - 6, 7, 'e'); R(g, x + 4, y + 4, lw - 8, 5, 'a'); R(g, x + 4, y + 4, 2, 1, 'w');
+    for (let i = 0; i < lw - 2; i += 4) { R(g, x + 1 + i, y + 12, 2, 2, 'o'); R(g, x + 3 + i, y + 12, 2, 2, 'k'); }
+    R(g, x + 2, y + 16, lw - 4, h - 19, 'e'); R(g, x + 3, y + 17, lw - 6, 1, 'w');
+    R(g, rt ? x + 2 : x + lw - 5, y + 15, 3, 3, 'r');
+  },
+  7(g, x, y, lw, h, rt) {       // неон: чорна з рожево-блакитним світлом
+    R(g, x, y, lw, h, 'f'); R(g, x + 1, y + 1, lw - 2, h - 1, 'k');
+    R(g, x + 2, y + 2, lw - 4, 1, 'T'); R(g, x + 2, y + 2, 1, h - 3, 'T'); R(g, x + lw - 3, y + 2, 1, h - 3, 'T');
+    R(g, x + 4, y + 4, lw - 8, 6, 'V'); R(g, x + 4, y + 4, lw - 8, 1, 'v');
+    R(g, x + 4, y + 13, lw - 8, 1, 'f'); R(g, x + 4, y + 16, lw - 8, 1, 'T'); R(g, x + 4, y + 19, lw - 8, 1, 'f');
+    R(g, rt ? x + 3 : x + lw - 5, y + 9, 2, 3, 'T');
+  },
+  8(g, x, y, lw, h, rt) {       // Японія: сьоджі — рама з дерева й паперові клітинки
+    R(g, x, y, lw, h, 'b'); R(g, x + 1, y + 1, lw - 2, h - 1, 'w');
+    R(g, x + (lw >> 1), y + 1, 1, h - 1, 'b'); for (let k = 5; k < h - 8; k += 5) R(g, x + 1, y + k, lw - 2, 1, 'b');
+    R(g, x + 1, y + h - 9, lw - 2, 8, 'l'); R(g, x + 1, y + h - 9, lw - 2, 1, 'b');
+    R(g, rt ? x + 2 : x + lw - 3, y + 11, 1, 3, 'r');
+  }
+};
 function drawDoorLeaves(g, d, open) {
   const lw = d.w / 2, off = Math.round(open * (lw - 1));
   g.save(); g.beginPath(); g.rect(d.x, d.y, d.w, d.h); g.clip();
   [[d.x - off, false], [d.x + lw + off, true]].forEach(p => {
     const x = Math.round(p[0]);
-    if (d.type === 0 || d.type === 3) {                       // дерев'яні стулки
+    if ((d.type === 0 || d.type === 3) && DOOR_LEAF_STYLES[d.ep]) DOOR_LEAF_STYLES[d.ep](g, x, d.y, lw, d.h, p[1]);
+    else if (d.type === 0 || d.type === 3) {                  // дерев'яні стулки
       R(g, x, d.y, lw, d.h, 'd'); R(g, x + 1, d.y + 1, lw - 2, d.h - 1, 'b');
       R(g, x + 3, d.y + 3, lw - 6, 6, 's'); R(g, x + 3, d.y + 3, 3, 1, 'S');
       R(g, x + 3, d.y + 11, lw - 6, d.h - 14, 'l'); R(g, p[1] ? x + 2 : x + lw - 4, d.y + 9, 2, 3, 'h');
