@@ -152,9 +152,10 @@ function buildAchievements() {
 function updateAchUI() {
   if (ui.paneAch.hidden) return;
   const done = state.ach.reduce((s, v) => s + v, 0);
-  setText(ui.achSummary, t('achSummary', done, ACHIEVEMENTS.length), 'achSum');
+  setText(ui.achSummary, t('achSummary', done, achTotal()), 'achSum');
   ACHIEVEMENTS.forEach((a, i) => {
     const e = achEls[i], got = state.ach[i] === 1, v = achValue(a);
+    e.card.style.display = achShown(a, i) ? '' : 'none';
     if (e.shown !== (got ? 1 : 0)) {
       e.shown = got ? 1 : 0;
       const bc = e.badge.getContext('2d');
@@ -214,7 +215,7 @@ function updateStatsUI() {
     stPuddles: fmt(st.puddlesFixed),
     stGhosts: fmt(st.ghostsCaught),
     stWheel: fmt(st.wheelSpins),
-    stAch: s.ach.reduce((a, b) => a + b, 0) + ' / ' + ACHIEVEMENTS.length,
+    stAch: s.ach.reduce((a, b) => a + b, 0) + ' / ' + achTotal(),
     stChapters: s.story.done + ' / ' + CHAPTERS.length
   };
   Object.keys(statRows).forEach(k => {

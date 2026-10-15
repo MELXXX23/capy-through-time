@@ -233,7 +233,7 @@ const ACH_SETS = [
   { metric: 'teamEver',    glyph: 'paw',      targets: [1, 6, 12] },
   { metric: 'teamMax',     glyph: 'hammer',   targets: [5, 10] },
   { metric: 'raccoons',    glyph: 'raccoon',  targets: [1, 10, 50] },
-  { metric: 'puddles',     glyph: 'drop',     targets: [5, 25] },
+  { metric: 'puddles',     glyph: 'drop',     targets: [5, 25], hidden: true },   // подію «Протікає дах» прибрано: видно лише тим, хто вже отримав (індекси в state.ach не зсувати!)
   { metric: 'wheel',       glyph: 'wheel',    targets: [1, 7] },
   { metric: 'travels',     glyph: 'clock',    targets: [1, 3, 10] },
   { metric: 'crystals',    glyph: 'gem',      targets: [5, 50, 200] },
@@ -241,7 +241,9 @@ const ACH_SETS = [
   { metric: 'holidays',    glyph: 'calendar', targets: [1, 3] },
   { metric: 'hours',       glyph: 'clock',    targets: [1, 12] }
 ];
-const ACHIEVEMENTS = ACH_SETS.flatMap(set => set.targets.map((target, tier) => ({ id: set.metric + '_' + tier, metric: set.metric, glyph: set.glyph, target, tier })));
+const ACHIEVEMENTS = ACH_SETS.flatMap(set => set.targets.map((target, tier) => ({ id: set.metric + '_' + tier, metric: set.metric, glyph: set.glyph, target, tier, hidden: !!set.hidden })));
+function achShown(a, i) { return !a.hidden || state.ach[i] === 1; }   // скриті — лише отримані
+function achTotal() { return ACHIEVEMENTS.filter(achShown).length; }
 const ACH_TIER_COLORS = ['c', 'E', 'h', 'S'];     // колір медалі: бронза, срібло, золото, кристал
 const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 function popcount(n) { let c = 0; n = Math.floor(n); while (n > 0) { c += n & 1; n >>= 1; } return c; }
