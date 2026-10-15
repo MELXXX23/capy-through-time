@@ -81,5 +81,6 @@
 | `278_a_build_themes.js` | 31 | Будівництво по епохах: ядро BTH (rnd, помічники, ефекти), перші епохи | BTH, buildThemeRender |
 | `278_b_build_themes.js` | 24 | Будівництво по епохах: середні епохи |  |
 | `278_c_build_themes.js` | 31 | Будівництво по епохах: останні епохи, BTH.render, buildThemeRender (тап-прискорення build.boost) |  |
-| `279_bonus_games.js` | 17 | бонус-ігри під епохи: реєстр MG_DEFS, спільний мінірушій mgMake (таймер, ціль, приз), «Танцпол» (епоха 2), «Спам» (епоха 4) | BONUS_COOLDOWN_MIN, MG_DEFS, mgGame, mgForEpoch, mgCur, bonusCooldownMs, bonusWaitMs, openBonus |
+| `279_bonus_games.js` | 18 | бонус-ігри під епохи: реєстр MG_DEFS, спільний мінірушій mgMake (таймер, ціль, приз), «Танцпол» (епоха 2), «Спам» (епоха 4); перезарядка 12 год на епоху, приз-скін | BONUS_COOLDOWN_MIN, BONUS_RETRY_ON_MISS, MG_DEFS, mgGame, mgForEpoch, mgCur, bonusCooldownMs, bonusWaitMs |
+| `279_c_bonus_games_more.js` | 25 | бонус-ігри епох 0 Фреска, 1 Джубокс, 3 Клешня, 5 Сортування, 6 Кристали, 7 Нічна траса (mgMake) + їх тексти |  |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |

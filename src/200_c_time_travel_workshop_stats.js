@@ -464,6 +464,7 @@ function debugHour() {
   const shift = 3600000;
   ['nextSale', 'saleUntil', 'nextTrouble', 'incomeBoostUntil', 'tapBoostUntil'].forEach(k => { if (state.events[k]) state.events[k] -= shift; });
   if (state.wheel.lastSpin) state.wheel.lastSpin -= shift;
+  if (state.wheel.mg) state.wheel.mg = state.wheel.mg.map(v => (v ? v - shift : 0));
   updateUI();
 }
 function debugX100() {

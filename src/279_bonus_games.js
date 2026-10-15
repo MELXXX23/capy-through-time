@@ -1,24 +1,30 @@
 //#part 279_bonus_games.js
 /* =====================================================================
    БОНУС-ІГРИ ПІД ЕПОХИ: окрема іконка у верхньому правому куті (там, де був барабан). Цирк Фортуни лишається цирком з колесом.
-   Гра відкривається у тому самому вікні, що й цирк (circusModal), у «бонус-режимі» (circus.bonus). Перезаряджається
-   за BONUS_COOLDOWN_MIN хвилин (state.wheel.lastSpin; «Цирк частіше» з Магазину часу скорочує). Приз — як у лапшичній:
-   вдало → головний приз (кристали/бонуси, ~38% скін), майже → 2 кристали, не вийшло → 1 кристал.
+   Гра відкривається у тому самому вікні, що й цирк (circusModal), у «бонус-режимі» (circus.bonus). Перезарядка 12 год
+   (BONUS_COOLDOWN_MIN) окремо на кожну епоху (state.wheel.mg[eid]). Приз лише скін: ціль goalP виконано → скін і 12 год чекання;
+   не вийшло → можна одразу ще раз (BONUS_RETRY_ON_MISS). Ігри епох 0,1,3,5,6,7 — у 279_c_bonus_games_more.js.
    Реєстр MG_DEFS[номер епохи] → опис гри; їх робить mgMake: таймер (dur), ціль «ідеально» (goalP) і «майже» (goalN),
    рахунок G.score, фази idle → play → reveal → done. Гра задає: init() → стан, tick(G, dt), tap(G, lx, ly) (полотно 192×120),
    draw(g, G, T). Додати гру: mgMake(eid, {...}) + тексти mg<Ім'я>Title/Sub/Start/Done. Лапшична (Японія) і відьма — окремі, на візку.
    ===================================================================== */
-const BONUS_COOLDOWN_MIN = 15;
+const BONUS_COOLDOWN_MIN = 720;                                      // 12 годин; у кожної епохи свій таймер (state.wheel.mg[eid])
+const BONUS_RETRY_ON_MISS = true;                                    // не вийшло — спробуй ще, перезарядка йде лише після виграного скіна
 const MG_DEFS = {};
 const mgGame = { phase: 'idle', t: 0, left: 0, score: 0, rt: 0, res: '', prize: null, main: false, s: null };
 function mgForEpoch(eid) { return MG_DEFS[eid] || null; }
 function mgCur() { return circus.bonusDef; }                         // гра, що зараз у вікні (circus.bonus)
-function bonusCooldownMs() { return BONUS_COOLDOWN_MIN * 60000 * circusFreq(); }
-function bonusWaitMs(now = Date.now()) { return Math.max(0, (state.wheel.lastSpin || 0) + bonusCooldownMs() - now); }
+function bonusCooldownMs() { return BONUS_COOLDOWN_MIN * 60000; }
+function bonusWaitMs(eid = viewEpoch(), now = Date.now()) { return Math.max(0, ((state.wheel.mg && state.wheel.mg[eid]) || 0) + bonusCooldownMs() - now); }
+function mgSkinSector() {                                            // приз бонус-гри — лише скін (як усі вільні скіни закінчились — 5 кристалів)
+  const pool = BONUS_GAME_SKINS.filter(x => circusFreeSkins(x.skin).length);
+  if (!pool.length) return { kind: 'crystal', amount: 5, icon: 'gem2', color: 'v', weight: 0 };
+  return pool[Math.floor(Math.random() * pool.length)];
+}
 function openBonus(def) {                                            // def — лише для тестів; інакше гра поточної епохи
   if (dialog.active || !ui.circusModal.hidden) return;
   const d = def || mgForEpoch(viewEpoch()); if (!d) return;
-  const w = bonusWaitMs();
+  const w = bonusWaitMs(d.eid);
   if (w > 0) { showToast(t('mgWait', fmtTime(w / 1000))); return; }
   circus.bonus = true; circus.bonusDef = d;
   ui.circusModal.classList.add('hag');
@@ -33,7 +39,7 @@ function updateBonusBtn(dt) {                                        // ікон
   circus.bt = (circus.bt || 0) - dt; if (circus.bt > 0) return; circus.bt = 0.4;
   const d = mgForEpoch(viewEpoch()), b = ui.bonusOpen;
   b.hidden = !d; if (!d) return;
-  const w = bonusWaitMs();
+  const w = bonusWaitMs(viewEpoch());
   b.classList.toggle('ready', w <= 0); b.classList.toggle('wait', w > 0);
   ui.bonusOpenT.textContent = w > 0 ? fmtTime(w / 1000) : '';
   b.setAttribute('aria-label', t(d.k.title));
@@ -50,18 +56,20 @@ function mgStart(o) {
   mgReset(o); G.phase = 'play';
   ui.circusResult.textContent = t('mgScore', 0, o.goalP); updateCircusButtons(); playSfx('pip');
 }
-function mgFinish(o) {                                               // час вийшов: приз за кількістю влучань
+function mgFinish(o) {                                               // час вийшов: ціль виконана — скін, ні — спробуй ще
   const G = mgGame; if (G.phase !== 'play') return;
-  let sec, key;
-  if (G.score >= o.goalP) { sec = rollCircusSector(true, true).sec; key = 'mgPerfect'; G.res = 'perfect'; }
-  else if (G.score >= o.goalN) { sec = { kind: 'crystal', amount: 2, icon: 'gem2', color: 'v', weight: 0 }; key = 'mgNear'; G.res = 'near'; }
-  else { sec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u', weight: 0 }; key = 'mgMiss'; G.res = 'miss'; }
-  G.main = G.res === 'perfect'; G.prize = sec; G.phase = 'reveal'; G.rt = 0;
-  state.wheel.lastSpin = Date.now();
-  const pr = applyCircusSector(sec, Date.now());
-  ui.circusResult.textContent = t(key) + ' ' + pr.text;
-  playSfx(G.main ? 'wheelWin' : 'pip'); buzz(25);
-  if (pr.skin >= 0) setTimeout(() => openLoot(pr.skin), 1500); else showToast(pr.text, 'good');
+  const eid = mgCur().eid, win = G.score >= o.goalP;
+  G.res = win ? 'perfect' : G.score >= o.goalN ? 'near' : 'miss';
+  G.main = win; G.phase = 'reveal'; G.rt = 0; G.prize = null;
+  if (win || !BONUS_RETRY_ON_MISS) { if (!state.wheel.mg) state.wheel.mg = []; state.wheel.mg[eid] = Date.now(); }
+  let text = t(win ? 'mgPerfect' : G.res === 'near' ? 'mgNear' : 'mgMiss');
+  if (win) {
+    const sec = mgSkinSector(), pr = applyCircusSector(sec, Date.now());
+    G.prize = sec; text += ' ' + pr.text;
+    if (pr.skin >= 0) setTimeout(() => openLoot(pr.skin), 1500); else showToast(pr.text, 'good');
+  }
+  ui.circusResult.textContent = text;
+  playSfx(win ? 'wheelWin' : 'pip'); buzz(25);
   updateUI(); saveGame(); updateCircusButtons();
 }
 function mgUpdate(o, dt) {
@@ -78,7 +86,7 @@ function mgPoint(e) {                                                // коор
   const cv = ui.circusWheel, r = cv.getBoundingClientRect();
   return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height };
 }
-function mgMake(eid, o) { MG_DEFS[eid] = { id: o.id, o, k: o.k }; }
+function mgMake(eid, o) { MG_DEFS[eid] = { id: o.id, eid, o, k: o.k }; }
 // гачки для вікна цирку (230_a2/230_b), коли circus.bonus
 function mgBusy() { return mgGame.phase === 'play' || mgGame.phase === 'reveal'; }
 function mgAct() { mgStart(mgCur().o); }
@@ -97,12 +105,12 @@ function mgButton() { return { key: mgCur().k.start, off: mgGame.phase !== 'idle
 function mgBars(g, o, G) {
   R(g, 7, 1, 178, 4, 'd'); R(g, 8, 2, Math.round(176 * Math.max(0, G.left) / o.dur), 2, 'y');
   R(g, 7, 7, 178, 6, 'd'); const f = Math.min(1, G.score / o.goalP);
-  R(g, 8, 8, Math.round(176 * f), 4, G.score >= o.goalP ? 'g' : G.score >= o.goalN ? 'h' : 'o');
-  R(g, 8 + Math.round(176 * o.goalN / o.goalP), 7, 1, 6, 'w'); R(g, 183, 7, 1, 6, 'w');
+  R(g, 8, 8, Math.round(176 * f), 4, G.score >= o.goalP ? 'g' : 'o');
+  R(g, 183, 7, 1, 6, 'w');
 }
 // приз над ігровим полем у фазах reveal/done (центр cx, cy)
 function mgPrize(g, G, T, cx, cy) {
-  if (G.phase !== 'reveal' && G.phase !== 'done') return;
+  if ((G.phase !== 'reveal' && G.phase !== 'done') || !G.prize) return;
   const a = Math.min(1, G.rt / 0.35 + (G.phase === 'done' ? 1 : 0)), by = Math.round(cy + Math.sin(T * 3) * 2);
   g.globalAlpha = 0.3 * a; disc(g, cx, by, 15, 'h'); g.globalAlpha = 0.5 * a; disc(g, cx, by, 11, 'y'); g.globalAlpha = a;
   if (G.prize) drawCircusIcon(g, G.prize.icon || 'gem', cx, by);
@@ -246,13 +254,13 @@ function mgPrize(g, G, T, cx, cy) {
 
 (function () {
   const UK = {
-    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgPerfect: 'Ідеально! Головний приз твій!', mgNear: 'Чудово! Два кристали.', mgMiss: 'Гарна спроба! Кристал твій.',
+    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
     mgDanceTitle: 'Танцпол Диско-Капі',
     mgDanceSub: 'Плитки спалахують і гаснуть. Тапай світні вчасно, а на темні не наступай!', mgDanceStart: 'Танцювати!', mgDanceDone: 'Гарно потанцювали!',
     mgSpamTitle: 'Спам-бомба', mgSpamSub: 'Вікна-спам лізуть на екран. Закривай їх тапом, поки не завалило!', mgSpamStart: 'Закривати!', mgSpamDone: 'Екран чистий!'
   };
   const EN = {
-    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game will be ready in {0}', mgBonusTitle: 'Bonus game', mgPerfect: 'Perfect! The main prize is yours!', mgNear: 'Great! Two crystals.', mgMiss: 'Nice try! The crystal is yours.',
+    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
     mgDanceTitle: 'Disco Capy Dance Floor',
     mgDanceSub: 'Tiles light up and fade. Tap the glowing ones in time and keep off the dark ones!', mgDanceStart: 'Dance!', mgDanceDone: 'What a dance!',
     mgSpamTitle: 'Spam Bomb', mgSpamSub: 'Spam windows pop up everywhere. Tap them shut before they pile up!', mgSpamStart: 'Close them!', mgSpamDone: 'Screen is clean!'
