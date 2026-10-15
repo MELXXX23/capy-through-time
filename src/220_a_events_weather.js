@@ -10,10 +10,6 @@ const bats = [];             // кажани
 let trouble = null;          // неприємність, що триває: { type: 'thief', ... }
 let sackDrop = null;         // мішок, який кинув Шнирь після поразки
 let eventTimer = 0;
-let wheelAnim = null;        // обертання колеса: { t, dur, from, to }
-let wheelAngle = 0;
-let wheelTexture = null;
-let wheelWasReady = null;
 
 /* ---------- Свята ---------- */
 function inRange(d, from, to) {
@@ -138,7 +134,7 @@ function showSeasonsIntro() {
 }
 function updateSeasonsIntro() {
   if (state.seasonsIntro || state.epoch < 2) return;
-  if (dialog.active || epochIntro.active || build || !ui.modal.hidden || !ui.wheelModal.hidden || !ui.letterModal.hidden || !ui.circusModal.hidden || !ui.lootModal.hidden) return;
+  if (dialog.active || epochIntro.active || build || !ui.modal.hidden || !ui.letterModal.hidden || !ui.circusModal.hidden || !ui.lootModal.hidden) return;
   showSeasonsIntro();
 }
 function updateTheme() {
@@ -212,7 +208,6 @@ function updateBoostsUI() {
   items.unshift({ cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
   if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
-   // скільки зібрано до додаткового оберту барабана (самі привиди й кристали лишаються)
   items.splice(1, 0, ...helpChips());                                                      // «Допоможи Піпу: 4/12»
   const sig = items.map(i => i.icon + i.text).join('|');
   if (uiCache.boostSig === sig) return;
@@ -271,7 +266,7 @@ function rescheduleEvents() {
   const now = Date.now(), c = state.circus;
   scheduleSale(now); scheduleTrouble(now);
   nextGhostAt = now + CONFIG.CREATURE_INTERVAL_SECONDS * 1000 * evMult();
-  if (c.phase === 0) c.next = now + CONFIG.DAY_SECONDS * 1000 * evMult();
+  if (c.phase === 0) c.next = now + CONFIG.DAY_SECONDS * 1000 * evMult() * circusFreq();
 }
 function startTrouble(now) {
   scheduleTrouble(now);

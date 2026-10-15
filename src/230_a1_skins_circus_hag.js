@@ -1,13 +1,22 @@
 //#part 230_a1_skins_circus_hag.js
 /* =====================================================================
-   ЦИРК ФОРТУНИ: раз на 24 години в правому куті з'являється червоний «!», який мигає й грає марш.
-   Тап по ньому → цирк-причіп їде справа наліво ~5 с → тап по цирку → вікно з колесом на 12 секторів і клоуном Бубоном.
+   ЦИРК ФОРТУНИ: раз на ігрову добу в правому куті з’являється червоний «!», який мигає й грає марш.
+   Тап по ньому → цирк-причіп їде справа наліво ~5 с → тап по цирку → вікно з колесом на 12 секторів (кристали й бонуси) і клоуном Бубоном.
+   У Японії замість цирку лапшична, на Хелловін відьма: це бонус-ігри, їхній головний приз може бути скіном (барабан фортуни прибрано).
    ===================================================================== */
-// 12 секторів: 8 звичайних призів колеса (монети, дохід, тап, кристал, джекпот) та 4 скіни (Капі, магазин, погода, герої)
+// 12 секторів цирку: кристали й бонуси (монети, дохід, тап, джекпот). Скінів у цирку нема: їх виграють у бонус-іграх (лапшична, хатка відьми)
 const CIRCUS_SECTORS = (function () {
-  const sk = (type, color, icon) => ({ kind: 'skin', skin: type, weight: 7, color, icon }), cr = (n, w, color) => ({ kind: 'crystal', amount: n, weight: w, color, icon: n > 1 ? 'gem' + n : 'gem' });   // цирк дає лише скіни й кристали
-  return [cr(1, 14, 'u'), sk('capy', 'c', 'hat'), cr(2, 9, 'v'), sk('shop', 'q', 'house'), cr(1, 14, 'u'), sk('weather', 'S', 'cloud'), cr(3, 5, 'P'), sk('street', 'E', 'brick'), cr(1, 14, 'u'), sk('hero', 'w', 'paw'), cr(2, 9, 'v'), sk('capy', 'c', 'hat')];
+  const cr = (n, w, color) => ({ kind: 'crystal', amount: n, weight: w, color, icon: n > 1 ? 'gem' + n : 'gem' });
+  const co = (seconds, flat, w, color, icon) => ({ kind: 'coins', seconds, flat, weight: w, color, icon });
+  const bo = (kind, mult, minutes, w, color, icon) => ({ kind, mult, minutes, weight: w, color, icon });
+  return [cr(1, 14, 'u'), co(60, 50, 12, 'r', 'coin1'), cr(2, 9, 'v'), bo('income', 2, 5, 9, 'h', 'up'), cr(1, 14, 'u'), bo('tap', 3, 3, 8, 'p', 'tap'),
+    cr(3, 5, 'P'), co(180, 200, 8, 'm', 'coin2'), cr(1, 14, 'u'), bo('income', 3, 3, 5, 'o', 'up'), cr(2, 9, 'v'), { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3, color: 'y', icon: 'star' }];
 })();
+// Скіни-призи (Капі двічі за вагою): додаються до пулу лише в бонус-іграх, коли вони дають головний приз
+const BONUS_GAME_SKINS = [['capy', 'c', 'hat'], ['shop', 'q', 'house'], ['weather', 'S', 'cloud'], ['street', 'E', 'brick'], ['hero', 'w', 'paw'], ['capy', 'c', 'hat']]
+  .map(([type, color, icon]) => ({ kind: 'skin', skin: type, weight: 7, color, icon }));
+// Магазин часу «Цирк частіше» (id wheelFast): скільки від звичайної паузи між візитами цирку або бонус-гри
+function circusFreq() { return CIRCUS_FREQ_BY_LEVEL[wsLevel('wheelFast')] || 1; }
 const WEATHER_ORDER = ['rainbow', 'lightning', 'lightninggreen', 'lightningred', 'cottoncloud', 'goldcloud', 'starcloud'];     // порядок у вкладці: хмари в кінці
 const SKIN_HIDDEN = ['street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_wood', 'shop_garden', 'shop_spring', 'shop_autumn'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
 const SKIN_TYPES = ['capy', 'shop', 'weather', 'street', 'hero'];   // групи скінів: Капі, магазин, погода, герої

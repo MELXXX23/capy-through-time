@@ -36,6 +36,30 @@ function hitCircus(p) {
 }
 
 /* ---- вікно колеса ---- */
+// Маленькі піксельні значки на секторах
+function drawWheelIcon(g, kind, cx, cy) {
+  const cc = EPOCH_COIN_COLORS[viewEpoch() % EPOCH_COIN_COLORS.length];
+  const coin = (x, y) => { disc(g, x, y, 4, 'd'); disc(g, x, y, 3, cc[0]); R(g, x - 1, y - 2, 2, 1, cc[1]); };
+  switch (kind) {
+    case 'gem': { const rows = SPRITES[gemSprite()].rows; rows.forEach((row, ry) => { for (let rx = 0; rx < 8; rx++) if (row[rx] !== '.') R(g, cx - 4 + rx, cy - 4 + ry, 1, 1, row[rx]); }); break; }
+    case 'coin1': coin(cx, cy); break;
+    case 'coin2': coin(cx - 4, cy + 2); coin(cx + 4, cy - 2); break;
+    case 'coin3': coin(cx - 5, cy + 3); coin(cx + 5, cy + 3); coin(cx, cy - 3); break;
+    case 'up':
+      for (let i = 0; i < 6; i++) { R(g, cx - i - 1, cy - 7 + i, 2 * i + 3, 1, 'd'); R(g, cx - i, cy - 7 + i, 2 * i + 1, 1, 'w'); }
+      R(g, cx - 3, cy - 1, 7, 8, 'd'); R(g, cx - 2, cy - 1, 5, 7, 'w'); break;
+    case 'tap':
+      for (let i = 0; i < 9; i++) { R(g, cx - 4, cy - 7 + i, Math.min(i + 2, 7), 1, 'd'); R(g, cx - 3, cy - 7 + i, Math.max(1, Math.min(i, 5)), 1, 'w'); }
+      R(g, cx - 1, cy + 1, 3, 7, 'd'); R(g, cx, cy + 1, 1, 6, 'w'); break;
+    case 'star': {
+      const star = ['.....y.....', '....yyy....', '....yyy....', 'yyyyyyyyyyy', '.yyyyyyyyy.', '..yyyyyyy..', '..yyyyyyy..', '.yyyy.yyyy.', '.yyy...yyy.', 'yy.......yy'];
+      const draw = (ox, oy, col) => star.forEach((row, ry) => { for (let rx = 0; rx < row.length; rx++) if (row[rx] === 'y') R(g, cx - 5 + rx + ox, cy - 5 + ry + oy, 1, 1, col); });
+      [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([ox, oy]) => draw(ox, oy, 'd'));   // контур
+      draw(0, 0, 'w'); draw(0, 1, 'h');
+      break;
+    }
+  }
+}
 function drawCircusIcon(g, icon, cx, cy) {
   switch (icon) {
     case 'gem2': drawWheelIcon(g, 'gem', cx - 4, cy + 2); drawWheelIcon(g, 'gem', cx + 4, cy - 2); break;
@@ -104,15 +128,17 @@ function closeCircus() {
 }
 function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_HIDDEN.includes(SKIN_POOL[i]) && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
 // Один випадковий сектор (з урахуванням скінів, що вже є) і його дія
-function rollCircusSector(noSmall) {
+function rollCircusSector(noSmall, withSkins) {
+  const pool = withSkins ? CIRCUS_SECTORS.concat(BONUS_GAME_SKINS) : CIRCUS_SECTORS;   // скіни є лише в призах бонус-ігор (лапшична, відьма), у цирку їх нема
   const weight = x => (x.kind === 'skin' && !circusFreeSkins(x.skin).length ? 0 : (noSmall && x.kind === 'crystal' && (x.amount || 1) === 1 ? 0 : x.weight));
-  const total = CIRCUS_SECTORS.reduce((a, x) => a + weight(x), 0);
+  const total = pool.reduce((a, x) => a + weight(x), 0);
   let roll = Math.random() * total, idx = 0;
-  for (; idx < CIRCUS_SECTORS.length - 1; idx++) { roll -= weight(CIRCUS_SECTORS[idx]); if (roll < 0) break; }
-  return { sec: CIRCUS_SECTORS[idx], idx };
+  for (; idx < pool.length - 1; idx++) { roll -= weight(pool[idx]); if (roll < 0) break; }
+  return { sec: pool[idx], idx };
 }
 function applyCircusSector(sec, now) {
   let text, skinPick = -1;
+  state.stats.wheelSpins++;                       // лічильник «цирк і бонус-ігри» (нагорода, щоденне завдання, статистика)
   if (sec.kind === 'coins' || sec.kind === 'jackpot') {
     const gain = Math.floor(state.cps * sec.seconds + sec.flat * levelMult()); state.coins += gain; state.totalEarned += gain;
     text = t(sec.kind === 'jackpot' ? 'prize_jackpot' : 'prize_coins', fmt(gain)); if (sec.kind === 'jackpot') state.stats.jackpots++;
@@ -187,7 +213,7 @@ function mailBoxX() { return mailStopX() - 30; }
 function updateMail(dt) {
   const now = Date.now(), ev = state.events;
   if (!ev.nextMail) ev.nextMail = now + CONFIG.MAIL_FIRST_SECONDS * 1000;
-  const quiet = !dialog.active && !epochIntro.active && !build && ui.modal.hidden && ui.wheelModal.hidden && ui.letterModal.hidden;
+  const quiet = !dialog.active && !epochIntro.active && !build && ui.modal.hidden && ui.letterModal.hidden;
   if (mail.state === 'idle') {
     if (now >= ev.nextMail && quiet && state.circus.phase === 0) {
       ev.nextMail = now + CONFIG.MAIL_MINUTES * 60000;

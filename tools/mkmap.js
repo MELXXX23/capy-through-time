@@ -59,7 +59,7 @@ const DESC = {
   '230_a1_skins_circus_hag.js': 'СКІНИ: пули, ціни, володіння',
   '230_a2_skins_circus_hag.js': 'цирк (CIRCUS_ART), відьма, хатка',
   '230_b_circus_loot_letters.js': 'колесо цирку, лут, газета (початок), листи',
-  '230_c_news_wheel_events.js': 'газета (сторінки), «Барабан фортуни», updateEvents/initEvents',
+  '230_c_news_wheel_events.js': 'газета (сторінки), листи, updateEvents/initEvents',
   '230_d_circus_themes.js': 'цирк по епохах: CIRCUS_THEMES (палітра, деталі, гірлянда), малює CIRCUS_ART з 230_a',
   '240_story.js': 'сюжет: діалоги, гості, камео',
   '241_a_epoch_story.js': 'сюжет епох: початок EC_DATA (перші епохи)',

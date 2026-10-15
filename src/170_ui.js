@@ -332,7 +332,7 @@ let dailyRemindT = 25;
 function updateDailyReminder(dt) {
   if (!state.story || state.story.done < 1) return;
   dailyRemindT -= dt; if (dailyRemindT > 0) return;
-  if (dialog.active || epochIntro.active || build || warp || !ui.modal.hidden || !ui.wheelModal.hidden || !ui.letterModal.hidden || !ui.circusModal.hidden || !ui.siModal.hidden || !ui.newsModal.hidden) { dailyRemindT = 4; return; }
+  if (dialog.active || epochIntro.active || build || warp || !ui.modal.hidden || !ui.letterModal.hidden || !ui.circusModal.hidden || !ui.siModal.hidden || !ui.newsModal.hidden) { dailyRemindT = 4; return; }
   ensureDaily();
   const D = state.daily, open = D.c.filter(v => !v).length;
   dailyRemindT = 600;

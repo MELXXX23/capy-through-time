@@ -317,7 +317,6 @@ function startWarp(view, demo) {
   clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('clockBong');
   warp = { demo: !!demo, fromEpoch: viewEpoch() % EPOCHS.length, toEpoch: target, t: 0, applied: false, fx, fy, W, H, snap, view, dur: (view === undefined || demo) ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
   ui.timeWarp.hidden = false;
-  closeWheel();
   playSfx('warp', warp.dur, target);
 }
 // Роки епох для анімації «Перемотка»

@@ -80,7 +80,6 @@ const CONFIG = {
   GHOST_COUNT: 6,             // скільки привидів вилітає
   GHOST_SECONDS: 16,          // скільки секунд їх можна ловити
   GHOST_MAX: 99,              // найбільше кристалів привидів у скарбничці
-  GHOST_RESPIN_COST: 12,      // скільки кристалів привидів коштує додатковий оберт колеса фортуни
   SAVE_KEY: 'capyThroughTime_save',
   SAVE_VERSION: 19,            // номер версії збереження (збільшуємо, коли змінюється формат)
   AUTOSAVE_SECONDS: 10,
@@ -121,9 +120,6 @@ const CONFIG = {
   RACCOON_REWARD_MINUTES: 4,      // за перемогу — 4 хвилини доходу
 
   // Колесо фортуни
-  WHEEL_COOLDOWN_HOURS: 24,
-  WHEEL_STREAK_STEP: 0.25,        // кожен день серії дає +25% до призів
-  WHEEL_STREAK_MAX_DAYS: 8,
   WHEEL_SPIN_SECONDS: 4.6,
 
   // Прикраси
@@ -541,16 +537,4 @@ const HOLIDAYS = [
 // Чорна п'ятниця — остання п'ятниця листопада (за реальною датою)
 const BLACK_FRIDAY = { icon: '🖤', decor: ['balloons', 'garlands'], skyTint: { color: 'k', alpha: 0.45 }, lights: ['h', 'k', 'y'] };
 
-// Колесо фортуни: 8 секторів. kind: coins / income / tap / jackpot.
-// Монети = (дохід за секунду × seconds + flat × множник рівня) × серія днів. weight — шанс випадіння.
-const WHEEL_SECTORS = [
-  { kind: 'coins',   seconds: 60,   flat: 50,    weight: 18, color: 'r', icon: 'coin1' },
-  { kind: 'income',  mult: 2, minutes: 5,        weight: 12, color: 'h', icon: 'up' },
-  { kind: 'coins',   seconds: 180,  flat: 200,   weight: 15, color: 'm', icon: 'coin2' },
-  { kind: 'tap',     mult: 3, minutes: 3,        weight: 12, color: 'p', icon: 'tap' },
-  { kind: 'coins',   seconds: 600,  flat: 1000,  weight: 10, color: 's', icon: 'coin3' },
-  { kind: 'income',  mult: 3, minutes: 3,        weight: 8,  color: 'o', icon: 'up' },
-  { kind: 'coins',   seconds: 300,  flat: 400,    weight: 8,  color: 'u', icon: 'coin2' },
-  { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3,  color: 'y', icon: 'star' }
-];
 

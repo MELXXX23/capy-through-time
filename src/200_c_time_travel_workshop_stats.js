@@ -54,7 +54,7 @@ function wsEffectText(id, L) {
     case 'offlineRate':  return t('wsEff_offlineRate', Math.round((CONFIG.OFFLINE_RATE + 0.05 * L) * 100));
     case 'salesFreq':    return t('wsEff_salesFreq', Math.round((1 / (1 - 0.05 * L) - 1) * 100));
     case 'saleLength':   return t('wsEff_saleLength', CONFIG.SALE_SECONDS + 20 * L);
-    case 'wheelFast':    return t('wsEff_wheelFast', WHEEL_HOURS_BY_LEVEL[L] || 24);
+    case 'wheelFast':    return t('wsEff_wheelFast', Math.round(CONFIG.DAY_SECONDS / 6 * (CIRCUS_FREQ_BY_LEVEL[L] || 1)) / 10);
     case 'thiefLess':    return t('wsEff_thiefLess', Math.round(L * 20));
     case 'cheaperDepts': return t('wsEff_cheaperDepts', Math.round(L * 2));
     case 'cheaperTeam':  return t('wsEff_cheaperTeam', Math.round(L * 2));

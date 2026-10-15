@@ -119,7 +119,9 @@
   await check('відьма: гра', () => { openCircus(); hagStart(); }, 800);
   await check('відьма: закрити', () => { closeAll(); state.circus.hag = 0; hagFly.on = false; }, 200);
   state.settings.season = 'summer'; updateTheme();
-  await check('колесо фортуни', () => { openWheel(); }, 500);
+  await check('лапшична: гра', () => { const c = state.circus; c.noodle = 1; c.hag = 0; c.phase = 3; c.spun = 0; openCircus(); noodleStart(); }, 600);
+  await check('бонус-гра: приз-скін', () => { const pr = applyCircusSector(BONUS_GAME_SKINS[0], Date.now()); if (pr.skin >= 0) openLoot(pr.skin); }, 600);
+  await check('лапшична: закрити', () => { closeAll(); state.circus.noodle = 0; state.circus.phase = 0; state.circus.next = Date.now() + 1e9; }, 200);
   await check('газета', () => { openNews(); }, 700);
   for (let p = 0; p < 6; p++) await check('газета сторінка ' + p, () => { try { npGo(p); } catch (e) { /* менше сторінок */ } }, 160);
   await check('відгук', () => { closeAll(); openFeedback(); }, 300);

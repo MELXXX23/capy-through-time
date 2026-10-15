@@ -28,8 +28,8 @@
 @keyframes lootBob { 50% { transform: translateY(-6px); } }
 @keyframes lootRise { 0% { transform: translateY(20px) scale(.5); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(-90px) scale(1.2); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .loot-rays, .loot-card::after, .loot-spark, .loot-stage canvas, .loot-tag { animation: none; } }
-#modal, #wheelModal, #letterModal, #circusModal, #seasonIntroModal, #newsModal, #feedbackModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
-#modal[hidden], #wheelModal[hidden], #letterModal[hidden], #circusModal[hidden], #seasonIntroModal[hidden], #newsModal[hidden], #feedbackModal[hidden] { display: none; }
+#modal, #letterModal, #circusModal, #seasonIntroModal, #newsModal, #feedbackModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
+#modal[hidden], #letterModal[hidden], #circusModal[hidden], #seasonIntroModal[hidden], #newsModal[hidden], #feedbackModal[hidden] { display: none; }
 #newsModal .np-wrap { width: min(94vw, 520px); display: flex; flex-direction: column; align-items: center; gap: 8px; }
 #newsTitle { margin: 0; font-size: 15px; line-height: 1.5; color: #fff4dc; text-align: center; text-shadow: -2px 0 #2a1d1a, 2px 0 #2a1d1a, 0 -2px #2a1d1a, 0 2px #2a1d1a, -2px -2px #2a1d1a, 2px -2px #2a1d1a, -2px 2px #2a1d1a, 2px 2px #2a1d1a, 3px 3px 0 #2a1d1a; }
 #feedbackModal { z-index: 70; }
@@ -112,11 +112,6 @@
 #circusClose { margin-top: 6px; }
 .wheel-box { max-height: 96vh; overflow-y: auto; padding-top: 22px; }
 .wheel-wrap { display: flex; justify-content: center; margin: 4px 0 8px; }
-#wheelCanvas { width: min(64vw, 256px, max(120px, calc((100dvh - 340px) * .914))); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
-#wheelLegend { font-size: 11px !important; color: var(--brown); }
-#wheelStreak { font-size: 11px !important; color: var(--dark); }
-#wheelResult { min-height: 22px; font-size: 15px !important; }
-#wheelClose { margin-top: 6px; }
 .modal-box { width: min(92vw, 360px); padding: 26px 22px 22px; text-align: center; }
 .modal-box h2 { font-size: 16px; line-height: 1.4; margin-bottom: 14px; }
 .modal-box p { font-size: 13px; line-height: 1.8; margin-bottom: 6px; white-space: pre-line; }
@@ -171,8 +166,7 @@
   .chip { font-size: 10px; padding: 3px 5px; }
   #hudWrap { gap: 5px; }
   #topRight { gap: 6px; }
-  #wheelOpen, #soundBtn { padding: 3px 8px; font-size: 16px; }
-  #wheelOpen { padding: 1px 9px; font-size: 18.4px; }
+  #soundBtn { padding: 3px 8px; font-size: 16px; }
   #eventBanner { top: 124px; font-size: 11px; padding: 5px 8px; }
 }
 /* ===== Телефон у горизонтальному положенні: той самий вигляд, що на ПК (сцена зліва, меню справа), лише компактніше ===== */

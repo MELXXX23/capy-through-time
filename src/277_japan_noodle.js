@@ -125,7 +125,7 @@ function noodleTake() {                                              // вийн
   const G = noodleGame; if (G.phase !== 'cook') return;
   const d = Math.abs(G.p - G.zc);
   let sec, key;
-  if (d <= NOODLE_ZH) { sec = rollCircusSector(true).sec; key = 'noodlePerfect'; G.res = 'perfect'; }
+  if (d <= NOODLE_ZH) { sec = rollCircusSector(true, true).sec; key = 'noodlePerfect'; G.res = 'perfect'; }
   else if (d <= NOODLE_ZN) { sec = { kind: 'crystal', amount: 2, icon: 'gem2', color: 'v', weight: 0 }; key = 'noodleNear'; G.res = 'near'; }
   else { sec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u', weight: 0 }; key = G.p < G.zc ? 'noodleRaw' : 'noodleSoft'; G.res = 'miss'; }
   G.main = G.res === 'perfect'; G.prize = sec; G.phase = 'reveal'; G.rt = 0;

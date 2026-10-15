@@ -90,7 +90,7 @@ function setupInput() {
   ui.panL.addEventListener('pointerdown', e => e.stopPropagation()); ui.panR.addEventListener('pointerdown', e => e.stopPropagation());
   ui.panL.addEventListener('click', e => { e.stopPropagation(); panBy(-viewCrop.w * 0.6); });
   ui.panR.addEventListener('click', e => { e.stopPropagation(); panBy(viewCrop.w * 0.6); });
-  document.addEventListener('keydown', e => { if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.target.closest('input,textarea') && ui.modal.hidden && ui.wheelModal.hidden && ui.circusModal.hidden && ui.letterModal.hidden) panBy((e.key === 'ArrowLeft' ? -1 : 1) * viewCrop.w * 0.3); });
+  document.addEventListener('keydown', e => { if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.target.closest('input,textarea') && ui.modal.hidden && ui.circusModal.hidden && ui.letterModal.hidden) panBy((e.key === 'ArrowLeft' ? -1 : 1) * viewCrop.w * 0.3); });
   ui.panelToggle.addEventListener('click', () => { state.settings.panelOpen = !state.settings.panelOpen; applyPanel(); saveGame(); });
   // «Порожній режим»: маленький − унизу зліва ховає лічильник, написи, бонуси й репліки (на горизонтальному екрані при закритому меню); + повертає все
   ui.cleanToggle.addEventListener('pointerdown', e => e.stopPropagation());

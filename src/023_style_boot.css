@@ -130,7 +130,7 @@ body.no-anim .floater { display: none; }
 body { position: fixed; inset: 0; width: 100%; background: #2a1d1a; }
 /* програма з головного екрана (клас standalone ставить скрипт у head): на iPhone лише 100vh дає повний екран, 100% і dvh залишають білі смуги */
 html.standalone, html.standalone body, html.standalone #app { height: calc(100vh + var(--gap, 0px)); }
-html.standalone :is(#confirmModal, #timeWarp, #boot, #epochIntro, #tour, #cutscene, #dialog, #soundModal, #lootModal, #modal, #wheelModal, #letterModal, #circusModal, #seasonIntroModal, #newsModal, #feedbackModal) { bottom: calc(0px - var(--gap, 0px)); }
+html.standalone :is(#confirmModal, #timeWarp, #boot, #epochIntro, #tour, #cutscene, #dialog, #soundModal, #lootModal, #modal, #letterModal, #circusModal, #seasonIntroModal, #newsModal, #feedbackModal) { bottom: calc(0px - var(--gap, 0px)); }
 html.standalone #seasonFx { height: calc(100% + var(--gap, 0px)); }
 @media (max-width: 820px) and (orientation: portrait), (max-width: 560px) { html.standalone #panel, html.standalone #app.panel-closed #panel { bottom: calc(0px - var(--gap, 0px)); } }
 @media (max-width: 820px) and (orientation: portrait), (max-width: 560px) {

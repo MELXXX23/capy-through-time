@@ -12,13 +12,13 @@ const NP_GUIDE = {
   uk: { head: 'Поради', sub: 'Кілька підказок, щоб грати легше й розвиватися швидше.', items: [
     ['💰 Як швидше розбагатіти', '<ul class="np-list"><li>Найми Їжачка Голку якомога раніше. Він коштує всього 100 монет, а кожен тап стає сильнішим у 1,5 раза.</li><li>Кнопка «МАКС» у «Відділах» купує стільки, скільки вистачає грошей. Так не треба тиснути «Купити» двадцять разів.</li><li>Дивись на смужку вгорі екрана. Вона завжди підказує наступну ціль, наприклад «Купи “Свічки й сірники”: 7/25».</li></ul>', 'tipRich'],
     ['🏪 Як рости', '<ul class="np-list"><li>Щоб розширити магазин, треба виконати три умови: купити потрібні відділи, прокачати звірят і зібрати монети. Умови видно у вкладці «Відділи», у блоці «Розширення».</li><li>Кожен новий рівень магазину дає ×2 до всього доходу, тому розширюйся при першій нагоді.</li></ul>', 'tipGrow'],
-    ['🎁 Безкоштовні бонуси', '<ul class="np-list"><li>Барабан фортуни щодня. Якщо пропустиш день, серія скинеться і призи стануть меншими.</li><li>Цирк фортуни дає скіни й кристали, тож не проходь повз намет.</li><li>Нагороди за досягнення. Заглядай у вкладку з кубком, там чекають призи.</li><li>Івенти на вулиці. Червоний «!», сова чи єнот з’являються ненадовго. Встиг тапнути, і отримаєш бонус.</li></ul>', 'tipFree'],
+    ['🎁 Безкоштовні бонуси', '<ul class="np-list"><li>Бонус-ігри: лапшична діда Рьо в Японії й хатка відьми на Хелловін. Саме там виграють скіни.</li><li>Цирк фортуни дає кристали й бонуси, тож не проходь повз намет.</li><li>Нагороди за досягнення. Заглядай у вкладку з кубком, там чекають призи.</li><li>Івенти на вулиці. Червоний «!», сова чи єнот з’являються ненадовго. Встиг тапнути, і отримаєш бонус.</li></ul>', 'tipFree'],
     ['⏳ На майбутнє', 'Подорож у часі скидає магазин, але дає осколки часу, нову епоху й постійний бонус до доходу. Не бійся її: наступне коло пройде набагато швидше.', 'clock']
   ] },
   en: { head: 'Tips', sub: 'A few hints to play easier and grow faster.', items: [
     ['💰 How to get rich faster', '<ul class="np-list"><li>Hire Spike the hedgehog as early as you can. He costs only 100 coins, and every tap becomes 1.5 times stronger.</li><li>The MAX button in Departments buys as much as your money allows. No need to press Buy twenty times.</li><li>Watch the strip at the top of the screen. It always shows the next goal, for example “Buy “Candles and matches”: 7/25”.</li></ul>', 'tipRich'],
     ['🏪 How to grow', '<ul class="np-list"><li>To expand the shop you need three things: buy the required departments, upgrade the animals and collect coins. The conditions are in the Departments tab, in the Expansion block.</li><li>Every new shop level gives ×2 to all income, so expand at the first chance.</li></ul>', 'tipGrow'],
-    ['🎁 Free bonuses', '<ul class="np-list"><li>The fortune drum every day. If you skip a day the streak resets and prizes get smaller.</li><li>The fortune circus gives skins and crystals, so do not walk past the tent.</li><li>Achievement rewards. Look into the tab with the cup, prizes are waiting there.</li><li>Street events. The red “!”, an owl or a raccoon appear only for a moment. Tap in time and you get a bonus.</li></ul>', 'tipFree'],
+    ['🎁 Free bonuses', '<ul class="np-list"><li>Bonus games: Grandpa Ryo’s noodle cart in Japan and the witch’s hut at Halloween. That is where skins are won.</li><li>The fortune circus gives crystals and bonuses, so do not walk past the tent.</li><li>Achievement rewards. Look into the tab with the cup, prizes are waiting there.</li><li>Street events. The red “!”, an owl or a raccoon appear only for a moment. Tap in time and you get a bonus.</li></ul>', 'tipFree'],
     ['⏳ For the future', 'Time travel resets the shop but gives time shards, a new era and a permanent income bonus. Do not be afraid of it: the next round goes much faster.', 'clock']
   ] }
 };
@@ -247,7 +247,7 @@ function claimLetter() {
   if (L.kind === 'income') { ev.incomeBoostUntil = now + L.min * 60000; ev.incomeBoostMult = L.mult; }
   else if (L.kind === 'tap') { ev.tapBoostUntil = now + L.min * 60000; ev.tapBoostMult = L.mult; }
   else if (L.kind === 'coins') { state.coins += L.gain; state.totalEarned += L.gain; }
-  else if (L.kind === 'wheel') state.wheel.lastSpin = 0;
+  else if (L.kind === 'wheel') { if (state.circus.phase === 0) state.circus.next = Date.now() - 1; }   // лист «цирк уже в дорозі»
   else if (L.kind === 'sale') startSale(now);
   else { state.crystals += 1; state.crystalsTotal += 1; }
   recalcIncome();
@@ -256,194 +256,8 @@ function claimLetter() {
   updateUI(); saveGame();
 }
 
-/* ---------- Колесо фортуни ---------- */
-function wheelCooldownMs() { return (WHEEL_HOURS_BY_LEVEL[wsLevel('wheelFast')] || CONFIG.WHEEL_COOLDOWN_HOURS) * 3600000; }
-function wheelReady(now = Date.now()) { return now - state.wheel.lastSpin >= wheelCooldownMs(); }
-// Серія днів: якщо крутили менше ніж 48 годин тому — серія продовжується
-function projectedStreak(now = Date.now()) {
-  return (state.wheel.lastSpin && now - state.wheel.lastSpin < Math.max(wheelCooldownMs() * 2, CONFIG.WHEEL_COOLDOWN_HOURS * 2 * 3600000)) ? state.wheel.streak + 1 : 1;
-}
-function streakMult(streak) { return 1 + CONFIG.WHEEL_STREAK_STEP * (Math.min(streak, CONFIG.WHEEL_STREAK_MAX_DAYS) - 1); }
-
-// Маленькі піксельні значки на секторах
-function drawWheelIcon(g, kind, cx, cy) {
-  const cc = EPOCH_COIN_COLORS[viewEpoch() % EPOCH_COIN_COLORS.length];
-  const coin = (x, y) => { disc(g, x, y, 4, 'd'); disc(g, x, y, 3, cc[0]); R(g, x - 1, y - 2, 2, 1, cc[1]); };
-  switch (kind) {
-    case 'gem': { const rows = SPRITES[gemSprite()].rows; rows.forEach((row, ry) => { for (let rx = 0; rx < 8; rx++) if (row[rx] !== '.') R(g, cx - 4 + rx, cy - 4 + ry, 1, 1, row[rx]); }); break; }
-    case 'coin1': coin(cx, cy); break;
-    case 'coin2': coin(cx - 4, cy + 2); coin(cx + 4, cy - 2); break;
-    case 'coin3': coin(cx - 5, cy + 3); coin(cx + 5, cy + 3); coin(cx, cy - 3); break;
-    case 'up':
-      for (let i = 0; i < 6; i++) { R(g, cx - i - 1, cy - 7 + i, 2 * i + 3, 1, 'd'); R(g, cx - i, cy - 7 + i, 2 * i + 1, 1, 'w'); }
-      R(g, cx - 3, cy - 1, 7, 8, 'd'); R(g, cx - 2, cy - 1, 5, 7, 'w'); break;
-    case 'tap':
-      for (let i = 0; i < 9; i++) { R(g, cx - 4, cy - 7 + i, Math.min(i + 2, 7), 1, 'd'); R(g, cx - 3, cy - 7 + i, Math.max(1, Math.min(i, 5)), 1, 'w'); }
-      R(g, cx - 1, cy + 1, 3, 7, 'd'); R(g, cx, cy + 1, 1, 6, 'w'); break;
-    case 'star': {
-      const star = ['.....y.....', '....yyy....', '....yyy....', 'yyyyyyyyyyy', '.yyyyyyyyy.', '..yyyyyyy..', '..yyyyyyy..', '.yyyy.yyyy.', '.yyy...yyy.', 'yy.......yy'];
-      const draw = (ox, oy, col) => star.forEach((row, ry) => { for (let rx = 0; rx < row.length; rx++) if (row[rx] === 'y') R(g, cx - 5 + rx + ox, cy - 5 + ry + oy, 1, 1, col); });
-      [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([ox, oy]) => draw(ox, oy, 'd'));   // контур
-      draw(0, 0, 'w'); draw(0, 1, 'h');
-      break;
-    }
-  }
-}
-function buildWheelTexture() {
-  const S = 128, c = document.createElement('canvas');
-  c.width = S; c.height = S;
-  const g = c.getContext('2d');
-  const cx = 64, cy = 64, step = Math.PI / 4;
-  for (let y = 0; y < S; y++) {
-    for (let x = 0; x < S; x++) {
-      const dx = x + 0.5 - cx, dy = y + 0.5 - cy, r = Math.sqrt(dx * dx + dy * dy);
-      if (r > 62) continue;
-      let col;
-      if (r >= 59) col = 'd';
-      else if (r < 9) col = r >= 7 ? 'd' : 'h';
-      else {
-        let a = Math.atan2(dx, -dy); if (a < 0) a += Math.PI * 2;
-        const sec = Math.floor(a / step), frac = a / step - sec;
-        const edge = Math.min(frac, 1 - frac) * step * r;
-        col = edge < 0.9 ? 'd' : (r >= 55.5 && r < 57 ? ((Math.floor(a / step * 3) % 2) ? 'w' : 'y') : WHEEL_SECTORS[sec].color);
-      }
-      R(g, x, y, 1, 1, col);
-    }
-  }
-  WHEEL_SECTORS.forEach((s, i) => {
-    const a = (i + 0.5) * step;
-    drawWheelIcon(g, s.icon, Math.round(cx + Math.sin(a) * 36), Math.round(cy - Math.cos(a) * 36));
-  });
-  return c;
-}
-// Барабан фортуни: вертикальний барабан із 8 комірок-призів; обертається вгору, призова комірка зупиняється між двома червоними стрілками
-let drumCells = null;
-const DRUM_CELL_H = 38, DRUM_R = 50;          // висота клітинки й радіус барабана: проміжок між призами ~2–3 пікселі
-// Клітинки барабана: sectors — призи, iconFn(g, sector, cx, cy) малює значок; H — висота клітинки
-function buildDrumCellsFor(sectors, iconFn, H) {
-  return sectors.map(sec => {
-    const c = document.createElement('canvas'); c.width = 96; c.height = H; const g = c.getContext('2d');
-    R(g, 0, 0, 96, H, 'd'); R(g, 2, 2, 92, H - 4, sec.color); R(g, 2, 2, 92, 3, 'w'); R(g, 2, H - 5, 92, 3, 'd'); g.globalAlpha = 0.25; R(g, 2, H - 5, 92, 3, 'd'); g.globalAlpha = 1;
-    iconFn(g, sec, 26, H >> 1); iconFn(g, sec, 70, H >> 1);
-    R(g, 47, 6, 2, H - 12, 'd'); R(g, 46, 4, 4, 2, 'w'); R(g, 46, H - 6, 4, 2, 'w');
-    return c;
-  });
-}
-function buildDrumCells() { return buildDrumCellsFor(WHEEL_SECTORS, (g, sec, x, y) => drawWheelIcon(g, sec.icon, x, y), DRUM_CELL_H); }
-// Малює вертикальний барабан на полотні 128×140: n комірок, кут angle (як у колеса), усередині рамки з двома червоними стрілками
-function paintDrum(g, cells, n, angle, H) {
-  g.imageSmoothingEnabled = false;
-  g.clearRect(0, 0, 128, 140);
-  R(g, 12, 18, 104, 116, 'd'); R(g, 14, 20, 100, 112, 'k');                                  // корпус барабана
-  const step = Math.PI * 2 / n, order = [];
-  for (let i = 0; i < n; i++) { const ang = (i + 0.5) * step + angle, c = Math.cos(ang); if (c > 0.05) order.push({ i, c, y: 76 - Math.sin(ang) * DRUM_R }); }
-  g.save(); g.beginPath(); g.rect(14, 20, 100, 112); g.clip();                                // комірки не виходять за корпус
-  order.sort((p, q) => p.c - q.c).forEach(o => {
-    const h = Math.max(2, Math.round(H * o.c)), y = Math.round(o.y - h / 2);
-    g.drawImage(cells[o.i], 0, 0, 96, H, 16, y, 96, h);
-    if (o.c < 0.95) { g.globalAlpha = 0.55 * (1 - o.c); R(g, 16, y, 96, h, 'k'); g.globalAlpha = 1; }
-  });
-  g.restore();
-  g.globalAlpha = 0.28; R(g, 16, 22, 96, 18, 'k'); R(g, 16, 112, 96, 18, 'k'); g.globalAlpha = 1;   // затемнення зверху й знизу — об'єм
-  R(g, 8, 14, 112, 6, 'e'); R(g, 8, 14, 112, 2, 'E'); R(g, 8, 132, 112, 6, 'e'); R(g, 8, 136, 112, 2, 'd'); R(g, 8, 14, 112, 1, 'd'); R(g, 8, 19, 112, 1, 'd'); R(g, 8, 132, 112, 1, 'd');
-  for (let x = 14; x < 118; x += 12) { R(g, x, 16, 2, 2, 'd'); R(g, x, 134, 2, 2, 'd'); }
-  for (let i = 0; i < 9; i++) { R(g, 2 + i, 66 + i, 1, 20 - i * 2 > 0 ? 20 - i * 2 : 1, 'r'); R(g, 125 - i, 66 + i, 1, 20 - i * 2 > 0 ? 20 - i * 2 : 1, 'r'); }   // червоні стрілки-вказівники з боків
-  R(g, 0, 66, 2, 20, 'd'); R(g, 126, 66, 2, 20, 'd');
-}
-function drawWheel() {
-  if (!drumCells) drumCells = buildDrumCells();
-  paintDrum(ui.wheelCanvas.getContext('2d'), drumCells, 8, wheelAngle, DRUM_CELL_H);
-}
-function updateWheelUI() {
-  if (ui.wheelModal.hidden) return;
-  const now = Date.now(), ready = wheelReady(now);
-  const streak = (wheelAnim || !ready) ? Math.max(1, state.wheel.streak) : projectedStreak(now);
-  setText(ui.wheelStreak, t('wheelStreak', streak, fmt(streakMult(streak), 2)), 'wStreak');
-  if (wheelAnim) { setText(ui.wheelBtn, t('wheelSpin'), 'wBtn'); ui.wheelBtn.disabled = true; }
-  else if (ready) { setText(ui.wheelBtn, t('wheelSpin'), 'wBtn'); ui.wheelBtn.disabled = false; }
-  else { setText(ui.wheelBtn, t('wheelWait', fmtTime((state.wheel.lastSpin + wheelCooldownMs() - now) / 1000)), 'wBtn'); ui.wheelBtn.disabled = true; }
-  // додатковий оберт за кристали привидів
-  const showGhost = false;                       // кристали привидів прибрано
-  ui.wheelGhostBtn.hidden = ui.wheelGhostNote.hidden = !showGhost;
-  if (showGhost) {
-    setText(ui.wheelGhostBtn, t('wheelGhostBtn', CONFIG.GHOST_RESPIN_COST), 'wGhostBtn');
-    ui.wheelGhostBtn.disabled = !!wheelAnim || state.ghosts < CONFIG.GHOST_RESPIN_COST;
-    setText(ui.wheelGhostNote, t('wheelGhostNote', state.ghosts, CONFIG.GHOST_RESPIN_COST), 'wGhostNote');
-  }
-}
-function openWheel() {
-  if (dialog.active) return;
-  ui.wheelModal.hidden = false;
-  if (!wheelAnim) ui.wheelResult.textContent = '';
-  drawWheel();
-  updateWheelUI();
-}
-function closeWheel() { ui.wheelModal.hidden = true; }
-function spinWheel(extra) {
-  const now = Date.now();
-  if (wheelAnim) return;
-  if (extra) { if (state.ghosts < CONFIG.GHOST_RESPIN_COST) return; state.ghosts -= CONFIG.GHOST_RESPIN_COST; }   // додатковий оберт за кристали привидів
-  else if (!wheelReady(now)) return;
-  // вибір сектора за вагами
-  const weight = x => x.weight;
-  const total = WHEEL_SECTORS.reduce((s, x) => s + weight(x), 0);
-  let roll = Math.random() * total, idx = 0;
-  for (; idx < WHEEL_SECTORS.length - 1; idx++) { roll -= weight(WHEEL_SECTORS[idx]); if (roll < 0) break; }
-  const s = WHEEL_SECTORS[idx];
-  if (!extra) { state.wheel.streak = projectedStreak(now); state.wheel.lastSpin = now; }   // додатковий оберт не чіпає чергу й серію днів
-  state.stats.wheelSpins++;
-  const mult = streakMult(Math.max(1, state.wheel.streak));
-  let text;
-  if (s.kind === 'coins' || s.kind === 'jackpot') {
-    const gain = Math.floor((state.cps * s.seconds + s.flat * levelMult()) * mult);
-    state.coins += gain; state.totalEarned += gain;
-    text = t(s.kind === 'jackpot' ? 'prize_jackpot' : 'prize_coins', fmt(gain));
-    if (s.kind === 'jackpot') state.stats.jackpots++;
-  } else if (s.kind === 'crystal') {
-    const gem = Math.max(1, Math.floor(mult));
-    state.crystals += gem; state.crystalsTotal += gem;
-    text = t('prize_crystal', gem);
-  } else if (s.kind === 'income') {
-    state.events.incomeBoostUntil = now + s.minutes * 60000; state.events.incomeBoostMult = s.mult;
-    text = t('prize_income', s.mult, s.minutes);
-  } else {
-    state.events.tapBoostUntil = now + s.minutes * 60000; state.events.tapBoostMult = s.mult;
-    text = t('prize_tap', s.mult, s.minutes);
-  }
-  recalcIncome();
-  const step = Math.PI / 4;
-  const jitter = rand(-0.35, 0.35) * step;
-  const from = wheelAngle % (Math.PI * 2);
-  const to = Math.PI * 2 * 5 + (Math.PI * 2 - (idx + 0.5) * step) + jitter;
-  wheelAnim = { t: 0, dur: CONFIG.WHEEL_SPIN_SECONDS, from, to, text, jackpot: s.kind === 'jackpot' };
-  ui.wheelResult.textContent = '…';
-  updateWheelUI();
-  updateUI();
-  saveGame();
-}
-function updateWheel(dt) {
-  if (!wheelAnim) return;
-  wheelAnim.t += dt;
-  const k = Math.min(1, wheelAnim.t / wheelAnim.dur), e = 1 - Math.pow(1 - k, 3);
-  const prevSector = Math.floor(wheelAngle / (Math.PI / 4));
-  wheelAngle = wheelAnim.from + (wheelAnim.to - wheelAnim.from) * e;
-  if (Math.floor(wheelAngle / (Math.PI / 4)) !== prevSector && performance.now() - audio.lastTick > 40) { audio.lastTick = performance.now(); playSfx('wheelTick'); }
-  if (!ui.wheelModal.hidden) drawWheel();
-  if (k >= 1) {
-    const done = wheelAnim;
-    wheelAnim = null;
-    wheelAngle = done.to % (Math.PI * 2);
-    ui.wheelResult.textContent = done.text;
-    playSfx(done.jackpot ? 'jackpot' : 'wheelWin');
-    showToast(done.text, done.jackpot ? 'big' : 'good');
-    updateWheelUI();
-    updateUI();
-  }
-}
-
 /* ---------- Головний цикл подій ---------- */
 function updateEvents(dt) {
-  updateWheel(dt);
   updateTrouble(dt);
   updateGhostHunt(dt);
   updateWeather(dt);
@@ -466,25 +280,19 @@ function updateEvents(dt) {
   if (sig !== uiCache.eventSig) { uiCache.eventSig = sig; changed = true; }
   if (changed) recalcIncome();
   if (!theme.blackFriday && now >= state.events.nextSale) startSale(now);
-  const quiet = !trouble && !ghostHunt && !dialog.active && !epochIntro.active && !build && ui.modal.hidden && ui.wheelModal.hidden;
+  const quiet = !trouble && !ghostHunt && !dialog.active && !epochIntro.active && !build && ui.modal.hidden;
   if (quiet && state.story.done >= 2) {                // раз на кілька хвилин вилітають привиди (Хелловін) або герої поточної епохи
     if (!nextGhostAt) nextGhostAt = now + rand(25, 50) * 1000;
     else if (now >= nextGhostAt) startGhostHunt();
   }
   if (quiet && state.story.done >= 3 && now >= state.events.nextTrouble) startTrouble(now);
-  // колесо стало готовим
-  const ready = wheelReady(now);
-  if (wheelWasReady === false && ready) showToast(t('wheelReady'), 'big');
-  wheelWasReady = ready;
-  ui.wheelOpen.classList.toggle('ready', ready);
   updateBoostsUI();
   updateBanner();
-  updateWheelUI();
   achTimer += 0.25;
   if (achTimer >= 1) { achTimer = 0; checkAchievements(); }
 }
 
-// Початок гри: розклад подій, тема, колесо
+// Початок гри: розклад подій, тема
 function initEvents() {
   const now = Date.now();
   if (!state.events.nextSale) scheduleSale(now);
@@ -492,10 +300,6 @@ function initEvents() {
   if (!state.events.nextTrouble) scheduleTrouble(now);
   else if (state.events.nextTrouble <= now) state.events.nextTrouble = now + rand(1, 5) * 60000;
   updateTheme();
-  wheelTexture = buildWheelTexture();
-  ui.wheelOpen.addEventListener('click', openWheel);
-  ui.wheelClose.addEventListener('click', closeWheel);
-  ui.wheelBtn.addEventListener('click', () => spinWheel(false));
   ui.circusBtn.addEventListener('click', circusSpin);
   ui.lootWear.addEventListener('click', () => closeLoot(true));
   ui.lootClose.addEventListener('click', () => closeLoot(false));
@@ -504,8 +308,6 @@ function initEvents() {
   ui.circusModal.addEventListener('click', e => { if (e.target === ui.circusModal) closeCircus(); });
   ui.dbgCircus.addEventListener('click', () => { const c = state.circus; if (c.phase === 0 || c.phase === 4) { c.phase = 0; c.next = Date.now() - 1; } showToast('Цирк скоро!', 'good'); });
   ui.letterBtn.addEventListener('click', claimLetter);
-  ui.wheelGhostBtn.addEventListener('click', () => spinWheel(true));
-  ui.wheelModal.addEventListener('click', e => { if (e.target === ui.wheelModal) closeWheel(); });
   if (theme.holiday) {
     const h = theme.holiday;
     const bonus = h.bonus.global ? t('hb_global', Math.round(h.bonus.global * 100)) : Object.keys(h.bonus.depts || {}).map(i => t('hb_dept', deptName(i), fmt(1 + h.bonus.depts[i], 2))).join(', ');
