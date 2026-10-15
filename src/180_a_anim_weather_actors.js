@@ -444,8 +444,9 @@ let chatterTimer = 20;
 function actorHome(m) {
   const s = m.spot;
   if (s.x === null) {
-    if (mobileMQ.matches) { const cp = LAYOUT.capy; return cp ? Math.max(cp.x + 50, Math.min(cp.x + 58, visR() - 24)) : shop.x + shop.door.x + shop.door.w / 2 + 40; }   // на телефоні їжак теж праворуч від Капі, впритул до краю екрана (каса — ліворуч від нього, її частково затуляє Капі)
-    const cp = LAYOUT.capy; return Math.min(worldR() - 24, cp.x + 14 + 66);          // на ПК їжак із касою стоїть праворуч від Капі, не впритул
+    // їжак із касою прибитий до світу, а не до краю екрана: місце не залежить від гортання камери й ширини вікна
+    const cp = LAYOUT.capy; if (!cp) return shop.x + shop.door.x + shop.door.w / 2 + 40;
+    return mobileMQ.matches ? cp.x + 58 : cp.x + 14 + 66;   // телефон: ближче до Капі, щоб лишався в кадрі; ПК: праворуч, не впритул
   }
   // решта звіряток розставлені рівномірно по ВСІЙ вулиці (f — частка ширини світу), а не лише біля магазину
   return worldL() + 16 + s.f * (worldR() - worldL() - 32);
@@ -459,11 +460,15 @@ function syncActors() {
     else if (!has && idx >= 0) actors.splice(idx, 1);
   });
 }
-// Позаду Капі й упритул до неї нікому не місце: у смузі ±34 px від неї ходять лише попереду (нижче на 24 px)
+// Капі ніхто не перекриває й не ходить за нею: у смузі ±34 px від неї спереду звірята відступають на смугу перед нею, а ті, що опинились позаду, виходять убік
+function capyZone(x, y) { const cp = LAYOUT.capy; return !!cp && Math.abs(x - (cp.x + 14)) < 34 && y < cp.footY + 24; }
+function capyPathBlocked(x0, y0, x1, y1) { for (let k = 1; k <= 8; k++) if (capyZone(x0 + (x1 - x0) * k / 8, y0 + (y1 - y0) * k / 8)) return true; return false; }
 function capyAvoid(o, dt) {
   const cp = LAYOUT.capy; if (!cp) return;
-  const lim = cp.footY + 24;
-  if (Math.abs(o.x - (cp.x + 14)) < 34 && o.y < lim && o.y > cp.footY - 46) o.y = Math.min(lim, o.y + 48 * dt);
+  const dx = o.x - (cp.x + 14), lim = cp.footY + 24;
+  if (Math.abs(dx) >= 34 || o.y >= lim) return;
+  if (o.y > cp.footY + 2) o.y = Math.min(lim, o.y + 48 * dt);                    // трохи попереду: спускається на смугу перед Капі
+  else o.x += (dx >= 0 ? 1 : -1) * 70 * dt;                                       // позаду чи впритул: відходить убік
 }
 function updateActors(dt) {
   actors.forEach(a => {
@@ -499,6 +504,7 @@ function updateActors(dt) {
       a.speed = rand(11, 22);
       const slots = [];
       benches.forEach(bn => bn.slots.forEach((sl, k) => { if (sl.who === null) slots.push([bn, k]); }));
+      a.route = null;
       if (slots.length && Math.random() < 0.22) {      // іноді йде посидіти на лавочці
         const pick = slots[Math.floor(Math.random() * slots.length)];
         pick[0].slots[pick[1]].who = a.i; a.bench = pick[0]; a.slot = pick[1];
@@ -507,7 +513,16 @@ function updateActors(dt) {
       return;
     }
     // іде до цілі (випадкова точка вулиці або лавочка)
-    const dx = a.tx - a.x, dy = a.ty - a.y, d = Math.hypot(dx, dy), step = a.speed * dt;
+    const wp = a.route && a.route.length ? a.route[0] : null;                 // обхід Капі: проміжні точки перед справжньою ціллю
+    const gx = wp ? wp.x : a.tx, gy = wp ? wp.y : a.ty;
+    const dx = gx - a.x, dy = gy - a.y, d = Math.hypot(dx, dy), step = a.speed * dt;
+    if (d > step && !capyZone(a.x, a.y) && capyZone(a.x + dx / d * step, a.y + dy / d * step)) {      // шлях упирається в Капі: обходить її спереду
+      const cp = LAYOUT.capy, cx = cp.x + 14, side = a.tx >= cx ? 1 : -1, fy = cp.footY + 26;
+      if (!wp && Math.abs(a.tx - cx) > 34 && side * (a.x - cx) < 0) a.route = [{ x: a.x, y: Math.max(a.y, fy) }, { x: cx + side * 40, y: fy }];
+      else { a.route = null; if (a.bench) { a.bench.slots[a.slot].who = null; a.bench = null; } a.mode = 'idle'; a.moving = false; a.wait = rand(0.4, 1.2); }
+      return;
+    }
+    if (wp && d <= step) { a.x = wp.x; a.y = wp.y; a.route.shift(); if (!a.route.length) a.route = null; return; }
     if (d <= step) {
       a.x = a.tx; a.y = a.ty; a.moving = false;
       if (a.mode === 'toBench' && a.bench) {

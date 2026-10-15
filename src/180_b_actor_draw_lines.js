@@ -15,7 +15,7 @@ function pickWanderTarget(a) {
       md = Math.min(md, Math.hypot(tx - (walking ? o.tx : o.x), (ty - (walking ? o.ty : o.y)) * 1.6));
     });
     md += Math.min(60, Math.abs(tx - LAYOUT.centerX)) * 0.3;               // трохи подалі від входу в магазин
-    { const cpp = LAYOUT.capy; if (cpp && Math.abs(tx - (cpp.x + 14)) < 30 && ty > cpp.footY - 34) md -= 200; }       // і не лізти на Капі
+    if (capyZone(tx, ty) || capyPathBlocked(a.x, a.y, tx, ty)) md -= 1e6;       // не лізти на Капі, не заходити за неї й не ходити крізь неї
     if (md > bestD) { bestD = md; best = [tx, ty]; }
   }
   a.tx = best[0]; a.ty = best[1];
