@@ -114,6 +114,8 @@ function circusQuiet() { return !dialog.active && !epochIntro.active && !build &
 function updateCircus(dt) {
   const c = state.circus, now = Date.now();
   circus.t += dt;
+  // уже стоїть/їде візок — вигляд за поточною епохою (у Японії лапшична, не цирк), поки вікно гри закрите
+  if (c.phase > 0 && !c.hag && ui.circusModal.hidden) c.noodle = curEpoch() === 8 ? 1 : 0;
   const dayMs = CONFIG.DAY_SECONDS * 1000;
   if (!c.next) c.next = now + CONFIG.CIRCUS_FIRST_MINUTES * 60000;
   if (!circus.inited) {                           // після перезапуску цирк уже стоїть розкладений (або від'їжджає)

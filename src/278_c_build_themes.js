@@ -290,26 +290,7 @@
       if (spiral > 0) { const a = tt * 4.2; x = lerp(x, G.cx + Math.cos(a) * 34, spiral); y = lerp(y, G.roof - 42 + Math.sin(a) * 12 - (tt - t) * 14 * 0, spiral); }
       return [x, y];
     };
-    const N = 28, pts = []; for (let i = 0; i < N; i++) pts.push(pos(t - i * 0.075));
-    for (let i = N - 1; i >= 0; i--) {
-      const [x, y] = pts[i], r = lerp(5.5, 1.6, i / N), xi = Math.round(x), yi = Math.round(y + Math.sin(t * 8 - i * 0.7) * 1.2);
-      disc(ctx, xi, yi, Math.round(r) + 1, 'd');
-    }
-    for (let i = N - 1; i >= 0; i--) {
-      const [x, y] = pts[i], r = Math.max(1, Math.round(lerp(5.5, 1.6, i / N))), xi = Math.round(x), yi = Math.round(y + Math.sin(t * 8 - i * 0.7) * 1.2);
-      disc(ctx, xi, yi, r, i % 4 < 2 ? 'g' : 'm'); if (r > 2) R(ctx, xi - 1, yi + Math.round(r * 0.5), 3, 1, 'y');
-      if (i % 3 === 1 && r > 1) R(ctx, xi, yi - r - 1, 1, 2, 'r');
-    }
-    // голова
-    const [hx, hy] = pts[0], nx = pts[1][0], dir = hx >= nx ? 1 : -1, x = Math.round(hx), y = Math.round(hy);
-    const P = (dx, dy, w, h, c) => R(ctx, dir > 0 ? x + dx : x - dx - w + 1, y + dy, w, h, c);
-    P(-5, -7, 12, 12, 'd'); P(-4, -6, 10, 10, 'g'); P(4, -1, 6, 5, 'd'); P(5, 0, 5, 3, 'm'); P(7, 2, 3, 1, 'w');
-    P(-1, -5, 3, 3, 'd'); P(0, -4, 2, 2, 'w'); P(1, -3, 1, 1, 'r');                                         // око
-    P(-3, -12, 2, 6, 'o'); P(1, -12, 2, 6, 'o'); P(-3, -13, 1, 1, 'y');                                      // роги
-    P(-8, -2, 4, 8, 'r'); P(-10, 2, 3, 4, 'r');                                                              // грива
-    P(9, 3, 7, 1, 'y'); P(10, 5, 6, 1, 'y');                                                                 // вуса
-    if (Math.floor(t * 3) % 2) B.spark(x + dir * 18, y + 6, 'y', 'w');
-    return pts;
+    ARCH.japan.drawDragon(ctx, t, pos);                       // той самий дракон, що літає в небі (3D-кульки, голова, вогонь із пащі)
   }
   B.list[8] = {
     id: 'japan',

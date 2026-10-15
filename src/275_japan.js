@@ -54,9 +54,23 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
+  function fuji(g, cx, bY, H, hw) {                       // гладкий конус зі сніжною шапкою (рваний край), імла до підніжжя; світло зліва
+    for (let dx = -hw; dx <= hw; dx++) {
+      const a = Math.abs(dx) / hw, hh = Math.min(Math.round(H * 0.985), Math.round(H * Math.pow(Math.max(0, 1 - a), 1.2)));
+      if (hh < 1) continue;
+      const top = bY - hh, lit = dx < 0, ridge = Math.sin(dx * 0.23) + Math.sin(dx * 0.61 + 2) > 1.15;
+      const snowEnd = bY - H * 0.74 + 6 * Math.sin(dx * 0.33) + 4 * Math.sin(dx * 0.12 + 1) + 9 * Math.pow(Math.max(0, Math.sin(dx * 0.55 + 1.3)), 3);
+      for (let y = top; y < bY; y += 2) {
+        const hz = Math.max(0, Math.min(1, (y - (bY - H * 0.34)) / (H * 0.34)));
+        let col = y < snowEnd ? (lit ? '#fbf8ff' : '#dcd7f2') : (lit ? '#8c88c0' : '#6c68ae');
+        if (y >= snowEnd && ridge) col = mixc(col, '#4f4a96', 0.35);
+        P(g, cx + dx, y, 1, Math.min(2, bY - y), mixc(col, '#f0c8dc', hz * 0.6));
+      }
+    }
+  }
   function farSkyline(g, x0, W) {                       // гора Фудзі, телевежа, пагода, високі будинки
-    const base = 112, fx = x0 + Math.round(W * 0.3);
-    for (let dx = -92; dx <= 92; dx++) { const t2 = 1 - Math.abs(dx) / 92, hh = Math.round(84 * Math.pow(t2, 1.3)); P(g, fx + dx, base - hh, 1, hh, dx < -6 ? '#8c88c0' : '#7c78b4'); const cap = hh - 52; if (cap > 0) P(g, fx + dx, base - hh, 1, Math.min(cap, 6 + Math.round((1 - Math.abs(dx) / 40) * 18)), '#f6f3ff'); }
+    const base = 112;
+    fuji(g, x0 + Math.round(W * 0.5) + 90, LAYOUT.horizonY, 215, 250);        // велика Фудзі за торговим центром і будинками
     A(g, 0.45, () => {
       for (let x = x0, i = 0; x < x0 + W; i++) { const hs = hash2(x + 31, 7), bw = 10 + hs % 12, bh = 16 + (hs >>> 4) % 30; P(g, x, base - bh, bw, bh, i % 2 ? '#7a74b8' : '#6a66a8'); if (hs % 3 === 0) P(g, x + (bw >> 1), base - bh - 5, 1, 5, '#6a66a8'); x += bw + 1 + hs % 5; }
       const tx = x0 + Math.round(W * 0.62);
@@ -263,16 +277,32 @@
     const W = wr - wl, cxm = wl + W * 0.5, a = t * 0.07;
     return [cxm + Math.sin(a) * W * 0.5 + Math.sin(a * 2.3 + 1.1) * W * 0.1, top + span * (0.5 + 0.42 * Math.sin(a * 1.7 + 0.6)) + Math.sin(a * 4.1) * 5];
   }
-  function dragon(g, t, wl, wr, top, span) {
-    const N = 30, SP = 7.4, pts = [], dt = 0.04, h0 = dragonPath(t, wl, wr, top, span);
+  let GA = 1;                                           // множник прозорості: уночі дракон малюється ще раз поверх затемнення
+  function breathFire(g, t, night) {                    // вогонь із пащі (координати голови, дивиться ліворуч): раз на ~11 с, ~2,4 с; уночі яскравий і з м'яким ореолом
+    const ph = (t + 3.7) % 11, env = ph < 2.4 ? Math.sin(ph / 2.4 * Math.PI) : 0;
+    if (env < 0.03) return;
+    const L = 8 + 44 * env, ga = night > 0 ? Math.min(1, night * 1.4) : g.globalAlpha, cols = ['#fffbe6', '#ffe45e', '#ffb02e', '#ff6a2b', '#d93a2a'];
+    if (night > 0) { g.globalAlpha = ga * env * 0.09; D(g, Math.round(-27 - L * 0.5), 5, Math.round(7 + L * 0.28), '#ff8a30'); g.globalAlpha = ga * env * 0.14; D(g, Math.round(-27 - L * 0.45), 5, Math.round(4 + L * 0.16), '#ffc060'); }
+    for (let i = 23; i >= 0; i--) {
+      const u = i / 23, x = -27 - u * L, y = 5 + Math.sin(t * 15 + i * 0.9) * (0.8 + 3 * u) * env - u * u * 4;
+      g.globalAlpha = ga * Math.min(1, env * 1.6) * (1 - u * 0.55);
+      D(g, Math.round(x), Math.round(y), Math.max(1, Math.round(1 + u * (2 + 4 * env))), cols[Math.min(4, Math.floor(u * 5))]);
+    }
+    g.globalAlpha = ga * env;
+    for (let k = 0; k < 6; k++) { const u = (t * 1.7 + k / 6) % 1; P(g, -30 - u * (L + 10), 4 + Math.sin(k * 2.3 + t * 5) * 7 * u, 1, 1, k % 2 ? '#ffe45e' : '#ff9a2b'); }
+    g.globalAlpha = night > 0 ? GA : ga;
+  }
+  function dragon(g, t, wl, wr, top, span, night) { return dragonDraw(g, t, tt => dragonPath(tt, wl, wr, top, span), night); }
+  function dragonDraw(g, t, pos, night) {                // pos(tt) → [x, y] голови в момент tt; однаковий для неба й будівництва
+    const N = 30, SP = 7.4, pts = [], dt = 0.04, h0 = pos(t);
     pts.push(h0);
     let tt = t, prev = h0, acc = 0;
     for (let it = 0; it < 4000 && pts.length < N; it++) {
-      tt -= dt; const p = dragonPath(tt, wl, wr, top, span); acc += Math.hypot(p[0] - prev[0], p[1] - prev[1]); prev = p;
+      tt -= dt; const p = pos(tt); acc += Math.hypot(p[0] - prev[0], p[1] - prev[1]); prev = p;
       if (acc >= SP) { acc = 0; pts.push([p[0], p[1] + Math.sin(t * 2.2 - pts.length * 0.5) * 3]); }
     }
     while (pts.length < N) pts.push(pts[pts.length - 1]);
-    const back = dragonPath(t - 0.15, wl, wr, top, span), hv = [pts[0][0] - back[0], pts[0][1] - back[1]], faceL = hv[0] < 0;
+    const back = pos(t - 0.15), hv = [pts[0][0] - back[0], pts[0][1] - back[1]], faceL = hv[0] < 0;
     const bodyR = i => Math.max(3, Math.round(11 - i * 0.27));
     const [tx, ty] = pts[N - 1];
     for (let k = 0; k < 6; k++) P(g, tx + (faceL ? 3 : -5) + (faceL ? k : -k) * 2, ty - 2 + Math.round(Math.sin(t * 3 + k) * 2), 3, 2, k % 2 ? '#e8503a' : '#ffd24a');
@@ -284,10 +314,10 @@
     }
     [6, 12, 19].forEach(li => { const [x, y] = pts[li], r = bodyR(li); P(g, x - 1, y + r - 1, 3, 6, '#1c7a58'); P(g, x - 1, y + r - 1, 1, 6, '#5fe0a8'); P(g, x - 3, y + r + 5, 7, 2, '#2fbf86'); [-2, 0, 2].forEach(d => P(g, x + d, y + r + 7, 1, 2, '#ffd24a')); });
     const [hx, hy] = pts[0], hs = headSprite(), ang = Math.max(-0.7, Math.min(0.7, Math.atan2(hv[1], Math.abs(hv[0]) + 0.001))) * (faceL ? 1 : -1) * -1;
-    g.save(); g.translate(Math.round(hx), Math.round(hy)); if (!faceL) g.scale(-1, 1); g.rotate(Math.round((faceL ? ang : -ang) * 6) / 6); g.drawImage(hs, -30, -22); g.restore();
+    g.save(); g.translate(Math.round(hx), Math.round(hy)); if (!faceL) g.scale(-1, 1); g.rotate(Math.round((faceL ? ang : -ang) * 6) / 6); breathFire(g, t, night); g.drawImage(hs, -30, -22); g.restore();
     const dir = faceL ? -1 : 1;
     for (let k = 0; k < 14; k++) { const wx = hx + dir * (14 + k * 2), wy = hy + 6 + Math.round(Math.sin(t * 3 + k * 0.5) * 3) + k * 0.4; P(g, wx, wy, 2, 1, '#ffd24a'); P(g, wx, wy - 7 - Math.round(Math.sin(t * 3 + k * 0.4) * 2), 2, 1, '#ffe08a'); }
-    const px = hx + dir * 36, py = hy + 8 + Math.sin(t * 2) * 2; g.globalAlpha = 0.25; D(g, Math.round(px), Math.round(py), 7, '#fff2b0'); g.globalAlpha = 1; g.drawImage(ball(3, '#ffffff'), Math.round(px - 5), Math.round(py - 5));
+    const px = hx + dir * 36, py = hy + 8 + Math.sin(t * 2) * 2; g.globalAlpha = 0.25 * GA; D(g, Math.round(px), Math.round(py), 7, '#fff2b0'); g.globalAlpha = GA; g.drawImage(ball(3, '#ffffff'), Math.round(px - 5), Math.round(py - 5));
   }
   function skyExtra(time, noFly) {
     const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
@@ -346,6 +376,14 @@
   /* ---------- реєстрація ---------- */
   ARCH.japan = {
     buildSky, farSkyline, bush, tree, house, skyExtra,
+    drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),          // той самий дракон, що в небі (використовує будівництво, 278)
+    nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
+      const n = sky.night; if (noFly || n < 0.05) return;
+      const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24);
+      GA = Math.min(0.5, n * 0.55); ctx.globalAlpha = GA;
+      dragon(ctx, time, wl, wr, top + 12, span, n);
+      GA = 1; ctx.globalAlpha = 1;
+    },
     roof: shopRoof, facadeDeco: shopDeco, facadeFx, facadeExtra() { /* немає */ }, signMotif, roofProp() { /* дахові прикраси лишились у торіях і ліхтарях */ }, noRoofExtras: true
   };
   HOUSE_TONE.push([0.1, 0.8, 30]);
