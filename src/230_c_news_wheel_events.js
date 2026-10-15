@@ -55,7 +55,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Епічне будівництво! Тепер кожну епоху магазин будують по-своєму: у Відродженні — ангели, у Диско — танцюристи й дзеркальна куля, в Аркадах — тетріс і Пакман, в Інтернеті — хмара й дрони, у Космосі — тарілка й астронавти, в Японії — дракон і журавлики. Тапай по екрану під час будівництва — команда працюватиме швидше! Ще: цирк і музика під кожну епоху, лапшична діда Рьо в Японії, а на горизонтальному екрані при закритому меню внизу зліва є маленький «−»: він ховає лічильники й написи, а «+» повертає їх. Стрілки камери тепер дрібні й прозорі. Бонусна епоха «Японія»! Після Неону час несе в країну вранішнього сонця: дерев’яні будинки з дашками, сакура, паперові ліхтарі й дракон, що літає над містом. У неї свій перехід, 8 нових глав, лисиця Сора з чайним будиночком і новий помічник, олениця Нара. Годинникова вежа тепер у стилі кожної епохи й стоїть просто на даху.',
+    newH: 'Що нового', new: 'Бонусна епоха «Японія»! Після Неону час несе в країну вранішнього сонця: дерев’яні будинки з дашками, сакура, паперові ліхтарі, неонові вивіски, що світяться вночі, і дракон, який літає над містом і сам злітає до будівництва. У неї свій перехід, 8 нових глав, лисиця Сора з чайним будиночком, олениця Нара, лапшична діда Рьо замість цирку й Капі в кімоно. Попереду — нові бонусні епохи: дивись розділ «Скоро».',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -63,7 +63,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'Epic building! Every era now builds the shop its own way: angels in the Renaissance, dancers and a mirror ball in Disco, tetris and Pac-Man in Arcade, a cloud and drones on the Internet, a saucer and astronauts in Space, a dragon and cranes in Japan. Tap the screen while it is being built to make the crew work faster! Also: a circus and music for every era, Grandpa Ryo\'s noodle stall in Japan, and on a wide screen with the menu closed a small “−” at the bottom left hides the counters and labels, and “+” brings them back. The camera arrows are now small and transparent. The bonus era “Japan”! After Neon, time carries you to the land of the rising sun: wooden houses with little roofs, sakura, paper lanterns and a dragon flying over town. It has its own travel animation, 8 new chapters, Sora the fox with her tea house and a new helper, Nara the doe. The clock tower now matches every era and stands right on the roof.',
+    newH: 'What is new', new: 'The bonus era “Japan”! After Neon, time carries you to the land of the rising sun: wooden houses with little roofs, sakura, paper lanterns, neon signs that glow at night, and a dragon that flies over town and swoops down to the building site. It has its own travel animation, 8 new chapters, Sora the fox with her tea house, Nara the doe, Grandpa Ryo’s noodle stall instead of the circus, and Capy in a kimono. More bonus eras are on the way: see “Coming soon”.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
@@ -188,6 +188,7 @@ function newsReveal() {                                                         
   const W = host.clientWidth, H = host.clientHeight - 36; if (W < 40 || H < 40) return;
   const B = 12, cols = Math.ceil(W / B), rows = Math.ceil(H / B);
   cv = document.createElement('canvas'); cv.id = 'npReveal'; cv.width = cols; cv.height = rows; host.appendChild(cv);
+  const pg0 = ui.newsBody.querySelector('.np-page'), paperCol = (pg0 && getComputedStyle(pg0).backgroundColor) || '#f6edd2';
   const g = cv.getContext('2d'), noise = new Float32Array(cols * rows).map((_, i) => ((i * 2654435761) >>> 8) % 100 / 100);
   const pages = ui.newsBody; pages.style.opacity = '0';
   const t0 = performance.now(), D = 950, maxD = Math.hypot(cols / 2 * (H / W), rows / 2) + 1;
@@ -199,7 +200,7 @@ function newsReveal() {                                                         
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
       if (!fill(x, y)) continue;
       const edge = !(fill(x - 1, y) && fill(x + 1, y) && fill(x, y - 1) && fill(x, y + 1));
-      g.fillStyle = edge ? '#2a1d1a' : '#f6edd2'; g.fillRect(x, y, 1, 1);
+      g.fillStyle = edge ? '#2a1d1a' : paperCol; g.fillRect(x, y, 1, 1);
     }
     const a = Math.max(0, (k - 0.45) / 0.55); pages.style.opacity = String(a * a * (3 - 2 * a));
     cv.style.opacity = k < 0.8 ? '1' : String(Math.max(0, 1 - (k - 0.8) / 0.2));

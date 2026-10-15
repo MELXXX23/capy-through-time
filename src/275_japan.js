@@ -31,6 +31,7 @@
     P(g, x, y, 1, 1, '#ffffff'); P(g, x + w - 1, y + h - 1, 1, 1, '#ffffff');
   }
   function neonText(g, draw, c) { A(g, 0.32, () => { draw(-1, 0, c); draw(1, 0, c); draw(0, 1, c); }); draw(0, 0, mixc(c, '#ffffff', 0.6)); }   // літери: сяйво навколо + світла серцевина
+  let neonSigns = [], neonOwner = null, neonLayer = null;      // неонові вивіски будинків: уночі світяться окремим шаром (скидається разом із houseGlass)
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   let fujiC = null, fujiT = null, fujiKey = '';
@@ -185,6 +186,7 @@
   function house(g, spec, lamps) {
     const { x, w, h } = spec, base = LAYOUT.horizonY, top = base - h, hs = hash2(x + 17, h), S = WOOD[(hs >>> 3) % WOOD.length];
     houseGlass = houseGlass || []; houseDoors = houseDoors || [];
+    if (neonOwner !== houseGlass) { neonOwner = houseGlass; neonSigns = []; neonLayer = null; }
     const CAP = 9, tb = top - 4 - CAP - 1, winter = buildSeason === 'winter';
     P(g, x, top, w, h, S[0]); P(g, x, top, w, 1, DKW); P(g, x, top, 1, h, DKW); P(g, x + w - 1, top, 1, h, DKW);
     A(g, 0.4, () => { for (let xx = x + 3; xx < x + w - 1; xx += 4) P(g, xx, top + 1, 1, h - 1, S[2]); });
@@ -227,9 +229,11 @@
         else if (k === 3) { P(g, wx + 2, y0 + 12, 1, 5, '#d3342c'); D(g, wx + 2, y0 + 15, 2, '#d3342c'); D(g, wx + 2, y0 + 15, 1, '#ffd45c'); }
       }
     }
-    if (hasK) { P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); neonBox(g, sx, sy, 14, sh, kb[0]); neonText(g, (dx, dy, col) => vtext(g, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]); }
+    if (hasK) { P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); neonBox(g, sx, sy, 14, sh, kb[0]); neonText(g, (dx, dy, col) => vtext(g, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]);
+      neonSigns.push({ x: sx, y: sy, w: 14, h: sh, c: kb[0], draw: g2 => { neonBox(g2, sx, sy, 14, sh, kb[0]); neonText(g2, (dx, dy, col) => vtext(g2, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]); } }); }
     P(g, gx - 2, gy - 3, gw + 4, 2, TILE[1]); P(g, gx - 2, gy - 3, gw + 4, 1, TILE[2]); P(g, gx - 3, gy - 4, 1, 2, TILE[1]); P(g, gx + gw + 2, gy - 4, 1, 2, TILE[1]);   // тонкий навіс над вивіскою (нижче вікон верхнього поверху)
     neonBox(g, gx, gy, gw, 14, kh[0]); neonText(g, (dx, dy, col) => text(g, wh, gx + 3 + dx, gy + 1 + ((11 - gsz) >> 1) + dy, col, gsz, true), kh[0]);
+    neonSigns.push({ x: gx, y: gy, w: gw, h: 14, c: kh[0], draw: g2 => { neonBox(g2, gx, gy, gw, 14, kh[0]); neonText(g2, (dx, dy, col) => text(g2, wh, gx + 3 + dx, gy + 1 + ((11 - gsz) >> 1) + dy, col, gsz, true), kh[0]); } });
     houseDoors.push({ x: doorX + 5, y: base });
     P(g, doorX, base - 14, 10, 14, DKW); P(g, doorX + 1, base - 13, 8, 13, '#e8dcb8'); A(g, 0.7, () => { P(g, doorX + 4, base - 13, 1, 13, '#4a3020'); for (let k = -10; k < 0; k += 3) P(g, doorX + 1, base + k, 8, 1, '#4a3020'); });
     ['#1c3a78', '#f4ece0', '#1c3a78'].forEach((c, i) => { P(g, doorX - 1 + i * 4, base - 17, 4, 6, c); P(g, doorX - 1 + i * 4, base - 17, 4, 1, DKW); });
@@ -348,9 +352,18 @@
     for (let k = 0; k < 14; k++) { const wx = hx + dir * (14 + k * 2), wy = hy + 6 + Math.round(Math.sin(t * 3 + k * 0.5) * 3) + k * 0.4; P(g, wx, wy, 2, 1, '#ffd24a'); P(g, wx, wy - 7 - Math.round(Math.sin(t * 3 + k * 0.4) * 2), 2, 1, '#ffe08a'); }
     const px = hx + dir * 36, py = hy + 8 + Math.sin(t * 2) * 2; g.globalAlpha = 0.25 * GA; D(g, Math.round(px), Math.round(py), 7, '#fff2b0'); g.globalAlpha = GA; g.drawImage(ball(3, '#ffffff'), Math.round(px - 5), Math.round(py - 5));
   }
+  function neonNight() {                                  // уночі вивіски світяться яскравіше за затемнення, з ореолом і легким мерехтінням
+    const Lm = sky.lamp; if (!neonSigns.length || Lm <= 0.02) return;
+    if (!neonLayer) {
+      const { c, g } = newLayer();
+      neonSigns.forEach(s => { A(g, 0.1, () => P(g, s.x - 7, s.y - 7, s.w + 14, s.h + 14, s.c)); A(g, 0.17, () => P(g, s.x - 4, s.y - 4, s.w + 8, s.h + 8, s.c)); s.draw(g); });
+      neonLayer = c;
+    }
+    ctx.globalAlpha = Math.min(1, Lm) * (0.92 + 0.08 * Math.sin(animClock * 3.1)); ctx.drawImage(neonLayer, -view.offX, -view.offY); ctx.globalAlpha = 1;
+  }
   function skyExtra(time, noFly) {
     const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
-    if (!noFly) { dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }
+    if (!noFly) { if (!build) dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }       // під час будівництва той самий дракон літає біля будинку (278)
     const nP = Math.min(420, Math.round(90 * Math.max(1, W / Math.max(200, visR() - visL()))));      // лепестки теж у світі; щільність на екрані та сама
     for (let i = 0; i < nP; i++) { const hs = hash2(i * 13, 5), px = wl + ((hs % 1000) / 1000 * W + time * (6 + hs % 5)) % W, py = top + 8 + (((hs >>> 10) % 1000) / 1000 * 170 + time * (8 + hs % 6)) % 170; P(g, Math.round(px), Math.round(py), 2, 1, '#ffc9d4'); P(g, Math.round(px) + (hs % 2), Math.round(py) + 1, 1, 1, '#ef8fa3'); }
   }
@@ -418,9 +431,12 @@
       }
       c.drawImage(fujiT, 0, 0);
     },
+    filterNeon(keep) { neonSigns = neonSigns.filter(s => keep([s.x, s.y, s.w, s.h])); neonLayer = null; },
+    skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
     drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),          // той самий дракон, що в небі (використовує будівництво, 278)
     nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
-      const n = sky.night; if (noFly || n < 0.05) return;
+      neonNight();
+      const n = sky.night; if (noFly || n < 0.05 || build) return;
       const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24);
       GA = Math.min(0.5, n * 0.55); ctx.globalAlpha = GA;
       dragon(ctx, time, wl, wr, top + 12, span, n);

@@ -163,6 +163,12 @@ function drawNightLights() {
     ctx.globalAlpha = L * (state.events.mailPending ? 0.18 + 0.1 * Math.sin(animClock * 5) : 0.1); disc(ctx, bx, by, 14, 'T');
     if (mail.state === 'arriving' || mail.state === 'leaving') { ctx.globalAlpha = L * 0.22; disc(ctx, Math.round(mail.x) - 18, mailRoadY() - 6, 9, 'y'); ctx.globalAlpha = L * 0.1; R(ctx, Math.round(mail.x) - 44, mailRoadY() - 8, 26, 5, 'y'); }
   }
+  if (state.circus.phase >= 2 && !build) {                            // цирк вночі м'яко світиться: шатро не тьмяніє під затемненням, тепле сяйво й пляма світла на землі
+    const s = circus.setup === undefined ? 0 : circus.setup, cx = Math.round(circus.x), cy = circusY(), pulse = 0.9 + 0.1 * Math.sin(animClock * 1.7);
+    ctx.globalAlpha = L * 0.55 * s; ctx.drawImage(circusCanvas, cx - 80, cy - 76);
+    for (let i = 0; i < 6; i++) { const hw = 70 - i * 9; ctx.globalAlpha = L * 0.045 * pulse * s; R(ctx, cx - hw, cy - 5 + i * 2, hw * 2, 3, 'y'); }
+    [[58, 0.035], [46, 0.05], [34, 0.07]].forEach(([r, al]) => { ctx.globalAlpha = L * al * pulse * s; disc(ctx, cx, cy - 36, r, 'y'); });
+  }
   ctx.globalAlpha = 1;
   drawEpochGlow(animClock);
 }

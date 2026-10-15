@@ -283,11 +283,15 @@
   }
   function dragon(G, t, mode) {
     const base = G.base, y0 = Math.min(G.top - 60, base - 165);
+    const sky = ARCH.japan.skyPath(), clock = animClock;
     const rx = (G.x1 - G.x0) * 0.5 + 24, spiral = G.q > 0 ? smooth01(c01(G.q / 0.55)) : 0;
     const pos = tt => {
       let x = G.cx + Math.sin(tt * 0.62) * rx * (1 - spiral * 0.75), y = y0 + Math.sin(tt * 1.3) * 20 - spiral * 40;
-      if (G.p < G.A) { const s = smooth01(c01(G.p / G.A)); x = lerp(visR() + 120 + (tt - t) * 40, x, s); y = lerp(y0 - 130, y, s); }
       if (spiral > 0) { const a = tt * 4.2; x = lerp(x, G.cx + Math.cos(a) * 34, spiral); y = lerp(y, G.roof - 42 + Math.sin(a) * 12 - (tt - t) * 14 * 0, spiral); }
+      // той самий дракон, що літає в небі: на початку злітає з небесного маршруту вниз до будівництва, наприкінці повертається в небо
+      const sp = sky(clock + (tt - t)), s1 = smooth01(c01(t / 3)), s2 = G.p > 0.7 ? smooth01(c01((G.p - 0.7) / 0.3)) : 0;
+      x = lerp(sp[0], x, s1); y = lerp(sp[1], y, s1);
+      if (s2 > 0) { x = lerp(x, sp[0], s2); y = lerp(y, sp[1], s2); }
       return [x, y];
     };
     ARCH.japan.drawDragon(ctx, t, pos);                       // той самий дракон, що літає в небі (3D-кульки, голова, вогонь із пащі)

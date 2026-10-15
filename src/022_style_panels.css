@@ -38,6 +38,15 @@
 .team-card { background: var(--tc-card, #fff4dc); }
 .team-card .portrait { background: var(--tc-portrait, var(--mint)); }
 .team-card .btn.go:not(:disabled) { background: var(--tc-btn, var(--mint)); color: var(--tc-btn-text, var(--dark)); }
+/* Відділи: фон, текст і кнопки — з теми епохи, як у «Команді» (на темних епохах картки темні, рамки чіткі) */
+.dept.card, .expand-card { background: var(--tc-card, var(--card, #fff4dc)); }
+.dept, .expand-card, .expand-card h2 { color: var(--tc-name, var(--dark)); }
+.buy-modes .buy-mode:not([aria-pressed="true"]) { background: var(--tc-btn, var(--panel-dark)); color: var(--tc-btn-text, var(--dark)); }
+.dept-count, .req b { color: var(--tc-role, var(--red)); }
+.req.ok b { color: var(--tc-now, var(--green)); }
+.dept-income, .ms-text, .expand-card p, .dept.locked { color: var(--tc-trait, var(--brown)); }
+.dept .btn.wide:not(:disabled), .expand-card .btn.go:not(:disabled) { background: var(--tc-btn, var(--mint)); color: var(--tc-btn-text, var(--dark)); }
+.dept .ms-bar { background: color-mix(in srgb, var(--tc-card, var(--card, #fff4dc)) 55%, var(--tc-btn, var(--tan))); }
 body[data-epoch="0"] { --tc-portrait: #c4ebf5; --tc-card: #e9f7fc; --tc-btn: #8fd3ea; --tc-btn-text: var(--dark); }
 body[data-epoch="1"] { --tc-portrait: #ffc9d4; --tc-card: #ffedf1; --tc-btn: #f6a3b8; --tc-btn-text: var(--dark); }
 body[data-epoch="2"] { --tc-portrait: #6d3b6e; --tc-card: #3a2140; --tc-btn: #8a4d8b; --tc-btn-text: #fff4dc; }
@@ -46,7 +55,7 @@ body[data-epoch="4"] { --tc-portrait: #b8e3ff; --tc-card: #e8f6ff; --tc-btn: #8c
 body[data-epoch="5"] { --tc-portrait: #8ed4a6; --tc-card: #e4f6ea; --tc-btn: #6fc08c; --tc-btn-text: var(--dark); }
 body[data-epoch="6"] { --tc-portrait: #1b2a4a; --tc-card: #111a30; --tc-btn: #2d4c8a; --tc-btn-text: #fff4dc; }
 body[data-epoch="7"] { --tc-portrait: #3d5a8c; --tc-card: #1e2f4d; --tc-btn: #3d5a8c; --tc-btn-text: #fff4dc; }
-body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoch="6"] .team-card, body[data-epoch="7"] .team-card { --tc-name: #fff4dc; --tc-role: #ffc9d4; --tc-trait: #e6d6c0; --tc-now: #8ed4a6; }
+body[data-epoch="2"] :is(.team-card, .dept, .expand-card), body[data-epoch="3"] :is(.team-card, .dept, .expand-card), body[data-epoch="6"] :is(.team-card, .dept, .expand-card), body[data-epoch="7"] :is(.team-card, .dept, .expand-card) { --tc-name: #fff4dc; --tc-role: #ffc9d4; --tc-trait: #e6d6c0; --tc-now: #8ed4a6; }
 .team-card .t-name, .team-card .t-lvl { color: var(--tc-name, var(--dark)); }
 .team-card .t-role { color: var(--tc-role, var(--red)); }
 .team-card .t-trait, .team-card .t-next { color: var(--tc-trait, var(--brown)); }

@@ -334,13 +334,26 @@ function makeCapyOldDetail(kind) {
     for (let y = 21; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y)) put(x, y, y === 21 ? 'N' : 'f');
     outlineAll('uVkNfwTprn', 'O');
   } else if (kind === 'ep8') {
+    // Японія: кімоно з коміром, візерунком сакури, хвилями на подолі, рукавом-фурісоде й оби з бантом; солом'яне кацу зі шнурком і квіткою; віяло, ґета
     suit(['w', 'r', 'r', 'r', 'r', 'r', 'r', 'R', 'R'], 'w', 'R');
-    for (let x = 12; x <= 25; x++) { if (isFur(x, 13) || at(x, 13) === 'r') put(x, 13, 'n'); if (isFur(x, 14) || at(x, 14) === 'r') put(x, 14, 'n'); }
-    put(18, 13, 'h'); put(19, 13, 'h'); put(18, 14, 'h');
-    art(21, 10, ['rrr', 'rwr', '.d.']);
-    cone([[0, 6, 10], [1, 4, 12], [2, 3, 13], [3, 2, 14], [4, 1, 15], [5, 0, 16]], ['h', 'y', 'c']);
-    rect(0, 16, 6, 6, 'l'); rect(2, 14, 7, 7, 'r'); put(7, 6, 'p'); put(9, 5, 'q'); put(3, 8, 'p'); put(14, 8, 'q'); put(24, 8, 'p');
-    outlineAll('wrRnhycldpq', 'O');
+    for (let x = 12; x <= 18; x++) if (isFur(x, 10) || at(x, 10) === 'r') put(x, 10, 'p');              // внутрішній рожевий комір
+    for (let x = 12; x <= 25; x++) { if (isFur(x, 13) || at(x, 13) === 'r') put(x, 13, 'n'); if (isFur(x, 14) || at(x, 14) === 'r') put(x, 14, 'n'); }   // оби
+    for (let x = 14; x <= 24; x += 4) { put(x, 13, 'h'); put(x + 2, 14, 'h'); }                          // золота парча на поясі
+    for (let x = 12; x <= 25; x++) { const a = x % 4 === 1 || x % 4 === 2; if (at(x, 16) === 'R' || at(x, 16) === 'r' || isFur(x, 16)) put(x, 16, a ? 'w' : 'R'); if (at(x, 17) === 'R' || isFur(x, 17)) put(x, 17, a ? 'R' : 'w'); }   // хвилі сейгайха на подолі
+    plus(14, 11, 'q', 'y'); plus(22, 11, 'q', 'y'); put(14, 15, 'q'); put(23, 15, 'q');                  // сакура на тканині
+    rect(16, 20, 11, 16, 'R'); rect(16, 16, 11, 15, 'r'); rect(16, 20, 16, 16, 'w'); put(18, 12, 'q'); put(19, 14, 'q'); put(18, 15, 'w'); put(17, 13, 'w');   // довгий рукав із білою підкладкою
+    rect(24, 26, 11, 16, 'n'); put(25, 13, 'h'); put(25, 14, 'h'); put(24, 11, 'h'); art(24, 17, ['nn', 'nn', 'n.', 'n.']);   // бант оби й кінці стрічки
+    art(22, 3, ['.www.', 'wrrww', 'wrrww', 'wwwww', '.www.', '..d..', '..d..']);                          // віяло-учіва з червоним колом
+    // капелюх-каса: плетена солома зі світлою лівою і темною правою стороною, ґудзик угорі
+    const spec = [[0, 6, 10], [1, 4, 12], [2, 3, 13], [3, 2, 14], [4, 1, 15], [5, 0, 16]];
+    spec.forEach(([y, x0, x1]) => { for (let x = x0; x <= x1; x++) put(x, y, x - x0 < 2 ? 'y' : x1 - x < 2 ? 'c' : (x + y) % 3 === 0 ? 'y' : 'h'); });
+    rect(7, 9, 0, 0, 'd'); rect(0, 16, 6, 6, 'l'); for (let x = 2; x <= 14; x += 3) put(x, 6, 'c');       // ґудзик і тінь від крисів
+    rect(2, 14, 7, 7, 'r'); put(8, 7, 'w'); put(5, 7, 'h'); put(11, 7, 'h');                             // червона пов'язка-хатімакі з білим колом
+    for (let y = 8; y <= 14; y++) put(13, y, 'r'); put(12, 15, 'r'); put(14, 15, 'r'); put(13, 16, 'r');   // шнурок під підборіддя з бантом
+    plus(13, 3, 'p', 'y'); put(3, 4, 'q'); put(15, 3, 'p');                                              // сакура на капелюсі
+    put(6, 10, 'p'); put(7, 10, 'p');                                                                    // рум'янець
+    put(9, 21, 'r'); put(10, 21, 'r'); put(19, 21, 'r'); put(20, 21, 'r'); put(9, 22, 'w'); put(19, 22, 'w');   // ремінці ґета й таби
+    outlineAll('wrRnhycldpqJ', 'O');
   }
   let maxX = 26 + ox; grid.forEach(r => r.forEach((c, x) => { if (c !== '.' && x > maxX) maxX = x; }));
   return grid.map(row => '.' + row.slice(0, maxX + 1).reverse().join(''));
@@ -428,6 +441,9 @@ function syncEpochEarned() {
   state.epochSeen = state.totalEarned;
 }
 function coinSprite() { return 'coin_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
+// Колір іскор і цифри «+N» при тапі в стилі монети епохи: [іскра 1, іскра 2, цифра] (літери PALETTE)
+const COIN_INK = [['h', 'y', 'y'], ['T', 'w', 'T'], ['f', 'w', 'f'], ['v', 'T', 'T'], ['a', 'w', 'a'], ['g', 'm', 'm'], ['E', 'w', 'E'], ['f', 'T', 'f'], ['h', 'y', 'y']];
+function coinInk() { return COIN_INK[viewEpoch() % COIN_INK.length] || COIN_INK[0]; }
 function gemSprite() { return 'gem_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
 function refreshCoinIcon() {
   const g = ui.coinIcon.getContext('2d');

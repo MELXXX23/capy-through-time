@@ -115,7 +115,7 @@ function updateCircus(dt) {
   const c = state.circus, now = Date.now();
   circus.t += dt;
   // уже стоїть/їде візок — вигляд за поточною епохою (у Японії лапшична, не цирк), поки вікно гри закрите
-  if (c.phase > 0 && !c.hag && ui.circusModal.hidden) c.noodle = curEpoch() === 8 ? 1 : 0;
+  if (c.phase > 0 && !c.hag && ui.circusModal.hidden) c.noodle = viewEpoch() === 8 ? 1 : 0;
   const dayMs = CONFIG.DAY_SECONDS * 1000;
   if (!c.next) c.next = now + CONFIG.CIRCUS_FIRST_MINUTES * 60000;
   if (!circus.inited) {                           // після перезапуску цирк уже стоїть розкладений (або від'їжджає)
@@ -125,7 +125,7 @@ function updateCircus(dt) {
     if (c.phase === 3) circus.setup = 1;
   }
   if (c.phase === 0) {
-    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * (1.0 + 0.6 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; c.noodle = (!c.hag && curEpoch() === 8) ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : c.noodle ? 'noodleTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : c.noodle ? 'noodleBang' : 'circusBang'), 'good'); saveGame(); }
+    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * (1.0 + 0.6 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; c.noodle = (!c.hag && viewEpoch() === 8) ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : c.noodle ? 'noodleTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : c.noodle ? 'noodleBang' : 'circusBang'), 'good'); saveGame(); }
   } else if (c.phase === 1) {                      // «!» чекає на тап, а з часом зникає (гравець сам вирішує, чи тикати)
     circus.bangT += dt;
     if (circus.bangT > CONFIG.CIRCUS_BANG_SECONDS) { c.phase = 0; saveGame(); }

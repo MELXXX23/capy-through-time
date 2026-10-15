@@ -52,9 +52,25 @@
 .np-toc { padding-left: 2.6em; list-style-position: outside; }
 .np-list li { margin-bottom: 7px; overflow-wrap: break-word; }
 .np-gift { display: block; width: 100%; margin: 8px 0 4px; padding: 10px 6px; font-size: clamp(8px, 2.4vw, 12px); line-height: 1.5; overflow-wrap: break-word; white-space: normal; }
-.np-guide-n { display: inline-block; min-width: 1.6em; color: #7a2230; }
+/* Плашки під лічильником (ціль, епоха, бонуси) — у кольорах епохи */
+.chip { background: var(--card, var(--cream)); }
+.chip.dark { background: color-mix(in srgb, var(--brown) 72%, #120d0b); color: var(--yellow); }
+.chip.quiet { background: color-mix(in srgb, var(--brown) 62%, transparent); color: var(--cream); }
+/* Насичені фони пошти розробників і лічильника: --vivid для кожної епохи (Еко — зеленіший, Японія — червоніша) */
+body { --vivid: #f0c36a; }
+body[data-epoch="0"] { --vivid: #8ccbea; } body[data-epoch="1"] { --vivid: #ffa3bf; } body[data-epoch="2"] { --vivid: #d79ae8; } body[data-epoch="3"] { --vivid: #b4a0f0; }
+body[data-epoch="4"] { --vivid: #8cc6f5; } body[data-epoch="5"] { --vivid: #86d996; } body[data-epoch="6"] { --vivid: #98a8e4; } body[data-epoch="7"] { --vivid: #86b0f0; } body[data-epoch="8"] { --vivid: #f0857a; }
+#hud { background: var(--vivid); }
+.np-page { background: color-mix(in srgb, var(--vivid) 88%, #fff); box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--vivid) 68%, #fff), inset 0 0 0 5px var(--brown); }
+.np-tab { background: color-mix(in srgb, var(--vivid) 82%, #000); }
+.np-tab.on { background: color-mix(in srgb, var(--vivid) 88%, #fff); box-shadow: 0 3px 0 color-mix(in srgb, var(--vivid) 88%, #fff); }
+.np-nav button { background: color-mix(in srgb, var(--vivid) 68%, #fff); }
+.np-fig, .np-mast .who canvas { background: color-mix(in srgb, var(--vivid) 82%, #000); }
+#npWrite { background: color-mix(in srgb, var(--vivid) 68%, #fff); }
+.np-guide-n { display: inline-block; min-width: 1.6em; color: var(--brown, #7a2230); }
+.np-in h3, .np-lead, .np-mast small { color: var(--brown, #7a2230); }
 /* Японія (епоха 8): тепла паперова тема меню, червоний акцент */
 body[data-epoch="8"] { --panel: #f2e4d0; --panel-dark: #d8c1a0; --card: #fff7ea; --honey: #c8102e; --mint: #2c6fbf; --brown: #1c2f5a; --glow: #ffc9d4; }
 body[data-epoch="8"] #sign { color: #fff7ea; text-shadow: 0 0 calc(var(--u) * 2) #ff5f7a, 0 0 calc(var(--u) * 4) #ff2a4a; }
-body[data-epoch="8"] .team-card { --tc-portrait: #f2e4d0; --tc-card: #fff7ea; --tc-btn: #c8102e; --tc-btn-text: #fff7ea; --tc-name: #1c2f5a; --tc-role: #c8102e; --tc-trait: #4a3228; --tc-now: #2c6fbf; }
+body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4d0; --tc-card: #fff7ea; --tc-btn: #c8102e; --tc-btn-text: #fff7ea; --tc-name: #1c2f5a; --tc-role: #c8102e; --tc-trait: #4a3228; --tc-now: #2c6fbf; }
 </style>

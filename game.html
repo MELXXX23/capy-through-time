@@ -398,6 +398,15 @@ body[data-epoch="1"] { --glow: #ff8fb3; } body[data-epoch="2"] { --glow: #ff5fa2
 .team-card { background: var(--tc-card, #fff4dc); }
 .team-card .portrait { background: var(--tc-portrait, var(--mint)); }
 .team-card .btn.go:not(:disabled) { background: var(--tc-btn, var(--mint)); color: var(--tc-btn-text, var(--dark)); }
+/* Відділи: фон, текст і кнопки — з теми епохи, як у «Команді» (на темних епохах картки темні, рамки чіткі) */
+.dept.card, .expand-card { background: var(--tc-card, var(--card, #fff4dc)); }
+.dept, .expand-card, .expand-card h2 { color: var(--tc-name, var(--dark)); }
+.buy-modes .buy-mode:not([aria-pressed="true"]) { background: var(--tc-btn, var(--panel-dark)); color: var(--tc-btn-text, var(--dark)); }
+.dept-count, .req b { color: var(--tc-role, var(--red)); }
+.req.ok b { color: var(--tc-now, var(--green)); }
+.dept-income, .ms-text, .expand-card p, .dept.locked { color: var(--tc-trait, var(--brown)); }
+.dept .btn.wide:not(:disabled), .expand-card .btn.go:not(:disabled) { background: var(--tc-btn, var(--mint)); color: var(--tc-btn-text, var(--dark)); }
+.dept .ms-bar { background: color-mix(in srgb, var(--tc-card, var(--card, #fff4dc)) 55%, var(--tc-btn, var(--tan))); }
 body[data-epoch="0"] { --tc-portrait: #c4ebf5; --tc-card: #e9f7fc; --tc-btn: #8fd3ea; --tc-btn-text: var(--dark); }
 body[data-epoch="1"] { --tc-portrait: #ffc9d4; --tc-card: #ffedf1; --tc-btn: #f6a3b8; --tc-btn-text: var(--dark); }
 body[data-epoch="2"] { --tc-portrait: #6d3b6e; --tc-card: #3a2140; --tc-btn: #8a4d8b; --tc-btn-text: #fff4dc; }
@@ -406,7 +415,7 @@ body[data-epoch="4"] { --tc-portrait: #b8e3ff; --tc-card: #e8f6ff; --tc-btn: #8c
 body[data-epoch="5"] { --tc-portrait: #8ed4a6; --tc-card: #e4f6ea; --tc-btn: #6fc08c; --tc-btn-text: var(--dark); }
 body[data-epoch="6"] { --tc-portrait: #1b2a4a; --tc-card: #111a30; --tc-btn: #2d4c8a; --tc-btn-text: #fff4dc; }
 body[data-epoch="7"] { --tc-portrait: #3d5a8c; --tc-card: #1e2f4d; --tc-btn: #3d5a8c; --tc-btn-text: #fff4dc; }
-body[data-epoch="2"] .team-card, body[data-epoch="3"] .team-card, body[data-epoch="6"] .team-card, body[data-epoch="7"] .team-card { --tc-name: #fff4dc; --tc-role: #ffc9d4; --tc-trait: #e6d6c0; --tc-now: #8ed4a6; }
+body[data-epoch="2"] :is(.team-card, .dept, .expand-card), body[data-epoch="3"] :is(.team-card, .dept, .expand-card), body[data-epoch="6"] :is(.team-card, .dept, .expand-card), body[data-epoch="7"] :is(.team-card, .dept, .expand-card) { --tc-name: #fff4dc; --tc-role: #ffc9d4; --tc-trait: #e6d6c0; --tc-now: #8ed4a6; }
 .team-card .t-name, .team-card .t-lvl { color: var(--tc-name, var(--dark)); }
 .team-card .t-role { color: var(--tc-role, var(--red)); }
 .team-card .t-trait, .team-card .t-next { color: var(--tc-trait, var(--brown)); }
@@ -1010,11 +1019,27 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .np-toc { padding-left: 2.6em; list-style-position: outside; }
 .np-list li { margin-bottom: 7px; overflow-wrap: break-word; }
 .np-gift { display: block; width: 100%; margin: 8px 0 4px; padding: 10px 6px; font-size: clamp(8px, 2.4vw, 12px); line-height: 1.5; overflow-wrap: break-word; white-space: normal; }
-.np-guide-n { display: inline-block; min-width: 1.6em; color: #7a2230; }
+/* Плашки під лічильником (ціль, епоха, бонуси) — у кольорах епохи */
+.chip { background: var(--card, var(--cream)); }
+.chip.dark { background: color-mix(in srgb, var(--brown) 72%, #120d0b); color: var(--yellow); }
+.chip.quiet { background: color-mix(in srgb, var(--brown) 62%, transparent); color: var(--cream); }
+/* Насичені фони пошти розробників і лічильника: --vivid для кожної епохи (Еко — зеленіший, Японія — червоніша) */
+body { --vivid: #f0c36a; }
+body[data-epoch="0"] { --vivid: #8ccbea; } body[data-epoch="1"] { --vivid: #ffa3bf; } body[data-epoch="2"] { --vivid: #d79ae8; } body[data-epoch="3"] { --vivid: #b4a0f0; }
+body[data-epoch="4"] { --vivid: #8cc6f5; } body[data-epoch="5"] { --vivid: #86d996; } body[data-epoch="6"] { --vivid: #98a8e4; } body[data-epoch="7"] { --vivid: #86b0f0; } body[data-epoch="8"] { --vivid: #f0857a; }
+#hud { background: var(--vivid); }
+.np-page { background: color-mix(in srgb, var(--vivid) 88%, #fff); box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--vivid) 68%, #fff), inset 0 0 0 5px var(--brown); }
+.np-tab { background: color-mix(in srgb, var(--vivid) 82%, #000); }
+.np-tab.on { background: color-mix(in srgb, var(--vivid) 88%, #fff); box-shadow: 0 3px 0 color-mix(in srgb, var(--vivid) 88%, #fff); }
+.np-nav button { background: color-mix(in srgb, var(--vivid) 68%, #fff); }
+.np-fig, .np-mast .who canvas { background: color-mix(in srgb, var(--vivid) 82%, #000); }
+#npWrite { background: color-mix(in srgb, var(--vivid) 68%, #fff); }
+.np-guide-n { display: inline-block; min-width: 1.6em; color: var(--brown, #7a2230); }
+.np-in h3, .np-lead, .np-mast small { color: var(--brown, #7a2230); }
 /* Японія (епоха 8): тепла паперова тема меню, червоний акцент */
 body[data-epoch="8"] { --panel: #f2e4d0; --panel-dark: #d8c1a0; --card: #fff7ea; --honey: #c8102e; --mint: #2c6fbf; --brown: #1c2f5a; --glow: #ffc9d4; }
 body[data-epoch="8"] #sign { color: #fff7ea; text-shadow: 0 0 calc(var(--u) * 2) #ff5f7a, 0 0 calc(var(--u) * 4) #ff2a4a; }
-body[data-epoch="8"] .team-card { --tc-portrait: #f2e4d0; --tc-card: #fff7ea; --tc-btn: #c8102e; --tc-btn-text: #fff7ea; --tc-name: #1c2f5a; --tc-role: #c8102e; --tc-trait: #4a3228; --tc-now: #2c6fbf; }
+body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4d0; --tc-card: #fff7ea; --tc-btn: #c8102e; --tc-btn-text: #fff7ea; --tc-name: #1c2f5a; --tc-role: #c8102e; --tc-trait: #4a3228; --tc-now: #2c6fbf; }
 </style>
 <!--#part 030_body_open.html-->
 </head>
@@ -1071,8 +1096,8 @@ body[data-epoch="8"] .team-card { --tc-portrait: #f2e4d0; --tc-card: #fff7ea; --
   bootEl.style.background = SD.bg;
   bootEl.style.setProperty('--gr', SD.gr); bootEl.style.setProperty('--gb', SD.gb); bootEl.style.setProperty('--rd', SD.rd); bootEl.style.setProperty('--puff', SD.puff);
 
-  // ---- Капі із заставки (cutCapyHi + обличчя + чорний рюкзак), готові PNG ×4; бігунок: підскок, гойдання, ніжки й моргання; приладдя за сценою
-  var CUTCAPY = {"w":112,"h":96,"sets":{"base":"data:image/png;base64,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","rain":"data:image/png;base64,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","winter":"data:image/png;base64,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","time":"data:image/png;base64,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"},"blink":{"x":66,"y":24,"url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAKRJREFUSEtj3Nvi+Z8BD8iddhqfNF65yVmmOOUZqW0xPsuQXUG2xcRagMvLBC0mO5wJaBy1mFYhi2HuaFCPBjXNQoCoxEVKeU1siTayLN5/5DkDUT6mZkSDLAWBkWExzLd09/GAWIxsKU19rMJqAk+Td36fYaCZxcgWYcsFj59+hQvvuLWPOqmakKUgG5EtplpQjzyLQUGHz9eeE6czzAqJQ4ljAMhcfA1Ywg9sAAAAAElFTkSuQmCC"}};
+  // ---- Капі із заставки (cutCapyHi + обличчя), готові PNG ×4; бігунок: підскок, гойдання, ніжки й моргання; приладдя за сценою
+  var CUTCAPY = {"w":112,"h":96,"sets":{"base":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABgCAYAAADFNvbQAAAAAXNSR0IArs4c6QAABWVJREFUeF7t3b2KFEEQAOC5wEcQTjTcTBAFzUzMVIzEWIxFI5/B0EAUBSOfwMjgojMxU1AEE1kw0MMDQzEy8KjDPvt6+6eqpqpnero20r2e7rr6pnq6d/dmtwZ7NJ2Braajt+AHA2z8JDBAA2w8A42HbxVogI1noPHwrQINsPEMNB6+VaABNp6BxsO3CjTAdjNwfrX9F6L/uN4XOZGl+8NkViRwzEBzauMSHcbEhZTuj5KrrgBTieZCSvdHgXNtuwHEJttPYqoiJfvioPnHdA14Y7V9mIvX6/2xeSwez52eSx13ARhWjIMLk6MNqYFogJ6iNqAbShJy8YDY6nPJrYUotX0xQK8Cr1w+NTx4+SF52Xl050LpkhT9ea7PsZCLBkytFsNrIMC5RyzZXLhQUwPSAIdhkAS8/+zdRhU+uXvp2HOSkIsFxOzVoBJ9vLAKc5UXg0rNryFgrtqpC50uAB3EmOmRAhZCpgBzkNiV6iIBXfXFKihExF7fqIAltFi1hrFhEBcFGE6bNQA5UKWlLAVyMYAYPMo1rpRk7Z9jEbsE1E6+RP9dAVKqTyK5tfrAIDZdgVPD+QsbjWthapXqL26aBIzt8bCrSYnqSa1IP+/9HHYfXpcYYqOPVDWqAmI201K/bS1AwAMo9zh7+uThP/3nNBCrAtaEg+TVwoOxUoAOEUC1ptMYomgFLhnO4YXV5iqQ+uoLZ+ZRBayJV7Pi/ERTXo2pVYViFTj1woJzRlOP0QZ88/ZHMaTwDWcRwKmX88XfWqhBbvUJQ/jTKaUCMXDuVxAF7AXOJU8akAInDtgbXgnRL3JM9XHwYAyxCjTA9Lw8FtAhxT7+KALYKx6mCqXw3Fgh4ijA3uHCmuO+FpqbPkMgMUDDk1nKYq59KlOoAfIAVycuHh24/vN+wADmRmJNoYaHx/PBYkd92/t99PTOl118x/9akgANjpbfEh705gPC/6mIaEDDo+FBawOk52xWR8wG0KqPf17kEK89fj68uHUbfQ189en7cPPcmWPBoKZQA+QDhkf6oAAIjxAlNhrgxdoWAQ1PDi/Wk7/5j0E6uBS0Aer6FHuHfaCPlDogVaUGWEyxbgN/Ix+DzE2vIR58vHDjDV2bQusBUkcyQGrGFNpzX0qL4UF4VoEKSLkuDbBywqWH4wCmqs8qUFoH0R8FMAfnhrIpFJF0ySYYwNi9alJ/rWuAAjpf938le3m6sxYYIX1PUwMcmd4p8ewaOBIPDtcEZN3kwDbydNUQcey0iYGzRQzdCXVE7i5MFBjUYLaRx6YJ3y4GqAFnFYg3IbU0QFK65tcYc2cJyahtGyGZzWHYuN+o5vQZ3UbAk7YS5anWrj4D5Dklj5oNoFUhXXYKvGQFGuACAA0RjzhV9WUr0AAXAGiIZcQpq69YgQZ4HDD2zkP4wrX2vi88pVD3iel9X0h5y8gAy7NW9RbNA/Y8lebwIC9NTKFTAZaSFytFSKjUzfBggXLv6ipb8c0A1kTkwMWqgQvpryxzgFPjoVahsdNPe1EjBehip0IuHlCzGjl4mM+gYBHDfV2sAmPj1V59upMTtY3QqkJIVurrUN2YUl/IyAUs3SnJxdkc4JgqDM/yWt9pi0EsxUb51HSN/Q67Ag3wP89U1cdexPhnFnVBk/vYXY2vBS9VYSy+XFxT4qkAal7TsMnK3YBdOj5sTFrT6agp1AUVJkz6msZNUgpSKj5uXJKYswaUSpDWCSYV3xhQEcDYggae417TNBITq8Y5xcdFVAWkBqUBl5rmqbFBe834OPGILGJyK1JsULUSw/12mVrxYfPltxOrQA7kVInBQk4VHwVSBbA0bc0lMSnIucSHgTwA0Lh9FABvsWMAAAAASUVORK5CYII=","rain":"data:image/png;base64,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","winter":"data:image/png;base64,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","time":"data:image/png;base64,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"},"blink":{"x":66,"y":24,"url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAKRJREFUSEtj3Nvi+Z8BD8iddhqfNF65yVmmOOUZqW0xPsuQXUG2xcRagMvLBC0mO5wJaBy1mFYhi2HuaFCPBjXNQoCoxEVKeU1siTayLN5/5DkDUT6mZkSDLAWBkWExzLd09/GAWIxsKU19rMJqAk+Td36fYaCZxcgWYcsFj59+hQvvuLWPOqmakKUgG5EtplpQjzyLQUGHz9eeE6czzAqJQ4ljAMhcfA1Ywg9sAAAAAElFTkSuQmCC"}};
   var cset = { night: 'base', dawn: 'base', rain: 'rain', snow: 'winter', time: 'time' }[scene];
   var cp = document.getElementById('bootCapy'), cK = Math.max(1.4, Math.min(2.2, Math.min(VW, VH) / 270)), CW = Math.round(CUTCAPY.w * cK), CH = Math.round(CUTCAPY.h * cK);
   cp.style.width = CW + 'px'; cp.style.height = CH + 'px'; cp.style.marginLeft = (-CW / 2) + 'px';
@@ -3531,13 +3556,26 @@ function makeCapyOldDetail(kind) {
     for (let y = 21; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y)) put(x, y, y === 21 ? 'N' : 'f');
     outlineAll('uVkNfwTprn', 'O');
   } else if (kind === 'ep8') {
+    // Японія: кімоно з коміром, візерунком сакури, хвилями на подолі, рукавом-фурісоде й оби з бантом; солом'яне кацу зі шнурком і квіткою; віяло, ґета
     suit(['w', 'r', 'r', 'r', 'r', 'r', 'r', 'R', 'R'], 'w', 'R');
-    for (let x = 12; x <= 25; x++) { if (isFur(x, 13) || at(x, 13) === 'r') put(x, 13, 'n'); if (isFur(x, 14) || at(x, 14) === 'r') put(x, 14, 'n'); }
-    put(18, 13, 'h'); put(19, 13, 'h'); put(18, 14, 'h');
-    art(21, 10, ['rrr', 'rwr', '.d.']);
-    cone([[0, 6, 10], [1, 4, 12], [2, 3, 13], [3, 2, 14], [4, 1, 15], [5, 0, 16]], ['h', 'y', 'c']);
-    rect(0, 16, 6, 6, 'l'); rect(2, 14, 7, 7, 'r'); put(7, 6, 'p'); put(9, 5, 'q'); put(3, 8, 'p'); put(14, 8, 'q'); put(24, 8, 'p');
-    outlineAll('wrRnhycldpq', 'O');
+    for (let x = 12; x <= 18; x++) if (isFur(x, 10) || at(x, 10) === 'r') put(x, 10, 'p');              // внутрішній рожевий комір
+    for (let x = 12; x <= 25; x++) { if (isFur(x, 13) || at(x, 13) === 'r') put(x, 13, 'n'); if (isFur(x, 14) || at(x, 14) === 'r') put(x, 14, 'n'); }   // оби
+    for (let x = 14; x <= 24; x += 4) { put(x, 13, 'h'); put(x + 2, 14, 'h'); }                          // золота парча на поясі
+    for (let x = 12; x <= 25; x++) { const a = x % 4 === 1 || x % 4 === 2; if (at(x, 16) === 'R' || at(x, 16) === 'r' || isFur(x, 16)) put(x, 16, a ? 'w' : 'R'); if (at(x, 17) === 'R' || isFur(x, 17)) put(x, 17, a ? 'R' : 'w'); }   // хвилі сейгайха на подолі
+    plus(14, 11, 'q', 'y'); plus(22, 11, 'q', 'y'); put(14, 15, 'q'); put(23, 15, 'q');                  // сакура на тканині
+    rect(16, 20, 11, 16, 'R'); rect(16, 16, 11, 15, 'r'); rect(16, 20, 16, 16, 'w'); put(18, 12, 'q'); put(19, 14, 'q'); put(18, 15, 'w'); put(17, 13, 'w');   // довгий рукав із білою підкладкою
+    rect(24, 26, 11, 16, 'n'); put(25, 13, 'h'); put(25, 14, 'h'); put(24, 11, 'h'); art(24, 17, ['nn', 'nn', 'n.', 'n.']);   // бант оби й кінці стрічки
+    art(22, 3, ['.www.', 'wrrww', 'wrrww', 'wwwww', '.www.', '..d..', '..d..']);                          // віяло-учіва з червоним колом
+    // капелюх-каса: плетена солома зі світлою лівою і темною правою стороною, ґудзик угорі
+    const spec = [[0, 6, 10], [1, 4, 12], [2, 3, 13], [3, 2, 14], [4, 1, 15], [5, 0, 16]];
+    spec.forEach(([y, x0, x1]) => { for (let x = x0; x <= x1; x++) put(x, y, x - x0 < 2 ? 'y' : x1 - x < 2 ? 'c' : (x + y) % 3 === 0 ? 'y' : 'h'); });
+    rect(7, 9, 0, 0, 'd'); rect(0, 16, 6, 6, 'l'); for (let x = 2; x <= 14; x += 3) put(x, 6, 'c');       // ґудзик і тінь від крисів
+    rect(2, 14, 7, 7, 'r'); put(8, 7, 'w'); put(5, 7, 'h'); put(11, 7, 'h');                             // червона пов'язка-хатімакі з білим колом
+    for (let y = 8; y <= 14; y++) put(13, y, 'r'); put(12, 15, 'r'); put(14, 15, 'r'); put(13, 16, 'r');   // шнурок під підборіддя з бантом
+    plus(13, 3, 'p', 'y'); put(3, 4, 'q'); put(15, 3, 'p');                                              // сакура на капелюсі
+    put(6, 10, 'p'); put(7, 10, 'p');                                                                    // рум'янець
+    put(9, 21, 'r'); put(10, 21, 'r'); put(19, 21, 'r'); put(20, 21, 'r'); put(9, 22, 'w'); put(19, 22, 'w');   // ремінці ґета й таби
+    outlineAll('wrRnhycldpqJ', 'O');
   }
   let maxX = 26 + ox; grid.forEach(r => r.forEach((c, x) => { if (c !== '.' && x > maxX) maxX = x; }));
   return grid.map(row => '.' + row.slice(0, maxX + 1).reverse().join(''));
@@ -3625,6 +3663,9 @@ function syncEpochEarned() {
   state.epochSeen = state.totalEarned;
 }
 function coinSprite() { return 'coin_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
+// Колір іскор і цифри «+N» при тапі в стилі монети епохи: [іскра 1, іскра 2, цифра] (літери PALETTE)
+const COIN_INK = [['h', 'y', 'y'], ['T', 'w', 'T'], ['f', 'w', 'f'], ['v', 'T', 'T'], ['a', 'w', 'a'], ['g', 'm', 'm'], ['E', 'w', 'E'], ['f', 'T', 'f'], ['h', 'y', 'y']];
+function coinInk() { return COIN_INK[viewEpoch() % COIN_INK.length] || COIN_INK[0]; }
 function gemSprite() { return 'gem_' + (viewEpoch() % EPOCH_COIN_ROWS.length); }
 function refreshCoinIcon() {
   const g = ui.coinIcon.getContext('2d');
@@ -5822,6 +5863,7 @@ function buildGroundLayer() {
   const trees = treeSpots(x0, W);
   houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 28));      // двері, закриті деревом, не використовуються: звірята туди не заходять
   houseGlass = houseGlass.filter(r => !windowHidden(r, trees));        // вікна, закриті деревами чи магазином, не світяться й не блимають привидами
+  if (typeof ARCH !== 'undefined' && ARCH.japan && ARCH.japan.filterNeon) ARCH.japan.filterNeon(r => !windowHidden(r, trees));      // неонові вивіски Японії, закриті деревами чи магазином, уночі не світяться
   houseLit = buildLitLayer(houseGlass);
   return c;
 }
@@ -10832,9 +10874,10 @@ function spawnTapEffects(x, y) {
   for (let i = 0; i < n; i++) {
     fx.coins.push({ x: x + rand(-6, 6), y: y - 4, vx: rand(-45, 45), vy: rand(-125, -70), age: 0, life: rand(0.7, 1.0), spin: rand(0, 4) });
   }
+  const ink = coinInk();
   for (let i = 0; i < 5; i++) {
     const a = rand(0, Math.PI * 2), sp = rand(30, 70);
-    fx.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.25, 0.4), col: i % 2 ? 'y' : 'w' });
+    fx.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.25, 0.4), col: i % 2 ? ink[0] : ink[1] });
   }
   while (fx.coins.length > CONFIG.MAX_COIN_PARTICLES) fx.coins.shift();
   while (fx.sparks.length > (ecoOn() ? CONFIG.MAX_SPARKS >> 1 : CONFIG.MAX_SPARKS)) fx.sparks.shift();
@@ -10846,6 +10889,7 @@ function spawnFloater(x, y, text) {
   const el = document.createElement('div');
   el.className = 'floater';
   el.textContent = text;
+  if (/^\+[\d.,]/.test(text) && text.indexOf(GEM_CH) < 0) el.style.color = PALETTE[coinInk()[2]] || '';      // «+N» монет — у кольорі монети епохи
   el.style.left = pctX(x) + '%';
   el.style.top = pctY(y) + '%';
   el.addEventListener('animationend', () => el.remove());
@@ -15534,6 +15578,12 @@ function drawNightLights() {
     ctx.globalAlpha = L * (state.events.mailPending ? 0.18 + 0.1 * Math.sin(animClock * 5) : 0.1); disc(ctx, bx, by, 14, 'T');
     if (mail.state === 'arriving' || mail.state === 'leaving') { ctx.globalAlpha = L * 0.22; disc(ctx, Math.round(mail.x) - 18, mailRoadY() - 6, 9, 'y'); ctx.globalAlpha = L * 0.1; R(ctx, Math.round(mail.x) - 44, mailRoadY() - 8, 26, 5, 'y'); }
   }
+  if (state.circus.phase >= 2 && !build) {                            // цирк вночі м'яко світиться: шатро не тьмяніє під затемненням, тепле сяйво й пляма світла на землі
+    const s = circus.setup === undefined ? 0 : circus.setup, cx = Math.round(circus.x), cy = circusY(), pulse = 0.9 + 0.1 * Math.sin(animClock * 1.7);
+    ctx.globalAlpha = L * 0.55 * s; ctx.drawImage(circusCanvas, cx - 80, cy - 76);
+    for (let i = 0; i < 6; i++) { const hw = 70 - i * 9; ctx.globalAlpha = L * 0.045 * pulse * s; R(ctx, cx - hw, cy - 5 + i * 2, hw * 2, 3, 'y'); }
+    [[58, 0.035], [46, 0.05], [34, 0.07]].forEach(([r, al]) => { ctx.globalAlpha = L * al * pulse * s; disc(ctx, cx, cy - 36, r, 'y'); });
+  }
   ctx.globalAlpha = 1;
   drawEpochGlow(animClock);
 }
@@ -16214,7 +16264,7 @@ function updateCircus(dt) {
   const c = state.circus, now = Date.now();
   circus.t += dt;
   // уже стоїть/їде візок — вигляд за поточною епохою (у Японії лапшична, не цирк), поки вікно гри закрите
-  if (c.phase > 0 && !c.hag && ui.circusModal.hidden) c.noodle = curEpoch() === 8 ? 1 : 0;
+  if (c.phase > 0 && !c.hag && ui.circusModal.hidden) c.noodle = viewEpoch() === 8 ? 1 : 0;
   const dayMs = CONFIG.DAY_SECONDS * 1000;
   if (!c.next) c.next = now + CONFIG.CIRCUS_FIRST_MINUTES * 60000;
   if (!circus.inited) {                           // після перезапуску цирк уже стоїть розкладений (або від'їжджає)
@@ -16224,7 +16274,7 @@ function updateCircus(dt) {
     if (c.phase === 3) circus.setup = 1;
   }
   if (c.phase === 0) {
-    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * (1.0 + 0.6 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; c.noodle = (!c.hag && curEpoch() === 8) ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : c.noodle ? 'noodleTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : c.noodle ? 'noodleBang' : 'circusBang'), 'good'); saveGame(); }
+    if (now >= c.next && circusQuiet() && mail.state === 'idle') { c.next = now + dayMs * (1.0 + 0.6 * Math.random()); c.phase = 1; c.spun = 0; c.hag = theme.season === 'halloween' ? 1 : 0; c.noodle = (!c.hag && viewEpoch() === 8) ? 1 : 0; circus.bangT = 0; hagFly.on = false; hagFly.fast = false; hagFly.wait = 1.2; playSfx(c.hag ? 'hagTheme' : c.noodle ? 'noodleTheme' : 'circusMarch'); showToast(t(c.hag ? 'hagBang' : c.noodle ? 'noodleBang' : 'circusBang'), 'good'); saveGame(); }
   } else if (c.phase === 1) {                      // «!» чекає на тап, а з часом зникає (гравець сам вирішує, чи тикати)
     circus.bangT += dt;
     if (circus.bangT > CONFIG.CIRCUS_BANG_SECONDS) { c.phase = 0; saveGame(); }
@@ -16667,7 +16717,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 22;
+const NEWS_VERSION = 23;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -16863,7 +16913,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Епічне будівництво! Тепер кожну епоху магазин будують по-своєму: у Відродженні — ангели, у Диско — танцюристи й дзеркальна куля, в Аркадах — тетріс і Пакман, в Інтернеті — хмара й дрони, у Космосі — тарілка й астронавти, в Японії — дракон і журавлики. Тапай по екрану під час будівництва — команда працюватиме швидше! Ще: цирк і музика під кожну епоху, лапшична діда Рьо в Японії, а на горизонтальному екрані при закритому меню внизу зліва є маленький «−»: він ховає лічильники й написи, а «+» повертає їх. Стрілки камери тепер дрібні й прозорі. Бонусна епоха «Японія»! Після Неону час несе в країну вранішнього сонця: дерев’яні будинки з дашками, сакура, паперові ліхтарі й дракон, що літає над містом. У неї свій перехід, 8 нових глав, лисиця Сора з чайним будиночком і новий помічник, олениця Нара. Годинникова вежа тепер у стилі кожної епохи й стоїть просто на даху.',
+    newH: 'Що нового', new: 'Бонусна епоха «Японія»! Після Неону час несе в країну вранішнього сонця: дерев’яні будинки з дашками, сакура, паперові ліхтарі, неонові вивіски, що світяться вночі, і дракон, який літає над містом і сам злітає до будівництва. У неї свій перехід, 8 нових глав, лисиця Сора з чайним будиночком, олениця Нара, лапшична діда Рьо замість цирку й Капі в кімоно. Попереду — нові бонусні епохи: дивись розділ «Скоро».',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -16871,7 +16921,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'Epic building! Every era now builds the shop its own way: angels in the Renaissance, dancers and a mirror ball in Disco, tetris and Pac-Man in Arcade, a cloud and drones on the Internet, a saucer and astronauts in Space, a dragon and cranes in Japan. Tap the screen while it is being built to make the crew work faster! Also: a circus and music for every era, Grandpa Ryo\'s noodle stall in Japan, and on a wide screen with the menu closed a small “−” at the bottom left hides the counters and labels, and “+” brings them back. The camera arrows are now small and transparent. The bonus era “Japan”! After Neon, time carries you to the land of the rising sun: wooden houses with little roofs, sakura, paper lanterns and a dragon flying over town. It has its own travel animation, 8 new chapters, Sora the fox with her tea house and a new helper, Nara the doe. The clock tower now matches every era and stands right on the roof.',
+    newH: 'What is new', new: 'The bonus era “Japan”! After Neon, time carries you to the land of the rising sun: wooden houses with little roofs, sakura, paper lanterns, neon signs that glow at night, and a dragon that flies over town and swoops down to the building site. It has its own travel animation, 8 new chapters, Sora the fox with her tea house, Nara the doe, Grandpa Ryo’s noodle stall instead of the circus, and Capy in a kimono. More bonus eras are on the way: see “Coming soon”.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
@@ -16996,6 +17046,7 @@ function newsReveal() {                                                         
   const W = host.clientWidth, H = host.clientHeight - 36; if (W < 40 || H < 40) return;
   const B = 12, cols = Math.ceil(W / B), rows = Math.ceil(H / B);
   cv = document.createElement('canvas'); cv.id = 'npReveal'; cv.width = cols; cv.height = rows; host.appendChild(cv);
+  const pg0 = ui.newsBody.querySelector('.np-page'), paperCol = (pg0 && getComputedStyle(pg0).backgroundColor) || '#f6edd2';
   const g = cv.getContext('2d'), noise = new Float32Array(cols * rows).map((_, i) => ((i * 2654435761) >>> 8) % 100 / 100);
   const pages = ui.newsBody; pages.style.opacity = '0';
   const t0 = performance.now(), D = 950, maxD = Math.hypot(cols / 2 * (H / W), rows / 2) + 1;
@@ -17007,7 +17058,7 @@ function newsReveal() {                                                         
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
       if (!fill(x, y)) continue;
       const edge = !(fill(x - 1, y) && fill(x + 1, y) && fill(x, y - 1) && fill(x, y + 1));
-      g.fillStyle = edge ? '#2a1d1a' : '#f6edd2'; g.fillRect(x, y, 1, 1);
+      g.fillStyle = edge ? '#2a1d1a' : paperCol; g.fillRect(x, y, 1, 1);
     }
     const a = Math.max(0, (k - 0.45) / 0.55); pages.style.opacity = String(a * a * (3 - 2 * a));
     cv.style.opacity = k < 0.8 ? '1' : String(Math.max(0, 1 - (k - 0.8) / 0.2));
@@ -20062,6 +20113,7 @@ function frame(now) {
     P(g, x, y, 1, 1, '#ffffff'); P(g, x + w - 1, y + h - 1, 1, 1, '#ffffff');
   }
   function neonText(g, draw, c) { A(g, 0.32, () => { draw(-1, 0, c); draw(1, 0, c); draw(0, 1, c); }); draw(0, 0, mixc(c, '#ffffff', 0.6)); }   // літери: сяйво навколо + світла серцевина
+  let neonSigns = [], neonOwner = null, neonLayer = null;      // неонові вивіски будинків: уночі світяться окремим шаром (скидається разом із houseGlass)
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   let fujiC = null, fujiT = null, fujiKey = '';
@@ -20216,6 +20268,7 @@ function frame(now) {
   function house(g, spec, lamps) {
     const { x, w, h } = spec, base = LAYOUT.horizonY, top = base - h, hs = hash2(x + 17, h), S = WOOD[(hs >>> 3) % WOOD.length];
     houseGlass = houseGlass || []; houseDoors = houseDoors || [];
+    if (neonOwner !== houseGlass) { neonOwner = houseGlass; neonSigns = []; neonLayer = null; }
     const CAP = 9, tb = top - 4 - CAP - 1, winter = buildSeason === 'winter';
     P(g, x, top, w, h, S[0]); P(g, x, top, w, 1, DKW); P(g, x, top, 1, h, DKW); P(g, x + w - 1, top, 1, h, DKW);
     A(g, 0.4, () => { for (let xx = x + 3; xx < x + w - 1; xx += 4) P(g, xx, top + 1, 1, h - 1, S[2]); });
@@ -20258,9 +20311,11 @@ function frame(now) {
         else if (k === 3) { P(g, wx + 2, y0 + 12, 1, 5, '#d3342c'); D(g, wx + 2, y0 + 15, 2, '#d3342c'); D(g, wx + 2, y0 + 15, 1, '#ffd45c'); }
       }
     }
-    if (hasK) { P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); neonBox(g, sx, sy, 14, sh, kb[0]); neonText(g, (dx, dy, col) => vtext(g, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]); }
+    if (hasK) { P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); neonBox(g, sx, sy, 14, sh, kb[0]); neonText(g, (dx, dy, col) => vtext(g, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]);
+      neonSigns.push({ x: sx, y: sy, w: 14, h: sh, c: kb[0], draw: g2 => { neonBox(g2, sx, sy, 14, sh, kb[0]); neonText(g2, (dx, dy, col) => vtext(g2, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]); } }); }
     P(g, gx - 2, gy - 3, gw + 4, 2, TILE[1]); P(g, gx - 2, gy - 3, gw + 4, 1, TILE[2]); P(g, gx - 3, gy - 4, 1, 2, TILE[1]); P(g, gx + gw + 2, gy - 4, 1, 2, TILE[1]);   // тонкий навіс над вивіскою (нижче вікон верхнього поверху)
     neonBox(g, gx, gy, gw, 14, kh[0]); neonText(g, (dx, dy, col) => text(g, wh, gx + 3 + dx, gy + 1 + ((11 - gsz) >> 1) + dy, col, gsz, true), kh[0]);
+    neonSigns.push({ x: gx, y: gy, w: gw, h: 14, c: kh[0], draw: g2 => { neonBox(g2, gx, gy, gw, 14, kh[0]); neonText(g2, (dx, dy, col) => text(g2, wh, gx + 3 + dx, gy + 1 + ((11 - gsz) >> 1) + dy, col, gsz, true), kh[0]); } });
     houseDoors.push({ x: doorX + 5, y: base });
     P(g, doorX, base - 14, 10, 14, DKW); P(g, doorX + 1, base - 13, 8, 13, '#e8dcb8'); A(g, 0.7, () => { P(g, doorX + 4, base - 13, 1, 13, '#4a3020'); for (let k = -10; k < 0; k += 3) P(g, doorX + 1, base + k, 8, 1, '#4a3020'); });
     ['#1c3a78', '#f4ece0', '#1c3a78'].forEach((c, i) => { P(g, doorX - 1 + i * 4, base - 17, 4, 6, c); P(g, doorX - 1 + i * 4, base - 17, 4, 1, DKW); });
@@ -20379,9 +20434,18 @@ function frame(now) {
     for (let k = 0; k < 14; k++) { const wx = hx + dir * (14 + k * 2), wy = hy + 6 + Math.round(Math.sin(t * 3 + k * 0.5) * 3) + k * 0.4; P(g, wx, wy, 2, 1, '#ffd24a'); P(g, wx, wy - 7 - Math.round(Math.sin(t * 3 + k * 0.4) * 2), 2, 1, '#ffe08a'); }
     const px = hx + dir * 36, py = hy + 8 + Math.sin(t * 2) * 2; g.globalAlpha = 0.25 * GA; D(g, Math.round(px), Math.round(py), 7, '#fff2b0'); g.globalAlpha = GA; g.drawImage(ball(3, '#ffffff'), Math.round(px - 5), Math.round(py - 5));
   }
+  function neonNight() {                                  // уночі вивіски світяться яскравіше за затемнення, з ореолом і легким мерехтінням
+    const Lm = sky.lamp; if (!neonSigns.length || Lm <= 0.02) return;
+    if (!neonLayer) {
+      const { c, g } = newLayer();
+      neonSigns.forEach(s => { A(g, 0.1, () => P(g, s.x - 7, s.y - 7, s.w + 14, s.h + 14, s.c)); A(g, 0.17, () => P(g, s.x - 4, s.y - 4, s.w + 8, s.h + 8, s.c)); s.draw(g); });
+      neonLayer = c;
+    }
+    ctx.globalAlpha = Math.min(1, Lm) * (0.92 + 0.08 * Math.sin(animClock * 3.1)); ctx.drawImage(neonLayer, -view.offX, -view.offY); ctx.globalAlpha = 1;
+  }
   function skyExtra(time, noFly) {
     const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
-    if (!noFly) { dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }
+    if (!noFly) { if (!build) dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }       // під час будівництва той самий дракон літає біля будинку (278)
     const nP = Math.min(420, Math.round(90 * Math.max(1, W / Math.max(200, visR() - visL()))));      // лепестки теж у світі; щільність на екрані та сама
     for (let i = 0; i < nP; i++) { const hs = hash2(i * 13, 5), px = wl + ((hs % 1000) / 1000 * W + time * (6 + hs % 5)) % W, py = top + 8 + (((hs >>> 10) % 1000) / 1000 * 170 + time * (8 + hs % 6)) % 170; P(g, Math.round(px), Math.round(py), 2, 1, '#ffc9d4'); P(g, Math.round(px) + (hs % 2), Math.round(py) + 1, 1, 1, '#ef8fa3'); }
   }
@@ -20449,9 +20513,12 @@ function frame(now) {
       }
       c.drawImage(fujiT, 0, 0);
     },
+    filterNeon(keep) { neonSigns = neonSigns.filter(s => keep([s.x, s.y, s.w, s.h])); neonLayer = null; },
+    skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
     drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),          // той самий дракон, що в небі (використовує будівництво, 278)
     nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
-      const n = sky.night; if (noFly || n < 0.05) return;
+      neonNight();
+      const n = sky.night; if (noFly || n < 0.05 || build) return;
       const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24);
       GA = Math.min(0.5, n * 0.55); ctx.globalAlpha = GA;
       dragon(ctx, time, wl, wr, top + 12, span, n);
@@ -21814,11 +21881,15 @@ function buildThemeRender() { return BTH.render(); }
   }
   function dragon(G, t, mode) {
     const base = G.base, y0 = Math.min(G.top - 60, base - 165);
+    const sky = ARCH.japan.skyPath(), clock = animClock;
     const rx = (G.x1 - G.x0) * 0.5 + 24, spiral = G.q > 0 ? smooth01(c01(G.q / 0.55)) : 0;
     const pos = tt => {
       let x = G.cx + Math.sin(tt * 0.62) * rx * (1 - spiral * 0.75), y = y0 + Math.sin(tt * 1.3) * 20 - spiral * 40;
-      if (G.p < G.A) { const s = smooth01(c01(G.p / G.A)); x = lerp(visR() + 120 + (tt - t) * 40, x, s); y = lerp(y0 - 130, y, s); }
       if (spiral > 0) { const a = tt * 4.2; x = lerp(x, G.cx + Math.cos(a) * 34, spiral); y = lerp(y, G.roof - 42 + Math.sin(a) * 12 - (tt - t) * 14 * 0, spiral); }
+      // той самий дракон, що літає в небі: на початку злітає з небесного маршруту вниз до будівництва, наприкінці повертається в небо
+      const sp = sky(clock + (tt - t)), s1 = smooth01(c01(t / 3)), s2 = G.p > 0.7 ? smooth01(c01((G.p - 0.7) / 0.3)) : 0;
+      x = lerp(sp[0], x, s1); y = lerp(sp[1], y, s1);
+      if (s2 > 0) { x = lerp(x, sp[0], s2); y = lerp(y, sp[1], s2); }
       return [x, y];
     };
     ARCH.japan.drawDragon(ctx, t, pos);                       // той самий дракон, що літає в небі (3D-кульки, голова, вогонь із пащі)

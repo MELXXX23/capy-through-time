@@ -541,9 +541,10 @@ function spawnTapEffects(x, y) {
   for (let i = 0; i < n; i++) {
     fx.coins.push({ x: x + rand(-6, 6), y: y - 4, vx: rand(-45, 45), vy: rand(-125, -70), age: 0, life: rand(0.7, 1.0), spin: rand(0, 4) });
   }
+  const ink = coinInk();
   for (let i = 0; i < 5; i++) {
     const a = rand(0, Math.PI * 2), sp = rand(30, 70);
-    fx.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.25, 0.4), col: i % 2 ? 'y' : 'w' });
+    fx.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, age: 0, life: rand(0.25, 0.4), col: i % 2 ? ink[0] : ink[1] });
   }
   while (fx.coins.length > CONFIG.MAX_COIN_PARTICLES) fx.coins.shift();
   while (fx.sparks.length > (ecoOn() ? CONFIG.MAX_SPARKS >> 1 : CONFIG.MAX_SPARKS)) fx.sparks.shift();
@@ -555,6 +556,7 @@ function spawnFloater(x, y, text) {
   const el = document.createElement('div');
   el.className = 'floater';
   el.textContent = text;
+  if (/^\+[\d.,]/.test(text) && text.indexOf(GEM_CH) < 0) el.style.color = PALETTE[coinInk()[2]] || '';      // «+N» монет — у кольорі монети епохи
   el.style.left = pctX(x) + '%';
   el.style.top = pctY(y) + '%';
   el.addEventListener('animationend', () => el.remove());

@@ -147,6 +147,7 @@ function buildGroundLayer() {
   const trees = treeSpots(x0, W);
   houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 28));      // двері, закриті деревом, не використовуються: звірята туди не заходять
   houseGlass = houseGlass.filter(r => !windowHidden(r, trees));        // вікна, закриті деревами чи магазином, не світяться й не блимають привидами
+  if (typeof ARCH !== 'undefined' && ARCH.japan && ARCH.japan.filterNeon) ARCH.japan.filterNeon(r => !windowHidden(r, trees));      // неонові вивіски Японії, закриті деревами чи магазином, уночі не світяться
   houseLit = buildLitLayer(houseGlass);
   return c;
 }
