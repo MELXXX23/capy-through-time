@@ -28,12 +28,14 @@ function drawSkyScreen(time) {
     }
     ctx.globalAlpha = 1;
   }
-  if (theme.season === 'halloween') { drawSkyBody('hmoon', Math.round(viewCrop.x + viewCrop.w * 0.2 - (viewCrop.x - (view.w - viewCrop.w) / 2) * 0.1), Math.max(32, hor - 96)); return; }
+  const EA = ARCH[currentEpoch().id], arcRx = EA && EA.sunRx ? EA.sunRx(W) : W * 0.44, front = () => { if (EA && EA.skyFront) EA.skyFront(ctx); };      // епоха може малювати гору поверх сонця й місяця
+  if (theme.season === 'halloween') { drawSkyBody('hmoon', Math.round(viewCrop.x + viewCrop.w * 0.2 - (viewCrop.x - (view.w - viewCrop.w) / 2) * 0.1), Math.max(32, hor - 96)); front(); return; }
   // сонце вдень, місяць уночі: рухаються дугою зліва направо
   const a = dayNightOn() ? (state.dayPhase - 0.25) * Math.PI * 2 : Math.PI * 0.42;
-  const arcH = Math.min(hor - 26, 190), rx = W * 0.44;
+  const arcH = Math.min(hor - 26, 190), rx = arcRx;
   if (Math.sin(a) > -0.25) drawSkyBody('sun', W / 2 - Math.cos(a) * rx, hor - Math.sin(a) * arcH);
   if (dayNightOn() && -Math.sin(a) > -0.25) drawSkyBody('moon', W / 2 + Math.cos(a) * rx, hor + Math.sin(a) * arcH);
+  front();
 }
 // Затемнення всієї сцени вночі й тепле світло в сутінки (координати «ядра»)
 function drawNightShade() {

@@ -33,6 +33,7 @@
   function neonText(g, draw, c) { A(g, 0.32, () => { draw(-1, 0, c); draw(1, 0, c); draw(0, 1, c); }); draw(0, 0, mixc(c, '#ffffff', 0.6)); }   // літери: сяйво навколо + світла серцевина
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
+  let fujiC = null, fujiT = null, fujiKey = '';
   function buildSky() {
     const { c, g } = newLayer();
     const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
@@ -47,6 +48,7 @@
         g.fillStyle = 'rgb(' + cc[0] + ',' + cc[1] + ',' + cc[2] + ')'; g.fillRect(x, y, 1, 1);
       }
     }
+    { const L2 = newLayer(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, 315, 600); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
     for (let i = 0; i < 9; i++) { const hs = hash2(i * 31, 9), cx = x0 + (hs % W), cy = top + rows * (0.4 + (hs >>> 8) % 40 / 100), ww = 40 + hs % 70; g.globalAlpha = 0.22; R(g, cx, cy, ww, 2, '#ffffff'); R(g, cx + 8, cy + 2, ww - 16, 1, '#ffd0d8'); g.globalAlpha = 1; }
@@ -54,38 +56,29 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
-  function fuji(g, cx, bY, H, hw) {                       // Фудзі: піксель 2×2, м'який дизер, темний контур силуету і контур снігу; світло зліва, тіньова грань, вузькі снігові смуги
-    const B = 2, OUT = '#3b3a78', SOUT = '#6a78b8';
-    const SN = ['#ffffff', '#eef3ff', '#cdd9f4', '#a6b6e0'], RK = ['#9097cc', '#7b83bb', '#6770a8', '#555d94', '#444a7c'], WARM = ['#8a7fa6', '#776c92', '#645a7e'];
-    const bay = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+  function fuji(g, cx, bY, H, hw) {                       // Фудзі: плоскі кольори (сніг білий, гора один колір), чіткий контур 2 px і гори, і снігу; піксель 2×2
+    const B = 2, T = 2 * B, OUT = '#2c2b66', SOUT = '#3d4a9a', ROCK = '#7077b8', SNOW = '#ffffff';
     const heightAt = dx => Math.round(Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3)) / B) * B;
     const snowEndAt = dx => {
-      const nx = dx / hw, streak = Math.pow(Math.max(0, Math.sin(dx * 0.13 + 1)), 6) * 26 + Math.pow(Math.max(0, Math.sin(dx * 0.071 + 2.3)), 8) * 34;
-      return bY - H * 0.68 + 9 * Math.sin(dx * 0.045 + 0.6) + 5 * Math.sin(dx * 0.11 + 2) + 3 * Math.sin(dx * 0.27) + (nx < 0.1 ? streak : streak * 0.4);
+      const nx = dx / hw, streak = Math.pow(Math.max(0, Math.sin(dx * 0.11 + 1)), 6) * 26 + Math.pow(Math.max(0, Math.sin(dx * 0.061 + 2.3)), 8) * 34;
+      return bY - H * 0.7 + 9 * Math.sin(dx * 0.04 + 0.6) + 5 * Math.sin(dx * 0.1 + 2) + (nx < 0.1 ? streak : streak * 0.4);
     };
+    const isSnow = (y, e) => y + B / 2 < e;
     for (let bx = -hw; bx <= hw; bx += B) {
-      const dx = bx + B / 2, nx = dx / hw, hh = heightAt(dx);
+      const dx = bx + B / 2, hh = heightAt(dx);
       if (hh < B) continue;
-      const gul = Math.sin(dx * 0.071) * 0.5 + Math.sin(dx * 0.173 + 1.7) * 0.35 + Math.sin(dx * 0.031 + 3) * 0.4;
-      const sE = snowEndAt(dx), sL = snowEndAt(dx - B), sR = snowEndAt(dx + B), hL = heightAt(dx - B), hR = heightAt(dx + B);
+      const sE = snowEndAt(dx), sL = snowEndAt(dx - T), sR = snowEndAt(dx + T);
       for (let y = bY - B; y >= bY - hh; y -= B) {
-        const th = bay[(y / B) & 3][(bx / B) & 3], up = (bY - y) / H, dth = (th - 8) * 0.5;
-        const sh = 0.4 + nx * 0.38 + (dx > -hw * 0.04 ? 0.17 : -0.04) + gul * 0.05 + (th / 16 - 0.5) * 0.14;
-        const ix = sh < 0.2 ? 0 : sh < 0.4 ? 1 : sh < 0.6 ? 2 : 3;
-        const snow = y < sE + dth;
-        let col;
-        if (snow) col = SN[ix];
-        else col = up < 0.28 ? WARM[Math.min(2, ix)] : RK[Math.min(4, ix + (up < 0.5 ? 1 : 0))];
-        if (up < 0.26 && th / 16 < (0.26 - up) / 0.26 * 0.9) col = '#f2cade';
-        if (snow && (y + B >= sE + dth || y >= sL + dth || y >= sR + dth)) col = SOUT;           // контур снігу: нижній край і боки язиків
-        if (y === bY - hh || (y >= bY - hh && (hL < hh - 0 && y < bY - hL || hR < hh && y < bY - hR))) col = OUT;     // контур силуету гори
+        const snow = isSnow(y, sE);
+        let col = snow ? SNOW : ROCK;
+        if (snow && (!isSnow(y + T, sE) || !isSnow(y, sL) || !isSnow(y, sR))) col = SOUT;       // контур снігу 4 px: нижній край і боки язиків
+        if (y < bY - hh + T) col = OUT;                                  // контур силуету гори 4 px
         g.fillStyle = col; g.fillRect(cx + bx, y, B, B);
       }
     }
   }
   function farSkyline(g, x0, W) {                       // гора Фудзі, телевежа, пагода, високі будинки
     const base = 112;
-    fuji(g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, 285, 540);        // велика Фудзі за торговим центром і будинками
     A(g, 0.45, () => {
       for (let x = x0, i = 0; x < x0 + W; i++) { const hs = hash2(x + 31, 7), bw = 10 + hs % 12, bh = 16 + (hs >>> 4) % 30; P(g, x, base - bh, bw, bh, i % 2 ? '#7a74b8' : '#6a66a8'); if (hs % 3 === 0) P(g, x + (bw >> 1), base - bh - 5, 1, 5, '#6a66a8'); x += bw + 1 + hs % 5; }
       const tx = x0 + Math.round(W * 0.62);
@@ -391,6 +384,19 @@
   /* ---------- реєстрація ---------- */
   ARCH.japan = {
     buildSky, farSkyline, bush, tree, house, skyExtra,
+    sunRx: W => Math.round(W * 0.26),                              // вужча дуга сонця й місяця: виходять з-за схилу Фудзі, ховаються за нею близько полудня й виходять знову
+    skyFront(c) {                                                   // Фудзі поверх сонця/місяця/зір, із нічним і вечірнім затемненням як у шару неба
+      if (!fujiC) return;
+      const n = Math.round(sky.night * 24), d = Math.round(sky.dusk * 12), key = n + ':' + d + ':' + fujiC.width + 'x' + fujiC.height;
+      if (key !== fujiKey || !fujiT) {
+        fujiKey = key; if (!fujiT) fujiT = document.createElement('canvas');
+        fujiT.width = fujiC.width; fujiT.height = fujiC.height;
+        const t = fujiT.getContext('2d'); t.drawImage(fujiC, 0, 0); t.globalCompositeOperation = 'source-atop';
+        if (n > 0) { t.globalAlpha = n / 24 * 0.72; t.fillStyle = '#141a40'; t.fillRect(0, 0, fujiT.width, fujiT.height); }
+        if (d > 0) { t.globalAlpha = d / 12 * 0.1; t.fillStyle = '#ff8a4a'; t.fillRect(0, 0, fujiT.width, fujiT.height); }
+      }
+      c.drawImage(fujiT, 0, 0);
+    },
     drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),          // той самий дракон, що в небі (використовує будівництво, 278)
     nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
       const n = sky.night; if (noFly || n < 0.05) return;
