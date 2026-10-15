@@ -392,36 +392,34 @@ function drawSackDrop() {
   ctx.globalAlpha = 1;
 }
 
-// Капелюх на голові звірятка (Новий рік — шапка Діда Мороза, Хелловін — капелюх чарівниці)
-const HAT_COLORS = ['u', 'k', 'o', 'g', 'r', 'n', 'p'];     // кольори хелловінських шапочок
+// Прикраса на голові звірятка (Новий рік — шапка Діда Мороза, Хелловін — карнавальна маска на обличчі)
+const HAT_COLORS = ['u', 'k', 'o', 'g', 'r', 'n', 'p'];     // кольори хелловінських масок
 function drawHat(cx, ht, seed) {
   if (theme.decor.has('hats')) {
     R(ctx, cx - 4, ht - 1, 9, 2, 'w'); R(ctx, cx - 3, ht - 3, 7, 2, 'r'); R(ctx, cx - 2, ht - 5, 5, 2, 'r'); R(ctx, cx - 1, ht - 7, 3, 2, 'r'); R(ctx, cx + 1, ht - 9, 3, 2, 'w');
   } else if (theme.decor.has('witchhats')) {
-    // у кожного звірятка своя шапочка: 6 форм × 7 кольорів, стиль той самий
+    // у кожного звірятка своя маска: 6 видів × 7 кольорів; ht — верх голови, очі на 2–4 рядки нижче
     const s = Math.abs(seed | 0), shape = s % 6, c = HAT_COLORS[(s * 2 + 1) % 7];
-    const band = (c === 'o' || c === 'p' || c === 'g') ? 'k' : 'h';
+    const eyes = (x, y, col) => { R(ctx, x, y, 2, 2, 'k'); R(ctx, x, y, 1, 1, col || 'w'); R(ctx, x + 2, y, 2, 2, 'k'); R(ctx, x + 2, y, 1, 1, col || 'w'); };   // дві прорізі з відблиском
     switch (shape) {
-      case 0:                                                  // класичний капелюх чарівниці
-        R(ctx, cx - 5, ht - 1, 11, 2, c); R(ctx, cx - 3, ht - 4, 7, 3, c); R(ctx, cx - 3, ht - 3, 7, 1, band);
-        R(ctx, cx - 2, ht - 6, 5, 2, c); R(ctx, cx - 1, ht - 8, 3, 2, c); R(ctx, cx + 1, ht - 10, 2, 2, c); break;
-      case 1:                                                  // високий чарівничий, кінчик зігнутий, із зіркою
-        R(ctx, cx - 4, ht - 1, 9, 2, c); R(ctx, cx - 3, ht - 4, 7, 3, c); R(ctx, cx - 3, ht - 2, 7, 1, band);
-        R(ctx, cx - 2, ht - 7, 5, 3, c); R(ctx, cx - 1, ht - 10, 3, 3, c); R(ctx, cx, ht - 12, 3, 2, c); R(ctx, cx + 2, ht - 11, 2, 2, c);
-        R(ctx, cx - 1, ht - 6, 1, 1, 'y'); R(ctx, cx, ht - 5, 1, 1, 'y'); break;
-      case 2:                                                  // циліндр
-        R(ctx, cx - 5, ht - 1, 11, 2, c); R(ctx, cx - 3, ht - 8, 7, 7, c); R(ctx, cx - 3, ht - 3, 7, 1, band); R(ctx, cx - 3, ht - 8, 1, 7, 'd');
-        R(ctx, cx - 2, ht - 8, 5, 1, 'd'); R(ctx, cx + 1, ht - 7, 1, 3, 'w'); break;
-      case 3:                                                  // шапочка-гарбузик
-        R(ctx, cx - 4, ht - 2, 9, 2, c); R(ctx, cx - 5, ht - 4, 11, 2, c); R(ctx, cx - 3, ht - 6, 7, 2, c);
-        R(ctx, cx - 1, ht - 4, 1, 3, band); R(ctx, cx + 2, ht - 4, 1, 3, band); R(ctx, cx - 1, ht - 8, 3, 2, 'g'); R(ctx, cx + 1, ht - 9, 2, 1, 'g'); break;
-      case 4:                                                  // ковпак блазня зі звисаючим кінчиком і помпоном
-        R(ctx, cx - 4, ht - 1, 9, 2, band); R(ctx, cx - 3, ht - 3, 7, 2, c); R(ctx, cx - 2, ht - 5, 5, 2, c); R(ctx, cx - 1, ht - 7, 4, 2, c);
-        R(ctx, cx + 2, ht - 8, 3, 2, c); R(ctx, cx + 4, ht - 7, 2, 3, c); R(ctx, cx + 4, ht - 4, 2, 2, 'w'); break;
-      default:                                                 // обідок із вушками (кіт / кажан)
-        R(ctx, cx - 4, ht - 1, 9, 2, c);
-        R(ctx, cx - 4, ht - 4, 3, 3, c); R(ctx, cx - 4, ht - 6, 2, 2, c); R(ctx, cx - 3, ht - 3, 1, 2, 'q');
-        R(ctx, cx + 2, ht - 4, 3, 3, c); R(ctx, cx + 3, ht - 6, 2, 2, c); R(ctx, cx + 3, ht - 3, 1, 2, 'q'); break;
+      case 0:                                                  // розбійницька смужка з гострими кінцями
+        R(ctx, cx - 5, ht + 1, 11, 4, c); R(ctx, cx - 6, ht + 2, 1, 2, c); R(ctx, cx + 6, ht + 2, 1, 2, c);
+        R(ctx, cx - 5, ht + 1, 11, 1, 'w'); R(ctx, cx - 3, ht + 2, 2, 2, 'k'); R(ctx, cx + 2, ht + 2, 2, 2, 'k'); break;
+      case 1:                                                  // гарбузова маска з зубастою посмішкою
+        R(ctx, cx - 4, ht + 1, 9, 6, 'o'); R(ctx, cx - 5, ht + 2, 11, 4, 'o'); R(ctx, cx, ht, 1, 1, 'g'); R(ctx, cx + 1, ht - 1, 2, 1, 'g');
+        R(ctx, cx - 3, ht + 2, 2, 2, 'k'); R(ctx, cx + 2, ht + 2, 2, 2, 'k'); R(ctx, cx - 2, ht + 5, 5, 1, 'k'); R(ctx, cx - 1, ht + 5, 1, 1, 'o'); R(ctx, cx + 1, ht + 5, 1, 1, 'o'); break;
+      case 2:                                                  // череп
+        R(ctx, cx - 4, ht + 1, 9, 6, 'w'); R(ctx, cx - 3, ht + 2, 3, 3, 'k'); R(ctx, cx + 2, ht + 2, 3, 3, 'k');
+        R(ctx, cx, ht + 4, 1, 2, 'k'); R(ctx, cx - 3, ht + 6, 7, 1, 'k'); R(ctx, cx - 2, ht + 6, 1, 1, 'w'); R(ctx, cx, ht + 6, 1, 1, 'w'); R(ctx, cx + 2, ht + 6, 1, 1, 'w'); break;
+      case 3:                                                  // кішка з вушками й вусами
+        R(ctx, cx - 5, ht + 1, 11, 4, c); R(ctx, cx - 5, ht - 2, 3, 3, c); R(ctx, cx + 3, ht - 2, 3, 3, c); R(ctx, cx - 4, ht - 1, 1, 2, 'q'); R(ctx, cx + 4, ht - 1, 1, 2, 'q');
+        eyes(cx - 4, ht + 2, 'y'); R(ctx, cx + 4, ht + 4, 3, 1, 'w'); R(ctx, cx - 6, ht + 4, 3, 1, 'w'); break;
+      case 4:                                                  // венеціанська: дві половинки й золота смужка
+        R(ctx, cx - 5, ht + 1, 6, 5, c); R(ctx, cx + 1, ht + 1, 5, 5, 'w'); R(ctx, cx - 5, ht + 1, 11, 1, 'y');
+        R(ctx, cx - 3, ht + 2, 2, 2, 'k'); R(ctx, cx + 2, ht + 2, 2, 2, 'k'); R(ctx, cx - 1, ht + 5, 3, 1, 'y'); R(ctx, cx + 4, ht - 1, 2, 3, 'r'); break;
+      default:                                                 // кажан: крила з боків і вушка
+        R(ctx, cx - 4, ht + 1, 9, 4, 'k'); R(ctx, cx - 7, ht + 1, 3, 2, 'k'); R(ctx, cx + 5, ht + 1, 3, 2, 'k'); R(ctx, cx - 6, ht + 3, 2, 1, 'k'); R(ctx, cx + 5, ht + 3, 2, 1, 'k');
+        R(ctx, cx - 4, ht - 1, 2, 3, 'k'); R(ctx, cx + 3, ht - 1, 2, 3, 'k'); R(ctx, cx - 3, ht + 2, 2, 2, 'o'); R(ctx, cx + 2, ht + 2, 2, 2, 'o'); break;
     }
   }
 }

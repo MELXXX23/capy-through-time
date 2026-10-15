@@ -142,7 +142,7 @@ function roadDanger(c) {
   if (c.y < mailRoadY() - 24) return null;
   return hazardNearX(c, roadHazards()) || null;
 }
-const FEAR_LINES = 6;
+const FEAR_LINES = 6, GFEAR_LINES = 5;
 let lastFearSay = 0;
 function startFear(c, hz) {
   c.fear = { t: 0, stage: 0, ty: mailRoadY() - 27 - rand(0, 6), fy: 0, sx: 0, origDir: c.dir, away: c.x < hz.x ? -1 : 1, said: false, wait: 0 };
@@ -185,7 +185,7 @@ function updateFear(c, dt) {
 }
 function fearSay(c, ghost) {
   const now = performance.now(); if (now - lastFearSay < 1800) return; lastFearSay = now;
-  showBubble('fear', t((ghost ? 'gfear' : 'fear') + Math.floor(Math.random() * FEAR_LINES)), c.x, c.y - 26, () => ({ x: c.x, y: c.y - 26 + (c.fear ? c.fear.fy : 0) }));
+  showBubble('fear', t((ghost ? 'gfear' : 'fear') + Math.floor(Math.random() * (ghost ? GFEAR_LINES : FEAR_LINES))), c.x, c.y - 26, () => ({ x: c.x, y: c.y - 26 + (c.fear ? c.fear.fy : 0) }));
 }
 // Бордюр біля магазину: звірятко легко переступає його невеликою дугою, а не ковзає крізь нього
 function curbLift(y) { const a = LAYOUT.curbY - 5, b = LAYOUT.curbY + 9; return y > a && y < b ? Math.sin((y - a) / (b - a) * Math.PI) * 3.4 : 0; }

@@ -133,7 +133,7 @@
     fear0: 'Eek!', fear1: 'Mommy!', fear2: 'My bun!', fear3: 'I was just strolling!', fear4: 'Where are you going?!', fear5: 'Run!',
     seasonIntroTitle: 'Seasons unlocked!', seasonIntroText: 'Two eras down, and now you can pick the season yourself: spring, summer, autumn, winter or spooky Halloween. Each one changes the trees, the weather and the mood of the street. Look for the new wheel button in the menu!', seasonIntroGo: '🌸 To the seasons', seasonIntroLater: 'Later',
     mailSay0: 'Mail! Sign right here!', mailSay1: 'A letter for you! Faster than a pigeon!', mailSay2: 'Express delivery. The cap is official!', mailSay3: 'Letter delivered, paw on heart.',
-    gfear0: 'A ghost!!! Mommy!', gfear1: 'Boo-- oh, it is him!', gfear2: 'I saw nothing!', gfear3: 'Someone is in the window!', gfear4: 'Run, he has no ticket!', gfear5: 'It is just a sheet, right? NO!',
+    gfear0: 'A ghost!!! Mommy!', gfear1: 'Boo-- oh, it is him!', gfear2: 'I saw nothing!', gfear3: 'Someone is in the window!', gfear4: 'It is just a sheet, right? NO!',
     hagBang: '🧙 A witch is flying over town! Tap the "!"', hagArrived: '🏚️ The hut on chicken legs has arrived! Tap it', hagTitle: "The Witch's Hut",
     hagSub: 'Witch: "Three cauldrons, three surprises! Remember the best one, then guess!"', hagStart: 'Take a peek!', hagWatch: 'Watch closely what is where...', hagShuffle: 'Shuffling!', hagPick: 'Pick a cauldron!',
     hagGood: 'You found the main prize!', hagMiss: 'Oops, wrong one! The crystal is yours anyway.', hagDone: 'Thanks, witch!',
