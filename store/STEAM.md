@@ -30,21 +30,65 @@
 Скріншоти: 9 готових у `previews/r56/itch_upload/screenshots/` (усі 9 уже 1920×1080 ✓). Капсули зробимо зі справжніх кадрів і спершу покажемо зразком.
 Трейлер: Y1 з нашого YouTube-каналу можна додати як відео (потрібен файл).
 
-## Тексти (заготовка; звір із грою)
+## Тексти (звірено з грою 2026-10-16)
 Назва: `CapyTap: Market`. Розробник/видавець: CapyTap Company. Мови інтерфейсу: українська, англійська.
 
 **Короткий опис (до ~300 символів)**
 - uk: Капібара Капі перетворює крамничку на торговий центр і мандрує крізь 9 епох. Затишний піксель-клікер: тапай, розвивай поверхи, збирай скіни, грай у бонус-ігри. Без реєстрації й без реклами.
 - en: Capybara Capi turns a little shop into a mall and travels through 9 eras. A cozy pixel idle clicker: tap, grow your floors, collect skins, play bonus mini-games. No sign-up, no ads.
 
-**Довгий опис**: беремо з `store/PLAY.md` (uk/en); замість «телефон і планшет» писати «ПК»; «Працює без постійного інтернету» залишити.
+**Довгий опис** (формат Steam BBCode: `[h2]`, `[list][*]`; звірено з грою 2026-10-16: 9 епох, 6 рівнів ТЦ, 8 бонус-ігор (епохи 1–8), 64 скіни, 44 досягнення в грі, пори року та Геловін, щоденні завдання)
+
+*uk*
+```
+[h2]Капібара Капі мріє про торговий центр[/h2]
+Капібара Капі отримала маленьку крамничку. Тапай, продавай, купуй покращення й розвивай її до великого торгового центру з 6 рівнів!
+
+Коли ТЦ готовий, Капі вирушає в подорож у часі. Нова епоха: нові товари, нові клієнти й нова музика. Гра проходить через 9 епох, а кожна подорож відкриває нові можливості.
+
+[h2]Що всередині[/h2]
+[list]
+[*] Тапай і заробляй монети, наймай помічників, відкривай нові поверхи
+[*] 9 епох від минулого до майбутнього: свій вигляд, звуки й герої в кожній
+[*] 8 бонус-ігор і призи: понад 60 скінів для Капі
+[*] 44 досягнення в грі, щоденник завдань, події
+[*] Пори року й Геловін: сезонні сюрпризи
+[*] Піксель-арт, затишна музика й мультяшні звіряткові клієнти
+[*] Працює без інтернету, без реєстрації, без реклами й без покупок усередині
+[*] Українська та англійська мови
+[/list]
+
+Гра підходить для всіх віків. Безкоштовну браузерну версію можна спробувати на нашому сайті, а тут ти отримуєш версію для ПК одним платежем: без реклами, без пасток, лише затишний клікер.
+```
+
+*en*
+```
+[h2]Capybara Capi dreams of a big mall[/h2]
+Capybara Capi has a tiny shop. Tap, sell, buy upgrades and grow it into a 6-level shopping mall!
+
+When the mall is ready, Capi jumps through time. A new era means new goods, new customers and new music. The game goes through 9 eras, and every trip unlocks new things.
+
+[h2]What's inside[/h2]
+[list]
+[*] Tap to earn coins, hire helpers, open new floors
+[*] 9 eras from the past to the future, each with its own look, sounds and characters
+[*] 8 bonus mini-games with prizes: over 60 skins for Capi
+[*] 44 in-game achievements, a quest diary and events
+[*] Seasons and Halloween: seasonal surprises
+[*] Pixel art, cozy music and cartoon animal customers
+[*] Works offline, no sign-up, no ads and no in-game purchases
+[*] Ukrainian and English
+[/list]
+
+Suitable for all ages. A free browser version is available on our website if you want to try it first; here you get the PC version for a single payment: no ads, no traps, just a cozy clicker.
+```
 
 **Теги (до 20)**: Idle, Clicker, Casual, Cute, Pixel Graphics, Relaxing, Cozy, Management, Singleplayer, Time Travel, Animals, Family Friendly.
 **Категорії**: Single-player. Контролер не підтримується (мишка/сенсор): не позначати.
 **Жанр**: Casual, Simulation, Indie.
 **Вікова анкета**: насильства, азартних ігор, покупок за гроші немає, чат/онлайну немає. ПЕРЕВІР, що «колесо/бонус-ігри» не вважається азартом (призи безкоштовні, без ставок за гроші) і відповісти чесно в анкеті.
 **Політика конфіденційності**: https://melxxx23.github.io/capy-through-time/privacy.html (Steam-версія не збирає даних; у тексті політики вже сказано, що ПК-версія без реклами).
-**Системні вимоги** (Windows 10+ 64-біт, ~4 ГБ ОЗП, ~300 МБ диска): ПЕРЕВІР реальні цифри після збірки.
+**Системні вимоги** (виміряно на збірці: ~600 МБ ОЗП на старті, 273 МБ на диску): мінімум Windows 10 64-біт, 4 ГБ ОЗП, 500 МБ місця, відеокарта з підтримкою WebGL/Chromium (будь-яка проста), мишка або сенсор; рекомендовано 8 ГБ ОЗП. Звук: колонки/навушники за бажанням.
 
 ## Технічно (потрібні правки перед збіркою, окремо)
 1. ✓ **Збірка для Steam**: `bash desktop/build-steam.sh` → `desktop/dist-steam/win-unpacked/` (без режиму бога, перевірено; запускається, 273 МБ).

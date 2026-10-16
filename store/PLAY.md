@@ -23,7 +23,7 @@
 
 • Тапай і заробляй монети, наймай помічників, відкривай нові поверхи
 • 9 епох: від минулих століть до майбутнього, кожна зі своїм виглядом, звуками й героями
-• Бонус-ігри в кожній епосі та призи — скіни для Капі
+• 8 бонус-ігор і призи: понад 60 скінів для Капі
 • Щоденник завдань, події та сезонні сюрпризи
 • Піксель-арт, затишна музика й мультяшні звіряткові клієнти
 • Грай як хочеш: у вертикалі чи горизонталі, на телефоні та планшеті
@@ -39,7 +39,7 @@ When the mall is ready, Capi jumps through time: a new era means new goods, new 
 
 • Tap to earn coins, hire helpers, open new floors
 • 9 eras, from past centuries to the future, each with its own look, sounds and characters
-• Bonus mini-games in every era with prizes: skins for Capi
+• 8 bonus mini-games with prizes: over 60 skins for Capi
 • Daily quest diary, events and seasonal surprises
 • Pixel art, cozy music and cartoon animal customers
 • Play your way: portrait or landscape, phone or tablet
