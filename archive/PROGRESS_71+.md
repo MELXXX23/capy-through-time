@@ -201,3 +201,7 @@
 ## 107. Оновлення ПК, сайту й ZIP (р. 56)
 - Сайт (GitHub Pages) байт у байт збігається з `docs/index.html` (bc3c5a9), політика відкривається; ZIP для itch (`desktop/dist/CapyTapMarket-itch-html.zip`, 711 КБ) зібраний із цього ж файлу, перезавантажувати не треба. Код гри після випуску не змінювався.
 - exe: зібрано заново з bc3c5a9 (режим бога, п. 100–102) за рецептом із HANDOFF (кеш `previews/ebcache`), скопійовано на стіл як `D:\DESKTOP\CapyTapMarket-Portable-NEW.exe` (71,5 МБ); `desktop/app/game.html` повернуто без режиму бога.
+
+## 108. Очищення відео й скрінів (р. 56)
+- За списком `previews/r57/cleanup_plan.md` видалено 37 відео (862 МБ) і 1329 робочих картинок у `previews/` (≈167 МБ): ~1 ГБ звільнено. Лишились відео: Y1_v2, S2, трейлер YouTube `CapyTap_trailer_r53_16x9_web.mp4`, TikTok-трейлер v2; картинки: `previews/itch`, `r53/itch_upload|yt3|thumb`, `r56/itch_upload`, `r57/vid/out/final`, банер, `skins`.
+- Побічне: кадри для банера (`previews/r57/eras`) видалено — банер зберігся, а скрипт `previews/r57/banner.js` без них не запуститься (кадри відтворюються `previews/r57/eras.js`).
