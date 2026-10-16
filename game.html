@@ -8,13 +8,20 @@
 <meta name="color-scheme" content="dark">
 <script>
 (function () {                                         /* програма з головного екрана: клас standalone + «поштовх» viewport-fit на холодному старті (iOS інакше рахує відступи криво) */
-  var d = document.documentElement, st = navigator.standalone || (window.matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches));
+  var d = document.documentElement, st = /[?&]standalone=1/.test(location.search) || navigator.standalone || (window.matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches));
   if (!st) return; d.classList.add('standalone');
   function inset() { var p = document.createElement('div'); p.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding-top:env(safe-area-inset-top,0px)'; d.appendChild(p); var v = parseFloat(getComputedStyle(p).paddingTop) || 0; d.removeChild(p); return v; }
-  var lastGap = -1;
+  var lastGap = -1, ISLAND = { 393: 54, 402: 62, 420: 62, 430: 54, 440: 62 };
+  function iosFit() {                                    /* iOS 26: а) системну смугу зверху малює сама система (вікно коротше за екран, env = 0) → висота = реальне вікно; б) вміст під островом, а env = 0 → запасний відступ для інтерфейсу */
+    var por = innerHeight > innerWidth, sw = Math.min(screen.width, screen.height), sh = Math.max(screen.width, screen.height), t = por ? inset() : 0, d0 = sh - innerHeight;
+    var bar = por && t === 0 && d0 >= 40 && d0 <= 90, sat = (por && t === 0 && !bar && d0 <= 2 && ISLAND[sw]) || 0;
+    d.classList.toggle('sysbar', bar); d.classList.toggle('satfix', !!sat);
+    d.style.setProperty('--vhpx', innerHeight + 'px'); d.style.setProperty('--sat', sat + 'px'); window.__fit = bar ? 'sysbar' : sat ? 'sat' + sat : '';
+    return window.__fit;
+  }
   function setGap() {                                    /* порожній низ = на скільки вікно коротше за екран, але не більше за верхній відступ (інакше це не наш випадок) */
     var g = 0; if (innerHeight > innerWidth) { var t = inset(), raw = Math.max(screen.width, screen.height) - innerHeight; if (t > 0 && raw > 0) g = Math.min(raw, t + 2); }
-    d.style.setProperty('--gap', g + 'px'); window.__gap = g; if (g !== lastGap) { lastGap = g; window.dispatchEvent(new Event('resize')); }
+    var fit = iosFit(); d.style.setProperty('--gap', g + 'px'); window.__gap = g; var key = g + fit; if (key !== lastGap) { lastGap = key; window.dispatchEvent(new Event('resize')); }
   }
   window.addEventListener('resize', setGap); window.addEventListener('orientationchange', function () { setTimeout(setGap, 300); });
   var vm = document.querySelector('meta[name="viewport"]'), orig = vm.getAttribute('content'), poke = function () { setGap(); window.dispatchEvent(new Event('resize')); };
@@ -630,6 +637,10 @@ html.standalone #seasonFx { height: calc(100% + var(--gap, 0px)); }
   html.standalone #tabContent { max-height: 40vh; }
   html.standalone #app.sheet-open #stage { padding-bottom: calc(40vh + 70px + env(safe-area-inset-bottom, 0px)); }
 }
+/* iOS 26 (WebKit 301994): sysbar = систему смугу зверху малює система, вікно коротше за екран → висота за реальним вікном; satfix = вміст під островом, а env = 0 → запасний відступ --sat (клас і змінні ставить скрипт у head) */
+html.standalone.sysbar, html.standalone.sysbar body, html.standalone.sysbar #app { height: var(--vhpx); }
+html.satfix #topbar { margin-top: var(--sat, 0px); }
+html.satfix #cutSkip { top: calc(var(--sat, 0px) + 10px); }
 #topbar { margin: env(safe-area-inset-top, 0px) 0 0 calc(env(safe-area-inset-left, 0px) * .3); }      /* лічильник монет лишається біля лівого краю, картинку не рухаємо */
 #tour { position: fixed; inset: 0; z-index: 90000; pointer-events: none; }
 #tour[hidden] { display: none; }
@@ -12209,7 +12220,7 @@ function capyDiag() {
   const pr = document.createElement('div'); pr.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)'; document.body.appendChild(pr);
   const cs = getComputedStyle(pr), ins = [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].join(' / '); pr.remove();
   const vv = window.visualViewport, mm = q => matchMedia(q).matches ? 'так' : 'ні';
-  const txt = ['inner ' + innerWidth + 'x' + innerHeight, 'outer ' + outerWidth + 'x' + outerHeight, 'screen ' + screen.width + 'x' + screen.height, 'visual ' + (vv ? Math.round(vv.width) + 'x' + Math.round(vv.height) : '-'), 'insets ' + ins, 'dpr ' + devicePixelRatio, 'gap ' + window.__gap, 'standalone ' + navigator.standalone, 'display standalone ' + mm('(display-mode: standalone)'), 'fullscreen ' + mm('(display-mode: fullscreen)'), 'browser ' + mm('(display-mode: browser)')].join('\n');
+  const txt = ['inner ' + innerWidth + 'x' + innerHeight, 'outer ' + outerWidth + 'x' + outerHeight, 'screen ' + screen.width + 'x' + screen.height, 'visual ' + (vv ? Math.round(vv.width) + 'x' + Math.round(vv.height) : '-'), 'insets ' + ins, 'dpr ' + devicePixelRatio, 'gap ' + window.__gap, 'fit ' + (window.__fit || '-'),'standalone ' + navigator.standalone, 'display standalone ' + mm('(display-mode: standalone)'), 'fullscreen ' + mm('(display-mode: fullscreen)'), 'browser ' + mm('(display-mode: browser)')].join('\n');
   d.innerHTML = '<div style="position:absolute;left:0;right:0;top:0;height:8px;background:#f00"></div><div style="position:absolute;left:0;right:0;bottom:0;height:8px;background:#00f"></div><div style="position:absolute;left:0;top:0;bottom:0;width:8px;background:#0a0"></div><div style="position:absolute;right:0;top:0;bottom:0;width:8px;background:#fa0"></div><pre style="position:absolute;left:14px;top:90px;margin:0;padding:8px;background:rgba(0,0,0,.85);color:#fff;font:12px/1.5 monospace;pointer-events:auto"></pre>';
   d.querySelector('pre').textContent = txt; d.querySelector('pre').addEventListener('click', () => d.remove()); document.body.appendChild(d);
 }

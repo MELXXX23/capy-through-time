@@ -138,6 +138,10 @@ html.standalone #seasonFx { height: calc(100% + var(--gap, 0px)); }
   html.standalone #tabContent { max-height: 40vh; }
   html.standalone #app.sheet-open #stage { padding-bottom: calc(40vh + 70px + env(safe-area-inset-bottom, 0px)); }
 }
+/* iOS 26 (WebKit 301994): sysbar = систему смугу зверху малює система, вікно коротше за екран → висота за реальним вікном; satfix = вміст під островом, а env = 0 → запасний відступ --sat (клас і змінні ставить скрипт у head) */
+html.standalone.sysbar, html.standalone.sysbar body, html.standalone.sysbar #app { height: var(--vhpx); }
+html.satfix #topbar { margin-top: var(--sat, 0px); }
+html.satfix #cutSkip { top: calc(var(--sat, 0px) + 10px); }
 #topbar { margin: env(safe-area-inset-top, 0px) 0 0 calc(env(safe-area-inset-left, 0px) * .3); }      /* лічильник монет лишається біля лівого краю, картинку не рухаємо */
 #tour { position: fixed; inset: 0; z-index: 90000; pointer-events: none; }
 #tour[hidden] { display: none; }
