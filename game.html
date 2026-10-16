@@ -3719,6 +3719,7 @@ const translations = {
     offlineCoins: '{0} монеток 💤',
     offlineBtn: 'Забрати',
     adOfflineBtn: '🎬 ×2: подивитись ролик',
+    adPrivacyBtn: 'Параметри реклами',
     adBonusTitle: 'Пропустити очікування?',
     adBonusText: 'Бонус-гра буде готова через {0}. Подивись короткий ролик, і вона відкриється зараз.',
     adBoostChip: '×2 прибуток 10 хв',
@@ -4191,6 +4192,7 @@ const translations = {
     offlineCoins: '{0} coins 💤',
     offlineBtn: 'Collect',
     adOfflineBtn: '🎬 ×2: watch a video',
+    adPrivacyBtn: 'Ad privacy options',
     adBonusTitle: 'Skip the wait?',
     adBonusText: 'The bonus game will be ready in {0}. Watch a short video and it opens right now.',
     adBoostChip: '×2 income 10 min',
@@ -20059,6 +20061,7 @@ const Ads = (() => {
         let ci = await plugin.requestConsentInfo({ tagForUnderAgeOfConsent: true });
         if (ci && ci.isConsentFormAvailable && ci.status === 'REQUIRED') ci = await plugin.showConsentForm();
         if (ci && ci.canRequestAds === false) canRequest = false;
+        if (ci && ci.privacyOptionsRequirementStatus === 'REQUIRED') adsAddPrivacyButton();   // вхід у «Параметри реклами» — вимога Google у регіонах зі згодою
       } catch (e) { /* без згоди (збій) — реклама тихіша, але гра працює */ canRequest = false; }
       if (!canRequest) return;
       await plugin.initialize({
@@ -20098,8 +20101,23 @@ const Ads = (() => {
     return rewarded;
   }
 
-  return { init, available, showRewarded, justShown, enabled: () => !!CFG };
+  // Форма «Параметри реклами» (UMP): гравець може змінити або відкликати згоду
+  async function showPrivacyOptions() { try { if (plugin) await plugin.showPrivacyOptionsForm(); } catch (e) { adsLog(e); } }
+
+  return { init, available, showRewarded, justShown, showPrivacyOptions, enabled: () => !!CFG };
 })();
+
+// Кнопка в налаштуваннях, під «Політикою конфіденційності» (з'являється лише коли Google вимагає такий вхід)
+function adsAddPrivacyButton() {
+  try {
+    if (document.getElementById('adPrivacyBtn') || !ui.privacyBtn) return;
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.id = 'adPrivacyBtn'; btn.className = 'btn wide'; btn.setAttribute('data-i18n', 'adPrivacyBtn');
+    btn.textContent = t('adPrivacyBtn');
+    ui.privacyBtn.parentNode.insertBefore(btn, ui.privacyBtn.nextSibling);
+    btn.addEventListener('click', () => { Ads.showPrivacyOptions(); });
+  } catch (e) { adsLog(e); }
+}
 
 // ---------- Місця, де пропонуємо ролик (кнопки з'являються лише коли Ads.available()) ----------
 function adsLog(e) { try { if (typeof logErr === 'function') logErr('ads', String(e && e.message || e), '', 0, 0); } catch (x) { /* нічого */ } }

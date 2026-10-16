@@ -67,6 +67,7 @@
     offlineCoins: '{0} coins 💤',
     offlineBtn: 'Collect',
     adOfflineBtn: '🎬 ×2: watch a video',
+    adPrivacyBtn: 'Ad privacy options',
     adBonusTitle: 'Skip the wait?',
     adBonusText: 'The bonus game will be ready in {0}. Watch a short video and it opens right now.',
     adBoostChip: '×2 income 10 min',

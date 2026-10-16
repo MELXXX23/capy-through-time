@@ -76,6 +76,7 @@ const translations = {
     offlineCoins: '{0} монеток 💤',
     offlineBtn: 'Забрати',
     adOfflineBtn: '🎬 ×2: подивитись ролик',
+    adPrivacyBtn: 'Параметри реклами',
     adBonusTitle: 'Пропустити очікування?',
     adBonusText: 'Бонус-гра буде готова через {0}. Подивись короткий ролик, і вона відкриється зараз.',
     adBoostChip: '×2 прибуток 10 хв',
