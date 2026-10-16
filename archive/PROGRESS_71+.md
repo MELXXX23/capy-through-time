@@ -197,3 +197,7 @@
 ## 106. Y1 і S2 у чернетках YouTube (р. 56)
 - Видалено S1_v2 і S3_v2; у чернетки (приватні) завантажено `CapyTap_Y1_time_travel_v2.mp4` («I Time-Traveled a Capybara's Shopping Mall Through 9 Eras (Idle Game)», мініатюра `thumb_Y1_time_travel.png`, опис із посиланням і хештегами) і `CapyTap_S2_nine_eras.mp4` («Same mall, nine eras. Which one is yours?», вкладка Shorts).
 - Не заповнено: «Аудиторія» (призначене для дітей?) — рішення користувачки; публікація й видимість не чіпані.
+
+## 107. Оновлення ПК, сайту й ZIP (р. 56)
+- Сайт (GitHub Pages) байт у байт збігається з `docs/index.html` (bc3c5a9), політика відкривається; ZIP для itch (`desktop/dist/CapyTapMarket-itch-html.zip`, 711 КБ) зібраний із цього ж файлу, перезавантажувати не треба. Код гри після випуску не змінювався.
+- exe: зібрано заново з bc3c5a9 (режим бога, п. 100–102) за рецептом із HANDOFF (кеш `previews/ebcache`), скопійовано на стіл як `D:\DESKTOP\CapyTapMarket-Portable-NEW.exe` (71,5 МБ); `desktop/app/game.html` повернуто без режиму бога.

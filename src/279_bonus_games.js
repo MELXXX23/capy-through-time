@@ -26,7 +26,7 @@ function openBonus(def) {                                            // def — 
   if (dialog.active || !ui.circusModal.hidden) return;
   const d = def || mgForEpoch(viewEpoch()); if (!d) return;
   const w = bonusWaitMs(d.eid);
-  if (w > 0) { showToast(t('mgWait', fmtTime(w / 1000))); return; }
+  if (w > 0) { if (typeof adsOfferBonusSkip !== 'function' || !adsOfferBonusSkip(def, w)) showToast(t('mgWait', fmtTime(w / 1000))); return; }
   circus.bonus = true; circus.bonusDef = d;
   ui.circusModal.classList.add('hag');
   ui.circusWheel.width = 192; ui.circusWheel.height = 120;

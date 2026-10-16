@@ -66,6 +66,10 @@
     offlineText: 'While you were away, the shop earned',
     offlineCoins: '{0} coins 💤',
     offlineBtn: 'Collect',
+    adOfflineBtn: '🎬 ×2: watch a video',
+    adBonusTitle: 'Skip the wait?',
+    adBonusText: 'The bonus game will be ready in {0}. Watch a short video and it opens right now.',
+    adBonusYes: '🎬 Watch a video',
 
     teamNote: "Hire staff: each gives their own bonus. Tap someone on the scene, you might hear something interesting.",
     teamLevel: 'Level {0} / {1}',

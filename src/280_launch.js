@@ -99,7 +99,7 @@ function init() {
       saveGame();
     } else {
       lastFrame = performance.now();
-      if (hiddenAt) { addOfflineEarnings((Date.now() - hiddenAt) / 1000); hiddenAt = 0; }
+      if (hiddenAt) { if (!(typeof Ads !== 'undefined' && Ads.justShown())) addOfflineEarnings((Date.now() - hiddenAt) / 1000); hiddenAt = 0; }   // повернення з рекламного ролика офлайном не вважаємо
     }
   });
 
