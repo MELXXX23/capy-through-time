@@ -205,3 +205,12 @@
 ## 108. Очищення відео й скрінів (р. 56)
 - За списком `previews/r57/cleanup_plan.md` видалено 37 відео (862 МБ) і 1329 робочих картинок у `previews/` (≈167 МБ): ~1 ГБ звільнено. Лишились відео: Y1_v2, S2, трейлер YouTube `CapyTap_trailer_r53_16x9_web.mp4`, TikTok-трейлер v2; картинки: `previews/itch`, `r53/itch_upload|yt3|thumb`, `r56/itch_upload`, `r57/vid/out/final`, банер, `skins`.
 - Побічне: кадри для банера (`previews/r57/eras`) видалено — банер зберігся, а скрипт `previews/r57/banner.js` без них не запуститься (кадри відтворюються `previews/r57/eras.js`).
+
+## 109. Android-обгортка і публічний exe (р. 57, гілка android-wrapper, мітка before-android)
+- `mobile/`: Capacitor піднято 6 → 8 (Play з 31.08.2026 вимагає targetSdk 36); створено `mobile/android/` (targetSdk 36, minSdk 24, плагіни App/Haptics/Preferences), іконки зі `store/icons/android`, фон `#2E4580`. Не зібрано: на ПК нема Android Studio/JDK; AAB ще не будувався.
+- `desktop/build-public.sh` — публічний exe БЕЗ режиму бога (перевіряє, що прапорців нема в app/game.html); не запускався.
+- Далі: акаунт Play ($25) → Android Studio → підписаний AAB → закритий тест 12×14 днів; потім AdMob/«Без реклами» (гра для всіх віків → неперсоналізована реклама, Families).
+
+## 110. Play Console: акаунт і чернетка сторінки (р. 57)
+- Акаунт розробника CapyTap Company створено (особистий); чекають перевірка особи, Android-пристрій (потрібен позичений Android), телефон. Рішення: гра для всіх віків, реклама буде (Families Policy: лише сімейна неперсоналізована).
+- `store/PLAY.md`: тексти (uk/en), анкети, закритий тест 12×14 днів — чернетка, сайт/опис звірити з грою.
