@@ -1,8 +1,8 @@
 # Передача між чатами (оновлюй перед кожним переходом; тримай ≤ 40 рядків)
 
-Читай: `CLAUDE.md` (правила, економія токенів), цей файл, останні пункти `PROGRESS.md` (109–111). Старі HANDOFF — `archive/` (лише Grep).
+Читай: `CLAUDE.md` (правила, економія токенів), цей файл, останні пункти `PROGRESS.md` (112–117). Старі HANDOFF — `archive/` (лише Grep).
 
-## Де ми (2026-10-16, раунд 57; PROGRESS п. 82–111)
+## Де ми (2026-10-16, раунд 57; PROGRESS п. 82–117)
 - Опубліковане (main, коміт bc3c5a9) НЕ змінювалось: сайт, ZIP для itch (id 5134270), exe на столі (з режимом бога). YouTube: банер опубліковано; Y1 і S2 у чернетках (потрібна «Аудиторія», публікує користувачка).
 - Усе нове — у ГІЛЦІ `android-wrapper` (мітки відкату `before-android`, `before-ads`), локальні коміти, НЕ запушено, НЕ опубліковано:
   · `mobile/`: Capacitor 8 (targetSdk 36, Play вимагає з 31.08.2026), створено `mobile/android/`, іконки, фон `#2E4580`, плагін AdMob 8.2.1; AAB НЕ збирався (на ПК нема Android Studio/JDK, поставити має користувачка самотужки).
@@ -10,6 +10,9 @@
   · `docs/privacy.html` оновлено під рекламу (НЕ опубліковано; випускати разом з Android). `store/PLAY.md` (тексти, анкети, Data safety), `store/ADS_PLAN.md` (план).
   · `desktop/build-public.sh`: публічний exe БЕЗ режиму бога (не запускався).
 - Google Play: акаунт CapyTap Company (особистий) створено, $25 сплачено. Чекає: підтвердження особи (документ), підтвердження пристрою Android (програма Play Console на Android-телефоні; у користувачки iPhone → позичити Android на 5 хв), телефон. Платіжний профіль з іменем лише власниці документа.
+- Steam (п. 114–116): ціна $2.99, платна, без реклами й покупок; збірка `bash desktop/build-steam.sh` (win-unpacked, без бога, без автооновлення), картинки `previews/steam/ready`, тексти й чеклист `store/STEAM.md`, завантаження `store/steam/upload.sh`. Чекає користувачку: анкета Steamworks, - Google Play: акаунт CapyTap Company (особистий) створено, $25 сплачено. Чекає: підтвердження особи (документ), підтвердження пристрою Android (програма Play Console на Android-телефоні; у користувачки iPhone → позичити Android на 5 хв), телефон. Платіжний профіль з іменем лише власниці документа.
+00, App ID + Depot ID.
+- ТРЕЙЛЕР (п. 117, `store/TRAILER.md`): покадровий запис `previews/video/rec2.js` (+ `vclock.js` віртуальний годинник, `cam.js` камера), сценарій `scn_trailer_v2.src.js` (шоти A–I), збірка `build_scn.js`. Запуск: `CAPY_ONLY=F,G CAPY_CDP=1 CAPY_Z=0.75 CAPY_CRF=24 CAPY_PRESET=veryfast env -u ELECTRON_RUN_AS_NODE desktop/node_modules/electron/dist/electron.exe previews/video/rec2.js out.mp4 scn_trailer_v2.js` (драфт; повна якість: без CAPY_Z, CAPY_CRF=16). НЕ ПЕРЕВІРЕНО: шоти A–I у зборі (перший драфт F+G не дав файлу), дракон-фінал, скіни/бруківка/хмари. «Відродження» = епоха Ренесанс. Чекає: музика (файл), голос жіночий (скрипт у TRAILER.md; спосіб озвучки не вибрано), «окей» на драфт. Скоротити до ~75 с (зараз ~93).
 
 ## Чекає / не зроблено
 1. Користувачка: Play Console — документ, Android-пристрій, телефон; створити акаунт AdMob (з того ж Google-акаунта; W-8BEN; App ID і блок Rewarded → дати мені); поставити Android Studio.
