@@ -228,3 +228,7 @@
 ## 113. Кнопка «Параметри реклами» (UMP) (р. 57, гілка android-wrapper, не закомічено)
 - `275_ads.js`: якщо Google повертає `privacyOptionsRequirementStatus: REQUIRED`, у налаштуваннях під «Політикою» з'являється кнопка «Параметри реклами» (`showPrivacyOptionsForm`); тексти `adPrivacyBtn` (uk/en). Лише Android-обгортка.
 - Перевірено підробним плагіном (`previews/ads_test/probe_priv.js`) і autotest --quick ✓; на справжньому Android ще ні. `AD_ID` у маніфесті прибрано — підтверджено.
+
+## 114. Steam: план і заготовки (р. 57, гілка android-wrapper)
+- `store/STEAM.md`: порядок і строки (Steamworks, $100, «Скоро», 30 днів), розміри капсул (виправлено в `store/README.md`), тексти uk/en, теги, технічні правки (автооновлення вимкнути для Steam, збірка `win-unpacked`, Auto-Cloud, досягнення — за бажанням). 9 скріншотів з itch уже 1920×1080.
+- Відкрите: ціна (безкоштовно чи платно), акаунт Steamworks — за користувачкою. Нічого не публікувалось.
