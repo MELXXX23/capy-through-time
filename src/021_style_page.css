@@ -109,6 +109,7 @@
 .chip.quiet .ico { filter: grayscale(1); opacity: .7; }
 .chip.dark { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 2px var(--honey); }
 .chip .ico { font-size: 11px; }
+.chip.ad { pointer-events: auto; cursor: pointer; background: var(--mint); box-shadow: 0 0 0 2px var(--dark); }   /* «×2 за ролик»: кнопка в смужці (HUD сам клікань не приймає) */
 #topRight { display: flex; align-items: center; gap: 8px; flex: none; }
 #bonusOpen { display: flex; align-items: center; gap: 6px; padding: 5px 8px; }
 #bonusOpen[hidden] { display: none; }

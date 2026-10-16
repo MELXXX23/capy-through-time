@@ -69,6 +69,7 @@
     adOfflineBtn: '🎬 ×2: watch a video',
     adBonusTitle: 'Skip the wait?',
     adBonusText: 'The bonus game will be ready in {0}. Watch a short video and it opens right now.',
+    adBoostChip: '×2 income 10 min',
     adBonusYes: '🎬 Watch a video',
 
     teamNote: "Hire staff: each gives their own bonus. Tap someone on the scene, you might hear something interesting.",

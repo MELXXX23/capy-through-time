@@ -88,6 +88,7 @@ function updateAdButtons() {
     const btn = document.getElementById('adOfflineBtn');
     const show = Ads.available() && ui.modal && !ui.modal.hidden && state.pendingOffline >= 1 && !adOfflineDone && ui.modalBtn.id === 'modalBtn';
     if (btn) btn.hidden = !show;
+    if (typeof uiCache !== 'undefined') uiCache.boostSig = null;      // чіп «×2 за ролик» у смужці перемалюється
   } catch (e) { adsLog(e); }
 }
 function adsOfferOffline() {                                          // викликає showOfflineModal
@@ -111,6 +112,15 @@ function adsOfferOffline() {                                          // вик�
     btn.textContent = t('adOfflineBtn');
     updateAdButtons();
   } catch (e) { adsLog(e); }
+}
+
+// 3) Чіп «×2 прибуток 10 хв» у смужці під рахунком (малює updateBoostsUI, коли Ads.available() і підсилення ще нема)
+function adsBoostClick() {
+  Ads.showRewarded().then(ok => {
+    if (!ok) { updateAdButtons(); return; }
+    state.events.incomeBoostUntil = Date.now() + 10 * 60000; state.events.incomeBoostMult = 2;
+    recalcIncome(); saveGame(); updateBoostsUI(); showToast(t('prize_income', 2, 10));
+  }).catch(adsLog);
 }
 
 // 2) Очікування бонус-гри: «пропустити очікування за ролик» (не частіше за саму перезарядку, бо після пропуску вона починається знову)

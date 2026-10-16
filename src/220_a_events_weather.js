@@ -208,7 +208,8 @@ function updateBoostsUI() {
   items.unshift({ cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
   if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
-  items.splice(1, 0, ...helpChips());                                                      // «Допоможи Піпу: 4/12»
+  if (typeof Ads !== 'undefined' && Ads.available() && !(ev.incomeBoostUntil > now)) items.push({ cls: 'ad', icon: '🎬', text: t('adBoostChip'), act: adsBoostClick });   // «×2 за ролик» (лише Android-обгортка з рекламою)
+  items.splice(1, 0, ...helpChips());                                                    // «Допоможи Піпу: 4/12»
   const sig = items.map(i => i.icon + i.text).join('|');
   if (uiCache.boostSig === sig) return;
   uiCache.boostSig = sig;
@@ -220,6 +221,11 @@ function updateBoostsUI() {
     const ico = document.createElement('span'); ico.className = 'ico'; ico.textContent = it.icon;
     const tx = document.createElement('span'); tx.textContent = it.text;
     chip.append(ico, tx);
+    if (it.act) {                                                // клікабельний чіп (кнопка)
+      chip.setAttribute('role', 'button'); chip.tabIndex = 0;
+      chip.addEventListener('click', it.act);
+      chip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); it.act(); } });
+    }
     ui.boosts.appendChild(chip);
   });
 }

@@ -227,6 +227,7 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 .chip.quiet .ico { filter: grayscale(1); opacity: .7; }
 .chip.dark { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 2px var(--honey); }
 .chip .ico { font-size: 11px; }
+.chip.ad { pointer-events: auto; cursor: pointer; background: var(--mint); box-shadow: 0 0 0 2px var(--dark); }   /* «×2 за ролик»: кнопка в смужці (HUD сам клікань не приймає) */
 #topRight { display: flex; align-items: center; gap: 8px; flex: none; }
 #bonusOpen { display: flex; align-items: center; gap: 6px; padding: 5px 8px; }
 #bonusOpen[hidden] { display: none; }
@@ -3720,6 +3721,7 @@ const translations = {
     adOfflineBtn: '🎬 ×2: подивитись ролик',
     adBonusTitle: 'Пропустити очікування?',
     adBonusText: 'Бонус-гра буде готова через {0}. Подивись короткий ролик, і вона відкриється зараз.',
+    adBoostChip: '×2 прибуток 10 хв',
     adBonusYes: '🎬 Подивитись ролик',
 
     // Команда
@@ -4191,6 +4193,7 @@ const translations = {
     adOfflineBtn: '🎬 ×2: watch a video',
     adBonusTitle: 'Skip the wait?',
     adBonusText: 'The bonus game will be ready in {0}. Watch a short video and it opens right now.',
+    adBoostChip: '×2 income 10 min',
     adBonusYes: '🎬 Watch a video',
 
     teamNote: "Hire staff: each gives their own bonus. Tap someone on the scene, you might hear something interesting.",
@@ -14221,7 +14224,8 @@ function updateBoostsUI() {
   items.unshift({ cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
   if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
-  items.splice(1, 0, ...helpChips());                                                      // «Допоможи Піпу: 4/12»
+  if (typeof Ads !== 'undefined' && Ads.available() && !(ev.incomeBoostUntil > now)) items.push({ cls: 'ad', icon: '🎬', text: t('adBoostChip'), act: adsBoostClick });   // «×2 за ролик» (лише Android-обгортка з рекламою)
+  items.splice(1, 0, ...helpChips());                                                    // «Допоможи Піпу: 4/12»
   const sig = items.map(i => i.icon + i.text).join('|');
   if (uiCache.boostSig === sig) return;
   uiCache.boostSig = sig;
@@ -14233,6 +14237,11 @@ function updateBoostsUI() {
     const ico = document.createElement('span'); ico.className = 'ico'; ico.textContent = it.icon;
     const tx = document.createElement('span'); tx.textContent = it.text;
     chip.append(ico, tx);
+    if (it.act) {                                                // клікабельний чіп (кнопка)
+      chip.setAttribute('role', 'button'); chip.tabIndex = 0;
+      chip.addEventListener('click', it.act);
+      chip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); it.act(); } });
+    }
     ui.boosts.appendChild(chip);
   });
 }
@@ -20102,6 +20111,7 @@ function updateAdButtons() {
     const btn = document.getElementById('adOfflineBtn');
     const show = Ads.available() && ui.modal && !ui.modal.hidden && state.pendingOffline >= 1 && !adOfflineDone && ui.modalBtn.id === 'modalBtn';
     if (btn) btn.hidden = !show;
+    if (typeof uiCache !== 'undefined') uiCache.boostSig = null;      // чіп «×2 за ролик» у смужці перемалюється
   } catch (e) { adsLog(e); }
 }
 function adsOfferOffline() {                                          // викликає showOfflineModal
@@ -20125,6 +20135,15 @@ function adsOfferOffline() {                                          // вик�
     btn.textContent = t('adOfflineBtn');
     updateAdButtons();
   } catch (e) { adsLog(e); }
+}
+
+// 3) Чіп «×2 прибуток 10 хв» у смужці під рахунком (малює updateBoostsUI, коли Ads.available() і підсилення ще нема)
+function adsBoostClick() {
+  Ads.showRewarded().then(ok => {
+    if (!ok) { updateAdButtons(); return; }
+    state.events.incomeBoostUntil = Date.now() + 10 * 60000; state.events.incomeBoostMult = 2;
+    recalcIncome(); saveGame(); updateBoostsUI(); showToast(t('prize_income', 2, 10));
+  }).catch(adsLog);
 }
 
 // 2) Очікування бонус-гри: «пропустити очікування за ролик» (не частіше за саму перезарядку, бо після пропуску вона починається знову)
