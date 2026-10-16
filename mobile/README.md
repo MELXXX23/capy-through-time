@@ -14,13 +14,14 @@
 3. Рейтинг віку, опис, скріншоти, країни — заповнюються в консолях магазинів.
 
 ## Як зібрати Android (на ПК з Android Studio)
+Capacitor 8 (targetSdk 36: Google Play з 31.08.2026 вимагає API 36 для нових застосунків). Потрібні Android Studio Otter (2025.2.1+) і JDK 21 (іде в комплекті зі Studio), Node 22+.
+Проєкт `mobile/android/` уже створений, іконки (`store/icons/android`) і колір фону вже в ньому.
 ```
 cd mobile
 npm install
-npm run android:add     # один раз
 npm run android         # оновить гру й відкриє Android Studio → Build → Generate Signed Bundle (AAB)
 ```
-Іконки: скопіюй вміст `store/icons/android/mipmap-*` у `android/app/src/main/res/` (замінить стандартні).
+Перед кожним новим AAB у `android/app/build.gradle` підніми `versionCode` (1, 2, 3 …).
 
 ## iOS (на Mac)
 ```

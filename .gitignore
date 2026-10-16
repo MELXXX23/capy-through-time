@@ -3,3 +3,5 @@ desktop/dist/
 backups/
 .claude/
 desktop/dist-*/
+mobile/node_modules/
+mobile/www/

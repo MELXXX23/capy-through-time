@@ -188,3 +188,8 @@
 
 ## 104. Новий банер YouTube (р. 56)
 - `previews/r57/yt_banner_2560x1440.png`: 9 смуг епох (від Відродження до Японії) зі справжніх знімків гри + плашка «CAPYTAP: MARKET / TAP · BUILD · TRAVEL THROUGH 8 ERAS + BONUS» усередині безпечної зони 1546×423. Збірка: `previews/r57/eras.js` (знімки через `previews/itch/shots.js`, CAPY_Z=2) → `previews/r57/banner.js`. Код гри не чіпав; Завантажено на канал CapyTap Games через Studio (Персоналізація → Банер), видно на сторінці каналу.
+
+## 105. Шість відео для YouTube і Shorts/TikTok (р. 56)
+- Лишено в `previews/r57/vid/out/final/` (за вибором користувачки): YouTube — `CapyTap_Y1_time_travel_v2.mp4` (1:35, одна музика без ефектів); Shorts/TikTok 1080×1920 — `CapyTap_S1_one_coin_v2.mp4`, `CapyTap_S2_nine_eras.mp4`, `CapyTap_S3_satisfying_builds_v2.mp4` (v2 = одна музика без ефектів); мініатюри `thumb_Y*.png` не чіпано. Y2, Y3 і перші версії видалено (відтворюються з `gen.js`). Назви/описи — `previews/r57/vid/metadata.txt`.
+- Збірка: `previews/r57/vid/gen.js` → `build.js` → запис `previews/video/rec.js` (скрипти `run_all.sh`, `compress.sh`, `thumb.js`). Код гри не чіпав; на YouTube/TikTok не завантажено.
+- Підводне: Y2 з першого разу записався з 52 кадрами (завис насос кадрів), повторний запис вийшов нормально; підписи мають темну підкладку (`capB`), бо на світлих епохах не читалися.
