@@ -28,3 +28,12 @@ CapyTap: Market — free cozy pixel idle game: https://melxxxnika.itch.io/capyta
 TAGS: secret bonus game, skins, pixel art, idle game, cozy game, capybara, browser game, free game
 
 Налаштування під час завантаження: «Ні, це не для дітей» НЕ обирати автоматично — рішення за користувачкою (див. примітку в чаті); видимість — ЧЕРНЕТКА/Приватне, не публікувати.
+
+## Short 4 — переверни телефон (22,5 с)
+TITLE: Did you know? Flip your phone! 📱↔️ CapyTap works sideways #shorts
+DESCRIPTION:
+Rotate your phone and play CapyTap: Market in wide-screen mode — same cozy shop, every era! 🦫📱
+Free in your browser: https://melxxxnika.itch.io/capytap-market
+#shorts #pixelart #idlegame #cozygames #mobilegame
+TAGS: mobile game, landscape mode, idle game, pixel art, cozy game, capybara, browser game, free game
+Файли: `previews/shorts/final/CapyTap_Short4.mp4`; збірка: `previews/video/scn_s4{a,b,c}.src.js` (A портрет, C горизонталь 640×360, B анімація повороту + кінцівка), склейка `previews/shorts/compose_s4.sh`, голос `previews/voice/gen_s4_voice.js`, мікс `previews/shorts/s4_mix.json`.
