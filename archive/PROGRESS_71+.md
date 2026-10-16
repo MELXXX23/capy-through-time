@@ -232,3 +232,7 @@
 ## 114. Steam: план і заготовки (р. 57, гілка android-wrapper)
 - `store/STEAM.md`: порядок і строки (Steamworks, $100, «Скоро», 30 днів), розміри капсул (виправлено в `store/README.md`), тексти uk/en, теги, технічні правки (автооновлення вимкнути для Steam, збірка `win-unpacked`, Auto-Cloud, досягнення — за бажанням). 9 скріншотів з itch уже 1920×1080.
 - Відкрите: ціна (безкоштовно чи платно), акаунт Steamworks — за користувачкою. Нічого не публікувалось.
+
+## 115. Steam: збірка, автооновлення, капсули-зразки (р. 57, гілка android-wrapper, мітка before-steam)
+- Рішення: \$2.99, платна, без реклами й покупок усередині. `desktop/build-steam.sh` → `dist-steam/win-unpacked` без режиму бога; `main.js` не оновлює збірку з `app/steam.flag`. Запуск перевірено.
+- Капсули (header, small, main, vertical, library, hero 3840×1240, logo) зібрані `previews/steam/compose.js` зі справжнього кадра в `previews/steam/out` (не в git). Чекають «окей» користувачки.

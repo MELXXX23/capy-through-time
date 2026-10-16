@@ -2,10 +2,6 @@
 
 Тут лише ОСТАННІ раунди (максимум 6 пунктів). Старі: `archive/PROGRESS_*.md` (не читай без потреби; шукай через Grep). Новий пункт додавай у кінець, коротко (до ~8 рядків); ротація: `node tools/progress_rotate.js`.
 
-## 115. Steam: збірка, автооновлення, капсули-зразки (р. 57, гілка android-wrapper, мітка before-steam)
-- Рішення: \$2.99, платна, без реклами й покупок усередині. `desktop/build-steam.sh` → `dist-steam/win-unpacked` без режиму бога; `main.js` не оновлює збірку з `app/steam.flag`. Запуск перевірено.
-- Капсули (header, small, main, vertical, library, hero 3840×1240, logo) зібрані `previews/steam/compose.js` зі справжнього кадра в `previews/steam/out` (не в git). Чекають «окей» користувачки.
-
 ## 116. Steam: усе для виходу, що не залежить від акаунта (р. 57, гілка android-wrapper)
 - Тексти звірено з грою (8 бонус-ігор, а не «в кожній епосі»; виправлено і `store/PLAY.md`), системні вимоги виміряно (~600 МБ ОЗП, 273 МБ диск), `store/STEAM.md` — чеклист користувачки; `store/steam/` — шаблон і `upload.sh` (SteamPipe), потрібні App ID, Depot ID, steamcmd.
 - Картинки за слотами: `previews/steam/ready/` (не в git). Чекає: анкета Steamworks і $100 (користувачка).
@@ -18,3 +14,9 @@
 - Сценарій v3 прив’язано до тактової сітки (SH у scn_trailer_v3.src.js); будівництва повні по 8,5 с (B: 2, D: 1) — `grow()` не прискорювати. Драфт ≈79 с, усі шоти A–I відрендерено й перевірено кадрами (скіни, бруківка, хмари з зоряними/цукровими, дракон).
 - Музика: `previews/music/compose.js` — один мотив Капі в стилях епох (скринька, лютня, диско, чіп, кото/тайко…), 42 такти. Мікс із голосом і приглушенням: `previews/video/mix.js`. Чорновий голос Edge (`previews/voice/guide`) лише для підгонки часу.
 - Голос: обрано ElevenLabs (Eleven v3); тексти A–I з тегами в `store/TRAILER.md`. Чекає файли від користувачки і її «окей».
+
+## 119. Shorts/TikTok: 3 вертикальні відео з трейлера (р. 57, гілка android-wrapper; previews/ не в git)
+- `store/SHORTS.md`: таблиця відео, тексти голосу (ElevenLabs) з вікнами в секундах. Рендер `bash previews/shorts/render_shorts.sh [1 2 3]` → `previews/shorts/out/CapyTap_Short1..3.mp4` (1080×1920, 60 к/с).
+- Short 1 (31,9 с): повне ренесансне будівництво 8,5 с → подорож → Диско швидко (taps + `build.dur`) → 4 епохи → «Coming soon to Steam». Short 2 (26,3 с): тап → відділи → 3 звірят → розширення. Short 3 (22,5 с): секретна бонус-гра «Фреска» → скін Chef Capy. Shorts 2–3 лише Ренесанс.
+- Інструменти: `previews/video/scn_short{1,2,3}.src.js` + `shorts_lib.js` + `build_short.js` (збірка), `mix_short.js` (музика трейлера, нарізана за тактами, + голос; файли голосу в `previews/voice/shorts/` і `previews/voice/final/`, поки їх нема — лише музика).
+- Кінцівка Shorts 2–3 «PLAY FREE / LINK IN BIO» — змінити в `endCard({sub})`, якщо інакше.
