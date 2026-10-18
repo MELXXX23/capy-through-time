@@ -37,6 +37,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="CapyTap">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script>
+/* iOS 26 на iPhone 17 / Air (екран 402/420/440 pt): із black-translucent система малює чорну смугу зверху (помилка WebKit). Тут беремо стиль «default» (смуга без накладання на гру) і theme-color під небо; решта iPhone без змін. Діє після перевстановлення іконки. */
+(function () {
+  try {
+    var sw = Math.min(screen.width, screen.height);
+    if (!/iPhone/.test(navigator.userAgent) || [402, 420, 440].indexOf(sw) < 0) return;
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#2E4580');
+    document.documentElement.classList.add('ios26bar');
+  } catch (e) {}
+})();
+</script>
 <title>CapyTap: Market</title>
 <!-- Піксельний шрифт з чіткою кирилицею (Pixelify Sans малює українські літери криво, тому Press Start 2P). Без інтернету спрацює запасний моноширинний -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
