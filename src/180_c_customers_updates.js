@@ -10,7 +10,7 @@ function capySay(forceId) {
   let id = forceId || null;
   if (!id && worn.length && Math.random() < 0.65) { const cs = worn.find(w => w.startsWith('capy_')); id = (cs && Math.random() < 0.6) ? cs : worn[Math.floor(Math.random() * worn.length)]; }
   const key = id ? 'skinSay_' + id : '';
-  let pi = Math.floor(Math.random() * CAPY_PHRASES); if (skinOn('capy')) { const ok = [...Array(CAPY_PHRASES).keys()].filter(n => n !== 1 && n !== 4); pi = ok[Math.floor(Math.random() * ok.length)]; }       // у скіні Капі не жартує про квіточку на голові
+  const pi = Math.floor(Math.random() * CAPY_PHRASES);
   const txt = (id && skinLine(id)) || (key && t(key) !== key ? t(key) : pickLine('capy', () => 'capy_say_' + pi, 'capy_cold_', 3));
   showBubble('capy', txt, c.x + 14, c.footY - 32 * CAPY_K);
 }
@@ -40,6 +40,7 @@ function hireOrUpgrade(i) {
   const cost = teamCost(i, lvl + 1);
   if (!(state.coins >= cost)) return;
   state.coins -= cost; state.stats.teamUps = (state.stats.teamUps || 0) + 1;
+  const returning = lvl === 0 && !!state.teamKnown[i];                 // уже був у штаті в минулій епосі (команда скидається при подорожі)
   state.team[i] = lvl + 1;
   state.teamKnown[i] = 1;
   state.stats.teamMaxLevel = Math.max(state.stats.teamMaxLevel, lvl + 1);
@@ -50,10 +51,12 @@ function hireOrUpgrade(i) {
     const a = actors.find(x => x.i === i);
     a.hop = 1;
     spawnDust(a.x, a.y - 2, 6);
-    showToast(t('teamHired', name), 'big');
+    // перший раз — власна фраза героя; повернення після подорожі — одна з кількох; щоб не повторювалось, без шаблонного «контракту»
+    showToast(returning ? t('teamReturn_' + Math.floor(Math.random() * 4), name) : (t('team_' + TEAM[i].id + '_hire') !== 'team_' + TEAM[i].id + '_hire' ? name + ': «' + t('team_' + TEAM[i].id + '_hire') + '»' : t('teamHired', name)), 'big');
     playSfx('hire');
   } else {
-    showToast(t('teamUpgraded', name, lvl + 1), 'good');
+    const mile = lvl + 1 === 5 || lvl + 1 >= CONFIG.TEAM_MAX_LEVEL;     // повний жарт лише на 5-му й останньому рівні, решта — коротко
+    showToast(mile ? t('teamUpMile_' + Math.floor(Math.random() * 4), name, lvl + 1) : t('teamUpShort', name, lvl + 1), 'good');
     playSfx('upgrade');
   }
   updateUI();

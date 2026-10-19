@@ -446,8 +446,8 @@ const TEAM = [
   { id: 'nara',   level: 2, baseCost: 1.2e5,  bonus: { type: 'global', per: 0.03 }, needs: 'japanJoined',
     spot: { f: 0.69, r: 10, y: 157, move: 'patrol', prop: 'none' } }
 ];
-const TEAM_PHRASES = 16;  // скільки звичайних фраз у кожного звірятка (див. translations; є ще «холодні» взимку й загальні по епохах)
-const CAPY_PHRASES = 16;
+const TEAM_PHRASES = 10;  // скільки звичайних фраз у кожного звірятка (див. translations; є ще «холодні» взимку й загальні по епохах)
+const CAPY_PHRASES = 10;
 const lastLine = {};
 
 // Сюжетні персонажі, яких не можна найняти (той самий спосіб збирання 16×16, що й у команди)

@@ -1067,7 +1067,6 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
 <!--#part 030_body_open.html-->
 </head>
 <body>
-<script>window.__debug = true;</script>
 <div id="boot" aria-hidden="true">
   <div class="b-stars"></div><div class="b-sun"></div><div id="bootOrb"></div>
   <div id="bootSky"></div>
@@ -2148,8 +2147,8 @@ const TEAM = [
   { id: 'nara',   level: 2, baseCost: 1.2e5,  bonus: { type: 'global', per: 0.03 }, needs: 'japanJoined',
     spot: { f: 0.69, r: 10, y: 157, move: 'patrol', prop: 'none' } }
 ];
-const TEAM_PHRASES = 16;  // скільки звичайних фраз у кожного звірятка (див. translations; є ще «холодні» взимку й загальні по епохах)
-const CAPY_PHRASES = 16;
+const TEAM_PHRASES = 10;  // скільки звичайних фраз у кожного звірятка (див. translations; є ще «холодні» взимку й загальні по епохах)
+const CAPY_PHRASES = 10;
 const lastLine = {};
 
 // Сюжетні персонажі, яких не можна найняти (той самий спосіб збирання 16×16, що й у команди)
@@ -3825,81 +3824,74 @@ const translations = {
     speaker_clock: 'Годинник',
     speaker_capy: 'Капі',
 
-    ch1_title: 'Одна монетка',
-    ch1_0: "Містечко прокидається. Пахне булками, обіцянками та чужими боргами. Ідеально, щоб розбагатіти.",
-    ch1_1: "На площу в’їжджає облізлий візок. Звідти визирає капібара. Вигляд — «я тут не випадково».",
-    ch1_2: "Привіт, місто. Я Капі. З однією монетою, купою амбіцій і нульовим планом Б.",
-    ch1_3: "Мрія проста: власна крамниця. І ось вона, будка на розі, що бачила краще життя. І гірше.",
-    ch1_4: "Дах тече, вивіска криво висить, зате є навіс. Назву «Усе за копійку». Копійка вже є. Майже.",
-    ch1_5: "Так починаються великі історії. І великі кредити. Тапай по магазину й заробляй. Перший покупець уже нервово переминається біля дверей.",
-
-    ch2_title: 'Перші друзі',
-    ch2_0: "Кілька днів тапання, і каса вже дзвенить. Покупців стільки, що Капі не встигає ні торгувати, ні панікувати. Потрібен хтось іще.",
-    ch2_1: "Вітаю! Вакансії не знайдеться? Я їжак Голка. Резюме колюче, зате чесне.",
-    ch2_2: "Колюче? Для співбесіди це, мабуть, мінус.",
-    ch2_3: "Це фільтр від підозрілих покупців. А ще я рахую гроші швидше, ніж ти кажеш «знижка».",
-    ch2_4: "Каса твоя. Випробувального терміну не буде: на нього немає ні часу, ні бюджету.",
-    ch2_5: "Дякую. Обіцяю, жодна копійка не загубиться. Хіба що застрягне в голках.",
+    ch1_title: "Будка на розі",
+    ch1_0: "Ранок у містечку. Пекарня вже димить, бруківка ще мокра, а на розі стоїть будка, яку ніхто не хотів.",
+    ch1_1: "До неї підкочує візок з однією монетою на дні. З візка визирає капібара. Вигляд упевнений. Майже весь.",
+    ch1_2: "Привіт, будко. Я Капі. У мене одна монета, купа планів і жодного запасного.",
+    ch1_3: "Дах тече, вивіска висить криво, зате є навіс. Назву «Усе за копійку». Копійка вже є.",
+    ch1_4: "Кажуть, хто стоїть на розі, той бачить усе місто. Ніхто не попередив, що все місто побачить мене.",
+    ch1_5: "Перший покупець уже топчеться біля дверей і міцно тримає гаманець. Час тапати: кожен дотик — монета.",
+    ch2_title: "Голка шукає роботу",
+    ch2_0: "За кілька днів каса задзвеніла так, що Капі не встигає ні торгувати, ні рахувати. Біля дверей давно сидить їжак із папірцем.",
+    ch2_1: "Добрий день. Вакансії не знайдеться? Я Голка. Рахувати вмію, красти не вмію. Здебільшого не хочу.",
+    ch2_2: "Ти ж колючий. Покупці, мабуть, бояться.",
+    ch2_3: "Чесні не бояться. Інші теж не бояться, але потім шкодують.",
+    ch2_4: "Каса твоя. Випробувального терміну не буде: на нього немає ні часу, ні грошей.",
+    ch2_5: "Дякую. Жодна копійка не загубиться. Хіба що застрягне в голках. Тоді обов'язково поверну.",
     ch2_6: "Підказка: відкрий вкладку «Команда» й найми Голку. Він збільшить силу тапу.",
-
-    ch3_title: 'Хтось краде!',
-    ch3_0: "З Голкою на касі справи пішли вгору, і про крамницю дізналося все місто. Разом із покупцями прийшов хтось, хто платити не планував.",
-    ch3_1: "Капі, зникла пачка печива! Я встиг помітити лише смугастий хвіст і дуже впевнену спину.",
-    ch3_2: "Смугастий хвіст і впевнена спина. Є одна підозра.",
-    ch3_3: "Нічого особистого, це просто фріланс. Я Шнирь, найспритніший єнот цього району.",
-    ch3_4: "Ти поцупив моє печиво. Верни. Негайно.",
-    ch3_5: "Воно вже трохи... продегустоване. Вважай, це відгук. Цур, мене не ловити!",
-    ch3_6: "Втік. Ну нічого, ще побачимо, хто кого.",
-    ch3_7: "Шнирь хитрий, але нібито не злий. Він повернеться. Цінне краще ховати, а нерви берегти.",
-
-    ch4_title: 'Дивний годинник',
-    ch4_0: "Ховаючи цінне від єнота, Капі перебирає склад і натрапляє на щось дивне.",
-    ch4_1: "Кишеньковий годинник. Старий, але стильний. Золото потемніло, скло тріснуло. Вінтаж, словом.",
-    ch4_2: "Він цокає. Але стрілки йдуть назад. Це точно не за інструкцією.",
-    ch4_3: "Мабуть, зламаний. Дід казав: годинник, що йде назад, або зламаний, або з сюрпризом.",
-    ch4_4: "З сюрпризом? Сумнівно. Але гарний. Залишу собі, без гарантії.",
-    ch4_5: "Годинник тихо цокнув у кишені, ніби підморгнув. Схоже, це було не востаннє.",
-
-    ch5_title: 'Супермаркет',
-    ch5_0: "Годинник цокає впевненіше, а справи йдуть вгору. Крамничка доросла до супермаркету. Про Капі та «Усе за копійку» говорить усе місто, і в команду тягнуться нові люди. Ну, і звірі.",
-    ch5_1: "Я Бодя, бобер-будівельник. Чув, у вас розширення. Дошки треба? Рахунок надішлю окремо. І ще один, за ввічливість.",
-    ch5_2: "Я Зоя, продавчиня. Які вітрини... Я б і сніг узимку продала. Двічі. З націнкою.",
-    ch5_3: "У-гу. Я Соня, бухгалтерка. Хтось має рахувати ці гори монет, поки вони не зникли самі.",
-    ch5_4: "Тоня. Охорона. Повільно, зате принципово. І без поблажок.",
-    ch5_5: "Заходьте, друзі. Навіть не знаю, як дякувати.",
-    ch5_6: "Дякувати? Я вже перший у черзі за премією.",
+    ch3_title: "Хтось краде!",
+    ch3_0: "З Голкою на касі справи пішли вгору, і про крамницю дізналося все місто. Разом із покупцями прийшов хтось, хто платити не збирався.",
+    ch3_1: "Капі! Зникла пачка печива. Я бачив лише смугастий хвіст і дуже впевнену спину.",
+    ch3_2: "Смугастий хвіст. Упевнена спина. У нас на районі такий лише один.",
+    ch3_3: "Без образ. Це не крадіжка, це фріланс. Я Шнирь, найспритніший єнот на цій вулиці.",
+    ch3_4: "Це моє печиво. Верни. Негайно.",
+    ch3_5: "Воно вже трохи... продегустоване. Вважай, це відгук. А тепер цур, мене не ловити!",
+    ch3_6: "Втік. Я ж казав: потрібен сейф. Хоча б маленький.",
+    ch3_7: "Єнот хитрий, але, здається, не злий. Він іще повернеться. Цінне краще заховати, нерви теж.",
+    ch4_title: "Годинник, що йде назад",
+    ch4_0: "Ховаючи цінне від єнота, Капі перебирає склад і в кутку натрапляє на щось дивне.",
+    ch4_1: "Кишеньковий годинник. Золото потемніло, скло тріснуло. Старий, але з характером.",
+    ch4_2: "Цокає. Тільки стрілки йдуть назад. Це точно не за інструкцією.",
+    ch4_3: "Зламаний. Дід казав: годинник, що йде назад, або зламаний, або з сюрпризом.",
+    ch4_4: "Сюрпризи я не люблю. Але він гарний. Залишу собі, без гарантії.",
+    ch4_5: "У кишені годинник тихо цокнув, ніби підморгнув. Схоже, це був не останній раз.",
+    ch5_title: "Нові колеги",
+    ch5_0: "Крамниця доросла до супермаркету. Про Капі говорить уся вулиця, і в двері вже стукають нові працівники. Які могли, ті й постукали.",
+    ch5_1: "Я Бодя, будівельник. Чув, у вас розширення. Дошки потрібні? Рахунок надішлю окремо. І ще один — за ввічливість.",
+    ch5_2: "Зоя. Продаю все, що не прибито. Що прибито, теж, але довше. Дайте вітрину, і вона заговорить.",
+    ch5_3: "У-гу. Я Соня, бухгалтерка. Працюю вночі, вдень лише моргаю. Хтось мусить рахувати ці монети, поки вони не втекли.",
+    ch5_4: "Тоня, охорона. Я йду. Скоро буду. Зате нікого не пропущу.",
+    ch5_5: "Заходьте, друзі. Дякую, що прийшли. Серйозно.",
+    ch5_6: "Дякувати — це добре. Але я ще не бачив, чим закінчиться питання премії.",
     ch5_7: "Команда росте. Наймай нових працівників у вкладці «Команда». А хтось із темряви вже косо поглядає на вашу касу.",
-
-    ch6_title: 'Шнирь у біді',
-    ch6_0: "Пізній вечір. Команда роз’їхалась по домівках, а Капі зависає над виручкою. За вікном дощ, і біля чорного входу щось ворушиться.",
+    ch6_title: "Шнирь під дощем",
+    ch6_0: "Пізній вечір. Усі розійшлися, а Капі сидить над виручкою. За вікном дощ, біля чорного входу щось ворушиться.",
     ch6_1: "Хтось схлипує? Шнирю, це ти?",
-    ch6_2: "Я не плачу. Це дощ. На обличчі. Лише на обличчі.",
-    ch6_3: "Шнирю, навіщо ти крадеш? У тебе що, немає дому?",
-    ch6_4: "Є ящик за пекарнею. Друзів немає. Взагалі. Навіть у месенджерах.",
-    ch6_5: "Хоч би хтось сказав просто «привіт»... А всі кричать «Тримайте єнота!»",
-    ch6_6: "Привіт, Шнирю. Просто так, без підстав. Заходь, у нас чай і булочки.",
-    ch6_7: "Серйозно? Тоді я більше не краду. Ну... майже. Жартую. Мабуть.",
-    ch6_8: "Відтоді Шнирь більше не злодій, а друг. Здебільшого. Попереду на всіх чекали великі справи.",
-
-    ch7_title: 'Торговий центр',
-    ch7_0: "Минули місяці. Шнирь став улюбленцем покупців, а команда — справжньою родиною, з дрібними сварками за каву. Крамниця виросла в магазин, потім у супермаркет, а тепер...",
-    ch7_1: "На вулиці стоїть справжній торговий центр зі скляним дахом, кінотеатром і запахом свіжої випічки. Конкуренти тихо плачуть у куточку.",
+    ch6_2: "Не я. Це дощ. На обличчі. Лише на обличчі.",
+    ch6_3: "Шнирю, навіщо ти це робиш? Хіба в тебе немає дому?",
+    ch6_4: "Є ящик за пекарнею. Друзів немає. Узагалі. Навіть щоб мовчки посидіти поруч.",
+    ch6_5: "Хотів би, щоб хтось просто сказав «привіт». А всі кричать «тримайте єнота».",
+    ch6_6: "Привіт, Шнирю. Просто так, без причини. Заходь, у нас чай і булочки.",
+    ch6_7: "Серйозно? Тоді я більше не краду. Ну... майже. Жартую. Мабуть. Дякую.",
+    ch6_8: "Відтоді Шнирь став не злодієм, а своїм. Іноді ще позирає на касу, але вже ніяково. Попереду на всіх чекали великі справи.",
+    ch7_title: "Торговий центр",
+    ch7_0: "Минули місяці. Шнирь став улюбленцем покупців, а команда — родиною, що сперечається за каву. Крамниця виросла в магазин, потім у супермаркет, а тепер...",
+    ch7_1: "На вулиці стоїть торговий центр зі скляним дахом, кінотеатром і запахом свіжої випічки. Конкуренти тихо сумують у кутку.",
     ch7_2: "Торговий центр «Капі». З однієї монети. Хто б міг подумати.",
-    ch7_3: "Будували всі, а премію дадуть мені. Чудовий день.",
-    ch7_4: "З вами цікавіше, ніж красти. Хоча красти теж було весело.",
+    ch7_3: "Я перерахував кожну цеглину. Усе сходиться. Це диво.",
+    ch7_4: "Мене тут нікому не треба ловити. Дивно й приємно.",
     ch7_5: "Дякую вам усім. Без вас тут продавалося б лише повітря.",
-    ch7_6: "Раптом у кишені Капі щось голосно цокнуло.",
+    ch7_6: "У кишені Капі щось голосно цокнуло.",
     ch7_7: "Мій годинник... Він що, ожив?",
-
-    ch8_title: 'Фінал: годинник цокає',
-    ch8_0: "Так і є: золотий годинник виповзає з кишені й зависає в повітрі. Стрілки крутяться назад, як у поганому фільмі.",
-    ch8_1: "Привіт, Капі. Я чекав довго. Дуже довго. Вічність, якщо без перерв на каву.",
+    ch8_title: "Годинник заговорив",
+    ch8_0: "Так і є: золотий годинник виповзає з кишені й зависає в повітрі. Стрілки крутяться назад.",
+    ch8_1: "Привіт, Капі. Я чекав довго. Вічність, якщо без перерв на каву.",
     ch8_2: "Ти розмовляєш?!",
     ch8_3: "Я Годинник часу. Вмію повертати хвилини. Повернення грошей не передбачено.",
-    ch8_4: "Торговий центр чудовий. Але що було б, якби все це можна було пройти знову, вже з досвідом?",
-    ch8_5: "Почати знову? Але ж я вже...",
-    ch8_6: "Не втратити, а збудувати мудріше. Друзі лишаться. Знання лишаться. Монети ні. Така економіка.",
-    ch8_7: "Мудріше... Звучить непогано. Подумаю.",
+    ch8_4: "Твій торговий центр чудовий. Але уяви: пройти все ще раз, уже з досвідом.",
+    ch8_5: "Почати знову? Але ж тут усе вже збудовано...",
+    ch8_6: "Не втратити, а збудувати мудріше. Друзі лишаться, знання теж. Монети ні. Така економіка.",
+    ch8_7: "Мудріше... Звучить непогано. Мені треба подумати.",
     ch8_8: "Коли вирішиш, просто заведи мене. Я тут. Цокаю.",
     ch8_9: "Подорож у часі відкрито. Зазирни у вкладку «Годинник»: там чекає нова епоха.",
 
@@ -4296,81 +4288,74 @@ const translations = {
     speaker_clock: 'The Watch',
     speaker_capy: 'Capy',
 
-    ch1_title: 'One Coin',
-    ch1_0: "A sleepy little town. It smells of fresh buns, empty promises and other people's debts. Perfect for getting rich.",
-    ch1_1: "A battered cart rolls onto the square. A capybara peeks out. The look says “I'm here on purpose”.",
-    ch1_2: "Hi, town. I'm Capy. One coin, a pile of ambition and zero Plan B.",
-    ch1_3: "The dream is simple: my own shop. And here it is, a booth on the corner that has seen better days. And worse.",
-    ch1_4: "The roof leaks, the sign hangs crooked, but hey, an awning. I'll call it “Everything for a Penny”. I already have a penny. Almost.",
-    ch1_5: "That's how great stories start. And great loans. Tap the shop and earn. The first customer is already shifting nervously at the door.",
-
-    ch2_title: 'First Friends',
-    ch2_0: "A few days of tapping and the till is ringing. So many customers that Capy can't sell and panic at the same time. Someone else is needed.",
-    ch2_1: "Hi! Any vacancies? I'm Spike the hedgehog. The résumé is prickly but honest.",
-    ch2_2: "Prickly? For an interview that's probably a minus.",
-    ch2_3: "It's a filter against shady customers. Also I count money faster than you can say “discount”.",
-    ch2_4: "The register is yours. No probation: no time and no budget for it.",
-    ch2_5: "Thanks. I promise not a single penny gets lost. Unless it gets stuck in the spines.",
-    ch2_6: "Tip: open the \"Team\" tab and hire Spike. He boosts your tap power.",
-
-    ch3_title: 'Someone Is Stealing!',
-    ch3_0: "With Spike at the till business took off and the whole town heard about the shop. Along with the customers came someone who had no plan to pay.",
-    ch3_1: "Capy, a pack of cookies is gone! All I caught was a striped tail and a very confident back.",
-    ch3_2: "A striped tail and a confident back. I have a suspect.",
-    ch3_3: "Nothing personal, it's just freelance. I'm Shnyr, the slickest raccoon in the neighborhood.",
-    ch3_4: "You swiped my cookies. Give them back. Now.",
-    ch3_5: "They're already a little... taste-tested. Call it a review. Tag, you can't catch me!",
-    ch3_6: "Gone. Fine, we'll see who wins next time.",
-    ch3_7: "Shnyr is sly but supposedly not evil. He'll be back. Hide the valuables and save your nerves.",
-
-    ch4_title: 'The Strange Watch',
-    ch4_0: "Hiding valuables from the raccoon, Capy rummages through the storeroom and finds something odd.",
-    ch4_1: "A pocket watch. Old but stylish. The gold has darkened, the glass is cracked. Vintage, basically.",
-    ch4_2: "It ticks. But the hands go backwards. Definitely not in the manual.",
-    ch4_3: "Must be broken. Grandpa said: a watch that runs backwards is either broken or full of surprises.",
-    ch4_4: "Surprises? Doubtful. But it's pretty. I'll keep it, no warranty.",
-    ch4_5: "The watch ticked softly in the pocket, as if winking. Looks like that wasn't the last time.",
-
-    ch5_title: 'Supermarket',
-    ch5_0: "The watch ticks more confidently and business keeps climbing. The shop has grown into a proper supermarket. The whole town talks about Capy and “Everything for a Penny”, and new people join the team. Well, and animals.",
-    ch5_1: "I'm Bodie, builder beaver. Heard you're expanding. Need planks? I'll send the invoice separately. And another one for politeness.",
-    ch5_2: "I'm Zoya, sales. What displays... I'd sell snow in winter. Twice. With a markup.",
-    ch5_3: "Hoo. I'm Sonia, accountant. Someone has to count these mountains of coins before they vanish on their own.",
-    ch5_4: "Tonya. Security. Slow, but principled. And no favors.",
-    ch5_5: "Come in, friends. I don't even know how to thank you.",
-    ch5_6: "Thank us? I'm already first in line for the bonus.",
+    ch1_title: "The Corner Booth",
+    ch1_0: "Morning in the little town. The bakery is already smoking, the cobbles are still wet, and on the corner stands a booth nobody wanted.",
+    ch1_1: "A cart rolls up with one coin at the bottom. A capybara peeks out. Looks confident. Mostly.",
+    ch1_2: "Hello, booth. I'm Capy. One coin, lots of plans, and no backup.",
+    ch1_3: "The roof leaks, the sign hangs crooked, but there's an awning. I'll call it “Everything for a Penny”. The penny is already here.",
+    ch1_4: "They say whoever stands on the corner sees the whole town. Nobody warned me the whole town would see me.",
+    ch1_5: "The first customer is already shuffling by the door, clutching a purse. Time to tap: every touch is a coin.",
+    ch2_title: "Spike Needs a Job",
+    ch2_0: "A few days in, the till rings so much that Capy can't keep up with selling or counting. A hedgehog with a piece of paper has been sitting by the door for ages.",
+    ch2_1: "Good day. Any openings? I'm Spike. I can count, I can't steal. Mostly don't want to.",
+    ch2_2: "But you're prickly. Customers are probably scared.",
+    ch2_3: "The honest ones aren't scared. The others aren't either, but they regret it later.",
+    ch2_4: "The till is yours. No trial period: we have neither the time nor the money.",
+    ch2_5: "Thanks. Not a single penny will get lost. Unless it gets stuck in the quills. Then I'll definitely return it.",
+    ch2_6: "Tip: open the “Team” tab and hire Spike. He boosts your tap power.",
+    ch3_title: "Someone's Stealing!",
+    ch3_0: "With Spike at the till, business took off and the whole town heard about the shop. Along with the customers came someone who didn't plan to pay.",
+    ch3_1: "Capy! A pack of cookies is gone. I only caught a striped tail and a very confident back.",
+    ch3_2: "Striped tail. Confident back. There's only one of those in this neighbourhood.",
+    ch3_3: "No offence, it isn't stealing, it's freelance. I'm Shnyr, the fastest raccoon on this street.",
+    ch3_4: "That's my cookie. Give it back. Now.",
+    ch3_5: "It's been... slightly tasted. Call it a review. And now, no catching me!",
+    ch3_6: "Gone. I told you we need a safe. Even a small one.",
+    ch3_7: "The raccoon is sly, but doesn't seem mean. He'll be back. Better hide valuables, and nerves too.",
+    ch4_title: "The Watch That Ticks Backwards",
+    ch4_0: "Hiding valuables from the raccoon, Capy rummages through the stockroom and finds something odd in a corner.",
+    ch4_1: "A pocket watch. The gold has darkened, the glass is cracked. Old, but with character.",
+    ch4_2: "It ticks. But the hands go backwards. Definitely not by the manual.",
+    ch4_3: "Broken. My grandpa said: a watch that runs backwards is either broken or has a surprise.",
+    ch4_4: "I don't like surprises. But it's pretty. I'll keep it, no warranty.",
+    ch4_5: "In the pocket the watch ticked softly, as if winking. Looks like that wasn't the last time.",
+    ch5_title: "New Colleagues",
+    ch5_0: "The shop has grown into a supermarket. The whole street talks about Capy, and new workers are knocking on the door. Those who could, knocked.",
+    ch5_1: "I'm Bodya, a builder. Heard you're expanding. Need boards? I'll send the bill separately. And another one, for politeness.",
+    ch5_2: "Zoya. I sell everything that isn't nailed down. And what is nailed down, just slower. Give me a window and it'll start talking.",
+    ch5_3: "Hoo. I'm Sonia, an accountant. I work nights, by day I only blink. Someone has to count these coins before they run away.",
+    ch5_4: "Tonya, security. I'm coming. Will be there soon. But I won't let anyone through.",
+    ch5_5: "Come in, friends. Thank you for coming. Seriously.",
+    ch5_6: "Thanks are nice. But I haven't seen how the bonus question ends.",
     ch5_7: "The team is growing. Hire new staff in the “Team” tab. Meanwhile someone in the dark is eyeing your register.",
-
-    ch6_title: 'Shnyr in Trouble',
-    ch6_0: "Late evening. The team has gone home and Capy is zoning out over the takings. Rain outside, and something stirs by the back door.",
-    ch6_1: "Is someone sniffling? Shnyr, is that you?",
-    ch6_2: "I'm not crying. It's the rain. On my face. Only on my face.",
-    ch6_3: "Shnyr, why do you steal? Don't you have a home?",
-    ch6_4: "I have a box behind the bakery. Friends, none. At all. Not even in group chats.",
-    ch6_5: "If someone just said “hi” to me... But everyone yells “Catch the raccoon!”",
+    ch6_title: "Shnyr in the Rain",
+    ch6_0: "Late evening. Everyone has gone home and Capy sits over the takings. Rain outside, and something stirs by the back door.",
+    ch6_1: "Is someone sobbing? Shnyr, is that you?",
+    ch6_2: "Not me. It's the rain. On my face. Only on my face.",
+    ch6_3: "Shnyr, why do you do it? Don't you have a home?",
+    ch6_4: "There's a crate behind the bakery. No friends. At all. Not even someone to sit quietly next to.",
+    ch6_5: "I'd like someone to just say “hi”. Everyone yells “catch the raccoon”.",
     ch6_6: "Hi, Shnyr. Just because. Come in, we have tea and buns.",
-    ch6_7: "Seriously? Then I'm done stealing. Well... almost. Kidding. Probably.",
-    ch6_8: "Since then Shnyr is no longer a thief but a friend. Mostly. Big things awaited everyone.",
-
-    ch7_title: 'The Shopping Mall',
-    ch7_0: "Months passed. Shnyr became a customer favorite and the team a real family, with minor fights over coffee. The shop grew into a store, then a supermarket, and now...",
-    ch7_1: "A real shopping mall stands on the street, with a glass roof, a cinema and the smell of fresh pastry. Competitors quietly cry in a corner.",
-    ch7_2: "The Capy Mall. From one coin. Who would have thought.",
-    ch7_3: "Everyone built it, and the bonus goes to me. Lovely day.",
-    ch7_4: "It's more fun with you than stealing. Though stealing was fun too.",
-    ch7_5: "Thank you all. Without you this place would sell nothing but air.",
-    ch7_6: "Suddenly something ticked loudly in Capy's pocket.",
+    ch6_7: "Seriously? Then I'm done stealing. Well... almost. Kidding. Probably. Thanks.",
+    ch6_8: "Since then Shnyr isn't a thief but one of us. He still glances at the till sometimes, but now with embarrassment. Big things were ahead for everyone.",
+    ch7_title: "The Mall",
+    ch7_0: "Months passed. Shnyr became a customer favourite, and the team became a family that argues over coffee. The shop grew into a store, then a supermarket, and now...",
+    ch7_1: "On the street stands a mall with a glass roof, a cinema and the smell of fresh pastries. Competitors quietly sulk in a corner.",
+    ch7_2: "Capy's Mall. From one coin. Who would have thought.",
+    ch7_3: "I counted every brick. They all add up. A miracle.",
+    ch7_4: "Nobody needs to catch me here. It's strange and nice.",
+    ch7_5: "Thank you all. Without you this place would only sell air.",
+    ch7_6: "Something ticked loudly in Capy's pocket.",
     ch7_7: "My watch... Did it just come alive?",
-
-    ch8_title: 'Finale: The Watch Ticks',
-    ch8_0: "It did: the golden watch crawls out of the pocket and hangs in the air. The hands spin backwards, like in a bad movie.",
-    ch8_1: "Hello, Capy. I waited long. Very long. An eternity, minus the coffee breaks.",
+    ch8_title: "Finale: The Watch Speaks",
+    ch8_0: "Sure enough, the golden watch crawls out of the pocket and hangs in the air. The hands spin backwards.",
+    ch8_1: "Hello, Capy. I've waited long. An eternity, if you don't count coffee breaks.",
     ch8_2: "You can talk?!",
-    ch8_3: "I'm the Watch of Time. I can turn back minutes. Refunds are not included.",
-    ch8_4: "The mall is wonderful. But what if you could play it all again, with experience?",
-    ch8_5: "Start over? But I already...",
-    ch8_6: "Not lose, but build wiser. Friends stay. Knowledge stays. Coins don't. That's the economy.",
-    ch8_7: "Wiser... Sounds not bad. I'll think about it.",
+    ch8_3: "I'm the Watch of Time. I can rewind minutes. Refunds not included.",
+    ch8_4: "Your mall is wonderful. But imagine going through it all again, with experience.",
+    ch8_5: "Start over? But everything's already built here...",
+    ch8_6: "Not lose, but build wiser. Friends stay, knowledge stays. Coins don't. That's the economy.",
+    ch8_7: "Wiser... Sounds not bad. I need to think.",
     ch8_8: "When you decide, just wind me up. I'm here. Ticking.",
     ch8_9: "Time travel is unlocked. Check the “Watch” tab: a new era is waiting.",
 
@@ -10463,7 +10448,7 @@ function wornSkinIds() {                                                       /
   return ids;
 }
 // Живі репліки скінів: по 3–8 на скін, вибираються навмання без повтору поспіль (старі skinSay_* лишились запасним варіантом)
-const SKIN_LINES = {"uk":{"capy_pirate":["Папуга знову вкрав моє печиво. Зрадник!","Де скарб? А, ось він. Це каса.","Йо-хо-хо... ой, доброго дня, шановні покупці!","Пов’язка на оці. Тепер бачу лише знижки."],"capy_astro":["Х’юстоне, чуєш? Тут пахне булочками!","У шоломі так тихо... Тільки я і мої думки. О, покупець!","Невагомість — це коли ніхто не просить “ще знижку”.","Один маленький тап для Капі, один гігантський прибуток для магазину."],"capy_wizard":["Абра-кадабра... ні, це не те. Зараз згадаю.","Борода сама росте. Я тут ні до чого. Ну, майже.","Чарівна паличка загубилась. Зате лишились нерви.","Зірки на мантії підморгують. Або мені здається."],"capy_chef":["Щось пахне смачно. То не я, то сусіди!","Ковпак великий, а ложка ще більша. Бачите?","Шеф радить: не їжте товар. Вибір уже зроблений.","Сіль, перець і трохи терпіння. Це весь секрет."],"capy_explorer":["За цим рогом точно щось цікаве. Або кіт.","Бінокль дивиться вгору, а я шукаю печиво.","Рюкзак важкий, зате там три бутерброди!","Мапа показує на північ. А ми на південь. Вибачте."],"capy_santa":["Хо-хо-хо! Хтось тут був чемний. Не будемо називати імен.","Мішок порожній. Усе роздано... мені.","Борода лоскочеться. Це так і має бути?","Кожен день трохи Різдво, коли вдягнеш червоне!"],"capy_witch":["Метла в ремонті. Тепер літаю на надії.","Гарбуз на спині дивиться на мене. Я теж на нього.","Зілля готове! Правда, нічого не пам’ятаю, що там було.","Брррр! Це хтось прошепотів “знижка”?"],"capy_flower":["Метелик сів мені на спину. Тс-с, не рухайтеся.","Квіти пахнуть весною. А я пахну квітами. Гарно!","Вінок трохи з’їхав. Але мені навіть подобається.","Бджоли вже питали, чи можна в нас пожити."],"capy_beach":["Хочу в море. Але тут хоч тінь від магазину.","М’яч на спині не втече. А от я втечу на пляж!","Окуляри темні, настрій світлий.","Лимонад, будь ласка. З льодом. І парасольку!"],"capy_autumn":["Шарф такий довгий, що я за нього чіпляюсь.","Листя шарудить, а в мене кава. Ідеальний ранок.","Осінь пахне корицею. Чи то від мене?","Теплий светр — це як обійми. Тільки трохи кусається."],"capy_ep0":["Береток набік, перо вгору. Ось тепер я митець.","Ця лілія на мантії не проста. Вона дорога!","Лютня десь грає. Хто там, виходьте!","Я весь у ренесансі. А ви?"],"capy_ep1":["Радіо ловить лише одну хвилю. Ну й нехай!","Літера C означає «Супер Капі». Секретна розшифровка.","Бульбашка жуйки... Ой, вона лопнула.","Куртка стара, а настрій новий."],"capy_ep2":["Диско-куля сяє! Я теж трохи сяю.","Окуляри великі, а бачу все. Навіть хто не платить.","Ноги самі просяться в танець!","Блиск, блиск, іще раз блиск!"],"capy_ep3":["Рівень пройдено! Наступний: порожня каса.","Геймпад на грудях. Для швидких рішень.","Один круг монет — і тут уже +1 життя.","Навушники грають восьмибітну музику. Класика!"],"capy_ep4":["Мій телефон на 1%. А настрій на сто!","Wi-Fi знайшов! Тепер можна жити.","Рюкзак повний стікерів. Сорок шість разів “лайк”.","Мене ніхто не підписав. Але я не ображаюсь."],"capy_ep5":["Паросток на рюкзаку підріс на сантиметр. Я пишаюсь!","Дерева ростуть, а ми їм допомагаємо.","Куртка зі старих пляшок. Нова, але з історією!","Дихайте глибоко. Тут майже ліс."],"capy_ep6":["Тиша... Тільки я і зорі. О, це касир кличе.","Шолом запотів, бо я радий!","Невагомість мені подобається. Бо печиво не падає.","Ракета чекає. А я чекаю покупців."],"capy_ep7":["Неон миготить, а я нервово усміхаюсь.","Візор світиться, але бачу гірше. Ох, стиль!","Місто ввечері — це як світломузика.","Кросівки теж світяться. Ходжу, як ліхтарик."],"capy_knight":["Мій меч гострий, а ціни чесні. Принаймні сьогодні.","Шолом великий, а видно тільки носа. Зручно!","Поки я у броні, нікому до мене діла. Мрія.","Хто тут ображає покупців? Назад, лицар уже в дорозі!"],"capy_hero":["Плащ розвівається, а я ні. Контролюю ситуацію.","Моя суперсила: знаходити печиво за три метри.","Маска трохи тисне, але героям так і треба.","Хтось тут кричав? Спокійно, я вже їду!"],"capy_cowboy":["У цьому місті діє закон. І закон каже: купуйте.","Капелюх з’їжджає на очі. Тримаю рівновагу.","Шериф вийшов на вулицю. Тихо!","Хустка пахне пилом і пригодами."],"capy_fairy":["Крильця щекочуть, коли сміюсь. Хі-хі.","Дрібка чарів, і день стає світлішим.","Корона ледь тримається на вухах. Це нормально?","Усі побажання виконую. Окрім “знижка ще більша”."],"capy_viking":["Рогатий шолом зачіпається за двері. Знову.","Щит міцний, а я м’який. Баланс!","На абордаж... тобто на кухню. Там вечеря.","Бородатий вікінг хоче обійми. Хто за?"],"capy_pilot":["Окуляри запотіли. Лечу наосліп, але з любов’ю.","Шарф довгий, а крила короткі. Вирішую по ходу.","Пристебніться! Зараз буде невеличка турбулентність.","Приземлення м’яке, як булочка."],"capy_mel":["Я Мел. Так, лис. Ні, капібарою не стану.","Хвіст пухнастий, а в голові ідей ще пухнастіше!","Хтось казав “хитрий лис”? Я просто думаю наперед.","Мел тут, щоб усе було гарно і смачно.","Дві лапи на клавіатурі, одна на кнопці “зберегти”.","Нашу гру збирали вночі. Тому в ній трохи ночі.","Якщо щось блимає не так, це не баг. Це… задум!","Ніка принесла каву. Я випив. Вона, здається, теж."],"capy_nika":["Я Ніка. Стрибаю, коли хвилююсь.","Бантик на місці, вуха на місці, ідея теж.","Морквину нікому не віддам. Навіть Мелу.","Хтось казав “зайка”? Прийом, ми вже тут!","Зробили гру з любові до міст і до капібар.","Іноді пишу код, іноді малюю, іноді просто ляскаю вухами.","Мел знову плутає тап і клік. Не поправляю.","Дякую, що граєте. Мені аж вушка теплішають."],"shop_candy":["Тут усе липке. Але приємно.","Лоліпоп вищий за мене. Мрія збулась.","Не облизуйте стіни. Я це кажу і собі."],"shop_gold":["Сяє так, що я бачу зайчики.","Золото холодне, а настрій теплий.","Касир носить окуляри від блиску. Правда!"],"shop_ice":["Бр-р-р! Але гарно, як у казці.","Сосулька впала. Не на мене, слава небу.","Знижки тут не тануть. Бо морозні!"],"shop_wood":["Пахне смолою й теплом. Як у лісі.","Дерев’яна хатина тримається міцно. Як я.","Скрип-скрип. Це добре. Це затишок!"],"shop_garden":["Квіти ростуть на даху. Хтось їх поливає?","Тут живе бджола. Ми вже подружились.","Магазин-сад: гуляєш і купуєш. Зручно."],"shop_xmas":["Вогники миготять. Мені теж хочеться.","Під ялинкою точно щось є. Я не дивлюсь... дивлюсь.","У магазині пахне мандаринами. Мрія!"],"shop_halloween":["Хтось ходить на горищі. Не я, чесно.","Гарбуз усміхається ширше за мене.","Цукерки чи жарт? Я вибираю цукерки."],"shop_spring":["Весна прийшла! Навіть у каси.","Пелюстки на даху. Дуже мило.","Птахи співають, а покупці усміхаються."],"shop_autumn":["Листя на даху шарудить, як мишка.","Тепло, затишно, і пахне яблуками.","Осінь у магазині — це як обійми."],"weather_rainbow":["Веселка! Дивіться, дивіться! Ой, зникла.","Кольорів так багато, що я їх не рахую.","Десь під нею точно ховається горщик із печивом."],"weather_lightning":["Бах! Це було гучно, але красиво.","Блискавка фіолетова. Мені подобається.","Тримаю вуха під кепкою. На всяк випадок."],"weather_lightninggreen":["Зелена блискавка! Точно чарівна.","Бах-бах! А чому не червона?","Хтось там у небі грається в неон."],"weather_lightningred":["Червона блискавка! Аж серце тьохнуло.","Вона така яскрава, що я мружусь.","Небо сердиться, але гарно сердиться."],"weather_cottoncloud":["Хмара з цукрової вати. Хто надкусив?","Хочу залізти й поспати. Вона ж солодка!","Дощику з карамелі ще не чекаємо?"],"weather_goldcloud":["Золота хмара! Іноді з неї падають монети.","Небо теж вирішило заробляти. Молодець.","Дивіться вгору. Може, пощастить!"],"weather_starcloud":["Зірки у хмарах мерехтять. Загадаю бажання.","Хмара переливається. Хочу таку шапку.","Тихо, тихо... Чуєте, як вона співає?"],"hero_party":["Свято щодня! Конфеті в кожній кишені.","Помічники в капелюшках. Просто мрія.","Ну що, потанцюємо? Каса почекає."],"hero_ninja":["Хтось пробіг? Ні? Ну, тоді то були ніндзя.","Тихо як тінь. Кажуть, це наші.","Я їх не бачу. І не побачу. Вони молодці."],"hero_chef":["Пахне булочками. Хто там готує?","Помічники-кухарі нагодують і покупців, і мене.","Тільки не їжте товар. Це я собі кажу."],"hero_wizard":["Помічники чаклують! Черга зменшується сама.","Мантії блимають, а я усміхаюсь.","Чарівна паличка в кишені? Мене теж навчіть!"],"hero_royal":["Помічники в коронах. Ваша величносте, каса там!","Король із ковбасою? Це вже вищий рівень.","Королівська команда працює без вихідних."],"hero_santa":["Пакують подарунки так швидко, що я не встигаю.","Червоні шапки скрізь. Свята прийшли!","Хо-хо, це вже не жарт, це команда!"],"hero_witch":["Відьмочки літають між полицями. Тільки б не збили.","Капелюхи гострі. Не підходьте надто близько.","Зілля для швидкого обслуговування. Корисно!"],"street_brick":["Цегляна дорога. Куди вона веде? До каси!","Ходити приємно. Кожна цеглина рівна.","Дорога червона. Як мої щоки зараз."],"street_wood":["Дошки скрипять під лапами. Затишно!","Дерев’яна доріжка пахне лісом.","Скрип-скрип. Наче хтось іде. Ой, це я."],"street_leaves":["Хрум-хрум! Мій улюблений звук осені.","Листя під лапами: як килим із чорного золота.","Хтось розсипав листя. Дякую, добра людино!"],"street_snow":["Сніг! Ні, не їсти. Обійдусь без снігу.","Лапи холодні, а серце тепле.","Скрип-скрип. Сніг — теж музика."],"street_moss":["Мох м’який, як килим. Піду полежу.","Замшіла бруківка пам’ятає багато історій.","У шві росте квіточка. Не наступіть!"],"street_gold":["Золота дорога! Хоч і не з рубінів.","Іду, а під лапами сяє. Приємно.","Цеглина з монети. Не чіпати, не мою."]},"en":{"capy_pirate":["The parrot stole my cookie again. Traitor!","Where's the treasure? Oh, that's the till.","Yo-ho-ho... oh, hello, dear customers!","Eye patch on. Now I only see discounts."],"capy_astro":["Houston, do you smell buns?","So quiet in the helmet... just me and my thoughts. Oh, a customer!","Zero gravity is when nobody asks for 'one more discount'.","One small tap for Capy, one giant profit for the shop."],"capy_wizard":["Abra-ca-dabra... no, wrong one. I'll remember in a sec.","The beard grows on its own. I did nothing. Almost.","I lost my wand. At least my nerves are still here.","The stars on my robe are winking. Or I'm imagining."],"capy_chef":["Something smells great. Not me, it's the neighbours!","Big hat, bigger spoon. See?","The chef advises: don't eat the goods. The choice is made.","Salt, pepper and a little patience. That's the whole secret."],"capy_explorer":["Something interesting is round that corner. Or a cat.","The binoculars look up, I look for cookies.","The backpack is heavy, but it has three sandwiches!","The map says north. We go south. Sorry."],"capy_santa":["Ho-ho-ho! Someone here was good. No names.","The sack is empty. I gave it all... to myself.","The beard tickles. Is it supposed to?","Every day is a bit of Christmas when you wear red!"],"capy_witch":["The broom is being repaired. I fly on hope now.","The pumpkin on my back stares at me. I stare back.","The potion is ready! I just forgot what's in it.","Brrr! Did someone whisper 'discount'?"],"capy_flower":["A butterfly landed on my back. Shh, nobody move.","Flowers smell like spring. And I smell like flowers. Nice!","The wreath slipped a bit. I kind of like it.","The bees already asked if they can live here."],"capy_beach":["I want the sea. But at least here's the shop's shade.","The ball on my back won't run away. I will, to the beach!","Dark glasses, bright mood.","Lemonade, please. With ice. And an umbrella!"],"capy_autumn":["The scarf is so long that I trip on it.","Leaves rustle, I have coffee. Perfect morning.","Autumn smells like cinnamon. Or is it me?","A warm sweater is like a hug. Slightly scratchy."],"capy_ep0":["Beret aside, feather up. Now I'm an artist.","This lily on my cloak isn't plain. It's expensive!","A lute is playing somewhere. Come out, whoever you are!","I'm all Renaissance. And you?"],"capy_ep1":["The radio catches one wave only. Fine!","The C stands for 'Super Capy'. I made it up.","A bubblegum bubble... oh, it popped.","The jacket is old, the mood is new."],"capy_ep2":["The disco ball is shining! I shine a little too.","Big glasses, and I see everything. Even who doesn't pay.","My feet are asking for a dance!","Sparkle, sparkle, one more sparkle!"],"capy_ep3":["Level cleared! Next: an empty till.","A gamepad on my chest. For quick decisions.","One coin lap and that's +1 life.","My headphones play 8-bit music. A classic!"],"capy_ep4":["My phone is at 1%. My mood is at 100!","Found Wi-Fi! Now life can go on.","The backpack is full of stickers. Forty-six likes.","Nobody followed me. But I'm not offended."],"capy_ep5":["The sprout on my backpack grew a centimetre. So proud!","Trees grow, and we help them.","A jacket from old bottles. New, but with a story!","Breathe deeply. It's almost a forest here."],"capy_ep6":["Silence... just me and the stars. Oh, the cashier is calling.","The helmet fogged up because I'm happy!","I like zero gravity. The cookies don't fall.","The rocket is waiting. I'm waiting for customers."],"capy_ep7":["The neon blinks and I smile nervously.","My visor glows, but I see worse. Oh, style!","The city at night is like a light show.","My sneakers glow too. I walk like a lantern."],"capy_knight":["My sword is sharp, my prices are honest. At least today.","Big helmet, only my nose is visible. Handy!","While I'm in armour, nobody bothers me. A dream.","Who's bothering the customers? Step back, I'm ready!"],"capy_hero":["The cape flutters, I don't. Situation under control.","My superpower: finding cookies from three metres away.","The mask is a bit tight, but that's how heroes are.","Did someone shout? Calm down, I'm already coming!"],"capy_cowboy":["There's law in this town. And the law says: buy.","My hat slides over my eyes. Keeping my balance.","The sheriff is on the street. Quiet!","The bandana smells of dust and adventure."],"capy_fairy":["My wings tickle when I laugh. Hee-hee.","A pinch of magic, and the day gets brighter.","The crown barely stays on my ears. Is that normal?","I grant every wish. Except 'an even bigger discount'."],"capy_viking":["The horned helmet snags on the door. Again.","The shield is strong, I'm soft. Balance!","To the boarding... I mean to the kitchen. Dinner's there.","A bearded Viking wants a hug. Who's in?"],"capy_pilot":["My goggles fogged up. Flying blind, but with love.","Long scarf, short wings. I'll figure it out.","Buckle up! A bit of turbulence ahead.","The landing is soft as a bun."],"capy_mel":["I'm Mel. Yes, a fox. No, I won't turn into a capybara.","My tail is fluffy, and my ideas are even fluffier!","Someone said 'sly fox'? I just plan ahead.","Mel is here to keep everything pretty and tasty.","Two paws on the keyboard, one on the 'save' button.","We built this game at night. That's why it has a bit of night.","If something blinks wrong, it's not a bug. It's... a feature!","Nika brought coffee. I drank it. She did too, I think."],"capy_nika":["I'm Nika. I hop when I'm excited.","Bow in place, ears in place, idea in place.","I won't give my carrot to anyone. Not even Mel.","Someone said 'bunny'? Roger, we're here!","We made this game out of love for towns and capybaras.","Sometimes I code, sometimes I draw, sometimes I just flap my ears.","Mel mixes up tap and click again. I don't correct him.","Thanks for playing. My ears get warm."],"shop_candy":["Everything is sticky here. But nice.","The lollipop is taller than me. Dream come true.","Don't lick the walls. I'm telling myself too."],"shop_gold":["It shines so much I see sparkles.","Gold is cold, but the mood is warm.","The cashier wears sunglasses against the glare. True!"],"shop_ice":["Brr! But so pretty, like a fairy tale.","An icicle fell. Not on me, thank goodness.","Discounts don't melt here. They're frozen!"],"shop_wood":["Smells of resin and warmth. Like a forest.","The wooden cabin stands firm. Like me.","Creak-creak. That's good. That's cosy!"],"shop_garden":["Flowers grow on the roof. Who waters them?","A bee lives here. We're already friends.","A shop-garden: stroll and shop. Handy."],"shop_xmas":["The lights blink. I want to blink too.","There's definitely something under the tree. I'm not looking... I'm looking.","The shop smells of tangerines. A dream!"],"shop_halloween":["Someone's walking in the attic. Not me, honest.","The pumpkin smiles wider than me.","Trick or treat? I choose the treat."],"shop_spring":["Spring is here! Even at the till.","Petals on the roof. So sweet.","Birds sing and customers smile."],"shop_autumn":["Leaves on the roof rustle like a mouse.","Warm, cosy, smells of apples.","Autumn in a shop is like a hug."],"weather_rainbow":["A rainbow! Look, look! Oh, gone.","So many colours I stopped counting.","Somewhere under it hides a pot of cookies."],"weather_lightning":["Boom! That was loud, but pretty.","The lightning is purple. I like it.","Keeping my ears under my cap. Just in case."],"weather_lightninggreen":["Green lightning! Definitely magic.","Boom-boom! Why not red?","Someone up there is playing with neon."],"weather_lightningred":["Red lightning! My heart skipped.","It's so bright I squint.","The sky is angry, but in a pretty way."],"weather_cottoncloud":["A cotton candy cloud. Who took a bite?","I want to climb in and nap. It's sweet!","Caramel rain, anyone?"],"weather_goldcloud":["A gold cloud! Sometimes coins fall from it.","The sky decided to earn too. Good job.","Look up. Maybe you'll be lucky!"],"weather_starcloud":["Stars in the clouds are twinkling. Making a wish.","The cloud shimmers. I want that hat.","Hush, hush... Can you hear it singing?"],"hero_party":["A party every day! Confetti in every pocket.","Helpers in party hats. Just a dream.","Shall we dance? The till can wait."],"hero_ninja":["Did someone run by? No? Then it was ninjas.","Quiet as a shadow. They say that's ours.","I didn't see them. And I won't. Good work."],"hero_chef":["Smells like buns. Who's cooking?","Chef helpers will feed the customers and me.","Just don't eat the goods. I'm telling myself."],"hero_wizard":["Helpers are casting spells! The queue shrinks by itself.","Robes blink, and I smile.","A magic wand in your pocket? Teach me too!"],"hero_royal":["Helpers in crowns. Your Majesty, the till is that way!","A king with a sausage? That's the next level.","The royal team works without days off."],"hero_santa":["They wrap gifts so fast I can't keep up.","Red hats everywhere. The holidays are here!","Ho-ho, that's not a joke, that's a team!"],"hero_witch":["Little witches fly between the shelves. Hope nobody gets hit.","The hats are pointy. Don't get too close.","A potion for fast service. Useful!"],"street_brick":["A brick road. Where does it lead? To the till!","Nice to walk on. Every brick is straight.","The road is red. Like my cheeks right now."],"street_wood":["Boards creak under my paws. Cosy!","A wooden path smells of the forest.","Creak-creak. Like someone's coming. Oh, it's me."],"street_leaves":["Crunch-crunch! My favourite autumn sound.","Leaves under paws: a carpet of dark gold.","Someone scattered leaves. Thanks, kind soul!"],"street_snow":["Snow! No, don't eat it. I'm stopping myself too.","My paws are cold, my heart is warm.","Crunch-crunch. Snow is music too."],"street_moss":["Moss is soft like a carpet. Going to lie down.","Mossy cobbles remember many stories.","A little flower grows in the crack. Don't step on it!"],"street_gold":["A golden road! Not made of rubies though.","I walk and it sparkles under my paws. Nice.","A brick made from coins. Not touching, not mine."]}};
+const SKIN_LINES = {"uk":{"capy_pirate":["Папуга знову вкрав моє печиво. Зрадник!","Де скарб? А, ось він. Це каса.","Йо-хо-хо... ой, доброго дня, шановні покупці!","Пов’язка на оці. Тепер бачу лише знижки."],"capy_astro":["Х’юстоне, чуєш? Тут пахне булочками!","У шоломі так тихо... Тільки я і мої думки. О, покупець!","Невагомість — це коли ніхто не просить “ще знижку”.","Один маленький тап для Капі, один гігантський прибуток для магазину."],"capy_wizard":["Абра-кадабра... ні, це не те. Зараз згадаю.","Борода сама росте. Я тут ні до чого. Ну, майже.","Чарівна паличка загубилась. Зате лишились нерви.","Зірки на мантії підморгують. Або мені здається."],"capy_chef":["Щось пахне смачно. То не я, то сусіди!","Ковпак великий, а ложка ще більша. Бачите?","Шеф радить: не їжте товар. Вибір уже зроблений.","Сіль, перець і трохи терпіння. Це весь секрет."],"capy_explorer":["За цим рогом точно щось цікаве. Або кіт.","Бінокль дивиться вгору, а я шукаю печиво.","Рюкзак важкий, зате там три бутерброди!","Мапа показує на північ. А ми на південь. Вибачте."],"capy_santa":["Хо-хо-хо! Хтось тут був чемний. Не будемо називати імен.","Мішок порожній. Усе роздано... мені.","Борода лоскочеться. Це так і має бути?","Кожен день трохи Різдво, коли вдягнеш червоне!"],"capy_witch":["Метла в ремонті. Тепер літаю на надії.","Гарбуз на спині дивиться на мене. Я теж на нього.","Зілля готове! Правда, нічого не пам’ятаю, що там було.","Брррр! Це хтось прошепотів “знижка”?"],"capy_flower":["Метелик сів мені на спину. Тс-с, не рухайтеся.","Квіти пахнуть весною. А я пахну квітами. Гарно!","Вінок трохи з’їхав. Але мені навіть подобається.","Бджоли вже питали, чи можна в нас пожити."],"capy_beach":["Хочу в море. Але тут хоч тінь від магазину.","М’яч на спині не втече. А от я втечу на пляж!","Окуляри темні, настрій світлий.","Лимонад, будь ласка. З льодом. І парасольку!"],"capy_autumn":["Шарф такий довгий, що я за нього чіпляюсь.","Листя шарудить, а в мене кава. Ідеальний ранок.","Осінь пахне корицею. Чи то від мене?","Теплий светр — це як обійми. Тільки трохи кусається."],"capy_ep0":["Береток набік, перо вгору. Ось тепер я митець.","Ця лілія на мантії не проста. Вона дорога!","Лютня десь грає. Хто там, виходьте!","Я весь у ренесансі. А ви?"],"capy_ep1":["Радіо ловить лише одну хвилю. Ну й нехай!","Літера C означає «Супер Капі». Секретна розшифровка.","Бульбашка жуйки... Ой, вона лопнула.","Куртка стара, а настрій новий."],"capy_ep2":["Диско-куля сяє! Я теж трохи сяю.","Окуляри великі, а бачу все. Навіть хто не платить.","Ноги самі просяться в танець!","Блиск, блиск, іще раз блиск!"],"capy_ep3":["Рівень пройдено! Наступний: порожня каса.","Геймпад на грудях. Для швидких рішень.","Один круг монет — і тут уже +1 життя.","Навушники грають восьмибітну музику. Класика!"],"capy_ep4":["Мій телефон на 1%. А настрій на сто!","Wi-Fi знайшов! Тепер можна жити.","Рюкзак повний стікерів. Сорок шість разів “лайк”.","Мене ніхто не підписав. Але я не ображаюсь."],"capy_ep5":["Паросток на рюкзаку підріс на сантиметр. Я пишаюсь!","Дерева ростуть, а ми їм допомагаємо.","Куртка зі старих пляшок. Нова, але з історією!","Дихайте глибоко. Тут майже ліс."],"capy_ep6":["Тиша... Тільки я і зорі. О, це касир кличе.","Шолом запотів, бо я радий!","Невагомість мені подобається. Бо печиво не падає.","Ракета чекає. А я чекаю покупців."],"capy_ep7":["Неон миготить, а я нервово усміхаюсь.","Візор світиться, але бачу гірше. Ох, стиль!","Місто ввечері — це як світломузика.","Кросівки теж світяться. Ходжу, як ліхтарик."],"capy_knight":["Мій меч гострий, а ціни чесні. Принаймні сьогодні.","Шолом великий, а видно тільки носа. Зручно!","Поки я у броні, нікому до мене діла. Мрія.","Хто тут ображає покупців? Назад, лицар уже в дорозі!"],"capy_hero":["Плащ розвівається, а я ні. Контролюю ситуацію.","Моя суперсила: знаходити печиво за три метри.","Маска трохи тисне, але героям так і треба.","Хтось тут кричав? Спокійно, я вже їду!"],"capy_cowboy":["У цьому місті діє закон. І закон каже: купуйте.","Капелюх з’їжджає на очі. Тримаю рівновагу.","Шериф вийшов на вулицю. Тихо!","Хустка пахне пилом і пригодами."],"capy_fairy":["Крильця щекочуть, коли сміюсь. Хі-хі.","Дрібка чарів, і день стає світлішим.","Корона ледь тримається на вухах. Це нормально?","Усі побажання виконую. Окрім “знижка ще більша”."],"capy_viking":["Рогатий шолом зачіпається за двері. Знову.","Щит міцний, а я м’який. Баланс!","На абордаж... тобто на кухню. Там вечеря.","Бородатий вікінг хоче обійми. Хто за?"],"capy_pilot":["Окуляри запотіли. Лечу наосліп, але з любов’ю.","Шарф довгий, а крила короткі. Вирішую по ходу.","Пристебніться! Зараз буде невеличка турбулентність.","Приземлення м’яке, як булочка."],"capy_mel":["Я Мел. Лис. Так, капібарою не стану, питали вже.","Ніка каже, що в мене забагато ідей. Це вона ще не бачила нотатки.","Ця гра почалась з одного пікселя й однієї безсонної ночі. Піксель досі тут.","Коли щось блимає не так, я кажу «це задум». Ніка робить вигляд, що вірить.","Кава від Ніки — найкращий баг-фікс. Не пояснюється, але працює.","Іноді заходжу в гру й бачу те, чого не писав. Це ви чи Ніка?","Хвіст пухнастий, а дедлайни ще пухнастіші.","Дякую, що граєте. Це правда найкращий момент мого робочого дня."],"capy_nika":["Я Ніка. Стрибаю, коли хвилююсь. А хвилююсь досить часто.","Мел знову плутає тап і клік. Не поправляю. Це наша традиція.","Морквину нікому не віддам. Навіть Мелу. Особливо Мелу.","Іноді малюю, іноді пишу код, іноді просто ляскаю вухами. Усе це робота.","Ця гра — про місто, у якому хочеться жити. І трохи про капібар.","Бантик на місці, вуха на місці, ідея теж. Лише кава закінчилась.","Бачу, ви тут уже давно. Це скільки днів? Дякую вам за них.","Мел називає мене перфекціоністкою. Я його — «потім виправимо». Разом ми студія."],"shop_candy":["Тут усе липке. Але приємно.","Лоліпоп вищий за мене. Мрія збулась.","Не облизуйте стіни. Я це кажу і собі."],"shop_gold":["Сяє так, що я бачу зайчики.","Золото холодне, а настрій теплий.","Касир носить окуляри від блиску. Правда!"],"shop_ice":["Бр-р-р! Але гарно, як у казці.","Сосулька впала. Не на мене, слава небу.","Знижки тут не тануть. Бо морозні!"],"shop_wood":["Пахне смолою й теплом. Як у лісі.","Дерев’яна хатина тримається міцно. Як я.","Скрип-скрип. Це добре. Це затишок!"],"shop_garden":["Квіти ростуть на даху. Хтось їх поливає?","Тут живе бджола. Ми вже подружились.","Магазин-сад: гуляєш і купуєш. Зручно."],"shop_xmas":["Вогники миготять. Мені теж хочеться.","Під ялинкою точно щось є. Я не дивлюсь... дивлюсь.","У магазині пахне мандаринами. Мрія!"],"shop_halloween":["Хтось ходить на горищі. Не я, чесно.","Гарбуз усміхається ширше за мене.","Цукерки чи жарт? Я вибираю цукерки."],"shop_spring":["Весна прийшла! Навіть у каси.","Пелюстки на даху. Дуже мило.","Птахи співають, а покупці усміхаються."],"shop_autumn":["Листя на даху шарудить, як мишка.","Тепло, затишно, і пахне яблуками.","Осінь у магазині — це як обійми."],"weather_rainbow":["Веселка! Дивіться, дивіться! Ой, зникла.","Кольорів так багато, що я їх не рахую.","Десь під нею точно ховається горщик із печивом."],"weather_lightning":["Бах! Це було гучно, але красиво.","Блискавка фіолетова. Мені подобається.","Тримаю вуха під кепкою. На всяк випадок."],"weather_lightninggreen":["Зелена блискавка! Точно чарівна.","Бах-бах! А чому не червона?","Хтось там у небі грається в неон."],"weather_lightningred":["Червона блискавка! Аж серце тьохнуло.","Вона така яскрава, що я мружусь.","Небо сердиться, але гарно сердиться."],"weather_cottoncloud":["Хмара з цукрової вати. Хто надкусив?","Хочу залізти й поспати. Вона ж солодка!","Дощику з карамелі ще не чекаємо?"],"weather_goldcloud":["Золота хмара! Іноді з неї падають монети.","Небо теж вирішило заробляти. Молодець.","Дивіться вгору. Може, пощастить!"],"weather_starcloud":["Зірки у хмарах мерехтять. Загадаю бажання.","Хмара переливається. Хочу таку шапку.","Тихо, тихо... Чуєте, як вона співає?"],"hero_party":["Свято щодня! Конфеті в кожній кишені.","Помічники в капелюшках. Просто мрія.","Ну що, потанцюємо? Каса почекає."],"hero_ninja":["Хтось пробіг? Ні? Ну, тоді то були ніндзя.","Тихо як тінь. Кажуть, це наші.","Я їх не бачу. І не побачу. Вони молодці."],"hero_chef":["Пахне булочками. Хто там готує?","Помічники-кухарі нагодують і покупців, і мене.","Тільки не їжте товар. Це я собі кажу."],"hero_wizard":["Помічники чаклують! Черга зменшується сама.","Мантії блимають, а я усміхаюсь.","Чарівна паличка в кишені? Мене теж навчіть!"],"hero_royal":["Помічники в коронах. Ваша величносте, каса там!","Король із ковбасою? Це вже вищий рівень.","Королівська команда працює без вихідних."],"hero_santa":["Пакують подарунки так швидко, що я не встигаю.","Червоні шапки скрізь. Свята прийшли!","Хо-хо, це вже не жарт, це команда!"],"hero_witch":["Відьмочки літають між полицями. Тільки б не збили.","Капелюхи гострі. Не підходьте надто близько.","Зілля для швидкого обслуговування. Корисно!"],"street_brick":["Цегляна дорога. Куди вона веде? До каси!","Ходити приємно. Кожна цеглина рівна.","Дорога червона. Як мої щоки зараз."],"street_wood":["Дошки скрипять під лапами. Затишно!","Дерев’яна доріжка пахне лісом.","Скрип-скрип. Наче хтось іде. Ой, це я."],"street_leaves":["Хрум-хрум! Мій улюблений звук осені.","Листя під лапами: як килим із чорного золота.","Хтось розсипав листя. Дякую, добра людино!"],"street_snow":["Сніг! Ні, не їсти. Обійдусь без снігу.","Лапи холодні, а серце тепле.","Скрип-скрип. Сніг — теж музика."],"street_moss":["Мох м’який, як килим. Піду полежу.","Замшіла бруківка пам’ятає багато історій.","У шві росте квіточка. Не наступіть!"],"street_gold":["Золота дорога! Хоч і не з рубінів.","Іду, а під лапами сяє. Приємно.","Цеглина з монети. Не чіпати, не мою."]},"en":{"capy_pirate":["The parrot stole my cookie again. Traitor!","Where's the treasure? Oh, that's the till.","Yo-ho-ho... oh, hello, dear customers!","Eye patch on. Now I only see discounts."],"capy_astro":["Houston, do you smell buns?","So quiet in the helmet... just me and my thoughts. Oh, a customer!","Zero gravity is when nobody asks for 'one more discount'.","One small tap for Capy, one giant profit for the shop."],"capy_wizard":["Abra-ca-dabra... no, wrong one. I'll remember in a sec.","The beard grows on its own. I did nothing. Almost.","I lost my wand. At least my nerves are still here.","The stars on my robe are winking. Or I'm imagining."],"capy_chef":["Something smells great. Not me, it's the neighbours!","Big hat, bigger spoon. See?","The chef advises: don't eat the goods. The choice is made.","Salt, pepper and a little patience. That's the whole secret."],"capy_explorer":["Something interesting is round that corner. Or a cat.","The binoculars look up, I look for cookies.","The backpack is heavy, but it has three sandwiches!","The map says north. We go south. Sorry."],"capy_santa":["Ho-ho-ho! Someone here was good. No names.","The sack is empty. I gave it all... to myself.","The beard tickles. Is it supposed to?","Every day is a bit of Christmas when you wear red!"],"capy_witch":["The broom is being repaired. I fly on hope now.","The pumpkin on my back stares at me. I stare back.","The potion is ready! I just forgot what's in it.","Brrr! Did someone whisper 'discount'?"],"capy_flower":["A butterfly landed on my back. Shh, nobody move.","Flowers smell like spring. And I smell like flowers. Nice!","The wreath slipped a bit. I kind of like it.","The bees already asked if they can live here."],"capy_beach":["I want the sea. But at least here's the shop's shade.","The ball on my back won't run away. I will, to the beach!","Dark glasses, bright mood.","Lemonade, please. With ice. And an umbrella!"],"capy_autumn":["The scarf is so long that I trip on it.","Leaves rustle, I have coffee. Perfect morning.","Autumn smells like cinnamon. Or is it me?","A warm sweater is like a hug. Slightly scratchy."],"capy_ep0":["Beret aside, feather up. Now I'm an artist.","This lily on my cloak isn't plain. It's expensive!","A lute is playing somewhere. Come out, whoever you are!","I'm all Renaissance. And you?"],"capy_ep1":["The radio catches one wave only. Fine!","The C stands for 'Super Capy'. I made it up.","A bubblegum bubble... oh, it popped.","The jacket is old, the mood is new."],"capy_ep2":["The disco ball is shining! I shine a little too.","Big glasses, and I see everything. Even who doesn't pay.","My feet are asking for a dance!","Sparkle, sparkle, one more sparkle!"],"capy_ep3":["Level cleared! Next: an empty till.","A gamepad on my chest. For quick decisions.","One coin lap and that's +1 life.","My headphones play 8-bit music. A classic!"],"capy_ep4":["My phone is at 1%. My mood is at 100!","Found Wi-Fi! Now life can go on.","The backpack is full of stickers. Forty-six likes.","Nobody followed me. But I'm not offended."],"capy_ep5":["The sprout on my backpack grew a centimetre. So proud!","Trees grow, and we help them.","A jacket from old bottles. New, but with a story!","Breathe deeply. It's almost a forest here."],"capy_ep6":["Silence... just me and the stars. Oh, the cashier is calling.","The helmet fogged up because I'm happy!","I like zero gravity. The cookies don't fall.","The rocket is waiting. I'm waiting for customers."],"capy_ep7":["The neon blinks and I smile nervously.","My visor glows, but I see worse. Oh, style!","The city at night is like a light show.","My sneakers glow too. I walk like a lantern."],"capy_knight":["My sword is sharp, my prices are honest. At least today.","Big helmet, only my nose is visible. Handy!","While I'm in armour, nobody bothers me. A dream.","Who's bothering the customers? Step back, I'm ready!"],"capy_hero":["The cape flutters, I don't. Situation under control.","My superpower: finding cookies from three metres away.","The mask is a bit tight, but that's how heroes are.","Did someone shout? Calm down, I'm already coming!"],"capy_cowboy":["There's law in this town. And the law says: buy.","My hat slides over my eyes. Keeping my balance.","The sheriff is on the street. Quiet!","The bandana smells of dust and adventure."],"capy_fairy":["My wings tickle when I laugh. Hee-hee.","A pinch of magic, and the day gets brighter.","The crown barely stays on my ears. Is that normal?","I grant every wish. Except 'an even bigger discount'."],"capy_viking":["The horned helmet snags on the door. Again.","The shield is strong, I'm soft. Balance!","To the boarding... I mean to the kitchen. Dinner's there.","A bearded Viking wants a hug. Who's in?"],"capy_pilot":["My goggles fogged up. Flying blind, but with love.","Long scarf, short wings. I'll figure it out.","Buckle up! A bit of turbulence ahead.","The landing is soft as a bun."],"capy_mel":["I'm Mel. A fox. And no, I won't become a capybara, people asked.","Nika says I have too many ideas. She hasn't seen my notes yet.","This game began with one pixel and one sleepless night. The pixel is still here.","When something blinks wrong I say \"it's by design\". Nika pretends to believe me.","Coffee from Nika is the best bug fix. Can't explain it, but it works.","Sometimes I open the game and see things I never wrote. Was it you or Nika?","The tail is fluffy, and the deadlines are even fluffier.","Thank you for playing. Honestly the best moment of my working day."],"capy_nika":["I'm Nika. I jump when I'm nervous. And I'm nervous quite often.","Mel mixes up tap and click again. I don't correct him. It's our tradition.","I won't give my carrot to anyone. Not even Mel. Especially Mel.","Sometimes I draw, sometimes I code, sometimes I just flap my ears. All of it is work.","This game is about a town you'd want to live in. And a little about capybaras.","Bow in place, ears in place, idea in place. Only the coffee ran out.","I see you've been here a while. How many days is that? Thank you for them.","Mel calls me a perfectionist. I call him \"we'll fix it later\". Together we're a studio."],"shop_candy":["Everything is sticky here. But nice.","The lollipop is taller than me. Dream come true.","Don't lick the walls. I'm telling myself too."],"shop_gold":["It shines so much I see sparkles.","Gold is cold, but the mood is warm.","The cashier wears sunglasses against the glare. True!"],"shop_ice":["Brr! But so pretty, like a fairy tale.","An icicle fell. Not on me, thank goodness.","Discounts don't melt here. They're frozen!"],"shop_wood":["Smells of resin and warmth. Like a forest.","The wooden cabin stands firm. Like me.","Creak-creak. That's good. That's cosy!"],"shop_garden":["Flowers grow on the roof. Who waters them?","A bee lives here. We're already friends.","A shop-garden: stroll and shop. Handy."],"shop_xmas":["The lights blink. I want to blink too.","There's definitely something under the tree. I'm not looking... I'm looking.","The shop smells of tangerines. A dream!"],"shop_halloween":["Someone's walking in the attic. Not me, honest.","The pumpkin smiles wider than me.","Trick or treat? I choose the treat."],"shop_spring":["Spring is here! Even at the till.","Petals on the roof. So sweet.","Birds sing and customers smile."],"shop_autumn":["Leaves on the roof rustle like a mouse.","Warm, cosy, smells of apples.","Autumn in a shop is like a hug."],"weather_rainbow":["A rainbow! Look, look! Oh, gone.","So many colours I stopped counting.","Somewhere under it hides a pot of cookies."],"weather_lightning":["Boom! That was loud, but pretty.","The lightning is purple. I like it.","Keeping my ears under my cap. Just in case."],"weather_lightninggreen":["Green lightning! Definitely magic.","Boom-boom! Why not red?","Someone up there is playing with neon."],"weather_lightningred":["Red lightning! My heart skipped.","It's so bright I squint.","The sky is angry, but in a pretty way."],"weather_cottoncloud":["A cotton candy cloud. Who took a bite?","I want to climb in and nap. It's sweet!","Caramel rain, anyone?"],"weather_goldcloud":["A gold cloud! Sometimes coins fall from it.","The sky decided to earn too. Good job.","Look up. Maybe you'll be lucky!"],"weather_starcloud":["Stars in the clouds are twinkling. Making a wish.","The cloud shimmers. I want that hat.","Hush, hush... Can you hear it singing?"],"hero_party":["A party every day! Confetti in every pocket.","Helpers in party hats. Just a dream.","Shall we dance? The till can wait."],"hero_ninja":["Did someone run by? No? Then it was ninjas.","Quiet as a shadow. They say that's ours.","I didn't see them. And I won't. Good work."],"hero_chef":["Smells like buns. Who's cooking?","Chef helpers will feed the customers and me.","Just don't eat the goods. I'm telling myself."],"hero_wizard":["Helpers are casting spells! The queue shrinks by itself.","Robes blink, and I smile.","A magic wand in your pocket? Teach me too!"],"hero_royal":["Helpers in crowns. Your Majesty, the till is that way!","A king with a sausage? That's the next level.","The royal team works without days off."],"hero_santa":["They wrap gifts so fast I can't keep up.","Red hats everywhere. The holidays are here!","Ho-ho, that's not a joke, that's a team!"],"hero_witch":["Little witches fly between the shelves. Hope nobody gets hit.","The hats are pointy. Don't get too close.","A potion for fast service. Useful!"],"street_brick":["A brick road. Where does it lead? To the till!","Nice to walk on. Every brick is straight.","The road is red. Like my cheeks right now."],"street_wood":["Boards creak under my paws. Cosy!","A wooden path smells of the forest.","Creak-creak. Like someone's coming. Oh, it's me."],"street_leaves":["Crunch-crunch! My favourite autumn sound.","Leaves under paws: a carpet of dark gold.","Someone scattered leaves. Thanks, kind soul!"],"street_snow":["Snow! No, don't eat it. I'm stopping myself too.","My paws are cold, my heart is warm.","Crunch-crunch. Snow is music too."],"street_moss":["Moss is soft like a carpet. Going to lie down.","Mossy cobbles remember many stories.","A little flower grows in the crack. Don't step on it!"],"street_gold":["A golden road! Not made of rubies though.","I walk and it sparkles under my paws. Nice.","A brick made from coins. Not touching, not mine."]}};
 //#part 180_c_customers_updates.js
 const skinLineLast = {};
 function skinLine(id) {
@@ -10476,7 +10461,7 @@ function capySay(forceId) {
   let id = forceId || null;
   if (!id && worn.length && Math.random() < 0.65) { const cs = worn.find(w => w.startsWith('capy_')); id = (cs && Math.random() < 0.6) ? cs : worn[Math.floor(Math.random() * worn.length)]; }
   const key = id ? 'skinSay_' + id : '';
-  let pi = Math.floor(Math.random() * CAPY_PHRASES); if (skinOn('capy')) { const ok = [...Array(CAPY_PHRASES).keys()].filter(n => n !== 1 && n !== 4); pi = ok[Math.floor(Math.random() * ok.length)]; }       // у скіні Капі не жартує про квіточку на голові
+  const pi = Math.floor(Math.random() * CAPY_PHRASES);
   const txt = (id && skinLine(id)) || (key && t(key) !== key ? t(key) : pickLine('capy', () => 'capy_say_' + pi, 'capy_cold_', 3));
   showBubble('capy', txt, c.x + 14, c.footY - 32 * CAPY_K);
 }
@@ -10506,6 +10491,7 @@ function hireOrUpgrade(i) {
   const cost = teamCost(i, lvl + 1);
   if (!(state.coins >= cost)) return;
   state.coins -= cost; state.stats.teamUps = (state.stats.teamUps || 0) + 1;
+  const returning = lvl === 0 && !!state.teamKnown[i];                 // уже був у штаті в минулій епосі (команда скидається при подорожі)
   state.team[i] = lvl + 1;
   state.teamKnown[i] = 1;
   state.stats.teamMaxLevel = Math.max(state.stats.teamMaxLevel, lvl + 1);
@@ -10516,10 +10502,12 @@ function hireOrUpgrade(i) {
     const a = actors.find(x => x.i === i);
     a.hop = 1;
     spawnDust(a.x, a.y - 2, 6);
-    showToast(t('teamHired', name), 'big');
+    // перший раз — власна фраза героя; повернення після подорожі — одна з кількох; щоб не повторювалось, без шаблонного «контракту»
+    showToast(returning ? t('teamReturn_' + Math.floor(Math.random() * 4), name) : (t('team_' + TEAM[i].id + '_hire') !== 'team_' + TEAM[i].id + '_hire' ? name + ': «' + t('team_' + TEAM[i].id + '_hire') + '»' : t('teamHired', name)), 'big');
     playSfx('hire');
   } else {
-    showToast(t('teamUpgraded', name, lvl + 1), 'good');
+    const mile = lvl + 1 === 5 || lvl + 1 >= CONFIG.TEAM_MAX_LEVEL;     // повний жарт лише на 5-му й останньому рівні, решта — коротко
+    showToast(mile ? t('teamUpMile_' + Math.floor(Math.random() * 4), name, lvl + 1) : t('teamUpShort', name, lvl + 1), 'good');
     playSfx('upgrade');
   }
   updateUI();
@@ -12546,7 +12534,7 @@ function drawCapiPortrait() {
 }
 // Яка зараз пора року: з налаштувань або (в режимі «Авто») за датою пристрою; Хелловін — за датою свята
 // Вибір пори року й Хелловіну відкривається після проходження 2 епохи (поки що діє «Авто»)
-const DEV_OPEN_BUILD = true;   // прапорець збірки: для exe його ставить desktop/prepare.js
+const DEV_OPEN_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
 const DEV_OPEN_ALL = (DEV_OPEN_BUILD && !GOD_PAUSED) || GOD_ON;   // GOD_ON — режим бога за кодом власника (див. 100_config.js)     // для перевірки можна тимчасово поставити true: відкриє всі сезони й усі 8 епох
 function themesUnlocked() { return DEV_OPEN_ALL || state.epoch >= 2; }
 // Ручний вибір Хелловіну відкривається пізніше: після проходження 5 епохи
@@ -16111,7 +16099,7 @@ const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weat
 const SKIN_SEASON = { capy_santa: '🎄', capy_witch: '🎃', capy_flower: '🌸', capy_beach: '🏖️', capy_autumn: '🍂', hero_santa: '🎄', hero_witch: '🎃', shop_xmas: '🎄', shop_halloween: '🎃', shop_spring: '🌸', shop_autumn: '🍂', street_snow: '❄️', street_leaves: '🍂' };   // сезонні скіни
 function skinHas(i) { return i < 32 ? !!(state.skinsMask & (1 << i)) : !!(state.skinsMask2 & (1 << (i - 32))); }       // перші 32 скіни — у skinsMask, решта — у skinsMask2
 function skinGrant(i) { if (i < 32) state.skinsMask |= (1 << i); else state.skinsMask2 |= (1 << (i - 32)); }
-const SKINS_FREE_BUILD = true;   // прапорець збірки: для exe його ставить desktop/prepare.js
+const SKINS_FREE_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
 const SKINS_FREE = (SKINS_FREE_BUILD && !GOD_PAUSED) || GOD_ON;          // скіни відкриваються виграшем у цирку або купівлею
 const SKIN_PRICE = 50;             // символічна ціна скіна в кристалах
 function skinOwned(i) {
@@ -17866,6 +17854,7 @@ function showDialogPage() {
 function startDialogue(n, replay = false, kind = 'ch', labelNo = n, epk = 0) {
   const def = kind === 'ec' ? (EPOCH_CHAPTERS[epk] || [])[n - 1] : kind === 'ch' ? CHAPTERS[n - 1] : (kind === 'ep' || kind === 'thx') ? EPOCH_STORIES[n - 1] : TUTORIAL;
   if (!def || dialog.active) return;
+  if (!replay && previewIdx() !== null) setEpochPreview(null);        // новий розділ історії — завжди у власній епосі: інакше заголовок («Епоха Відродження») не збігається з видом на екрані (перегляд іншої епохи)
   dialog.after = null;
   dialog.active = true;
   dialog.kind = kind;
@@ -20947,6 +20936,113 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
     SKIN_LINES.uk.capy_ep8 = ['Кімоно дуже гарне, а сандалі муляють. Краса вимагає жертв.', 'Капелюх як ліхтар: нічого не видно, зате затишно.', 'Дракон мені підморгнув. Або це був вітер.', 'Чай, рис і сакура: життя вдалося.'];
     SKIN_LINES.en.capy_ep8 = ['The kimono is lovely, the sandals pinch. Beauty demands sacrifice.', 'The hat is like a lantern: I can’t see, but it’s cozy.', 'The dragon winked at me. Or maybe it was the wind.', 'Tea, rice and sakura: life is good.'];
   }
+})();
+//#part 276_zz_lines_b.js
+/* =====================================================================
+   РЕПЛІКИ ЗВІРЯТ І КАПІ, стиль B: у кожного мрія / біда / стосунки з колегами; 10 фраз на героя (TEAM_PHRASES = CAPY_PHRASES = 10).
+   Тут же — репліки при наймі: team_{id}_hire (перший раз), teamReturn_* (повернення після подорожі), teamUpMile_* (рівні 5 і 10), teamUpShort.
+   Старі team_*_say_* і capy_say_* цей файл стирає й пише заново; «холодні» (cold) і репліки епох не чіпає.
+   ===================================================================== */
+(function () {
+  const L = {
+    spike: {
+      uk: ["Колись мені довірять сейф. Невеликий, на одного їжака.", "Тоня йде до дверей уже годину. Я поставив на «до обіду». Програю.", "Монета в голках — це не крадіжка, це доставка. Мені так здається.", "Перерахував утретє. Сходиться. Це лякає більше, ніж коли не сходиться.", "Мама казала: хто рахує, той спить спокійно. Мама в магазині не працювала.", "Хтось залишив чайові: три копійки й стрічку. Беру обидва.", "Кажуть, у мене колючий характер. Я перевіряв: просто голки.", "Тома пам'ятає борги, я пам'ятаю решту. Разом ми непереможні.", "Вночі мені сниться сейф. Він усміхається. Прокидаюсь щасливим.", "Лев просить звіт. Кажу: «Звіт у касі». Він кивнув. Не зрозумів."],
+      en: ["One day they'll trust me with a safe. A small one, hedgehog-sized.", "Tonya has been walking to the door for an hour. I bet on \"by lunch\". I'm going to lose.", "A coin stuck in my quills isn't theft, it's delivery. That's how I see it.", "Counted it three times. It adds up. That scares me more than when it doesn't.", "Mum used to say: whoever counts, sleeps well. Mum never worked in a shop.", "Someone left a tip: three pennies and a ribbon. I'm taking both.", "They say I have a prickly personality. I checked: it's just the quills.", "Toma remembers the debts, I remember the change. Together we're unbeatable.", "At night I dream about a safe. It smiles. I wake up happy.", "Leo wants a report. I say, \"The report is in the till\". He nodded. Didn't get it."]
+    },
+    bodya: {
+      uk: ["Колись збудую греблю. Справжню, з табличкою «Збудував Бодя».", "Міхас носить ящики повз мої сходи. Я їх щойно вирівняв. Щойно!", "Креслення у мене є. Поки що в голові. І трохи на серветці.", "Дошка скрипнула, і я вже знаю: не та. Спина мені вірить більше, ніж лінійка.", "Усі кажуть «будівельник». А я ще й гарно малюю плани. Ніхто ж не питає.", "Колись у мене була ідеальна дошка. Не знаю, куди поділась. Може, Тома знає.", "Нахилена полиця — не помилка. Це ухил на смак покупців.", "Чуєш, як гуде вулиця? Це не шум. Це план будови.", "Я люблю дерево. Воно не сперечається. Не те що Міхас.", "Кря щойно натерла підлогу. Тепер я бобер, а не ковзаняр."],
+      en: ["One day I'll build a dam. A real one, with a plaque: \"Built by Bodya\".", "Mikhas carries crates past my stairs. I just straightened them. Just now!", "I have the blueprints. They're in my head for now. And a bit on a napkin.", "A board creaked and I already know: wrong one. My back trusts me more than a ruler.", "Everyone says \"builder\". I also draw nice plans. Nobody asks.", "I once had the perfect board. No idea where it went. Maybe Toma knows.", "A slanted shelf isn't a mistake. It's a tilt toward what customers like.", "Hear how the street hums? That's not noise. That's a building plan.", "I love wood. It doesn't argue. Unlike Mikhas.", "Kria just waxed the floor. Now I'm a beaver, not an ice skater."]
+    },
+    zoya: {
+      uk: ["Мрію про власну вітрину. Ніжно-рожеву. Щоб навіть каса мала настрій.", "Жужа назвала мій колір «персиковий шок». Беру як комплімент.", "Лев вчить мене «стратегій продажу». Я їх уже пів року застосовую. Просто називаю це «розмова».", "Є покупці, яким ще нічого не треба. Я чекаю. Вони зараз прозріють.", "Сьогодні шість разів сказала «останній екземпляр». Склад чесний, просто мовчить.", "Покупець замислився. Це моє улюблене. Допоможу йому замислитись ще трохи.", "Перша реакція — «дорого». Друга — «візьму». Я чекаю другої.", "Пао намалювала мій портрет на плакаті. Вуха вийшли великі. Мені подобається.", "Сьогодні мені подякували. Ще й повернулись. Я розчулилась.", "Жужа каже, що в мене «вічна розпродажна усмішка». Не знаю, що вона мала на увазі."],
+      en: ["I dream of my own shop window. Soft pink. So even the till has a mood.", "Zhuzha called my colour \"peach shock\". I'm taking it as a compliment.", "Leo teaches me \"sales strategies\". I've been using them for half a year. I just call it \"chatting\".", "Some customers don't need anything yet. I wait. They'll see the light.", "Said \"last one in stock\" six times today. The stockroom is honest, just quiet.", "A customer is thinking it over. My favourite part. I'll help them think a little longer.", "First reaction: \"too expensive\". Second: \"I'll take it\". I wait for the second.", "Pao drew my portrait on a poster. The ears came out huge. I like it.", "Someone thanked me today. And came back. I got misty.", "Zhuzha says I have a \"permanent sale smile\". I don't know what she meant."]
+    },
+    tonya: {
+      uk: ["Шість власників бачила ця крамниця за сто сорок років. Цей — найцікавіший.", "Стежу за єнотом, а він за мною. Така в нас дружба.", "Поки всі біжать, я встигаю помітити, що вони впустили. Мовчки піднімаю.", "Хто поспішає, пробігає повз найцікавіше. Я йду. Я бачу все.", "Голка поставив на мене «до обіду». Я його не підведу. Може.", "Єнот щойно пройшов повз. Я помітила. Через п'ять хвилин скажу.", "Тут шість поверхів. Я піднімалась пішки. Ще не дійшла.", "Ніч — найкращий час для охорони. Нічого не рухається. Крім мене. Ледве.", "Панцир — мій кабінет. Тут усе при мені.", "Кря перемила підлогу, а я на тому ж місці. Вона не ображається."],
+      en: ["This shop has had six owners in a hundred and forty years. This one is the most interesting.", "I watch the raccoon, and he watches me. That's our friendship.", "While everyone runs, I have time to notice what they dropped. I quietly pick it up.", "Whoever hurries runs past the best parts. I walk. I see everything.", "Spike bet on me \"by lunch\". I won't let him down. Maybe.", "The raccoon just walked past. I noticed. I'll mention it in five minutes.", "There are six floors here. I walked up. Haven't arrived yet.", "Night is the best time for guarding. Nothing moves. Except me. Barely.", "My shell is my office. Everything's with me.", "Kria mopped the floor and I'm in the same spot. She doesn't mind."]
+    },
+    mikhas: {
+      uk: ["Мріяв про пасіку. Став вантажником. Мед усе одно поряд, то й нічого.", "Тома пам'ятає, де що лежить. Я пам'ятаю, що воно важке. Гарна пара.", "Бодя будує, я ношу. Було б чудово, якби хтось іще казав «обережно».", "Ящик не питає, чи я втомився. За це я його й люблю.", "Не питай, що в коробці. Я теж не питаю. Так спокійніше.", "Мед у складі є. Не питайте звідки. Не мій.", "Люблю, коли ящик легкий. Буває раз на тиждень. Відзначаю.", "Соня спить удень, я працюю вдень. Зустрічаємось на повороті, обидва втомлені.", "Хтось сказав «підніми, будь ласка». Це вже хороша зміна.", "Моя спина тримає півміста. Дякую, що ніхто не сів зверху."],
+      en: ["I dreamed of a beehive. Became a porter. Honey's still nearby, so it's fine.", "Toma remembers where everything is. I remember that it's heavy. Good pair.", "Bodya builds, I carry. Would be great if someone also said \"careful\".", "A crate never asks if I'm tired. That's why I love it.", "Don't ask what's in the box. I don't either. It's calmer that way.", "There's honey in the stockroom. Don't ask where from. Not mine.", "I love it when a crate is light. Happens once a week. I mark the date.", "Sonia sleeps by day, I work by day. We meet at the corner, both exhausted.", "Someone said \"lift this, please\". Already a good shift.", "My back holds up half the town. Thanks for not sitting on top."]
+    },
+    sonia: {
+      uk: ["Колись знайду ту копійку, що зникла в березні. Вона десь тут. Відчуваю.", "Леву сподобалась моя таблиця. Він не розуміє, що в ній, але сподобалась.", "Кава о третій ночі — не залежність. Це графік.", "Вдень я лише моргаю. Голова вмикається, коли гасне світло.", "Хтось залишив чек без дати. Не скажу хто. Але я бачу.", "Дебет із кредитом посварились. Я не втручаюсь. Ну, майже.", "Нічого так не заспокоює, як порожній стовпчик у таблиці.", "Леве, цифри не слухаються нарад. Я перевіряла.", "Тихіше ходіть: ніч любить рахувати в тиші.", "Мудра сова не дивиться на годинник. Вона дивиться на касу."],
+      en: ["One day I'll find that penny that vanished in March. It's here somewhere. I can feel it.", "Leo liked my spreadsheet. He doesn't understand it, but he liked it.", "Coffee at three a.m. isn't an addiction. It's a schedule.", "By day I just blink. My head switches on when the lights go out.", "Someone left a receipt with no date. I won't say who. But I see.", "Debit and credit had a fight. I'm not getting involved. Well, almost.", "Nothing calms me like an empty column in a spreadsheet.", "Leo, numbers don't obey meetings. I checked.", "Walk softer: the night likes to count in silence.", "A wise owl doesn't watch the clock. She watches the till."]
+    },
+    kria: {
+      uk: ["Усе життя мию чужі сліди. Колись залишу власний.", "Тоня — ідеальна колега: стоїть на місці й не наслідить.", "Мрію про полірувальну машину. З мигалкою. Щоб усі знали: тут чисто.", "Хтось залишив слід від кави. Я його запам'ятала. Ми ще зустрінемось.", "Вранці підлога чиста. До обіду вже ні. Не засмучуюсь, просто повертаюсь.", "Піна — це мій настрій. Сьогодні він високий.", "Нікому не кажіть, але мені подобаються сліди. Просто не люблю їх прибирати.", "Мурзик пролив воду біля розетки. Я стояла й дивилась. Він живий.", "Скло блищить, значить, я ще тут. Це моє «доброго ранку».", "У кожної швабри є ім'я. Мою звуть Зінаїда. Не питайте."],
+      en: ["All my life I wash other people's footprints. One day I'll leave my own.", "Tonya is the perfect colleague: stands still and leaves no mess.", "I dream of a floor polisher. With a flashing light. So everyone knows: it's clean here.", "Someone left a coffee stain. I remember it. We'll meet again.", "In the morning the floor is clean. By lunch it isn't. I don't mind, I just come back.", "Foam is my mood. Today it's high.", "Don't tell anyone, but I kind of like footprints. I just don't like cleaning them.", "Murzyk spilled water near the socket. I stood and watched. He's alive.", "The glass shines, so I'm still here. That's my \"good morning\".", "Every mop has a name. Mine is Zinaida. Don't ask."]
+    },
+    zhuzha: {
+      uk: ["Колись мене запросять на тиждень моди. Капелюх уже обрала. Бракує запрошення.", "Зоя продає, я підбираю. Разом ми майже бізнес.", "Мурзик порадив «вдягнути щось із проводів». Подякувала й відійшла.", "Це не червоний. Це «вогонь у ліхтарі». Чуєте різницю? Ніхто не чує.", "Шарф і капелюх разом — ні. Я пробувала. Було погано. Дуже.", "Новий колір! Ні, не новий. Просто хтось нарешті його помітив.", "Пао питає, який колір плаката. Кажу: «Менше червоного». Вона додала червоного.", "Дві смужки — класика. Три — бунт. Чотири — це вже ми з Мурзиком.", "Люблю блискітки. Вони не виправдовуються. Вони просто сяють.", "Мода повертається. Спина теж. Не одночасно."],
+      en: ["One day they'll invite me to fashion week. I've already picked the hat. Just need the invite.", "Zoya sells, I style. Together we're almost a business.", "Murzyk advised me to \"wear something made of wires\". I thanked him and walked away.", "It's not red. It's \"fire in a lantern\". Hear the difference? Nobody does.", "Scarf and hat together? No. I tried. It was bad. Very bad.", "A new colour! No, not new. Someone finally noticed it.", "Pao asks what colour the poster should be. I say, \"Less red\". She added red.", "Two stripes: classic. Three: rebellion. Four: that's me and Murzyk.", "I love glitter. It doesn't make excuses. It just shines.", "Fashion comes back. So does my back pain. Not at the same time."]
+    },
+    leo: {
+      uk: ["Усі думають, що я нічого не роблю. Я роблю нічого дуже наполегливо.", "Скоро ювілей крамниці. Треба вигадати, що ми святкуємо.", "Соня знайшла помилку в моєму звіті. Тепер я її побоююсь і поважаю.", "Нарада на п'ять хвилин. Тобто на годину. Принесіть печиво.", "Я не тікаю з нарад. Я виходжу по свіжі ідеї. Вони зазвичай у коридорі.", "Ми працюємо над планом. Він у процесі. Процес теж у процесі.", "Спізнююсь не я. Це решта приходять раніше за графік.", "Нова політика: нарада не довша за кави. Окрема нарада про те, яка це кава.", "Капі, на хвилинку? Це на пів години. Максимум.", "Головна навичка менеджера: мовчки дивитись у вікно. Практикую щодня."],
+      en: ["Everyone thinks I do nothing. I do nothing very hard.", "The shop's anniversary is coming. We need to decide what we're celebrating.", "Sonia found a mistake in my report. Now I fear and respect her.", "A five-minute meeting. Meaning an hour. Bring cookies.", "I don't flee meetings. I step out for fresh ideas. They're usually in the corridor.", "We're working on a plan. It's in progress. The progress is in progress too.", "I'm not late. Everyone else just arrives ahead of schedule.", "New policy: no meeting longer than a coffee. A separate meeting on which coffee.", "Capy, got a minute? It's half an hour. Max.", "A manager's key skill: staring silently out the window. I practise daily."]
+    },
+    pao: {
+      uk: ["Хочу зняти ролик, де всі танцюють. Ніхто не погоджується. Поки.", "Лев каже, що мій слоган уже зайнятий. Вигадаю гірший, щоб точно наш.", "Новий плакат! Усе на ньому моє. Навіть кривий шрифт.", "Бамбук смачний. Це не реклама. Хоча... трішки реклама.", "Хештег вигадала вчора. Три лайки вже є. Два мої, один мамин.", "Моя поза на плакаті — найкраща. Інші пози відхилено.", "Сьогодні роздала двадцять листівок. Дев'ятнадцять повернулись. Це популярність.", "Зоя бере мої плакати для вітрини. Ще не сказала їй, що вони не готові.", "Мрію про рекламний щит на весь квартал. Ну або хоча б на дах.", "Бамбуковий чай — мій улюблений. Сьорбаю гучно. Для атмосфери."],
+      en: ["I want to shoot a video where everyone dances. Nobody agrees. Yet.", "Leo says my slogan is already taken. I'll invent a worse one, so it's definitely ours.", "New poster! Everything on it is mine. Even the crooked font.", "Bamboo is tasty. That's not an ad. Although... a little bit an ad.", "I made up a hashtag yesterday. Three likes already. Two are mine, one is Mum's.", "My pose on the poster is the best. Other poses rejected.", "Handed out twenty flyers today. Nineteen came back. That's popularity.", "Zoya takes my posters for the window. I haven't told her they aren't finished.", "I dream of a billboard across the whole block. Or at least on the roof.", "Bamboo tea is my favourite. I slurp loudly. For atmosphere."]
+    },
+    murzyk: {
+      uk: ["Мрію про день без короткого замикання. Не сьогодні. Може, завтра.", "Шнирь просив позичити батарейку. Я сказав «позичай». Він сказав «ага». Більше я її не бачив.", "Дроти заплуталися. Я знаю, звідки вони. Це моя справа.", "Не чіпав. Воно саме. Просто поруч стояв я.", "Лампочку замінив. Світить не так, як раніше, але світить. Це вже перемога.", "Хтось просив «увімкнути світло». Шукав вимикач. Знайшов кнопку. Тепер у нас музика.", "Іскра була невеличка. Майже непомітна. Тільки Кря помітила.", "Лампочки мене люблять. Особливо перегорілі.", "У шафі сидить роутер. Дивиться на мене. Я на нього. Ніхто не кліпає.", "Якщо гасне світло, то це не я. Скоріше за все."],
+      en: ["I dream of a day with no short circuit. Not today. Maybe tomorrow.", "Shnyr asked to borrow a battery. I said \"sure\". He said \"yep\". Never saw it again.", "The wires are tangled. I know where they come from. That's my business.", "Didn't touch it. It did it itself. I just happened to be standing nearby.", "Changed the bulb. It doesn't shine like before, but it shines. That's a win.", "Someone asked to \"turn on the light\". I looked for the switch. Found a button. Now we have music.", "The spark was small. Almost unnoticeable. Only Kria noticed.", "Light bulbs love me. Especially the burnt-out ones.", "There's a router in the cupboard. It looks at me. I look at it. Nobody blinks.", "If the lights go out, it's not me. Most likely."]
+    },
+    toma: {
+      uk: ["Слонова пам'ять — не метафора. Тому я пам'ятаю й те, що вам хочеться забути.", "Міхас носить, я записую. Він не любить, коли я записую.", "Мрію про склад, де нічого не губиться. Поки що трохи губиться. Мишка в курсі.", "Хто переставив ящики? Я пам'ятаю хто. Не скажу. Поки.", "Хобот — найкраща лінійка. Нею міряю все, навіть настрій.", "У вівторок о 14:32 хтось сказав «потім». Минуло вже багато вівторків. Я чекаю.", "Склад — мій храм. Міхас — єдиний, кому я дозволяю торкатись ящиків.", "Мишка знову в складі. Я знаю її на ім'я. Вона мене теж.", "Інвентар — це любов, виміряна в коробках. Я люблю багато.", "Нікому не кажіть, але я все пам'ятаю, і це втомлює."],
+      en: ["An elephant's memory isn't a metaphor. That's why I remember what you'd rather forget.", "Mikhas carries, I write it down. He doesn't like it when I write it down.", "I dream of a stockroom where nothing gets lost. A little gets lost. The mouse knows.", "Who moved the crates? I remember who. Won't tell. Yet.", "The trunk is the best ruler. I measure everything with it, even moods.", "On a Tuesday at 14:32 someone said \"later\". Many Tuesdays have passed. I'm waiting.", "The stockroom is my temple. Mikhas is the only one I let touch the crates.", "The mouse is back in the stockroom. I know her by name. She knows mine too.", "Inventory is love, measured in boxes. I love a lot.", "Don't tell anyone, but I remember everything, and it's tiring."]
+    },
+    shnyr: {
+      uk: ["Тоня за мною стежить. Мені навіть подобається: ніхто досі так довго мною не цікавився.", "Виправляюсь. Вчора повернув п'ять монет. Три з них мої.", "Хочу, щоб тут довіряли. Хоч би один ключ. Від чогось невеликого.", "Бачу блискуче, лапа сама тягнеться. Тримаю її другою лапою. Допомагає.", "Мурзик про батарейку не питає. Я теж. Дружба.", "Бачу кишеню, розумію, що чужа. Відводжу очі. Роблю успіхи.", "Голка бачив, як я дивлюсь на касу. Тепер нам обом ніяково.", "Мене тут не бояться. Це вперше. Не знаю, що робити з руками.", "Раніше я тікав. Тепер мене кличуть на обід. Дивне відчуття.", "Тоня навчила мене чекати. Вчора чекав цілу хвилину. Пишаюсь."],
+      en: ["Tonya watches me. I kind of like it: nobody's ever been so interested in me for so long.", "I'm reforming. Yesterday I returned five coins. Three of them were mine.", "I want to be trusted here. Just one key. To something small.", "I see something shiny and my paw reaches out. I hold it back with my other paw. It helps.", "Murzyk doesn't ask about the battery. Neither do I. Friendship.", "I see a pocket, realise it's not mine. Look away. Making progress.", "Spike saw me looking at the till. Now we're both awkward.", "Nobody's afraid of me here. First time ever. Don't know what to do with my hands.", "I used to run away. Now they call me to lunch. Weird feeling.", "Tonya taught me to wait. Yesterday I waited a whole minute. Proud of myself."]
+    },
+    nara: {
+      uk: ["Чай заварюється рівно стільки, скільки треба. Не питайте скільки.", "На рогах у мене мох. Це не недогляд, це сад.", "Єнот приходить по чай. Я наливаю. Він приходить знову. Це дружба.", "Колись здавалося, що вистачить одного дерева. Тепер тут цілий сад.", "Пелюстки падають, а я слухаю. Тихо, але чутно.", "Мрію про чайну вулицю, де всі говорять тихо й п'ють багато.", "Тоня й я рухаємось однаково повільно. Нам є про що мовчати.", "Тайко б'є вдалині. Серце теж. Не сперечаємось.", "Лев кличе на нараду, я кличу на чай. Поки що чай виграє.", "Хто поспішає, забуває дихати. А я дихаю. Бачите, нічого страшного."],
+      en: ["Tea steeps exactly as long as it needs. Don't ask how long.", "I have moss on my antlers. It's not neglect, it's a garden.", "The raccoon comes for tea. I pour. He comes again. That's friendship.", "I used to think one tree would be enough. Now there's a whole garden.", "Petals fall and I listen. Quiet, but audible.", "I dream of a tea street where everyone speaks softly and drinks a lot.", "Tonya and I move at the same slow pace. We have plenty to be silent about.", "A taiko drum beats in the distance. So does my heart. We don't argue.", "Leo calls me to a meeting, I call him to tea. Tea is winning so far.", "Whoever hurries forgets to breathe. I breathe. See? Nothing scary."]
+    }
+  };
+  const CAPY = {
+    uk: ["Нова епоха, ті самі обличчя. Лише капелюхи інші.", "Колись мріялось про будку на розі. А ось вона. Іноді ще не віриться.", "Тоня й досі йде до дверей. Починаю вірити, що дійде.", "Голка перерахував утретє. Не заважаю: це його ритуал.", "Вранці тут тихо. Потім хтось відчиняє двері, і починається життя.", "Тут уже майже все моє. Решту куплю завтра.", "Ранок: перша монета й перше «доброго дня». Жодна не зайва.", "Хтось залишив чайові у вазі. Не знаю, чия ваза. Беру.", "Тримаю в голові список: не забути подякувати кожному. Поки що я на третьому.", "Коли ввечері вулиця світиться, здається, що всі ми одна велика вивіска."],
+    en: ["New era, same faces. Just different hats.", "I used to dream of a booth on the corner. And here it is. Sometimes I still can't believe it.", "Tonya is still walking to the door. I'm starting to believe she'll make it.", "Spike counted it three times. I don't interfere: it's his ritual.", "It's quiet here in the morning. Then someone opens the door and life begins.", "Almost everything here is mine already. I'll buy the rest tomorrow.", "Morning: the first coin and the first \"good morning\". Neither is wasted.", "Someone left a tip in a vase. No idea whose vase. I'll take it.", "I keep a list in my head: remember to thank everyone. So far I'm on the third.", "When the street lights up in the evening, it feels like we're one big shop sign."]
+  };
+  const HIRE = {
+    spike: ["Каса моя. Руки не тягнути.", "The till is mine. Hands off."],
+    bodya: ["Де тут що ламати? Тобто будувати.", "Where's something to break? I mean build."],
+    zoya: ["Покажіть, хто тут ще без обновки.", "Show me who's still without something new."],
+    tonya: ["Я на місці. Майже. Скоро.", "I'm here. Almost. Soon."],
+    mikhas: ["Ящики — до мене.", "Crates, come to me."],
+    sonia: ["Я вже рахую.", "I'm already counting."],
+    kria: ["Підлога, тримайся. Я йду.", "Floor, brace yourself. I'm coming."],
+    zhuzha: ["Хто тут без смаку? Усі? Чудово.", "Who here has no taste? Everyone? Wonderful."],
+    leo: ["Збираємось на нараду. Вона коротка. Це жарт.", "Let's gather for a meeting. It's short. That's a joke."],
+    pao: ["Вітаю. Я принесла плакати.", "Hello. I brought posters."],
+    murzyk: ["Нічого не чіпав. Ще.", "Haven't touched anything. Yet."],
+    toma: ["Я прийшов. Склад чекає.", "I've arrived. The stockroom is waiting."],
+    shnyr: ["Я тут. Руки на видноті. Обіцяю.", "I'm here. Hands in plain sight. Promise."],
+    nara: ["Чай уже заварюється. Сідайте.", "The tea is already steeping. Sit down."]
+  };
+  const RET = {
+    uk: ["{0} повернувся. Лише капелюх інший.", "{0}: знову в штаті, і вже все знає.", "{0} каже, що нічого не змінилося. Окрім усього.", "{0} впізнає вулицю, але не вивіску."],
+    en: ["{0} is back. Only the hat is different.", "{0}: back on staff, and already knows everything.", "{0} says nothing has changed. Except everything.", "{0} recognises the street, but not the sign."]
+  };
+  const MILE = {
+    uk: ["{0}: рівень {1}. Помітно виріс. Хоч би знати, на скільки.", "{0}: рівень {1}. Зарплата та сама, посмішка ширша.", "{0}: рівень {1}. Тепер ще впевненіше робить те саме.", "{0}: рівень {1}. Колеги кивають. Це майже оплески."],
+    en: ["{0}: level {1}. Visibly grown. If only we knew by how much.", "{0}: level {1}. Same pay, wider smile.", "{0}: level {1}. Now does the same thing with more confidence.", "{0}: level {1}. Colleagues nod. That's almost applause."]
+  };
+  ['uk', 'en'].forEach((lang, li) => {
+    const T = translations[lang];
+    Object.keys(L).forEach(id => {
+      for (let i = 0; i < 16; i++) delete T['team_' + id + '_say_' + i];
+      L[id][lang].forEach((s, i) => { T['team_' + id + '_say_' + i] = s; });
+      T['team_' + id + '_hire'] = HIRE[id][li];
+    });
+    for (let i = 0; i < 16; i++) delete T['capy_say_' + i];
+    CAPY[lang].forEach((s, i) => { T['capy_say_' + i] = s; });
+    RET[lang].forEach((s, i) => { T['teamReturn_' + i] = s; });
+    MILE[lang].forEach((s, i) => { T['teamUpMile_' + i] = s; });
+    T.teamUpShort = lang === 'uk' ? '{0}: рівень {1}' : '{0}: level {1}';
+  });
 })();
 //#part 277_japan_noodle.js
 /* =====================================================================

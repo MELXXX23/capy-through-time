@@ -93,6 +93,7 @@ function showDialogPage() {
 function startDialogue(n, replay = false, kind = 'ch', labelNo = n, epk = 0) {
   const def = kind === 'ec' ? (EPOCH_CHAPTERS[epk] || [])[n - 1] : kind === 'ch' ? CHAPTERS[n - 1] : (kind === 'ep' || kind === 'thx') ? EPOCH_STORIES[n - 1] : TUTORIAL;
   if (!def || dialog.active) return;
+  if (!replay && previewIdx() !== null) setEpochPreview(null);        // новий розділ історії — завжди у власній епосі: інакше заголовок («Епоха Відродження») не збігається з видом на екрані (перегляд іншої епохи)
   dialog.after = null;
   dialog.active = true;
   dialog.kind = kind;
