@@ -275,3 +275,8 @@
 - Аналітика itch: 166 показів → 29 переглядів (CTR 1,2%) → 8 запусків; 0 оцінок. Готово в `previews/itch/ready/` (не в git): 2 обкладинки 1260×1000 (`cover_bigcapy`, `cover_mall`; скрипт `previews/itch/cover_big.js`, зум світу на Капі), GIF росту крамнички 2,7 МБ (з фінального трейлера).
 - `src/275_z_itch_rate.js`: кнопка «⭐ Оціни гру на itch.io» у налаштуваннях і одна тост-підказка за ~10 хв гри — ЛИШЕ на домені itch.io/itch.zone (тест: `?itch=1`). autotest --quick ✓.
 - `store/ITCH_DEVLOG.md`: текст девлогу uk/en і список дій. Девлог постити після завантаження нового ZIP на itch.
+
+## 124. itch.io: опис, тема, банер, Embed BG (р. 58, у Chrome користувачки; нічого не закомічено в гру)
+- Підготовлено в редакторах itch, Save натискає користувачка: форма «Edit game» (новий опис EN+UK з перевіреними фактами: 9 епох, 8 бонус-ігор, 64 скіни, 13 помічників; підпис «9 eras») і «Edit theme» (Renaissance terracotta: bg #2b1a14, bg2 #4a2c1f, text #f6e7d0, link #8fd0ff, headers #f2c46b, buttons #c8553a; банер 1800×600 з Фудзі й драконом; Embed BG 1600×900). Space night уже збережено на живій сторінці, її замінить Renaissance після Save.
+- Файли в `previews/itch/ready/` (не в git): cover_bigcapy, banner_fuji_dragon_1800x600, embed_bg_1600x900, capytap_build.gif. Скрипти: `previews/itch/{cover_big,banner,embed_bg}.js` (знімає `previews/itch/shots.js`), `serve_dir.js` (локальна роздача для завантаження в форми через fetch). Текст опису — `store/itch_description.html`.
+- Обкладинка bigcapy і GIF уже збережені на itch (12 скрінів, GIF першим).
