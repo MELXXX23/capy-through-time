@@ -2,19 +2,27 @@
 
 Тут лише ОСТАННІ раунди (максимум 6 пунктів). Старі: `archive/PROGRESS_*.md` (не читай без потреби; шукай через Grep). Новий пункт додавай у кінець, коротко (до ~8 рядків); ротація: `node tools/progress_rotate.js`.
 
-## 105. Шість відео для YouTube і Shorts/TikTok (р. 56)
-- Лишено в `previews/r57/vid/out/final/` (за вибором користувачки): YouTube — `CapyTap_Y1_time_travel_v2.mp4` (1:35, одна музика без ефектів); Shorts/TikTok 1080×1920 — `CapyTap_S1_one_coin_v2.mp4`, `CapyTap_S2_nine_eras.mp4`, `CapyTap_S3_satisfying_builds_v2.mp4` (v2 = одна музика без ефектів); мініатюри `thumb_Y*.png` не чіпано. Y2, Y3 і перші версії видалено (відтворюються з `gen.js`). Назви/описи — `previews/r57/vid/metadata.txt`.
-- Збірка: `previews/r57/vid/gen.js` → `build.js` → запис `previews/video/rec.js` (скрипти `run_all.sh`, `compress.sh`, `thumb.js`). Код гри не чіпав; на YouTube/TikTok не завантажено.
-- Підводне: Y2 з першого разу записався з 52 кадрами (завис насос кадрів), повторний запис вийшов нормально; підписи мають темну підкладку (`capB`), бо на світлих епохах не читалися.
+## 121. iPhone 17 Pro (Dynamic Island), вертикаль у програмі з головного екрана (р. 57, гілка android-wrapper; не опубліковано)
+- Причина: помилка iOS 26.x у WebKit (301994 повернулась на 26.5.2): `env(safe-area-inset-top)`=0, а зверху або системна смуга ~62 px (вікно коротше за екран), або вміст під островом.
+- `010_head.html` `iosFit()` міряє це в standalone-портреті: `sysbar` (екран−вікно 40–90 px, env=0) → висота = `innerHeight` (`--vhpx`); `satfix` (вікно = екран, env=0, ширина 393/402/420/430/440) → запасний відступ `--sat` 54/62 px для лічильника монет і «Пропустити». Горизонталь і 13 Pro (env>0) не змінено. Для тесту: `game.html?standalone=1`.
+- Знімки й скрипти: `previews/ios17/` (shot.js, montage.js). Користувачка схвалила знімок «варіант 2 після». На справжньому iPhone ще не перевірено: діагностика = 5 швидких дотиків по лічильнику монет.
+- Результат на телефоні (17 Pro): смуга зверху лишилась — це варіант 1 (системна, iOS 26). Далі: скрін діагностики (`fit`), спроба без `black-translucent` + `theme-color` під небо (перевстановити іконку); повний екран можливий лише в iOS-застосунку.
 
-## 106. Y1 і S2 у чернетках YouTube (р. 56)
-- Видалено S1_v2 і S3_v2; у чернетки (приватні) завантажено `CapyTap_Y1_time_travel_v2.mp4` («I Time-Traveled a Capybara's Shopping Mall Through 9 Eras (Idle Game)», мініатюра `thumb_Y1_time_travel.png`, опис із посиланням і хештегами) і `CapyTap_S2_nine_eras.mp4` («Same mall, nine eras. Which one is yours?», вкладка Shorts).
-- Не заповнено: «Аудиторія» (призначене для дітей?) — рішення користувачки; публікація й видимість не чіпані.
+## 122. iPhone 17 / Air: спроба прибрати чорну смугу зверху (р. 57, гілка android-wrapper; не закомічено, не опубліковано)
+- `010_head.html`: після мета-тегів маленький скрипт — лише для iPhone з екраном 402/420/440 pt (17 Pro, Air, 17 Pro Max): `apple-mobile-web-app-status-bar-style` = `default` замість `black-translucent`, `theme-color` = `#2E4580` (небо). Інші iPhone без змін. Клас `ios26bar` на `<html>`.
+- Діє лише після видалення й повторного додавання іконки на головний екран. На справжньому iPhone не перевірено; autotest --quick ✓. Відкат: `git reset --hard before-ios26bar` (або `git checkout 010_head`).
 
-## 107. Оновлення ПК, сайту й ZIP (р. 56)
-- Сайт (GitHub Pages) байт у байт збігається з `docs/index.html` (bc3c5a9), політика відкривається; ZIP для itch (`desktop/dist/CapyTapMarket-itch-html.zip`, 711 КБ) зібраний із цього ж файлу, перезавантажувати не треба. Код гри після випуску не змінювався.
-- exe: зібрано заново з bc3c5a9 (режим бога, п. 100–102) за рецептом із HANDOFF (кеш `previews/ebcache`), скопійовано на стіл як `D:\DESKTOP\CapyTapMarket-Portable-NEW.exe` (71,5 МБ); `desktop/app/game.html` повернуто без режиму бога.
+## 123. itch.io: обкладинки, GIF, девлог, кнопка оцінки (р. 58, гілка android-wrapper; не опубліковано)
+- Аналітика itch: 166 показів → 29 переглядів (CTR 1,2%) → 8 запусків; 0 оцінок. Готово в `previews/itch/ready/` (не в git): 2 обкладинки 1260×1000 (`cover_bigcapy`, `cover_mall`; скрипт `previews/itch/cover_big.js`, зум світу на Капі), GIF росту крамнички 2,7 МБ (з фінального трейлера).
+- `src/275_z_itch_rate.js`: кнопка «⭐ Оціни гру на itch.io» у налаштуваннях і одна тост-підказка за ~10 хв гри — ЛИШЕ на домені itch.io/itch.zone (тест: `?itch=1`). autotest --quick ✓.
+- `store/ITCH_DEVLOG.md`: текст девлогу uk/en і список дій. Девлог постити після завантаження нового ZIP на itch.
 
-## 108. Очищення відео й скрінів (р. 56)
-- За списком `previews/r57/cleanup_plan.md` видалено 37 відео (862 МБ) і 1329 робочих картинок у `previews/` (≈167 МБ): ~1 ГБ звільнено. Лишились відео: Y1_v2, S2, трейлер YouTube `CapyTap_trailer_r53_16x9_web.mp4`, TikTok-трейлер v2; картинки: `previews/itch`, `r53/itch_upload|yt3|thumb`, `r56/itch_upload`, `r57/vid/out/final`, банер, `skins`.
-- Побічне: кадри для банера (`previews/r57/eras`) видалено — банер зберігся, а скрипт `previews/r57/banner.js` без них не запуститься (кадри відтворюються `previews/r57/eras.js`).
+## 124. itch.io: опис, тема, банер, Embed BG (р. 58, у Chrome користувачки; нічого не закомічено в гру)
+- Підготовлено в редакторах itch, Save натискає користувачка: форма «Edit game» (новий опис EN+UK з перевіреними фактами: 9 епох, 8 бонус-ігор, 64 скіни, 13 помічників; підпис «9 eras») і «Edit theme» (Renaissance terracotta: bg #2b1a14, bg2 #4a2c1f, text #f6e7d0, link #8fd0ff, headers #f2c46b, buttons #c8553a; банер 1800×600 з Фудзі й драконом; Embed BG 1600×900). Space night уже збережено на живій сторінці, її замінить Renaissance після Save.
+- Файли в `previews/itch/ready/` (не в git): cover_bigcapy, banner_fuji_dragon_1800x600, embed_bg_1600x900, capytap_build.gif. Скрипти: `previews/itch/{cover_big,banner,embed_bg}.js` (знімає `previews/itch/shots.js`), `serve_dir.js` (локальна роздача для завантаження в форми через fetch). Текст опису — `store/itch_description.html`.
+- Обкладинка bigcapy і GIF уже збережені на itch (12 скрінів, GIF першим).
+
+## 125. itch.io: повний прохід по вкладках дашборда (р. 58; у Chrome користувачки, у гру нічого не змінено)
+- Metadata (збережено): Input methods + Mouse + Keyboard; Languages English + Ukrainian; External links: Homepage = сайт GitHub Pages. Release info/ліцензії залишені «No license» (комерційна гра); Engines & tools — у базі немає підходящого.
+- Promo images (збережено, 4 шт., знімає `previews/itch/promo.js` зі steam-зображень; `previews/itch/ready/`): social 1200×630, favicon 512, wide cover 21:9 (2100×900), logo прозорий PNG.
+- Перевірено: сторінка Published, тема Renaissance + банер застосовані, оцінки й коментарі увімкнені, відео-трейлер є, 0 оцінок. Девлог — після нового ZIP (на «публікуй»).

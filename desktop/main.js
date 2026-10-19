@@ -76,6 +76,7 @@ function createWindow() {
 // Без пакета electron-updater або без інтернету просто нічого не відбувається.
 function startAutoUpdate() {
   if (!app.isPackaged || process.env.PORTABLE_EXECUTABLE_DIR) return;
+  try { if (require('fs').existsSync(path.join(__dirname, 'app', 'steam.flag'))) return; } catch (e) { /* нічого */ }   // Steam-збірка оновлюється самим Steam
   try {
     const { autoUpdater } = require('electron-updater');
     autoUpdater.autoDownload = true;

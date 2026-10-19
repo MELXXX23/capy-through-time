@@ -1,24 +1,22 @@
 # Передача між чатами (оновлюй перед кожним переходом; тримай ≤ 40 рядків)
 
-Читай: `CLAUDE.md` (правила, економія токенів), цей файл, останні пункти `PROGRESS.md`. Старі HANDOFF — `archive/` (лише Grep).
+Читай: `CLAUDE.md` (правила, економія токенів), цей файл, останні пункти `PROGRESS.md` (121–124). Старі HANDOFF — `archive/` (лише Grep).
 
-## Де ми (2026-10-16, раунд 56; PROGRESS п. 82–108)
-- Усе випущене й актуальне (коміт bc3c5a9, код гри після нього не змінювався): сайт (Японія, Хелловін, бонус-ігри всіх епох, політика з рекламою, спільний таймер бонус-ігор, щоденник 9/9); ZIP для itch (id 5134270, `desktop/dist/CapyTapMarket-itch-html.zip`); exe на столі `D:\DESKTOP\CapyTapMarket-Portable-NEW.exe` перезібрано 2026-10-15 23:26 з bc3c5a9 (режим бога; `desktop/app/game.html` повернуто без нього).
-- Збірка exe: кеш electron-builder у профілі зашифровано (EFS), CopyFile у dist падає. Рецепт: копія кешу в `previews/ebcache` (не в git; поновити `node previews/copycache.js`), далі `cd desktop; node prepare.js; ELECTRON_BUILDER_CACHE=C:/GAMES/capy-through-time/previews/ebcache npx electron-builder --win portable --config.electronDist=node_modules/electron/dist --config.electronVersion=33.4.11`, копія на D:/DESKTOP, потім `CAPY_NOGOD=1 node desktop/prepare.js`. Не запускай збірку з терміналу користувачки (порожній кеш, нема прав на symlink).
-- YouTube (@CapyTapGames, канал UCsm_WASQWBvP-OEUtbOJxZg): новий банер 2560×1440 із підписом «8 ERAS + BONUS» опубліковано (`previews/r57/yt_banner_2560x1440.png`). У приватних ЧЕРНЕТКАХ: Y1 «I Time-Traveled a Capybara's Shopping Mall Through 9 Eras (Idle Game)» (з мініатюрою) і Shorts S2 «Same mall, nine eras. Which one is yours?»; «Аудиторія» (для дітей?) ще не вибрана — рішення користувачки; публікує користувачка.
-- Відео: файли `previews/r57/vid/out/final/` (Y1_v2, S2, мініатюри `thumb_Y*.png`), назви/описи `previews/r57/vid/metadata.txt`, збірка `previews/r57/vid/gen.js → build.js → previews/video/rec.js` (одна музика + mute — `fixTrack`, `mute`). Підписи мають підкладку (`capB`). Решту відео й скрінів видалено (п. 108); кадри банера теж, щоб міняти текст — спершу `previews/r57/eras.js`.
-- Бонус-ігри: іконка `#bonusOpen`, реєстр `MG_DEFS` (`279_bonus_games.js`, `279_c_bonus_games_more.js`); перезарядка 12 год одна на всі епохи, приз скін. Лапшична (Японія), відьма — візок, цирк — колесо: НЕ ЧІПАТИ. Відкат: `git reset --hard before-bonus-all`.
-- Поза кодом: itch.io, YouTube, TikTok-трейлер v2 (`previews/video/`).
+## Де ми (2026-10-18, раунд 58; PROGRESS п. 82–124)
+- Опубліковане: main, коміт def1a8c (iPhone 17 Pro, п. 121). Усе нижче — у ГІЛЦІ `android-wrapper` (мітки відкату `before-android`, `before-ads`, `before-ios26bar`), локальні коміти, НЕ запушено, НЕ опубліковано: сайт, ZIP для itch (id 5134270, зараз із bc3c5a9), exe на столі (з режимом бога).
+- iPhone 17/Air (п. 121–122, коміт 766ffa6): чорна смуга зверху — помилка iOS 26; спроба: `010_head.html` для екранів 402/420/440 pt ставить `status-bar-style=default` і `theme-color=#2E4580` (діє після перевстановлення іконки). На справжньому iPhone не перевірено; чекаю скрін діагностики (5 тапів по лічильнику монет, рядок `fit`). Повний екран = лише iOS-застосунок (Apple Developer $99).
+- itch.io (п. 123–124): кнопка «⭐ Оціни гру на itch.io» + разова підказка за ~10 хв — `src/275_z_itch_rate.js`, лише на домені itch.io/itch.zone (тест `?itch=1`), потрапить у новий ZIP при «публікуй». На сторінці в редакторах (Chrome користувачки) підготовлено, Save натискає вона: форма «Edit game» (новий опис EN+UK, підпис «9 eras», `store/itch_description.html`) і «Edit theme» (Renaissance terracotta + банер 1800×600 Фудзі/дракон + Embed BG). Обкладинка bigcapy і GIF уже збережені. Файли в `previews/itch/ready/`, тексти девлогу і чеклист — `store/ITCH_DEVLOG.md`. Девлог постити після нового ZIP. Аналітика: 166 показів, 29 переглядів (CTR 1,2%), 8 запусків, 0 оцінок.
+- `mobile/`: Capacitor 8 (targetSdk 36), AdMob 8.2.1; реклама лише в Android (`src/275_ads.js`, прапорець `window.__ADS`), тестові ID, AAB не збирався (немає Android Studio/JDK). `docs/privacy.html` оновлено під рекламу, не публікувати без Android. `store/PLAY.md`, `store/ADS_PLAN.md`.
+- Google Play: акаунт CapyTap Company, $25 сплачено. Чекає: документ, Android-пристрій для підтвердження, телефон.
+- Steam (п. 114–116): $2.99, без реклами; збірка `bash desktop/build-steam.sh`, картинки `previews/steam/ready`, `store/STEAM.md`, `store/steam/upload.sh`. Чекає: анкета Steamworks, $100, App ID + Depot ID.
+- Трейлер і Shorts (п. 117–120, `store/TRAILER.md`, `SHORTS.md`, `SHORTS_YT.md`): трейлер 1080p60 і Shorts 1–4 на YouTube чернетками (голос Edge; аудиторію «для дітей?» й публікацію робить користувачка). Справжній голос — ElevenLabs (A–I у `previews/voice/final/`), чекає її. TikTok не завантажено. Будування в трейлері повні по 8,5 с; рівень магазину в сценаріях = 1.
 
 ## Чекає / не зроблено
-0. itch: на сторінці 11 скрінів; решту 3 з 9 нових додати вручну з `previews/r56/itch_upload/screenshots/` і прибрати старі. Зайва копія ZIP у корені Google Диска користувачки.
-1. YouTube: у чернетках Y1 і S2 обрати «Аудиторію», перевірити звук Y1, опублікувати (1 Shorts на день, довге раз на тиждень).
-2. Користувачка перевіряє на телефоні 390×844: щоденник (кольори кнопок епох, 9/9), один таймер бонус-ігор, 8 бонус-ігор, лапшична у справжній подорожі без режиму бога (візок діда Рьо, а не цирк), музика й звуки тапа, обхід Капі в годину пік, плавність подорожі, скін Капі в Японії, неон і дракон уночі.
-3. Наступне «публікуй»: `node tools/sync.js`, autotest --quick, `node tools/publish.js`, `CAPY_NOGOD=1 node desktop/prepare.js`, коміт docs/index.html, `git push`, `bash tools/watch-pages.sh 9 <слово>`; ZIP для itch (.NET ZipArchive з docs: index, privacy, manifest, fonts, icons), завантаження через Chrome (хук на HTMLInputElement.click, PROGRESS п. 103). «Зроби на пк» → рецепт exe вище.
-4. Газета «Що нового»: про бонус-ігри всіх епох ще нема випуску (`NEWS_ISSUES`, підняти `NEWS_VERSION`, зараз 23).
-5. Баги без відтворення: екран епохи Відродження «час від часу»; блимання звірят і кінозалу на телефоні.
-6. Ідеї: таймлапс доби під час будівництва, глядачі-звірята, бос на 5–6 рівнях, Хелловін/зима-теми будівництва, нова бонусна епоха (рецепт у `src/ARCH.md`, рядок про `state.eid`); нові ролики: усі 8 бонус-ігор (потрібні боти для кожної гри).
+1. Користувачка: Save у двох редакторах itch; Play Console (документ, Android); AdMob (App ID, блок Rewarded); Android Studio; Steamworks; «Аудиторія» й публікація Y1/S2 на YouTube.
+2. На слово «публікуй»: випуск (рецепт у `CLAUDE.md`, перед ним `bash tools/autotest.sh --quick`), новий ZIP на itch (Edit game → Uploads), девлог, `NEWS_VERSION` зараз 23 (газета про бонус-ігри). Злиття гілки в main лише з дозволу.
+3. Android: підписаний AAB (keystore створює користувачка; `versionCode` піднімати), закритий тест ≥12 тестувальників × 14 днів (перший білд без реклами); живі ID реклами, Families Policy, Data safety.
+4. iOS (останнім): Apple Developer $99, збірка через хмару, TestFlight; поки PWA.
+5. Раніше: перевірка телефону 390×844 (щоденник, таймер бонус-ігор, лапшична); баги без відтворення (Відродження, блимання звірят).
 
 ## Перед випуском
-Не комітяться: `desktop/*.bat`, `tools/autotest_last.txt`, `previews/`, `backups/`; `desktop/app/game.html` після exe повертай `CAPY_NOGOD=1 node desktop/prepare.js`.
-Поза репозиторієм: W-8BEN на itch.io лишилось «Submit» і «Exit Interview».
+Не комітяться: `desktop/*.bat`, `tools/autotest_last.txt`, `previews/`, `backups/`; `desktop/app/game.html` після exe повертай `CAPY_NOGOD=1 node desktop/prepare.js`. Не публікуй `docs/privacy.html` без Android-випуску.

@@ -1,0 +1,20 @@
+"AppBuild"
+{
+	"AppID" "APP_ID"
+	"Desc" "CapyTap Market Steam build"
+	"BuildOutput" "C:\GAMES\capy-through-time\previews\steam\steambuild_output"
+	"ContentRoot" "C:\GAMES\capy-through-time\desktop\dist-steam\win-unpacked"
+	"SetLive" ""
+	"Depots"
+	{
+		"DEPOT_ID"
+		{
+			"FileMapping"
+			{
+				"LocalPath" "*"
+				"DepotPath" "."
+				"recursive" "1"
+			}
+		}
+	}
+}

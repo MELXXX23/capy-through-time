@@ -23,6 +23,7 @@ function showOfflineModal() {
   ui.modalBtn.textContent = t('offlineBtn');
   refreshOfflineModal();
   ui.modal.hidden = false;
+  if (typeof adsOfferOffline === 'function') adsOfferOffline();      // кнопка «×2 за ролик» (лише Android-обгортка з рекламою)
   ui.modalBtn.focus({ preventScroll: true });
 }
 function claimOffline() {
@@ -32,6 +33,7 @@ function claimOffline() {
   state.pendingOffline = 0;
   playSfx('coins');
   ui.modal.hidden = true;
+  if (typeof updateAdButtons === 'function') updateAdButtons();
   updateUI();
   saveGame();
 }
