@@ -21,3 +21,8 @@
 - Підготовлено в редакторах itch, Save натискає користувачка: форма «Edit game» (новий опис EN+UK з перевіреними фактами: 9 епох, 8 бонус-ігор, 64 скіни, 13 помічників; підпис «9 eras») і «Edit theme» (Renaissance terracotta: bg #2b1a14, bg2 #4a2c1f, text #f6e7d0, link #8fd0ff, headers #f2c46b, buttons #c8553a; банер 1800×600 з Фудзі й драконом; Embed BG 1600×900). Space night уже збережено на живій сторінці, її замінить Renaissance після Save.
 - Файли в `previews/itch/ready/` (не в git): cover_bigcapy, banner_fuji_dragon_1800x600, embed_bg_1600x900, capytap_build.gif. Скрипти: `previews/itch/{cover_big,banner,embed_bg}.js` (знімає `previews/itch/shots.js`), `serve_dir.js` (локальна роздача для завантаження в форми через fetch). Текст опису — `store/itch_description.html`.
 - Обкладинка bigcapy і GIF уже збережені на itch (12 скрінів, GIF першим).
+
+## 125. itch.io: повний прохід по вкладках дашборда (р. 58; у Chrome користувачки, у гру нічого не змінено)
+- Metadata (збережено): Input methods + Mouse + Keyboard; Languages English + Ukrainian; External links: Homepage = сайт GitHub Pages. Release info/ліцензії залишені «No license» (комерційна гра); Engines & tools — у базі немає підходящого.
+- Promo images (збережено, 4 шт., знімає `previews/itch/promo.js` зі steam-зображень; `previews/itch/ready/`): social 1200×630, favicon 512, wide cover 21:9 (2100×900), logo прозорий PNG.
+- Перевірено: сторінка Published, тема Renaissance + банер застосовані, оцінки й коментарі увімкнені, відео-трейлер є, 0 оцінок. Девлог — після нового ZIP (на «публікуй»).
