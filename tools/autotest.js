@@ -36,7 +36,8 @@ app.whenReady().then(async () => {
     await wait(1500);
     const t0 = Date.now();
     try {
-      await win.webContents.executeJavaScript('window.__QUICK=' + QUICK);
+      const LANGOPT = (process.argv.find(a => a.startsWith('--lang=')) || '').slice(7);
+      await win.webContents.executeJavaScript('window.__QUICK=' + QUICK + ';window.__LANG=' + JSON.stringify(LANGOPT));
       const r = await win.webContents.executeJavaScript(page);
       r.notes.forEach(n => say('  · ' + n));
       r.fails.forEach(f => say('  ✗ ' + f));

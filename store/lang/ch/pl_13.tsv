@@ -1,0 +1,143 @@
+T:team_toma_say_1	Mikhas nosi, ja zapisuję. Nie lubi, gdy zapisuję.
+T:team_toma_say_2	Marzę o magazynie, w którym nic się nie gubi. Trochę się gubi. Mysz wie.
+T:team_toma_say_3	Kto poprzestawiał skrzynie? Pamiętam, kto. Nie powiem. Jeszcze.
+T:team_toma_say_4	Trąba to najlepsza miara. Mierzę nią wszystko, nawet nastroje.
+T:team_toma_say_5	We wtorek o 14:32 ktoś powiedział „później”. Minęło wiele wtorków. Czekam.
+T:team_toma_say_6	Magazyn to moja świątynia. Mikhas jest jedynym, komu pozwalam dotykać skrzyń.
+T:team_toma_say_7	Mysz wróciła do magazynu. Znam ją z imienia. Ona moje też zna.
+T:team_toma_say_8	Inwentarz to miłość mierzona w pudełkach. Bardzo kocham.
+T:team_toma_say_9	Nikomu nie mów, ale pamiętam wszystko, i to męczące.
+T:team_toma_hire	Przybyłem. Magazyn czeka.
+T:team_shnyr_say_0	Tonya mnie obserwuje. Nawet mi się to podoba: nikt nigdy nie interesował się mną tak długo.
+T:team_shnyr_say_1	Poprawiam się. Wczoraj oddałem pięć monet. Trzy były moje.
+T:team_shnyr_say_2	Chcę, żeby mi tu zaufano. Tylko jeden klucz. Do czegoś małego.
+T:team_shnyr_say_3	Widzę coś błyszczącego i łapa sama się wyciąga. Przytrzymuję ją drugą łapą. Pomaga.
+T:team_shnyr_say_4	Murzyk nie pyta o baterię. Ja też nie. Przyjaźń.
+T:team_shnyr_say_5	Widzę kieszeń, zdaję sobie sprawę, że nie moja. Odwracam wzrok. Robię postępy.
+T:team_shnyr_say_6	Spike widział, jak patrzę na kasę. Teraz obaj czujemy się niezręcznie.
+T:team_shnyr_say_7	Nikt się tu mnie nie boi. Pierwszy raz w życiu. Nie wiem, co zrobić z rękami.
+T:team_shnyr_say_8	Kiedyś uciekałem. Teraz wołają mnie na obiad. Dziwne uczucie.
+T:team_shnyr_say_9	Tonya nauczyła mnie czekać. Wczoraj czekałem całą minutę. Jestem z siebie dumny.
+T:team_shnyr_hire	Jestem. Ręce na widoku. Obiecuję.
+T:team_nara_say_0	Herbata parzy się dokładnie tyle, ile trzeba. Nie pytaj, ile.
+T:team_nara_say_1	Mam mech na rogach. To nie zaniedbanie, to ogród.
+T:team_nara_say_2	Szop przychodzi na herbatę. Nalewam. Przychodzi znowu. To jest przyjaźń.
+T:team_nara_say_3	Kiedyś myślałam, że wystarczy jedno drzewo. Teraz jest cały ogród.
+T:team_nara_say_4	Płatki opadają, a ja słucham. Cicho, ale słyszalnie.
+T:team_nara_say_5	Marzę o ulicy herbaty, gdzie wszyscy mówią cicho i dużo piją.
+T:team_nara_say_6	Tonya i ja poruszamy się w tym samym wolnym tempie. Mamy mnóstwo powodów do milczenia.
+T:team_nara_say_7	W oddali bije bęben taiko. Moje serce też. Nie kłócimy się.
+T:team_nara_say_8	Leo woła mnie na zebranie, ja jego na herbatę. Na razie wygrywa herbata.
+T:team_nara_say_9	Kto się spieszy, zapomina oddychać. Ja oddycham. Widzisz? Nic strasznego.
+T:team_nara_hire	Herbata już się parzy. Usiądź.
+T:capy_say_0	Nowa epoka, te same twarze. Tylko inne kapelusze.
+T:capy_say_1	Marzyłam o budce na rogu. I oto jest. Czasem wciąż nie mogę w to uwierzyć.
+T:capy_say_2	Tonya wciąż idzie do drzwi. Zaczynam wierzyć, że dojdzie.
+T:capy_say_3	Spike policzył trzy razy. Nie wtrącam się: to jego rytuał.
+T:capy_say_4	Rano jest tu cicho. Potem ktoś otwiera drzwi i zaczyna się życie.
+T:capy_say_5	Prawie wszystko tutaj jest już moje. Resztę kupię jutro.
+T:capy_say_6	Poranek: pierwsza moneta i pierwsze „dzień dobry”. Żadne nie idzie na marne.
+T:capy_say_7	Ktoś zostawił napiwek w wazonie. Nie mam pojęcia, czyj to wazon. Zabieram.
+T:capy_say_8	Trzymam w głowie listę: pamiętać, żeby wszystkim podziękować. Na razie jestem przy trzeciej osobie.
+T:capy_say_9	Gdy wieczorem ulica się rozświetla, wydaje się, że jesteśmy jednym wielkim szyldem sklepu.
+T:teamReturn_0	{0} wrócił. Tylko kapelusz jest inny.
+T:teamReturn_1	{0}: znów w zespole i już wszystko wie.
+T:teamReturn_2	{0} mówi, że nic się nie zmieniło. Oprócz wszystkiego.
+T:teamReturn_3	{0} poznaje ulicę, ale nie szyld.
+T:teamUpMile_0	{0}: poziom {1}. Widocznie urósł. Szkoda, że nie wiemy, o ile.
+T:teamUpMile_1	{0}: poziom {1}. Ta sama pensja, szerszy uśmiech.
+T:teamUpMile_2	{0}: poziom {1}. Teraz robi to samo z większą pewnością.
+T:teamUpMile_3	{0}: poziom {1}. Koledzy kiwają głowami. To prawie oklaski.
+T:teamUpShort	{0}: poziom {1}
+T:noodleBang	🍜 Pachnie ramenem… ktoś ciągnie wózek! Stuknij „!”
+T:noodleArrived	🍜 Wózek z makaronem dziadka Ryo otwarty! Stuknij go
+T:noodleTitle	Wózek z Makaronem Dziadka Ryo
+T:noodleSub	Dziadek Ryo: „Gotuję makaron dokładnie tyle, ile trzeba. Złap moment, a miska jest twoja!”
+T:noodleStart	Gotuj!
+T:noodleTake	Wyjmij!
+T:noodleCook	Stuknij, gdy makaron będzie idealny (zielona strefa)!
+T:noodlePerfect	Idealnie! Najlepsza miska jest twoja!
+T:noodleNear	Prawie! I tak smaczne.
+T:noodleRaw	Jeszcze surowy… ale kryształ jest twój.
+T:noodleSoft	Rozgotowany… ale kryształ jest twój.
+T:noodleDone	Dziękuję, dziadku!
+T:mgScore	Trafienia: {0} z {1}
+T:mgWait	Minigra bonusowa tej epoki będzie gotowa za {0}
+T:mgBonusTitle	Minigra bonusowa
+T:mgPerfect	Idealnie! Oto twoja skórka!
+T:mgNear	Prawie! Spróbuj jeszcze raz.
+T:mgMiss	Tym razem nie. Spróbuj jeszcze raz!
+T:mgDanceTitle	Parkiet Capy Disco
+T:mgDanceSub	Płytki zapalają się i gasną. Stukaj świecące w rytm i omijaj ciemne!
+T:mgDanceStart	Tańcz!
+T:mgDanceDone	Co za taniec!
+T:mgSpamTitle	Bomba Spamu
+T:mgSpamSub	Okna ze spamem wyskakują wszędzie. Zamykaj je stuknięciem, zanim się nagromadzą!
+T:mgSpamStart	Zamykaj!
+T:mgSpamDone	Ekran czysty!
+T:mgFrescoTitle	Fresk Mistrzyni Capy
+T:mgFrescoSub	Pojemniki z farbą zapalają się po kolei. Powtórz kolejność, by ożywić fresk!
+T:mgFrescoStart	Maluj!
+T:mgFrescoDone	Jak pięknie!
+T:mgJukeTitle	Szafa Grająca Capy
+T:mgJukeSub	Płyty spadają ku linii. Stuknij tor w chwili, gdy płyta go dosięgnie!
+T:mgJukeStart	Graj!
+T:mgJukeDone	Świetna muzyka!
+T:mgClawTitle	Chwytak
+T:mgClawSub	Chwytak przesuwa się tam i z powrotem. Stuknij, by opuścić go dokładnie nad zabawką!
+T:mgClawStart	Chwytaj!
+T:mgClawDone	Kieszenie pełne zabawek!
+T:mgSortTitle	Segregacja Śmieci
+T:mgSortSub	Śmieci jadą taśmą. Stuknij po lewej dla zielonego kosza (bio), po prawej dla niebieskiego (plastik)!
+T:mgSortStart	Segreguj!
+T:mgSortDone	Planeta jest czystsza!
+T:mgCrysTitle	Kosmiczne Kryształy
+T:mgCrysSub	Łap kryształy i omijaj asteroidy. Stuknij tam, gdzie ma lecieć rakieta!
+T:mgCrysStart	Leć!
+T:mgCrysDone	Ładownia pełna!
+T:mgRoadTitle	Nocna Droga
+T:mgRoadSub	Zbieraj neonowe monety i omijaj samochody. Stuknij pas, którym chcesz jechać!
+T:mgRoadStart	Jedź!
+T:mgRoadDone	Co za przejażdżka!
+skin:/capy_pirate/0	Papuga znów ukradła mi ciastko. Zdrajczyni!
+skin:/capy_pirate/1	Gdzie skarb? A, to kasa.
+skin:/capy_pirate/2	Jo-ho-ho... ach, dzień dobry, drodzy klienci!
+skin:/capy_pirate/3	Przepaska na oku założona. Teraz widzę tylko zniżki.
+skin:/capy_astro/0	Houston, czujecie zapach bułeczek?
+skin:/capy_astro/1	Tak cicho w hełmie... tylko ja i moje myśli. O, klient!
+skin:/capy_astro/2	Zerowa grawitacja to wtedy, gdy nikt nie prosi o „jeszcze jedną zniżkę”.
+skin:/capy_astro/3	Jedno małe stuknięcie dla Capy, jeden gigantyczny zysk dla sklepu.
+skin:/capy_wizard/0	Abrakadabra... nie, nie to. Zaraz sobie przypomnę.
+skin:/capy_wizard/1	Broda rośnie sama. Ja nic nie robiłam. Prawie.
+skin:/capy_wizard/2	Zgubiłam różdżkę. Przynajmniej nerwy jeszcze mam.
+skin:/capy_wizard/3	Gwiazdy na mojej szacie mrugają. A może mi się wydaje.
+skin:/capy_chef/0	Ślicznie pachnie. To nie ja, to sąsiedzi!
+skin:/capy_chef/1	Duża czapka, jeszcze większa łyżka. Widzisz?
+skin:/capy_chef/2	Szef kuchni radzi: nie jedz towaru. Wybór dokonany.
+skin:/capy_chef/3	Sól, pieprz i trochę cierpliwości. To cały sekret.
+skin:/capy_explorer/0	Za tym rogiem jest coś ciekawego. Albo kot.
+skin:/capy_explorer/1	Lornetka patrzy w górę, ja szukam ciastek.
+skin:/capy_explorer/2	Plecak jest ciężki, ale ma trzy kanapki!
+skin:/capy_explorer/3	Mapa mówi: północ. My idziemy na południe. Przepraszam.
+skin:/capy_santa/0	Ho-ho-ho! Ktoś tu był grzeczny. Bez nazwisk.
+skin:/capy_santa/1	Worek jest pusty. Wszystko rozdałam... sobie.
+skin:/capy_santa/2	Broda łaskocze. Tak ma być?
+skin:/capy_santa/3	Każdy dzień to trochę Bożego Narodzenia, gdy nosisz czerwień!
+skin:/capy_witch/0	Miotła jest w naprawie. Teraz lecę na nadziei.
+skin:/capy_witch/1	Dynia na moich plecach się we mnie wpatruje. Ja wpatruję się w nią.
+skin:/capy_witch/2	Eliksir gotowy! Tylko zapomniałam, co w nim jest.
+skin:/capy_witch/3	Brr! Czy ktoś szepnął „zniżka”?
+skin:/capy_flower/0	Motyl usiadł mi na plecach. Cii, nikt się nie rusza.
+skin:/capy_flower/1	Kwiaty pachną wiosną. A ja pachnę kwiatami. Miło!
+skin:/capy_flower/2	Wianek trochę się zsunął. Nawet mi się podoba.
+skin:/capy_flower/3	Pszczoły już pytały, czy mogą tu zamieszkać.
+skin:/capy_beach/0	Chcę morza. Ale przynajmniej tu jest cień sklepu.
+skin:/capy_beach/1	Piłka na moich plecach nie ucieknie. Ja tak, na plażę!
+skin:/capy_beach/2	Ciemne okulary, jasny nastrój.
+skin:/capy_beach/3	Poproszę lemoniadę. Z lodem. I z parasolką!
+skin:/capy_autumn/0	Szalik jest tak długi, że się o niego potykam.
+skin:/capy_autumn/1	Liście szeleszczą, ja mam kawę. Idealny poranek.
+skin:/capy_autumn/2	Jesień pachnie cynamonem. A może to ja?
+skin:/capy_autumn/3	Ciepły sweter jest jak uścisk. Lekko drapiący.
+skin:/capy_ep0/0	Beret na bakier, pióro do góry. Teraz jestem artystką.
+skin:/capy_ep0/1	Ta lilia na moim płaszczu nie jest zwykła. Jest droga!

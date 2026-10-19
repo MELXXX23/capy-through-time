@@ -1,0 +1,108 @@
+T:ec8_7_1	Hay tanta comida rica que olvidé la dieta. Y que tenía una.
+T:ec8_7_2	Solo comprobaba si las empanadillas estaban envenenadas. Tres de ellas. Por seguridad.
+T:ec8_7_3	¡Atención! Pronto habrá fuegos artificiales. Mirad el cielo y pedid un deseo.
+T:ec8_7_4	El cielo estalló en dorado y rojo. El dragón pasó entre las luces y todos pensaron que él mismo lanzaba los fuegos.
+T:ec8_8_title	Llega Nara
+T:ec8_8_0	Por la mañana una cierva se acercó en silencio a la casa de té. Pelaje blanco, cuernos dorados y ojos serenos que habían visto muchas primaveras.
+T:ec8_8_1	Esta es Nara. Viene de los bosques de las afueras. Hace tiempo que quería ver qué hacéis aquí.
+T:ec8_8_2	Bienvenida, Nara. Tenemos té, farolillos y una caja que no sabe estar callada.
+T:ec8_8_3	Otra empleada que no toma nada sin pedir. Aceptada.
+T:ec8_8_4	Nara hizo una reverencia y se quedó junto a la puerta como si siempre hubiera estado allí. Los farolillos brillaron con una luz algo más cálida.
+T:ec8_8_5	Fue una época bonus. Pero la espiral continúa: un nuevo círculo te espera.
+T:guestSay_pip_3	Un bar justo al lado de la gramola no es casualidad, es estrategia.
+T:guestSay_pip_4	¿Un cóctel con sombrillita? La sombrilla está incluida. El hielo no.
+T:guestSay_pip_5	El disco gira, la vida gira. Solo no des vueltas con la cuenta.
+T:guestSay_zina_3	Los altavoces callan, pero mis piernas ya tiemblan. Esa es nuestra disco.
+T:guestSay_zina_4	El bajo es tan fuerte que mi corazón ya no es mío. No lo devolveré.
+T:guestSay_zina_5	¿Quieres bailar? Pon el pie en el compás. El tuyo, no el mío.
+T:guestSay_maks_3	La grúa es un juego honrado. Solo que la mano honrada a veces duda.
+T:guestSay_maks_4	El conejito de peluche es casi mío. «Casi» es la palabra clave.
+T:guestSay_maks_5	Una moneda más y el mono de la máquina se viene a casa conmigo.
+T:guestSay_bitik_3	El servidor zumba, las luces parpadean. Todo va bien. Probablemente.
+T:guestSay_bitik_4	Mi servidor funciona el 99,9% del tiempo. El otro 0,1% lo llamamos «descanso».
+T:guestSay_bitik_5	El wifi llega incluso adonde no llega la razón.
+T:guestSay_lesyk_3	La pala es la mejor herramienta para pensar. Silenciosa y útil.
+T:guestSay_lesyk_4	Las flores de las macetas ya probaron la fama. Pronto pedirán sueldo.
+T:guestSay_lesyk_5	Un arbolito hoy, una gran sombra mañana. Hay que tener paciencia.
+T:guestSay_orbit_3	El lanzamiento corre de mi cuenta. La cuenta atrás avanza y las galletas ya están a bordo.
+T:guestSay_orbit_4	El cohete está listo, el combustible cargado, solo la caja no ha aprobado la ruta.
+T:guestSay_orbit_5	El humo bajo la tobera no es un incendio, es ambiente.
+T:guestSay_lumi_3	La noria gira, los farolillos brillan. Llévate un buen ánimo.
+T:guestSay_lumi_4	Cada cabina es un sueño propio. Por desgracia, sin cinturón de seguridad.
+T:guestSay_lumi_5	Parpadeo-parpadeo. Neón fuera, calor dentro.
+T:guestSay_bruno_3	Una regla en la galería: mirar, no tocar. Tocar solo para comprar.
+T:guestSay_bruno_4	Este cuadro está sin terminar. Como todos mis cuadros. Como yo.
+T:guestSay_bruno_5	Cada pincelada cuesta más que la anterior. El presupuesto también es una pincelada.
+T:guestSay_pietro_3	La feria bulle, las carteras tiemblan. Todo según el plan.
+T:guestSay_pietro_4	Mis canciones no tienen precio. Aunque una moneda le encuentra precio rápido.
+T:guestSay_pietro_5	El Renacimiento es cuando de pronto todos se hicieron artistas. Incluso yo.
+T:guestArrive	¡{0} ha llegado al pueblo! Mira lo que ha traído.
+T:helpChip	Ayuda a {0}: {1}/{2}
+T:helpChipDone	Ayuda a {0}: hecha
+T:helpDoneToast	¡Ayuda a {0} completada! Cristal +1 💎. Una escena de agradecimiento llega antes del viaje.
+T:helpDoneToast2	¡Ayuda a {0} completada! Cristal +1 💎
+T:helpDiaryLine	Ayuda: {0}/{1}
+T:helpDiaryDone	Ayuda completada
+T:thanksCardTitle	Agradecimiento: {0}
+T:guestDat_pip	Pip
+T:guestDat_zina	Zina
+T:guestDat_maks	Max
+T:guestDat_bitik	Bitik
+T:guestDat_lesyk	Lesyk
+T:guestDat_orbit	Orbit
+T:guestDat_lumi	Lumi
+T:guestDat_bruno	Bruno
+T:guestDat_pietro	Pietro
+T:ep1_0	El reloj hizo tictac y el pueblo volvió a ser pastel, como un caramelo del siglo pasado. En la esquina brilla un «Milk Bar» y junto a él, una enorme gramola calla.
+T:ep1_1	Bienvenido a mi bar. Soy Pip. ¿Ves la gramola? Está muda: todos los discos desaparecieron justo bajo la aguja.
+T:ep1_2	¿Desaparecieron? Los discos no se escapan solos.
+T:ep1_3	¡Y tanto que sí! Son los Erizos Vinyl: ensartan los discos en sus púas y se van rodando. Yo solo vendía entradas para sus carreras.
+T:ep1_4	¡Así que fue él quien soltó a los erizos! Ayúdame a atraparlos: ruedan por la calle y tú tocas a cada uno. Atrapa {0} y los discos vuelven a ser míos.
+T:ep1_5	Hecho. El contador de arriba mostrará cuántos llevas.
+T:ep1_o1	Hagamos una carrera de discos: quien atrape más elige la canción.
+T:ep1_o2	Shnyr, devuelve el dinero de las entradas, y atraparemos a los erizos juntos.
+T:ep1_r1	¿Una carrera? Ya aposté por el erizo amarillo. Es el más rápido, por cierto.
+T:ep1_r2	¿El dinero? Bueno... una parte la gasté en utilería. El resto lo devuelvo.
+T:ep1_6	Estaré junto a la gramola. Atrapa {0} erizos y tendrás mi agradecimiento, y la gramola volverá a tocar más de una canción.
+T:ep1_7	Hecho: llegamos a la gramola con las manos llenas. Es decir, de discos.
+T:ep1_8	(tic) Aquí el Reloj. Ayuda a Pip y todo irá mejor. Si no, nos vamos igual, solo que sin agradecimiento.
+T:thx1_0	¡Todos los discos han vuelto! La gramola toca ahora un desfile de éxitos entero, no una sola canción. Gracias, amigo.
+T:thx1_1	La gramola canta y a los erizos les da igual. Las púas tienen buen oído.
+T:thx1_2	Que viajen sin discos. Y cuando vuelvas, el batido corre de mi cuenta.
+T:ep2_0	El reloj hizo tictac y la música inundó la calle. Haces de luz giran sobre la tienda y junto a dos altavoces gigantes alguien gira botones desesperadamente.
+T:ep2_1	Hola. Soy Zina, la DJ de la manzana. ¿Ves los altavoces? ¡Mudos! Mis bolas de espejos se escaparon justo antes de la fiesta.
+T:ep2_2	¿Se escaparon? Las bolas no corren.
+T:ep2_3	Estas sí. Son los Armadillos Disco: fingían ser bolas y colgaban del techo. Yo solo los alquilaba para la fiesta de otro. Se ofendieron y se fueron a pasear.
+T:ep2_4	Sin ellos la pista está a oscuras. Ayúdame a atrapar {0}: caminan haciendo el moonwalk, un paso adelante y un paso atrás. ¡Tócalos!
+T:ep2_5	Un paso adelante, un paso atrás: lo principal es mantener el ritmo. Vamos.
+T:ep2_o1	Compitamos: quien atrape más rápido pincha primero.
+T:ep2_o2	Shnyr, devuelve el dinero del alquiler: irá a lámparas nuevas.
+T:ep2_r1	¿DJ? ¡Yo! Solo dadme dos altavoces y cero responsabilidad.
+T:ep2_r2	¿El dinero del alquiler? Vale. Pero atrapad a los armadillos vosotros, me tienen miedo.
+T:ep2_6	Estaré junto a los altavoces. {0} bolas en la bolsa y la calle vuelve a tener fiesta. La pista corre de mi cuenta.
+T:ep2_7	Atrapamos al ritmo: uno-dos-tres, toque.
+T:ep2_8	(tic-tac) Soy el Reloj. Me gusta que alguien lleve el compás mejor que yo. Es raro.
+T:thx2_0	¡Todas las bolas están en casa! Las luces parpadean al ritmo, el bajo golpea el pecho y la pista es un cuento de hadas. Gracias, amigo.
+T:thx2_1	La pista brilla y los armadillos roncan en sus caparazones. La fiesta salió bien.
+T:thx2_2	Sigue adelante, y yo pondré una sesión de despedida. La mejor, solo para ti.
+T:ep3_0	El reloj hizo tictac y la calle se llenó de un brillo violeta. Del salón recreativo sale un «ping-ping-ping» y junto a la entrada hay una gran máquina de garra. Vacía.
+T:ep3_1	Soy Max, el dueño del salón. ¿Ves mi máquina de garra? Todos los peluches cobraron vida y se escaparon.
+T:ep3_2	¿Cobraron vida? Menudo premio.
+T:ep3_3	Son los Hámsteres Token. Solo les puse una moneda en cada mejilla para que «pasaran de nivel». Pasaron. Directo por la puerta.
+T:ep3_4	Corretean por la cuadrícula como en un juego: izquierda, derecha, arriba, abajo. Ayúdame a atrapar {0} y la máquina vuelve a estar llena.
+T:ep3_5	¿Corretean por una cuadrícula? Bueno, estamos en un salón recreativo. A tocar.
+T:ep3_o1	Juguemos: quien atrape más hámsteres gana la partida.
+T:ep3_o2	Shnyr, devuelve las fichas que les metiste en las mejillas.
+T:ep3_r1	Ganaré, porque yo me escapé más rápido. Quiero decir, los perseguí más rápido.
+T:ep3_r2	Las fichas están en las mejillas, y las mejillas ahora están libres. Atrapad a los hámsteres y las fichas volverán solas.
+T:ep3_6	Esperaré junto a la máquina de garra. Atrapa {0} hámsteres y los juguetes vuelven a su sitio, y recibes el agradecimiento del dueño.
+T:ep3_7	Atrapamos casilla por casilla. Un nivel más.
+T:ep3_8	(tic) El temporizador sigue corriendo, el juego continúa. Solo vigilo que nadie haga trampa. Salvo yo.
+T:thx3_0	La máquina de garra está llena, los hámsteres están en brazos de los peluches y la tabla de récords tiene una entrada nueva: «TÚ».
+T:thx3_1	Récord guardado. Ahora lo principal es no perderlo antes del siguiente nivel.
+T:thx3_2	No lo perderé. ¡Buen viaje! El récord esperará.
+T:ep4_0	El reloj hizo tictac y una red invisible se encendió sobre el pueblo. Un rack de servidores zumba en la esquina de la calle y todos los indicadores parpadean... en rojo.
+T:ep4_1	Bip. Soy Bitik, el robot asesor. ¡Se han colado bugs en mi servidor! Escarabajos verdes de verdad, con antenas: roen cables y estropean precios.
+T:ep4_2	¿Bugs saliendo del servidor? Eso no viene en el manual.
+T:ep4_3	Los solté «sin querer». Quería que todos los precios fueran una moneda. Los bugs estuvieron de acuerdo y además royeron la contraseña.
+T:ep4_4	Fallan: ahora desaparecen, ahora vuelven. Ayúdame a atrapar {0} antes de que se coman todo el sistema. ¡Tócalos!

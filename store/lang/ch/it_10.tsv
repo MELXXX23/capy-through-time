@@ -1,0 +1,102 @@
+T:ep4_5	Fanno glitch, ma il tocco non si lascia ingannare. Cominciamo.
+T:ep4_o1	Giochiamo: chi cattura più bug diventa admin.
+T:ep4_o2	Shnyr, rimetti i prezzi a posto, e Bitik installerà la protezione.
+T:ep4_r1	Admin? Oh, io farei un sito... Solo non consideratela una minaccia.
+T:ep4_r2	La protezione si sta caricando. Bip-bup. Prezzi ripristinati, bug sotto controllo.
+T:ep4_6	Resto vicino al rack a controllare gli indicatori. Cattura {0} bug e il sistema si riavvia senza errori.
+T:ep4_7	Allora chiudiamo le schede in più e catturiamo.
+T:ep4_8	(tic) Salvato. Sono l'Orologio: non ho backup, solo un minuto molto lungo.
+T:thx4_0	Tutti gli indicatori sono verdi! Grazie. Il server è stabile, i prezzi sono onesti e i bug si sono trasferiti nel backup.
+T:thx4_1	Wow, neanche un errore. Quasi sospetto.
+T:thx4_2	Solo perché sei vicino. Terrò i tuoi progressi nel cloud. Buon viaggio.
+T:ep5_0	L'orologio ha ticchettato, i tetti sono diventati verdi e i mulini hanno girato sulle colline. Accanto al negozio c'è un'aiuola curata con alberelli e grandi vasi.
+T:ep5_1	Sono Lesyk, il giardiniere della città. La mia aiuola ha vita propria: qualcosa si muove, ma non è cavolo.
+T:ep5_2	Si muove? È proprio una pianta?
+T:ep5_3	Sono i Camaleonti Leaf. Li ho lasciati vivere nell'aiuola perché costano meno di una guardia. Ora si mimetizzano tra le foglie e nemmeno io li vedo.
+T:ep5_4	Si mimetizzano e sono quasi invisibili. Guarda bene, tocca e cattura. Cattura {0} e l'aiuola rifiorisce.
+T:ep5_5	Invisibili, ma non silenziosi. Guardo bene.
+T:ep5_o1	Gareggiamo: chi trova più camaleonti.
+T:ep5_o2	Shnyr, ripianta le aiuole e aiuta Lesyk.
+T:ep5_r1	Una gara? Li vedo benissimo... ah, no, quella è una foglia.
+T:ep5_r2	Ripiantare? Va bene. La pala è pesante, ma ho la coscienza pulita.
+T:ep5_6	Sarò vicino all'aiuola con l'annaffiatoio. Cattura {0} camaleonti e avrai il mio ringraziamento e un raccolto di parole gentili.
+T:ep5_7	Un raccolto di parole gentili. Il migliore di tutti.
+T:ep5_8	(tic) Sono l'Orologio. Qui sa di terra e di pioggia. Per un meccanismo è come una vacanza.
+T:thx5_0	L'aiuola è verde, gli alberelli sono felici e i camaleonti dormono nei vasi. Grazie.
+T:thx5_1	Che silenzio. Anche le foglie frusciano contente.
+T:thx5_2	Gli alberelli cresceranno e si ricorderanno di te. Prosegui, io annaffio qui.
+T:ep6_0	L'orologio ha ticchettato e il cielo si è oscurato. Un razzo è sulla rampa di lancio sulla collina, con il vapore che già si arriccia sotto l'ugello.
+T:ep6_1	Nominativo «Orbit», astronauta. Il razzo è pronto, ma il carburante è sparito! Gli Assolotti Astro hanno preso le taniche e sono andati a fluttuare per la città.
+T:ep6_2	Assolotti nello spazio? E rubano anche il carburante?
+T:ep6_3	Non rubano, «prendono in prestito». Ho solo detto loro che il carburante sa di torta. Ora fluttuano in assenza di gravità, con le taniche in mano.
+T:ep6_4	Senza carburante niente lancio. Aiutami a catturare {0} assolotti. Fluttuano lenti e fluidi. Tocca prima che si allontanino.
+T:ep6_5	Lenti e fluidi fa al caso nostro. Inizio il conto alla rovescia.
+T:ep6_o1	Giochiamo alla «pesca spaziale»: chi cattura più assolotti è il capitano.
+T:ep6_o2	Orbit, prepara il razzo, e noi riporteremo tutto il carburante.
+T:ep6_r1	Capitano? Io! Datemi solo il timone e zero obblighi.
+T:ep6_r2	Aspetto sulla rampa. Accetto le taniche una per una, il conto alla rovescia non si ferma.
+T:ep6_6	Sarò vicino al razzo. Cattura {0} assolotti e il carburante torna nel serbatoio. Poi il razzo vola senza problemi.
+T:ep6_7	Preparo i motori. Il conto alla rovescia è partito.
+T:ep6_8	Nello spazio il tempo scorre più lento, ma è meglio catturare in tempo. Tic... tac...
+T:thx6_0	Tutte le taniche sono nel serbatoio! Lancio approvato. Grazie all'equipaggio, e vacanza sulla Terra per gli assolotti.
+T:thx6_1	Lo spazio ti ringrazia per il servizio. Anche il carburante.
+T:thx6_2	Terra, qui Orbit. Parto con il miglior equipaggio. La tua strada prosegue attraverso il tempo.
+T:ep7_0	L'orologio ha ticchettato e la città si è accesa di neon. Una grande ruota al neon gira accanto alle insegne, ma metà delle cabine è al buio.
+T:ep7_1	Sono Lumi, il maestro del neon. Le mie lanterne per la ruota sono sparite! I gattini al neon le hanno portate via e le fanno brillare nei vicoli.
+T:ep7_2	Gattini con le lanterne? Carino, ma la ruota è bloccata.
+T:ep7_3	Sono i Gattini Signboard. Volevo che accendessero la mia insegna nuova, ma hanno preso le lanterne e sono scappati a saltare sui tetti.
+T:ep7_4	Saltano in alto e all'improvviso. Aiutami a catturarne {0} e la ruota si illumina del tutto.
+T:ep7_5	Saltano, ma noi coglieremo il bersaglio. Tocca!
+T:ep7_o1	Shnyr, lascia stare gli imbrogli e unisciti alla squadra: brillerai su tutto l'isolato.
+T:ep7_o2	Aiuta a catturare i gattini e ti troveremo un lavoro onesto.
+T:ep7_r1	Unirmi a voi? Un lavoro vero? È il miglior piano della storia.
+T:ep7_r2	Un lavoro onesto... Pagano in biscotti? Allora ci sto.
+T:ep7_6	Sarò vicino alla ruota. Cattura {0} gattini e ogni cabina si accende. La luce funziona a buone azioni.
+T:ep7_7	Va bene, mi arrendo. Voglio entrare nella squadra. Prometto di essere furbo solo per le buone azioni.
+T:ep7_8	Benvenuto, Shnyr. Il negozio ci guadagna soltanto.
+T:ep7_9	Tic-tac. Finalmente Shnyr è dalla parte giusta del tempo.
+T:thx7_0	Ogni cabina brilla! La ruota gira, le lanterne sono tornate, i gattini fanno le fusa. Grazie.
+T:thx7_1	La città scintilla. Credo che perfino Shnyr brilli d'orgoglio.
+T:thx7_2	Blink-blink! Prosegui, e qui ci sarà sempre un po' di luce per te.
+T:ep8_0	Il cerchio si è chiuso: di nuovo la piazza, di nuovo i gonfaloni e una sola moneta. Solo che ora in piazza ha aperto una galleria, e ovunque ci sono volti familiari e un po' di stanchezza.
+T:ep8_1	Sono Bruno, il pittore. Mi hanno commissionato «Tutti gli Amici Attraverso Tutte le Epoche» e i colori sono spariti. Li rubano i gufi Mazok, e il peggio è che le loro pennellate superano le mie.
+T:ep8_2	Gufi pittori? Allora Mazok conosce il mestiere.
+T:ep8_3	Ho solo mostrato dove stanno i colori migliori. Sul serio. Non sapevo che li avrebbero trasformati in astrazione.
+T:ep8_4	Volano a ondate sulla strada. Aiutami a catturarne {0}, o non finirò il quadro.
+T:ep8_5	Volano a ondate, e noi coglieremo l'attimo.
+T:ep8_o1	Lascia che Mazok finisca l'orologio ammiccante. A me non importa.
+T:ep8_o2	Catturiamo i gufi, e tu dipingi tutti noi: l'intera squadra, dalla prima epoca.
+T:ep8_r1	Un orologio ammiccante? Va bene. Se mi ruba di nuovo i colori, le farò il ritratto.
+T:ep8_r2	L'intera squadra? Questo sì che è un capolavoro. Forza, tutti nella cornice.
+T:ep8_6	Sarò in galleria accanto alla tela. Cattura {0} gufi e il quadro sarà finito.
+T:ep8_7	Il quadro si farà. E anche Mazok.
+T:ep8_8	Tic-tac. Ogni nuovo cerchio rende la storia più luminosa.
+T:thx8_0	Tutti i colori sono tornati! Il quadro è finito: tutti gli amici attraverso tutte le epoche, e «Mazok» ha firmato nell'angolo.
+T:thx8_1	La firma del gufo nell'angolo. Ha ottenuto ciò che voleva.
+T:thx8_2	Il talento ha bisogno di sostegno. Prosegui, io appenderò il quadro in galleria.
+T:ep9_0	Un gallo errante con un liuto e una piuma sul berretto si è fermato in piazza. La città si risveglia: il Rinascimento. Una sontuosa «Fontana dei Desideri» a tre livelli sorge in mezzo alla piazza.
+T:ep9_1	Salve. Sono Pietro, il menestrello. Questa è la mia Fontana dei Desideri, ma le monete volano via e spariscono! Brillano, e il mio compenso svanisce in qualche modo.
+T:ep9_2	Monete che volano? Questa non è una fontana, è pioggia al contrario.
+T:ep9_3	Sono i gufi Mazok. Pescano le monete dal fondo perché brillano. E io... io ho solo detto loro dove sono le più luccicanti.
+T:ep9_4	Quindi è stato lui a far entrare i gufi nella fontana! Aiutami a catturarli. Volano a ondate, veloci. Cattura {0} e le monete tintinneranno di nuovo nell'acqua.
+T:ep9_5	I desideri non vanno lasciati andare. Tocca!
+T:ep9_o1	Lascia che i gufi cantino in un'orchestra: che moda sarebbe.
+T:ep9_o2	Shnyr, rimetti le monete sul fondo, e cattureremo i gufi.
+T:ep9_r1	Gufi nell'orchestra? Uh-uh! Solo che nessuno raccolga monete in un cappello.
+T:ep9_r2	Va bene, va bene. Restituite... quasi tutte.
+T:ep9_6	Sarò vicino alla fontana a suonare per tutti quelli in coda per i desideri. Cattura {0} gufi e le monete restano nell'acqua.
+T:ep9_7	E i desideri si avvereranno da soli.
+T:ep9_8	Tic-tac. Il Rinascimento è quando le cose vecchie all'improvviso suonano nuove.
+T:thx9_0	Le monete tintinnano di nuovo nell'acqua e i gufi dormono sui tetti! I desideri sono al sicuro. Il liuto canta solo per te.
+T:thx9_1	La fontana canta meglio del liuto.
+T:thx9_2	È un complimento e un insulto insieme. Si prosegue? Che il tempo sia gentile.
+T:guestSay_pip_0	Il jukebox tace. Non sapevo che il silenzio potesse essere così rumoroso.
+T:guestSay_pip_1	Un riccio con un disco sugli aculei non è moda, è furto. Anche se, lo ammetto, sta bene.
+T:guestSay_pip_2	Un frappè? Solo per gli amici. E per i clienti paganti. A volte sono le stesse persone.
+T:guestAsk_pip_0	Vedi un riccio? Toccalo, il mio disco è su di lui!
+T:guestAsk_pip_1	Ancora qualche riccio e il jukebox torna a cantare.
+T:guestDone_pip	Tutti i dischi sono tornati. Il jukebox ti ringrazia, e anch'io!
+T:guestSay_zina_0	Dove sono le mie palle? Una festa senza palla a specchi è solo una cucina rumorosa.
+T:guestSay_zina_1	Armadilli con il guscio a specchio: bellissimi, scintillanti e del tutto irresponsabili. Li adoro.
+T:guestSay_zina_2	Uno-due-tre, tieni il ritmo. Chi sbaglia tempo lava i piatti. Kria sta già facendo la lista.
+T:guestAsk_zina_0	Hai un ottimo tocco! Cattura gli armadilli luccicanti, mi serve la mia pista da ballo.

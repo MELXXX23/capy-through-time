@@ -1,0 +1,102 @@
+skin:/street_brick/1	Bom de pisar. Cada tijolo está reto.
+skin:/street_brick/2	A estrada é vermelha. Como as minhas bochechas agora.
+skin:/street_wood/0	As tábuas rangem sob as minhas patas. Aconchegante!
+skin:/street_wood/1	Um caminho de madeira cheira a floresta.
+skin:/street_wood/2	Crec-crec. Como se alguém estivesse vindo. Ah, sou eu.
+skin:/street_leaves/0	Crec-crec! Meu som favorito do outono.
+skin:/street_leaves/1	Folhas sob as patas: um tapete de ouro escuro.
+skin:/street_leaves/2	Alguém espalhou folhas. Obrigada, alma gentil!
+skin:/street_snow/0	Neve! Não, não coma. Eu também me seguro.
+skin:/street_snow/1	Minhas patas estão frias, meu coração está quente.
+skin:/street_snow/2	Crec-crec. A neve também é música.
+skin:/street_moss/0	O musgo é macio como um tapete. Vou me deitar.
+skin:/street_moss/1	Paralelepípedos com musgo guardam muitas histórias.
+skin:/street_moss/2	Uma florzinha cresce na fresta. Não pise nela!
+skin:/street_gold/0	Uma estrada dourada! Mas não é feita de rubis.
+skin:/street_gold/1	Eu ando e ela cintila sob as minhas patas. Que bom.
+skin:/street_gold/2	Um tijolo feito de moedas. Não vou tocar, não é meu.
+skin:/capy_ep8/0	O quimono é lindo, as sandálias apertam. A beleza exige sacrifício.
+skin:/capy_ep8/1	O chapéu é como uma lanterna: não enxergo, mas é aconchegante.
+skin:/capy_ep8/2	O dragão piscou para mim. Ou talvez tenha sido o vento.
+skin:/capy_ep8/3	Chá, arroz e sakura: a vida é boa.
+tour:/shop/1	Esta é a Loja. Aqui você toca, melhora seu toque e amplia a loja. Toque aqui!
+tour:/departments/1	Os departamentos ganham moedas sozinhos, mesmo quando você está fora. Toque!
+tour:/team/1	Na Equipe você contrata bichinhos ajudantes. Cada um ajuda do seu jeito.
+tour:/story/1	Diário: capítulos da história e histórias das eras. Você pode relê-los.
+tour:/skins/1	Skins: mude o visual da Capy, da loja e dos heróis por cristais.
+tour:/seasons/1	Estações e hora do dia. O cadeado abre após a 2ª era.
+tour:/achievements/1	Conquistas: prêmios esperam aqui por seus feitos.
+tour:/settings/1	Ajustes: idioma, som, visualização de eras e animações.
+tour:/news/1	E esta é a caixa de correio dos desenvolvedores! Lá estão as novidades das atualizações, e você pode escrever para nós. Abra!
+tour:/end/1	É só isso! Toque na loja e faça-a crescer. Estamos sempre por perto!
+tour:/endBtn	JOGAR!
+tour:/skip	Pular tour
+cut:/intro/0	Era uma vez,
+cut:/intro/1	a Capy vivia num mundo de pixels…
+cut:/introN/0	Era uma
+cut:/introN/1	vez, a Capy
+cut:/introN/2	vivia num
+cut:/introN/3	mundo de pixels…
+cut:/p1	Uau... Eu tenho uma moeda!
+cut:/b1	Uma primeira moeda? Então você precisa de uma loja!
+cut:/c2	Uma loja?
+cut:/b2	Até uma única moeda pode virar um negócio!
+cut:/b3	Observe bem!
+cut:/b4	Agora é a sua vez.
+cut:/c5	O que eu faço?
+cut:/b5	Tente tocar!
+cut:/hint	TOQUE NA LOJA
+cut:/click	TOQUE!
+cut:/b6	Quanto mais você ganha, mais pode ampliar a sua loja!
+cut:/b7	Amplie a loja, ganhe moedas e desbloqueie novas eras!
+cut:/w1	MELHORE.
+cut:/w2	TOQUE.
+cut:/w3	CRESÇA.
+cut:/i1	TOQUE
+cut:/i2	MOEDAS
+cut:/i3	MELHORIA
+cut:/i4	NÍVEL
+cut:/skip	Pular
+cut:/m1	Oi! Eu sou o Mel,
+cut:/n1	e eu sou a Nika. Nós somos os desenvolvedores!
+cut:/m2	Vamos mostrar como tudo funciona. Vamos começar?
+cut:/go	VAMOS LÁ!
+cut:/tuk	TAQUE!
+about:/mast	SOBRE NÓS
+about:/lead	Oi, amigo!
+about:/newH	O que há de novo
+about:/new	A era bônus "Japão"! Depois do Neon, o tempo leva você à terra do sol nascente: casas de madeira com telhadinhos, sakura, lanternas de papel, letreiros de neon que brilham à noite e um dragão que sobrevoa a cidade e mergulha até o canteiro de obras. Tem animação de viagem própria, 8 capítulos novos, a raposa Sora com sua casa de chá, a corça Nara, a barraca de macarrão do vovô Ryo no lugar do circo e a Capy de quimono. Mais eras bônus estão a caminho: veja "Em breve".
+about:/intro/0	Somos MEL e NIKA, e fizemos este jogo nós mesmos, pixel por pixel.
+about:/intro/1	A Capy começa com uma moeda e uma lojinha minúscula na esquina. Sua missão: transformá-la num verdadeiro shopping e viajar por eras inteiras.
+about:/nextH	O que vem por aí
+about:/next	Pela frente há 8 eras: do Renascimento ao Neon. Viaje no tempo, e sua loja se tornará algo maior…
+about:/giftH	Um presente
+about:/gift	Resgate o presente dos desenvolvedores: +100 moedas
+about:/giftDone	Presente já resgatado. Obrigado por jogar!
+about:/writeH	Contato
+about:/write	Encontrou um bug ou tem uma ideia? Toque em Escrever aos desenvolvedores abaixo: lemos tudo.
+about:/toast	+100 moedas dos desenvolvedores!
+about:/paper	NOVIDADES DOS DESENVOLVEDORES ·
+guide:/head	Dicas
+guide:/sub	Algumas dicas para jogar com mais facilidade e crescer mais rápido.
+guide:/items/0/0	💰 Como enriquecer mais rápido
+guide:/items/0/1	<ul class="np-list"><li>Contrate o ouriço Spike o quanto antes. Ele custa só 100 moedas, e cada toque fica 1,5 vez mais forte.</li><li>O botão MÁX em Departamentos compra tanto quanto o seu dinheiro permitir. Não precisa tocar em Comprar vinte vezes.</li><li>Observe a faixa no topo da tela. Ela sempre mostra a próxima meta, por exemplo "Compre "Velas e fósforos": 7/25".</li></ul>
+guide:/items/0/2	tipRich
+guide:/items/1/0	🏪 Como crescer
+guide:/items/1/1	<ul class="np-list"><li>Para ampliar a loja você precisa de três coisas: comprar os departamentos necessários, melhorar os bichinhos e juntar moedas. As condições estão na aba Departamentos, no bloco Ampliação.</li><li>Cada novo nível da loja dá ×2 em toda a renda, então amplie na primeira oportunidade.</li></ul>
+guide:/items/1/2	tipGrow
+guide:/items/2/0	🎁 Bônus grátis
+guide:/items/2/1	<ul class="np-list"><li>Minijogos bônus: a pista de dança na era Disco, a carrocinha de macarrão do vovô Ryo no Japão e a cabana da bruxa no Halloween. É lá que se ganham skins.</li><li>O circo da fortuna dá cristais e bônus, então não passe direto pela tenda.</li><li>Recompensas de conquistas. Olhe a aba com a taça, há prêmios esperando lá.</li><li>Eventos na rua. O "!" vermelho, uma coruja ou um guaxinim aparecem só por um instante. Toque a tempo e ganhe um bônus.</li></ul>
+guide:/items/2/2	tipFree
+guide:/items/3/0	⏳ Para o futuro
+guide:/items/3/1	A viagem no tempo reinicia a loja, mas dá fragmentos de tempo, uma nova era e um bônus permanente de renda. Não tenha medo dela: a próxima rodada fica muito mais rápida.
+guide:/items/3/2	clock
+soon:/head	Em breve
+soon:/sub	No que estamos trabalhando. Ainda não saiu, mas está quase.
+soon:/items/0/0	Mais eras bônus
+soon:/items/0/1	O Japão já está no jogo. Mais eras bônus estão chegando, cada uma com sua própria animação de viagem, história, ajudante, convidado e decorações voadoras.
+soon:/items/1/0	Versões para lojas de aplicativos
+soon:/items/1/1	Estamos preparando versões do jogo para celulares e computadores nas lojas de aplicativos.
+sec:/news	Sobre nós
+sec:/guide	Dicas
+sec:/soon	Em breve

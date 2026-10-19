@@ -1,0 +1,102 @@
+skin:/street_brick/1	È bello camminarci. Ogni mattone è dritto.
+skin:/street_brick/2	La strada è rossa. Come le mie guance adesso.
+skin:/street_wood/0	Le assi scricchiolano sotto le mie zampe. Accogliente!
+skin:/street_wood/1	Un sentiero di legno sa di bosco.
+skin:/street_wood/2	Crac-crac. Come se arrivasse qualcuno. Ah, sono io.
+skin:/street_leaves/0	Crac-crac! Il mio suono preferito dell'autunno.
+skin:/street_leaves/1	Foglie sotto le zampe: un tappeto di oro scuro.
+skin:/street_leaves/2	Qualcuno ha sparso delle foglie. Grazie, anima gentile!
+skin:/street_snow/0	Neve! No, non mangiarla. Mi trattengo anch'io.
+skin:/street_snow/1	Le mie zampe sono fredde, il mio cuore è caldo.
+skin:/street_snow/2	Crac-crac. Anche la neve è musica.
+skin:/street_moss/0	Il muschio è morbido come un tappeto. Vado a sdraiarmi.
+skin:/street_moss/1	Il selciato muschioso ricorda molte storie.
+skin:/street_moss/2	Un fiorellino cresce nella fessura. Non calpestarlo!
+skin:/street_gold/0	Una strada dorata! Anche se non è fatta di rubini.
+skin:/street_gold/1	Cammino e sotto le mie zampe luccica. Che bello.
+skin:/street_gold/2	Un mattone fatto di monete. Non lo tocco, non è mio.
+skin:/capy_ep8/0	Il kimono è bellissimo, i sandali stringono. La bellezza esige sacrifici.
+skin:/capy_ep8/1	Il cappello è come una lanterna: non vedo, ma è accogliente.
+skin:/capy_ep8/2	Il drago mi ha fatto l'occhiolino. O forse era il vento.
+skin:/capy_ep8/3	Tè, riso e sakura: la vita è bella.
+tour:/shop/1	Questo è il Negozio. Qui tocchi, potenzi il tuo tocco e amplii il negozio. Premilo!
+tour:/departments/1	I reparti guadagnano monete da soli, anche quando non ci sei. Premili!
+tour:/team/1	In Squadra assumi animaletti aiutanti. Ognuno aiuta a modo suo.
+tour:/story/1	Diario: capitoli della storia e storie delle epoche. Puoi rileggerli.
+tour:/skins/1	Skin: cambia l'aspetto di Capy, del negozio e degli eroi con i cristalli.
+tour:/seasons/1	Stagioni e ora del giorno. Il lucchetto si apre dopo la 2ª epoca.
+tour:/achievements/1	Obiettivi: qui ti aspettano premi per i tuoi traguardi.
+tour:/settings/1	Impostazioni: lingua, audio, visualizzatore di epoche e animazioni.
+tour:/news/1	E questa è la cassetta postale degli sviluppatori! Lì ci sono le novità sugli aggiornamenti, e puoi scriverci. Aprila!
+tour:/end/1	È tutto! Tocca il negozio e fallo crescere. Siamo sempre vicini!
+tour:/endBtn	GIOCA!
+tour:/skip	Salta il tour
+cut:/intro/0	C'era una volta
+cut:/intro/1	Capy viveva in un mondo di pixel…
+cut:/introN/0	C'era una
+cut:/introN/1	volta Capy
+cut:/introN/2	viveva in un
+cut:/introN/3	mondo di pixel…
+cut:/p1	Wow... Ho una moneta!
+cut:/b1	Una prima moneta? Allora ti serve un negozio!
+cut:/c2	Un negozio?
+cut:/b2	Anche una sola moneta può diventare un'attività!
+cut:/b3	Guarda bene!
+cut:/b4	Ora tocca a te.
+cut:/c5	Cosa faccio?
+cut:/b5	Prova a toccare!
+cut:/hint	TOCCA IL NEGOZIO
+cut:/click	TOCCA!
+cut:/b6	Più guadagni, più puoi far crescere il tuo negozio!
+cut:/b7	Fai crescere il negozio, guadagna monete e sblocca nuove epoche!
+cut:/w1	POTENZIA.
+cut:/w2	TOCCA.
+cut:/w3	CRESCI.
+cut:/i1	TOCCO
+cut:/i2	MONETE
+cut:/i3	POTENZIA
+cut:/i4	LIVELLO
+cut:/skip	Salta
+cut:/m1	Ciao! Sono Mel,
+cut:/n1	e io sono Nika. Siamo gli sviluppatori!
+cut:/m2	Vi mostreremo come funziona tutto. Cominciamo?
+cut:/go	ANDIAMO!
+cut:/tuk	TOC!
+about:/mast	CHI SIAMO
+about:/lead	Ciao, amico!
+about:/newH	Le novità
+about:/new	L'epoca bonus «Giappone»! Dopo il Neon, il tempo ti porta nella terra del sol levante: case di legno con tettucci, sakura, lanterne di carta, insegne al neon che brillano di notte e un drago che sorvola la città e si tuffa verso il cantiere. Ha una sua animazione di viaggio, 8 nuovi capitoli, la volpe Sora con la sua casa da tè, la cerva Nara, il carretto dei noodle di nonno Ryo al posto del circo e Capy in kimono. Altre epoche bonus sono in arrivo: guarda «Prossimamente».
+about:/intro/0	Siamo MEL e NIKA, e questo gioco l'abbiamo fatto noi, pixel dopo pixel.
+about:/intro/1	Capy parte con una moneta e un negozietto minuscolo all'angolo. Il tuo compito: farlo diventare un vero centro commerciale e viaggiare attraverso intere epoche.
+about:/nextH	Cosa ci aspetta
+about:/next	Davanti ci sono 8 epoche: dal Rinascimento al Neon. Viaggia nel tempo, e il tuo negozio diventerà qualcosa di più grande…
+about:/giftH	Un regalo
+about:/gift	Ritira il regalo degli sviluppatori: +100 monete
+about:/giftDone	Regalo già ritirato. Grazie per aver giocato!
+about:/writeH	Contatti
+about:/write	Hai trovato un bug o hai un'idea? Premi Scrivi agli sviluppatori qui sotto: leggiamo tutto.
+about:/toast	+100 monete dagli sviluppatori!
+about:/paper	NOVITÀ DAGLI SVILUPPATORI ·
+guide:/head	Consigli
+guide:/sub	Qualche suggerimento per giocare più facilmente e crescere più in fretta.
+guide:/items/0/0	💰 Come arricchirsi più in fretta
+guide:/items/0/1	<ul class="np-list"><li>Assumi il riccio Spike il prima possibile. Costa solo 100 monete, e ogni tocco diventa 1,5 volte più forte.</li><li>Il pulsante MAX nei Reparti compra quanto il tuo denaro permette. Non serve premere Compra venti volte.</li><li>Guarda la striscia in alto sullo schermo. Mostra sempre il prossimo obiettivo, per esempio «Compra "Candele e fiammiferi": 7/25».</li></ul>
+guide:/items/0/2	tipRich
+guide:/items/1/0	🏪 Come crescere
+guide:/items/1/1	<ul class="np-list"><li>Per ampliare il negozio servono tre cose: comprare i reparti necessari, potenziare gli animaletti e raccogliere monete. Le condizioni sono nella scheda Reparti, nel blocco Ampliamento.</li><li>Ogni nuovo livello del negozio dà ×2 a tutto il reddito, quindi amplia alla prima occasione.</li></ul>
+guide:/items/1/2	tipGrow
+guide:/items/2/0	🎁 Bonus gratuiti
+guide:/items/2/1	<ul class="np-list"><li>Minigiochi bonus: la pista da ballo nell'epoca Disco, il carretto dei noodle di nonno Ryo in Giappone e la capanna della strega a Halloween. È lì che si vincono le skin.</li><li>Il circo della fortuna dà cristalli e bonus, quindi non passare oltre il tendone.</li><li>Ricompense degli obiettivi. Guarda la scheda con la coppa, lì ti aspettano dei premi.</li><li>Eventi in strada. Il «!» rosso, un gufo o un procione compaiono solo per un attimo. Tocca in tempo e ricevi un bonus.</li></ul>
+guide:/items/2/2	tipFree
+guide:/items/3/0	⏳ Per il futuro
+guide:/items/3/1	Il viaggio nel tempo azzera il negozio ma dà frammenti di tempo, una nuova epoca e un bonus permanente al reddito. Non temerlo: il giro successivo è molto più veloce.
+guide:/items/3/2	clock
+soon:/head	Prossimamente
+soon:/sub	A cosa stiamo lavorando. Non è ancora uscito, ma quasi.
+soon:/items/0/0	Altre epoche bonus
+soon:/items/0/1	Il Giappone è già nel gioco. In arrivo altre epoche bonus, ognuna con la sua animazione di viaggio, storia, aiutante, ospite e decorazioni volanti.
+soon:/items/1/0	Versioni per gli app store
+soon:/items/1/1	Stiamo preparando le versioni del gioco per telefoni e computer negli app store.
+sec:/news	Chi siamo
+sec:/guide	Consigli
+sec:/soon	Prossimamente

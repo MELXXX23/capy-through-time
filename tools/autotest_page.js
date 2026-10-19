@@ -26,6 +26,7 @@
   try { cutStop(false); } catch (e) { /* нічого */ }
   try { tourStop(false); } catch (e) { /* нічого */ }
   closeAll();
+  if (window.__LANG) { try { setLanguage(window.__LANG); } catch (e) { fail('мова ' + window.__LANG + ' → ' + e.message); } }
   state.cutSeen = true; state.tutorialDone = true; state.story.finale = true; state.story.done = 8;
   state.epochIntroSeen = 99; storyTimer = 1e9; state.settings.dayNight = false; state.settings.panelOpen = false;
   state.coins = 1e30; state.totalEarned = 1e30;

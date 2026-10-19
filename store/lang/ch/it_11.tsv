@@ -1,0 +1,123 @@
+T:guestAsk_zina_1	Non fermarti: ancora qualche palla a specchi e si suona.
+T:guestDone_zina	La pista brilla, il basso rimbomba e sono di ottimo umore. Grazie!
+T:guestSay_maks_0	La macchina con la pinza è vuota. I giocattoli sono andati in cerca di un padrone migliore. Li capisco.
+T:guestSay_maks_1	I criceti Token corrono sulla griglia, casella per casella: sinistra, destra, su. I miei occhi non ce la fanno.
+T:guestSay_maks_2	Un altro gioco? Solo uno onesto. Spike lo annoterà e io non sopravvivrei.
+T:guestAsk_maks_0	I criceti nascondono i gettoni nelle guance. Tocca, e il gettone torna!
+T:guestAsk_maks_1	Mi servono più criceti. Il gioco non è finito!
+T:guestDone_maks	La macchina è piena, i criceti sono a casa. Il record è nostro!
+T:guestSay_bitik_0	Bip-bup. Il sistema ha otto bug e nove problemi e mezzo. Il mezzo non l'ho ancora trovato.
+T:guestSay_bitik_1	Dicono che un bug sia un utente che non ha letto il manuale. Ma questi sono veri. Con le antenne.
+T:guestSay_bitik_2	Tutto è salvato nel cloud. Tranne i miei nervi.
+T:guestAsk_bitik_0	Cattura i bug! Fanno glitch, ma un tocco batte l'antivirus.
+T:guestAsk_bitik_1	Ancora qualche bug e il server respira di sollievo.
+T:guestDone_bitik	Sistema stabile. Indicatori verdi. Bip!
+T:guestSay_lesyk_0	La mia aiuola si muove. Non è il vento: qui non tira da una vita.
+T:guestSay_lesyk_1	Un camaleonte su una foglia è mimetismo. Quasi. Cerco gli occhietti a torretta.
+T:guestSay_lesyk_2	Un'erbaccia è solo una pianta che non ha fatto carriera. Le amo tutte.
+T:guestAsk_lesyk_0	Guarda bene le foglie: qualcosa ha appena ammiccato. Tocca!
+T:guestAsk_lesyk_1	Ci sono ancora camaleonti in giro. Cerca gli occhi a torretta.
+T:guestDone_lesyk	L'aiuola è calma. Gli alberi ti ringraziano, e anch'io.
+T:guestSay_orbit_0	Terra, qui Orbit, mi ricevi. Il carburante è sparso, ma non mollo.
+T:guestSay_orbit_1	Gli assolotti fluttuano in assenza di gravità portando le mie taniche. La logistica è questa.
+T:guestSay_orbit_2	Lo spazio è silenzioso. Così silenzioso che i pensieri si fanno forti. Sono stanco dei miei.
+T:guestAsk_orbit_0	Cattura gli assolotti astro: hanno il mio carburante. Tocca!
+T:guestAsk_orbit_1	Le taniche sono ancora in arrivo. Catturo il prossimo assolotto.
+T:guestDone_orbit	Serbatoi pieni. Preparo il lancio. Grazie, equipaggio!
+T:guestSay_lumi_0	Blink-blink. La ruota è bloccata perché le lanterne sono scappate con i gattini.
+T:guestSay_lumi_1	I gattini al neon saltano sui tetti e fanno brillare le mie lanterne. Carino, ma non sono mie.
+T:guestSay_lumi_2	La luce funziona a buone azioni. Il budget è piccolo, ma basta.
+T:guestAsk_lumi_0	Cattura i gattini: hanno preso le mie lanterne. Tocca!
+T:guestAsk_lumi_1	Ancora qualche gattino e la ruota brilla al completo.
+T:guestDone_lumi	Ogni cabina brilla. Blink-blink, grazie!
+T:guestSay_bruno_0	Un gufo mi ruba i colori. Il peggio è che le sue astrazioni battono le mie.
+T:guestSay_bruno_1	Una pennellata qui, una là, e all'improvviso c'è un gufo con gli artigli colorati. È anche orgoglioso.
+T:guestSay_bruno_2	Il mio capolavoro è ancora davanti a me. Di solito ci resta. Ma non mi abbatto.
+T:guestAsk_bruno_0	I gufi Mazok hanno sparpagliato di nuovo i miei colori! Toccali!
+T:guestAsk_bruno_1	Ancora qualche gufo e il quadro sarà finito.
+T:guestDone_bruno	I colori sono tornati. Il quadro si può finire. Grazie!
+T:guestSay_pietro_0	La Fontana dei Desideri mormora, e le monete spariscono. I desideri vanno protetti.
+T:guestSay_pietro_1	I gufi Mazok amano ciò che luccica. Per colpa loro le monete spariscono, e il mio compenso dietro di loro.
+T:guestSay_pietro_2	Il Rinascimento è quando le cose vecchie all'improvviso suonano nuove. Ci provo.
+T:guestAsk_pietro_0	Cattura i gufi che tirano fuori le monete dalla fontana! Tocca!
+T:guestAsk_pietro_1	Ancora qualche gufo e i desideri restano nell'acqua.
+T:guestDone_pietro	Monete nell'acqua, desideri al loro posto. Grazie!
+T:itchRateBtn	⭐ Valuta il gioco su itch.io
+T:itchRateHint	Ti piace il gioco? Valutalo su itch.io: menu → Impostazioni.
+T:epoch_8	Giappone
+T:epochTitle_8	Terra del Sol Levante
+T:epochSub_8	Sakura, lanterne di carta e un drago sopra i tetti.
+T:crt_8	Gru di Origami
+T:good_8_0	Servizi da Tè
+T:good_8_1	Onigiri e Riso
+T:good_8_2	Bandiere a Onde
+T:good_8_3	Ventagli e Ombrellini
+T:good_8_4	Sapone e Cipria
+T:good_8_5	Mochi e Dango
+T:good_8_6	Ramen
+T:good_8_7	Kimono
+T:good_8_8	Sandali di Legno
+T:good_8_9	Lanterne di Carta
+T:good_8_10	Sushi Bar
+T:good_8_11	Teatro Kabuki
+T:epoch_say_8_0	Il sakura cade così piano che si sente pensare.
+T:epoch_say_8_1	Le lanterne salgono, i prezzi no. Principio.
+T:epoch_say_8_2	Il drago è di nuovo sopra i tetti. Probabilmente controlla gli sconti.
+T:epoch_say_8_3	Tè, riso e calma. Questo sì che è commercio.
+T:epoch_say_8_4	I sandali di legno risuonano come il battito del negozio.
+T:epoch_say_8_5	Un torii alla porta: entra e lascia i tuoi soldi in cassa.
+T:skinSay_capy_ep8	Kimono, cappello di paglia e tè con i dolci. Affari in stile giapponese!
+T:team_nara	Nara la Cerva
+T:team_nara_role	Guardiana Silenziosa
+T:team_nara_trait	Sa dove il tempo scorre più piano. Aggiunge un po' a tutto il reddito a ogni livello.
+T:team_nara_sit_0	Siediti, guardiamo i sakura.
+T:team_nara_sit_1	Mi siedo. Solo un minuto. O un'ora.
+T:team_nara_cold_0	La neve sulle corna è una bella decorazione.
+T:team_nara_cold_1	Uno scialle caldo? Grazie. Profumo di tè.
+T:team_nara_cold_2	Il freddo qui è gentile. Ci sono abituata.
+T:naraJoined	Nara ora è nella squadra. Guarda la scheda «Squadra»: aggiunge un po' a tutto il reddito.
+T:bonusAvail	🎌 Capitoli bonus disponibili! Il tuo prossimo viaggio nel tempo apre l'epoca bonus: Giappone.
+T:routeNextBonus	Prossima: l'epoca bonus «{0}»
+T:speaker_sora	Sora la Volpe
+T:guestDat_sora	Sora
+T:guestSay_sora_0	Il tè si infonde esattamente il tempo che serve. La fretta aggiunge solo amaro.
+T:guestSay_sora_1	Una gru è solo un foglio di carta che ha creduto in se stesso.
+T:guestSay_sora_2	Il drago sbircia nella mia casetta. Dice che viene per il tè. Non ci credo.
+T:guestSay_sora_3	Le lanterne qui brillano fino al mattino. A volte fino a pranzo.
+T:guestSay_sora_4	Il sakura cade così piano che si sente pensare.
+T:guestSay_sora_5	Una volpe sa fare molte cose. Tranne catturare la propria teiera.
+T:guestAsk_sora_0	Cattura le gru: sono volate fuori dal mio tè. Tocca!
+T:guestAsk_sora_1	Ancora qualche gru e la teiera canterà di nuovo.
+T:guestDone_sora	Tutte le gru sono a casa. Il tè è caldo e il drago è contento. Grazie!
+T:ep10_title	Terra del Sol Levante
+T:ep10_0	L'orologio ha ticchettato e la strada si è riempita di luce rosa. Lanterne di carta fluttuano sopra i tetti e, accanto alla casa da tè, una volpe fissa smarrita una teiera rovesciata.
+T:ep10_1	Buongiorno! Sono Sora. Questa è la mia casa da tè. Tutte le foglie di tè sono scappate quando ho guardato altrove per un secondo.
+T:ep10_2	Le foglie di tè sono scappate? Le foglie non corrono.
+T:ep10_3	Eccome se corrono. Le ho viste: verdi, con le alucce. Non ho toccato nessuno, ovviamente. Non ho venduto niente a nessuno.
+T:ep10_4	Sono gru di origami! Piegate con le mie bustine di tè, e sono volate per tutta la città. Aiutami a catturarne {0}: tocca ciascuna prima che si posi su un tetto.
+T:ep10_5	Ci stiamo. Il contatore in alto mostrerà quante sono già nel cestino.
+T:ep10_o1	Facciamo a gara fino ai tamburi taiko: chi ne cattura di più beve il primo tè.
+T:ep10_o2	Shnyr, restituisci le bustine di tè che hai «preso in prestito», e cattureremo le gru insieme.
+T:ep10_r1	Taiko? Io so battere un tamburo. Due volte. Insieme, con una pausa.
+T:ep10_r2	Bustine di tè? Beh... avevano un profumo così buono. Restituirò il resto.
+T:ep10_6	Aspetterò vicino alla casa da tè. Cattura {0} gru e avrai il mio ringraziamento e il miglior tè della città.
+T:ep10_7	Affare fatto. Il tè è mio, e tu catturi. Cioè, insieme.
+T:ep10_8	Insieme, Shnyr. Andiamo.
+T:ep10_9	Tic-tac. Aiuta Sora durante questa epoca. Se non ce la fai, il viaggio nel tempo ti aspetta comunque, solo che non ci sarà il ringraziamento.
+T:thx10_0	Tutte le foglie sono a casa! Il tè è di nuovo caldo e il profumo era così buono che il drago è sceso ad ascoltare. Grazie, amico.
+T:thx10_1	Il drago? Beve il tè?
+T:thx10_2	Solo da un piattino. Lascialo vagare, e quando tornerai, la prima tazza è offerta da me.
+T:team_spike_say_0	Un giorno mi affideranno una cassaforte. Una piccola, a misura di riccio.
+T:team_spike_say_1	Tonya cammina verso la porta da un'ora. Ho scommesso «entro pranzo». Perderò.
+T:team_spike_say_2	Una moneta incastrata tra gli aculei non è un furto, è una consegna. È così che la vedo io.
+T:team_spike_say_3	L'ho contato tre volte. Torna. Questo mi spaventa più di quando non torna.
+T:team_spike_say_4	La mamma diceva: chi conta, dorme bene. La mamma non ha mai lavorato in un negozio.
+T:team_spike_say_5	Qualcuno ha lasciato la mancia: tre soldi e un nastro. Prendo tutte e due.
+T:team_spike_say_6	Dicono che ho un carattere spinoso. Ho controllato: sono solo gli aculei.
+T:team_spike_say_7	Toma ricorda i debiti, io ricordo il resto. Insieme siamo imbattibili.
+T:team_spike_say_8	Di notte sogno una cassaforte. Sorride. Mi sveglio felice.
+T:team_spike_say_9	Leo vuole un rapporto. Ho detto: «Il rapporto è in cassa». Ha annuito. Non ha capito.
+T:team_spike_hire	La cassa è mia. Giù le mani.
+T:team_bodya_say_0	Un giorno costruirò una diga. Una vera, con una targa: «Costruita da Bodya».
+T:team_bodya_say_1	Mikhas porta casse davanti alle mie scale. Le avevo appena allineate. Proprio adesso!
+T:team_bodya_say_2	Ho i progetti. Per ora sono nella mia testa. E un po' su un tovagliolo.

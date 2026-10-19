@@ -1,0 +1,108 @@
+T:ec8_7_1	C'è così tanto cibo buono che ho dimenticato la dieta. E che ne avevo una.
+T:ec8_7_2	Controllavo solo se i ravioli fossero avvelenati. Tre di loro. Per sicurezza.
+T:ec8_7_3	Attenzione! Fra poco i fuochi d'artificio. Guardate il cielo ed esprimete un desiderio.
+T:ec8_7_4	Il cielo è esploso in oro e rosso. Il drago è passato tra le luci e tutti hanno pensato che li accendesse lui stesso.
+T:ec8_8_title	Arriva Nara
+T:ec8_8_0	Al mattino una cerva si è avvicinata in silenzio alla casa da tè. Pelo bianco, corna dorate e occhi calmi che avevano visto molte primavere.
+T:ec8_8_1	Questa è Nara. Viene dai boschi fuori città. Voleva vedere da tempo cosa fate qui.
+T:ec8_8_2	Benvenuta, Nara. Abbiamo tè, lanterne e una cassa che non sa stare zitta.
+T:ec8_8_3	Un'altra dipendente che non prende niente senza chiedere. Accettata.
+T:ec8_8_4	Nara si è inchinata ed è rimasta accanto alla porta come se fosse sempre stata lì. Le lanterne hanno brillato di una luce un po' più calda.
+T:ec8_8_5	Era un'epoca bonus. Ma la spirale continua: ti aspetta un nuovo cerchio.
+T:guestSay_pip_3	Un bar proprio accanto al jukebox non è una coincidenza, è una strategia.
+T:guestSay_pip_4	Un cocktail con l'ombrellino? L'ombrellino è incluso. Il ghiaccio no.
+T:guestSay_pip_5	Il disco gira, la vita gira. Solo non girare intorno al conto.
+T:guestSay_zina_3	Le casse sono mute, ma le mie gambe già tremano. Questa è la nostra disco.
+T:guestSay_zina_4	Il basso è così forte che il mio cuore non è più mio. Non lo restituirò.
+T:guestSay_zina_5	Vuoi ballare? Metti il piede sul ritmo. Il tuo, non il mio.
+T:guestSay_maks_3	La pinza è un gioco onesto. Solo che la mano onesta a volte dubita.
+T:guestSay_maks_4	Il coniglietto di peluche è quasi mio. «Quasi» è la parola chiave.
+T:guestSay_maks_5	Ancora una moneta e la scimmia della macchina torna a casa con me.
+T:guestSay_bitik_3	Il server ronza, le luci lampeggiano. Va tutto bene. Probabilmente.
+T:guestSay_bitik_4	Il mio server è attivo il 99,9% del tempo. Lo 0,1% restante lo chiamiamo «riposo».
+T:guestSay_bitik_5	Il Wi-Fi prende anche dove non arriva la ragione.
+T:guestSay_lesyk_3	La pala è il miglior strumento per pensare. Silenziosa e utile.
+T:guestSay_lesyk_4	I fiori nei vasi hanno già assaggiato la fama. Presto chiederanno lo stipendio.
+T:guestSay_lesyk_5	Un alberello oggi, una grande ombra domani. Bisogna avere pazienza.
+T:guestSay_orbit_3	Il lancio è a mio carico. Il conto alla rovescia scorre e i biscotti sono già a bordo.
+T:guestSay_orbit_4	Il razzo è pronto, il carburante c'è, solo la cassa non ha ancora approvato la rotta.
+T:guestSay_orbit_5	Il fumo sotto l'ugello non è un incendio, è atmosfera.
+T:guestSay_lumi_3	La ruota gira, le lanterne brillano. Porta con te il buonumore.
+T:guestSay_lumi_4	Ogni cabina è un sogno a sé. Purtroppo, senza cinture di sicurezza.
+T:guestSay_lumi_5	Blink-blink. Neon fuori, calore dentro.
+T:guestSay_bruno_3	Una regola in galleria: guardare, non toccare. Toccare solo per comprare.
+T:guestSay_bruno_4	Questo quadro è incompiuto. Come tutti i miei quadri. Come me.
+T:guestSay_bruno_5	Ogni pennellata costa più della precedente. Anche il budget è una pennellata.
+T:guestSay_pietro_3	La fiera brulica, i portafogli tremano. Tutto secondo i piani.
+T:guestSay_pietro_4	Le mie canzoni non hanno prezzo. Anche se una moneta il prezzo lo trova in fretta.
+T:guestSay_pietro_5	Il Rinascimento è quando tutti, all'improvviso, sono diventati artisti. Anche io.
+T:guestArrive	{0} è arrivato in città! Guarda cosa ha portato.
+T:helpChip	Aiuta {0}: {1}/{2}
+T:helpChipDone	Aiuto a {0}: fatto
+T:helpDoneToast	Aiuto a {0} completato! Cristallo +1 💎. Una scena di ringraziamento arriva prima del viaggio.
+T:helpDoneToast2	Aiuto a {0} completato! Cristallo +1 💎
+T:helpDiaryLine	Aiuto: {0}/{1}
+T:helpDiaryDone	Aiuto completato
+T:thanksCardTitle	Ringraziamento: {0}
+T:guestDat_pip	Pip
+T:guestDat_zina	Zina
+T:guestDat_maks	Max
+T:guestDat_bitik	Bitik
+T:guestDat_lesyk	Lesyk
+T:guestDat_orbit	Orbit
+T:guestDat_lumi	Lumi
+T:guestDat_bruno	Bruno
+T:guestDat_pietro	Pietro
+T:ep1_0	L'orologio ha ticchettato e la città è tornata pastello, come una caramella del secolo scorso. All'angolo brilla un «Milk Bar» e accanto a esso un enorme jukebox tace.
+T:ep1_1	Benvenuto nel mio bar. Sono Pip. Vedi il jukebox? È muto: tutti i dischi sono spariti da sotto la puntina.
+T:ep1_2	Spariti? I dischi non scappano da soli.
+T:ep1_3	Eccome! Sono i Ricci Vinyl: infilzano i dischi sugli aculei e se ne vanno rotolando. Io vendevo solo i biglietti per le loro corse.
+T:ep1_4	Quindi è stato lui a far uscire i ricci! Aiutami a catturarli: rotolano per la strada e tu tocchi ciascuno. Cattura {0} e i dischi tornano miei.
+T:ep1_5	Affare fatto. Il contatore in alto mostrerà quanti ne hai presi.
+T:ep1_o1	Facciamo una corsa di dischi: chi ne cattura di più sceglie la canzone.
+T:ep1_o2	Shnyr, restituisci i soldi dei biglietti, e cattureremo i ricci insieme.
+T:ep1_r1	Una corsa? Ho già scommesso sul riccio giallo. È il più veloce, tra l'altro.
+T:ep1_r2	I soldi? Beh... una parte l'ho spesa in attrezzature di scena. Il resto lo restituisco.
+T:ep1_6	Sarò vicino al jukebox. Cattura {0} ricci e avrai il mio ringraziamento, e il jukebox suonerà di nuovo più di una canzone.
+T:ep1_7	Affare fatto: arriviamo al jukebox a mani piene. Cioè, di dischi.
+T:ep1_8	(tic) Qui l'Orologio. Aiuta Pip e le cose andranno meglio. Se no, partiamo lo stesso, solo senza ringraziamenti.
+T:thx1_0	Tutti i dischi sono tornati! Il jukebox suona un'intera hit parade ora, non una sola canzone. Grazie, amico.
+T:thx1_1	Il jukebox canta e ai ricci non importa. Gli aculei hanno buon orecchio.
+T:thx1_2	Che viaggino senza dischi. E quando tornerai, il frappè è offerto da me.
+T:ep2_0	L'orologio ha ticchettato e la musica si è riversata per la strada. Fasci di luce girano sopra il negozio e, accanto a due casse giganti, qualcuno gira disperatamente le manopole.
+T:ep2_1	Ciao. Sono Zina, la DJ dell'isolato. Vedi le casse? Mute! Le mie palle a specchi sono scappate proprio prima della festa.
+T:ep2_2	Scappate? Le palle non corrono.
+T:ep2_3	Queste sì. Sono gli Armadilli Disco: fingevano di essere palle e pendevano dal soffitto. Io li affittavo solo per la festa di qualcun altro. Si sono offesi e sono andati a passeggio.
+T:ep2_4	Senza di loro la pista è al buio. Aiutami a catturarne {0}: camminano in moonwalk, un passo avanti e uno indietro. Toccali!
+T:ep2_5	Un passo avanti, uno indietro: l'importante è tenere il ritmo. Andiamo.
+T:ep2_o1	Facciamo una gara: chi cattura più in fretta fa il DJ per primo.
+T:ep2_o2	Shnyr, restituisci i soldi del noleggio: serviranno per lampade nuove.
+T:ep2_r1	DJ? Io! Datemi solo due casse e zero responsabilità.
+T:ep2_r2	I soldi del noleggio? Va bene. Ma gli armadilli catturateli voi, hanno paura di me.
+T:ep2_6	Sarò vicino alle casse. {0} palle nel sacco e la strada ha di nuovo la festa. La pista è offerta da me.
+T:ep2_7	Catturiamo a ritmo: uno-due-tre, tocco.
+T:ep2_8	(tic-tac) Sono l'Orologio. Mi piace quando qualcuno tiene il ritmo meglio di me. È raro.
+T:thx2_0	Tutte le palle sono a casa! Le luci lampeggiano a ritmo, il basso colpisce il petto e la pista è una favola. Grazie, amico.
+T:thx2_1	La pista brilla e gli armadilli russano nei loro gusci. La festa è riuscita.
+T:thx2_2	Vai avanti, e io suonerò un set d'addio. Il mio migliore, solo per te.
+T:ep3_0	L'orologio ha ticchettato e la strada si è riempita di un bagliore viola. Dalla sala giochi arriva un «ping-ping-ping» e all'ingresso c'è una grande macchina con la pinza. Vuota.
+T:ep3_1	Sono Max, il proprietario della sala giochi. Vedi la mia macchina con la pinza? Tutti i peluche sono tornati in vita e sono scappati.
+T:ep3_2	Tornati in vita? Bel premio.
+T:ep3_3	Sono i Criceti Token. Ho solo messo una moneta in ogni guancia perché «superassero il livello». L'hanno superato. Dritti attraverso la porta.
+T:ep3_4	Sfrecciano sulla griglia come in un gioco: sinistra, destra, su, giù. Aiutami a catturarne {0} e la macchina sarà di nuovo piena.
+T:ep3_5	Sfrecciano su una griglia? Beh, siamo in una sala giochi. Tocco.
+T:ep3_o1	Giochiamo: chi cattura più criceti vince la partita.
+T:ep3_o2	Shnyr, restituisci i gettoni che hai messo nelle loro guance.
+T:ep3_r1	Vincerò, perché io sono scappato più in fretta. Cioè, li ho inseguiti più in fretta.
+T:ep3_r2	I gettoni sono nelle guance, e le guance ora sono libere. Catturate i criceti e i gettoni torneranno da soli.
+T:ep3_6	Aspetterò vicino alla macchina con la pinza. Cattura {0} criceti e i giocattoli tornano al loro posto, e ricevi il ringraziamento del proprietario.
+T:ep3_7	Catturiamo casella per casella. Ancora un livello.
+T:ep3_8	(tic) Il timer corre ancora, il gioco continua. Mi assicuro solo che nessuno bari. Tranne me.
+T:thx3_0	La macchina con la pinza è piena, i criceti sono tra le braccia dei peluche e la classifica dei record ha un nuovo inserimento: «TU».
+T:thx3_1	Record salvato. Ora l'importante è non perderlo prima del prossimo livello.
+T:thx3_2	Non lo perderò. Buon viaggio! Il record aspetterà.
+T:ep4_0	L'orologio ha ticchettato e una rete invisibile si è accesa sulla città. Un rack di server ronza all'angolo della strada e tutti gli indicatori lampeggiano... di rosso.
+T:ep4_1	Bip. Sono Bitik, il robot consulente. Si sono infilati dei bug nel mio server! Veri coleotteri verdi con le antenne: rosicchiano i cavi e rompono i prezzi.
+T:ep4_2	Bug che escono dal server? Non è nel manuale.
+T:ep4_3	Li ho fatti uscire «per sbaglio». Volevo che ogni prezzo fosse una moneta. I bug erano d'accordo e hanno anche rosicchiato la password.
+T:ep4_4	Fanno glitch: ora spariscono, ora tornano. Aiutami a catturarne {0} prima che mangino l'intero sistema. Toccali!

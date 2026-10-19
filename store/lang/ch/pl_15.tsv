@@ -1,0 +1,102 @@
+skin:/street_brick/1	Miło się po niej chodzi. Każda cegła jest prosta.
+skin:/street_brick/2	Droga jest czerwona. Jak teraz moje policzki.
+skin:/street_wood/0	Deski skrzypią pod łapkami. Przytulnie!
+skin:/street_wood/1	Drewniana ścieżka pachnie lasem.
+skin:/street_wood/2	Skrzyp-skrzyp. Jakby ktoś szedł. A, to ja.
+skin:/street_leaves/0	Chrup-chrup! Mój ulubiony jesienny dźwięk.
+skin:/street_leaves/1	Liście pod łapkami: dywan ciemnego złota.
+skin:/street_leaves/2	Ktoś rozsypał liście. Dzięki, dobra duszo!
+skin:/street_snow/0	Śnieg! Nie, nie jedz go. Ja też się powstrzymuję.
+skin:/street_snow/1	Łapki mam zimne, serce ciepłe.
+skin:/street_snow/2	Chrup-chrup. Śnieg to też muzyka.
+skin:/street_moss/0	Mech jest miękki jak dywan. Idę się położyć.
+skin:/street_moss/1	Omszały bruk pamięta wiele historii.
+skin:/street_moss/2	W szczelinie rośnie kwiatek. Nie nadepnij na niego!
+skin:/street_gold/0	Złota droga! Chociaż nie z rubinów.
+skin:/street_gold/1	Idę, a pod łapkami skrzy się. Miło.
+skin:/street_gold/2	Cegła z monet. Nie dotykam, nie moja.
+skin:/capy_ep8/0	Kimono piękne, sandały uwierają. Piękno wymaga poświęceń.
+skin:/capy_ep8/1	Kapelusz jest jak lampion: nic nie widzę, ale jest przytulnie.
+skin:/capy_ep8/2	Smok do mnie mrugnął. A może to wiatr.
+skin:/capy_ep8/3	Herbata, ryż i sakura: życie jest piękne.
+tour:/shop/1	To jest Sklep. Tutaj stukasz, wzmacniasz stuknięcie i rozbudowujesz sklep. Naciśnij!
+tour:/departments/1	Działy zarabiają monety same, nawet gdy cię nie ma. Naciśnij!
+tour:/team/1	W Zespole zatrudniasz zwierzaki-pomocników. Każdy pomaga po swojemu.
+tour:/story/1	Dziennik: rozdziały historii i opowieści epok. Można je przeczytać ponownie.
+tour:/skins/1	Skórki: zmieniaj wygląd Capy, sklepu i bohaterów za kryształy.
+tour:/seasons/1	Pory roku i pora dnia. Kłódka otwiera się po 2. epoce.
+tour:/achievements/1	Nagrody: czekają tu nagrody za twoje osiągnięcia.
+tour:/settings/1	Ustawienia: język, dźwięk, przeglądarka epok i animacje.
+tour:/news/1	A to jest skrzynka twórców! Są tam wieści o aktualizacjach i możesz do nas napisać. Otwórz!
+tour:/end/1	To wszystko! Stukaj sklep i rozwijaj go. Zawsze jesteśmy w pobliżu!
+tour:/endBtn	GRAJ!
+tour:/skip	Pomiń wprowadzenie
+cut:/intro/0	Dawno, dawno temu
+cut:/intro/1	Capy żyła w pikselowym świecie…
+cut:/introN/0	Dawno,
+cut:/introN/1	dawno temu Capy
+cut:/introN/2	żyła w
+cut:/introN/3	pikselowym świecie…
+cut:/p1	Wow... Mam monetę!
+cut:/b1	Pierwsza moneta? To potrzebujesz sklepu!
+cut:/c2	Sklepu?
+cut:/b2	Nawet jedna moneta może urosnąć w biznes!
+cut:/b3	Patrz uważnie!
+cut:/b4	Teraz twoja kolej.
+cut:/c5	Co mam robić?
+cut:/b5	Spróbuj stuknąć!
+cut:/hint	STUKNIJ SKLEP
+cut:/click	STUKNIJ!
+cut:/b6	Im więcej zarabiasz, tym bardziej możesz rozbudować sklep!
+cut:/b7	Rozwijaj sklep, zarabiaj monety i odblokowuj nowe epoki!
+cut:/w1	ULEPSZAJ.
+cut:/w2	STUKAJ.
+cut:/w3	ROŚNIJ.
+cut:/i1	STUKNIĘCIE
+cut:/i2	MONETY
+cut:/i3	ULEPSZENIE
+cut:/i4	POZIOM
+cut:/skip	Pomiń
+cut:/m1	Cześć! Jestem Mel,
+cut:/n1	a ja jestem Nika. Jesteśmy twórcami!
+cut:/m2	Pokażemy, jak to wszystko działa. Zaczynamy?
+cut:/go	JAZDA!
+cut:/tuk	TAK!
+about:/mast	O NAS
+about:/lead	Cześć, przyjacielu!
+about:/newH	Co nowego
+about:/new	Bonusowa epoka „Japonia”! Po Neonie czas niesie cię do kraju kwitnącej wiśni: drewniane domki z daszkami, sakura, papierowe lampiony, neonowe szyldy, które świecą nocą, i smok, który przelatuje nad miastem i nurkuje ku placowi budowy. Ma własną animację podróży, 8 nowych rozdziałów, lisicę Sorę z herbaciarnią, łanię Narę, wózek z makaronem dziadka Ryo zamiast cyrku i Capy w kimonie. W drodze są kolejne epoki bonusowe: zobacz „Wkrótce”.
+about:/intro/0	Jesteśmy MEL i NIKA i zrobiliśmy tę grę sami, piksel po pikselu.
+about:/intro/1	Capy zaczyna z jedną monetą i malutkim sklepikiem na rogu. Twoje zadanie: rozwinąć go w prawdziwe centrum handlowe i podróżować przez całe epoki.
+about:/nextH	Co dalej
+about:/next	Przed tobą 8 epok: od Renesansu do Neonu. Podróżuj w czasie, a twój sklep stanie się czymś większym…
+about:/giftH	Prezent
+about:/gift	Odbierz prezent od twórców: +100 monet
+about:/giftDone	Prezent już odebrany. Dzięki za grę!
+about:/writeH	Kontakt
+about:/write	Błąd albo pomysł? Naciśnij „Napisz do twórców” poniżej: czytamy wszystko.
+about:/toast	+100 monet od twórców!
+about:/paper	WIEŚCI OD TWÓRCÓW ·
+guide:/head	Porady
+guide:/sub	Kilka wskazówek, by grać łatwiej i rosnąć szybciej.
+guide:/items/0/0	💰 Jak szybciej się wzbogacić
+guide:/items/0/1	<ul class="np-list"><li>Zatrudnij jeża Spike’a jak najwcześniej. Kosztuje tylko 100 monet, a każde stuknięcie staje się 1,5 raza silniejsze.</li><li>Przycisk MAKS w Działach kupuje tyle, na ile pozwalają pieniądze. Nie trzeba naciskać Kup dwadzieścia razy.</li><li>Patrz na pasek u góry ekranu. Zawsze pokazuje następny cel, na przykład „Kup „Świece i zapałki”: 7/25”.</li></ul>
+guide:/items/0/2	tipRich
+guide:/items/1/0	🏪 Jak się rozwijać
+guide:/items/1/1	<ul class="np-list"><li>Aby rozbudować sklep, potrzebujesz trzech rzeczy: kupić wymagane działy, ulepszyć zwierzaki i zebrać monety. Warunki są na karcie Działy, w bloku Rozbudowa.</li><li>Każdy nowy poziom sklepu daje ×2 do całego dochodu, więc rozbudowuj przy pierwszej okazji.</li></ul>
+guide:/items/1/2	tipGrow
+guide:/items/2/0	🎁 Darmowe bonusy
+guide:/items/2/1	<ul class="np-list"><li>Minigry bonusowe: parkiet w epoce Disco, wózek z makaronem dziadka Ryo w Japonii i chatka wiedźmy na Halloween. To tam wygrywa się skórki.</li><li>Cyrk fortuny daje kryształy i bonusy, więc nie mijaj namiotu obojętnie.</li><li>Nagrody za osiągnięcia. Zajrzyj na kartę z pucharem, czekają tam nagrody.</li><li>Zdarzenia na ulicy. Czerwony „!”, sowa lub szop pojawiają się tylko na chwilę. Stuknij w porę, a dostaniesz bonus.</li></ul>
+guide:/items/2/2	tipFree
+guide:/items/3/0	⏳ Na przyszłość
+guide:/items/3/1	Podróż w czasie resetuje sklep, ale daje odłamki czasu, nową epokę i stały bonus do dochodu. Nie bój się jej: następna runda idzie dużo szybciej.
+guide:/items/3/2	clock
+soon:/head	Wkrótce
+soon:/sub	Nad czym pracujemy. Jeszcze nie wyszło, ale już prawie.
+soon:/items/0/0	Więcej epok bonusowych
+soon:/items/0/1	Japonia jest już w grze. Kolejne epoki bonusowe w drodze, każda z własną animacją podróży, historią, pomocnikiem, gościem i latającymi dekoracjami.
+soon:/items/1/0	Wersje do sklepów z aplikacjami
+soon:/items/1/1	Przygotowujemy wersje gry na telefony i komputery do sklepów z aplikacjami.
+sec:/news	O nas
+sec:/guide	Porady
+sec:/soon	Wkrótce

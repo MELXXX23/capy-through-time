@@ -165,10 +165,10 @@ const CONFIG = {
 const LANGS = [
   { id: 'uk', label: 'UA' },
   { id: 'en', label: 'EN' },
-  { id: 'pt', label: 'PT', wip: true },   // wip — переклад не завершено: кнопки мови немає, автовибору немає (прибрати wip, коли мова готова; див. HANDOFF)
-  { id: 'es', label: 'ES', wip: true },
-  { id: 'it', label: 'IT', wip: true },
-  { id: 'pl', label: 'PL', wip: true }
+  { id: 'pt', label: 'PT' },
+  { id: 'es', label: 'ES' },
+  { id: 'it', label: 'IT' },
+  { id: 'pl', label: 'PL' }
 ];
 
 // Вкладки панелі. ready: true — вже працює; false — з'явиться на наступних етапах

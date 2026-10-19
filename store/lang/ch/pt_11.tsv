@@ -1,0 +1,123 @@
+T:guestAsk_zina_1	Não pare: mais algumas bolas de espelhos e a gente toca.
+T:guestDone_zina	A pista brilha, o grave ribomba e eu estou de ótimo humor. Obrigada!
+T:guestSay_maks_0	A máquina de garra está vazia. Os brinquedos saíram em busca de um dono melhor. Eu entendo.
+T:guestSay_maks_1	Os hamsters Token correm pela grade, casa por casa: esquerda, direita, cima. Meus olhos não acompanham.
+T:guestSay_maks_2	Outro jogo? Só um honesto. O Spike vai anotar e eu não sobreviveria a isso.
+T:guestAsk_maks_0	Os hamsters escondem fichas nas bochechas. Toque, e a ficha volta!
+T:guestAsk_maks_1	Preciso de mais hamsters. O jogo não acabou!
+T:guestDone_maks	A máquina está cheia, os hamsters estão em casa. O recorde é nosso!
+T:guestSay_bitik_0	Bip-bup. O sistema tem oito bugs e nove problemas e meio. Ainda não achei o meio.
+T:guestSay_bitik_1	Dizem que bug é um usuário que não leu o manual. Mas esses são de verdade. Com antenas.
+T:guestSay_bitik_2	Tudo está salvo na nuvem. Menos os meus nervos.
+T:guestAsk_bitik_0	Pegue os bugs! Eles travam, mas um toque vence o antivírus.
+T:guestAsk_bitik_1	Mais alguns bugs e o servidor respira aliviado.
+T:guestDone_bitik	Sistema estável. Indicadores verdes. Bip!
+T:guestSay_lesyk_0	Meu canteiro está se mexendo. Não é o vento: faz tempo que não venta aqui.
+T:guestSay_lesyk_1	Um camaleão numa folha é camuflagem. Quase. Estou procurando os olhinhos de torre.
+T:guestSay_lesyk_2	Erva daninha é só uma planta que não fez carreira. Eu amo todas.
+T:guestAsk_lesyk_0	Olhe bem as folhas: algo acabou de piscar. Toque!
+T:guestAsk_lesyk_1	Ainda há camaleões por aí. Procure os olhos de torre.
+T:guestDone_lesyk	O canteiro está calmo. As árvores agradecem, e eu também.
+T:guestSay_orbit_0	Terra, aqui é o Orbit, câmbio. O combustível está espalhado, mas não vou desistir.
+T:guestSay_orbit_1	Axolotes flutuam em gravidade zero carregando meus galões. A logística é o que é.
+T:guestSay_orbit_2	O espaço é silencioso. Tão silencioso que os pensamentos ficam altos. Estou cansado dos meus.
+T:guestAsk_orbit_0	Pegue os axolotes astro: eles estão com o meu combustível. Toque!
+T:guestAsk_orbit_1	Os galões ainda estão a caminho. Pegando o próximo axolote.
+T:guestDone_orbit	Tanques cheios. Preparando o lançamento. Obrigado, tripulação!
+T:guestSay_lumi_0	Pisca-pisca. A roda está travada porque as lanternas fugiram com os gatinhos.
+T:guestSay_lumi_1	Gatinhos de neon pulam pelos telhados e fazem minhas lanternas brilhar. Lindo, mas não são minhas.
+T:guestSay_lumi_2	A luz funciona à base de boas ações. O orçamento é pequeno, mas dá.
+T:guestAsk_lumi_0	Pegue os gatinhos: eles levaram minhas lanternas. Toque!
+T:guestAsk_lumi_1	Mais alguns gatinhos e a roda brilha por completo.
+T:guestDone_lumi	Todas as cabines estão brilhando. Pisca-pisca, obrigado!
+T:guestSay_bruno_0	Uma coruja rouba minhas tintas. O pior é que as abstrações dela superam as minhas.
+T:guestSay_bruno_1	Uma pincelada aqui, outra ali, e de repente surge uma coruja com garras coloridas. Ela até se orgulha.
+T:guestSay_bruno_2	Minha obra-prima ainda está por vir. Geralmente ela fica por lá. Mas não me aborreço.
+T:guestAsk_bruno_0	As corujas Mazok espalharam minhas tintas de novo! Toque nelas!
+T:guestAsk_bruno_1	Mais algumas corujas e o quadro estará pronto.
+T:guestDone_bruno	As tintas voltaram. O quadro pode ser terminado. Obrigado!
+T:guestSay_pietro_0	A Fonte dos Desejos murmura, e as moedas desaparecem. É preciso proteger os desejos.
+T:guestSay_pietro_1	As corujas Mazok adoram brilho. Por causa delas as moedas somem, e meu cachê atrás delas.
+T:guestSay_pietro_2	O Renascimento é quando coisas antigas de repente soam novas. Estou tentando.
+T:guestAsk_pietro_0	Pegue as corujas que tiram moedas da fonte! Toque!
+T:guestAsk_pietro_1	Mais algumas corujas e os desejos ficam na água.
+T:guestDone_pietro	Moedas na água, desejos no lugar. Obrigado!
+T:itchRateBtn	⭐ Avalie o jogo no itch.io
+T:itchRateHint	Está gostando do jogo? Avalie no itch.io: menu → Ajustes.
+T:epoch_8	Japão
+T:epochTitle_8	Terra do Sol Nascente
+T:epochSub_8	Sakura, lanternas de papel e um dragão sobre os telhados.
+T:crt_8	Tsuru de Origami
+T:good_8_0	Conjuntos de Chá
+T:good_8_1	Onigiri e Arroz
+T:good_8_2	Bandeiras de Ondas
+T:good_8_3	Leques e Sombrinhas
+T:good_8_4	Sabão e Pó de Arroz
+T:good_8_5	Mochi e Dango
+T:good_8_6	Lámen
+T:good_8_7	Quimonos
+T:good_8_8	Sandálias de Madeira
+T:good_8_9	Lanternas de Papel
+T:good_8_10	Sushi Bar
+T:good_8_11	Teatro Kabuki
+T:epoch_say_8_0	A sakura cai tão silenciosamente que dá para ouvi-la pensar.
+T:epoch_say_8_1	As lanternas sobem, os preços não. Princípio.
+T:epoch_say_8_2	O dragão está sobre os telhados de novo. Provavelmente conferindo os descontos.
+T:epoch_say_8_3	Chá, arroz e calma. Isso sim é comércio.
+T:epoch_say_8_4	As sandálias de madeira batem como o coração da loja.
+T:epoch_say_8_5	Um torii na porta: entre e deixe seu dinheiro no caixa.
+T:skinSay_capy_ep8	Quimono, chapéu de palha e chá com doces. Negócios, estilo japonês!
+T:team_nara	Nara, a Corça
+T:team_nara_role	Guardiã Silenciosa
+T:team_nara_trait	Sabe onde o tempo corre mais devagar. Soma um pouco a toda a renda a cada nível.
+T:team_nara_sit_0	Senta, vamos ver as sakuras.
+T:team_nara_sit_1	Vou sentar. Só um minuto. Ou uma hora.
+T:team_nara_cold_0	Neve nos chifres é uma linda decoração.
+T:team_nara_cold_1	Um xale quente? Obrigada. Estou cheirando a chá.
+T:team_nara_cold_2	O frio aqui é gentil. Estou acostumada.
+T:naraJoined	A Nara agora está na equipe. Veja a aba "Equipe": ela soma um pouco a toda a renda.
+T:bonusAvail	🎌 Capítulos bônus disponíveis! Sua próxima viagem no tempo abre a era bônus: Japão.
+T:routeNextBonus	Próxima: a era bônus "{0}"
+T:speaker_sora	Sora, a Raposa
+T:guestDat_sora	Sora
+T:guestSay_sora_0	O chá infusiona exatamente o tempo necessário. Pressa só traz amargor.
+T:guestSay_sora_1	Um tsuru é só uma folha de papel que acreditou em si mesma.
+T:guestSay_sora_2	O dragão espia a minha casinha. Diz que veio pelo chá. Não acredito.
+T:guestSay_sora_3	As lanternas aqui brilham até de manhã. Às vezes até o almoço.
+T:guestSay_sora_4	A sakura cai tão silenciosamente que dá para ouvi-la pensar.
+T:guestSay_sora_5	Uma raposa faz muitas coisas. Menos pegar o próprio bule.
+T:guestAsk_sora_0	Pegue os tsurus: eles voaram do meu chá. Toque!
+T:guestAsk_sora_1	Mais alguns tsurus e o bule vai cantar de novo.
+T:guestDone_sora	Todos os tsurus estão em casa. O chá está quente e o dragão está feliz. Obrigada!
+T:ep10_title	Terra do Sol Nascente
+T:ep10_0	O relógio fez tique-taque e a rua se encheu de luz rosada. Lanternas de papel flutuam sobre os telhados e, junto à casa de chá, uma raposa olha desamparada para um bule virado.
+T:ep10_1	Bom dia! Eu sou a Sora. Esta é a minha casa de chá. Todas as folhas de chá fugiram quando olhei para o lado por um segundo.
+T:ep10_2	As folhas de chá fugiram? Folhas não correm.
+T:ep10_3	Correm, e como. Eu vi: verdes, com asinhas. Eu não toquei em ninguém, claro. Não vendi nada a ninguém.
+T:ep10_4	São tsurus de origami! Dobrados com meus saquinhos de chá, e voaram pela cidade toda. Ajude-me a pegar {0}: toque em cada um antes que pousem num telhado.
+T:ep10_5	Estamos nessa. O contador lá em cima vai mostrar quantos já estão na cesta.
+T:ep10_o1	Vamos correr até os tambores taiko: quem pegar mais toma o primeiro chá.
+T:ep10_o2	Shnyr, devolva os saquinhos de chá que você "pegou emprestado", e pegamos os tsurus juntos.
+T:ep10_r1	Taiko? Eu sei bater num tambor. Duas vezes. De uma vez, com uma pausa.
+T:ep10_r2	Saquinhos de chá? Bom... cheiravam tão bem. Devolvo o resto.
+T:ep10_6	Vou esperar junto à casa de chá. Pegue {0} tsurus e você ganha meu agradecimento e o melhor chá da cidade.
+T:ep10_7	Combinado. O chá é meu, e você pega. Quer dizer, juntos.
+T:ep10_8	Juntos, Shnyr. Vamos.
+T:ep10_9	Tique-taque. Ajude a Sora durante esta era. Se não conseguir, a viagem no tempo continua à espera, só não haverá agradecimento.
+T:thx10_0	Todas as folhas estão em casa! O chá está quente de novo, e o cheiro era tão bom que o dragão desceu para escutar. Obrigada, amigo.
+T:thx10_1	O dragão? Ele toma chá?
+T:thx10_2	Só no pires. Deixe-o passear, e quando você voltar, a primeira xícara é por minha conta.
+T:team_spike_say_0	Um dia vão me confiar um cofre. Um pequeno, do tamanho de um ouriço.
+T:team_spike_say_1	A Tonya está indo até a porta há uma hora. Apostei que chegava "até o almoço". Vou perder.
+T:team_spike_say_2	Uma moeda presa nos meus espinhos não é roubo, é entrega. É assim que eu vejo.
+T:team_spike_say_3	Contei três vezes. Fecha. Isso me assusta mais do que quando não fecha.
+T:team_spike_say_4	Mamãe dizia: quem conta dorme bem. Mamãe nunca trabalhou numa loja.
+T:team_spike_say_5	Alguém deixou gorjeta: três centavos e uma fita. Fico com os dois.
+T:team_spike_say_6	Dizem que tenho personalidade espinhosa. Conferi: são só os espinhos.
+T:team_spike_say_7	O Toma lembra das dívidas, eu lembro do troco. Juntos somos imbatíveis.
+T:team_spike_say_8	À noite sonho com um cofre. Ele sorri. Acordo feliz.
+T:team_spike_say_9	O Leo quer um relatório. Eu disse: "O relatório está no caixa". Ele assentiu. Não entendeu.
+T:team_spike_hire	A caixa é minha. Não toque.
+T:team_bodya_say_0	Um dia vou construir uma represa. Uma de verdade, com placa: "Construída por Bodya".
+T:team_bodya_say_1	O Mikhas carrega caixotes diante das minhas escadas. Eu acabei de alinhá-los. Agora mesmo!
+T:team_bodya_say_2	Eu tenho as plantas. Por enquanto estão na minha cabeça. E um pouco num guardanapo.

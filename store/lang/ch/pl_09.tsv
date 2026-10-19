@@ -1,0 +1,108 @@
+T:ec8_7_1	Jest tyle smacznego jedzenia, że zapomniałem o diecie. I o tym, że ją miałem.
+T:ec8_7_2	Tylko sprawdzałem, czy pierogi nie są zatrute. Trzy sztuki. Dla bezpieczeństwa.
+T:ec8_7_3	Uwaga! Zaraz fajerwerki. Spójrzcie w niebo i pomyślcie życzenie.
+T:ec8_7_4	Niebo wybuchło złotem i czerwienią. Smok przemknął między światłami i wszyscy pomyśleli, że to on sam odpala fajerwerki.
+T:ec8_8_title	Przybywa Nara
+T:ec8_8_0	Rano łania cicho podeszła do herbaciarni. Biała sierść, złote poroże i spokojne oczy, które widziały wiele wiosen.
+T:ec8_8_1	To Nara. Jest z lasów za miastem. Od dawna chciała zobaczyć, czym się tu zajmujecie.
+T:ec8_8_2	Witaj, Naro. Mamy herbatę, lampiony i kasę, która nie umie milczeć.
+T:ec8_8_3	Kolejna pracownica, która nic nie bierze bez pytania. Przyjęta.
+T:ec8_8_4	Nara skłoniła się i stanęła przy drzwiach, jakby była tu od zawsze. Lampiony zajaśniały nieco cieplejszym światłem.
+T:ec8_8_5	To była epoka bonusowa. Ale spirala trwa dalej: przed tobą nowe koło.
+T:guestSay_pip_3	Bar tuż obok szafy grającej to nie przypadek, to strategia.
+T:guestSay_pip_4	Koktajl z parasolką? Parasolka jest w cenie. Lód nie.
+T:guestSay_pip_5	Płyta się kręci, życie się kręci. Tylko nie kręć się wokół rachunku.
+T:guestSay_zina_3	Głośniki milczą, ale moje nogi już drżą. Takie jest nasze disco.
+T:guestSay_zina_4	Bas jest tak mocny, że moje serce już nie jest moje. Nie oddam go.
+T:guestSay_zina_5	Chcesz zatańczyć? Postaw stopę w rytm. Swoją, nie moją.
+T:guestSay_maks_3	Chwytak to uczciwa gra. Tylko uczciwa ręka czasem się waha.
+T:guestSay_maks_4	Pluszowy króliczek jest prawie mój. „Prawie” to słowo klucz.
+T:guestSay_maks_5	Jeszcze jedna moneta i małpka z automatu wraca ze mną do domu.
+T:guestSay_bitik_3	Serwer szumi, światełka mrugają. Wszystko w porządku. Chyba.
+T:guestSay_bitik_4	Mój serwer działa 99,9% czasu. Pozostałe 0,1% nazywamy „odpoczynkiem”.
+T:guestSay_bitik_5	Wi-Fi łapie nawet tam, gdzie nie sięga rozum.
+T:guestSay_lesyk_3	Łopata to najlepsze narzędzie do myślenia. Cicha i pożyteczna.
+T:guestSay_lesyk_4	Kwiaty w doniczkach zasmakowały już sławy. Wkrótce zażądają pensji.
+T:guestSay_lesyk_5	Małe drzewko dziś, wielki cień jutro. Trzeba uzbroić się w cierpliwość.
+T:guestSay_orbit_3	Start jest na mnie. Odliczanie leci, a ciastka są już na pokładzie.
+T:guestSay_orbit_4	Rakieta gotowa, paliwo zatankowane, tylko kasa nie zatwierdziła trasy.
+T:guestSay_orbit_5	Dym pod dyszą to nie pożar, to atmosfera.
+T:guestSay_lumi_3	Koło się kręci, lampiony świecą. Zabierz ze sobą dobry nastrój.
+T:guestSay_lumi_4	Każda kabina to osobne marzenie. Niestety, bez pasów bezpieczeństwa.
+T:guestSay_lumi_5	Mig-mig. Neon na zewnątrz, ciepło w środku.
+T:guestSay_bruno_3	W galerii obowiązuje jedna zasada: patrz, nie dotykaj. Dotykać można tylko, żeby kupić.
+T:guestSay_bruno_4	Ten obraz jest niedokończony. Jak wszystkie moje obrazy. Jak ja.
+T:guestSay_bruno_5	Każde pociągnięcie pędzla kosztuje więcej niż poprzednie. Budżet to też pociągnięcie.
+T:guestSay_pietro_3	Jarmark huczy, portfele drżą. Wszystko według planu.
+T:guestSay_pietro_4	Moje pieśni są bezcenne. Choć moneta szybko znajduje cenę.
+T:guestSay_pietro_5	Renesans to czas, gdy nagle wszyscy zostali artystami. Nawet ja.
+T:guestArrive	{0} przybył do miasta! Zobacz, co przyniósł.
+T:helpChip	Pomóż {0}: {1}/{2}
+T:helpChipDone	Pomoc {0}: gotowe
+T:helpDoneToast	Pomoc {0} udzielona! Kryształ +1 💎. Scena podziękowań czeka przed podróżą.
+T:helpDoneToast2	Pomoc {0} udzielona! Kryształ +1 💎
+T:helpDiaryLine	Pomoc: {0}/{1}
+T:helpDiaryDone	Pomoc zakończona
+T:thanksCardTitle	Podziękowanie: {0}
+T:guestDat_pip	Pipowi
+T:guestDat_zina	Zinie
+T:guestDat_maks	Maksowi
+T:guestDat_bitik	Bitikowi
+T:guestDat_lesyk	Lesykowi
+T:guestDat_orbit	Orbitowi
+T:guestDat_lumi	Lumi
+T:guestDat_bruno	Brunonowi
+T:guestDat_pietro	Pietrowi
+T:ep1_0	Zegarek zatykał i miasto znów zrobiło się pastelowe, jak cukierek z ubiegłego wieku. Na rogu świeci „Bar Mleczny”, a obok niego milczy wielka szafa grająca.
+T:ep1_1	Witaj w moim barze. Jestem Pip. Widzisz szafę grającą? Milczy: wszystkie płyty zniknęły prosto spod igły.
+T:ep1_2	Zniknęły? Płyty nie uciekają same.
+T:ep1_3	A właśnie, że uciekają! To Jeże Vinyl: nabijają płyty na kolce i toczą się precz. Ja tylko sprzedawałem bilety na ich wyścigi.
+T:ep1_4	Czyli to on wypuścił jeże! Pomóż mi je złapać: toczą się ulicą, a ty stukasz każdego. Złap {0}, a płyty znów będą moje.
+T:ep1_5	Umowa. Licznik u góry pokaże, ilu już złapano.
+T:ep1_o1	Urządźmy wyścig płyt: kto złapie więcej, ten wybiera piosenkę.
+T:ep1_o2	Shnyr, oddaj pieniądze za bilety, a jeże złapiemy razem.
+T:ep1_r1	Wyścig? Ja już postawiłem na żółtego jeża. Swoją drogą, jest najszybszy.
+T:ep1_r2	Pieniądze? No... część wydałem na rekwizyty. Resztę oddam.
+T:ep1_6	Będę przy szafie grającej. Złap {0} jeży, a dostaniesz moje podziękowanie, a szafa znów zagra więcej niż jedną piosenkę.
+T:ep1_7	Umowa: przychodzimy do szafy z pełnymi rękami. To znaczy z płytami.
+T:ep1_8	(tik) Tu Zegarek. Pomóż Pipowi, a będzie lepiej. Nie pomożesz, i tak ruszymy, tylko bez podziękowań.
+T:thx1_0	Wszystkie płyty wróciły! Szafa gra teraz całą listę przebojów, a nie jedną piosenkę. Dzięki, przyjacielu.
+T:thx1_1	Szafa śpiewa, a jeże nic sobie z tego nie robią. Kolce mają dobry słuch.
+T:thx1_2	Niech podróżują bez płyt. A kiedy wrócisz, koktajl mleczny na mój koszt.
+T:ep2_0	Zegarek zatykał i ulicą popłynęła muzyka. Promienie światła krążą nad sklepem, a przy dwóch gigantycznych głośnikach ktoś rozpaczliwie kręci gałkami.
+T:ep2_1	Cześć. Jestem Zina, didżejka kwartału. Widzisz głośniki? Nieme! Moje kule lustrzane uciekły tuż przed imprezą.
+T:ep2_2	Uciekły? Kule nie biegają.
+T:ep2_3	Te biegają. To Pancerniki Disco: udawały kule i wisiały pod sufitem. Ja tylko wypożyczałam je na cudzą imprezę. Obraziły się i poszły na spacer.
+T:ep2_4	Bez nich parkiet jest ciemny. Pomóż mi złapać {0}: chodzą moonwalkiem, krok w przód i krok w tył. Stukaj je!
+T:ep2_5	Krok w przód, krok w tył: najważniejsze to nie zgubić rytmu. Do dzieła.
+T:ep2_o1	Zróbmy zawody: kto szybciej złapie, ten pierwszy puszcza muzykę.
+T:ep2_o2	Shnyr, oddaj pieniądze za wypożyczenie: pójdą na nowe lampy.
+T:ep2_r1	Didżej? Ja! Tylko dajcie mi dwa głośniki i zero odpowiedzialności.
+T:ep2_r2	Pieniądze za wypożyczenie? Dobra. Ale pancerniki łapcie sami, boją się mnie.
+T:ep2_6	Będę przy głośnikach. {0} kul w worku i na ulicy znów jest impreza. Parkiet jest na mnie.
+T:ep2_7	Łapiemy w rytm: raz-dwa-trzy, stuk.
+T:ep2_8	(tik-tak) Jestem Zegarkiem. Lubię, gdy ktoś trzyma rytm lepiej ode mnie. To rzadkość.
+T:thx2_0	Wszystkie kule są w domu! Światła mrugają w rytm, bas uderza w pierś, a parkiet to bajka. Dzięki, przyjacielu.
+T:thx2_1	Parkiet lśni, a pancerniki chrapią w skorupach. Impreza się udała.
+T:thx2_2	Idź dalej, a ja zagram na pożegnanie. Mój najlepszy set, tylko dla ciebie.
+T:ep3_0	Zegarek zatykał i ulica wypełniła się fioletową poświatą. Z salonu gier dobiega „ping-ping-ping”, a przy wejściu stoi wielki chwytak. Pusty.
+T:ep3_1	Jestem Max, właściciel salonu gier. Widzisz mojego chwytaka? Wszystkie pluszaki ożyły i uciekły.
+T:ep3_2	Ożyły? Ładna nagroda.
+T:ep3_3	To Chomiki Token. Wsunąłem im tylko po monecie w policzki, żeby „przeszły poziom”. Przeszły. Prosto przez drzwi.
+T:ep3_4	Śmigają po siatce jak w grze: w lewo, w prawo, w górę, w dół. Pomóż mi złapać {0}, a chwytak znów będzie pełny.
+T:ep3_5	Śmigają po siatce? No cóż, jesteśmy w salonie gier. Stukam.
+T:ep3_o1	Zagrajmy: kto złapie więcej chomików, wygrywa grę.
+T:ep3_o2	Shnyr, oddaj żetony, które wsadziłeś im w policzki.
+T:ep3_r1	Wygram, bo uciekałem najszybciej. To znaczy, goniłem je najszybciej.
+T:ep3_r2	Żetony są w policzkach, a policzki są teraz na wolności. Złapcie chomiki, a żetony wrócą same.
+T:ep3_6	Poczekam przy chwytaku. Złap {0} chomików, a zabawki wrócą na miejsce i dostaniesz podziękowanie od właściciela.
+T:ep3_7	Łapiemy pole po polu. Jeszcze jeden poziom.
+T:ep3_8	(tik) Licznik nadal tyka, gra trwa. Pilnuję tylko, żeby nikt nie oszukiwał. Oprócz mnie.
+T:thx3_0	Chwytak pełny, chomiki w objęciach pluszaków, a w tabeli rekordów nowy wpis: „TY”.
+T:thx3_1	Rekord zapisany. Teraz najważniejsze, żeby go nie stracić przed następnym poziomem.
+T:thx3_2	Nie stracę. Szczęśliwej podróży! Rekord poczeka.
+T:ep4_0	Zegarek zatykał i nad miastem zapaliła się niewidzialna sieć. Szafa serwerowa szumi w rogu ulicy, a wszystkie wskaźniki mrugają... na czerwono.
+T:ep4_1	Bip. Jestem Bitik, robot-konsultant. W mój serwer wdarły się bugi! Prawdziwe zielone żuki z czułkami: gryzą kable i psują ceny.
+T:ep4_2	Bugi wyłażące z serwera? Tego nie ma w instrukcji.
+T:ep4_3	Wypuściłem je „przypadkiem”. Chciałem, żeby wszystkie ceny wynosiły jedną monetę. Bugi się zgodziły, a przy okazji przegryzły hasło.
+T:ep4_4	Mają glitche: raz znikają, raz wracają. Pomóż mi złapać {0}, zanim zjedzą cały system. Stukaj je!

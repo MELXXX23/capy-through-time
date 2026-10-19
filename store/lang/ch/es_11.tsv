@@ -1,0 +1,123 @@
+T:guestAsk_zina_1	No pares: unas bolas de espejos más y empezamos a tocar.
+T:guestDone_zina	La pista brilla, el bajo retumba y estoy de muy buen humor. ¡Gracias!
+T:guestSay_maks_0	La máquina de garra está vacía. Los juguetes se fueron en busca de un dueño mejor. Lo entiendo.
+T:guestSay_maks_1	Los hámsteres Token corren por la cuadrícula, casilla a casilla: izquierda, derecha, arriba. Mis ojos no los siguen.
+T:guestSay_maks_2	¿Otro juego? Solo uno honrado. Spike lo apuntará y yo no sobreviviría a eso.
+T:guestAsk_maks_0	Los hámsteres esconden fichas en las mejillas. ¡Toca y la ficha vuelve!
+T:guestAsk_maks_1	Necesito más hámsteres. ¡El juego no ha terminado!
+T:guestDone_maks	La máquina está llena, los hámsteres están en casa. ¡El récord es nuestro!
+T:guestSay_bitik_0	Bip-bup. El sistema tiene ocho bugs y nueve problemas y medio. Aún no he encontrado el medio.
+T:guestSay_bitik_1	Dicen que un bug es un usuario que no leyó el manual. Pero estos son de verdad. Con antenas.
+T:guestSay_bitik_2	Todo está guardado en la nube. Menos mis nervios.
+T:guestAsk_bitik_0	¡Atrapa los bugs! Fallan, pero un toque vence al antivirus.
+T:guestAsk_bitik_1	Unos bugs más y el servidor respira aliviado.
+T:guestDone_bitik	Sistema estable. Indicadores en verde. ¡Bip!
+T:guestSay_lesyk_0	Mi bancal se mueve. No es el viento: aquí no ha soplado desde hace siglos.
+T:guestSay_lesyk_1	Un camaleón en una hoja es camuflaje. Casi. Busco los ojitos de torreta.
+T:guestSay_lesyk_2	Una mala hierba es solo una planta que no hizo carrera. Las quiero a todas.
+T:guestAsk_lesyk_0	Mira bien las hojas: algo acaba de parpadear. ¡Toca!
+T:guestAsk_lesyk_1	Aún quedan camaleones por ahí. Busca los ojos de torreta.
+T:guestDone_lesyk	El bancal está en calma. Los árboles te dan las gracias, y yo también.
+T:guestSay_orbit_0	Tierra, aquí Orbit, adelante. El combustible está disperso, pero no me rindo.
+T:guestSay_orbit_1	Los ajolotes flotan en gravedad cero llevando mis bidones. La logística es lo que es.
+T:guestSay_orbit_2	El espacio es silencioso. Tan silencioso que los pensamientos suenan fuerte. Estoy cansado de los míos.
+T:guestAsk_orbit_0	Atrapa a los ajolotes astro: tienen mi combustible. ¡Toca!
+T:guestAsk_orbit_1	Los bidones aún están en camino. Atrapando al siguiente ajolote.
+T:guestDone_orbit	Depósitos llenos. Preparando el lanzamiento. ¡Gracias, tripulación!
+T:guestSay_lumi_0	Parpadeo-parpadeo. La noria está parada porque los farolillos se fueron con los gatitos.
+T:guestSay_lumi_1	Gatitos de neón saltan por los tejados y hacen brillar mis farolillos. Bonito, pero no son míos.
+T:guestSay_lumi_2	La luz funciona con buenas obras. El presupuesto es pequeño, pero alcanza.
+T:guestAsk_lumi_0	Atrapa a los gatitos: se llevaron mis farolillos. ¡Toca!
+T:guestAsk_lumi_1	Unos gatitos más y la noria brillará por completo.
+T:guestDone_lumi	Todas las cabinas brillan. Parpadeo-parpadeo, ¡gracias!
+T:guestSay_bruno_0	Una lechuza me roba las pinturas. Lo peor es que sus abstracciones superan las mías.
+T:guestSay_bruno_1	Una pincelada aquí, otra allá, y de pronto hay una lechuza con garras de colores. Hasta está orgullosa.
+T:guestSay_bruno_2	Mi obra maestra aún está por venir. Suele quedarse ahí. Pero no me disgusto.
+T:guestAsk_bruno_0	¡Las lechuzas Mazok han esparcido mis pinturas otra vez! ¡Tócalas!
+T:guestAsk_bruno_1	Unas lechuzas más y el cuadro estará terminado.
+T:guestDone_bruno	Las pinturas han vuelto. El cuadro se puede terminar. ¡Gracias!
+T:guestSay_pietro_0	La Fuente de los Deseos murmura y las monedas desaparecen. Hay que proteger los deseos.
+T:guestSay_pietro_1	A las lechuzas Mazok les encanta el brillo. Por ellas desaparecen las monedas, y mi paga detrás.
+T:guestSay_pietro_2	El Renacimiento es cuando las cosas viejas suenan de pronto nuevas. Lo intento.
+T:guestAsk_pietro_0	¡Atrapa a las lechuzas que sacan monedas de la fuente! ¡Toca!
+T:guestAsk_pietro_1	Unas lechuzas más y los deseos se quedan en el agua.
+T:guestDone_pietro	Monedas en el agua, deseos en su sitio. ¡Gracias!
+T:itchRateBtn	⭐ Valora el juego en itch.io
+T:itchRateHint	¿Te gusta el juego? Valóralo en itch.io: menú → Ajustes.
+T:epoch_8	Japón
+T:epochTitle_8	Tierra del Sol Naciente
+T:epochSub_8	Sakura, farolillos de papel y un dragón sobre los tejados.
+T:crt_8	Grulla de Origami
+T:good_8_0	Juegos de Té
+T:good_8_1	Onigiri y Arroz
+T:good_8_2	Banderas de Olas
+T:good_8_3	Abanicos y Sombrillas
+T:good_8_4	Jabón y Polvos
+T:good_8_5	Mochi y Dango
+T:good_8_6	Ramen
+T:good_8_7	Kimonos
+T:good_8_8	Sandalias de Madera
+T:good_8_9	Farolillos de Papel
+T:good_8_10	Sushi Bar
+T:good_8_11	Teatro Kabuki
+T:epoch_say_8_0	La sakura cae tan en silencio que se la oye pensar.
+T:epoch_say_8_1	Los farolillos suben, los precios no. Principio.
+T:epoch_say_8_2	El dragón vuelve a estar sobre los tejados. Seguramente revisando los descuentos.
+T:epoch_say_8_3	Té, arroz y calma. Eso sí es comercio.
+T:epoch_say_8_4	Las sandalias de madera repiquetean como el latido de la tienda.
+T:epoch_say_8_5	Un torii en la puerta: entra y deja tu dinero en la caja.
+T:skinSay_capy_ep8	Kimono, sombrero de paja y té con dulces. ¡Negocios al estilo japonés!
+T:team_nara	Nara la Cierva
+T:team_nara_role	Guardiana Silenciosa
+T:team_nara_trait	Sabe dónde el tiempo corre más despacio. Suma un poco a todos los ingresos por cada nivel.
+T:team_nara_sit_0	Siéntate, miremos los cerezos.
+T:team_nara_sit_1	Me siento. Solo un minuto. O una hora.
+T:team_nara_cold_0	La nieve en los cuernos es una bonita decoración.
+T:team_nara_cold_1	¿Un chal caliente? Gracias. Huelo a té.
+T:team_nara_cold_2	El frío aquí es suave. Estoy acostumbrada.
+T:naraJoined	Nara ya está en el equipo. Mira la pestaña «Equipo»: suma un poco a todos los ingresos.
+T:bonusAvail	🎌 ¡Capítulos extra disponibles! Tu próximo viaje en el tiempo abre la época extra: Japón.
+T:routeNextBonus	Siguiente: la época extra «{0}»
+T:speaker_sora	Sora la Zorra
+T:guestDat_sora	Sora
+T:guestSay_sora_0	El té reposa exactamente lo que necesita. La prisa solo añade amargor.
+T:guestSay_sora_1	Una grulla es solo una hoja de papel que creyó en sí misma.
+T:guestSay_sora_2	El dragón se asoma a mi casita. Dice que viene por el té. No me lo creo.
+T:guestSay_sora_3	Los farolillos de aquí brillan hasta la mañana. A veces hasta el almuerzo.
+T:guestSay_sora_4	La sakura cae tan en silencio que se la oye pensar.
+T:guestSay_sora_5	Una zorra puede hacer muchas cosas. Menos atrapar su propia tetera.
+T:guestAsk_sora_0	Atrapa a las grullas: salieron volando de mi té. ¡Toca!
+T:guestAsk_sora_1	Unas grullas más y la tetera volverá a cantar.
+T:guestDone_sora	Todas las grullas están en casa. El té está caliente y el dragón contento. ¡Gracias!
+T:ep10_title	Tierra del Sol Naciente
+T:ep10_0	El reloj hizo tictac y la calle se llenó de luz rosada. Farolillos de papel flotan sobre los tejados y junto a la casa de té una zorra mira desamparada una tetera volcada.
+T:ep10_1	¡Buenos días! Soy Sora. Esta es mi casa de té. Todas las hojas de té se escaparon cuando miré a un lado un segundo.
+T:ep10_2	¿Las hojas de té se escaparon? Las hojas no corren.
+T:ep10_3	Corren, y cómo. Las vi: verdes, con alitas. No toqué a nadie, claro. No le vendí nada a nadie.
+T:ep10_4	¡Son grullas de origami! Dobladas con mis bolsitas de té, y salieron volando por todo el pueblo. Ayúdame a atrapar {0}: toca cada una antes de que se posen en un tejado.
+T:ep10_5	Nos ponemos a ello. El contador de arriba mostrará cuántas hay ya en la cesta.
+T:ep10_o1	Corramos hasta los tambores taiko: quien atrape más bebe el primer té.
+T:ep10_o2	Shnyr, devuelve las bolsitas de té que «tomaste prestadas», y atraparemos las grullas juntos.
+T:ep10_r1	¿Taiko? Sé golpear un tambor. Dos veces. A la vez, con una pausa.
+T:ep10_r2	¿Bolsitas de té? Bueno... olían tan bien. Devolveré el resto.
+T:ep10_6	Esperaré junto a la casa de té. Atrapa {0} grullas y tendrás mi agradecimiento y el mejor té del pueblo.
+T:ep10_7	Trato hecho. El té es mío, y tú atrapas. Quiero decir, juntos.
+T:ep10_8	Juntos, Shnyr. Vamos.
+T:ep10_9	Tic-tac. Ayuda a Sora durante esta época. Si no lo logras, el viaje en el tiempo sigue esperando, solo que no habrá agradecimiento.
+T:thx10_0	¡Todas las hojas están en casa! El té vuelve a estar caliente y olía tan bien que el dragón bajó a escuchar. Gracias, amigo.
+T:thx10_1	¿El dragón? ¿Bebe té?
+T:thx10_2	Solo de un platito. Déjalo pasear, y cuando vuelvas, la primera taza corre de mi cuenta.
+T:team_spike_say_0	Algún día me confiarán una caja fuerte. Una pequeña, del tamaño de un erizo.
+T:team_spike_say_1	Tonya lleva una hora caminando hacia la puerta. Aposté a que llegaba «antes del almuerzo». Voy a perder.
+T:team_spike_say_2	Una moneda atascada en mis púas no es un robo, es una entrega. Así lo veo yo.
+T:team_spike_say_3	Lo conté tres veces. Cuadra. Eso me asusta más que cuando no cuadra.
+T:team_spike_say_4	Mamá decía: quien cuenta, duerme bien. Mamá nunca trabajó en una tienda.
+T:team_spike_say_5	Alguien dejó propina: tres centavos y una cinta. Me quedo con las dos.
+T:team_spike_say_6	Dicen que tengo una personalidad espinosa. Lo comprobé: son solo las púas.
+T:team_spike_say_7	Toma recuerda las deudas, yo recuerdo el cambio. Juntos somos imbatibles.
+T:team_spike_say_8	Por las noches sueño con una caja fuerte. Sonríe. Me despierto feliz.
+T:team_spike_say_9	Leo quiere un informe. Dije: «El informe está en la caja». Asintió. No lo entendió.
+T:team_spike_hire	La caja es mía. No tocar.
+T:team_bodya_say_0	Algún día construiré una presa. De verdad, con una placa: «Construida por Bodya».
+T:team_bodya_say_1	Mikhas lleva cajas junto a mis escaleras. Las acabo de alinear. ¡Ahora mismo!
+T:team_bodya_say_2	Tengo los planos. De momento están en mi cabeza. Y un poco en una servilleta.
