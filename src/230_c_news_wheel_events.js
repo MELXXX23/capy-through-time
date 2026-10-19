@@ -55,7 +55,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Бонусна епоха «Японія»! Після Неону час несе в країну вранішнього сонця: дерев’яні будинки з дашками, сакура, паперові ліхтарі, неонові вивіски, що світяться вночі, і дракон, який літає над містом і сам злітає до будівництва. У неї свій перехід, 8 нових глав, лисиця Сора з чайним будиночком, олениця Нара, лапшична діда Рьо замість цирку й Капі в кімоно. Попереду — нові бонусні епохи: дивись розділ «Скоро».',
+    newH: 'Що нового', new: 'Нові мови! Гру перекладено португальською (Бразилія), іспанською, італійською та польською: обери мову в налаштуваннях (PT, ES, IT, PL). Мова обирається й сама, за мовою твого телефона чи браузера. Ще героїв, Капі, Мел і Ніку почуєш живіше: нові репліки в усіх епохах, а коли гортаєш екран, бульбашки більше не заважають.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -63,7 +63,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'The bonus era “Japan”! After Neon, time carries you to the land of the rising sun: wooden houses with little roofs, sakura, paper lanterns, neon signs that glow at night, and a dragon that flies over town and swoops down to the building site. It has its own travel animation, 8 new chapters, Sora the fox with her tea house, Nara the doe, Grandpa Ryo’s noodle stall instead of the circus, and Capy in a kimono. More bonus eras are on the way: see “Coming soon”.',
+    newH: 'What is new', new: 'New languages! The game is now in Portuguese (Brazil), Spanish, Italian and Polish: pick one in Settings (PT, ES, IT, PL). It also picks the language by itself from your phone or browser. You will also hear the heroes, Capy, Mel and Nika more vividly: new lines in every epoch, and speech bubbles no longer get in the way when you scroll the screen.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
