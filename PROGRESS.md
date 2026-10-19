@@ -30,4 +30,4 @@
 ## 126. Випуск: злиття android-wrapper у main, сайт і новий ZIP для itch (р. 58)
 - `git merge --no-ff android-wrapper` у main (мітка `before-itchrelease` = main до злиття); `docs/privacy.html` повернуто як у main (без реклами). autotest --quick ✓. Коміт 660ec9c, push, сайт оновився (~2 хв).
 - ZIP: `desktop/dist/CapyTapMarket-itch-html.zip` = `docs/` без `sw.js` (PowerShell ZipFile з `/` у шляхах; tar з Git Bash дає не-zip). На itch завантажено через Edit game → Uploads (файл з тією ж назвою замінив старий, 700 КБ), «played in browser» увімкнено, Save; гра на сторінці запускається. Кнопка оцінки видна лише всередині itch.
-- Лишилось: девлог на itch (потрібен дозвіл), exe на столі не оновлювався.
+- Девлог опубліковано на itch (https://melxxxnika.itch.io/capytap-market/devlog/1716496), тип «Major update», EN, коментарі увімкнені. exe на столі не оновлювався.
