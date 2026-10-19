@@ -26,3 +26,8 @@
 - Metadata (збережено): Input methods + Mouse + Keyboard; Languages English + Ukrainian; External links: Homepage = сайт GitHub Pages. Release info/ліцензії залишені «No license» (комерційна гра); Engines & tools — у базі немає підходящого.
 - Promo images (збережено, 4 шт., знімає `previews/itch/promo.js` зі steam-зображень; `previews/itch/ready/`): social 1200×630, favicon 512, wide cover 21:9 (2100×900), logo прозорий PNG.
 - Перевірено: сторінка Published, тема Renaissance + банер застосовані, оцінки й коментарі увімкнені, відео-трейлер є, 0 оцінок. Девлог — після нового ZIP (на «публікуй»).
+
+## 126. Випуск: злиття android-wrapper у main, сайт і новий ZIP для itch (р. 58)
+- `git merge --no-ff android-wrapper` у main (мітка `before-itchrelease` = main до злиття); `docs/privacy.html` повернуто як у main (без реклами). autotest --quick ✓. Коміт 660ec9c, push, сайт оновився (~2 хв).
+- ZIP: `desktop/dist/CapyTapMarket-itch-html.zip` = `docs/` без `sw.js` (PowerShell ZipFile з `/` у шляхах; tar з Git Bash дає не-zip). На itch завантажено через Edit game → Uploads (файл з тією ж назвою замінив старий, 700 КБ), «played in browser» увімкнено, Save; гра на сторінці запускається. Кнопка оцінки видна лише всередині itch.
+- Лишилось: девлог на itch (потрібен дозвіл), exe на столі не оновлювався.
