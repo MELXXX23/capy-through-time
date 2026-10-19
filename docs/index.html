@@ -37,6 +37,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="CapyTap">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script>
+/* iOS 26 на iPhone 17 / Air (екран 402/420/440 pt): із black-translucent система малює чорну смугу зверху (помилка WebKit). Тут беремо стиль «default» (смуга без накладання на гру) і theme-color під небо; решта iPhone без змін. Діє після перевстановлення іконки. */
+(function () {
+  try {
+    var sw = Math.min(screen.width, screen.height);
+    if (!/iPhone/.test(navigator.userAgent) || [402, 420, 440].indexOf(sw) < 0) return;
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#2E4580');
+    document.documentElement.classList.add('ios26bar');
+  } catch (e) {}
+})();
+</script>
 <title>CapyTap: Market</title>
 <style>@font-face{font-family:'Press Start 2P';src:url('fonts/PressStart2P-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:block}</style>
 <!-- Піксельний шрифт з чіткою кирилицею (Pixelify Sans малює українські літери криво, тому Press Start 2P). Без інтернету спрацює запасний моноширинний -->
@@ -232,6 +244,7 @@ body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb;
 .chip.quiet .ico { filter: grayscale(1); opacity: .7; }
 .chip.dark { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 2px var(--honey); }
 .chip .ico { font-size: 11px; }
+.chip.ad { pointer-events: auto; cursor: pointer; background: var(--mint); box-shadow: 0 0 0 2px var(--dark); }   /* «×2 за ролик»: кнопка в смужці (HUD сам клікань не приймає) */
 #topRight { display: flex; align-items: center; gap: 8px; flex: none; }
 #bonusOpen { display: flex; align-items: center; gap: 6px; padding: 5px 8px; }
 #bonusOpen[hidden] { display: none; }
@@ -3726,6 +3739,12 @@ const translations = {
     offlineText: 'Поки тебе не було, магазин заробив',
     offlineCoins: '{0} монеток 💤',
     offlineBtn: 'Забрати',
+    adOfflineBtn: '🎬 ×2: подивитись ролик',
+    adPrivacyBtn: 'Параметри реклами',
+    adBonusTitle: 'Пропустити очікування?',
+    adBonusText: 'Бонус-гра буде готова через {0}. Подивись короткий ролик, і вона відкриється зараз.',
+    adBoostChip: '×2 прибуток 10 хв',
+    adBonusYes: '🎬 Подивитись ролик',
 
     // Команда
     teamNote: "Наймай співробітників — кожен дає свій бонус. Тапни по комусь на сцені: можливо, почуєш щось цікаве.",
@@ -4193,6 +4212,12 @@ const translations = {
     offlineText: 'While you were away, the shop earned',
     offlineCoins: '{0} coins 💤',
     offlineBtn: 'Collect',
+    adOfflineBtn: '🎬 ×2: watch a video',
+    adPrivacyBtn: 'Ad privacy options',
+    adBonusTitle: 'Skip the wait?',
+    adBonusText: 'The bonus game will be ready in {0}. Watch a short video and it opens right now.',
+    adBoostChip: '×2 income 10 min',
+    adBonusYes: '🎬 Watch a video',
 
     teamNote: "Hire staff: each gives their own bonus. Tap someone on the scene, you might hear something interesting.",
     teamLevel: 'Level {0} / {1}',
@@ -9550,6 +9575,7 @@ function showOfflineModal() {
   ui.modalBtn.textContent = t('offlineBtn');
   refreshOfflineModal();
   ui.modal.hidden = false;
+  if (typeof adsOfferOffline === 'function') adsOfferOffline();      // кнопка «×2 за ролик» (лише Android-обгортка з рекламою)
   ui.modalBtn.focus({ preventScroll: true });
 }
 function claimOffline() {
@@ -9559,6 +9585,7 @@ function claimOffline() {
   state.pendingOffline = 0;
   playSfx('coins');
   ui.modal.hidden = true;
+  if (typeof updateAdButtons === 'function') updateAdButtons();
   updateUI();
   saveGame();
 }
@@ -14220,7 +14247,8 @@ function updateBoostsUI() {
   items.unshift({ cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
   if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
   if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
-  items.splice(1, 0, ...helpChips());                                                      // «Допоможи Піпу: 4/12»
+  if (typeof Ads !== 'undefined' && Ads.available() && !(ev.incomeBoostUntil > now)) items.push({ cls: 'ad', icon: '🎬', text: t('adBoostChip'), act: adsBoostClick });   // «×2 за ролик» (лише Android-обгортка з рекламою)
+  items.splice(1, 0, ...helpChips());                                                    // «Допоможи Піпу: 4/12»
   const sig = items.map(i => i.icon + i.text).join('|');
   if (uiCache.boostSig === sig) return;
   uiCache.boostSig = sig;
@@ -14232,6 +14260,11 @@ function updateBoostsUI() {
     const ico = document.createElement('span'); ico.className = 'ico'; ico.textContent = it.icon;
     const tx = document.createElement('span'); tx.textContent = it.text;
     chip.append(ico, tx);
+    if (it.act) {                                                // клікабельний чіп (кнопка)
+      chip.setAttribute('role', 'button'); chip.tabIndex = 0;
+      chip.addEventListener('click', it.act);
+      chip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); it.act(); } });
+    }
     ui.boosts.appendChild(chip);
   });
 }
@@ -20011,6 +20044,164 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
+//#part 275_ads.js
+/* =====================================================================
+   РЕКЛАМА (AdMob) — лише в Android-обгортці й лише нагороджений ролик за бажанням гравця.
+   Увімкнено, тільки коли mobile/sync-web.js вставив window.__ADS (у game.html, на сайті, в exe — нічого не робить).
+   Гра для всіх віків → усі гравці вважаються дитячою аудиторією (child-directed, рейтинг G, без персоналізації).
+   Збій реклами ніколи не блокує гру: кнопка просто не з'являється. Лічильники — окремий ключ localStorage (збереження гри не чіпаємо).
+   ===================================================================== */
+const Ads = (() => {
+  const CFG = (typeof window !== 'undefined' && window.__ADS) || null;
+  const KEY = 'capyAdsDaily';
+  const MAX_DAY = 5;               // роликів на добу
+  const GAP_MS = 60000;            // мінімальна пауза між роликами
+  let plugin = null, ready = false, loaded = false, busy = false, lastEndAt = 0, retry = 0, retryTimer = 0;
+
+  const dayKey = () => new Date().toISOString().slice(0, 10);
+  function daily() {
+    try { const o = JSON.parse(localStorage.getItem(KEY) || '{}'); if (o.d === dayKey()) return o; } catch (e) { /* нічого */ }
+    return { d: dayKey(), n: 0, last: 0 };
+  }
+  function bump() { const o = daily(); o.n++; o.last = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { /* нічого */ } }
+  function opts() { return { adId: CFG.rewardedId, isTesting: !!CFG.testing, npa: true }; }
+
+  function preload() {
+    if (!ready || loaded || busy) return;
+    plugin.prepareRewardVideoAd(opts()).then(() => { loaded = true; retry = 0; updateAdButtons(); })
+      .catch(() => { loaded = false; if (retry < 5) { clearTimeout(retryTimer); retryTimer = setTimeout(preload, 30000 * Math.pow(2, retry++)); } });
+  }
+
+  async function init() {
+    if (!CFG || !CFG.rewardedId || ready) return;
+    try {
+      if (typeof nativeApp !== 'function' || !nativeApp()) return;
+      plugin = nativePlugin('AdMob'); if (!plugin) return;
+      let canRequest = true;
+      try {                                                        // згода Google (UMP): форму покаже сама, якщо це потрібно в регіоні
+        let ci = await plugin.requestConsentInfo({ tagForUnderAgeOfConsent: true });
+        if (ci && ci.isConsentFormAvailable && ci.status === 'REQUIRED') ci = await plugin.showConsentForm();
+        if (ci && ci.canRequestAds === false) canRequest = false;
+        if (ci && ci.privacyOptionsRequirementStatus === 'REQUIRED') adsAddPrivacyButton();   // вхід у «Параметри реклами» — вимога Google у регіонах зі згодою
+      } catch (e) { /* без згоди (збій) — реклама тихіша, але гра працює */ canRequest = false; }
+      if (!canRequest) return;
+      await plugin.initialize({
+        initializeForTesting: !!CFG.testing, tagForChildDirectedTreatment: true, tagForUnderAgeOfConsent: true, maxAdContentRating: 'General',
+      });
+      ready = true;
+      preload();
+    } catch (e) { ready = false; }
+  }
+
+  // Можна пропонувати ролик саме зараз?
+  function available() {
+    if (!ready || !loaded || busy) return false;
+    const d = daily();
+    return d.n < MAX_DAY && Date.now() - d.last > GAP_MS;
+  }
+  // Щойно закрився ролик (щоб повернення з реклами не рахувати «офлайном»)
+  function justShown() { return busy || Date.now() - lastEndAt < 8000; }
+
+  // Показує ролик. Повертає Promise<true>, лише якщо гравець дивився до нагороди; інакше false.
+  async function showRewarded() {
+    if (!available()) return false;
+    busy = true; loaded = false;
+    let rewarded = false, dismissed = null;
+    const wait = new Promise(res => { dismissed = res; });
+    let h = null;
+    try { h = await plugin.addListener('onRewardedVideoAdDismissed', () => dismissed()); } catch (e) { /* нічого */ }
+    try {
+      await plugin.showRewardVideoAd();
+      rewarded = true;
+      await Promise.race([wait, new Promise(res => setTimeout(res, 5000))]);
+    } catch (e) { rewarded = false; }
+    try { if (h && h.remove) await h.remove(); } catch (e) { /* нічого */ }
+    busy = false; lastEndAt = Date.now();
+    if (rewarded) bump();
+    preload(); updateAdButtons();
+    return rewarded;
+  }
+
+  // Форма «Параметри реклами» (UMP): гравець може змінити або відкликати згоду
+  async function showPrivacyOptions() { try { if (plugin) await plugin.showPrivacyOptionsForm(); } catch (e) { adsLog(e); } }
+
+  return { init, available, showRewarded, justShown, showPrivacyOptions, enabled: () => !!CFG };
+})();
+
+// Кнопка в налаштуваннях, під «Політикою конфіденційності» (з'являється лише коли Google вимагає такий вхід)
+function adsAddPrivacyButton() {
+  try {
+    if (document.getElementById('adPrivacyBtn') || !ui.privacyBtn) return;
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.id = 'adPrivacyBtn'; btn.className = 'btn wide'; btn.setAttribute('data-i18n', 'adPrivacyBtn');
+    btn.textContent = t('adPrivacyBtn');
+    ui.privacyBtn.parentNode.insertBefore(btn, ui.privacyBtn.nextSibling);
+    btn.addEventListener('click', () => { Ads.showPrivacyOptions(); });
+  } catch (e) { adsLog(e); }
+}
+
+// ---------- Місця, де пропонуємо ролик (кнопки з'являються лише коли Ads.available()) ----------
+function adsLog(e) { try { if (typeof logErr === 'function') logErr('ads', String(e && e.message || e), '', 0, 0); } catch (x) { /* нічого */ } }
+
+// 1) Вікно «З поверненням!»: ×2 непозбраних монет
+let adOfflineDone = false;
+function updateAdButtons() {
+  try {
+    const btn = document.getElementById('adOfflineBtn');
+    const show = Ads.available() && ui.modal && !ui.modal.hidden && state.pendingOffline >= 1 && !adOfflineDone && ui.modalBtn.id === 'modalBtn';
+    if (btn) btn.hidden = !show;
+    if (typeof uiCache !== 'undefined') uiCache.boostSig = null;      // чіп «×2 за ролик» у смужці перемалюється
+  } catch (e) { adsLog(e); }
+}
+function adsOfferOffline() {                                          // викликає showOfflineModal
+  try {
+    if (!Ads.enabled()) return;
+    let btn = document.getElementById('adOfflineBtn');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.type = 'button'; btn.id = 'adOfflineBtn'; btn.className = 'btn wide'; btn.hidden = true;
+      ui.modalBtn.parentNode.insertBefore(btn, ui.modalBtn);
+      btn.addEventListener('click', () => {
+        btn.hidden = true;
+        Ads.showRewarded().then(ok => {
+          if (!ok) { updateAdButtons(); return; }
+          state.pendingOffline *= 2; adOfflineDone = true;
+          refreshOfflineModal(); saveGame();
+        }).catch(adsLog);
+      });
+    }
+    adOfflineDone = false;
+    btn.textContent = t('adOfflineBtn');
+    updateAdButtons();
+  } catch (e) { adsLog(e); }
+}
+
+// 3) Чіп «×2 прибуток 10 хв» у смужці під рахунком (малює updateBoostsUI, коли Ads.available() і підсилення ще нема)
+function adsBoostClick() {
+  Ads.showRewarded().then(ok => {
+    if (!ok) { updateAdButtons(); return; }
+    state.events.incomeBoostUntil = Date.now() + 10 * 60000; state.events.incomeBoostMult = 2;
+    recalcIncome(); saveGame(); updateBoostsUI(); showToast(t('prize_income', 2, 10));
+  }).catch(adsLog);
+}
+
+// 2) Очікування бонус-гри: «пропустити очікування за ролик» (не частіше за саму перезарядку, бо після пропуску вона починається знову)
+function adsOfferBonusSkip(def, waitMs) {                                      // повертає true, якщо показали пропозицію (тоді openBonus нічого більше не робить)
+  try {
+    if (!Ads.available()) return false;
+    askConfirm(t('adBonusTitle'), t('adBonusText', fmtTime(waitMs / 1000)), t('adBonusYes'), () => {
+      Ads.showRewarded().then(ok => {
+        if (!ok) return;
+        const past = Date.now() - bonusCooldownMs() - 1000;           // «виграш був давно» → очікування 0
+        state.wheel.mg = (state.wheel.mg || []).map(v => (v ? Math.min(v, past) : v));
+        saveGame(); openBonus(def);
+      }).catch(adsLog);
+    });
+    return true;
+  } catch (e) { adsLog(e); return false; }
+}
+
+setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // після запуску гри, щоб форма згоди не лізла на першому кадрі
 //#part 275_japan.js
 /* =====================================================================
    БОНУСНА ЕПОХА «ЯПОНІЯ» (9-та, індекс 8; після Неону): дерев'яні будинки з дашками, сакура, ліхтарі, дракон, чайний будиночок гостя,
@@ -20575,6 +20766,38 @@ function frame(now) {
       rc(x + 22, y - 9, 8, 2, '#a46a34'); rc(x + 23, y - 7, 1, 3, '#4e2414'); rc(x + 28, y - 7, 1, 3, '#4e2414');       // лавка
     }
   };
+})();
+//#part 275_z_itch_rate.js
+/* =====================================================================
+   «Оціни на itch.io» — лише у веб-версії на itch.io (її видно за доменом iframe; для перевірки — ?itch=1).
+   У Android-обгортці, Steam, на сайті й у PWA кнопки немає (дитяча аудиторія: зовнішні заклики до оцінки там недоречні).
+   Кнопка в налаштуваннях під «Політикою конфіденційності»; один раз за ~10 хв гри — тихий тост-підказка (прапорець у localStorage).
+   ===================================================================== */
+const ITCH_PAGE = 'https://melxxxnika.itch.io/capytap-market';
+function onItchBuild() {
+  try { return /(^|\.)itch\.(io|zone)$/.test(location.hostname) || /[?&]itch=1/.test(location.search); } catch (e) { return false; }
+}
+translations.uk.itchRateBtn = '⭐ Оціни гру на itch.io';
+translations.en.itchRateBtn = '⭐ Rate the game on itch.io';
+translations.uk.itchRateHint = 'Подобається гра? Постав оцінку на itch.io: меню → Налаштування.';
+translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → Settings.';
+(function itchRateInit() {
+  if (!onItchBuild() || !ui.privacyBtn) return;
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.id = 'itchRateBtn'; btn.className = 'btn wide'; btn.setAttribute('data-i18n', 'itchRateBtn');
+  btn.textContent = t('itchRateBtn');
+  ui.privacyBtn.parentNode.insertBefore(btn, ui.privacyBtn);
+  btn.addEventListener('click', () => { window.open(ITCH_PAGE, '_blank', 'noopener'); });
+  let asked = false, seen = 0;
+  try { asked = localStorage.getItem('capyItchRateHint') === '1'; } catch (e) { asked = false; }
+  if (asked) return;
+  const iv = setInterval(() => {                                    // лише хвилини, коли вкладка видима
+    if (document.hidden) return;
+    if (++seen < 600) return;
+    clearInterval(iv);
+    try { localStorage.setItem('capyItchRateHint', '1'); } catch (e) { /* нічого */ }
+    try { showToast(t('itchRateHint')); } catch (e) { /* нічого */ }
+  }, 1000);
 })();
 //#part 276_japan_text.js
 /* =====================================================================
@@ -21917,7 +22140,7 @@ function openBonus(def) {                                            // def — 
   if (dialog.active || !ui.circusModal.hidden) return;
   const d = def || mgForEpoch(viewEpoch()); if (!d) return;
   const w = bonusWaitMs(d.eid);
-  if (w > 0) { showToast(t('mgWait', fmtTime(w / 1000))); return; }
+  if (w > 0) { if (typeof adsOfferBonusSkip !== 'function' || !adsOfferBonusSkip(def, w)) showToast(t('mgWait', fmtTime(w / 1000))); return; }
   circus.bonus = true; circus.bonusDef = d;
   ui.circusModal.classList.add('hag');
   ui.circusWheel.width = 192; ui.circusWheel.height = 120;
@@ -22664,7 +22887,7 @@ function init() {
       saveGame();
     } else {
       lastFrame = performance.now();
-      if (hiddenAt) { addOfflineEarnings((Date.now() - hiddenAt) / 1000); hiddenAt = 0; }
+      if (hiddenAt) { if (!(typeof Ads !== 'undefined' && Ads.justShown())) addOfflineEarnings((Date.now() - hiddenAt) / 1000); hiddenAt = 0; }   // повернення з рекламного ролика офлайном не вважаємо
     }
   });
 
