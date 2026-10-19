@@ -898,6 +898,11 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 #circusResult { min-height: 22px; font-size: 15px !important; }
 #circusModal.hag #circusWheel { width: min(84vw, 372px, max(180px, calc((100dvh - 400px) * 1.6))); cursor: pointer; }
 #circusModal.hag #circusResult { min-height: 44px; font-size: 12px !important; line-height: 1.5; }
+/* бонус-ігри епох: без клоуна та його вікна, сама гра на всю рамку */
+#circusModal.mg .clown-win { display: none; }
+#circusModal.mg .modal-box { width: min(96vw, 640px); padding: 16px 14px 14px; }
+#circusModal.mg .wheel-wrap { margin: 2px 0 6px; }
+#circusModal.mg #circusWheel { width: min(100%, max(180px, calc((100dvh - 250px) * 1.6))); }
 #circusClose { margin-top: 6px; }
 .wheel-box { max-height: 96vh; overflow-y: auto; padding-top: 22px; }
 .wheel-wrap { display: flex; justify-content: center; margin: 4px 0 8px; }
@@ -3926,7 +3931,7 @@ const translations = {
     wheelClose: 'Закрити',
     wheelReady: 'Колесо фортуни готове! 🎡',
     prize_coins: 'Монети: +{0}',
-    themeLocked: 'Необхідно пройти 2 епоху',
+    themeLocked: 'Необхідно пройти 2 епоху', themeLockedHalloween: 'Необхідно пройти 5 епоху',
     fbBtn: '✉ Написати розробникам', fbTitle: 'Напиши нам', fbHint: 'Що тобі подобається, що зламалося, чого не вистачає? Читаємо кожне повідомлення.', fbContact: 'Контакт (не обов’язково)', fbSend: 'Надіслати', fbCancel: 'Скасувати', fbThanks: 'Дякуємо! Повідомлення відправлено 💌', fbFail: 'Не вдалося відправити. Спробуй пізніше.', fbCopied: 'Адреса ще не налаштована. Текст скопійовано, надішли його розробникам.', fbEmpty: 'Спершу напиши кілька слів.',
     newsTitle: '📮 Пошта від розробників', newsSub: 'Свіжі новини CapyTap',
     newsIntro: 'Привіт, друже! Цього разу новини в газеті: годинникова вежа, нове завантаження й багато дрібниць. Гортай сторінки!',
@@ -4396,7 +4401,7 @@ const translations = {
     wheelClose: 'Close',
     wheelReady: 'The Wheel of Fortune is ready! 🎡',
     prize_coins: 'Coins: +{0}',
-    themeLocked: 'Finish epoch 2 first',
+    themeLocked: 'Finish epoch 2 first', themeLockedHalloween: 'Finish epoch 5 first',
     fbBtn: '✉ Write to the developers', fbTitle: 'Write to us', fbHint: 'What do you like, what broke, what is missing? We read every message.', fbContact: 'Contact (optional)', fbSend: 'Send', fbCancel: 'Cancel', fbThanks: 'Thank you! Your message was sent 💌', fbFail: 'Could not send. Please try again later.', fbCopied: 'The address is not set up yet. The text was copied, please send it to the developers.', fbEmpty: 'Write a few words first.',
     newsTitle: '📮 Mail from the developers', newsSub: 'Fresh CapyTap news',
     newsIntro: 'Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!',
@@ -12510,9 +12515,12 @@ function drawCapiPortrait() {
 const DEV_OPEN_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
 const DEV_OPEN_ALL = (DEV_OPEN_BUILD && !GOD_PAUSED) || GOD_ON;   // GOD_ON — режим бога за кодом власника (див. 100_config.js)     // для перевірки можна тимчасово поставити true: відкриє всі сезони й усі 8 епох
 function themesUnlocked() { return DEV_OPEN_ALL || state.epoch >= 2; }
+// Ручний вибір Хелловіну відкривається пізніше: після проходження 5 епохи
+function seasonPickLocked(s) { return s !== 'auto' && (!themesUnlocked() || (s === 'halloween' && !DEV_OPEN_ALL && state.epoch < 5)); }
+function seasonLockText(s) { return t(s === 'halloween' && themesUnlocked() ? 'themeLockedHalloween' : 'themeLocked'); }
 function seasonNow() {
   const s = state.settings.season;
-  if (s !== 'auto' && SEASONS.includes(s) && themesUnlocked()) return s;
+  if (s !== 'auto' && SEASONS.includes(s) && !seasonPickLocked(s)) return s;
   const forced = forcedHoliday();
   if (forced === 'halloween') return 'halloween';
   if (forced === 'newyear') return 'winter';
@@ -13518,10 +13526,10 @@ function updateSeasonsUI() {
   if (ui.paneSeasons.hidden) return;
   ui.setTime.querySelectorAll('button').forEach(b => { b.textContent = t('time_' + b.dataset.time); });
   ui.setSeason.querySelectorAll('button').forEach(b => {
-    const locked = b.dataset.season !== 'auto' && !themesUnlocked();
+    const locked = seasonPickLocked(b.dataset.season);
     b.textContent = t('season_' + b.dataset.season);
     b.classList.toggle('locked', locked);
-    b.title = locked ? t('themeLocked') : '';
+    b.title = locked ? seasonLockText(b.dataset.season) : '';
     if (locked) b.appendChild(lockImg('lock'));
     b.setAttribute('aria-pressed', String(b.dataset.season === state.settings.season && !locked));
   });
@@ -13975,7 +13983,7 @@ function setupProgression() {
   SEASONS.forEach(s => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn lang-pick'; b.dataset.season = s;
-    b.addEventListener('click', () => { if (s !== 'auto' && !themesUnlocked()) { showToast(t('themeLocked'), 'bad'); return; } state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
+    b.addEventListener('click', () => { if (seasonPickLocked(s)) { showToast(seasonLockText(s), 'bad'); return; } state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
     ui.setSeason.appendChild(b);
   });
   // швидко перемкнути час доби (далі сонце й місяць рухаються самі)
@@ -15729,7 +15737,8 @@ function drawNightLights() {
 }
 
 /* ---------- Хелловін: привиди; в усі інші часи — герої епох (сова, їжак, броненосець…), яких так само ловлять тапом ---------- */
-let ghostHunt = null;            // триває полювання: { t, dur, caught, total, ghosts, crt } (crt — номер епохи героя; -1 — привиди на Хелловін)
+const CREATURE_SCALE = 1.1;       // розмір істот епох у полюванні (привиди Хелловіну без змін)
+let ghostHunt = null;          // триває полювання: { t, dur, caught, total, ghosts, crt } (crt — номер епохи героя; -1 — привиди на Хелловін)
 let nextGhostAt = 0;             // коли почнеться наступне полювання (мс); 0 — ще не заплановано
 const windowGhosts = [];         // привиди, що на мить блимають у вікнах будинків
 let windowGhostTimer = 3;
@@ -15981,7 +15990,8 @@ function hitGhost(p) {
   const h = ghostHunt;
   for (const g of h.ghosts) {
     if (!g.alive || h.t < g.born || g.sy === undefined) continue;
-    if (Math.abs(p.x - g.x) <= 10 && p.y >= g.sy - 17 && p.y <= g.sy + 5) {
+    const k = h.crt >= 0 ? CREATURE_SCALE : 1;
+    if (Math.abs(p.x - g.x) <= 10 * k && p.y >= g.sy - 17 * k && p.y <= g.sy + 5 * k) {
       g.alive = false; buzz(25);
       h.caught++;
       const prize = Math.floor(state.cps * 20 + 100 * levelMult()); state.coins += prize; state.totalEarned += prize;        // за кожного — готова нагорода монетами
@@ -16008,6 +16018,7 @@ function drawGhostHunt() {
         drawSprite(ctx, 'ghost', x - 6, y - 13, { flip: g.flip });
         return;
       }
+      ctx.save(); ctx.translate(x, y); ctx.scale(CREATURE_SCALE, CREATURE_SCALE); ctx.translate(-x, -y);       // істоти епох на 10% більші
       const mv = EPOCH_CREATURES[h.crt].move, c = getOutlinedCanvas('npc_crt' + h.crt), airborne = mv === 'glide' || mv === 'float' || g.air;
       const gy = (mv === 'leap' ? g.y : y);                              // тінь лишається на землі
       if (!(mv === 'glide' || mv === 'float')) { ctx.globalAlpha = 0.2 * fade * (g.alpha || 1); R(ctx, x - 6, Math.round(gy) + 1, 13, 2, 'd'); }
@@ -16020,6 +16031,7 @@ function drawGhostHunt() {
       else if (mv === 'camo' || mv === 'glitch' || mv === 'leap' || mv === 'dash' || mv === 'moonwalk' || mv === 'glide') drawCanvasSprite(ctx, c, x - 10, y - 17, { flip: g.flip, sy: airborne && mv === 'glide' ? 1 + 0.08 * Math.sin(g.ph * 5) : 1 });
       else drawCanvasSprite(ctx, c, x - 10, y - 17, { flip: g.flip });
       if (mv === 'moonwalk' && animOn() && Math.floor(g.ph * 3) % 2) { ctx.globalAlpha = fade; R(ctx, x - 12, y - 14, 1, 1, 'y'); R(ctx, x + 11, y - 12, 1, 1, 'f'); }
+      ctx.restore();
     });
     ctx.globalAlpha = 1;
   }
@@ -16058,7 +16070,7 @@ const BONUS_GAME_SKINS = [['capy', 'c', 'hat'], ['shop', 'q', 'house'], ['weathe
   .map(([type, color, icon]) => ({ kind: 'skin', skin: type, weight: 7, color, icon }));
 // Магазин часу «Цирк частіше» (id wheelFast): скільки від звичайної паузи між візитами цирку або бонус-гри
 function circusFreq() { return CIRCUS_FREQ_BY_LEVEL[wsLevel('wheelFast')] || 1; }
-const WEATHER_ORDER = ['rainbow', 'lightning', 'lightninggreen', 'lightningred', 'cottoncloud', 'goldcloud', 'starcloud'];     // порядок у вкладці: хмари в кінці
+const WEATHER_ORDER = ['rainbow', 'lightning', 'lightninggreen', 'lightningred', 'cottoncloud', 'goldcloud', 'starcloud', 'diamondcloud'];     // порядок у вкладці: хмари в кінці
 const SKIN_HIDDEN = ['street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_wood', 'shop_garden', 'shop_spring', 'shop_autumn'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
 const SKIN_TYPES = ['capy', 'shop', 'weather', 'street', 'hero'];   // групи скінів: Капі, магазин, погода, герої
 const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_lightning', 'hero_party', 'hero_ninja', 'capy_ep0', 'capy_ep1', 'capy_ep2', 'capy_ep3', 'capy_ep4', 'capy_ep5', 'capy_ep6', 'capy_ep7', 'capy_wizard', 'capy_chef', 'capy_explorer', 'capy_detective', 'capy_sailor', 'shop_ice', 'shop_wood', 'shop_garden', 'weather_cottoncloud', 'weather_goldcloud', 'weather_starcloud', 'hero_chef', 'hero_wizard', 'hero_royal', 'street_wood', 'street_brick', 'capy_santa', 'capy_witch', 'capy_flower', 'capy_beach', 'capy_autumn', 'hero_santa', 'hero_witch', 'shop_xmas', 'shop_halloween', 'shop_spring', 'shop_autumn', 'street_snow', 'street_leaves', 'capy_mel', 'capy_nika', 'capy_knight', 'capy_hero', 'capy_cowboy', 'capy_fairy', 'capy_viking', 'capy_pilot', 'weather_lightninggreen', 'weather_lightningred', 'street_moss', 'street_gold', 'capy_gold', 'capy_diamond', 'hero_gold', 'hero_diamond', 'shop_diamond', 'street_diamond', 'weather_diamondcloud'];
@@ -16457,7 +16469,7 @@ function updateCircus(dt) {
   if (c.hag) updateHagGame(dt);
   if (c.noodle) updateNoodleGame(dt);
   updateBonusGame(dt); updateBonusBtn(dt);
-  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); CIRCUS_ART.clownWindow(g, circus.t); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
+  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
 }
 /* ---- Баба Яга ---- */
 const hagFly = { on: false, x: 0, y: 0, dir: -1, t: 0, wait: 0, fast: false };            // Баба Яга в ступі летить небом
@@ -16675,7 +16687,7 @@ function openCircus() {
   if (dialog.active) return;
   circus.bonus = false;
   const hag = !!state.circus.hag, nd = !!state.circus.noodle;
-  ui.circusModal.classList.toggle('hag', hag || nd);
+  ui.circusModal.classList.toggle('hag', hag || nd); ui.circusModal.classList.remove('mg');
   if (nd) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (noodleGame.phase === 'idle' || noodleGame.phase === 'done') noodleReset(); if (state.circus.spun) noodleGame.phase = 'done'; }
   else if (hag) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
@@ -22142,7 +22154,7 @@ function openBonus(def) {                                            // def — 
   const w = bonusWaitMs(d.eid);
   if (w > 0) { if (typeof adsOfferBonusSkip !== 'function' || !adsOfferBonusSkip(def, w)) showToast(t('mgWait', fmtTime(w / 1000))); return; }
   circus.bonus = true; circus.bonusDef = d;
-  ui.circusModal.classList.add('hag');
+  ui.circusModal.classList.add('hag', 'mg');                           // mg: без клоуна, гра на всю рамку
   ui.circusWheel.width = 192; ui.circusWheel.height = 120;
   mgReset(d.o);
   ui.circusModal.hidden = false;

@@ -312,7 +312,7 @@ function setupProgression() {
   SEASONS.forEach(s => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn lang-pick'; b.dataset.season = s;
-    b.addEventListener('click', () => { if (s !== 'auto' && !themesUnlocked()) { showToast(t('themeLocked'), 'bad'); return; } state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
+    b.addEventListener('click', () => { if (seasonPickLocked(s)) { showToast(seasonLockText(s), 'bad'); return; } state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
     ui.setSeason.appendChild(b);
   });
   // швидко перемкнути час доби (далі сонце й місяць рухаються самі)

@@ -38,9 +38,12 @@ function drawCapiPortrait() {
 const DEV_OPEN_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
 const DEV_OPEN_ALL = (DEV_OPEN_BUILD && !GOD_PAUSED) || GOD_ON;   // GOD_ON — режим бога за кодом власника (див. 100_config.js)     // для перевірки можна тимчасово поставити true: відкриє всі сезони й усі 8 епох
 function themesUnlocked() { return DEV_OPEN_ALL || state.epoch >= 2; }
+// Ручний вибір Хелловіну відкривається пізніше: після проходження 5 епохи
+function seasonPickLocked(s) { return s !== 'auto' && (!themesUnlocked() || (s === 'halloween' && !DEV_OPEN_ALL && state.epoch < 5)); }
+function seasonLockText(s) { return t(s === 'halloween' && themesUnlocked() ? 'themeLockedHalloween' : 'themeLocked'); }
 function seasonNow() {
   const s = state.settings.season;
-  if (s !== 'auto' && SEASONS.includes(s) && themesUnlocked()) return s;
+  if (s !== 'auto' && SEASONS.includes(s) && !seasonPickLocked(s)) return s;
   const forced = forcedHoliday();
   if (forced === 'halloween') return 'halloween';
   if (forced === 'newyear') return 'winter';

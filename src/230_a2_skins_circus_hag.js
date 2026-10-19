@@ -159,7 +159,7 @@ function updateCircus(dt) {
   if (c.hag) updateHagGame(dt);
   if (c.noodle) updateNoodleGame(dt);
   updateBonusGame(dt); updateBonusBtn(dt);
-  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); CIRCUS_ART.clownWindow(g, circus.t); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
+  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
 }
 /* ---- Баба Яга ---- */
 const hagFly = { on: false, x: 0, y: 0, dir: -1, t: 0, wait: 0, fast: false };            // Баба Яга в ступі летить небом

@@ -101,7 +101,7 @@ function openCircus() {
   if (dialog.active) return;
   circus.bonus = false;
   const hag = !!state.circus.hag, nd = !!state.circus.noodle;
-  ui.circusModal.classList.toggle('hag', hag || nd);
+  ui.circusModal.classList.toggle('hag', hag || nd); ui.circusModal.classList.remove('mg');
   if (nd) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (noodleGame.phase === 'idle' || noodleGame.phase === 'done') noodleReset(); if (state.circus.spun) noodleGame.phase = 'done'; }
   else if (hag) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }

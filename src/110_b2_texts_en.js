@@ -116,7 +116,7 @@
     wheelClose: 'Close',
     wheelReady: 'The Wheel of Fortune is ready! 🎡',
     prize_coins: 'Coins: +{0}',
-    themeLocked: 'Finish epoch 2 first',
+    themeLocked: 'Finish epoch 2 first', themeLockedHalloween: 'Finish epoch 5 first',
     fbBtn: '✉ Write to the developers', fbTitle: 'Write to us', fbHint: 'What do you like, what broke, what is missing? We read every message.', fbContact: 'Contact (optional)', fbSend: 'Send', fbCancel: 'Cancel', fbThanks: 'Thank you! Your message was sent 💌', fbFail: 'Could not send. Please try again later.', fbCopied: 'The address is not set up yet. The text was copied, please send it to the developers.', fbEmpty: 'Write a few words first.',
     newsTitle: '📮 Mail from the developers', newsSub: 'Fresh CapyTap news',
     newsIntro: 'Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!',

@@ -330,10 +330,10 @@ function updateSeasonsUI() {
   if (ui.paneSeasons.hidden) return;
   ui.setTime.querySelectorAll('button').forEach(b => { b.textContent = t('time_' + b.dataset.time); });
   ui.setSeason.querySelectorAll('button').forEach(b => {
-    const locked = b.dataset.season !== 'auto' && !themesUnlocked();
+    const locked = seasonPickLocked(b.dataset.season);
     b.textContent = t('season_' + b.dataset.season);
     b.classList.toggle('locked', locked);
-    b.title = locked ? t('themeLocked') : '';
+    b.title = locked ? seasonLockText(b.dataset.season) : '';
     if (locked) b.appendChild(lockImg('lock'));
     b.setAttribute('aria-pressed', String(b.dataset.season === state.settings.season && !locked));
   });

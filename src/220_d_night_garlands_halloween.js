@@ -174,7 +174,8 @@ function drawNightLights() {
 }
 
 /* ---------- Хелловін: привиди; в усі інші часи — герої епох (сова, їжак, броненосець…), яких так само ловлять тапом ---------- */
-let ghostHunt = null;            // триває полювання: { t, dur, caught, total, ghosts, crt } (crt — номер епохи героя; -1 — привиди на Хелловін)
+const CREATURE_SCALE = 1.1;       // розмір істот епох у полюванні (привиди Хелловіну без змін)
+let ghostHunt = null;          // триває полювання: { t, dur, caught, total, ghosts, crt } (crt — номер епохи героя; -1 — привиди на Хелловін)
 let nextGhostAt = 0;             // коли почнеться наступне полювання (мс); 0 — ще не заплановано
 const windowGhosts = [];         // привиди, що на мить блимають у вікнах будинків
 let windowGhostTimer = 3;
@@ -426,7 +427,8 @@ function hitGhost(p) {
   const h = ghostHunt;
   for (const g of h.ghosts) {
     if (!g.alive || h.t < g.born || g.sy === undefined) continue;
-    if (Math.abs(p.x - g.x) <= 10 && p.y >= g.sy - 17 && p.y <= g.sy + 5) {
+    const k = h.crt >= 0 ? CREATURE_SCALE : 1;
+    if (Math.abs(p.x - g.x) <= 10 * k && p.y >= g.sy - 17 * k && p.y <= g.sy + 5 * k) {
       g.alive = false; buzz(25);
       h.caught++;
       const prize = Math.floor(state.cps * 20 + 100 * levelMult()); state.coins += prize; state.totalEarned += prize;        // за кожного — готова нагорода монетами
@@ -453,6 +455,7 @@ function drawGhostHunt() {
         drawSprite(ctx, 'ghost', x - 6, y - 13, { flip: g.flip });
         return;
       }
+      ctx.save(); ctx.translate(x, y); ctx.scale(CREATURE_SCALE, CREATURE_SCALE); ctx.translate(-x, -y);       // істоти епох на 10% більші
       const mv = EPOCH_CREATURES[h.crt].move, c = getOutlinedCanvas('npc_crt' + h.crt), airborne = mv === 'glide' || mv === 'float' || g.air;
       const gy = (mv === 'leap' ? g.y : y);                              // тінь лишається на землі
       if (!(mv === 'glide' || mv === 'float')) { ctx.globalAlpha = 0.2 * fade * (g.alpha || 1); R(ctx, x - 6, Math.round(gy) + 1, 13, 2, 'd'); }
@@ -465,6 +468,7 @@ function drawGhostHunt() {
       else if (mv === 'camo' || mv === 'glitch' || mv === 'leap' || mv === 'dash' || mv === 'moonwalk' || mv === 'glide') drawCanvasSprite(ctx, c, x - 10, y - 17, { flip: g.flip, sy: airborne && mv === 'glide' ? 1 + 0.08 * Math.sin(g.ph * 5) : 1 });
       else drawCanvasSprite(ctx, c, x - 10, y - 17, { flip: g.flip });
       if (mv === 'moonwalk' && animOn() && Math.floor(g.ph * 3) % 2) { ctx.globalAlpha = fade; R(ctx, x - 12, y - 14, 1, 1, 'y'); R(ctx, x + 11, y - 12, 1, 1, 'f'); }
+      ctx.restore();
     });
     ctx.globalAlpha = 1;
   }

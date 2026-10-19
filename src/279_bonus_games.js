@@ -28,7 +28,7 @@ function openBonus(def) {                                            // def — 
   const w = bonusWaitMs(d.eid);
   if (w > 0) { if (typeof adsOfferBonusSkip !== 'function' || !adsOfferBonusSkip(def, w)) showToast(t('mgWait', fmtTime(w / 1000))); return; }
   circus.bonus = true; circus.bonusDef = d;
-  ui.circusModal.classList.add('hag');
+  ui.circusModal.classList.add('hag', 'mg');                           // mg: без клоуна, гра на всю рамку
   ui.circusWheel.width = 192; ui.circusWheel.height = 120;
   mgReset(d.o);
   ui.circusModal.hidden = false;

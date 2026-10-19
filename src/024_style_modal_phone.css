@@ -109,6 +109,11 @@
 #circusResult { min-height: 22px; font-size: 15px !important; }
 #circusModal.hag #circusWheel { width: min(84vw, 372px, max(180px, calc((100dvh - 400px) * 1.6))); cursor: pointer; }
 #circusModal.hag #circusResult { min-height: 44px; font-size: 12px !important; line-height: 1.5; }
+/* бонус-ігри епох: без клоуна та його вікна, сама гра на всю рамку */
+#circusModal.mg .clown-win { display: none; }
+#circusModal.mg .modal-box { width: min(96vw, 640px); padding: 16px 14px 14px; }
+#circusModal.mg .wheel-wrap { margin: 2px 0 6px; }
+#circusModal.mg #circusWheel { width: min(100%, max(180px, calc((100dvh - 250px) * 1.6))); }
 #circusClose { margin-top: 6px; }
 .wheel-box { max-height: 96vh; overflow-y: auto; padding-top: 22px; }
 .wheel-wrap { display: flex; justify-content: center; margin: 4px 0 8px; }
