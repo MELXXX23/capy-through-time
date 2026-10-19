@@ -70,7 +70,7 @@
 | `241_b_epoch_story.js` | 19 | сюжет епох: середина EC_DATA |  |
 | `241_c_epoch_story.js` | 31 | сюжет епох: кінець EC_DATA, EC_TRIGGERS | EPOCH_CHAPTERS |
 | `245_stands.js` | 36 | місця гостей біля магазину | GUEST_STAND_EPOCH, STANDS, standPending, guestArrived, guestStands, drawGuestStand |
-| `246_a_help.js` | 34 | допомога гостям: логіка, подяки, тексти UK | helpChipUntil, HELP_NEED, guestEpochOf, helpCount, helpDone, helpMetIn, helpActiveIn, helpCredit |
+| `246_a_help.js` | 35 | допомога гостям: логіка, подяки, тексти UK | helpChipUntil, HELP_NEED, guestEpochOf, helpCount, helpDone, helpMetIn, helpActiveIn, helpCredit |
 | `246_b_help.js` | 19 | допомога гостям: тексти EN, підключення |  |
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
 | `260_render.js` | 29 | головний render, будівельна техніка | render, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum, drawTruckWheel |
@@ -79,7 +79,7 @@
 | `275_japan.js` | 54 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `275_z_itch_rate.js` | 2 | — | ITCH_PAGE, onItchBuild |
 | `276_japan_text.js` | 15 | епоха 9 Японія: тексти |  |
-| `276_zz_lines_b.js` | 32 | — |  |
+| `276_zz_lines_b.js` | 39 | — |  |
 | `277_japan_noodle.js` | 19 | Японія: лапшична діда Рьо замість цирку (візок, портрет, гра «Звари лапшу», тексти) | NOODLE_BUST, noodleGame, NOODLE_ZH, NOODLE_ART, noodleReset, noodleStart, noodleTake, updateNoodleGame |
 | `278_a_build_themes.js` | 31 | Будівництво по епохах: ядро BTH (rnd, помічники, ефекти), перші епохи | BTH, buildThemeRender |
 | `278_b_build_themes.js` | 24 | Будівництво по епохах: середні епохи |  |

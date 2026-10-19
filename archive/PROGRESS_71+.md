@@ -290,3 +290,10 @@
 - `git merge --no-ff android-wrapper` у main (мітка `before-itchrelease` = main до злиття); `docs/privacy.html` повернуто як у main (без реклами). autotest --quick ✓. Коміт 660ec9c, push, сайт оновився (~2 хв).
 - ZIP: `desktop/dist/CapyTapMarket-itch-html.zip` = `docs/` без `sw.js` (PowerShell ZipFile з `/` у шляхах; tar з Git Bash дає не-zip). На itch завантажено через Edit game → Uploads (файл з тією ж назвою замінив старий, 700 КБ), «played in browser» увімкнено, Save; гра на сторінці запускається. Кнопка оцінки видна лише всередині itch.
 - Девлог опубліковано на itch (https://melxxxnika.itch.io/capytap-market/devlog/1716496), тип «Major update», EN, коментарі увімкнені. exe на столі не оновлювався.
+
+## 127. Правки р. 59: істоти +10%, замок Хелловіну, погода у скінах, бонус-ігри на всю рамку (не закомічено; мітка відкату `before-tweaks59`)
+- Істоти епох у полюванні (`CREATURE_SCALE` 1.1 у `220_d_night_garlands_halloween.js`): малюнок і зона тапу на 10% більші; привиди Хелловіну без змін.
+- Пора року «Хелловін» у налаштуваннях: замок (як в інших) до проходження 5 епохи (`seasonPickLocked`/`seasonLockText`, `200_a`; тост «Необхідно пройти 5 епоху»). «Авто» за датою не змінено.
+- Скіни → Погода: «діамантова хмара» додана в `WEATHER_ORDER` (стояла одразу після «звичайного», тепер після зоряної, серед хмар).
+- Бонус-ігри епох: без клоуна й вікна з фоном; модалка клас `mg` (`024_style_modal_phone.css`), поле гри ~612 px на ПК, на всю ширину рамки на телефоні. Старі ігри Цирку/Баби/Локшини не чіпав.
+- autotest --quick ✓; бекап `game.html` не створено (cp заблоковано), відкат — `git reset --hard before-tweaks59`.

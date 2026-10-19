@@ -91,8 +91,32 @@
     uk: ["{0}: рівень {1}. Помітно виріс. Хоч би знати, на скільки.", "{0}: рівень {1}. Зарплата та сама, посмішка ширша.", "{0}: рівень {1}. Тепер ще впевненіше робить те саме.", "{0}: рівень {1}. Колеги кивають. Це майже оплески."],
     en: ["{0}: level {1}. Visibly grown. If only we knew by how much.", "{0}: level {1}. Same pay, wider smile.", "{0}: level {1}. Now does the same thing with more confidence.", "{0}: level {1}. Colleagues nod. That's almost applause."]
   };
+  // Загальні репліки епох (каже будь-хто з команди приблизно кожну третю фразу), по 6 на епоху 0–7; Японія (8) лишається в 276_japan_text
+  const EPS = {
+    uk: [
+      ["Пахне воском і свіжим хлібом. Затишно.", "Хтось знову малює на стіні. Кажуть, мистецтво.", "Гільдія купців схвалила наші ціни. Чи принаймні мовчить.", "Тут усе пишуть пером. Чеки досі пахнуть чорнилом.", "Тут би гобелен — і був би справжній палац.", "Хтось грає на лютні під вікном. Фальшивить, але з душею."],
+      ["Радіо грає й шипить водночас. Таке воно, ретро.", "Над дахами знову дирижабль. Мабуть, везе знижки.", "Молочний коктейль — і день удався.", "Кіно за копійку? Беру два квитки.", "Касету перемотую олівцем. Дідусь теж так робив.", "Пастельні кольори — найкращі кольори. Не сперечайтесь."],
+      ["Дзеркальна куля знову підморгує. Хтось танцює без музики?", "Платформи на підборах, а ціни вищі. Закономірність.", "Ритм такий, що прилавки трохи танцюють.", "Блискітки — не бруд. Це стиль. Кря вже знає.", "Диско не вмерло, воно просто на касі.", "Раз, два, три... знижка!"],
+      ["Ще одна монетка — і новий рівень. Я знаю, що кажу.", "Автомати блимають. Серце теж. У ритм.", "Рекорд на табло? Це не я. Це Шнирь. Знову.", "Тут у кожного по три життя. Хтось уже використав друге.", "Піксель — це маленька цеглинка щастя.", "Чую «пінг» і біжу. Навіть коли не мені."],
+      ["Сигнал є, а толку нема. Класика.", "Ця вкладка п'ять років чекає, що я її закрию.", "Дрон пролетів над вухом. Привітався. Я підстрибнув.", "Хтось знову виклав фото їжі. Моє печиво, до речі.", "Пароль «1234» — це не пароль, а прохання.", "Wi-Fi ловить усюди, крім мого настрою."],
+      ["Вітряк крутиться, лампа світить. Тихо, чисто, приємно.", "Бджола гуде над вухом. Це не напад, це розмова.", "На даху щось росте. Ніхто не пам'ятає, хто це садив.", "Чай із м'ятою з власного балкона. Це розкіш.", "Сонце гріє безкоштовно. Дивно, що раніше ніхто не здогадався.", "Велосипеди тут дзвенять, а не гудуть. Люблю."],
+      ["Зорі сьогодні близько. Можна ледь не торкнутись.", "Скафандр гріє, вітрина холодить. Збалансовано.", "Тут усе трохи легше. Навіть ціни.", "Підстрибнеш — повиснеш на секунду. Не перевіряв. Багато разів.", "Ракета шумить, але вже не лякає. Звикли.", "Зі станції видно ціле місто. Воно маленьке й світиться."],
+      ["Вивіска блимає. Здається, нагадує, що я не їв.", "Місто не спить. Я, мабуть, теж.", "У цій тіні ліхтар світить яскравіше за день.", "Рожевий і бірюзовий — єдина палітра, яка нам потрібна.", "Таксі пролетіло над головою. Глянув — і вже запізнився.", "Дощ тут світиться. Тому не заважає."]
+    ],
+    en: [
+      ["Smells of wax and fresh bread. Cozy.", "Someone's painting on the wall again. They call it art.", "The merchants' guild approved our prices. Or at least stays quiet.", "Everything is written with a quill here. Receipts still smell of ink.", "A tapestry here and it'd be a real palace.", "Someone's playing a lute under the window. Off-key, but with feeling."],
+      ["The radio plays and hisses at once. That's retro.", "A blimp above the roofs again. Probably carrying discounts.", "A milkshake and the day is made.", "A movie for a penny? Two tickets, please.", "I rewind the tape with a pencil. Grandpa did too.", "Pastel colours are the best colours. Don't argue."],
+      ["The mirror ball winks again. Is someone dancing without music?", "Platform shoes and higher prices. There's a pattern.", "The beat is so strong the counters are almost dancing.", "Glitter isn't dirt. It's style. Kria knows.", "Disco isn't dead, it's just at the till.", "One, two, three... discount!"],
+      ["One more coin and a new level. I know what I'm talking about.", "The machines blink. So does my heart. In rhythm.", "A new record on the board? Not me. Shnyr. Again.", "Everyone here has three lives. Someone's already used the second.", "A pixel is a little brick of happiness.", "I hear a ping and run. Even when it isn't for me."],
+      ["There's a signal, but no use. Classic.", "This tab has been waiting five years for me to close it.", "A drone flew by my ear. Said hi. I jumped.", "Someone posted a photo of food again. My cookie, by the way.", "The password “1234” isn't a password, it's a request.", "Wi-Fi catches everywhere except my mood."],
+      ["The windmill turns, the lamp glows. Quiet, clean, nice.", "A bee buzzes by my ear. Not an attack, a conversation.", "Something is growing on the roof. Nobody remembers who planted it.", "Mint tea from my own balcony. That's luxury.", "The sun warms for free. Strange nobody thought of it earlier.", "Bicycles here ring, not roar. I love it."],
+      ["The stars are close tonight. You can almost touch them.", "The spacesuit warms, the window cools. Balanced.", "Everything is a bit lighter here. Even the prices.", "If you jump, you hang for a second. Haven't checked. Many times.", "The rocket roars but no longer scares us. We got used to it.", "From the station you can see the whole city. It's small and glowing."],
+      ["The sign flickers. I think it's reminding me I haven't eaten.", "The city doesn't sleep. Neither do I, probably.", "In this shade a lamp shines brighter than daylight.", "Pink and turquoise are the only palette we need.", "A taxi flew overhead. One glance and I'm already late.", "The rain glows here. So it doesn't bother me."]
+    ]
+  };
   ['uk', 'en'].forEach((lang, li) => {
     const T = translations[lang];
+    EPS[lang].forEach((arr, e) => arr.forEach((s, i) => { T['epoch_say_' + e + '_' + i] = s; }));
     Object.keys(L).forEach(id => {
       for (let i = 0; i < 16; i++) delete T['team_' + id + '_say_' + i];
       L[id][lang].forEach((s, i) => { T['team_' + id + '_say_' + i] = s; });
