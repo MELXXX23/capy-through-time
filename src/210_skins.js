@@ -285,6 +285,7 @@ function setupProgression() {
   // мова в налаштуваннях
   ui.setLangBtns.innerHTML = '';
   LANGS.forEach(l => {
+    if (l.wip && !DEV_OPEN_ALL) return;
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn lang-pick'; b.dataset.lang = l.id; b.textContent = l.label;
     b.addEventListener('click', () => setLanguage(l.id));

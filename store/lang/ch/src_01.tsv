@@ -1,0 +1,174 @@
+T:ch5_7	The team is growing. Hire new staff in the “Team” tab. Meanwhile someone in the dark is eyeing your register.
+T:ch6_title	Shnyr in the Rain
+T:ch6_0	Late evening. Everyone has gone home and Capy sits over the takings. Rain outside, and something stirs by the back door.
+T:ch6_1	Is someone sobbing? Shnyr, is that you?
+T:ch6_2	Not me. It's the rain. On my face. Only on my face.
+T:ch6_3	Shnyr, why do you do it? Don't you have a home?
+T:ch6_4	There's a crate behind the bakery. No friends. At all. Not even someone to sit quietly next to.
+T:ch6_5	I'd like someone to just say “hi”. Everyone yells “catch the raccoon”.
+T:ch6_6	Hi, Shnyr. Just because. Come in, we have tea and buns.
+T:ch6_7	Seriously? Then I'm done stealing. Well... almost. Kidding. Probably. Thanks.
+T:ch6_8	Since then Shnyr isn't a thief but one of us. He still glances at the till sometimes, but now with embarrassment. Big things were ahead for everyone.
+T:ch7_title	The Mall
+T:ch7_0	Months passed. Shnyr became a customer favourite, and the team became a family that argues over coffee. The shop grew into a store, then a supermarket, and now...
+T:ch7_1	On the street stands a mall with a glass roof, a cinema and the smell of fresh pastries. Competitors quietly sulk in a corner.
+T:ch7_2	Capy's Mall. From one coin. Who would have thought.
+T:ch7_3	I counted every brick. They all add up. A miracle.
+T:ch7_4	Nobody needs to catch me here. It's strange and nice.
+T:ch7_5	Thank you all. Without you this place would only sell air.
+T:ch7_6	Something ticked loudly in Capy's pocket.
+T:ch7_7	My watch... Did it just come alive?
+T:ch8_title	Finale: The Watch Speaks
+T:ch8_0	Sure enough, the golden watch crawls out of the pocket and hangs in the air. The hands spin backwards.
+T:ch8_1	Hello, Capy. I've waited long. An eternity, if you don't count coffee breaks.
+T:ch8_2	You can talk?!
+T:ch8_3	I'm the Watch of Time. I can rewind minutes. Refunds not included.
+T:ch8_4	Your mall is wonderful. But imagine going through it all again, with experience.
+T:ch8_5	Start over? But everything's already built here...
+T:ch8_6	Not lose, but build wiser. Friends stay, knowledge stays. Coins don't. That's the economy.
+T:ch8_7	Wiser... Sounds not bad. I need to think.
+T:ch8_8	When you decide, just wind me up. I'm here. Ticking.
+T:ch8_9	Time travel is unlocked. Check the “Watch” tab: a new era is waiting.
+T:holiday_newyear	New Year
+T:holiday_halloween	Halloween
+T:holiday_blackfriday	Black Friday
+T:hb_global	+{0}% income
+T:holidayToast	{0}: a holiday in town! {1}
+T:boost_sale	Sale ×{0}
+T:boost_bf	Black Friday ×{0}
+T:boost_income	Income ×{0}
+T:boost_tap	Tap ×{0}
+T:banner_sale	🏷️ SALE ×{0} · {1}
+T:banner_bf	🖤 BLACK FRIDAY ×{0} · {1}
+T:banner_thief	🦝 Catch the raccoon! {0}/{1} · {2} s
+T:saleStart	Sale. Income ×{0} for 2 minutes. Use it before everyone wakes up.
+T:raccoonStart	Shnyr the raccoon grabbed a sack. Chase him: tap on him.
+T:raccoonWin	Caught. Shnyr dropped the sack: +{0}.
+T:raccoonLose	Shnyr ran off and stole {0} coins.
+T:raccoonFriend	Shnyr was only joking and ran off. He stole nothing.
+T:tonyaScared	Tonya chased the raccoon off right at the entrance.
+T:shnyrSay_0	Heh-heh, mine.
+T:shnyrSay_1	The sack is mine, and the coins too.
+T:shnyrSay_2	Try and catch me.
+T:shnyrOuch_1	Hey, not the fur!
+T:shnyrOuch_2	Good shot. Unpleasant.
+T:wheelTitle	Fortune Drum
+T:wheelLegend	🪙 coins · ⚡ income · 👆 tap · ⭐ jackpot
+T:wheelStreak	Day streak: {0} (prizes ×{1})
+T:wheelSpin	Spin!
+T:wheelWait	Next spin in {0}
+T:wheelClose	Close
+T:wheelReady	The Wheel of Fortune is ready! 🎡
+T:prize_coins	Coins: +{0}
+T:themeLocked	Finish epoch 2 first
+T:themeLockedHalloween	Finish epoch 5 first
+T:fbBtn	✉ Write to the developers
+T:fbTitle	Write to us
+T:fbHint	What do you like, what broke, what is missing? We read every message.
+T:fbContact	Contact (optional)
+T:fbSend	Send
+T:fbCancel	Cancel
+T:fbThanks	Thank you! Your message was sent 💌
+T:fbFail	Could not send. Please try again later.
+T:fbCopied	The address is not set up yet. The text was copied, please send it to the developers.
+T:fbEmpty	Write a few words first.
+T:newsTitle	📮 Mail from the developers
+T:newsSub	Fresh CapyTap news
+T:newsIntro	Hi, friend! This time the news is in a newspaper: a clock tower, a new loading screen and many small things. Turn the pages!
+T:newsH0	A newspaper instead of a letter.
+T:newsT0	The mail from the developers is now a newspaper: it unfolds and the pages turn. Swipe, tap or use the arrows.
+T:newsH1	The clock tower.
+T:newsT1	A big clock tower rose on the mall. Before the trip it strikes: once on the first night, twice on the second and three times on the third. Tap it to set off for a new era.
+T:newsH2	New loading screen.
+T:newsT2	A lively night city with windows, cars and birds, and useful tips below. Tap a tip to see the next one.
+T:newsH3	A new witch.
+T:newsT3	The witch on a broom got prettier: a big hat, a fluffy broom and a trail of stars.
+T:newsH4	Bigger markets.
+T:newsT4	On a vertical phone markets of every level are bigger and the brown strips at the edges are gone.
+T:newsH5	Bitten clouds.
+T:newsT5	In the Cotton Clouds skin some of the clouds look as if somebody took a bite.
+T:newsH6	The rain drop.
+T:newsT6	The little drop that turns the rain on now hangs on the right by the shop sign.
+T:newsH7	Crisp frames.
+T:newsT7	Menu frames have a clear outline on all sides, and tab labels no longer hide under the padlock.
+T:newsH8	Capy at night.
+T:newsT8	In the dark Capy gets a warm outline so she stands out, and the fog no longer veils the animals.
+T:newsSign	Thanks for playing! Tell us what you want to see next. — The CapyTap team
+T:newsClose	Got it!
+T:fear0	Eek!
+T:fear1	Mommy!
+T:fear2	My bun!
+T:fear3	I was just strolling!
+T:fear4	Where are you going?!
+T:fear5	Run!
+T:seasonIntroTitle	Seasons unlocked!
+T:seasonIntroText	Two eras down, and now you can pick the season yourself: spring, summer, autumn, winter or spooky Halloween. Each one changes the trees, the weather and the mood of the street. Look for the new wheel button in the menu!
+T:seasonIntroGo	🌸 To the seasons
+T:seasonIntroLater	Later
+T:mailSay0	Mail! Sign right here!
+T:mailSay1	A letter for you! Faster than a pigeon!
+T:mailSay2	Express delivery. The cap is official!
+T:mailSay3	Letter delivered, paw on heart.
+T:gfear0	A ghost!!! Mommy!
+T:gfear1	Boo-- oh, it is him!
+T:gfear2	I saw nothing!
+T:gfear3	Someone is in the window!
+T:gfear4	It is just a sheet, right? NO!
+T:hagBang	🧙 A witch is flying over town! Tap the "!"
+T:hagArrived	🏚️ The hut on chicken legs has arrived! Tap it
+T:hagTitle	The Witch's Hut
+T:hagSub	Witch: "Three cauldrons, three surprises! Remember the best one, then guess!"
+T:hagStart	Take a peek!
+T:hagWatch	Watch closely what is where...
+T:hagShuffle	Shuffling!
+T:hagPick	Pick a cauldron!
+T:hagGood	You found the main prize!
+T:hagMiss	Oops, wrong one! The crystal is yours anyway.
+T:hagDone	Thanks, witch!
+T:clockWait	The clock is ticking... Build the mall and wait three nights. Then it will take you to a new era.
+T:clockNoGain	Too early: keep earning and the clock will pay shards for the trip.
+T:clockWarn	Night three. The clock strikes three times: time to go! Tap it or open the Clock in the menu.
+T:npMast	THE CAPY STREET NEWS
+T:npCoverHead	Fresh edition!
+T:npIn	In this issue:
+T:npCap1	The mall clock tower at midnight.
+T:npCap2	The night city on the loading screen.
+T:npCap3	The new witch circles the town.
+T:seasonFx_winter	Fluffy snow settles on the roofs
+T:seasonFx_spring	Flowers and petals wake up
+T:seasonFx_summer	The sun shines at full power
+T:seasonFx_autumn	The wind carries golden leaves
+T:seasonFx_halloween	Shh… something rustles in town
+T:circusFlag	LUCKY CIRCUS
+T:circusTitle	Fortune Circus
+T:circusSub	Clown Bubon: "Crystals and bonuses, only here!"
+T:circusSpin	Spin!
+T:circusDone	Thanks, circus!
+T:circusBang	Something showed up by the shop... Tap the red "!"
+T:circusArrived	The Fortune Circus is open! Tap it
+T:circusAgain	One more try! Spin again
+T:prize_skin	New skin: {0}! It waits in the skins tab
+T:skin_hero_party	Party heroes
+T:skin_hero_ninja	Ninja heroes
+T:skin_capy_knight	Knight Capy
+T:skin_capy_hero	Superhero Capy
+T:skin_capy_cowboy	Cowboy Capy
+T:skin_capy_fairy	Fairy Capy
+T:skin_capy_viking	Viking Capy
+T:skin_capy_pilot	Pilot Capy
+T:skinSay_capy_knight	My sword is sharp and my prices are fair. Almost.
+T:skinSay_capy_hero	My superpower is discounts. The cape is free.
+T:skinSay_capy_cowboy	This town has one sheriff. And he sells things.
+T:skinSay_capy_fairy	A pinch of magic, and the price tags jump to the sky.
+T:skinSay_capy_viking	To the sale! Raid the discounts!
+T:skinSay_capy_pilot	Fasten your seatbelts: our profit is gaining altitude.
+T:skin_capy_gold	Golden Capy
+T:skin_capy_diamond	Diamond Capy
+T:skin_hero_gold	Golden heroes
+T:skin_hero_diamond	Diamond heroes
+T:skin_shop_diamond	Diamond shop
+T:skin_street_diamond	Diamond road
+T:skin_weather_diamondcloud	Diamond clouds
+T:skinSay_capy_gold	Golden fur and no discount on the shine. Well, for you there is one.
+T:skinSay_capy_diamond	Diamond Capy. Tap boldly: I sparkle, but I am tough as crystal.
+T:skinSay_hero_gold	Golden helpers: they work like clockwork and shine like coins.

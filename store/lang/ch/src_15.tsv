@@ -1,0 +1,102 @@
+skin:/street_brick/1	Nice to walk on. Every brick is straight.
+skin:/street_brick/2	The road is red. Like my cheeks right now.
+skin:/street_wood/0	Boards creak under my paws. Cosy!
+skin:/street_wood/1	A wooden path smells of the forest.
+skin:/street_wood/2	Creak-creak. Like someone's coming. Oh, it's me.
+skin:/street_leaves/0	Crunch-crunch! My favourite autumn sound.
+skin:/street_leaves/1	Leaves under paws: a carpet of dark gold.
+skin:/street_leaves/2	Someone scattered leaves. Thanks, kind soul!
+skin:/street_snow/0	Snow! No, don't eat it. I'm stopping myself too.
+skin:/street_snow/1	My paws are cold, my heart is warm.
+skin:/street_snow/2	Crunch-crunch. Snow is music too.
+skin:/street_moss/0	Moss is soft like a carpet. Going to lie down.
+skin:/street_moss/1	Mossy cobbles remember many stories.
+skin:/street_moss/2	A little flower grows in the crack. Don't step on it!
+skin:/street_gold/0	A golden road! Not made of rubies though.
+skin:/street_gold/1	I walk and it sparkles under my paws. Nice.
+skin:/street_gold/2	A brick made from coins. Not touching, not mine.
+skin:/capy_ep8/0	The kimono is lovely, the sandals pinch. Beauty demands sacrifice.
+skin:/capy_ep8/1	The hat is like a lantern: I can’t see, but it’s cozy.
+skin:/capy_ep8/2	The dragon winked at me. Or maybe it was the wind.
+skin:/capy_ep8/3	Tea, rice and sakura: life is good.
+tour:/shop/1	This is the Shop. Tap, boost your tap and expand the shop here. Press it!
+tour:/departments/1	Departments earn coins by themselves, even when you are away. Press!
+tour:/team/1	In Team you hire animal helpers. Each one helps in their own way.
+tour:/story/1	Diary: story chapters and epoch stories. You can reread them.
+tour:/skins/1	Skins: change the look of Capy, the shop and heroes for crystals.
+tour:/seasons/1	Seasons and time of day. The lock opens after the 2nd epoch.
+tour:/achievements/1	Awards: prizes wait here for your achievements.
+tour:/settings/1	Settings: language, sound, epoch viewing and animations.
+tour:/news/1	And this is the developers mailbox! News about updates are there, and you can write to us. Open it!
+tour:/end/1	That is all! Tap the shop and grow it. We are always nearby!
+tour:/endBtn	PLAY!
+tour:/skip	Skip tour
+cut:/intro/0	Once upon a time,
+cut:/intro/1	Capy lived in a pixel world…
+cut:/introN/0	Once upon
+cut:/introN/1	a time, Capy
+cut:/introN/2	lived in a
+cut:/introN/3	pixel world…
+cut:/p1	Wow... I have a coin!
+cut:/b1	A first coin? Then you need a shop!
+cut:/c2	A shop?
+cut:/b2	Even one coin can grow into a business!
+cut:/b3	Watch closely!
+cut:/b4	Now it is your turn.
+cut:/c5	What do I do?
+cut:/b5	Try tapping!
+cut:/hint	TAP THE SHOP
+cut:/click	CLICK!
+cut:/b6	The more you earn, the more you can grow your shop!
+cut:/b7	Grow the shop, earn coins and unlock new epochs!
+cut:/w1	UPGRADE.
+cut:/w2	TAP.
+cut:/w3	GROW.
+cut:/i1	TAP
+cut:/i2	COINS
+cut:/i3	UPGRADE
+cut:/i4	LEVEL
+cut:/skip	Skip
+cut:/m1	Hi! I am Mel,
+cut:/n1	and I am Nika. We are the developers!
+cut:/m2	We will show how it all works. Shall we start?
+cut:/go	LET'S GO!
+cut:/tuk	TOCK!
+about:/mast	ABOUT US
+about:/lead	Hi, friend!
+about:/newH	What is new
+about:/new	The bonus era “Japan”! After Neon, time carries you to the land of the rising sun: wooden houses with little roofs, sakura, paper lanterns, neon signs that glow at night, and a dragon that flies over town and swoops down to the building site. It has its own travel animation, 8 new chapters, Sora the fox with her tea house, Nara the doe, Grandpa Ryo’s noodle stall instead of the circus, and Capy in a kimono. More bonus eras are on the way: see “Coming soon”.
+about:/intro/0	We are MEL and NIKA, and we made this game ourselves, pixel by pixel.
+about:/intro/1	Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.
+about:/nextH	What is ahead
+about:/next	Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…
+about:/giftH	A gift
+about:/gift	Claim the developers' gift: +100 coins
+about:/giftDone	Gift already claimed. Thanks for playing!
+about:/writeH	Contact
+about:/write	Found a bug or have an idea? Press Write to the developers below: we read everything.
+about:/toast	+100 coins from the developers!
+about:/paper	NEWS FROM THE DEVELOPERS · 
+guide:/head	Tips
+guide:/sub	A few hints to play easier and grow faster.
+guide:/items/0/0	💰 How to get rich faster
+guide:/items/0/1	<ul class="np-list"><li>Hire Spike the hedgehog as early as you can. He costs only 100 coins, and every tap becomes 1.5 times stronger.</li><li>The MAX button in Departments buys as much as your money allows. No need to press Buy twenty times.</li><li>Watch the strip at the top of the screen. It always shows the next goal, for example “Buy “Candles and matches”: 7/25”.</li></ul>
+guide:/items/0/2	tipRich
+guide:/items/1/0	🏪 How to grow
+guide:/items/1/1	<ul class="np-list"><li>To expand the shop you need three things: buy the required departments, upgrade the animals and collect coins. The conditions are in the Departments tab, in the Expansion block.</li><li>Every new shop level gives ×2 to all income, so expand at the first chance.</li></ul>
+guide:/items/1/2	tipGrow
+guide:/items/2/0	🎁 Free bonuses
+guide:/items/2/1	<ul class="np-list"><li>Bonus games: the dance floor in the Disco era, Grandpa Ryo’s noodle cart in Japan and the witch’s hut at Halloween. That is where skins are won.</li><li>The fortune circus gives crystals and bonuses, so do not walk past the tent.</li><li>Achievement rewards. Look into the tab with the cup, prizes are waiting there.</li><li>Street events. The red “!”, an owl or a raccoon appear only for a moment. Tap in time and you get a bonus.</li></ul>
+guide:/items/2/2	tipFree
+guide:/items/3/0	⏳ For the future
+guide:/items/3/1	Time travel resets the shop but gives time shards, a new era and a permanent income bonus. Do not be afraid of it: the next round goes much faster.
+guide:/items/3/2	clock
+soon:/head	Coming soon
+soon:/sub	What we are working on. Not out yet, but almost.
+soon:/items/0/0	More bonus eras
+soon:/items/0/1	Japan is already in the game. More bonus eras are coming, each with its own travel animation, story, helper, guest and flying decorations.
+soon:/items/1/0	App store versions
+soon:/items/1/1	We are preparing versions of the game for phones and computers in app stores.
+sec:/news	About us
+sec:/guide	Tips
+sec:/soon	Coming soon

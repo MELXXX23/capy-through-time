@@ -73,7 +73,7 @@ function formatNumber(value, lang, maxDecimals = 0) {
     return sign + String(parseFloat((n / Math.pow(10, e)).toFixed(2))).replace('.', fmt.decimal) + 'e' + e;
   }
   if (n >= 1000 && n < 1e15 && mode === 'full') {   // 1 500 000
-    return sign + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, lang === 'uk' ? ' ' : ',');
+    return sign + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, fmt.sep || ',');
   }
 
   if (n < 1000) {

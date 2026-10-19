@@ -1,0 +1,201 @@
+T:shnyrJoined	Shnyr jest już w zespole. Zajrzyj na kartę „Zespół”. I miej oko na kasę.
+T:team_shnyr	Shnyr Szop
+T:team_shnyr_role	Cwany doradca
+T:team_shnyr_trait	Zna każdą lukę. Teraz szuka ich w dobrej sprawie. Przeważnie.
+T:team_shnyr_sit_0	Siadaj, opowiem, jak kiedyś wziąłem ciastka. A właściwie nie. To był podatek.
+T:team_shnyr_sit_1	Mój dzień jest lepszy niż wczorajszy ja.
+T:ep9_title	Era Renesansu
+T:speaker_pietro	Pietro Kogut
+T:epochTitle_0	Era Renesansu
+T:epochTitle_1	Era Retro
+T:epochTitle_2	Era Disco
+T:epochTitle_3	Era Arkadowa
+T:epochTitle_4	Era Internetu
+T:epochTitle_5	Era Eko
+T:epochTitle_6	Era Kosmiczna
+T:epochTitle_7	Neonowa Przyszłość
+T:epochSub_0	Plac budzi się do życia, chorągiewki łopoczą nad ulicą, a w kieszeni jest tylko jedna moneta.
+T:epochSub_1	Pastelowe kolory, sterowce i szyldy jak w starym filmie.
+T:epochSub_2	Muzyka, kula lustrzana i kolorowe promienie.
+T:epochSub_3	Świat pikseli, pasiaste słońce i muzyka chiptune.
+T:epochSub_4	Samoloty na niebie, szklane okna i cały świat tuż obok.
+T:epochSub_5	Zielone dachy, panele słoneczne i wiatraki na wzgórzach.
+T:epochSub_6	Gwiazdy, rakiety i sklep na krańcu Wszechświata.
+T:epochSub_7	Neonowe szyldy i drony między wieżowcami.
+T:epochLabel	Epoka {0}
+T:prize_crystal	Kryształ Czasu: +{0} 💎
+T:tut1_0	Wersja skrócona. Stukaj sklep. To pierwszy i najuczciwszy sposób zarabiania.
+T:tut1_1	Jeszcze jedno: w każdej erze miasto odwiedzają specjalne zwierzaki. Stukaj, by je złapać. Złap wszystkie za jednym razem, a dostaniesz kryształ.
+T:tut1_2	Na karcie „Zespół” zatrudniaj pracowników. Każdy pomaga po swojemu, a jeśli stukniesz go na scenie, może coś powie. Posłuchaj.
+T:tut1_3	Rozbudowuj sklep: nowe działy, nowi ludzie, nowe rozdziały historii.
+T:tut1_4	Jeszcze jedno: w każdej erze miasto odwiedzają specjalne zwierzaki. Stukaj, by je złapać: każdy daje monety, a oba razem dają kryształ.
+T:storyDrumTitle	🎡 Specjalne zwierzaki
+T:storyDrumText	W każdej erze od czasu do czasu w mieście pojawiają się specjalne zwierzaki: sowa Mazok, jeż Vinyl, pancernik Disco, chomik Token, robak Glitchy, kameleon Leaf, aksolotl Astro i kot Signboard. Każdy porusza się po swojemu. Stukaj, by je złapać: każdy daje monety, a złapanie obu daje kryształ. W Halloween latają zamiast nich duchy. Kryształy i bonusy wygrywa się w cyrku, a skórki w minigrach bonusowych: wózek z makaronem dziadka Ryo w Japonii i chatka wiedźmy w Halloween.
+T:wsTitle	Warsztat Czasu
+T:wsShopTitle	🛒 Sklep czasu
+T:wsCrystals	Odłamki Czasu:  {0}
+T:wsBonus	Odłamków w sumie: {0} (każdy +{3}% dochodu, teraz ×{1}). Podróże w czasie: ×{2} do stuknięć i dochodu
+T:warpTitle	⏳ Podróż w Czasie
+T:warpText	Zegarek cofnie Capy w czasie. Monety, działy, poziom sklepu i poziomy zwierzaków się resetują, ale odłamki, kryształy, osiągnięcia, rozdziały i ulepszenia zostają. Zwierzaki stają się znajome: zatrudnienie ich kosztuje mniej.
+T:warpGain	Otrzymasz:  {0} i stałe ×{1} do stuknięć i dochodu
+T:routeTitle	🧭 Jak dotrzeć do następnej epoki
+T:routeNext	Dalej: epoka „{0}”
+T:routeLevel	Zbuduj centrum handlowe (poziom {0})
+T:routeNights	Poczekaj trzy noce: {0} z 3. Przez pierwsze dwie zegarek tylko tyka, w trzecią ożywa i odblokowuje podróż w czasie
+T:routeEarn	Zarabiaj w tej epoce: {0} z {1} monet. Od tej kwoty Zegarek zaczyna dawać odłamki
+T:routeGo	Stuknij „Podróż w czasie” poniżej. Monety i działy się resetują, ale kryształy, przyjaciele i ulepszenia zostają
+T:routeToast	Nowa epoka! Aby ruszyć dalej: zarób w niej co najmniej {0} monet i stuknij „Podróż w czasie” na karcie „Zegarek”.
+T:warpNone	Za wcześnie: Zegarek da kilka odłamków, gdy zarobisz {0} w tej epoce. Stukaj, prowadź sklep i wróć!
+T:warpBtn	Nakręć zegarek
+T:warpConfirmTitle	Podróż w czasie
+T:warpSkip	Stuknij, by pominąć
+T:warpConfirmText	Otrzymasz  {0} i stałe ×{1} do stuknięć i dochodu, a ta rozgrywka zacznie się od nowa. Kontynuować?
+T:warpConfirmYes	Tak, ruszamy!
+T:confirmNo	Anuluj
+T:wsBuy	Ulepsz ·  {0}
+T:wsGate	Wymagane podróże w czasie: {0}
+T:ws_goldenFreq	Złoty Nos
+T:ws_autoTap	Autostuknięcie
+T:ws_offlineHours	Długa Drzemka
+T:ws_offlineRate	Hojna Drzemka
+T:ws_salesFreq	Częste Wyprzedaże
+T:ws_saleLength	Długie Wyprzedaże
+T:ws_wheelFast	Więcej Cyrku
+T:ws_thiefLess	Strażnik Przeciw Szopom
+T:ws_cheaperDepts	Ceny Hurtowe
+T:ws_cheaperTeam	Zniżka dla Przyjaciół
+T:ws_tapPower	Potężna Łapa
+T:ws_crystalGain	Chciwy Zegarek
+T:wsEff_goldenFreq	złoci klienci częściej o {0}%
+T:wsEff_autoTap	autostuknięcia na sekundę: {0}
+T:wsEff_offlineHours	offline do {0} godz.
+T:wsEff_offlineRate	offline: {0}% dochodu
+T:wsEff_salesFreq	wyprzedaże częściej o {0}%
+T:wsEff_saleLength	wyprzedaż trwa {0} s
+T:wsEff_wheelFast	cyrk i minigry bonusowe mniej więcej co {0} min
+T:wsEff_thiefLess	szop kradnie o {0}% mniej
+T:wsEff_cheaperDepts	działy tańsze o {0}%
+T:wsEff_cheaperTeam	zwierzaki tańsze o {0}%
+T:wsEff_tapPower	siła stuknięcia ×{0}
+T:wsEff_crystalGain	odłamki za podróż +{0}%
+T:achSummary	Zdobyte nagrody: {0} / {1}
+T:achGot	Nowe osiągnięcie!
+T:achName_taps	Stukacz
+T:achName_earned	Skarbonka
+T:achName_level	Budowniczy
+T:achName_deptsBought	Zakupowicz
+T:achName_milestones	Progi
+T:achName_teamEver	Gracz Zespołowy
+T:achName_teamMax	Mistrz Rzemiosła
+T:achName_raccoons	Łowca Szopów
+T:achName_wheel	Szczęściarz
+T:achName_travels	Podróżnik w Czasie
+T:achName_crystals	Kolekcja Kryształów
+T:achName_chapters	Czytelnik
+T:achName_holidays	Świąteczny Duch
+T:achName_hours	Oddany Kupiec
+T:achDesc_taps	Stuknij sklep {0} razy
+T:achDesc_earned	Zarób łącznie {0} monet
+T:achDesc_level	Rozbuduj sklep do poziomu {0}
+T:achDesc_deptsBought	Kup działy: {0}
+T:achDesc_milestones	Osiągaj progi działów: {0}
+T:achDesc_teamEver	Poznaj zwierzaki w zespole: {0}
+T:achDesc_teamMax	Ulepsz zwierzaka do poziomu {0}
+T:achDesc_raccoons	Złap szopa razy: {0}
+T:achDesc_wheel	Zagraj w cyrku lub minigrach bonusowych razy: {0}
+T:achDesc_travels	Podróżuj w czasie: {0}
+T:achDesc_crystals	Zbierz kryształy: {0}
+T:achDesc_chapters	Przeczytaj rozdziały historii: {0}
+T:achDesc_holidays	Zobacz święta w mieście: {0}
+T:achDesc_hours	Godziny gry: {0}
+T:stEpoch	Epoka
+T:stPlay	Czas gry
+T:stEarned	Zarobiono w sumie
+T:stRun	Zarobiono w tej rozgrywce
+T:stCps	Dochód
+T:stTap	Monety za stuknięcie
+T:stTaps	Stuknięcia
+T:stDepts	Kupione działy
+T:stCrystals	Kryształy (teraz / razem)
+T:stShards	Odłamki czasu (teraz / razem)
+T:stTravels	Podróże w czasie
+T:stRaccoons	Szopy złapane / stracone
+T:stWheel	Cyrk i minigry bonusowe
+T:stAch	Nagrody
+T:stChapters	Przeczytane rozdziały
+T:setLang	Język
+T:setView	Ekran i dźwięk
+T:setSound	🔊 Ustawienia dźwięku
+T:setAnimOn	Animacje: WŁ.
+T:setAnimOff	Animacje: WYŁ.
+T:setNumFmt	Format liczb:
+T:setSave	Dane zapisu
+T:setSaveNote	Skopiuj kod, aby przenieść postęp na inne urządzenie, albo wklej tu kod, aby go wczytać.
+T:exportBtn	Pokaż kod
+T:copyBtn	Kopiuj
+T:exportCopied	Kod skopiowany!
+T:importPlaceholder	Wklej tu kod zapisu…
+T:importBtn	Wczytaj kod
+T:importTitle	Wczytać ten zapis?
+T:importText	Twój obecny postęp na tym urządzeniu zostanie zastąpiony.
+T:importYes	Tak, wczytaj
+T:importFail	Ten kod nie zadziałał. Upewnij się, że skopiowano go w całości.
+T:godOn	Tryb boga włączony
+T:godOff	Tryb boga wyłączony
+T:importNoStorage	Nie udało się zapisać: pamięć przeglądarki jest niedostępna.
+T:resetBtn	Zresetuj cały postęp
+T:resetTitle	Zresetować postęp?
+T:resetText	Wszystko zostanie usunięte na zawsze: monety, zwierzaki, rozdziały, nagrody i kryształy. Tego nie da się cofnąć!
+T:resetYes	Tak, usuń wszystko
+T:godCardTitle	👑 Tryb boga
+T:godCardNote	Tylko dla właściciela. „Wyłącz” gra jak zwykły gracz (skórki, epoki i rozdziały zablokowane); „Włącz” przywraca wszystko. Postęp zostaje.
+T:godToggleOn	Tryb boga: WŁ. — stuknij, by wyłączyć
+T:godToggleOff	Tryb boga: WYŁ. — stuknij, by włączyć
+T:dbgBuildNote	Pokaż animację budowy: sklep przechodzi na wybrany poziom (za darmo).
+T:dbgBuildKeepOff	Po pokazie: przywróć mój poziom
+T:dbgBuildKeepOn	Po pokazie: zostaw nowy poziom
+T:dbgBuildBusy	Poczekaj: budowa już trwa.
+T:dbgBuildDone	Pokaz zakończony: poziom twojego sklepu został przywrócony.
+T:dbgBuildKept	Pokaz zakończony: poziom sklepu się zmienił.
+T:dbgHour	+1 godzina czasu
+T:dbgX100	×100 monet
+T:dbgCircus	Cyrk teraz
+T:shareBtn	Udostępnij
+T:saveSummary	Zapis zawiera: „{0}”, kupione działy: {1}, zwierzaki: {2}, kryształy: {3}, zarobiono: {4}
+T:panelHide	Ukryj menu
+T:panelShow	Pokaż menu
+T:buildTapHint	Stukaj w ekran, by ekipa pracowała szybciej!
+T:cleanHide	Ukryj liczniki i podpisy
+T:cleanShow	Pokaż liczniki i podpisy
+T:setGender	Kim jesteś?
+T:setGenderNote	Gra będzie do ciebie mówić tak, jak wybierzesz.
+T:gender_f	Dziewczyna
+T:gender_m	Chłopak
+T:setDayNightOn	Dzień i noc: WŁ.
+T:setDayNightOff	Dzień i noc: WYŁ.
+T:swAnim	Animacje
+T:swDayNight	Dzień i noc
+T:swBirds	Ptaki
+T:swNoFly	Usuń latające obiekty
+T:swBirdsLate	Ptaki w późnych epokach
+T:swClouds	Chmury
+T:swSteam	Para z włazów
+T:swRain	Deszcz
+T:swBig	Duży tekst
+T:swVib	Wibracje
+T:setBirdsOn	Ptaki: WŁ.
+T:setBirdsOff	Ptaki: WYŁ.
+T:setCloudsOn	Chmury: WŁ.
+T:setCloudsOff	Chmury: WYŁ.
+T:setSteamOn	Para z włazów: WŁ.
+T:setSteamOff	Para z włazów: WYŁ.
+T:setBigOn	Duży tekst: WŁ.
+T:setBigOff	Duży tekst: WYŁ.
+T:setVibOn	Wibracje: WŁ.
+T:setVibOff	Wibracje: WYŁ.
+T:setEvents0	Zdarzenia: normalne
+T:setEvents1	Zdarzenia: rzadsze
+T:setEvents2	Zdarzenia: minimalne
+T:setEventsNote	Zdarzenia to cyrk, zwierzaki epoki, duchy, wyprzedaże i wpadki. „Rzadsze” to 2,5 raza rzadziej, „minimalne” to 5 razy.
+T:panHint	Przesuń w lewo lub w prawo, by zobaczyć całą ulicę.
+T:setEpochView	Przeglądarka epok

@@ -1,0 +1,143 @@
+T:team_toma_say_1	Mikhas carries, I write it down. He doesn't like it when I write it down.
+T:team_toma_say_2	I dream of a stockroom where nothing gets lost. A little gets lost. The mouse knows.
+T:team_toma_say_3	Who moved the crates? I remember who. Won't tell. Yet.
+T:team_toma_say_4	The trunk is the best ruler. I measure everything with it, even moods.
+T:team_toma_say_5	On a Tuesday at 14:32 someone said "later". Many Tuesdays have passed. I'm waiting.
+T:team_toma_say_6	The stockroom is my temple. Mikhas is the only one I let touch the crates.
+T:team_toma_say_7	The mouse is back in the stockroom. I know her by name. She knows mine too.
+T:team_toma_say_8	Inventory is love, measured in boxes. I love a lot.
+T:team_toma_say_9	Don't tell anyone, but I remember everything, and it's tiring.
+T:team_toma_hire	I've arrived. The stockroom is waiting.
+T:team_shnyr_say_0	Tonya watches me. I kind of like it: nobody's ever been so interested in me for so long.
+T:team_shnyr_say_1	I'm reforming. Yesterday I returned five coins. Three of them were mine.
+T:team_shnyr_say_2	I want to be trusted here. Just one key. To something small.
+T:team_shnyr_say_3	I see something shiny and my paw reaches out. I hold it back with my other paw. It helps.
+T:team_shnyr_say_4	Murzyk doesn't ask about the battery. Neither do I. Friendship.
+T:team_shnyr_say_5	I see a pocket, realise it's not mine. Look away. Making progress.
+T:team_shnyr_say_6	Spike saw me looking at the till. Now we're both awkward.
+T:team_shnyr_say_7	Nobody's afraid of me here. First time ever. Don't know what to do with my hands.
+T:team_shnyr_say_8	I used to run away. Now they call me to lunch. Weird feeling.
+T:team_shnyr_say_9	Tonya taught me to wait. Yesterday I waited a whole minute. Proud of myself.
+T:team_shnyr_hire	I'm here. Hands in plain sight. Promise.
+T:team_nara_say_0	Tea steeps exactly as long as it needs. Don't ask how long.
+T:team_nara_say_1	I have moss on my antlers. It's not neglect, it's a garden.
+T:team_nara_say_2	The raccoon comes for tea. I pour. He comes again. That's friendship.
+T:team_nara_say_3	I used to think one tree would be enough. Now there's a whole garden.
+T:team_nara_say_4	Petals fall and I listen. Quiet, but audible.
+T:team_nara_say_5	I dream of a tea street where everyone speaks softly and drinks a lot.
+T:team_nara_say_6	Tonya and I move at the same slow pace. We have plenty to be silent about.
+T:team_nara_say_7	A taiko drum beats in the distance. So does my heart. We don't argue.
+T:team_nara_say_8	Leo calls me to a meeting, I call him to tea. Tea is winning so far.
+T:team_nara_say_9	Whoever hurries forgets to breathe. I breathe. See? Nothing scary.
+T:team_nara_hire	The tea is already steeping. Sit down.
+T:capy_say_0	New era, same faces. Just different hats.
+T:capy_say_1	I used to dream of a booth on the corner. And here it is. Sometimes I still can't believe it.
+T:capy_say_2	Tonya is still walking to the door. I'm starting to believe she'll make it.
+T:capy_say_3	Spike counted it three times. I don't interfere: it's his ritual.
+T:capy_say_4	It's quiet here in the morning. Then someone opens the door and life begins.
+T:capy_say_5	Almost everything here is mine already. I'll buy the rest tomorrow.
+T:capy_say_6	Morning: the first coin and the first "good morning". Neither is wasted.
+T:capy_say_7	Someone left a tip in a vase. No idea whose vase. I'll take it.
+T:capy_say_8	I keep a list in my head: remember to thank everyone. So far I'm on the third.
+T:capy_say_9	When the street lights up in the evening, it feels like we're one big shop sign.
+T:teamReturn_0	{0} is back. Only the hat is different.
+T:teamReturn_1	{0}: back on staff, and already knows everything.
+T:teamReturn_2	{0} says nothing has changed. Except everything.
+T:teamReturn_3	{0} recognises the street, but not the sign.
+T:teamUpMile_0	{0}: level {1}. Visibly grown. If only we knew by how much.
+T:teamUpMile_1	{0}: level {1}. Same pay, wider smile.
+T:teamUpMile_2	{0}: level {1}. Now does the same thing with more confidence.
+T:teamUpMile_3	{0}: level {1}. Colleagues nod. That's almost applause.
+T:teamUpShort	{0}: level {1}
+T:noodleBang	🍜 It smells like ramen… someone is pulling a cart! Tap the "!"
+T:noodleArrived	🍜 Grandpa Ryo’s noodle shop is open! Tap it
+T:noodleTitle	Grandpa Ryo’s Noodle Cart
+T:noodleSub	Grandpa Ryo: "I cook noodles exactly as long as needed. Catch the moment and the bowl is yours!"
+T:noodleStart	Cook!
+T:noodleTake	Pull out!
+T:noodleCook	Tap when the noodles are perfect (the green zone)!
+T:noodlePerfect	Perfect! The best bowl is yours!
+T:noodleNear	Almost! Tasty anyway.
+T:noodleRaw	Still raw… but the crystal is yours.
+T:noodleSoft	Overcooked… but the crystal is yours.
+T:noodleDone	Thanks, Grandpa!
+T:mgScore	Hits: {0} of {1}
+T:mgWait	The bonus game of this era will be ready in {0}
+T:mgBonusTitle	Bonus game
+T:mgPerfect	Perfect! Here is your skin!
+T:mgNear	So close! Try again.
+T:mgMiss	Not this time. Try again!
+T:mgDanceTitle	Disco Capy Dance Floor
+T:mgDanceSub	Tiles light up and fade. Tap the glowing ones in time and keep off the dark ones!
+T:mgDanceStart	Dance!
+T:mgDanceDone	What a dance!
+T:mgSpamTitle	Spam Bomb
+T:mgSpamSub	Spam windows pop up everywhere. Tap them shut before they pile up!
+T:mgSpamStart	Close them!
+T:mgSpamDone	Screen is clean!
+T:mgFrescoTitle	Master Capy's Fresco
+T:mgFrescoSub	The paint pots light up one by one. Repeat the order to bring the fresco to life!
+T:mgFrescoStart	Paint!
+T:mgFrescoDone	How beautiful!
+T:mgJukeTitle	Capy's Jukebox
+T:mgJukeSub	Records fall toward the line. Tap the lane the moment a record reaches it!
+T:mgJukeStart	Play!
+T:mgJukeDone	Great music!
+T:mgClawTitle	Claw Machine
+T:mgClawSub	The claw slides back and forth. Tap to drop it right above a toy!
+T:mgClawStart	Grab!
+T:mgClawDone	Pockets full of toys!
+T:mgSortTitle	Trash Sorting
+T:mgSortSub	Trash rides the belt. Tap left for the green bin (organic), right for the blue one (plastic)!
+T:mgSortStart	Sort!
+T:mgSortDone	The planet is cleaner!
+T:mgCrysTitle	Space Crystals
+T:mgCrysSub	Catch the crystals and dodge the asteroids. Tap where the rocket should fly!
+T:mgCrysStart	Fly!
+T:mgCrysDone	Cargo hold full!
+T:mgRoadTitle	Night Road
+T:mgRoadSub	Collect neon coins and dodge the cars. Tap the lane you want to drive in!
+T:mgRoadStart	Drive!
+T:mgRoadDone	What a ride!
+skin:/capy_pirate/0	The parrot stole my cookie again. Traitor!
+skin:/capy_pirate/1	Where's the treasure? Oh, that's the till.
+skin:/capy_pirate/2	Yo-ho-ho... oh, hello, dear customers!
+skin:/capy_pirate/3	Eye patch on. Now I only see discounts.
+skin:/capy_astro/0	Houston, do you smell buns?
+skin:/capy_astro/1	So quiet in the helmet... just me and my thoughts. Oh, a customer!
+skin:/capy_astro/2	Zero gravity is when nobody asks for 'one more discount'.
+skin:/capy_astro/3	One small tap for Capy, one giant profit for the shop.
+skin:/capy_wizard/0	Abra-ca-dabra... no, wrong one. I'll remember in a sec.
+skin:/capy_wizard/1	The beard grows on its own. I did nothing. Almost.
+skin:/capy_wizard/2	I lost my wand. At least my nerves are still here.
+skin:/capy_wizard/3	The stars on my robe are winking. Or I'm imagining.
+skin:/capy_chef/0	Something smells great. Not me, it's the neighbours!
+skin:/capy_chef/1	Big hat, bigger spoon. See?
+skin:/capy_chef/2	The chef advises: don't eat the goods. The choice is made.
+skin:/capy_chef/3	Salt, pepper and a little patience. That's the whole secret.
+skin:/capy_explorer/0	Something interesting is round that corner. Or a cat.
+skin:/capy_explorer/1	The binoculars look up, I look for cookies.
+skin:/capy_explorer/2	The backpack is heavy, but it has three sandwiches!
+skin:/capy_explorer/3	The map says north. We go south. Sorry.
+skin:/capy_santa/0	Ho-ho-ho! Someone here was good. No names.
+skin:/capy_santa/1	The sack is empty. I gave it all... to myself.
+skin:/capy_santa/2	The beard tickles. Is it supposed to?
+skin:/capy_santa/3	Every day is a bit of Christmas when you wear red!
+skin:/capy_witch/0	The broom is being repaired. I fly on hope now.
+skin:/capy_witch/1	The pumpkin on my back stares at me. I stare back.
+skin:/capy_witch/2	The potion is ready! I just forgot what's in it.
+skin:/capy_witch/3	Brrr! Did someone whisper 'discount'?
+skin:/capy_flower/0	A butterfly landed on my back. Shh, nobody move.
+skin:/capy_flower/1	Flowers smell like spring. And I smell like flowers. Nice!
+skin:/capy_flower/2	The wreath slipped a bit. I kind of like it.
+skin:/capy_flower/3	The bees already asked if they can live here.
+skin:/capy_beach/0	I want the sea. But at least here's the shop's shade.
+skin:/capy_beach/1	The ball on my back won't run away. I will, to the beach!
+skin:/capy_beach/2	Dark glasses, bright mood.
+skin:/capy_beach/3	Lemonade, please. With ice. And an umbrella!
+skin:/capy_autumn/0	The scarf is so long that I trip on it.
+skin:/capy_autumn/1	Leaves rustle, I have coffee. Perfect morning.
+skin:/capy_autumn/2	Autumn smells like cinnamon. Or is it me?
+skin:/capy_autumn/3	A warm sweater is like a hug. Slightly scratchy.
+skin:/capy_ep0/0	Beret aside, feather up. Now I'm an artist.
+skin:/capy_ep0/1	This lily on my cloak isn't plain. It's expensive!

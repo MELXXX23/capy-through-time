@@ -1,0 +1,102 @@
+T:ep4_5	They glitch, but a tap can't be fooled. Let's start.
+T:ep4_o1	Let's play: whoever catches more bugs becomes admin.
+T:ep4_o2	Shnyr, put the prices back, and Bitik will set up protection.
+T:ep4_r1	Admin? Oh, I'd make such a site... Just don't consider it a threat.
+T:ep4_r2	Protection is loading. Beep-boop. Prices restored, bugs under control.
+T:ep4_6	I'll stay by the rack and watch the indicators. Catch {0} bugs and the system reboots without errors.
+T:ep4_7	Then we close extra tabs and catch.
+T:ep4_8	(tick) Saved. I'm the Watch: I have no backups, just one very long minute.
+T:thx4_0	All indicators are green! Thanks. The server is stable, prices are honest, and the bugs moved to the backup.
+T:thx4_1	Wow, not a single error. Even suspicious.
+T:thx4_2	Only because you're near. I'll keep your progress in the cloud. Happy travels.
+T:ep5_0	The watch ticked, the roofs turned green, and windmills spun on the hills. By the shop lies a neat garden bed with little trees and big pots.
+T:ep5_1	I'm Lesyk, the city gardener. My garden bed lives its own life: something's moving in it, but it isn't cabbage.
+T:ep5_2	Moving? Is that really a plant?
+T:ep5_3	Those are Leaf Chameleons. I let them live on the bed because they're cheaper than a guard. Now they blend into the leaves, and I can't see them myself.
+T:ep5_4	They camouflage and are almost invisible. Look closely, tap and catch. Catch {0} and the bed blooms again.
+T:ep5_5	Invisible, but not silent. Looking closely.
+T:ep5_o1	Let's compete: who finds more chameleons.
+T:ep5_o2	Shnyr, replant the beds and help Lesyk.
+T:ep5_r1	A contest? I see them fine... oh, no, that's a leaf.
+T:ep5_r2	Replant? Fine. The shovel is heavy, but my conscience is clear.
+T:ep5_6	I'll be by the bed with a watering can. Catch {0} chameleons and you get my thanks and a harvest of kind words.
+T:ep5_7	A harvest of kind words. The best one.
+T:ep5_8	(tick) I'm the Watch. It smells of earth and rain here. For a mechanism that's like a holiday.
+T:thx5_0	The bed is green, the little trees are happy, and the chameleons sleep in the pots. Thanks.
+T:thx5_1	What a silence. Even the leaves rustle contentedly.
+T:thx5_2	The little trees will grow and remember you. Travel on, and I'll water here.
+T:ep6_0	The watch ticked and the sky darkened. A rocket stands on its launch table on the hill, steam already curling under the nozzle.
+T:ep6_1	Callsign “Orbit”, astronaut. The rocket is ready, but the fuel is gone! Astro Axolotls took the canisters and floated off around town.
+T:ep6_2	Axolotls in space? And they steal fuel too?
+T:ep6_3	Not steal, “borrow”. I only told them the fuel smells like cake. Now they float in zero gravity, canisters in hand.
+T:ep6_4	No fuel, no launch. Help me catch {0} axolotls. They float slow and smooth. Tap before they drift away.
+T:ep6_5	Slow and smooth suits us. Starting the countdown.
+T:ep6_o1	Let's play “space fishing”: whoever catches more is captain.
+T:ep6_o2	Orbit, prepare the rocket, and we'll bring back all the fuel.
+T:ep6_r1	Captain? Me! Just give me the wheel and zero obligations.
+T:ep6_r2	Waiting at the launch pad. I accept canisters one by one, the countdown doesn't stop.
+T:ep6_6	I'll be by the rocket. Catch {0} axolotls and the fuel is back in the tank. Then the rocket flies with no problem.
+T:ep6_7	Preparing engines. The countdown is on.
+T:ep6_8	In space time flows slower, but it's better to catch in time. Tick... tock...
+T:thx6_0	All canisters are in the tank! Launch approved. Thanks to the crew, and a vacation on Earth for the axolotls.
+T:thx6_1	Space thanks you for your service. So does the fuel.
+T:thx6_2	Earth, this is Orbit. Departing with the best crew. Your road goes on through time.
+T:ep7_0	The watch ticked and the town flared with neon. A big neon wheel turns by the signs, but half the cabins are dark.
+T:ep7_1	I'm Lumi, the neon master. My lanterns for the wheel are gone! Neon kittens carried them off and shine them in the alleys.
+T:ep7_2	Kittens with lanterns? Pretty, but the wheel is stuck.
+T:ep7_3	Those are Signboard Kittens. I wanted them to light up my new sign, but they took the lanterns and ran off to jump across roofs.
+T:ep7_4	They jump high and suddenly. Help me catch {0} and the wheel lights up fully.
+T:ep7_5	They jump, but we'll hit. Tap!
+T:ep7_o1	Shnyr, drop the schemes and join the team: you'll shine over the whole block.
+T:ep7_o2	Help catch the kittens, and we'll find you an honest job.
+T:ep7_r1	Join you? A real job? That's my best plan in history.
+T:ep7_r2	An honest job... Do they pay in cookies? Then I'm in.
+T:ep7_6	I'll be by the wheel. Catch {0} kittens and every cabin lights up. The light runs on good deeds.
+T:ep7_7	Fine, I give up. I want to join the team. I promise to be sly only for good deeds.
+T:ep7_8	Welcome, Shnyr. The shop only gains.
+T:ep7_9	Tick-tock. At last Shnyr is on the right side of time.
+T:thx7_0	Every cabin is glowing! The wheel turns, the lanterns are back, the kittens purr. Thanks.
+T:thx7_1	The town sparkles. I think even Shnyr glows with pride.
+T:thx7_2	Blink-blink! Go on, and there will always be light left here for you.
+T:ep8_0	The circle has closed: the square again, the pennants again, and a single coin. Only now a gallery has opened on the square, and there are familiar faces and a bit of weariness everywhere.
+T:ep8_1	I'm Bruno, the painter. I was commissioned for “All Friends Through All Epochs”, and the paints vanished. The Mazok owls steal them, and the worst part is their strokes beat mine.
+T:ep8_2	Painter owls? Then Mazok knows the craft.
+T:ep8_3	I only showed them where the best paints lie. Honestly. I didn't know they'd turn them into abstraction.
+T:ep8_4	They fly in waves over the street. Help me catch {0}, or I won't finish the painting.
+T:ep8_5	They fly in waves, and we'll catch the moment.
+T:ep8_o1	Let Mazok finish the winking clock. I don't mind.
+T:ep8_o2	We catch the owls, and you paint all of us: the whole team, from the first epoch.
+T:ep8_r1	A winking clock? Fine. If she steals my paints again, I'll paint her portrait.
+T:ep8_r2	The whole team? Now that's a masterpiece. Come on, everyone into the frame.
+T:ep8_6	I'll be in the gallery by the canvas. Catch {0} owls and the painting will be finished.
+T:ep8_7	The painting will happen. So will Mazok.
+T:ep8_8	Tick-tock. Every new circle makes the story brighter.
+T:thx8_0	All the paints are back! The painting is done: all friends through all epochs, and “Mazok” signed in the corner.
+T:thx8_1	The owl's signature in the corner. She got what she wanted.
+T:thx8_2	Talent needs support. Go on, and I'll hang the painting in the gallery.
+T:ep9_0	A wandering rooster with a lute and a feather on his beret stopped on the square. The town awakes: the Renaissance. A lavish three-tier “Fountain of Wishes” stands in the middle of the square.
+T:ep9_1	Greetings. I'm Pietro, the minstrel. This is my Fountain of Wishes, but coins fly out of it and vanish! They shine, and my fee somehow disappears.
+T:ep9_2	Flying coins? That's not a fountain, that's rain in reverse.
+T:ep9_3	Those are the Mazok owls. They fish coins from the bottom because they shine. And I... I only told them where the shiniest are.
+T:ep9_4	So that's who let the owls into the fountain! Help me catch them. They fly in waves, fast. Catch {0} and the coins will jingle in the water again.
+T:ep9_5	Wishes must not be let go. Tap!
+T:ep9_o1	Let the owls sing in an orchestra: what a fashion that would be.
+T:ep9_o2	Shnyr, put the coins back on the bottom, and we'll catch the owls.
+T:ep9_r1	Owls in the orchestra? Hoo-hoo! Just don't let anyone collect coins in a hat.
+T:ep9_r2	Fine, fine. Returned... almost all of them.
+T:ep9_6	I'll be by the fountain playing for everyone in the line for wishes. Catch {0} owls and the coins stay in the water.
+T:ep9_7	And the wishes will come true by themselves.
+T:ep9_8	Tick-tock. The Renaissance is when old things suddenly sound new.
+T:thx9_0	The coins jingle in the water again, and the owls sleep on the roofs! The wishes are safe. The lute sings only for you.
+T:thx9_1	The fountain sings better than the lute.
+T:thx9_2	That's both a compliment and an insult. Moving on? May time be kind.
+T:guestSay_pip_0	The jukebox is silent. I never knew silence could be this loud.
+T:guestSay_pip_1	A hedgehog with a record on its quills isn't fashion, it's theft. Though, I admit, it looks nice.
+T:guestSay_pip_2	A milkshake? Friends only. And paying customers. Sometimes they're the same people.
+T:guestAsk_pip_0	See a hedgehog? Tap it, my record is on it!
+T:guestAsk_pip_1	A few more hedgehogs and the jukebox sings again.
+T:guestDone_pip	All records are back. The jukebox thanks you, and so do I!
+T:guestSay_zina_0	Where are my balls? A party without a mirror ball is just a loud kitchen.
+T:guestSay_zina_1	Armadillos in mirror shells: beautiful, sparkly and completely irresponsible. I adore them.
+T:guestSay_zina_2	One-two-three, keep the beat. Whoever's off-beat does the dishes. Kria is already making the list.
+T:guestAsk_zina_0	You've got a great tap! Catch the shiny armadillos, I need my dance floor.

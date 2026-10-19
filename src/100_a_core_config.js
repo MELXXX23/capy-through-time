@@ -164,7 +164,11 @@ const CONFIG = {
 // Мови: id, підпис на кнопці
 const LANGS = [
   { id: 'uk', label: 'UA' },
-  { id: 'en', label: 'EN' }
+  { id: 'en', label: 'EN' },
+  { id: 'pt', label: 'PT', wip: true },   // wip — переклад не завершено: кнопки мови немає, автовибору немає (прибрати wip, коли мова готова; див. HANDOFF)
+  { id: 'es', label: 'ES', wip: true },
+  { id: 'it', label: 'IT', wip: true },
+  { id: 'pl', label: 'PL', wip: true }
 ];
 
 // Вкладки панелі. ready: true — вже працює; false — з'явиться на наступних етапах
@@ -233,8 +237,12 @@ const BAG_COLORS = ['p', 'h', 'g', 'n', 'u'];
 
 // Формат великих чисел: суфікси для перших розрядів, далі aa, ab, ac...
 const NUMBER_FORMAT = {
-  uk: { suffixes: ['', 'тис.', 'млн', 'млрд', 'трлн'], decimal: ',', space: ' ' },
-  en: { suffixes: ['', 'K', 'M', 'B', 'T'],            decimal: '.', space: ''  }
+  uk: { suffixes: ['', 'тис.', 'млн', 'млрд', 'трлн'], decimal: ',', space: ' ', sep: ' ' },
+  en: { suffixes: ['', 'K', 'M', 'B', 'T'],            decimal: '.', space: '',  sep: ',' },
+  pt: { suffixes: ['', 'mil', 'mi', 'bi', 'tri'],      decimal: ',', space: ' ', sep: '.' },
+  es: { suffixes: ['', 'mil', 'M', 'MM', 'B'],         decimal: ',', space: ' ', sep: '.' },
+  it: { suffixes: ['', 'k', 'mln', 'mld', 'bln'],      decimal: ',', space: ' ', sep: '.' },
+  pl: { suffixes: ['', 'tys.', 'mln', 'mld', 'bln'],   decimal: ',', space: ' ', sep: ' ' }
 };
 
 // Розташування елементів на сцені (координати у пікселях сцени 320×180)

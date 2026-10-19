@@ -1,0 +1,174 @@
+T:pageTitle	CapyTap: Market
+T:langLabel	Language
+T:sceneLabel	A pixel street with Capy's shop. Tap the shop to earn coins.
+T:perSecond	{0} / sec
+T:tab_shop	Shop
+T:tab_departments	Depts.
+T:tab_team	Team
+T:tab_story	Diary
+T:capiName	Capy
+T:capiHello	I'm Capy. I have one coin, one shack on the corner and no backup plan. Tap the shop. We start small.
+T:statTapPower	Coins per tap
+T:statLevelMult	Level bonus
+T:statTaps	Taps
+T:statEarned	Earned all time
+T:tapHint	Tap the shop. The higher your income, the more each tap pays. Just like big business, only more honest.
+T:soonText	This tab opens a bit later. Capy is already working on it!
+T:saveError	Couldn't save the game: browser storage is unavailable.
+T:levelName_1	Little Shop
+T:levelName_2	Corner Shop
+T:levelName_3	Mini-Market
+T:levelName_4	Supermarket
+T:levelName_5	Department Store
+T:levelName_6	Shopping Mall
+T:sign_1	Everything for a Penny
+T:sign_2	Corner Shop
+T:sign_3	Mini-Market
+T:sign_4	Supermarket
+T:sign_5	Department Store
+T:sign_6	Shopping Mall
+T:shopLevelLabel	Shop level: {0} / {1}
+T:dept_trinkets	Trinkets & Matches
+T:dept_sweets	Sweets
+T:dept_stationery	Stationery
+T:dept_toys	Toys
+T:dept_cleaning	Household Goods
+T:dept_produce	Fruit & Veg
+T:dept_bakery	Bakery
+T:dept_clothes	Clothing
+T:dept_shoes	Shoes
+T:dept_electronics	Electronics
+T:dept_foodcourt	Food Court
+T:dept_cinema	Cinema
+T:buyModeLabel	How many to buy at once
+T:buyMax	MAX
+T:buyLabel	Buy ×{0} · {1}
+T:deptEach	Each earns: {0} / sec
+T:deptTotal	Total: {0} / sec
+T:msDone	All milestones reached ★
+T:milestoneToast	"{0}": {1} pcs. Department income ×2. Economies of scale.
+T:lockedDepts	🔒 New departments open at level "{0}"
+T:expandTitle	Expansion: {0}
+T:expandNote	A new level gives ×2 to all income and opens new departments. First buy the required departments and level up every animal of this level.
+T:expandBtn	Expand · {0}
+T:reqHire	Upgrade to level {1}: {0}
+T:expandMax	It's a shopping mall now — Capy's dream came true! 🎉
+T:buildDone	Expansion complete: it's now a "{0}". The rent will grow too, of course.
+T:newDepts	New departments: {0}
+T:offlineTitle	Welcome back!
+T:offlineText	While you were away, the shop earned
+T:offlineCoins	{0} coins 💤
+T:offlineBtn	Collect
+T:adOfflineBtn	🎬 ×2: watch a video
+T:adPrivacyBtn	Ad privacy options
+T:adBonusTitle	Skip the wait?
+T:adBonusText	The bonus game will be ready in {0}. Watch a short video and it opens right now.
+T:adBoostChip	×2 income 10 min
+T:adBonusYes	🎬 Watch a video
+T:teamNote	Hire staff: each gives their own bonus. Tap someone on the scene, you might hear something interesting.
+T:teamLevel	Level {0} / {1}
+T:teamHire	Hire · {0}
+T:teamUpgrade	Upgrade · {0}
+T:teamMax	Max level ★★★
+T:teamStarBtn	Star {0}: {1}/{2} · {3}
+T:teamStarred	{0} earns star {1}! The bonus grew.
+T:teamPlus	{0}: {1}/{2} to star {3}. The bonus grows.
+T:teamNow	Now: {0}
+T:teamNext	Next: {0}
+T:teamGives	Gives: {0}
+T:teamHired	{0} is on the payroll. The contract is verbal, as is tradition.
+T:teamUpgraded	{0}: level {1}. A promotion without a raise.
+T:lockedTeam	🔒 New animals arrive at level "{0}"
+T:bonus_tap	tap power ×{0}
+T:bonus_expandCost	expansions {0}% cheaper
+T:bonus_offline	offline: {0}% income, up to {1} h
+T:bonus_thief	raccoon steals {0}% less often
+T:bonus_deptIncome	{0}: income ×{1}
+T:bonus_global	all income ×{0}
+T:bonus_event	holidays & sales {0}% stronger
+T:bonus_deptCost	departments {0}% cheaper
+T:team_spike	Spike the Hedgehog
+T:team_spike_role	Cashier
+T:team_spike_trait	Prickly personality, soft bookkeeping. Counts every penny and every word.
+T:team_bodya	Beaver Bodie
+T:team_bodya_role	Builder
+T:team_bodya_trait	Will build anything if you give him planks, time and peace. Nobody gives him peace.
+T:team_zoya	Zoe the Hare
+T:team_zoya_role	Shop assistant
+T:team_zoya_trait	Will sell anything to anyone. Ethics cost extra.
+T:team_tonya	Tonya the Turtle
+T:team_tonya_role	Guard
+T:team_tonya_trait	Slow, but misses nothing. Especially other people's money.
+T:team_mikhas	Mikey the Bear
+T:team_mikhas_role	Loader
+T:team_mikhas_trait	Big as a wardrobe and just as talkative. Likes heavy lifting within reason.
+T:team_sonia	Sonia the Owl
+T:team_sonia_role	Accountant
+T:team_sonia_trait	Sees poetry in a balance sheet. Doesn't sleep until the numbers match, so barely sleeps.
+T:team_kria	Quackers the Duck
+T:team_kria_role	Cleaner
+T:team_kria_trait	A mop, a bucket and an attitude. There's no dirt in this shop because she decided so.
+T:team_zhuzha	Juju the Frog
+T:team_zhuzha_role	Stylist
+T:team_zhuzha_trait	Sharp taste and a sharper tongue. Believes that without style even a discount looks cheap.
+T:team_leo	Leo the Fox
+T:team_leo_role	Manager
+T:team_leo_trait	Lives in slides and deadlines. Turns every problem into a "growth opportunity".
+T:team_pao	Pao the Panda
+T:team_pao_role	Marketer
+T:team_pao_trait	Can turn nothing into a trend. Sometimes even something.
+T:team_murzyk	Whiskers the Cat
+T:team_murzyk_role	Electronics wizard
+T:team_murzyk_trait	Says everything just needs a reboot. Usually right. Sometimes you reboot too.
+T:team_toma	Tommy the Elephant
+T:team_toma_role	Caretaker
+T:team_toma_trait	Remembers where everything is, who took what and who promised what. It's frightening.
+T:storyNote	All the unlocked chapters are here. Re-reading is free.
+T:storyRead	Read
+T:introCutTitle	Intro
+T:introCutBtn	Watch
+T:storyLocked	🔒 The next chapter opens as you progress
+T:storySkip	Skip chapter
+T:chapterLabel	Chapter {0}
+T:speaker_shnyr	Shnyr the Raccoon
+T:speaker_clock	The Watch
+T:speaker_capy	Capy
+T:ch1_title	The Corner Booth
+T:ch1_0	Morning in the little town. The bakery is already smoking, the cobbles are still wet, and on the corner stands a booth nobody wanted.
+T:ch1_1	A cart rolls up with one coin at the bottom. A capybara peeks out. Looks confident. Mostly.
+T:ch1_2	Hello, booth. I'm Capy. One coin, lots of plans, and no backup.
+T:ch1_3	The roof leaks, the sign hangs crooked, but there's an awning. I'll call it “Everything for a Penny”. The penny is already here.
+T:ch1_4	They say whoever stands on the corner sees the whole town. Nobody warned me the whole town would see me.
+T:ch1_5	The first customer is already shuffling by the door, clutching a purse. Time to tap: every touch is a coin.
+T:ch2_title	Spike Needs a Job
+T:ch2_0	A few days in, the till rings so much that Capy can't keep up with selling or counting. A hedgehog with a piece of paper has been sitting by the door for ages.
+T:ch2_1	Good day. Any openings? I'm Spike. I can count, I can't steal. Mostly don't want to.
+T:ch2_2	But you're prickly. Customers are probably scared.
+T:ch2_3	The honest ones aren't scared. The others aren't either, but they regret it later.
+T:ch2_4	The till is yours. No trial period: we have neither the time nor the money.
+T:ch2_5	Thanks. Not a single penny will get lost. Unless it gets stuck in the quills. Then I'll definitely return it.
+T:ch2_6	Tip: open the “Team” tab and hire Spike. He boosts your tap power.
+T:ch3_title	Someone's Stealing!
+T:ch3_0	With Spike at the till, business took off and the whole town heard about the shop. Along with the customers came someone who didn't plan to pay.
+T:ch3_1	Capy! A pack of cookies is gone. I only caught a striped tail and a very confident back.
+T:ch3_2	Striped tail. Confident back. There's only one of those in this neighbourhood.
+T:ch3_3	No offence, it isn't stealing, it's freelance. I'm Shnyr, the fastest raccoon on this street.
+T:ch3_4	That's my cookie. Give it back. Now.
+T:ch3_5	It's been... slightly tasted. Call it a review. And now, no catching me!
+T:ch3_6	Gone. I told you we need a safe. Even a small one.
+T:ch3_7	The raccoon is sly, but doesn't seem mean. He'll be back. Better hide valuables, and nerves too.
+T:ch4_title	The Watch That Ticks Backwards
+T:ch4_0	Hiding valuables from the raccoon, Capy rummages through the stockroom and finds something odd in a corner.
+T:ch4_1	A pocket watch. The gold has darkened, the glass is cracked. Old, but with character.
+T:ch4_2	It ticks. But the hands go backwards. Definitely not by the manual.
+T:ch4_3	Broken. My grandpa said: a watch that runs backwards is either broken or has a surprise.
+T:ch4_4	I don't like surprises. But it's pretty. I'll keep it, no warranty.
+T:ch4_5	In the pocket the watch ticked softly, as if winking. Looks like that wasn't the last time.
+T:ch5_title	New Colleagues
+T:ch5_0	The shop has grown into a supermarket. The whole street talks about Capy, and new workers are knocking on the door. Those who could, knocked.
+T:ch5_1	I'm Bodya, a builder. Heard you're expanding. Need boards? I'll send the bill separately. And another one, for politeness.
+T:ch5_2	Zoya. I sell everything that isn't nailed down. And what is nailed down, just slower. Give me a window and it'll start talking.
+T:ch5_3	Hoo. I'm Sonia, an accountant. I work nights, by day I only blink. Someone has to count these coins before they run away.
+T:ch5_4	Tonya, security. I'm coming. Will be there soon. But I won't let anyone through.
+T:ch5_5	Come in, friends. Thank you for coming. Seriously.
+T:ch5_6	Thanks are nice. But I haven't seen how the bonus question ends.

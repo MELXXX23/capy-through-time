@@ -1,0 +1,174 @@
+T:pageTitle	CapyTap: Market
+T:langLabel	Idioma
+T:sceneLabel	Una calle de píxeles con la tienda de Capy. Toca la tienda para ganar monedas.
+T:perSecond	{0} / s
+T:tab_shop	Tienda
+T:tab_departments	Dptos.
+T:tab_team	Equipo
+T:tab_story	Diario
+T:capiName	Capy
+T:capiHello	Soy Capy. Tengo una moneda, una choza en la esquina y ningún plan B. Toca la tienda. Empezamos poco a poco.
+T:statTapPower	Monedas por toque
+T:statLevelMult	Bono de nivel
+T:statTaps	Toques
+T:statEarned	Ganado en total
+T:tapHint	Toca la tienda. Cuanto mayores sean tus ingresos, más rinde cada toque. Igual que los grandes negocios, pero más honesto.
+T:soonText	Esta pestaña se abre un poco más tarde. ¡Capy ya está trabajando en ella!
+T:saveError	No se pudo guardar la partida: el almacenamiento del navegador no está disponible.
+T:levelName_1	Tiendita
+T:levelName_2	Tienda de la Esquina
+T:levelName_3	Minimercado
+T:levelName_4	Supermercado
+T:levelName_5	Grandes Almacenes
+T:levelName_6	Centro Comercial
+T:sign_1	Todo por un Centavo
+T:sign_2	Tienda de la Esquina
+T:sign_3	Minimercado
+T:sign_4	Supermercado
+T:sign_5	Grandes Almacenes
+T:sign_6	Centro Comercial
+T:shopLevelLabel	Nivel de la tienda: {0} / {1}
+T:dept_trinkets	Baratijas y Cerillas
+T:dept_sweets	Dulces
+T:dept_stationery	Papelería
+T:dept_toys	Juguetes
+T:dept_cleaning	Artículos del Hogar
+T:dept_produce	Frutas y Verduras
+T:dept_bakery	Panadería
+T:dept_clothes	Ropa
+T:dept_shoes	Calzado
+T:dept_electronics	Electrónica
+T:dept_foodcourt	Zona de Comidas
+T:dept_cinema	Cine
+T:buyModeLabel	Cuántos comprar a la vez
+T:buyMax	MÁX
+T:buyLabel	Comprar ×{0} · {1}
+T:deptEach	Cada uno rinde: {0} / s
+T:deptTotal	Total: {0} / s
+T:msDone	Todos los hitos alcanzados ★
+T:milestoneToast	«{0}»: {1} uds. Ingresos del departamento ×2. Economía de escala.
+T:lockedDepts	🔒 Los nuevos departamentos se abren en el nivel «{0}»
+T:expandTitle	Ampliación: {0}
+T:expandNote	Cada nivel nuevo da ×2 a todos los ingresos y abre nuevos departamentos. Primero compra los departamentos necesarios y sube de nivel a todos los animalitos de este nivel.
+T:expandBtn	Ampliar · {0}
+T:reqHire	Sube al nivel {1}: {0}
+T:expandMax	¡Ya es un centro comercial: el sueño de Capy se hizo realidad! 🎉
+T:buildDone	Ampliación completa: ahora es «{0}». El alquiler también subirá, claro.
+T:newDepts	Nuevos departamentos: {0}
+T:offlineTitle	¡Bienvenido de nuevo!
+T:offlineText	Mientras estabas fuera, la tienda ganó
+T:offlineCoins	{0} monedas 💤
+T:offlineBtn	Recoger
+T:adOfflineBtn	🎬 ×2: ver un vídeo
+T:adPrivacyBtn	Opciones de privacidad de anuncios
+T:adBonusTitle	¿Saltarte la espera?
+T:adBonusText	El minijuego de bonificación estará listo en {0}. Mira un vídeo corto y se abre ahora mismo.
+T:adBoostChip	Ingresos ×2 durante 10 min
+T:adBonusYes	🎬 Ver un vídeo
+T:teamNote	Contrata personal: cada uno da su propio bono. Toca a alguien en la escena, quizá oigas algo interesante.
+T:teamLevel	Nivel {0} / {1}
+T:teamHire	Contratar · {0}
+T:teamUpgrade	Mejorar · {0}
+T:teamMax	Nivel máx. ★★★
+T:teamStarBtn	Estrella {0}: {1}/{2} · {3}
+T:teamStarred	¡{0} gana la estrella {1}! El bono ha crecido.
+T:teamPlus	{0}: {1}/{2} para la estrella {3}. El bono crece.
+T:teamNow	Ahora: {0}
+T:teamNext	Siguiente: {0}
+T:teamGives	Da: {0}
+T:teamHired	{0} está en nómina. El contrato es verbal, como manda la tradición.
+T:teamUpgraded	{0}: nivel {1}. Un ascenso sin subida de sueldo.
+T:lockedTeam	🔒 Nuevos animalitos llegan en el nivel «{0}»
+T:bonus_tap	poder del toque ×{0}
+T:bonus_expandCost	ampliaciones un {0}% más baratas
+T:bonus_offline	sin conexión: {0}% de ingresos, hasta {1} h
+T:bonus_thief	el mapache roba un {0}% menos
+T:bonus_deptIncome	{0}: ingresos ×{1}
+T:bonus_global	todos los ingresos ×{0}
+T:bonus_event	fiestas y rebajas un {0}% más fuertes
+T:bonus_deptCost	departamentos un {0}% más baratos
+T:team_spike	Spike el Erizo
+T:team_spike_role	Cajero
+T:team_spike_trait	Personalidad espinosa, contabilidad suave. Cuenta cada centavo y cada palabra.
+T:team_bodya	Bodie el Castor
+T:team_bodya_role	Constructor
+T:team_bodya_trait	Construye lo que sea si le das tablones, tiempo y paz. Nadie le da paz.
+T:team_zoya	Zoe la Liebre
+T:team_zoya_role	Dependienta
+T:team_zoya_trait	Vende cualquier cosa a cualquiera. La ética se cobra aparte.
+T:team_tonya	Tonya la Tortuga
+T:team_tonya_role	Guardia
+T:team_tonya_trait	Lenta, pero no se le escapa nada. Sobre todo el dinero ajeno.
+T:team_mikhas	Mikey el Oso
+T:team_mikhas_role	Cargador
+T:team_mikhas_trait	Grande como un armario y igual de hablador. Le gusta cargar peso, con medida.
+T:team_sonia	Sonia la Lechuza
+T:team_sonia_role	Contable
+T:team_sonia_trait	Ve poesía en un balance. No duerme hasta que cuadran los números, o sea, casi nunca.
+T:team_kria	Quackers la Pata
+T:team_kria_role	Limpiadora
+T:team_kria_trait	Una fregona, un cubo y mucha actitud. En esta tienda no hay suciedad porque ella lo decidió.
+T:team_zhuzha	Juju la Rana
+T:team_zhuzha_role	Estilista
+T:team_zhuzha_trait	Gusto afilado y lengua más afilada aún. Cree que sin estilo hasta un descuento parece barato.
+T:team_leo	Leo el Zorro
+T:team_leo_role	Gerente
+T:team_leo_trait	Vive de presentaciones y plazos. Convierte cada problema en una «oportunidad de crecimiento».
+T:team_pao	Pao el Panda
+T:team_pao_role	Marketing
+T:team_pao_trait	Convierte la nada en tendencia. A veces hasta algo.
+T:team_murzyk	Bigotes el Gato
+T:team_murzyk_role	Mago de la electrónica
+T:team_murzyk_trait	Dice que todo solo necesita un reinicio. Suele tener razón. A veces el que se reinicia eres tú.
+T:team_toma	Tommy el Elefante
+T:team_toma_role	Conserje
+T:team_toma_trait	Recuerda dónde está cada cosa, quién cogió qué y quién prometió qué. Da miedo.
+T:storyNote	Aquí están todos los capítulos desbloqueados. Releer es gratis.
+T:storyRead	Leer
+T:introCutTitle	Introducción
+T:introCutBtn	Ver
+T:storyLocked	🔒 El próximo capítulo se abre según avances
+T:storySkip	Saltar capítulo
+T:chapterLabel	Capítulo {0}
+T:speaker_shnyr	Shnyr el Mapache
+T:speaker_clock	El Reloj
+T:speaker_capy	Capy
+T:ch1_title	El Puesto de la Esquina
+T:ch1_0	Mañana en el pueblecito. La panadería ya echa humo, los adoquines aún están mojados y en la esquina hay un puesto que nadie quiso.
+T:ch1_1	Llega un carro con una sola moneda en el fondo. Una capibara se asoma. Parece segura. Casi siempre.
+T:ch1_2	Hola, puesto. Soy Capy. Una moneda, muchos planes y ningún plan B.
+T:ch1_3	El tejado gotea, el cartel cuelga torcido, pero hay un toldo. Lo llamaré «Todo por un Centavo». El centavo ya está aquí.
+T:ch1_4	Dicen que quien se planta en la esquina ve todo el pueblo. Nadie me avisó de que todo el pueblo me vería a mí.
+T:ch1_5	El primer cliente ya arrastra los pies junto a la puerta, agarrando un monedero. Hora de tocar: cada toque es una moneda.
+T:ch2_title	Spike Necesita un Trabajo
+T:ch2_0	Unos días después, la caja suena tanto que Capy no da abasto para vender y contar. Un erizo con un papel lleva un buen rato sentado en la puerta.
+T:ch2_1	Buenos días. ¿Hay vacantes? Soy Spike. Sé contar y no sé robar. Bueno, casi siempre no quiero.
+T:ch2_2	Pero eres espinoso. Los clientes seguro que se asustan.
+T:ch2_3	Los honrados no se asustan. Los otros tampoco, pero luego se arrepienten.
+T:ch2_4	La caja es tuya. Sin periodo de prueba: no tenemos ni tiempo ni dinero.
+T:ch2_5	Gracias. No se perderá ni un centavo. Salvo que se quede atascado en las púas. Entonces lo devolveré, seguro.
+T:ch2_6	Consejo: abre la pestaña «Equipo» y contrata a Spike. Aumenta tu poder de toque.
+T:ch3_title	¡Alguien Está Robando!
+T:ch3_0	Con Spike en la caja, el negocio despegó y todo el pueblo se enteró de la tienda. Junto con los clientes llegó alguien que no pensaba pagar.
+T:ch3_1	¡Capy! Falta un paquete de galletas. Solo vi una cola a rayas y una espalda muy segura de sí misma.
+T:ch3_2	Cola a rayas. Espalda segura. Solo hay uno así en este barrio.
+T:ch3_3	Sin ofender, no es robar, es trabajar por cuenta propia. Soy Shnyr, el mapache más rápido de esta calle.
+T:ch3_4	Esa galleta es mía. Devuélvela. Ya.
+T:ch3_5	Está... ligeramente probada. Llámalo reseña. ¡Y ahora, a que no me atrapas!
+T:ch3_6	Desapareció. Ya dije que necesitamos una caja fuerte. Aunque sea pequeña.
+T:ch3_7	El mapache es astuto, pero no parece malo. Volverá. Mejor esconder los objetos de valor, y los nervios también.
+T:ch4_title	El Reloj que Corre Hacia Atrás
+T:ch4_0	Escondiendo los objetos de valor del mapache, Capy rebusca en el almacén y encuentra algo raro en un rincón.
+T:ch4_1	Un reloj de bolsillo. El oro se ha oscurecido, el cristal está agrietado. Viejo, pero con carácter.
+T:ch4_2	Hace tictac. Pero las agujas van hacia atrás. Desde luego no es lo que dice el manual.
+T:ch4_3	Roto. Mi abuelo decía: un reloj que va hacia atrás o está roto o guarda una sorpresa.
+T:ch4_4	No me gustan las sorpresas. Pero es bonito. Me lo quedo, sin garantía.
+T:ch4_5	En el bolsillo, el reloj hizo tictac bajito, como guiñando un ojo. Parece que no fue la última vez.
+T:ch5_title	Nuevos Compañeros
+T:ch5_0	La tienda se ha convertido en un supermercado. Toda la calle habla de Capy y nuevos trabajadores llaman a la puerta. Los que pudieron, llamaron.
+T:ch5_1	Soy Bodya, constructor. He oído que estáis ampliando. ¿Necesitáis tablones? Os mando la factura por separado. Y otra más, por cortesía.
+T:ch5_2	Zoya. Vendo todo lo que no está clavado. Y lo que está clavado, solo que más despacio. Dame un escaparate y se pondrá a hablar.
+T:ch5_3	Uuh. Soy Sonia, contable. Trabajo de noche, de día solo parpadeo. Alguien tiene que contar estas monedas antes de que se escapen.
+T:ch5_4	Tonya, seguridad. Voy. Llegaré pronto. Pero no dejaré pasar a nadie.
+T:ch5_5	Pasad, amigos. Gracias por venir. De verdad.
+T:ch5_6	Las gracias están bien. Pero aún no he visto cómo acaba la pregunta del bono.

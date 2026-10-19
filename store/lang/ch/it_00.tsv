@@ -1,0 +1,174 @@
+T:pageTitle	CapyTap: Market
+T:langLabel	Lingua
+T:sceneLabel	Una strada in pixel art con il negozio di Capy. Tocca il negozio per guadagnare monete.
+T:perSecond	{0} / s
+T:tab_shop	Negozio
+T:tab_departments	Reparti
+T:tab_team	Squadra
+T:tab_story	Diario
+T:capiName	Capy
+T:capiHello	Sono Capy. Ho una moneta, una baracca all'angolo e nessun piano B. Tocca il negozio. Si comincia in piccolo.
+T:statTapPower	Monete per tocco
+T:statLevelMult	Bonus di livello
+T:statTaps	Tocchi
+T:statEarned	Guadagnato in totale
+T:tapHint	Tocca il negozio. Più alto è il tuo reddito, più rende ogni tocco. Proprio come i grandi affari, ma più onesto.
+T:soonText	Questa scheda si apre un po' più tardi. Capy ci sta già lavorando!
+T:saveError	Impossibile salvare il gioco: l'archiviazione del browser non è disponibile.
+T:levelName_1	Negozietto
+T:levelName_2	Bottega all'Angolo
+T:levelName_3	Minimarket
+T:levelName_4	Supermercato
+T:levelName_5	Grande Magazzino
+T:levelName_6	Centro Commerciale
+T:sign_1	Tutto per un Soldo
+T:sign_2	Bottega all'Angolo
+T:sign_3	Minimarket
+T:sign_4	Supermercato
+T:sign_5	Grande Magazzino
+T:sign_6	Centro Commerciale
+T:shopLevelLabel	Livello del negozio: {0} / {1}
+T:dept_trinkets	Cianfrusaglie e Fiammiferi
+T:dept_sweets	Dolci
+T:dept_stationery	Cartoleria
+T:dept_toys	Giocattoli
+T:dept_cleaning	Casalinghi
+T:dept_produce	Frutta e Verdura
+T:dept_bakery	Panetteria
+T:dept_clothes	Abbigliamento
+T:dept_shoes	Scarpe
+T:dept_electronics	Elettronica
+T:dept_foodcourt	Area Ristoro
+T:dept_cinema	Cinema
+T:buyModeLabel	Quanti comprarne in una volta
+T:buyMax	MAX
+T:buyLabel	Compra ×{0} · {1}
+T:deptEach	Ognuno rende: {0} / s
+T:deptTotal	Totale: {0} / s
+T:msDone	Tutti i traguardi raggiunti ★
+T:milestoneToast	«{0}»: {1} pz. Reddito del reparto ×2. Economia di scala.
+T:lockedDepts	🔒 I nuovi reparti si aprono al livello «{0}»
+T:expandTitle	Ampliamento: {0}
+T:expandNote	Ogni nuovo livello dà ×2 a tutto il reddito e apre nuovi reparti. Prima compra i reparti necessari e fai salire di livello tutti gli animaletti di questo livello.
+T:expandBtn	Amplia · {0}
+T:reqHire	Sali al livello {1}: {0}
+T:expandMax	Ora è un centro commerciale: il sogno di Capy si è avverato! 🎉
+T:buildDone	Ampliamento completato: ora è «{0}». Anche l'affitto salirà, ovviamente.
+T:newDepts	Nuovi reparti: {0}
+T:offlineTitle	Bentornato!
+T:offlineText	Mentre eri via, il negozio ha guadagnato
+T:offlineCoins	{0} monete 💤
+T:offlineBtn	Ritira
+T:adOfflineBtn	🎬 ×2: guarda un video
+T:adPrivacyBtn	Opzioni sulla privacy degli annunci
+T:adBonusTitle	Saltare l'attesa?
+T:adBonusText	Il minigioco bonus sarà pronto tra {0}. Guarda un breve video e si apre subito.
+T:adBoostChip	Reddito ×2 per 10 min
+T:adBonusYes	🎬 Guarda un video
+T:teamNote	Assumi personale: ognuno dà il suo bonus. Tocca qualcuno sulla scena, potresti sentire qualcosa di interessante.
+T:teamLevel	Livello {0} / {1}
+T:teamHire	Assumi · {0}
+T:teamUpgrade	Potenzia · {0}
+T:teamMax	Livello max ★★★
+T:teamStarBtn	Stella {0}: {1}/{2} · {3}
+T:teamStarred	{0} ottiene la stella {1}! Il bonus è cresciuto.
+T:teamPlus	{0}: {1}/{2} per la stella {3}. Il bonus cresce.
+T:teamNow	Ora: {0}
+T:teamNext	Prossimo: {0}
+T:teamGives	Dà: {0}
+T:teamHired	{0} è a libro paga. Il contratto è verbale, come da tradizione.
+T:teamUpgraded	{0}: livello {1}. Una promozione senza aumento.
+T:lockedTeam	🔒 Nuovi animaletti arrivano al livello «{0}»
+T:bonus_tap	potenza del tocco ×{0}
+T:bonus_expandCost	ampliamenti più economici del {0}%
+T:bonus_offline	offline: {0}% del reddito, fino a {1} h
+T:bonus_thief	il procione ruba il {0}% in meno
+T:bonus_deptIncome	{0}: reddito ×{1}
+T:bonus_global	tutto il reddito ×{0}
+T:bonus_event	feste e saldi più forti del {0}%
+T:bonus_deptCost	reparti più economici del {0}%
+T:team_spike	Spike il Riccio
+T:team_spike_role	Cassiere
+T:team_spike_trait	Carattere spinoso, contabilità morbida. Conta ogni soldo e ogni parola.
+T:team_bodya	Bodie il Castoro
+T:team_bodya_role	Costruttore
+T:team_bodya_trait	Costruisce qualsiasi cosa se gli dai assi, tempo e pace. Nessuno gli dà pace.
+T:team_zoya	Zoe la Lepre
+T:team_zoya_role	Commessa
+T:team_zoya_trait	Vende qualsiasi cosa a chiunque. L'etica si paga a parte.
+T:team_tonya	Tonya la Tartaruga
+T:team_tonya_role	Guardia
+T:team_tonya_trait	Lenta, ma non si lascia sfuggire niente. Soprattutto i soldi degli altri.
+T:team_mikhas	Mikey l'Orso
+T:team_mikhas_role	Facchino
+T:team_mikhas_trait	Grosso come un armadio e altrettanto loquace. Gli piace sollevare pesi, con moderazione.
+T:team_sonia	Sonia la Civetta
+T:team_sonia_role	Contabile
+T:team_sonia_trait	Vede poesia in un bilancio. Non dorme finché i conti non tornano, cioè dorme pochissimo.
+T:team_kria	Quackers l'Anatra
+T:team_kria_role	Addetta alle pulizie
+T:team_kria_trait	Uno straccio, un secchio e tanta grinta. In questo negozio non c'è sporco perché l'ha deciso lei.
+T:team_zhuzha	Juju la Rana
+T:team_zhuzha_role	Stilista
+T:team_zhuzha_trait	Gusto raffinato e lingua ancora più affilata. Crede che senza stile anche uno sconto sembri economico.
+T:team_leo	Leo la Volpe
+T:team_leo_role	Direttore
+T:team_leo_trait	Vive di slide e scadenze. Trasforma ogni problema in una «opportunità di crescita».
+T:team_pao	Pao il Panda
+T:team_pao_role	Marketing
+T:team_pao_trait	Sa trasformare il niente in una tendenza. A volte persino qualcosa.
+T:team_murzyk	Baffi il Gatto
+T:team_murzyk_role	Mago dell'elettronica
+T:team_murzyk_trait	Dice che basta riavviare tutto. Di solito ha ragione. A volte a riavviarsi sei tu.
+T:team_toma	Tommy l'Elefante
+T:team_toma_role	Custode
+T:team_toma_trait	Ricorda dov'è ogni cosa, chi ha preso cosa e chi ha promesso cosa. Fa paura.
+T:storyNote	Qui ci sono tutti i capitoli sbloccati. Rileggerli è gratis.
+T:storyRead	Leggi
+T:introCutTitle	Introduzione
+T:introCutBtn	Guarda
+T:storyLocked	🔒 Il prossimo capitolo si apre man mano che avanzi
+T:storySkip	Salta il capitolo
+T:chapterLabel	Capitolo {0}
+T:speaker_shnyr	Shnyr il Procione
+T:speaker_clock	L'Orologio
+T:speaker_capy	Capy
+T:ch1_title	Il Chiosco all'Angolo
+T:ch1_0	Mattina nel paesino. Il forno fuma già, i sassi del selciato sono ancora bagnati e all'angolo c'è un chiosco che nessuno ha voluto.
+T:ch1_1	Arriva un carretto con una sola moneta sul fondo. Una capibara fa capolino. Sembra sicura di sé. Quasi sempre.
+T:ch1_2	Ciao, chiosco. Sono Capy. Una moneta, tanti progetti e nessun piano B.
+T:ch1_3	Il tetto perde, l'insegna pende storta, ma c'è una tenda. Lo chiamerò «Tutto per un Soldo». Il soldo è già qui.
+T:ch1_4	Dicono che chi sta all'angolo veda tutto il paese. Nessuno mi ha avvisata che tutto il paese avrebbe visto me.
+T:ch1_5	Il primo cliente striscia già i piedi davanti alla porta, stringendo un borsellino. È ora di toccare: ogni tocco è una moneta.
+T:ch2_title	Spike Cerca Lavoro
+T:ch2_0	Dopo qualche giorno la cassa suona così tanto che Capy non riesce a vendere e contare insieme. Un riccio con un foglio in mano è seduto alla porta da un bel po'.
+T:ch2_1	Buongiorno. Ci sono posti liberi? Sono Spike. So contare, non so rubare. Cioè, per lo più non voglio.
+T:ch2_2	Ma sei spinoso. I clienti avranno paura, immagino.
+T:ch2_3	Gli onesti non hanno paura. Gli altri nemmeno, ma poi se ne pentono.
+T:ch2_4	La cassa è tua. Niente periodo di prova: non abbiamo né tempo né soldi.
+T:ch2_5	Grazie. Non si perderà nemmeno un soldo. A meno che non resti impigliato tra gli aculei. Allora lo restituirò di sicuro.
+T:ch2_6	Suggerimento: apri la scheda «Squadra» e assumi Spike. Aumenta la potenza del tuo tocco.
+T:ch3_title	Qualcuno Sta Rubando!
+T:ch3_0	Con Spike alla cassa gli affari sono decollati e tutto il paese ha saputo del negozio. Insieme ai clienti è arrivato qualcuno che non aveva intenzione di pagare.
+T:ch3_1	Capy! È sparito un pacco di biscotti. Ho fatto in tempo a vedere solo una coda a strisce e una schiena molto sicura di sé.
+T:ch3_2	Coda a strisce. Schiena sicura di sé. Ce n'è uno solo così, in questo quartiere.
+T:ch3_3	Senza offesa, non è un furto, è lavoro in proprio. Sono Shnyr, il procione più veloce di questa strada.
+T:ch3_4	Quel biscotto è mio. Restituiscilo. Subito.
+T:ch3_5	È stato... assaggiato appena. Chiamala recensione. E ora, non mi prendi!
+T:ch3_6	Sparito. Lo dicevo io che ci serve una cassaforte. Anche piccola.
+T:ch3_7	Il procione è furbo, ma non sembra cattivo. Tornerà. Meglio nascondere gli oggetti di valore, e anche i nervi.
+T:ch4_title	L'Orologio che Va all'Indietro
+T:ch4_0	Mentre nasconde gli oggetti di valore al procione, Capy fruga nel magazzino e trova qualcosa di strano in un angolo.
+T:ch4_1	Un orologio da taschino. L'oro si è scurito, il vetro è crepato. Vecchio, ma con carattere.
+T:ch4_2	Fa tic-tac. Ma le lancette vanno all'indietro. Di certo non è come dice il manuale.
+T:ch4_3	Rotto. Mio nonno diceva: un orologio che va all'indietro o è rotto o nasconde una sorpresa.
+T:ch4_4	Non mi piacciono le sorprese. Ma è bello. Lo tengo, senza garanzia.
+T:ch4_5	In tasca l'orologio ha fatto tic-tac piano, come se strizzasse l'occhio. Pare che non sia stata l'ultima volta.
+T:ch5_title	Nuovi Colleghi
+T:ch5_0	Il negozio è diventato un supermercato. Tutta la strada parla di Capy e nuovi lavoratori bussano alla porta. Quelli che ci sono riusciti, hanno bussato.
+T:ch5_1	Sono Bodya, costruttore. Ho sentito che vi state ampliando. Servono assi? Mando il conto a parte. E un altro, per cortesia.
+T:ch5_2	Zoya. Vendo tutto ciò che non è inchiodato. E ciò che è inchiodato, solo più lentamente. Dammi una vetrina e si metterà a parlare.
+T:ch5_3	Uh-uh. Sono Sonia, contabile. Lavoro di notte, di giorno mi limito a sbattere le palpebre. Qualcuno deve contare queste monete prima che scappino.
+T:ch5_4	Tonya, sicurezza. Sto arrivando. Sarò lì presto. Ma non farò passare nessuno.
+T:ch5_5	Entrate, amici. Grazie di essere venuti. Sul serio.
+T:ch5_6	I ringraziamenti sono belli. Ma non ho ancora visto come finisce la domanda bonus.

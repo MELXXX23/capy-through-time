@@ -1,0 +1,174 @@
+T:ch5_7	A equipe está crescendo. Contrate novos funcionários na aba "Equipe". Enquanto isso, alguém no escuro está de olho no seu caixa.
+T:ch6_title	Shnyr na Chuva
+T:ch6_0	Fim de noite. Todos foram para casa e a Capy fica sobre a féria do dia. Chove lá fora, e algo se mexe perto da porta dos fundos.
+T:ch6_1	Alguém está soluçando? Shnyr, é você?
+T:ch6_2	Não sou eu. É a chuva. No meu rosto. Só no meu rosto.
+T:ch6_3	Shnyr, por que você faz isso? Você não tem casa?
+T:ch6_4	Tem uma caixa atrás da padaria. Sem amigos. Nenhum. Nem alguém para sentar quietinho ao lado.
+T:ch6_5	Eu queria que alguém só dissesse "oi". Todo mundo grita "pega o guaxinim".
+T:ch6_6	Oi, Shnyr. Só porque sim. Entra, temos chá e pãezinhos.
+T:ch6_7	Sério? Então chega de roubar. Bom... quase. Brincadeira. Provavelmente. Obrigado.
+T:ch6_8	Desde então o Shnyr não é ladrão, e sim um de nós. Às vezes ainda olha de relance para a caixa, mas agora com vergonha. Coisas grandes vinham por aí para todos.
+T:ch7_title	O Shopping
+T:ch7_0	Meses se passaram. O Shnyr virou o queridinho dos clientes, e a equipe virou uma família que discute tomando café. A loja cresceu até virar um mercado, depois um supermercado, e agora...
+T:ch7_1	Na rua há um shopping com telhado de vidro, cinema e cheiro de salgados fresquinhos. Os concorrentes ficam emburrados num canto, em silêncio.
+T:ch7_2	O Shopping da Capy. De uma única moeda. Quem diria.
+T:ch7_3	Contei cada tijolo. Todos batem. Um milagre.
+T:ch7_4	Ninguém precisa me pegar aqui. É estranho e bom.
+T:ch7_5	Obrigada a todos. Sem vocês este lugar só venderia ar.
+T:ch7_6	Algo fez tique-taque alto no bolso da Capy.
+T:ch7_7	Meu relógio... Ele acabou de acordar?
+T:ch8_title	Final: O Relógio Fala
+T:ch8_0	Pois é: o relógio dourado sai rastejando do bolso e fica pairando no ar. Os ponteiros giram para trás.
+T:ch8_1	Olá, Capy. Esperei muito. Uma eternidade, se não contar os intervalos para o café.
+T:ch8_2	Você fala?!
+T:ch8_3	Sou o Relógio do Tempo. Posso voltar minutos. Reembolso não incluso.
+T:ch8_4	Seu shopping é maravilhoso. Mas imagine passar por tudo de novo, agora com experiência.
+T:ch8_5	Recomeçar? Mas aqui já está tudo construído...
+T:ch8_6	Não perder, e sim construir com mais sabedoria. Os amigos ficam, o conhecimento fica. As moedas não. Isso é economia.
+T:ch8_7	Com mais sabedoria... Até que soa bem. Preciso pensar.
+T:ch8_8	Quando decidir, é só dar corda em mim. Estou aqui. Tiquetaqueando.
+T:ch8_9	A viagem no tempo foi desbloqueada. Veja a aba "Relógio": uma nova era espera por você.
+T:holiday_newyear	Ano-Novo
+T:holiday_halloween	Halloween
+T:holiday_blackfriday	Black Friday
+T:hb_global	+{0}% de renda
+T:holidayToast	{0}: feriado na cidade! {1}
+T:boost_sale	Promoção ×{0}
+T:boost_bf	Black Friday ×{0}
+T:boost_income	Renda ×{0}
+T:boost_tap	Toque ×{0}
+T:banner_sale	🏷️ PROMOÇÃO ×{0} · {1}
+T:banner_bf	🖤 BLACK FRIDAY ×{0} · {1}
+T:banner_thief	🦝 Pegue o guaxinim! {0}/{1} · {2} s
+T:saleStart	Promoção. Renda ×{0} por 2 minutos. Aproveite antes que todo mundo acorde.
+T:raccoonStart	O guaxinim Shnyr pegou um saco. Corra atrás dele: toque nele.
+T:raccoonWin	Pegou! O Shnyr largou o saco: +{0}.
+T:raccoonLose	O Shnyr fugiu e roubou {0} moedas.
+T:raccoonFriend	O Shnyr só estava brincando e fugiu. Não roubou nada.
+T:tonyaScared	A Tonya espantou o guaxinim logo na entrada.
+T:shnyrSay_0	He-he, é meu.
+T:shnyrSay_1	O saco é meu, e as moedas também.
+T:shnyrSay_2	Tente me pegar.
+T:shnyrOuch_1	Ei, na pelagem não!
+T:shnyrOuch_2	Boa mira. Desagradável.
+T:wheelTitle	Tambor da Fortuna
+T:wheelLegend	🪙 moedas · ⚡ renda · 👆 toque · ⭐ bolada
+T:wheelStreak	Sequência de dias: {0} (prêmios ×{1})
+T:wheelSpin	Girar!
+T:wheelWait	Próximo giro em {0}
+T:wheelClose	Fechar
+T:wheelReady	A Roda da Fortuna está pronta! 🎡
+T:prize_coins	Moedas: +{0}
+T:themeLocked	Termine primeiro a era 2
+T:themeLockedHalloween	Termine primeiro a era 5
+T:fbBtn	✉ Escrever para os desenvolvedores
+T:fbTitle	Escreva para nós
+T:fbHint	O que você gosta, o que quebrou, o que está faltando? Lemos todas as mensagens.
+T:fbContact	Contato (opcional)
+T:fbSend	Enviar
+T:fbCancel	Cancelar
+T:fbThanks	Obrigado! Sua mensagem foi enviada 💌
+T:fbFail	Não foi possível enviar. Tente novamente mais tarde.
+T:fbCopied	O endereço ainda não foi configurado. O texto foi copiado, envie-o aos desenvolvedores.
+T:fbEmpty	Escreva algumas palavras primeiro.
+T:newsTitle	📮 Correio dos desenvolvedores
+T:newsSub	Novidades fresquinhas do CapyTap
+T:newsIntro	Oi, amigo! Desta vez as novidades vêm num jornal: uma torre do relógio, uma nova tela de carregamento e muitas coisinhas. Vire as páginas!
+T:newsH0	Um jornal no lugar da carta.
+T:newsT0	O correio dos desenvolvedores agora é um jornal: ele se abre e as páginas viram. Deslize, toque ou use as setas.
+T:newsH1	A torre do relógio.
+T:newsT1	Uma grande torre do relógio surgiu sobre o shopping. Antes da viagem ela bate: uma vez na primeira noite, duas na segunda e três na terceira. Toque nela para partir rumo a uma nova era.
+T:newsH2	Nova tela de carregamento.
+T:newsT2	Uma cidade noturna cheia de vida, com janelas, carros e pássaros, e dicas úteis embaixo. Toque numa dica para ver a próxima.
+T:newsH3	Uma bruxa nova.
+T:newsT3	A bruxa na vassoura ficou mais bonita: chapéu grande, vassoura fofa e um rastro de estrelas.
+T:newsH4	Mercados maiores.
+T:newsT4	No celular na vertical, os mercados de todos os níveis ficaram maiores e as faixas marrons nas bordas sumiram.
+T:newsH5	Nuvens mordidas.
+T:newsT5	Na skin Nuvens de Algodão, algumas nuvens parecem ter levado uma mordida.
+T:newsH6	A gota de chuva.
+T:newsT6	A gotinha que liga a chuva agora fica à direita, junto à placa da loja.
+T:newsH7	Molduras nítidas.
+T:newsT7	As molduras do menu têm um contorno claro em todos os lados, e os nomes das abas não se escondem mais sob o cadeado.
+T:newsH8	Capy à noite.
+T:newsT8	No escuro, a Capy ganha um contorno quente para se destacar, e a névoa não esconde mais os bichinhos.
+T:newsSign	Obrigado por jogar! Conte o que você quer ver a seguir. — A equipe CapyTap
+T:newsClose	Entendi!
+T:fear0	Ai!
+T:fear1	Mamãe!
+T:fear2	Meu pãozinho!
+T:fear3	Eu só estava passeando!
+T:fear4	Para onde você vai?!
+T:fear5	Corre!
+T:seasonIntroTitle	Estações desbloqueadas!
+T:seasonIntroText	Duas eras concluídas, e agora você mesmo escolhe a estação: primavera, verão, outono, inverno ou o assustador Halloween. Cada uma muda as árvores, o clima e o astral da rua. Procure o novo botão de roda no menu!
+T:seasonIntroGo	🌸 Ir às estações
+T:seasonIntroLater	Depois
+T:mailSay0	Correio! Assine aqui!
+T:mailSay1	Carta para você! Mais rápido que um pombo!
+T:mailSay2	Entrega expressa. O boné é oficial!
+T:mailSay3	Carta entregue, mão no coração.
+T:gfear0	Um fantasma!!! Mamãe!
+T:gfear1	Bu-- ah, é ele!
+T:gfear2	Eu não vi nada!
+T:gfear3	Tem alguém na janela!
+T:gfear4	É só um lençol, né? NÃO!
+T:hagBang	🧙 Uma bruxa está sobrevoando a cidade! Toque no "!"
+T:hagArrived	🏚️ A cabana sobre patas de galinha chegou! Toque nela
+T:hagTitle	A Cabana da Bruxa
+T:hagSub	Bruxa: "Três caldeirões, três surpresas! Lembre do melhor e depois adivinhe!"
+T:hagStart	Dê uma espiada!
+T:hagWatch	Observe bem o que está onde...
+T:hagShuffle	Embaralhando!
+T:hagPick	Escolha um caldeirão!
+T:hagGood	Você achou o prêmio principal!
+T:hagMiss	Ops, esse não! O cristal é seu mesmo assim.
+T:hagDone	Obrigado, bruxa!
+T:clockWait	O relógio está tiquetaqueando... Construa o shopping e espere três noites. Então ele levará você a uma nova era.
+T:clockNoGain	Cedo demais: continue ganhando e o relógio pagará fragmentos pela viagem.
+T:clockWarn	Terceira noite. O relógio bate três vezes: hora de partir! Toque nele ou abra o Relógio no menu.
+T:npMast	O JORNAL DA RUA DA CAPY
+T:npCoverHead	Edição fresquinha!
+T:npIn	Nesta edição:
+T:npCap1	A torre do relógio do shopping à meia-noite.
+T:npCap2	A cidade noturna na tela de carregamento.
+T:npCap3	A nova bruxa sobrevoa a cidade.
+T:seasonFx_winter	Neve fofa pousa nos telhados
+T:seasonFx_spring	Flores e pétalas despertam
+T:seasonFx_summer	O sol brilha com toda a força
+T:seasonFx_autumn	O vento leva folhas douradas
+T:seasonFx_halloween	Psiu… algo farfalha na cidade
+T:circusFlag	CIRCO DA SORTE
+T:circusTitle	Circo da Fortuna
+T:circusSub	Palhaço Bubon: "Cristais e bônus, só aqui!"
+T:circusSpin	Girar!
+T:circusDone	Obrigado, circo!
+T:circusBang	Algo apareceu perto da loja... Toque no "!" vermelho
+T:circusArrived	O Circo da Fortuna abriu! Toque nele
+T:circusAgain	Mais uma tentativa! Gire de novo
+T:prize_skin	Nova skin: {0}! Ela espera na aba de skins
+T:skin_hero_party	Heróis festeiros
+T:skin_hero_ninja	Heróis ninja
+T:skin_capy_knight	Capy Cavaleira
+T:skin_capy_hero	Capy Super-Heroína
+T:skin_capy_cowboy	Capy Cowboy
+T:skin_capy_fairy	Capy Fada
+T:skin_capy_viking	Capy Viking
+T:skin_capy_pilot	Capy Piloto
+T:skinSay_capy_knight	Minha espada é afiada e meus preços são justos. Quase.
+T:skinSay_capy_hero	Meu superpoder são os descontos. A capa é grátis.
+T:skinSay_capy_cowboy	Esta cidade tem um só xerife. E ele vende coisas.
+T:skinSay_capy_fairy	Uma pitada de magia, e as etiquetas de preço sobem até o céu.
+T:skinSay_capy_viking	À promoção! Vamos saquear os descontos!
+T:skinSay_capy_pilot	Apertem os cintos: nosso lucro está ganhando altitude.
+T:skin_capy_gold	Capy Dourada
+T:skin_capy_diamond	Capy Diamante
+T:skin_hero_gold	Heróis dourados
+T:skin_hero_diamond	Heróis de diamante
+T:skin_shop_diamond	Loja de diamante
+T:skin_street_diamond	Rua de diamante
+T:skin_weather_diamondcloud	Nuvens de diamante
+T:skinSay_capy_gold	Pelo dourado e nenhum desconto no brilho. Bom, para você tem.
+T:skinSay_capy_diamond	Capy Diamante. Toque sem medo: eu brilho, mas sou dura como cristal.
+T:skinSay_hero_gold	Ajudantes dourados: trabalham como um relógio e brilham como moedas.

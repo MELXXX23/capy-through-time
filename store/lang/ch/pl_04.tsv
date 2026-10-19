@@ -1,0 +1,195 @@
+T:setEpochViewNote	Wybierz jedną z epok, które masz już za sobą: zmienia się wygląd, towary i muzyka. Pod każdą nazwą: bieżąca epoka pokazuje twoje saldo, jak w liczniku; minione epoki pokazują, ile w nich zarobiono. Nowe monety, także offline, liczą się w wybranej epoce. Nowe epoki odblokowuje podróż w czasie.
+T:epochViewing	Epoka: {0}
+T:epochBalance	Saldo: {0}
+T:setSeason	Pora roku
+T:setSeasonNote	Zmienia drzewa, pogodę i nastrój ulicy. „Auto” używa daty z twojego urządzenia.
+T:season_auto	Auto
+T:season_spring	🌸 Wiosna
+T:season_summer	☀️ Lato
+T:season_autumn	🍂 Jesień
+T:season_winter	❄️ Zima
+T:season_halloween	🎃 Halloween
+T:summerSay_0	Uff, ale upał. Wody, i to dużo.
+T:summerSay_1	Tylko złapię oddech i wracam do pracy. Minuta. Dwie.
+T:summerSay_2	Słońce piecze jak urząd skarbowy: nie ma ucieczki.
+T:summerSay_3	Zimna woda to najlepsza nagroda. No, zaraz po pieniądzach.
+T:summerSay_4	Cień i szklanka wody. To jest życie.
+T:banner_ghost	👻 Łap duchy! {0}/{1} · {2} s
+T:banner_crt	{0} Łap: {1}! {2}/{3} · {4} s
+T:crtStart	{0} jest w mieście. Stukaj, by złapać: każdy daje monety, a razem dają kryształ.
+T:crtEnd	Złapano: {0}.
+T:crtEndNone	Za wolno. Następnym razem bądź szybszy.
+T:crt_0	Mazok Sowa
+T:crt_1	Vinyl Jeż
+T:crt_2	Disco Pancernik
+T:crt_3	Token Chomik
+T:crt_4	Glitchy Robak
+T:crt_5	Leaf Kameleon
+T:crt_6	Astro Aksolotl
+T:crt_7	Signboard Kot
+T:ghostStart	Duchy w mieście. Stukaj je: każdy daje monety, a złapanie wszystkich daje kryształ.
+T:huntEnd	Złapano: {0} z {1}. Złap wszystkie, a dostaniesz kryształ.
+T:huntAll	Wszystkie złapane! Kryształ +1 💎
+T:ghostEnd	Złapane duchy: {0}. Kryształy: {1}.
+T:ghostEndNone	Duchy się rozpłynęły. Następnym razem bądź szybszy.
+T:boost_ghosts	Duchy: {0}
+T:boost_drum	Bęben fortuny: {0}/{1}
+T:wheelGhostBtn	🎡 Jeszcze raz · {0}
+T:wheelGhostNote	Zebrano na bęben: {0}. {1} kupują dodatkowy obrót koła.
+T:stGhosts	Złapane duchy
+T:mailArrive	✉️ Przyjechała poczta. Odbierz list przy drodze.
+T:letterTitle	List od: {0}
+T:letterBtn	Odbierz premię
+T:letter_spike	Cześć, szefowo. Znalazłem w kasie dodatkowy grosz i od razu pomyślałem o tobie. Nie pytaj, czyj jest. Oto premia z poczty.
+T:letter_zoya	Tu Zoya. Wymyśliłam promocję: kto przeczyta ten list, dostaje premię. To ty. Nie dziękuj, po prostu mnie poleć.
+T:letter_bodya	Bodie. Zbudowałem skrzynkę pocztową i wysłałem pierwszy list. Premia jest przybita jak gwóźdź do deski: mocno i bez zbędnych słów.
+T:letter_sonia	Hu-hu. Policzyłam: należy ci się premia. Księgi się zgadzają, nie trzeba sprawdzać. I tak sprawdzisz.
+T:letter_leo	Plan: czytasz ten list, dostajesz premię, wszyscy zyskujemy. Zgoda? Milczenie uznam za zgodę.
+T:letter_pao	Tu Pao. W liście jest bambus i szczęście. Zniżki się skończyły, ale premia jest prawdziwa.
+T:letterBoost_income	Dochód ×{0} na {1} min
+T:letterBoost_tap	Stuknięcie ×{0} na {1} min
+T:letterBoost_coins	+{0} monet
+T:letterBoost_wheel	Cyrk jedzie do ciebie!
+T:letterBoost_sale	Wyprzedaż ×2 na 2 minuty!
+T:letterBoost_crystal	Kryształ +1 💎
+T:nightHint_1	Pierwsza noc. W kieszeni Capy coś cicho tyka. To nie telefon z banku.
+T:nightHint_2	Druga noc. Tykanie jest głośniejsze. Tym razem na pewno nie budzik.
+T:team_spike_sit_0	Siadaj. Jak minął dzień? Mój był kolczasty, jak zwykle.
+T:team_spike_sit_1	No i jak? Zysk dobry, humor wątpliwy.
+T:team_bodya_sit_0	Siadaj. Jak twój dzień? Mój jest jak tama: trzyma, ale coś trzeszczy.
+T:team_bodya_sit_1	Deska na desce. Powiedz, co słychać. Tylko bez planów remontu.
+T:team_zoya_sit_0	Siadaj. Jak twój dzień? Sprzedałam dwie rzeczy, które nie istnieją.
+T:team_zoya_sit_1	Opowiadaj nowiny. Wymyśliłam już trzy promocje i jedną wymówkę.
+T:team_tonya_sit_0	Spokojnie. Jak twój dzień? Nikogo nie przepuściłam. Nudno i wspaniale.
+T:team_tonya_sit_1	Siadaj. Powoli jest pięknie. Zwłaszcza gdy nikt się nie spieszy.
+T:team_mikhas_sit_0	Hej, przyjacielu. Jak twój dzień? Ciężki, ale z obiadem.
+T:team_mikhas_sit_1	Siadaj. Chcesz kanapkę? Nie pytam dwa razy.
+T:team_sonia_sit_0	Hu-hu, siadaj. Jak twój dzień? Moje księgi się zgadzają. Straszne i miłe.
+T:team_sonia_sit_1	Opowiadaj nowiny. Zapiszę. Nie, nie dla urzędu skarbowego.
+T:team_kria_sit_0	Kwa. Jak twój dzień? Mój jest czysty. A twój?
+T:team_kria_sit_1	Siadaj, odpocznij nogi. Potem powiedz, kto dziś nanosił brudu.
+T:team_zhuzha_sit_0	Rech. Jak twój dzień? Mój był stylowy. Twój naprawimy.
+T:team_zhuzha_sit_1	Siadaj, pogadajmy. O trendach, o ludziach, o trendach ludzi.
+T:team_leo_sit_0	Wersja skrócona: jak twój dzień? Mój jest zgodny z planem. Plan jest tajny.
+T:team_leo_sit_1	Siadaj, mam pomysł. Najpierw opowiesz o swoim dniu, potem mój slajd.
+T:team_pao_sit_0	Cześć. Jak twój dzień? Mój jest jak bambus: wytrzymały i nie zawsze smaczny.
+T:team_pao_sit_1	Siadaj, opowiadaj nowiny. Tylko bez spoilerów: mam własny content.
+T:team_murzyk_sit_0	Mrr. Jak twój dzień? Ładowałem się na słońcu. Zdrowsze niż praca.
+T:team_murzyk_sit_1	Siadaj, słucham. Tylko siedź cicho, gdy sięgam po kabel.
+T:team_toma_sit_0	Siadaj. Ja niczego nie zapominam, więc opowiedz o dniu dokładnie.
+T:team_toma_sit_1	Życie słonia jest długie. Jak twój dzień? Bez fikcji, proszę.
+T:setTime	Pora dnia (słońce i księżyc poruszają się same, doba trwa 5 minut):
+T:time_morning	🌅 Ranek
+T:time_day	☀️ Dzień
+T:time_evening	🌇 Wieczór
+T:time_night	🌙 Noc
+T:good_0_0	Świece i Zapałki
+T:good_0_1	Miód i Marcepan
+T:good_0_2	Pióra i Pergamin
+T:good_0_3	Drewniane Lalki
+T:good_0_4	Mydło i Zioła
+T:good_0_5	Płody Ogrodu
+T:good_0_6	Hala Chleba
+T:good_0_7	Kaftany i Suknie
+T:good_0_8	Buty
+T:good_0_9	Lunety i Kompasy
+T:good_0_10	Karczma
+T:good_0_11	Teatr Masek
+T:good_1_0	Pocztówki i Przypinki
+T:good_1_1	Lody i Oranżada
+T:good_1_2	Zeszyty i Maszyny do Pisania
+T:good_1_3	Pociągi Zabawki
+T:good_1_4	Proszki do Prania
+T:good_1_5	Konserwy
+T:good_1_6	Pączki
+T:good_1_7	Sukienki w Kropki
+T:good_1_8	Mokasyny
+T:good_1_9	Telewizory Kineskopowe
+T:good_1_10	Bar Mleczny
+T:good_1_11	Kino Samochodowe
+T:good_2_0	Brokat i Znaczki
+T:good_2_1	Lizaki
+T:good_2_2	Płyty Winylowe
+T:good_2_3	Jojo i Frisbee
+T:good_2_4	Lakier do Włosów i Perfumy
+T:good_2_5	Egzotyczne Owoce
+T:good_2_6	Rogaliki
+T:good_2_7	Dzwony i Błyszczące Garnitury
+T:good_2_8	Buty na Platformie
+T:good_2_9	Magnetofony Kasetowe
+T:good_2_10	Pizzeria
+T:good_2_11	Sala Disco
+T:good_3_0	Żetony i Naklejki
+T:good_3_1	Napoje Gazowane
+T:good_3_2	Kasety i Plakaty
+T:good_3_3	Konsole do Gier
+T:good_3_4	Baterie
+T:good_3_5	Owocowe Przekąski
+T:good_3_6	Ciastka i Pączki
+T:good_3_7	Kurtki Bomberki
+T:good_3_8	Trampki
+T:good_3_9	Automaty Arkadowe
+T:good_3_10	Fast Food
+T:good_3_11	Wypożyczalnia Wideo
+T:good_4_0	Dyskietki i Pendrive’y
+T:good_4_1	Chipsy i Napoje Energetyczne
+T:good_4_2	Myszki i Klawiatury
+T:good_4_3	Tamagotchi i Figurki
+T:good_4_4	Kable i Ładowarki
+T:good_4_5	Gotowe Sałatki
+T:good_4_6	Kawiarnia
+T:good_4_7	Gadżety i Koszulki
+T:good_4_8	Tenisówki
+T:good_4_9	Laptopy
+T:good_4_10	Sushi Bar
+T:good_4_11	Sala Streamingowa
+T:good_5_0	Rzeczy Wielokrotnego Użytku
+T:good_5_1	Orzechy i Suszone Owoce
+T:good_5_2	Ekologiczne Zeszyty
+T:good_5_3	Drewniane Klocki
+T:good_5_4	Ekologiczne Środki Czystości
+T:good_5_5	Warzywa z Farmy
+T:good_5_6	Chleb na Zakwasie
+T:good_5_7	Lniane Ubrania
+T:good_5_8	Buty z Recyklingu
+T:good_5_9	Panele Słoneczne
+T:good_5_10	Wegańska Kawiarnia
+T:good_5_11	Eko Kino pod Gołym Niebem
+T:good_6_0	Gwiezdne Pamiątki
+T:good_6_1	Jedzenie w Tubkach
+T:good_6_2	Mapy Gwiazd
+T:good_6_3	Rakiety Zabawki
+T:good_6_4	Środki Czystości Antygrawitacyjne
+T:good_6_5	Warzywa Hydroponiczne
+T:good_6_6	Kosmiczne Wypieki
+T:good_6_7	Skafandry
+T:good_6_8	Buty Magnetyczne
+T:good_6_9	Satelity i Gadżety
+T:good_6_10	Kosmiczna Kuchnia
+T:good_6_11	Planetarium
+T:good_7_0	Neonowe Breloki
+T:good_7_1	Bubble Tea i Galaretka
+T:good_7_2	Holograficzne Zeszyty
+T:good_7_3	Roboty Zabawki
+T:good_7_4	Nanośrodki Czystości
+T:good_7_5	Owoce z Laboratorium
+T:good_7_6	Desery 3D
+T:good_7_7	Świecące Kurtki
+T:good_7_8	Lewitujące Trampki
+T:good_7_9	Gogle VR
+T:good_7_10	Strefa Street Foodu
+T:good_7_11	Pokaz Hologramów
+T:team_spike_cold_0	Monety w moich kolcach pokryły się szronem. Liczenie jest teraz zimne i brzęczące.
+T:team_spike_cold_1	Zoya przywiązała mi szalik do jednego kolca. Reszta musi sobie radzić.
+T:team_spike_cold_2	Zimą ciepła zostaje tylko ta część kasy, na której leży moja łapa.
+T:team_bodya_cold_0	Deski śpiewają na mrozie. Nikt nie prosił, a brzmi jak orkiestra.
+T:team_bodya_cold_1	Mikhas przyniósł skrzynie, które pachną śniegiem. Postawię je przy piecu, niech się obudzą.
+T:team_bodya_cold_2	Marzę o warsztacie z kominkiem. Plany są, na serwetce po herbacie.
+T:team_zoya_cold_0	Szron rysuje wzory na witrynie. To konkurencja i do tego ładna.
+T:team_zoya_cold_1	Uszy mi zmarzły, ale humor mam różowy. Przydałaby się czapka, też różowa.
+T:team_zoya_cold_2	Zhuzha mówi, że szalik to dodatek. Ja mówię, że to ratunek, tylko ładny.
+T:team_tonya_cold_0	Jestem wolna, a zimno jest jeszcze wolniejsze. Wreszcie ktoś, z kim mogę się ścigać.
+T:team_tonya_cold_1	W skorupie jest ciepło. Inni mają kieszenie; niech mi zazdroszczą.
+T:team_tonya_cold_2	Ten sklep widział sto czterdzieści zim. Ta wydaje się zimniejsza. Albo ja starsza.
+T:team_mikhas_cold_0	Jestem niedźwiedziem, nie jest mi zimno. Chcę tylko spać do wiosny.
+T:team_mikhas_cold_1	Skrzynie zamarzły w wieżę. Spike mówi „architektura”. Ja mówię „problem”.

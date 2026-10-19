@@ -1,0 +1,195 @@
+T:setEpochViewNote	Pick one of the epochs you have passed: the look, goods and music change. Under each name: the current epoch shows your balance, as in the counter; passed epochs show what was earned in them. New coins, including offline ones, count in the selected epoch. New epochs unlock with time travel.
+T:epochViewing	Epoch: {0}
+T:epochBalance	Balance: {0}
+T:setSeason	Season
+T:setSeasonNote	Changes the trees, weather and mood of the street. "Auto" uses the date on your device.
+T:season_auto	Auto
+T:season_spring	🌸 Spring
+T:season_summer	☀️ Summer
+T:season_autumn	🍂 Autumn
+T:season_winter	❄️ Winter
+T:season_halloween	🎃 Halloween
+T:summerSay_0	Phew, the heat. Water, and plenty of it.
+T:summerSay_1	Just catching my breath, then back to work. One minute. Two.
+T:summerSay_2	The sun burns like the tax office: no escape.
+T:summerSay_3	Cold water is the best reward. Well, besides money.
+T:summerSay_4	Shade and a glass of water. Now that's life.
+T:banner_ghost	👻 Catch the ghosts! {0}/{1} · {2} s
+T:banner_crt	{0} Catch: {1}! {2}/{3} · {4} s
+T:crtStart	{0} is in town. Tap to catch: each gives coins, and both together give a crystal.
+T:crtEnd	Caught: {0}.
+T:crtEndNone	Too slow. Be faster next time.
+T:crt_0	Mazok the Owl
+T:crt_1	Vinyl the Hedgehog
+T:crt_2	Disco the Armadillo
+T:crt_3	Token the Hamster
+T:crt_4	Glitchy the Bug
+T:crt_5	Leaf the Chameleon
+T:crt_6	Astro Axolotl
+T:crt_7	Signboard the Cat
+T:ghostStart	Ghosts in town. Tap them: each gives coins, and catching them all gives a crystal.
+T:huntEnd	Caught: {0} of {1}. Catch them all for a crystal.
+T:huntAll	All caught! Crystal +1 💎
+T:ghostEnd	Ghosts caught: {0}. Crystals: {1}.
+T:ghostEndNone	The ghosts melted away. Be faster next time.
+T:boost_ghosts	Ghosts: {0}
+T:boost_drum	Fortune drum: {0}/{1}
+T:wheelGhostBtn	🎡 Once more · {0}
+T:wheelGhostNote	Collected for the drum: {0}. {1} buy an extra spin of the wheel.
+T:stGhosts	Ghosts caught
+T:mailArrive	✉️ The mail truck arrived. Pick up the letter by the road.
+T:letterTitle	A letter from {0}
+T:letterBtn	Claim bonus
+T:letter_spike	Hi, boss. Found an extra penny in the till and thought of you right away. Don't ask whose it is. Here's a bonus from the post office.
+T:letter_zoya	It's Zoya. I came up with a promo: whoever reads this letter gets a bonus. That's you. Don't thank me, just recommend me.
+T:letter_bodya	Bodie. Built a mailbox and sent the first letter. The bonus is attached like a nail to a plank: firmly and without extra words.
+T:letter_sonia	Hoo. I did the math: you deserve a bonus. The books balance, no need to check. You'll check anyway.
+T:letter_leo	The plan: you read this letter, get a bonus, we all come out ahead. Deal? I'll take silence as agreement.
+T:letter_pao	It's Pao. The letter has bamboo and luck. The discounts are gone, but the bonus is real.
+T:letterBoost_income	Income ×{0} for {1} min
+T:letterBoost_tap	Tap ×{0} for {1} min
+T:letterBoost_coins	+{0} coins
+T:letterBoost_wheel	The circus is on its way to you!
+T:letterBoost_sale	Sale ×2 for 2 minutes!
+T:letterBoost_crystal	Crystal +1 💎
+T:nightHint_1	Night one. Something quietly ticks in Capy's pocket. Not a call from the bank.
+T:nightHint_2	Night two. The ticking is louder. Definitely not an alarm clock this time.
+T:team_spike_sit_0	Sit down. How was your day? Mine was prickly, as usual.
+T:team_spike_sit_1	So, how was it? Profit's fine, mood's questionable.
+T:team_bodya_sit_0	Sit. How's your day? Mine's like a dam: it holds, but something's cracking.
+T:team_bodya_sit_1	Plank on plank. Tell me what's up. No renovation plans, please.
+T:team_zoya_sit_0	Sit down. How's your day? I sold two things that don't exist.
+T:team_zoya_sit_1	Tell me the news. I've already come up with three promos and one excuse.
+T:team_tonya_sit_0	Take your time. How's your day? I let no one through. Boring and wonderful.
+T:team_tonya_sit_1	Sit. Slow is beautiful. Especially when nobody is in a hurry.
+T:team_mikhas_sit_0	Hey, friend. How's your day? Heavy, but with lunch.
+T:team_mikhas_sit_1	Sit. Want a sandwich? I don't ask twice.
+T:team_sonia_sit_0	Hoo, sit down. How's your day? My books balanced. Scary and nice.
+T:team_sonia_sit_1	Tell me the news. I'll write it down. No, not for the tax office.
+T:team_kria_sit_0	Quack. How's your day? Mine's clean. Yours?
+T:team_kria_sit_1	Sit, rest your feet. Then tell me who tracked in the dirt today.
+T:team_zhuzha_sit_0	Ribbit. How's your day? Mine was stylish. Yours, we'll fix.
+T:team_zhuzha_sit_1	Sit, let's talk. About trends, about people, about people's trends.
+T:team_leo_sit_0	Quick version: how's your day? Mine's on plan. The plan is classified.
+T:team_leo_sit_1	Sit, I have an idea. First you tell me about your day, then comes my slide.
+T:team_pao_sit_0	Hi. How's your day? Mine's like bamboo: sturdy and not always tasty.
+T:team_pao_sit_1	Sit, share the news. No spoilers though: I have my own content.
+T:team_murzyk_sit_0	Purr. How's your day? I was charging in the sun. Healthier than working.
+T:team_murzyk_sit_1	Sit, I'll listen. Just stay quiet when I reach for the wire.
+T:team_toma_sit_0	Sit. I forget nothing, so tell me about your day carefully.
+T:team_toma_sit_1	An elephant's life is long. How's your day? No fiction, please.
+T:setTime	Time of day (the sun and moon move on their own, a day takes 5 minutes):
+T:time_morning	🌅 Morning
+T:time_day	☀️ Day
+T:time_evening	🌇 Evening
+T:time_night	🌙 Night
+T:good_0_0	Candles & Matches
+T:good_0_1	Honey & Marzipan
+T:good_0_2	Quills & Parchment
+T:good_0_3	Wooden Dolls
+T:good_0_4	Soap & Herbs
+T:good_0_5	Garden Produce
+T:good_0_6	Bread Hall
+T:good_0_7	Doublets & Gowns
+T:good_0_8	Boots
+T:good_0_9	Telescopes & Compasses
+T:good_0_10	Tavern
+T:good_0_11	Mask Theatre
+T:good_1_0	Postcards & Pins
+T:good_1_1	Ice Cream & Soda
+T:good_1_2	Notebooks & Typewriters
+T:good_1_3	Toy Trains
+T:good_1_4	Washing Powders
+T:good_1_5	Canned Goods
+T:good_1_6	Donuts
+T:good_1_7	Polka-dot Dresses
+T:good_1_8	Loafers
+T:good_1_9	Tube TVs
+T:good_1_10	Diner
+T:good_1_11	Drive-in Cinema
+T:good_2_0	Glitter & Badges
+T:good_2_1	Lollipops
+T:good_2_2	Vinyl Records
+T:good_2_3	Yo-yos & Frisbees
+T:good_2_4	Hairspray & Perfume
+T:good_2_5	Exotic Fruit
+T:good_2_6	Croissants
+T:good_2_7	Flares & Sparkly Suits
+T:good_2_8	Platform Boots
+T:good_2_9	Tape Players
+T:good_2_10	Pizzeria
+T:good_2_11	Disco Hall
+T:good_3_0	Tokens & Stickers
+T:good_3_1	Fizzy Drinks
+T:good_3_2	Tapes & Posters
+T:good_3_3	Game Consoles
+T:good_3_4	Batteries
+T:good_3_5	Fruit Snacks
+T:good_3_6	Cookies & Donuts
+T:good_3_7	Bomber Jackets
+T:good_3_8	Sneakers
+T:good_3_9	Arcade Machines
+T:good_3_10	Fast Food
+T:good_3_11	Video Rental
+T:good_4_0	Floppies & USB Sticks
+T:good_4_1	Chips & Energy Drinks
+T:good_4_2	Mice & Keyboards
+T:good_4_3	Tamagotchis & Figures
+T:good_4_4	Cables & Chargers
+T:good_4_5	Ready Salads
+T:good_4_6	Coffee Shop
+T:good_4_7	Merch & T-shirts
+T:good_4_8	Canvas Shoes
+T:good_4_9	Laptops
+T:good_4_10	Sushi Bar
+T:good_4_11	Streaming Hall
+T:good_5_0	Reusable Things
+T:good_5_1	Nuts & Dried Fruit
+T:good_5_2	Eco Notebooks
+T:good_5_3	Wooden Blocks
+T:good_5_4	Eco Cleaners
+T:good_5_5	Farm Veggies
+T:good_5_6	Sourdough Bread
+T:good_5_7	Linen Clothes
+T:good_5_8	Recycled Shoes
+T:good_5_9	Solar Panels
+T:good_5_10	Vegan Café
+T:good_5_11	Open-air Eco Cinema
+T:good_6_0	Star Souvenirs
+T:good_6_1	Food in Tubes
+T:good_6_2	Star Maps
+T:good_6_3	Toy Rockets
+T:good_6_4	Anti-gravity Cleaners
+T:good_6_5	Hydroponic Veggies
+T:good_6_6	Space Pastries
+T:good_6_7	Spacesuits
+T:good_6_8	Magnetic Boots
+T:good_6_9	Satellites & Gadgets
+T:good_6_10	Cosmo Kitchen
+T:good_6_11	Planetarium
+T:good_7_0	Neon Keychains
+T:good_7_1	Bubble Tea & Jelly
+T:good_7_2	Holo Notebooks
+T:good_7_3	Toy Robots
+T:good_7_4	Nano Cleaners
+T:good_7_5	Lab-grown Fruit
+T:good_7_6	3D Desserts
+T:good_7_7	Glowing Jackets
+T:good_7_8	Hover Sneakers
+T:good_7_9	VR Goggles
+T:good_7_10	Street Food Court
+T:good_7_11	Hologram Show
+T:team_spike_cold_0	The coins in my quills are frosted. Counting is cold and ringing now.
+T:team_spike_cold_1	Zoya tied a scarf onto one of my quills. The rest will have to cope.
+T:team_spike_cold_2	In winter only the part of the till under my paw stays warm.
+T:team_bodya_cold_0	Planks sing in the frost. Nobody asked, yet it sounds like an orchestra.
+T:team_bodya_cold_1	Mikhas brought crates and they smell of snow. I'll put them by the stove to wake up.
+T:team_bodya_cold_2	I dream of a workshop with a fireplace. The plans exist, on a tea napkin.
+T:team_zoya_cold_0	Frost draws patterns on the window. That's competition, and it's pretty.
+T:team_zoya_cold_1	My ears are frozen but my mood is pink. A hat would help, a pink one.
+T:team_zoya_cold_2	Zhuzha says a scarf is an accessory. I say it's a rescue, just a pretty one.
+T:team_tonya_cold_0	I'm slow and the cold is even slower. At last, someone to race.
+T:team_tonya_cold_1	It's warm in the shell. The others have pockets; let them envy me.
+T:team_tonya_cold_2	This shop has seen a hundred and forty winters. This one feels colder. Or I'm older.
+T:team_mikhas_cold_0	I'm a bear, I'm not cold. I just want to sleep until spring.
+T:team_mikhas_cold_1	The crates froze into a tower. Spike says "architecture". I say "problem".

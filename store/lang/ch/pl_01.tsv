@@ -1,0 +1,174 @@
+T:ch5_7	Zespół rośnie. Zatrudniaj nowych pracowników na karcie „Zespół”. Tymczasem ktoś w ciemności wypatruje twojej kasy.
+T:ch6_title	Shnyr w Deszczu
+T:ch6_0	Późny wieczór. Wszyscy poszli do domów, a Capy siedzi nad utargiem. Na dworze deszcz, a przy tylnych drzwiach coś się porusza.
+T:ch6_1	Czy ktoś szlocha? Shnyr, to ty?
+T:ch6_2	To nie ja. To deszcz. Na mojej twarzy. Tylko na mojej twarzy.
+T:ch6_3	Shnyr, czemu to robisz? Nie masz domu?
+T:ch6_4	Jest skrzynka za piekarnią. Bez przyjaciół. Żadnych. Nawet nikogo, obok kogo można posiedzieć w ciszy.
+T:ch6_5	Chciałbym, żeby ktoś po prostu powiedział „cześć”. Wszyscy krzyczą „łap szopa”.
+T:ch6_6	Cześć, Shnyr. Tak po prostu. Wejdź, mamy herbatę i bułeczki.
+T:ch6_7	Serio? To koniec z kradzieżą. No... prawie. Żartuję. Chyba. Dzięki.
+T:ch6_8	Od tamtej pory Shnyr nie jest złodziejem, tylko jednym z nas. Czasem jeszcze zerka na kasę, ale już ze wstydem. Czekały wszystkich wielkie rzeczy.
+T:ch7_title	Centrum Handlowe
+T:ch7_0	Minęły miesiące. Shnyr został ulubieńcem klientów, a zespół rodziną, która kłóci się przy kawie. Sklep urósł do sklepu wielobranżowego, potem supermarketu, a teraz...
+T:ch7_1	Na ulicy stoi centrum handlowe ze szklanym dachem, kinem i zapachem świeżych wypieków. Konkurenci cicho dąsają się w kącie.
+T:ch7_2	Centrum Handlowe Capy. Z jednej monety. Kto by pomyślał.
+T:ch7_3	Policzyłam każdą cegłę. Wszystkie się zgadzają. Cud.
+T:ch7_4	Tu nikt nie musi mnie łapać. Dziwne i miłe.
+T:ch7_5	Dziękuję wam wszystkim. Bez was to miejsce sprzedawałoby tylko powietrze.
+T:ch7_6	W kieszeni Capy coś głośno zatykało.
+T:ch7_7	Mój zegarek... Czy on właśnie ożył?
+T:ch8_title	Finał: Zegarek Przemówił
+T:ch8_0	Rzeczywiście, złoty zegarek wyczołguje się z kieszeni i zawisa w powietrzu. Wskazówki kręcą się do tyłu.
+T:ch8_1	Witaj, Capy. Długo czekałem. Całą wieczność, jeśli nie liczyć przerw na kawę.
+T:ch8_2	Ty mówisz?!
+T:ch8_3	Jestem Zegarem Czasu. Potrafię cofać minuty. Zwroty nie przysługują.
+T:ch8_4	Twoje centrum handlowe jest cudowne. Ale wyobraź sobie przejść przez to wszystko jeszcze raz, już z doświadczeniem.
+T:ch8_5	Zaczynać od nowa? Ale tu wszystko już zbudowane...
+T:ch8_6	Nie stracić, tylko zbudować mądrzej. Przyjaciele zostają, wiedza zostaje. Monety nie. Taka jest ekonomia.
+T:ch8_7	Mądrzej... Brzmi nieźle. Muszę to przemyśleć.
+T:ch8_8	Gdy się zdecydujesz, po prostu mnie nakręć. Jestem tu. Tykam.
+T:ch8_9	Podróż w czasie odblokowana. Zajrzyj na kartę „Zegarek”: czeka nowa epoka.
+T:holiday_newyear	Nowy Rok
+T:holiday_halloween	Halloween
+T:holiday_blackfriday	Czarny Piątek
+T:hb_global	+{0}% dochodu
+T:holidayToast	{0}: święto w mieście! {1}
+T:boost_sale	Wyprzedaż ×{0}
+T:boost_bf	Czarny Piątek ×{0}
+T:boost_income	Dochód ×{0}
+T:boost_tap	Stuknięcie ×{0}
+T:banner_sale	🏷️ WYPRZEDAŻ ×{0} · {1}
+T:banner_bf	🖤 CZARNY PIĄTEK ×{0} · {1}
+T:banner_thief	🦝 Złap szopa! {0}/{1} · {2} s
+T:saleStart	Wyprzedaż. Dochód ×{0} na 2 minuty. Skorzystaj, zanim wszyscy się obudzą.
+T:raccoonStart	Szop Shnyr porwał worek. Goń go: stukaj w niego.
+T:raccoonWin	Złapany! Shnyr upuścił worek: +{0}.
+T:raccoonLose	Shnyr uciekł i ukradł {0} monet.
+T:raccoonFriend	Shnyr tylko żartował i uciekł. Niczego nie ukradł.
+T:tonyaScared	Tonya przegoniła szopa już przy wejściu.
+T:shnyrSay_0	He-he, moje.
+T:shnyrSay_1	Worek jest mój, monety też.
+T:shnyrSay_2	Spróbuj mnie złapać.
+T:shnyrOuch_1	Hej, tylko nie futro!
+T:shnyrOuch_2	Dobry strzał. Nieprzyjemny.
+T:wheelTitle	Bęben Fortuny
+T:wheelLegend	🪙 monety · ⚡ dochód · 👆 stuknięcie · ⭐ jackpot
+T:wheelStreak	Dni z rzędu: {0} (nagrody ×{1})
+T:wheelSpin	Zakręć!
+T:wheelWait	Następny obrót za {0}
+T:wheelClose	Zamknij
+T:wheelReady	Koło Fortuny jest gotowe! 🎡
+T:prize_coins	Monety: +{0}
+T:themeLocked	Najpierw ukończ epokę 2
+T:themeLockedHalloween	Najpierw ukończ epokę 5
+T:fbBtn	✉ Napisz do twórców
+T:fbTitle	Napisz do nas
+T:fbHint	Co ci się podoba, co się zepsuło, czego brakuje? Czytamy każdą wiadomość.
+T:fbContact	Kontakt (opcjonalnie)
+T:fbSend	Wyślij
+T:fbCancel	Anuluj
+T:fbThanks	Dziękujemy! Twoja wiadomość została wysłana 💌
+T:fbFail	Nie udało się wysłać. Spróbuj ponownie później.
+T:fbCopied	Adres nie jest jeszcze skonfigurowany. Tekst został skopiowany, wyślij go twórcom.
+T:fbEmpty	Najpierw napisz kilka słów.
+T:newsTitle	📮 Poczta od twórców
+T:newsSub	Świeże wieści z CapyTap
+T:newsIntro	Cześć, przyjacielu! Tym razem wieści są w gazecie: wieża zegarowa, nowy ekran ładowania i wiele drobiazgów. Przewracaj strony!
+T:newsH0	Gazeta zamiast listu.
+T:newsT0	Poczta od twórców to teraz gazeta: rozkłada się, a strony się przewracają. Przesuń palcem, stuknij albo użyj strzałek.
+T:newsH1	Wieża zegarowa.
+T:newsT1	Nad centrum handlowym wyrosła wielka wieża zegarowa. Przed podróżą bije: raz pierwszej nocy, dwa razy drugiej i trzy razy trzeciej. Stuknij ją, by wyruszyć do nowej epoki.
+T:newsH2	Nowy ekran ładowania.
+T:newsT2	Tętniące życiem nocne miasto z oknami, autami i ptakami, a pod spodem przydatne wskazówki. Stuknij wskazówkę, by zobaczyć następną.
+T:newsH3	Nowa wiedźma.
+T:newsT3	Wiedźma na miotle wypiękniała: wielki kapelusz, puszysta miotła i smuga gwiazd.
+T:newsH4	Większe markety.
+T:newsT4	Na telefonie w pionie markety każdego poziomu są większe, a brązowe pasy po bokach zniknęły.
+T:newsH5	Nadgryzione chmury.
+T:newsT5	W skórce Waty Chmur niektóre chmury wyglądają, jakby ktoś je nadgryzł.
+T:newsH6	Kropla deszczu.
+T:newsT6	Kropelka włączająca deszcz wisi teraz po prawej, przy szyldzie sklepu.
+T:newsH7	Wyraźne ramki.
+T:newsT7	Ramki menu mają wyraźny kontur ze wszystkich stron, a nazwy kart nie chowają się już pod kłódką.
+T:newsH8	Capy nocą.
+T:newsT8	W ciemności Capy ma ciepły kontur, żeby się wyróżniała, a mgła nie zasłania już zwierząt.
+T:newsSign	Dzięki za grę! Napisz, co chcesz zobaczyć dalej. — Zespół CapyTap
+T:newsClose	Jasne!
+T:fear0	Ojej!
+T:fear1	Mamo!
+T:fear2	Moja bułka!
+T:fear3	Ja tylko spacerowałem!
+T:fear4	Dokąd idziesz?!
+T:fear5	Uciekaj!
+T:seasonIntroTitle	Pory roku odblokowane!
+T:seasonIntroText	Dwie epoki za tobą i teraz sam wybierasz porę roku: wiosnę, lato, jesień, zimę albo upiorne Halloween. Każda zmienia drzewa, pogodę i nastrój ulicy. Szukaj nowego przycisku z kołem w menu!
+T:seasonIntroGo	🌸 Do pór roku
+T:seasonIntroLater	Później
+T:mailSay0	Poczta! Proszę tu podpisać!
+T:mailSay1	List do ciebie! Szybciej niż gołąb!
+T:mailSay2	Przesyłka ekspresowa. Czapka jest oficjalna!
+T:mailSay3	List dostarczony, ręka na sercu.
+T:gfear0	Duch!!! Mamo!
+T:gfear1	Bu-- a, to on!
+T:gfear2	Niczego nie widziałem!
+T:gfear3	Ktoś jest w oknie!
+T:gfear4	To tylko prześcieradło, prawda? NIE!
+T:hagBang	🧙 Wiedźma leci nad miastem! Stuknij „!”
+T:hagArrived	🏚️ Chatka na kurzych łapkach przybyła! Stuknij ją
+T:hagTitle	Chatka Wiedźmy
+T:hagSub	Wiedźma: „Trzy kotły, trzy niespodzianki! Zapamiętaj najlepszą, a potem zgaduj!”
+T:hagStart	Zajrzyj!
+T:hagWatch	Patrz uważnie, co jest gdzie...
+T:hagShuffle	Mieszam!
+T:hagPick	Wybierz kocioł!
+T:hagGood	Główna nagroda znaleziona!
+T:hagMiss	Ups, pudło! Kryształ i tak jest twój.
+T:hagDone	Dzięki, wiedźmo!
+T:clockWait	Zegar tyka... Zbuduj centrum handlowe i poczekaj trzy noce. Wtedy zabierze cię do nowej epoki.
+T:clockNoGain	Za wcześnie: zarabiaj dalej, a zegar zapłaci odłamkami za podróż.
+T:clockWarn	Trzecia noc. Zegar bije trzy razy: czas ruszać! Stuknij go albo otwórz Zegar w menu.
+T:npMast	GAZETA ULICY CAPY
+T:npCoverHead	Świeże wydanie!
+T:npIn	W tym numerze:
+T:npCap1	Wieża zegarowa centrum handlowego o północy.
+T:npCap2	Nocne miasto na ekranie ładowania.
+T:npCap3	Nowa wiedźma krąży nad miastem.
+T:seasonFx_winter	Puszysty śnieg osiada na dachach
+T:seasonFx_spring	Budzą się kwiaty i płatki
+T:seasonFx_summer	Słońce świeci pełną mocą
+T:seasonFx_autumn	Wiatr niesie złote liście
+T:seasonFx_halloween	Cii… coś szeleści w mieście
+T:circusFlag	CYRK SZCZĘŚCIA
+T:circusTitle	Cyrk Fortuny
+T:circusSub	Klaun Bubon: „Kryształy i bonusy, tylko tutaj!”
+T:circusSpin	Zakręć!
+T:circusDone	Dzięki, cyrku!
+T:circusBang	Coś pojawiło się przy sklepie... Stuknij czerwony „!”
+T:circusArrived	Cyrk Fortuny jest otwarty! Stuknij go
+T:circusAgain	Jeszcze jedna próba! Zakręć ponownie
+T:prize_skin	Nowa skórka: {0}! Czeka na karcie skórek
+T:skin_hero_party	Imprezowi bohaterowie
+T:skin_hero_ninja	Bohaterowie-ninja
+T:skin_capy_knight	Capy Rycerz
+T:skin_capy_hero	Capy Superbohaterka
+T:skin_capy_cowboy	Capy Kowboj
+T:skin_capy_fairy	Capy Wróżka
+T:skin_capy_viking	Capy Wiking
+T:skin_capy_pilot	Capy Pilot
+T:skinSay_capy_knight	Mój miecz jest ostry, a ceny uczciwe. Prawie.
+T:skinSay_capy_hero	Moja supermoc to zniżki. Peleryna gratis.
+T:skinSay_capy_cowboy	W tym mieście jest jeden szeryf. I handluje.
+T:skinSay_capy_fairy	Szczypta magii, a metki z cenami wzlatują pod niebo.
+T:skinSay_capy_viking	Na wyprzedaż! Łupimy zniżki!
+T:skinSay_capy_pilot	Zapnijcie pasy: nasz zysk nabiera wysokości.
+T:skin_capy_gold	Złota Capy
+T:skin_capy_diamond	Diamentowa Capy
+T:skin_hero_gold	Złoci bohaterowie
+T:skin_hero_diamond	Diamentowi bohaterowie
+T:skin_shop_diamond	Diamentowy sklep
+T:skin_street_diamond	Diamentowa droga
+T:skin_weather_diamondcloud	Diamentowe chmury
+T:skinSay_capy_gold	Złote futro i żadnej zniżki na blask. No, dla ciebie jest.
+T:skinSay_capy_diamond	Diamentowa Capy. Stukaj śmiało: błyszczę, ale jestem twarda jak kryształ.
+T:skinSay_hero_gold	Złoci pomocnicy: pracują jak w zegarku i lśnią jak monety.

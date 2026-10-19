@@ -1,0 +1,201 @@
+T:shnyrJoined	O Shnyr agora está na equipe. Veja a aba "Equipe". E fique de olho no caixa.
+T:team_shnyr	Shnyr, o Guaxinim
+T:team_shnyr_role	Consultor esperto
+T:team_shnyr_trait	Conhece todas as brechas. Agora as procura para o bem. Na maioria das vezes.
+T:team_shnyr_sit_0	Senta aí, vou contar como eu peguei biscoitos uma vez. Na verdade, não peguei. Foi um imposto.
+T:team_shnyr_sit_1	Meu dia está melhor que o eu de ontem.
+T:ep9_title	Era do Renascimento
+T:speaker_pietro	Pietro, o Galo
+T:epochTitle_0	Era do Renascimento
+T:epochTitle_1	Era Retrô
+T:epochTitle_2	Era Disco
+T:epochTitle_3	Era do Fliperama
+T:epochTitle_4	Era da Internet
+T:epochTitle_5	Era Eco
+T:epochTitle_6	Era Espacial
+T:epochTitle_7	Futuro Neon
+T:epochSub_0	A praça ganha vida, flâmulas tremulam sobre a rua e há só uma moeda no bolso.
+T:epochSub_1	Cores pastel, dirigíveis e letreiros como num filme antigo.
+T:epochSub_2	Música, uma bola de espelhos e feixes coloridos.
+T:epochSub_3	Um mundo de pixels, um sol listrado e música chiptune.
+T:epochSub_4	Aviões no céu, janelas de vidro e o mundo inteiro por perto.
+T:epochSub_5	Telhados verdes, painéis solares e moinhos nas colinas.
+T:epochSub_6	Estrelas, foguetes e uma loja na beira do Universo.
+T:epochSub_7	Letreiros de neon e drones entre os arranha-céus.
+T:epochLabel	Era {0}
+T:prize_crystal	Cristal do Tempo: +{0} 💎
+T:tut1_0	A versão curta. Toque na loja. É a primeira e mais honesta forma de ganhar.
+T:tut1_1	Mais uma coisa: em cada era bichinhos especiais visitam a cidade. Toque para pegá-los. Pegue todos de uma vez e ganhe um cristal.
+T:tut1_2	Na aba "Equipe", contrate funcionários. Cada um ajuda do seu jeito, e se você tocar neles na cena, podem dizer algo. Escute.
+T:tut1_3	Amplie a loja: novos departamentos, novas pessoas, novos capítulos da história.
+T:tut1_4	Mais uma coisa: em cada era bichinhos especiais visitam a cidade. Toque para pegá-los: cada um dá moedas, e os dois juntos dão um cristal.
+T:storyDrumTitle	🎡 Bichinhos especiais
+T:storyDrumText	Em cada era, bichinhos especiais aparecem na cidade de vez em quando: a coruja Mazok, o ouriço Vinyl, o tatu Disco, o hamster Token, o inseto Glitchy, o camaleão Leaf, o axolote Astro e o gato Signboard. Cada um se move do seu jeito. Toque para pegá-los: cada um dá moedas, e pegar os dois dá um cristal. No Halloween, voam fantasmas no lugar deles. Cristais e bônus se ganham no circo, e skins nos minijogos bônus: a barraca de macarrão do vovô Ryo no Japão e a cabana da bruxa no Halloween.
+T:wsTitle	Oficina do Tempo
+T:wsShopTitle	🛒 Loja do tempo
+T:wsCrystals	Fragmentos de Tempo:  {0}
+T:wsBonus	Total de fragmentos: {0} (cada um +{3}% de renda, agora ×{1}). Viagens no tempo: ×{2} em toques e renda
+T:warpTitle	⏳ Viagem no Tempo
+T:warpText	O relógio mandará a Capy de volta no tempo. Moedas, departamentos, nível da loja e níveis dos bichinhos reiniciam, mas fragmentos, cristais, conquistas, capítulos e melhorias ficam. Os bichinhos se tornam conhecidos: contratá-los custa menos.
+T:warpGain	Você receberá:  {0} e um ×{1} permanente em toques e renda
+T:routeTitle	🧭 Como chegar à próxima era
+T:routeNext	Próxima: a era "{0}"
+T:routeLevel	Construa o shopping (nível {0})
+T:routeNights	Espere três noites: {0} de 3. Nas duas primeiras o relógio só tiquetaqueia, na terceira ele ganha vida e libera a viagem no tempo
+T:routeEarn	Ganhe nesta era: {0} de {1} moedas. A partir desse valor o Relógio começa a dar fragmentos
+T:routeGo	Toque em "Viagem no tempo" abaixo. Moedas e departamentos reiniciam, mas cristais, amigos e melhorias ficam
+T:routeToast	Uma nova era! Para avançar: ganhe pelo menos {0} moedas nela e toque em "Viagem no tempo" na aba "Relógio".
+T:warpNone	Cedo demais: o Relógio dá alguns fragmentos quando você ganhar {0} nesta era. Toque, vá à loja e volte!
+T:warpBtn	Dar corda no relógio
+T:warpConfirmTitle	Viagem no tempo
+T:warpSkip	Toque para pular
+T:warpConfirmText	Você receberá  {0} e um ×{1} permanente em toques e renda, e esta partida recomeça. Continuar?
+T:warpConfirmYes	Sim, vamos!
+T:confirmNo	Cancelar
+T:wsBuy	Melhorar ·  {0}
+T:wsGate	Viagens no tempo necessárias: {0}
+T:ws_goldenFreq	Nariz Dourado
+T:ws_autoTap	Toque automático
+T:ws_offlineHours	Soneca Longa
+T:ws_offlineRate	Soneca Generosa
+T:ws_salesFreq	Promoções Frequentes
+T:ws_saleLength	Promoções Longas
+T:ws_wheelFast	Mais Circo
+T:ws_thiefLess	Guarda Anti-Guaxinim
+T:ws_cheaperDepts	Preço de Atacado
+T:ws_cheaperTeam	Desconto de Amigo
+T:ws_tapPower	Patona Poderosa
+T:ws_crystalGain	Relógio Ganancioso
+T:wsEff_goldenFreq	clientes dourados {0}% mais frequentes
+T:wsEff_autoTap	toques automáticos por segundo: {0}
+T:wsEff_offlineHours	offline por até {0} h
+T:wsEff_offlineRate	offline: {0}% da renda
+T:wsEff_salesFreq	promoções {0}% mais frequentes
+T:wsEff_saleLength	a promoção dura {0} s
+T:wsEff_wheelFast	circo e minijogos bônus a cada {0} min, aproximadamente
+T:wsEff_thiefLess	o guaxinim rouba {0}% menos
+T:wsEff_cheaperDepts	departamentos {0}% mais baratos
+T:wsEff_cheaperTeam	bichinhos {0}% mais baratos
+T:wsEff_tapPower	poder do toque ×{0}
+T:wsEff_crystalGain	fragmentos por viagem +{0}%
+T:achSummary	Conquistas obtidas: {0} / {1}
+T:achGot	Nova conquista!
+T:achName_taps	Toqueiro
+T:achName_earned	Cofrinho
+T:achName_level	Construtor
+T:achName_deptsBought	Comprador
+T:achName_milestones	Metas
+T:achName_teamEver	Jogador de Equipe
+T:achName_teamMax	Mestre Artesão
+T:achName_raccoons	Caçador de Guaxinins
+T:achName_wheel	Sortudo
+T:achName_travels	Viajante do Tempo
+T:achName_crystals	Coleção de Cristais
+T:achName_chapters	Leitor
+T:achName_holidays	Espírito de Festa
+T:achName_hours	Comerciante Dedicado
+T:achDesc_taps	Toque na loja {0} vezes
+T:achDesc_earned	Ganhe {0} moedas no total
+T:achDesc_level	Amplie a loja até o nível {0}
+T:achDesc_deptsBought	Compre {0} departamentos
+T:achDesc_milestones	Alcance metas de departamentos: {0}
+T:achDesc_teamEver	Conheça bichinhos na sua equipe: {0}
+T:achDesc_teamMax	Melhore um bichinho até o nível {0}
+T:achDesc_raccoons	Pegue o guaxinim vezes: {0}
+T:achDesc_wheel	Jogue no circo ou nos minijogos bônus vezes: {0}
+T:achDesc_travels	Viaje no tempo: {0}
+T:achDesc_crystals	Colete cristais: {0}
+T:achDesc_chapters	Leia capítulos da história: {0}
+T:achDesc_holidays	Veja feriados na cidade: {0}
+T:achDesc_hours	Horas de jogo: {0}
+T:stEpoch	Era
+T:stPlay	Tempo de jogo
+T:stEarned	Ganho no total
+T:stRun	Ganho nesta partida
+T:stCps	Renda
+T:stTap	Moedas por toque
+T:stTaps	Toques
+T:stDepts	Departamentos comprados
+T:stCrystals	Cristais (agora / total)
+T:stShards	Fragmentos de tempo (agora / total)
+T:stTravels	Viagens no tempo
+T:stRaccoons	Guaxinins pegos / perdidos
+T:stWheel	Circo e minijogos bônus
+T:stAch	Conquistas
+T:stChapters	Capítulos lidos
+T:setLang	Idioma
+T:setView	Tela e som
+T:setSound	🔊 Configurações de som
+T:setAnimOn	Animações: LIGADAS
+T:setAnimOff	Animações: DESLIGADAS
+T:setNumFmt	Formato dos números:
+T:setSave	Dados salvos
+T:setSaveNote	Copie o código para levar seu progresso a outro dispositivo, ou cole um código aqui para carregá-lo.
+T:exportBtn	Mostrar código
+T:copyBtn	Copiar
+T:exportCopied	Código copiado!
+T:importPlaceholder	Cole aqui um código de salvamento…
+T:importBtn	Carregar código
+T:importTitle	Carregar este salvamento?
+T:importText	Seu progresso atual neste dispositivo será substituído.
+T:importYes	Sim, carregar
+T:importFail	Esse código não funcionou. Verifique se você o copiou por inteiro.
+T:godOn	Modo deus ativado
+T:godOff	Modo deus desativado
+T:importNoStorage	Não foi possível salvar: o armazenamento do navegador não está disponível.
+T:resetBtn	Apagar todo o progresso
+T:resetTitle	Apagar o progresso?
+T:resetText	Tudo será apagado para sempre: moedas, bichinhos, capítulos, conquistas e cristais. Isso não pode ser desfeito!
+T:resetYes	Sim, apagar tudo
+T:godCardTitle	👑 Modo deus
+T:godCardNote	Só para o dono. "Desativar" joga como um jogador normal (skins, eras e capítulos bloqueados); "Ativar" traz tudo de volta. O progresso é mantido.
+T:godToggleOn	Modo deus: ATIVADO — toque para desativar
+T:godToggleOff	Modo deus: DESATIVADO — toque para ativar
+T:dbgBuildNote	Mostrar a animação de construção: a loja vai para o nível escolhido (grátis).
+T:dbgBuildKeepOff	Após a exibição: restaurar meu nível
+T:dbgBuildKeepOn	Após a exibição: manter o novo nível
+T:dbgBuildBusy	Espere: a construção já está em andamento.
+T:dbgBuildDone	Exibição concluída: o nível da sua loja foi restaurado.
+T:dbgBuildKept	Exibição concluída: o nível da loja mudou.
+T:dbgHour	+1 hora de tempo
+T:dbgX100	×100 moedas
+T:dbgCircus	Circo agora
+T:shareBtn	Compartilhar
+T:saveSummary	O salvamento contém: "{0}", departamentos comprados: {1}, bichinhos: {2}, cristais: {3}, ganho: {4}
+T:panelHide	Ocultar menu
+T:panelShow	Mostrar menu
+T:buildTapHint	Toque na tela para a equipe trabalhar mais rápido!
+T:cleanHide	Ocultar contadores e legendas
+T:cleanShow	Mostrar contadores e legendas
+T:setGender	Quem é você?
+T:setGenderNote	O jogo vai falar com você da forma que escolher.
+T:gender_f	Menina
+T:gender_m	Menino
+T:setDayNightOn	Dia e noite: LIGADO
+T:setDayNightOff	Dia e noite: DESLIGADO
+T:swAnim	Animações
+T:swDayNight	Dia e noite
+T:swBirds	Pássaros
+T:swNoFly	Remover objetos voadores
+T:swBirdsLate	Pássaros nas eras finais
+T:swClouds	Nuvens
+T:swSteam	Vapor dos bueiros
+T:swRain	Chuva
+T:swBig	Texto grande
+T:swVib	Vibração
+T:setBirdsOn	Pássaros: LIGADOS
+T:setBirdsOff	Pássaros: DESLIGADOS
+T:setCloudsOn	Nuvens: LIGADAS
+T:setCloudsOff	Nuvens: DESLIGADAS
+T:setSteamOn	Vapor dos bueiros: LIGADO
+T:setSteamOff	Vapor dos bueiros: DESLIGADO
+T:setBigOn	Texto grande: LIGADO
+T:setBigOff	Texto grande: DESLIGADO
+T:setVibOn	Vibração: LIGADA
+T:setVibOff	Vibração: DESLIGADA
+T:setEvents0	Eventos: normais
+T:setEvents1	Eventos: mais raros
+T:setEvents2	Eventos: mínimos
+T:setEventsNote	Eventos são o circo, os bichinhos da era, fantasmas, promoções e trapalhadas. "Mais raros" é 2,5 vezes menos, "mínimos" é 5 vezes.
+T:panHint	Deslize para a esquerda ou para a direita para ver a rua inteira.
+T:setEpochView	Visualizador de eras

@@ -1,0 +1,195 @@
+T:setEpochViewNote	Escolha uma das eras pelas quais você passou: o visual, as mercadorias e a música mudam. Sob cada nome: a era atual mostra o seu saldo, como no contador; as eras já vividas mostram o que foi ganho nelas. Moedas novas, inclusive as offline, contam na era selecionada. Novas eras se desbloqueiam com a viagem no tempo.
+T:epochViewing	Era: {0}
+T:epochBalance	Saldo: {0}
+T:setSeason	Estação
+T:setSeasonNote	Muda as árvores, o clima e o astral da rua. "Auto" usa a data do seu dispositivo.
+T:season_auto	Auto
+T:season_spring	🌸 Primavera
+T:season_summer	☀️ Verão
+T:season_autumn	🍂 Outono
+T:season_winter	❄️ Inverno
+T:season_halloween	🎃 Halloween
+T:summerSay_0	Uff, que calor. Água, e muita.
+T:summerSay_1	Só recuperando o fôlego e já volto ao trabalho. Um minuto. Dois.
+T:summerSay_2	O sol queima como a Receita: não tem como fugir.
+T:summerSay_3	Água gelada é a melhor recompensa. Bom, depois do dinheiro.
+T:summerSay_4	Sombra e um copo d'água. Isso é que é vida.
+T:banner_ghost	👻 Pegue os fantasmas! {0}/{1} · {2} s
+T:banner_crt	{0} Pegue: {1}! {2}/{3} · {4} s
+T:crtStart	{0} está na cidade. Toque para pegar: cada um dá moedas, e os dois juntos dão um cristal.
+T:crtEnd	Pegos: {0}.
+T:crtEndNone	Devagar demais. Seja mais rápido da próxima vez.
+T:crt_0	Mazok, a Coruja
+T:crt_1	Vinyl, o Ouriço
+T:crt_2	Disco, o Tatu
+T:crt_3	Token, o Hamster
+T:crt_4	Glitchy, o Inseto
+T:crt_5	Leaf, o Camaleão
+T:crt_6	Astro Axolote
+T:crt_7	Signboard, o Gato
+T:ghostStart	Fantasmas na cidade. Toque neles: cada um dá moedas, e pegar todos dá um cristal.
+T:huntEnd	Pegos: {0} de {1}. Pegue todos para ganhar um cristal.
+T:huntAll	Todos pegos! Cristal +1 💎
+T:ghostEnd	Fantasmas pegos: {0}. Cristais: {1}.
+T:ghostEndNone	Os fantasmas se derreteram. Seja mais rápido da próxima vez.
+T:boost_ghosts	Fantasmas: {0}
+T:boost_drum	Tambor da fortuna: {0}/{1}
+T:wheelGhostBtn	🎡 Mais uma vez · {0}
+T:wheelGhostNote	Coletados para o tambor: {0}. {1} compram um giro extra da roda.
+T:stGhosts	Fantasmas pegos
+T:mailArrive	✉️ O caminhão dos correios chegou. Pegue a carta na beira da rua.
+T:letterTitle	Uma carta de {0}
+T:letterBtn	Resgatar bônus
+T:letter_spike	Oi, chefe. Achei um centavo a mais no caixa e pensei em você na hora. Não pergunte de quem é. Aqui está um bônus dos correios.
+T:letter_zoya	É a Zoya. Bolei uma promoção: quem ler esta carta ganha um bônus. Você. Não precisa agradecer, só me recomende.
+T:letter_bodya	Bodie. Construí uma caixa de correio e mandei a primeira carta. O bônus vai preso como prego em tábua: firme e sem palavras demais.
+T:letter_sonia	Hu-hu. Fiz as contas: você merece um bônus. Os livros fecham, não precisa conferir. Você vai conferir mesmo assim.
+T:letter_leo	O plano: você lê esta carta, ganha um bônus, todo mundo sai ganhando. Fechado? Vou considerar o silêncio como concordância.
+T:letter_pao	É o Pao. A carta traz bambu e sorte. Os descontos acabaram, mas o bônus é de verdade.
+T:letterBoost_income	Renda ×{0} por {1} min
+T:letterBoost_tap	Toque ×{0} por {1} min
+T:letterBoost_coins	+{0} moedas
+T:letterBoost_wheel	O circo está a caminho!
+T:letterBoost_sale	Promoção ×2 por 2 minutos!
+T:letterBoost_crystal	Cristal +1 💎
+T:nightHint_1	Primeira noite. Algo faz tique-taque baixinho no bolso da Capy. Não é ligação do banco.
+T:nightHint_2	Segunda noite. O tique-taque está mais alto. Definitivamente não é despertador desta vez.
+T:team_spike_sit_0	Senta aí. Como foi o seu dia? O meu foi espinhoso, como sempre.
+T:team_spike_sit_1	E então, como foi? O lucro está bom, o humor é duvidoso.
+T:team_bodya_sit_0	Senta. Como vai o seu dia? O meu é como uma represa: aguenta, mas algo está rachando.
+T:team_bodya_sit_1	Tábua sobre tábua. Conte o que houve. Sem planos de reforma, por favor.
+T:team_zoya_sit_0	Senta aí. Como vai o seu dia? Vendi duas coisas que não existem.
+T:team_zoya_sit_1	Conte as novidades. Já bolei três promoções e uma desculpa.
+T:team_tonya_sit_0	Sem pressa. Como vai o seu dia? Não deixei ninguém passar. Chato e maravilhoso.
+T:team_tonya_sit_1	Senta. Devagar é bonito. Principalmente quando ninguém tem pressa.
+T:team_mikhas_sit_0	Ei, amigo. Como vai o seu dia? Pesado, mas com almoço.
+T:team_mikhas_sit_1	Senta. Quer um sanduíche? Não pergunto duas vezes.
+T:team_sonia_sit_0	Hu-hu, senta. Como vai o seu dia? Meus livros fecharam. Assustador e agradável.
+T:team_sonia_sit_1	Conte as novidades. Vou anotar. Não, não é para a Receita.
+T:team_kria_sit_0	Quack. Como vai o seu dia? O meu está limpo. E o seu?
+T:team_kria_sit_1	Senta, descanse os pés. Depois me diga quem trouxe sujeira hoje.
+T:team_zhuzha_sit_0	Ribit. Como vai o seu dia? O meu foi estiloso. O seu a gente conserta.
+T:team_zhuzha_sit_1	Senta, vamos conversar. Sobre tendências, sobre gente, sobre as tendências da gente.
+T:team_leo_sit_0	Versão rápida: como vai o seu dia? O meu está dentro do plano. O plano é confidencial.
+T:team_leo_sit_1	Senta, tenho uma ideia. Primeiro você me conta do seu dia, depois vem o meu slide.
+T:team_pao_sit_0	Oi. Como vai o seu dia? O meu é como bambu: resistente e nem sempre gostoso.
+T:team_pao_sit_1	Senta, conte as novidades. Mas sem spoiler: eu tenho o meu próprio conteúdo.
+T:team_murzyk_sit_0	Purr. Como vai o seu dia? Fiquei carregando ao sol. Mais saudável que trabalhar.
+T:team_murzyk_sit_1	Senta, eu escuto. Só fique quieto quando eu pegar o fio.
+T:team_toma_sit_0	Senta. Eu não esqueço nada, então conte do seu dia com cuidado.
+T:team_toma_sit_1	A vida de um elefante é longa. Como vai o seu dia? Sem ficção, por favor.
+T:setTime	Hora do dia (o sol e a lua se movem sozinhos, um dia dura 5 minutos):
+T:time_morning	🌅 Manhã
+T:time_day	☀️ Dia
+T:time_evening	🌇 Tarde
+T:time_night	🌙 Noite
+T:good_0_0	Velas e Fósforos
+T:good_0_1	Mel e Maçapão
+T:good_0_2	Penas e Pergaminhos
+T:good_0_3	Bonecas de Madeira
+T:good_0_4	Sabão e Ervas
+T:good_0_5	Produtos da Horta
+T:good_0_6	Salão do Pão
+T:good_0_7	Gibões e Vestidos
+T:good_0_8	Botas
+T:good_0_9	Telescópios e Bússolas
+T:good_0_10	Taverna
+T:good_0_11	Teatro de Máscaras
+T:good_1_0	Cartões-postais e Broches
+T:good_1_1	Sorvete e Refrigerante
+T:good_1_2	Cadernos e Máquinas de Escrever
+T:good_1_3	Trenzinhos de Brinquedo
+T:good_1_4	Sabão em Pó
+T:good_1_5	Enlatados
+T:good_1_6	Donuts
+T:good_1_7	Vestidos de Bolinhas
+T:good_1_8	Mocassins
+T:good_1_9	TVs de Tubo
+T:good_1_10	Lanchonete
+T:good_1_11	Cinema Drive-in
+T:good_2_0	Glitter e Bottons
+T:good_2_1	Pirulitos
+T:good_2_2	Discos de Vinil
+T:good_2_3	Ioiôs e Frisbees
+T:good_2_4	Laquê e Perfume
+T:good_2_5	Frutas Exóticas
+T:good_2_6	Croissants
+T:good_2_7	Calças Boca de Sino e Ternos Brilhantes
+T:good_2_8	Botas Plataforma
+T:good_2_9	Toca-fitas
+T:good_2_10	Pizzaria
+T:good_2_11	Salão de Disco
+T:good_3_0	Fichas e Adesivos
+T:good_3_1	Refrigerantes
+T:good_3_2	Fitas e Pôsteres
+T:good_3_3	Consoles de Jogos
+T:good_3_4	Pilhas
+T:good_3_5	Snacks de Frutas
+T:good_3_6	Biscoitos e Donuts
+T:good_3_7	Jaquetas Bomber
+T:good_3_8	Tênis
+T:good_3_9	Máquinas de Fliperama
+T:good_3_10	Fast Food
+T:good_3_11	Locadora de Vídeo
+T:good_4_0	Disquetes e Pendrives
+T:good_4_1	Batatas Fritas e Energéticos
+T:good_4_2	Mouses e Teclados
+T:good_4_3	Tamagotchis e Bonecos
+T:good_4_4	Cabos e Carregadores
+T:good_4_5	Saladas Prontas
+T:good_4_6	Cafeteria
+T:good_4_7	Merchandising e Camisetas
+T:good_4_8	Tênis de Lona
+T:good_4_9	Notebooks
+T:good_4_10	Sushi Bar
+T:good_4_11	Salão de Streaming
+T:good_5_0	Itens Reutilizáveis
+T:good_5_1	Castanhas e Frutas Secas
+T:good_5_2	Cadernos Ecológicos
+T:good_5_3	Blocos de Madeira
+T:good_5_4	Produtos de Limpeza Ecológicos
+T:good_5_5	Legumes da Fazenda
+T:good_5_6	Pão de Fermentação Natural
+T:good_5_7	Roupas de Linho
+T:good_5_8	Calçados Reciclados
+T:good_5_9	Painéis Solares
+T:good_5_10	Café Vegano
+T:good_5_11	Cinema Ecológico ao Ar Livre
+T:good_6_0	Souvenirs Estelares
+T:good_6_1	Comida em Tubos
+T:good_6_2	Mapas Estelares
+T:good_6_3	Foguetes de Brinquedo
+T:good_6_4	Produtos de Limpeza Antigravidade
+T:good_6_5	Legumes Hidropônicos
+T:good_6_6	Doces Espaciais
+T:good_6_7	Trajes Espaciais
+T:good_6_8	Botas Magnéticas
+T:good_6_9	Satélites e Gadgets
+T:good_6_10	Cozinha Cósmica
+T:good_6_11	Planetário
+T:good_7_0	Chaveiros de Neon
+T:good_7_1	Bubble Tea e Gelatina
+T:good_7_2	Cadernos Holográficos
+T:good_7_3	Robôs de Brinquedo
+T:good_7_4	Produtos de Limpeza Nano
+T:good_7_5	Frutas de Laboratório
+T:good_7_6	Sobremesas 3D
+T:good_7_7	Jaquetas Brilhantes
+T:good_7_8	Tênis Flutuantes
+T:good_7_9	Óculos de VR
+T:good_7_10	Praça de Comida de Rua
+T:good_7_11	Show de Hologramas
+T:team_spike_cold_0	As moedas nos meus espinhos estão congeladas. Contar agora é frio e tilintante.
+T:team_spike_cold_1	A Zoya amarrou um cachecol em um dos meus espinhos. O resto vai ter que se virar.
+T:team_spike_cold_2	No inverno só a parte da caixa debaixo da minha pata fica quente.
+T:team_bodya_cold_0	As tábuas cantam na geada. Ninguém pediu, mas parece uma orquestra.
+T:team_bodya_cold_1	O Mikhas trouxe caixotes que cheiram a neve. Vou pôr perto do fogão para acordarem.
+T:team_bodya_cold_2	Sonho com uma oficina com lareira. Os planos existem, num guardanapo de chá.
+T:team_zoya_cold_0	A geada desenha padrões na vitrine. É concorrência, e é bonita.
+T:team_zoya_cold_1	Minhas orelhas congelaram, mas meu humor é cor-de-rosa. Uma touca ajudaria, rosa também.
+T:team_zoya_cold_2	A Zhuzha diz que cachecol é acessório. Eu digo que é socorro, só que bonito.
+T:team_tonya_cold_0	Eu sou lenta e o frio é ainda mais lento. Finalmente alguém para disputar corrida.
+T:team_tonya_cold_1	No casco está quentinho. Os outros têm bolsos; que sintam inveja.
+T:team_tonya_cold_2	Esta loja já viu cento e quarenta invernos. Este parece mais frio. Ou eu estou mais velha.
+T:team_mikhas_cold_0	Sou um urso, não sinto frio. Só quero dormir até a primavera.
+T:team_mikhas_cold_1	Os caixotes congelaram numa torre. O Spike diz "arquitetura". Eu digo "problema".

@@ -1,0 +1,108 @@
+T:ec8_7_1	There's so much tasty food that I forgot about my diet. And that I had one.
+T:ec8_7_2	I was only checking whether the dumplings were poisoned. Three of them. For safety.
+T:ec8_7_3	Attention! Fireworks soon. Look at the sky and make a wish.
+T:ec8_7_4	The sky burst into gold and red. The dragon passed between the lights, and everyone thought he was setting off the fireworks himself.
+T:ec8_8_title	Nara Arrives
+T:ec8_8_0	In the morning a doe quietly approached the tea house. White fur, golden antlers, and calm eyes that had seen many springs.
+T:ec8_8_1	This is Nara. She's from the forests outside town. She's wanted to see what you do here for ages.
+T:ec8_8_2	Welcome, Nara. We have tea, lanterns and a till that doesn't know how to be quiet.
+T:ec8_8_3	One more employee who takes nothing without asking. Accepted.
+T:ec8_8_4	Nara bowed and stood by the door as if she'd always been there. The lanterns flared with a slightly warmer glow.
+T:ec8_8_5	That was a bonus era. But the spiral goes on: a new circle lies ahead.
+T:guestSay_pip_3	A bar right next to the jukebox is not a coincidence, it is a strategy.
+T:guestSay_pip_4	A cocktail with an umbrella? The umbrella is included. The ice is not.
+T:guestSay_pip_5	The record spins, life spins. Just do not spin over the bill.
+T:guestSay_zina_3	The speakers are quiet, but my legs are already trembling. That is our disco.
+T:guestSay_zina_4	The bass is so strong my heart is not mine anymore. I will not give it back.
+T:guestSay_zina_5	Want to dance? Put your foot on the beat. Yours, not mine.
+T:guestSay_maks_3	The claw is an honest game. Only the honest hand sometimes doubts.
+T:guestSay_maks_4	The plush bunny is almost mine. “Almost” is the key word.
+T:guestSay_maks_5	One more coin and the monkey from the machine comes home with me.
+T:guestSay_bitik_3	The server hums, the lights blink. All is well. Probably.
+T:guestSay_bitik_4	My server is up 99.9% of the time. The other 0.1% we call “rest”.
+T:guestSay_bitik_5	Wi-Fi catches even where reason cannot.
+T:guestSay_lesyk_3	A shovel is the best tool for thinking. Quiet and useful.
+T:guestSay_lesyk_4	The flowers in the pots already tasted fame. Soon they will ask for a salary.
+T:guestSay_lesyk_5	A small tree today, a big shade tomorrow. We have to be patient.
+T:guestSay_orbit_3	Launch is on me. The countdown runs and the cookies are already aboard.
+T:guestSay_orbit_4	The rocket is ready, the fuel is in, only the till has not approved the route.
+T:guestSay_orbit_5	The smoke under the nozzle is not a fire, it is atmosphere.
+T:guestSay_lumi_3	The wheel turns, the lanterns glow. Take a good mood with you.
+T:guestSay_lumi_4	Every cabin is its own dream. Sadly, no seat belts.
+T:guestSay_lumi_5	Blink-blink. Neon outside, warmth inside.
+T:guestSay_bruno_3	One rule in the gallery: look, do not touch. Touching is only for buying.
+T:guestSay_bruno_4	This painting is unfinished. Like all my paintings. Like me.
+T:guestSay_bruno_5	Every brush stroke costs more than the last. The budget is a stroke too.
+T:guestSay_pietro_3	The fair is buzzing, wallets are trembling. All according to plan.
+T:guestSay_pietro_4	My songs are priceless. Although a coin finds a price fast.
+T:guestSay_pietro_5	The Renaissance is when everyone suddenly became an artist. Even me.
+T:guestArrive	{0} has come to town! See what they brought.
+T:helpChip	Help {0}: {1}/{2}
+T:helpChipDone	Help for {0}: done
+T:helpDoneToast	{0} is helped! Crystal +1 💎. A thank-you scene comes before you travel.
+T:helpDoneToast2	{0} is helped! Crystal +1 💎
+T:helpDiaryLine	Help: {0}/{1}
+T:helpDiaryDone	Help completed
+T:thanksCardTitle	Thanks: {0}
+T:guestDat_pip	Pip
+T:guestDat_zina	Zina
+T:guestDat_maks	Max
+T:guestDat_bitik	Bitik
+T:guestDat_lesyk	Lesyk
+T:guestDat_orbit	Orbit
+T:guestDat_lumi	Lumi
+T:guestDat_bruno	Bruno
+T:guestDat_pietro	Pietro
+T:ep1_0	The watch ticked and the town turned pastel again, like candy from the last century. A “Milk Bar” glows on the corner, and beside it a huge jukebox stands silent.
+T:ep1_1	Welcome to my bar. I'm Pip. See the jukebox? It's silent: all the records vanished right from under the needle.
+T:ep1_2	Vanished? Records don't run away on their own.
+T:ep1_3	Oh, they did! Those are Vinyl Hedgehogs: they spike the records on their quills and roll away. I only sold tickets to their races.
+T:ep1_4	So that's who let the hedgehogs out! Help me catch them: they roll down the street, you tap each one. Catch {0} and the records are mine again.
+T:ep1_5	Deal. The counter at the top will show how many you've caught.
+T:ep1_o1	Let's hold a record race: whoever catches more picks the song.
+T:ep1_o2	Shnyr, give back the ticket money, and we'll catch the hedgehogs together.
+T:ep1_r1	A race? I already bet on the yellow hedgehog. He's the fastest, by the way.
+T:ep1_r2	The money? Well... I spent part of it on props. I'll return the rest.
+T:ep1_6	I'll be by the jukebox. Catch {0} hedgehogs and you'll get my thanks, and the jukebox will play more than one song again.
+T:ep1_7	Deal: we come to the jukebox with full hands. I mean, records.
+T:ep1_8	(tick) The Watch here. Help Pip and things will be better. Don't, and we still leave, just without thanks.
+T:thx1_0	Every record is back! The jukebox plays a whole hit parade now, not one song. Thanks, friend.
+T:thx1_1	The jukebox sings and the hedgehogs don't care. Quills have good hearing.
+T:thx1_2	May they travel without records. And when you return, the milkshake is on me.
+T:ep2_0	The watch ticked and music poured down the street. Beams of light circle above the shop, and by two giant speakers someone is desperately turning knobs.
+T:ep2_1	Hi. I'm Zina, the block's DJ. See the speakers? Silent! My mirror balls ran away right before the party.
+T:ep2_2	Ran away? Balls don't run.
+T:ep2_3	These do. They're Disco Armadillos: they pretended to be balls and hung under the ceiling. I only rented them out for someone else's party. They got offended and went for a walk.
+T:ep2_4	Without them the dance floor is dark. Help me catch {0}: they moonwalk, one step forward and one step back. Tap them!
+T:ep2_5	One step forward, one step back: the main thing is to keep the rhythm. Let's go.
+T:ep2_o1	Let's compete: whoever catches faster DJs first.
+T:ep2_o2	Shnyr, return the rental money: it will go to new lamps.
+T:ep2_r1	DJ? Me! Just give me two speakers and zero responsibility.
+T:ep2_r2	The rental money? Fine. But catch the armadillos yourselves, they're scared of me.
+T:ep2_6	I'll be by the speakers. {0} balls in the bag and the street has a party again. The dance floor is on me.
+T:ep2_7	We catch in rhythm: one-two-three, tap.
+T:ep2_8	(tick-tock) I'm the Watch. I like it when someone keeps the beat better than I do. It's rare.
+T:thx2_0	All the balls are home! The lights blink in rhythm, the bass hits the chest, and the dance floor is a fairy tale. Thanks, friend.
+T:thx2_1	The dance floor sparkles and the armadillos snore in their shells. The party worked.
+T:thx2_2	Go on, and I'll play a farewell set. My best one, just for you.
+T:ep3_0	The watch ticked and the street filled with violet glow. “Ping-ping-ping” sounds from the arcade, and a big claw machine stands by the entrance. Empty.
+T:ep3_1	I'm Max, the arcade owner. See my claw machine? All the plush toys came alive and ran away.
+T:ep3_2	Came alive? Some prize.
+T:ep3_3	Those are Token Hamsters. I only put a coin in each cheek so they could “pass the level”. They did. Right through the door.
+T:ep3_4	They dash across the grid like in a game: left, right, up, down. Help me catch {0} and the machine is full again.
+T:ep3_5	Dash across a grid? Well, we're in an arcade. Tapping.
+T:ep3_o1	Let's play: whoever catches more hamsters wins the game.
+T:ep3_o2	Shnyr, return the tokens you put in their cheeks.
+T:ep3_r1	I'll win, because I ran away fastest. I mean, chased them fastest.
+T:ep3_r2	The tokens are in the cheeks, and the cheeks are free now. Catch the hamsters and the tokens will return on their own.
+T:ep3_6	I'll wait by the claw machine. Catch {0} hamsters and the toys return to their places, and you get the owner's thanks.
+T:ep3_7	We catch cell by cell. One more level.
+T:ep3_8	(tick) The timer's still running, the game goes on. I'm just making sure nobody cheats. Except me.
+T:thx3_0	The claw machine is full, the hamsters are in the toys' arms, and the high-score table has a new entry: “YOU”.
+T:thx3_1	Record saved. Now the main thing is not to lose it before the next level.
+T:thx3_2	I won't. Good trip! The record will wait.
+T:ep4_0	The watch ticked and an invisible network lit up over the town. A server rack hums in the corner of the street, and every indicator blinks... red.
+T:ep4_1	Beep. I'm Bitik, the robot consultant. Bugs got into my server! Real green beetles with antennae: they gnaw cables and break prices.
+T:ep4_2	Bugs crawling out of the server? That's not in the manual.
+T:ep4_3	I “accidentally” let them out. I wanted every price to be one coin. The bugs agreed and also gnawed through the password.
+T:ep4_4	They glitch: now gone, now back. Help me catch {0} before they eat the whole system. Tap them!

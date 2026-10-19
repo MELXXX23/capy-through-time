@@ -14,9 +14,9 @@
 | `024_style_modal_phone.css` | 21 | CSS: модальні вікна, телефон |  |
 | `025_style_late.css` | 7 | CSS: пізні правки (поверх решти) |  |
 | `030_body_open.html` | 1 | HTML: початок body |  |
-| `040_boot_script.html` | 45 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
+| `040_boot_script.html` | 50 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
 | `050_body_markup.html` | 18 | HTML: розмітка гри (панель, меню, вікна) |  |
-| `100_a_core_config.js` | 38 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
+| `100_a_core_config.js` | 39 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
 | `100_b_music_epochs_customers.js` | 44 | музика (MUSIC, EPOCH_MUSIC), майстерня часу, EPOCHS, досягнення, SPRITES, PALETTE, покупці CHIBI | arpBar, DRUMS_CALM, DRUMS_BOUNCE, MUSIC, DRUMS_CHIP, DRUMS_CHILL, MUSIC_STYLES, EPOCH_MUSIC |
 | `100_c_team_costumes_capy.js` | 42 | костюми героїв по епохах (TEAM_COSTUMES, composeTeamCostume, скіни героїв), спрайти Капі | CHIBI_LOWER, composeChibi, TEAM_GLASSES, teamDeco, TEAM_COSTUMES, teamEyes, composeTeamCostume, composeTeamSkin |
 | `100_d_capy_coins_epoch_state.js` | 44 | Капі (нові/старі рядки), монети й кристали епох, curEpoch/nextEpochId/viewEpoch | makeCapyNewRows, makeCapyOldDetail, EPOCH_COIN_ROWS, EPOCH_COIN_COLORS, SHARD_CH, GEM_CH, GEM_ROWS, gemUrls |
@@ -28,7 +28,7 @@
 | `110_b3_texts_en.js` | 22 | ТЕКСТИ en: вкладки, епохи, подорож…, кінець translations, GENDER_TEXTS, SEASONS | GENDER_TEXTS, SEASONS |
 | `120_state.js` | 16 | стан гри (state), множники, зірки, вимоги | createDefaultState, state, milestonesReached, nextMilestone, levelMult, teamLevelOf, STAR_MULT, STAR_HARD_CAP |
 | `125_save.js` | 16 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
-| `130_format.js` | 43 | t() — переклади, формат чисел | t, tierSuffix, formatNumber, fmt |
+| `130_format.js` | 42 | t() — переклади, формат чисел | t, tierSuffix, formatNumber, fmt |
 | `140_a_sprite_core_world_props.js` | 43 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
 | `140_b_ground_houses_layers.js` | 41 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGround, manholeSpots, buildGroundLayer, autumnGroundLeaves, drawRoadG, manholeG |
 | `150_a1_facade_items_decor.js` | 29 | магазин: предмети вітрин, прилавки | tierOf, drawItem, drawDisplay, drawShelf, posterG, DOOR_LEAF_STYLES, drawDoorLeaves, placeRow |
@@ -63,7 +63,7 @@
 | `230_a1_skins_circus_hag.js` | 25 | СКІНИ: пули, ціни, володіння | CIRCUS_SECTORS, BONUS_GAME_SKINS, circusFreq, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON |
 | `230_a2_skins_circus_hag.js` | 23 | цирк (CIRCUS_ART), відьма, хатка | hagReset, hagStart, updateHagGame, hagPos, hagClick, hagCauldron, drawHagGame, circusStopX |
 | `230_b_circus_loot_letters.js` | 43 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawWheelIcon, drawCircusIcon, buildCircusWheelTexture, drawCircusWheel |
-| `230_c_news_wheel_events.js` | 29 | газета (сторінки), листи, updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
+| `230_c_news_wheel_events.js` | 28 | газета (сторінки), листи, updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
 | `230_d_circus_themes.js` | 30 | цирк по епохах: CIRCUS_THEMES (палітра, деталі, гірлянда), малює CIRCUS_ART з 230_a | CIRCUS_THEMES, circusGarland |
 | `240_story.js` | 41 | сюжет: діалоги, гості, камео | dialog, storyTimer, cameos, speakerSprite, speakerName, pageText, renderDialogText, buildChoiceButtons |
 | `241_a_epoch_story.js` | 30 | сюжет епох: початок EC_DATA (перші епохи) | EC_TRIGGERS, EC_DATA |
@@ -79,11 +79,16 @@
 | `275_japan.js` | 54 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `275_z_itch_rate.js` | 2 | — | ITCH_PAGE, onItchBuild |
 | `276_japan_text.js` | 15 | епоха 9 Японія: тексти |  |
-| `276_zz_lines_b.js` | 39 | — |  |
+| `276_zz_lines_b.js` | 48 | — |  |
 | `277_japan_noodle.js` | 19 | Японія: лапшична діда Рьо замість цирку (візок, портрет, гра «Звари лапшу», тексти) | NOODLE_BUST, noodleGame, NOODLE_ZH, NOODLE_ART, noodleReset, noodleStart, noodleTake, updateNoodleGame |
 | `278_a_build_themes.js` | 31 | Будівництво по епохах: ядро BTH (rnd, помічники, ефекти), перші епохи | BTH, buildThemeRender |
 | `278_b_build_themes.js` | 24 | Будівництво по епохах: середні епохи |  |
 | `278_c_build_themes.js` | 31 | Будівництво по епохах: останні епохи, BTH.render, buildThemeRender (тап-прискорення build.boost) |  |
 | `279_bonus_games.js` | 18 | бонус-ігри під епохи: реєстр MG_DEFS, спільний мінірушій mgMake (таймер, ціль, приз), «Танцпол» (епоха 2), «Спам» (епоха 4); перезарядка 12 год на епоху, приз-скін | BONUS_COOLDOWN_MIN, BONUS_RETRY_ON_MISS, MG_DEFS, mgGame, mgForEpoch, mgCur, bonusCooldownMs, bonusLastWin |
 | `279_c_bonus_games_more.js` | 25 | бонус-ігри епох 0 Фреска, 1 Джубокс, 3 Клешня, 5 Сортування, 6 Кристали, 7 Нічна траса (mgMake) + їх тексти |  |
+| `279_y_lang_base.js` | 1 | — | installLang |
+| `279_z_lang_es.js` | 93 | — |  |
+| `279_z_lang_it.js` | 93 | — |  |
+| `279_z_lang_pl.js` | 90 | — |  |
+| `279_z_lang_pt.js` | 92 | — |  |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |

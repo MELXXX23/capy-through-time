@@ -5,7 +5,8 @@
 
 function detectLanguage() {
   const l = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en').toLowerCase();
-  return l.startsWith('uk') ? 'uk' : 'en';
+  const m = LANGS.find(x => x.id !== 'en' && !x.wip && l.startsWith(x.id));
+  return m ? m.id : 'en';
 }
 
 function setText(el, text, cacheKey) {

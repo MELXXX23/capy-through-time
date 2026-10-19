@@ -70,21 +70,22 @@ const NEWS_ABOUT = {
     writeH: 'Contact', write: 'Found a bug or have an idea? Press Write to the developers below: we read everything.'
   }
 };
+function newsLang() { return NEWS_ABOUT[state.lang] ? state.lang : 'en'; }       // нові мови підключає 279_y_lang_base.js
 function newsGiftClaim(btn) {
   if (state.newsGift) return;                                   // подарунок лише один раз
   state.newsGift = 1; state.coins += 100; state.totalEarned += 100;
   recalcIncome(); updateUI(); saveGame();
-  const W = NEWS_ABOUT[state.lang === 'uk' ? 'uk' : 'en'];
+  const W = NEWS_ABOUT[newsLang()];
   btn.disabled = true; btn.textContent = W.giftDone;
-  showToast(state.lang === 'uk' ? '+100 монет від розробників!' : '+100 coins from the developers!', 'big'); playSfx('wheelWin');
+  showToast(W.toast, 'big'); playSfx('wheelWin');
 }
 function buildNewsPages() {
-  if (newsSec === 'guide') return buildListPages(NP_GUIDE[state.lang === 'uk' ? 'uk' : 'en'], 1);
-  if (newsSec === 'soon') return buildListPages(NP_SOON[state.lang === 'uk' ? 'uk' : 'en'], 1);
-  const L = state.lang === 'uk' ? 'uk' : 'en', W = NEWS_ABOUT[L], pages = [];
+  if (newsSec === 'guide') return buildListPages(NP_GUIDE[newsLang()], 1);
+  if (newsSec === 'soon') return buildListPages(NP_SOON[newsLang()], 1);
+  const L = newsLang(), W = NEWS_ABOUT[L], pages = [];
   const cover = document.createElement('div'); cover.className = 'np-in np-cover';
   const mast = document.createElement('div'); mast.className = 'np-mast';
-  mast.innerHTML = '<div class="row"><div class="who" id="npWhoA"></div><b>MEL<br><i>&amp;</i> NIKA</b><div class="who" id="npWhoB"></div></div><small>' + (L === 'uk' ? 'ГАЗЕТА ВІД РОЗРОБНИКІВ · ' : 'NEWS FROM THE DEVELOPERS · ') + W.mast + '</small>';
+  mast.innerHTML = '<div class="row"><div class="who" id="npWhoA"></div><b>MEL<br><i>&amp;</i> NIKA</b><div class="who" id="npWhoB"></div></div><small>' + W.paper + W.mast + '</small>';
   const wa = mast.querySelector('#npWhoA'), wb = mast.querySelector('#npWhoB');
   wa.appendChild(newsPortrait('capy_mel', '#cdb98d')); wa.insertAdjacentHTML('beforeend', '<span>MEL</span>');
   wb.appendChild(newsPortrait('capy_nika', '#e7c6c0')); wb.insertAdjacentHTML('beforeend', '<span>NIKA</span>');
@@ -117,7 +118,7 @@ function newsFill() {                                                           
   ui.newsBody.innerHTML = '';
   buildNewsPages().forEach(inner => { const pg = document.createElement('div'); pg.className = 'np-page'; pg.appendChild(inner); ui.newsBody.appendChild(pg); });
   npI = 0; npN = ui.newsBody.children.length; npShow(true);
-  const L = state.lang === 'uk' ? 'uk' : 'en', secs = ['news', 'guide', 'soon'];
+  const L = newsLang(), secs = ['news', 'guide', 'soon'];
   ui.npSecs.innerHTML = '';
   secs.forEach((k, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'np-tab' + (k === newsSec ? ' on' : ''); b.textContent = NP_SEC[L][k]; b.addEventListener('click', e => { e.stopPropagation(); if (k === newsSec || newsBusy) return; const dir = i > secs.indexOf(newsSec) ? 1 : -1; newsAnimate(() => { newsSec = k;  }, dir); }); ui.npSecs.appendChild(b); });
   ui.npTabs.innerHTML = ''; ui.npTabs.hidden = true;                          // архіву старих випусків нема: лише свіжий (або вітальний)

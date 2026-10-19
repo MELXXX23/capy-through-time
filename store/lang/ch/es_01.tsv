@@ -1,0 +1,174 @@
+T:ch5_7	El equipo crece. Contrata a nuevo personal en la pestaña «Equipo». Mientras tanto, alguien en la oscuridad le echa el ojo a tu caja.
+T:ch6_title	Shnyr bajo la Lluvia
+T:ch6_0	Anochecer tardío. Todos se han ido a casa y Capy se queda ante la recaudación. Llueve fuera, y algo se mueve junto a la puerta trasera.
+T:ch6_1	¿Alguien está sollozando? Shnyr, ¿eres tú?
+T:ch6_2	Yo no. Es la lluvia. En mi cara. Solo en mi cara.
+T:ch6_3	Shnyr, ¿por qué lo haces? ¿No tienes casa?
+T:ch6_4	Hay una caja detrás de la panadería. Sin amigos. Ninguno. Ni siquiera alguien con quien sentarme en silencio.
+T:ch6_5	Me gustaría que alguien dijera simplemente «hola». Todos gritan «¡atrapad al mapache!».
+T:ch6_6	Hola, Shnyr. Porque sí. Pasa, tenemos té y bollos.
+T:ch6_7	¿En serio? Entonces se acabó robar. Bueno... casi. Es broma. Seguramente. Gracias.
+T:ch6_8	Desde entonces Shnyr no es un ladrón, sino uno de los nuestros. A veces aún mira de reojo la caja, pero ahora con vergüenza. A todos les esperaban cosas grandes.
+T:ch7_title	El Centro Comercial
+T:ch7_0	Pasaron los meses. Shnyr se volvió el favorito de los clientes y el equipo, una familia que discute tomando café. La tienda creció hasta ser un almacén, luego un supermercado y ahora...
+T:ch7_1	En la calle se alza un centro comercial con techo de cristal, un cine y olor a bollería recién hecha. La competencia hace pucheros en silencio en un rincón.
+T:ch7_2	El Centro Comercial de Capy. De una sola moneda. Quién lo diría.
+T:ch7_3	Conté cada ladrillo. Todos cuadran. Un milagro.
+T:ch7_4	Aquí nadie necesita atraparme. Es raro y agradable.
+T:ch7_5	Gracias a todos. Sin vosotros este sitio solo vendería aire.
+T:ch7_6	Algo hizo tictac fuerte en el bolsillo de Capy.
+T:ch7_7	Mi reloj... ¿Acaba de cobrar vida?
+T:ch8_title	Final: El Reloj Habla
+T:ch8_0	En efecto, el reloj dorado sale arrastrándose del bolsillo y queda suspendido en el aire. Las agujas giran hacia atrás.
+T:ch8_1	Hola, Capy. He esperado mucho. Una eternidad, si no cuentas los descansos para el café.
+T:ch8_2	¡¿Puedes hablar?!
+T:ch8_3	Soy el Reloj del Tiempo. Puedo rebobinar minutos. Devoluciones no incluidas.
+T:ch8_4	Tu centro comercial es maravilloso. Pero imagina pasar por todo de nuevo, ahora con experiencia.
+T:ch8_5	¿Empezar de nuevo? Pero aquí ya está todo construido...
+T:ch8_6	No perder, sino construir con más sabiduría. Los amigos se quedan, el conocimiento se queda. Las monedas no. Eso es la economía.
+T:ch8_7	Con más sabiduría... Suena bien. Tengo que pensarlo.
+T:ch8_8	Cuando te decidas, dame cuerda. Estoy aquí. Haciendo tictac.
+T:ch8_9	El viaje en el tiempo está desbloqueado. Mira la pestaña «Reloj»: te espera una nueva época.
+T:holiday_newyear	Año Nuevo
+T:holiday_halloween	Halloween
+T:holiday_blackfriday	Black Friday
+T:hb_global	+{0}% de ingresos
+T:holidayToast	{0}: ¡fiesta en el pueblo! {1}
+T:boost_sale	Rebajas ×{0}
+T:boost_bf	Black Friday ×{0}
+T:boost_income	Ingresos ×{0}
+T:boost_tap	Toque ×{0}
+T:banner_sale	🏷️ REBAJAS ×{0} · {1}
+T:banner_bf	🖤 BLACK FRIDAY ×{0} · {1}
+T:banner_thief	🦝 ¡Atrapa al mapache! {0}/{1} · {2} s
+T:saleStart	Rebajas. Ingresos ×{0} durante 2 minutos. Aprovéchalo antes de que todos despierten.
+T:raccoonStart	El mapache Shnyr agarró un saco. Persíguelo: tócalo.
+T:raccoonWin	¡Atrapado! Shnyr soltó el saco: +{0}.
+T:raccoonLose	Shnyr huyó y robó {0} monedas.
+T:raccoonFriend	Shnyr solo bromeaba y se fue corriendo. No robó nada.
+T:tonyaScared	Tonya espantó al mapache justo en la entrada.
+T:shnyrSay_0	Je, je, mío.
+T:shnyrSay_1	El saco es mío, y las monedas también.
+T:shnyrSay_2	A ver si me atrapas.
+T:shnyrOuch_1	¡Eh, el pelo no!
+T:shnyrOuch_2	Buen tiro. Desagradable.
+T:wheelTitle	Tambor de la Fortuna
+T:wheelLegend	🪙 monedas · ⚡ ingresos · 👆 toque · ⭐ premio gordo
+T:wheelStreak	Racha de días: {0} (premios ×{1})
+T:wheelSpin	¡Girar!
+T:wheelWait	Próximo giro en {0}
+T:wheelClose	Cerrar
+T:wheelReady	¡La Ruleta de la Fortuna está lista! 🎡
+T:prize_coins	Monedas: +{0}
+T:themeLocked	Termina primero la época 2
+T:themeLockedHalloween	Termina primero la época 5
+T:fbBtn	✉ Escribir a los desarrolladores
+T:fbTitle	Escríbenos
+T:fbHint	¿Qué te gusta, qué falla, qué falta? Leemos todos los mensajes.
+T:fbContact	Contacto (opcional)
+T:fbSend	Enviar
+T:fbCancel	Cancelar
+T:fbThanks	¡Gracias! Tu mensaje ha sido enviado 💌
+T:fbFail	No se pudo enviar. Inténtalo de nuevo más tarde.
+T:fbCopied	La dirección aún no está configurada. Se copió el texto, envíalo a los desarrolladores.
+T:fbEmpty	Escribe primero unas palabras.
+T:newsTitle	📮 Correo de los desarrolladores
+T:newsSub	Novedades frescas de CapyTap
+T:newsIntro	¡Hola, amigo! Esta vez las novedades vienen en un periódico: una torre del reloj, una nueva pantalla de carga y muchas cosillas. ¡Pasa las páginas!
+T:newsH0	Un periódico en lugar de una carta.
+T:newsT0	El correo de los desarrolladores ahora es un periódico: se despliega y las páginas pasan. Desliza, toca o usa las flechas.
+T:newsH1	La torre del reloj.
+T:newsT1	Una gran torre del reloj se alzó sobre el centro comercial. Antes del viaje da la hora: una vez la primera noche, dos la segunda y tres la tercera. Tócala para partir hacia una nueva época.
+T:newsH2	Nueva pantalla de carga.
+T:newsT2	Una ciudad nocturna llena de vida, con ventanas, coches y pájaros, y consejos útiles debajo. Toca un consejo para ver el siguiente.
+T:newsH3	Una bruja nueva.
+T:newsT3	La bruja en su escoba está más guapa: sombrero grande, escoba esponjosa y una estela de estrellas.
+T:newsH4	Mercados más grandes.
+T:newsT4	En el móvil en vertical, los mercados de todos los niveles son más grandes y las franjas marrones de los bordes han desaparecido.
+T:newsH5	Nubes mordidas.
+T:newsT5	En la skin Nubes de Algodón, algunas nubes parecen mordidas.
+T:newsH6	La gota de lluvia.
+T:newsT6	La gotita que activa la lluvia ahora cuelga a la derecha, junto al cartel de la tienda.
+T:newsH7	Marcos nítidos.
+T:newsT7	Los marcos del menú tienen un contorno claro por todos lados, y los nombres de las pestañas ya no se esconden bajo el candado.
+T:newsH8	Capy de noche.
+T:newsT8	En la oscuridad Capy tiene un contorno cálido para destacar, y la niebla ya no vela a los animales.
+T:newsSign	¡Gracias por jugar! Cuéntanos qué quieres ver a continuación. — El equipo de CapyTap
+T:newsClose	¡Entendido!
+T:fear0	¡Ay!
+T:fear1	¡Mamá!
+T:fear2	¡Mi bollo!
+T:fear3	¡Solo paseaba!
+T:fear4	¿¡Adónde vas!?
+T:fear5	¡Corre!
+T:seasonIntroTitle	¡Estaciones desbloqueadas!
+T:seasonIntroText	Dos épocas superadas, y ahora puedes elegir tú la estación: primavera, verano, otoño, invierno o el escalofriante Halloween. Cada una cambia los árboles, el clima y el ambiente de la calle. ¡Busca el nuevo botón de ruleta en el menú!
+T:seasonIntroGo	🌸 A las estaciones
+T:seasonIntroLater	Luego
+T:mailSay0	¡Correo! ¡Firme aquí!
+T:mailSay1	¡Una carta para ti! ¡Más rápido que una paloma!
+T:mailSay2	Entrega urgente. ¡La gorra es oficial!
+T:mailSay3	Carta entregada, mano en el corazón.
+T:gfear0	¡¡¡Un fantasma!!! ¡Mamá!
+T:gfear1	¡Bu-- ah, si es él!
+T:gfear2	¡No vi nada!
+T:gfear3	¡Hay alguien en la ventana!
+T:gfear4	Es solo una sábana, ¿no? ¡NO!
+T:hagBang	🧙 ¡Una bruja sobrevuela el pueblo! Toca el «!»
+T:hagArrived	🏚️ ¡Llegó la cabaña con patas de gallina! Tócala
+T:hagTitle	La Cabaña de la Bruja
+T:hagSub	Bruja: «¡Tres calderos, tres sorpresas! ¡Recuerda el mejor y luego adivina!»
+T:hagStart	¡Echa un vistazo!
+T:hagWatch	Mira bien qué hay dónde...
+T:hagShuffle	¡Mezclando!
+T:hagPick	¡Elige un caldero!
+T:hagGood	¡Encontraste el premio principal!
+T:hagMiss	¡Ups, ese no! El cristal es tuyo de todos modos.
+T:hagDone	¡Gracias, bruja!
+T:clockWait	El reloj hace tictac... Construye el centro comercial y espera tres noches. Entonces te llevará a una nueva época.
+T:clockNoGain	Demasiado pronto: sigue ganando y el reloj pagará fragmentos por el viaje.
+T:clockWarn	Tercera noche. El reloj da tres campanadas: ¡es hora de partir! Tócalo o abre el Reloj en el menú.
+T:npMast	EL DIARIO DE LA CALLE CAPY
+T:npCoverHead	¡Edición fresca!
+T:npIn	En este número:
+T:npCap1	La torre del reloj del centro comercial a medianoche.
+T:npCap2	La ciudad nocturna en la pantalla de carga.
+T:npCap3	La nueva bruja sobrevuela el pueblo.
+T:seasonFx_winter	Nieve esponjosa se posa en los tejados
+T:seasonFx_spring	Despiertan las flores y los pétalos
+T:seasonFx_summer	El sol brilla a pleno rendimiento
+T:seasonFx_autumn	El viento arrastra hojas doradas
+T:seasonFx_halloween	Shh… algo cruje en el pueblo
+T:circusFlag	CIRCO DE LA SUERTE
+T:circusTitle	Circo de la Fortuna
+T:circusSub	Payaso Bubon: «¡Cristales y bonos, solo aquí!»
+T:circusSpin	¡Girar!
+T:circusDone	¡Gracias, circo!
+T:circusBang	Algo apareció junto a la tienda... Toca el «!» rojo
+T:circusArrived	¡El Circo de la Fortuna está abierto! Tócalo
+T:circusAgain	¡Un intento más! Gira otra vez
+T:prize_skin	¡Nueva skin: {0}! Te espera en la pestaña de skins
+T:skin_hero_party	Héroes de fiesta
+T:skin_hero_ninja	Héroes ninja
+T:skin_capy_knight	Capy Caballera
+T:skin_capy_hero	Capy Superheroína
+T:skin_capy_cowboy	Capy Vaquera
+T:skin_capy_fairy	Capy Hada
+T:skin_capy_viking	Capy Vikinga
+T:skin_capy_pilot	Capy Piloto
+T:skinSay_capy_knight	Mi espada está afilada y mis precios son justos. Casi.
+T:skinSay_capy_hero	Mi superpoder son los descuentos. La capa es gratis.
+T:skinSay_capy_cowboy	Este pueblo tiene un solo sheriff. Y vende cosas.
+T:skinSay_capy_fairy	Una pizca de magia, y las etiquetas de precio saltan al cielo.
+T:skinSay_capy_viking	¡A las rebajas! ¡Asaltemos los descuentos!
+T:skinSay_capy_pilot	Abróchense los cinturones: nuestro beneficio gana altitud.
+T:skin_capy_gold	Capy Dorada
+T:skin_capy_diamond	Capy Diamante
+T:skin_hero_gold	Héroes dorados
+T:skin_hero_diamond	Héroes de diamante
+T:skin_shop_diamond	Tienda de diamante
+T:skin_street_diamond	Calle de diamante
+T:skin_weather_diamondcloud	Nubes de diamante
+T:skinSay_capy_gold	Pelaje dorado y ningún descuento en el brillo. Bueno, para ti sí hay.
+T:skinSay_capy_diamond	Capy Diamante. Toca sin miedo: brillo, pero soy dura como el cristal.
+T:skinSay_hero_gold	Ayudantes dorados: trabajan como un reloj y brillan como monedas.

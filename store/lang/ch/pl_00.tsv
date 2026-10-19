@@ -1,0 +1,174 @@
+T:pageTitle	CapyTap: Market
+T:langLabel	Język
+T:sceneLabel	Pikselowa ulica ze sklepem Capy. Stuknij sklep, żeby zarabiać monety.
+T:perSecond	{0} / s
+T:tab_shop	Sklep
+T:tab_departments	Działy
+T:tab_team	Zespół
+T:tab_story	Dziennik
+T:capiName	Capy
+T:capiHello	Jestem Capy. Mam jedną monetę, szopę na rogu i żadnego planu B. Stuknij sklep. Zaczynamy od małego.
+T:statTapPower	Monety za stuknięcie
+T:statLevelMult	Premia za poziom
+T:statTaps	Stuknięcia
+T:statEarned	Zarobiono w sumie
+T:tapHint	Stukaj sklep. Im większy dochód, tym więcej daje każde stuknięcie. Jak w wielkim biznesie, tylko uczciwiej.
+T:soonText	Ta karta otworzy się trochę później. Capy już nad nią pracuje!
+T:saveError	Nie udało się zapisać gry: pamięć przeglądarki jest niedostępna.
+T:levelName_1	Mały Sklepik
+T:levelName_2	Sklep na Rogu
+T:levelName_3	Minimarket
+T:levelName_4	Supermarket
+T:levelName_5	Dom Towarowy
+T:levelName_6	Centrum Handlowe
+T:sign_1	Wszystko za Grosz
+T:sign_2	Sklep na Rogu
+T:sign_3	Minimarket
+T:sign_4	Supermarket
+T:sign_5	Dom Towarowy
+T:sign_6	Centrum Handlowe
+T:shopLevelLabel	Poziom sklepu: {0} / {1}
+T:dept_trinkets	Drobiazgi i Zapałki
+T:dept_sweets	Słodycze
+T:dept_stationery	Papiernicze
+T:dept_toys	Zabawki
+T:dept_cleaning	Artykuły Domowe
+T:dept_produce	Owoce i Warzywa
+T:dept_bakery	Piekarnia
+T:dept_clothes	Odzież
+T:dept_shoes	Obuwie
+T:dept_electronics	Elektronika
+T:dept_foodcourt	Strefa Gastronomiczna
+T:dept_cinema	Kino
+T:buyModeLabel	Ile kupić naraz
+T:buyMax	MAKS
+T:buyLabel	Kup ×{0} · {1}
+T:deptEach	Każdy daje: {0} / s
+T:deptTotal	Razem: {0} / s
+T:msDone	Wszystkie progi osiągnięte ★
+T:milestoneToast	„{0}”: {1} szt. Dochód działu ×2. Efekt skali.
+T:lockedDepts	🔒 Nowe działy otworzą się na poziomie „{0}”
+T:expandTitle	Rozbudowa: {0}
+T:expandNote	Każdy nowy poziom daje ×2 do całego dochodu i otwiera nowe działy. Najpierw kup potrzebne działy i ulepsz wszystkie zwierzaki tego poziomu.
+T:expandBtn	Rozbuduj · {0}
+T:reqHire	Ulepsz do poziomu {1}: {0}
+T:expandMax	To już centrum handlowe: marzenie Capy się spełniło! 🎉
+T:buildDone	Rozbudowa zakończona: teraz to „{0}”. Czynsz oczywiście też wzrośnie.
+T:newDepts	Nowe działy: {0}
+T:offlineTitle	Witaj z powrotem!
+T:offlineText	Gdy cię nie było, sklep zarobił
+T:offlineCoins	{0} monet 💤
+T:offlineBtn	Odbierz
+T:adOfflineBtn	🎬 ×2: obejrzyj film
+T:adPrivacyBtn	Opcje prywatności reklam
+T:adBonusTitle	Pominąć czekanie?
+T:adBonusText	Minigra bonusowa będzie gotowa za {0}. Obejrzyj krótki film, a otworzy się od razu.
+T:adBoostChip	Dochód ×2 na 10 min
+T:adBonusYes	🎬 Obejrzyj film
+T:teamNote	Zatrudniaj pracowników: każdy daje własną premię. Stuknij kogoś na scenie, może usłyszysz coś ciekawego.
+T:teamLevel	Poziom {0} / {1}
+T:teamHire	Zatrudnij · {0}
+T:teamUpgrade	Ulepsz · {0}
+T:teamMax	Maks. poziom ★★★
+T:teamStarBtn	Gwiazdka {0}: {1}/{2} · {3}
+T:teamStarred	{0} zdobywa gwiazdkę {1}! Premia wzrosła.
+T:teamPlus	{0}: {1}/{2} do gwiazdki {3}. Premia rośnie.
+T:teamNow	Teraz: {0}
+T:teamNext	Dalej: {0}
+T:teamGives	Daje: {0}
+T:teamHired	{0} jest na liście płac. Umowa jest ustna, zgodnie z tradycją.
+T:teamUpgraded	{0}: poziom {1}. Awans bez podwyżki.
+T:lockedTeam	🔒 Nowe zwierzaki przychodzą na poziomie „{0}”
+T:bonus_tap	siła stuknięcia ×{0}
+T:bonus_expandCost	rozbudowy tańsze o {0}%
+T:bonus_offline	offline: {0}% dochodu, do {1} godz.
+T:bonus_thief	szop kradnie o {0}% rzadziej
+T:bonus_deptIncome	{0}: dochód ×{1}
+T:bonus_global	cały dochód ×{0}
+T:bonus_event	święta i wyprzedaże silniejsze o {0}%
+T:bonus_deptCost	działy tańsze o {0}%
+T:team_spike	Spike Jeż
+T:team_spike_role	Kasjer
+T:team_spike_trait	Charakter kolczasty, księgowość miękka. Liczy każdy grosz i każde słowo.
+T:team_bodya	Bodie Bóbr
+T:team_bodya_role	Budowniczy
+T:team_bodya_trait	Zbuduje wszystko, jeśli dasz mu deski, czas i spokój. Nikt nie daje mu spokoju.
+T:team_zoya	Zoe Zając
+T:team_zoya_role	Sprzedawczyni
+T:team_zoya_trait	Sprzeda wszystko każdemu. Etyka kosztuje extra.
+T:team_tonya	Tonya Żółwica
+T:team_tonya_role	Ochroniarz
+T:team_tonya_trait	Wolna, ale nic jej nie umknie. Zwłaszcza cudze pieniądze.
+T:team_mikhas	Mikey Miś
+T:team_mikhas_role	Tragarz
+T:team_mikhas_trait	Duży jak szafa i równie rozmowny. Lubi dźwigać ciężary, w rozsądnych granicach.
+T:team_sonia	Sonia Sowa
+T:team_sonia_role	Księgowa
+T:team_sonia_trait	Widzi poezję w bilansie. Nie śpi, dopóki liczby się nie zgadzają, czyli prawie wcale.
+T:team_kria	Quackers Kaczka
+T:team_kria_role	Sprzątaczka
+T:team_kria_trait	Mop, wiadro i charakter. W tym sklepie nie ma brudu, bo tak zdecydowała.
+T:team_zhuzha	Juju Żaba
+T:team_zhuzha_role	Stylistka
+T:team_zhuzha_trait	Ostry gust i jeszcze ostrzejszy język. Uważa, że bez stylu nawet promocja wygląda tanio.
+T:team_leo	Leo Lis
+T:team_leo_role	Kierownik
+T:team_leo_trait	Żyje slajdami i terminami. Każdy problem zamienia w „szansę na rozwój”.
+T:team_pao	Pao Panda
+T:team_pao_role	Marketingowiec
+T:team_pao_trait	Z niczego zrobi trend. Czasem nawet z czymś.
+T:team_murzyk	Wąsik Kot
+T:team_murzyk_role	Czarodziej elektroniki
+T:team_murzyk_trait	Twierdzi, że wszystko wystarczy zrestartować. Zwykle ma rację. Czasem to ty się restartujesz.
+T:team_toma	Tommy Słoń
+T:team_toma_role	Dozorca
+T:team_toma_trait	Pamięta, gdzie co leży, kto co wziął i kto co obiecał. To przerażające.
+T:storyNote	Tu są wszystkie odblokowane rozdziały. Czytanie ich ponownie jest za darmo.
+T:storyRead	Czytaj
+T:introCutTitle	Wstęp
+T:introCutBtn	Oglądaj
+T:storyLocked	🔒 Następny rozdział otworzy się w miarę postępów
+T:storySkip	Pomiń rozdział
+T:chapterLabel	Rozdział {0}
+T:speaker_shnyr	Shnyr Szop
+T:speaker_clock	Zegarek
+T:speaker_capy	Capy
+T:ch1_title	Budka na Rogu
+T:ch1_0	Poranek w małym miasteczku. Piekarnia już dymi, bruk jest jeszcze mokry, a na rogu stoi budka, której nikt nie chciał.
+T:ch1_1	Zajeżdża wózek z jedną monetą na dnie. Wyziera z niego kapibara. Pewna siebie. Przeważnie.
+T:ch1_2	Cześć, budko. Jestem Capy. Jedna moneta, mnóstwo planów i żadnego planu B.
+T:ch1_3	Dach cieknie, szyld wisi krzywo, ale jest markiza. Nazwę ją „Wszystko za Grosz”. Grosz już jest.
+T:ch1_4	Podobno kto stoi na rogu, widzi całe miasto. Nikt nie ostrzegł, że całe miasto zobaczy mnie.
+T:ch1_5	Pierwszy klient już szura nogami przy drzwiach, ściskając portmonetkę. Czas stukać: każde stuknięcie to moneta.
+T:ch2_title	Spike Szuka Pracy
+T:ch2_0	Po kilku dniach kasa dzwoni tak często, że Capy nie nadąża ze sprzedawaniem i liczeniem. Jeż z kartką w łapie siedzi pod drzwiami od dawna.
+T:ch2_1	Dzień dobry. Są wolne etaty? Jestem Spike. Umiem liczyć, nie umiem kraść. A raczej przeważnie nie chcę.
+T:ch2_2	Ale jesteś kolczasty. Klienci pewnie się boją.
+T:ch2_3	Uczciwi się nie boją. Pozostali też nie, ale potem żałują.
+T:ch2_4	Kasa jest twoja. Bez okresu próbnego: nie mamy ani czasu, ani pieniędzy.
+T:ch2_5	Dzięki. Ani jeden grosz się nie zgubi. Chyba że utknie w kolcach. Wtedy na pewno oddam.
+T:ch2_6	Wskazówka: otwórz kartę „Zespół” i zatrudnij Spike’a. Zwiększa siłę twojego stuknięcia.
+T:ch3_title	Ktoś Kradnie!
+T:ch3_0	Odkąd Spike siedzi przy kasie, interes ruszył i całe miasto dowiedziało się o sklepie. Razem z klientami przyszedł ktoś, kto nie zamierzał płacić.
+T:ch3_1	Capy! Zniknęła paczka ciastek. Zdążyłem zobaczyć tylko pręgowany ogon i bardzo pewne siebie plecy.
+T:ch3_2	Pręgowany ogon. Pewne siebie plecy. W tej okolicy jest tylko jeden taki.
+T:ch3_3	Bez urazy, to nie kradzież, to freelance. Jestem Shnyr, najszybszy szop na tej ulicy.
+T:ch3_4	To moje ciastko. Oddaj. Natychmiast.
+T:ch3_5	Zostało... lekko nadgryzione. Uznaj to za recenzję. A teraz nie złapiesz mnie!
+T:ch3_6	Zniknął. Mówiłem, że potrzebujemy sejfu. Choćby małego.
+T:ch3_7	Szop jest sprytny, ale nie wygląda na złego. Wróci. Lepiej schować kosztowności, a nerwy też.
+T:ch4_title	Zegarek, Który Chodzi do Tyłu
+T:ch4_0	Chowając kosztowności przed szopem, Capy przeszukuje magazyn i znajduje w kącie coś dziwnego.
+T:ch4_1	Zegarek kieszonkowy. Złoto pociemniało, szkiełko popękane. Stary, ale z charakterem.
+T:ch4_2	Tyka. Ale wskazówki idą do tyłu. Na pewno nie tak, jak w instrukcji.
+T:ch4_3	Zepsuty. Dziadek mówił: zegarek, który chodzi do tyłu, jest albo zepsuty, albo skrywa niespodziankę.
+T:ch4_4	Nie lubię niespodzianek. Ale jest ładny. Zatrzymam go, bez gwarancji.
+T:ch4_5	W kieszeni zegarek cicho zatykał, jakby mrugał. Wygląda na to, że to nie był ostatni raz.
+T:ch5_title	Nowi Koledzy
+T:ch5_0	Sklep urósł do supermarketu. Cała ulica mówi o Capy, a do drzwi pukają nowi pracownicy. Ci, którzy dali radę, zapukali.
+T:ch5_1	Jestem Bodya, budowniczy. Słyszałem, że się rozbudowujecie. Potrzebne deski? Rachunek wyślę osobno. I jeszcze jeden, dla grzeczności.
+T:ch5_2	Zoya. Sprzedaję wszystko, co nie jest przybite. A co jest przybite, tylko wolniej. Daj mi witrynę, a zacznie mówić.
+T:ch5_3	Hu-hu. Jestem Sonia, księgowa. Pracuję nocą, w dzień tylko mrugam. Ktoś musi policzyć te monety, zanim uciekną.
+T:ch5_4	Tonya, ochrona. Idę. Będę niedługo. Ale nikogo nie przepuszczę.
+T:ch5_5	Wchodźcie, przyjaciele. Dziękuję, że przyszliście. Naprawdę.
+T:ch5_6	Podziękowania są miłe. Ale nie widziałem jeszcze, jak kończy się pytanie bonusowe.

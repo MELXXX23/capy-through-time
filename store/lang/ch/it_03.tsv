@@ -1,0 +1,201 @@
+T:shnyrJoined	Shnyr ora è nella squadra. Guarda la scheda «Squadra». E tieni d'occhio la cassa.
+T:team_shnyr	Shnyr il Procione
+T:team_shnyr_role	Consulente furbo
+T:team_shnyr_trait	Conosce ogni scappatoia. Ora le cerca a fin di bene. Per lo più.
+T:team_shnyr_sit_0	Siediti, ti racconto come presi dei biscotti una volta. In realtà no. Era una tassa.
+T:team_shnyr_sit_1	La mia giornata è migliore dell'io di ieri.
+T:ep9_title	Era del Rinascimento
+T:speaker_pietro	Pietro il Gallo
+T:epochTitle_0	Era del Rinascimento
+T:epochTitle_1	Era Retrò
+T:epochTitle_2	Era Disco
+T:epochTitle_3	Era Arcade
+T:epochTitle_4	Era di Internet
+T:epochTitle_5	Era Eco
+T:epochTitle_6	Era Spaziale
+T:epochTitle_7	Futuro Neon
+T:epochSub_0	La piazza si anima, i gonfaloni sventolano sulla strada e in tasca c'è una sola moneta.
+T:epochSub_1	Colori pastello, dirigibili e insegne come in un vecchio film.
+T:epochSub_2	Musica, una palla a specchi e fasci colorati.
+T:epochSub_3	Un mondo di pixel, un sole a strisce e musica chiptune.
+T:epochSub_4	Aerei nel cielo, finestre di vetro e il mondo intero a portata di mano.
+T:epochSub_5	Tetti verdi, pannelli solari e mulini a vento sulle colline.
+T:epochSub_6	Stelle, razzi e un negozio ai confini dell'Universo.
+T:epochSub_7	Insegne al neon e droni tra i grattacieli.
+T:epochLabel	Epoca {0}
+T:prize_crystal	Cristallo del Tempo: +{0} 💎
+T:tut1_0	La versione breve. Tocca il negozio. È il primo e il più onesto modo di guadagnare.
+T:tut1_1	Un'altra cosa: in ogni era animaletti speciali visitano la città. Toccali per catturarli. Catturali tutti in una volta e ricevi un cristallo.
+T:tut1_2	Nella scheda «Squadra» assumi il personale. Ognuno aiuta a modo suo, e se li tocchi sulla scena potrebbero dire qualcosa. Ascolta.
+T:tut1_3	Amplia il negozio: nuovi reparti, nuove persone, nuovi capitoli della storia.
+T:tut1_4	Un'altra cosa: in ogni era animaletti speciali visitano la città. Toccali per catturarli: ognuno dà monete, e insieme danno un cristallo.
+T:storyDrumTitle	🎡 Animaletti speciali
+T:storyDrumText	In ogni era, di tanto in tanto, compaiono in città animaletti speciali: il gufo Mazok, il riccio Vinyl, l'armadillo Disco, il criceto Token, l'insetto Glitchy, il camaleonte Leaf, l'assolotto Astro e il gatto Signboard. Ognuno si muove a modo suo. Toccali per catturarli: ognuno dà monete e catturandoli entrambi ottieni un cristallo. A Halloween volano invece i fantasmi. Cristalli e bonus si vincono al circo, e le skin nei minigiochi bonus: il carretto dei noodle del nonno Ryo in Giappone e la capanna della strega a Halloween.
+T:wsTitle	Officina del Tempo
+T:wsShopTitle	🛒 Negozio del tempo
+T:wsCrystals	Frammenti di Tempo:  {0}
+T:wsBonus	Frammenti in totale: {0} (ognuno +{3}% di reddito, ora ×{1}). Viaggi nel tempo: ×{2} a tocchi e reddito
+T:warpTitle	⏳ Viaggio nel Tempo
+T:warpText	L'orologio rimanderà Capy indietro nel tempo. Monete, reparti, livello del negozio e livelli degli animaletti si azzerano, ma frammenti, cristalli, obiettivi, capitoli e potenziamenti restano. Gli animaletti diventano di casa: assumerli costa meno.
+T:warpGain	Riceverai:  {0} e un ×{1} permanente a tocchi e reddito
+T:routeTitle	🧭 Come raggiungere la prossima epoca
+T:routeNext	Prossima: l'epoca «{0}»
+T:routeLevel	Costruisci il centro commerciale (livello {0})
+T:routeNights	Aspetta tre notti: {0} di 3. Nelle prime due l'orologio si limita a ticchettare, nella terza si risveglia e sblocca il viaggio nel tempo
+T:routeEarn	Guadagna in questa epoca: {0} di {1} monete. Da questa cifra l'Orologio inizia a dare frammenti
+T:routeGo	Tocca «Viaggio nel tempo» qui sotto. Monete e reparti si azzerano, ma cristalli, amici e potenziamenti restano
+T:routeToast	Una nuova epoca! Per proseguire: guadagna almeno {0} monete e tocca «Viaggio nel tempo» nella scheda «Orologio».
+T:warpNone	Troppo presto: l'Orologio dà qualche frammento quando guadagni {0} in questa epoca. Tocca, gestisci il negozio e torna!
+T:warpBtn	Carica l'orologio
+T:warpConfirmTitle	Viaggio nel tempo
+T:warpSkip	Tocca per saltare
+T:warpConfirmText	Riceverai  {0} e un ×{1} permanente a tocchi e reddito, e questa partita ricomincia. Continuare?
+T:warpConfirmYes	Sì, andiamo!
+T:confirmNo	Annulla
+T:wsBuy	Potenzia ·  {0}
+T:wsGate	Viaggi nel tempo necessari: {0}
+T:ws_goldenFreq	Naso d'Oro
+T:ws_autoTap	Tocco automatico
+T:ws_offlineHours	Pisolino Lungo
+T:ws_offlineRate	Pisolino Generoso
+T:ws_salesFreq	Saldi Frequenti
+T:ws_saleLength	Saldi Lunghi
+T:ws_wheelFast	Più Circo
+T:ws_thiefLess	Guardia Anti-Procione
+T:ws_cheaperDepts	Prezzi all'Ingrosso
+T:ws_cheaperTeam	Sconto Amici
+T:ws_tapPower	Zampa Possente
+T:ws_crystalGain	Orologio Avido
+T:wsEff_goldenFreq	clienti dorati più frequenti del {0}%
+T:wsEff_autoTap	tocchi automatici al secondo: {0}
+T:wsEff_offlineHours	offline fino a {0} h
+T:wsEff_offlineRate	offline: {0}% del reddito
+T:wsEff_salesFreq	saldi più frequenti del {0}%
+T:wsEff_saleLength	i saldi durano {0} s
+T:wsEff_wheelFast	circo e minigiochi bonus circa ogni {0} min
+T:wsEff_thiefLess	il procione ruba il {0}% in meno
+T:wsEff_cheaperDepts	reparti più economici del {0}%
+T:wsEff_cheaperTeam	animaletti più economici del {0}%
+T:wsEff_tapPower	potenza del tocco ×{0}
+T:wsEff_crystalGain	frammenti per viaggio +{0}%
+T:achSummary	Obiettivi ottenuti: {0} / {1}
+T:achGot	Nuovo obiettivo!
+T:achName_taps	Tocchista
+T:achName_earned	Salvadanaio
+T:achName_level	Costruttore
+T:achName_deptsBought	Compratore
+T:achName_milestones	Traguardi
+T:achName_teamEver	Giocatore di Squadra
+T:achName_teamMax	Maestro Artigiano
+T:achName_raccoons	Cacciatore di Procioni
+T:achName_wheel	Fortunato
+T:achName_travels	Viaggiatore del Tempo
+T:achName_crystals	Collezione di Cristalli
+T:achName_chapters	Lettore
+T:achName_holidays	Spirito Festivo
+T:achName_hours	Commerciante Devoto
+T:achDesc_taps	Tocca il negozio {0} volte
+T:achDesc_earned	Guadagna {0} monete in totale
+T:achDesc_level	Amplia il negozio fino al livello {0}
+T:achDesc_deptsBought	Compra {0} reparti
+T:achDesc_milestones	Raggiungi i traguardi dei reparti: {0}
+T:achDesc_teamEver	Conosci gli animaletti della tua squadra: {0}
+T:achDesc_teamMax	Porta un animaletto al livello {0}
+T:achDesc_raccoons	Cattura il procione volte: {0}
+T:achDesc_wheel	Gioca al circo o ai minigiochi bonus volte: {0}
+T:achDesc_travels	Viaggia nel tempo: {0}
+T:achDesc_crystals	Raccogli cristalli: {0}
+T:achDesc_chapters	Leggi capitoli della storia: {0}
+T:achDesc_holidays	Vedi le feste in città: {0}
+T:achDesc_hours	Ore di gioco: {0}
+T:stEpoch	Epoca
+T:stPlay	Tempo di gioco
+T:stEarned	Guadagnato in totale
+T:stRun	Guadagnato in questa partita
+T:stCps	Reddito
+T:stTap	Monete per tocco
+T:stTaps	Tocchi
+T:stDepts	Reparti acquistati
+T:stCrystals	Cristalli (ora / totale)
+T:stShards	Frammenti di tempo (ora / totale)
+T:stTravels	Viaggi nel tempo
+T:stRaccoons	Procioni catturati / persi
+T:stWheel	Circo e minigiochi bonus
+T:stAch	Obiettivi
+T:stChapters	Capitoli letti
+T:setLang	Lingua
+T:setView	Schermo e audio
+T:setSound	🔊 Impostazioni audio
+T:setAnimOn	Animazioni: ATTIVE
+T:setAnimOff	Animazioni: DISATTIVATE
+T:setNumFmt	Formato dei numeri:
+T:setSave	Dati di salvataggio
+T:setSaveNote	Copia il codice per portare i tuoi progressi su un altro dispositivo, oppure incolla qui un codice per caricarlo.
+T:exportBtn	Mostra codice
+T:copyBtn	Copia
+T:exportCopied	Codice copiato!
+T:importPlaceholder	Incolla qui un codice di salvataggio…
+T:importBtn	Carica codice
+T:importTitle	Caricare questo salvataggio?
+T:importText	I tuoi progressi attuali su questo dispositivo verranno sostituiti.
+T:importYes	Sì, carica
+T:importFail	Quel codice non ha funzionato. Assicurati di averlo copiato per intero.
+T:godOn	Modalità dio attiva
+T:godOff	Modalità dio disattivata
+T:importNoStorage	Impossibile salvare: l'archiviazione del browser non è disponibile.
+T:resetBtn	Azzera tutti i progressi
+T:resetTitle	Azzerare i progressi?
+T:resetText	Tutto verrà cancellato per sempre: monete, animaletti, capitoli, obiettivi e cristalli. Non si può annullare!
+T:resetYes	Sì, cancella tutto
+T:godCardTitle	👑 Modalità dio
+T:godCardNote	Solo per il proprietario. «Disattiva» gioca come un giocatore normale (skin, epoche e capitoli bloccati); «Attiva» riporta tutto. I progressi restano.
+T:godToggleOn	Modalità dio: ATTIVA — tocca per disattivare
+T:godToggleOff	Modalità dio: DISATTIVATA — tocca per attivare
+T:dbgBuildNote	Mostra l'animazione della costruzione: il negozio passa al livello scelto (gratis).
+T:dbgBuildKeepOff	Dopo la dimostrazione: ripristina il mio livello
+T:dbgBuildKeepOn	Dopo la dimostrazione: mantieni il nuovo livello
+T:dbgBuildBusy	Aspetta: la costruzione è già in corso.
+T:dbgBuildDone	Dimostrazione finita: il livello del tuo negozio è stato ripristinato.
+T:dbgBuildKept	Dimostrazione finita: il livello del negozio è cambiato.
+T:dbgHour	+1 ora di tempo
+T:dbgX100	×100 monete
+T:dbgCircus	Circo adesso
+T:shareBtn	Condividi
+T:saveSummary	Il salvataggio contiene: «{0}», reparti acquistati: {1}, animaletti: {2}, cristalli: {3}, guadagnato: {4}
+T:panelHide	Nascondi menu
+T:panelShow	Mostra menu
+T:buildTapHint	Tocca lo schermo per far lavorare la squadra più in fretta!
+T:cleanHide	Nascondi contatori ed etichette
+T:cleanShow	Mostra contatori ed etichette
+T:setGender	Chi sei?
+T:setGenderNote	Il gioco ti parlerà nel modo che scegli.
+T:gender_f	Ragazza
+T:gender_m	Ragazzo
+T:setDayNightOn	Giorno e notte: ATTIVO
+T:setDayNightOff	Giorno e notte: DISATTIVATO
+T:swAnim	Animazioni
+T:swDayNight	Giorno e notte
+T:swBirds	Uccelli
+T:swNoFly	Rimuovi oggetti volanti
+T:swBirdsLate	Uccelli nelle epoche avanzate
+T:swClouds	Nuvole
+T:swSteam	Vapore dei tombini
+T:swRain	Pioggia
+T:swBig	Testo grande
+T:swVib	Vibrazione
+T:setBirdsOn	Uccelli: ATTIVI
+T:setBirdsOff	Uccelli: DISATTIVATI
+T:setCloudsOn	Nuvole: ATTIVE
+T:setCloudsOff	Nuvole: DISATTIVATE
+T:setSteamOn	Vapore dei tombini: ATTIVO
+T:setSteamOff	Vapore dei tombini: DISATTIVATO
+T:setBigOn	Testo grande: ATTIVO
+T:setBigOff	Testo grande: DISATTIVATO
+T:setVibOn	Vibrazione: ATTIVA
+T:setVibOff	Vibrazione: DISATTIVATA
+T:setEvents0	Eventi: normali
+T:setEvents1	Eventi: più rari
+T:setEvents2	Eventi: minimi
+T:setEventsNote	Gli eventi sono il circo, gli animaletti dell'epoca, i fantasmi, i saldi e le disavventure. «Più rari» significa 2,5 volte meno spesso, «minimi» 5 volte.
+T:panHint	Scorri a sinistra o a destra per vedere tutta la strada.
+T:setEpochView	Visualizzatore di epoche

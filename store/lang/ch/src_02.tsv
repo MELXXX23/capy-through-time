@@ -1,0 +1,203 @@
+T:skinSay_hero_diamond	Diamond helpers shine so much the till squints.
+T:skinSay_shop_diamond	A diamond shop! Crystal windows and crystal-honest prices.
+T:skinSay_street_diamond	A diamond road. Walking on it feels like walking on a chandelier.
+T:skinSay_weather_diamondcloud	Diamond clouds: not rain here, but sparks.
+T:skin_capy_pirate	Pirate Capy
+T:skin_capy_astro	Astronaut Capy
+T:skin_shop_candy	Candy shop
+T:skin_shop_gold	Golden shop
+T:skin_weather_rainbow	Rainbow over town
+T:skin_weather_lightning	Purple lightning
+T:skin_street_moss	Mossy cobbles
+T:skin_street_gold	Golden road
+T:skin_weather_lightninggreen	Green lightning
+T:skin_weather_lightningred	Red lightning
+T:skin_capy_wizard	Wizard Capy
+T:skin_capy_chef	Chef Capy
+T:skin_capy_explorer	Explorer Capy
+T:skin_capy_detective	Detective Capy
+T:skin_capy_sailor	Sailor Capy
+T:skin_shop_ice	Ice shop
+T:skin_shop_wood	Wooden cabin
+T:skin_shop_garden	Garden shop
+T:skin_weather_cottoncloud	Cotton-candy clouds
+T:skin_weather_goldcloud	Golden clouds
+T:skin_weather_starcloud	Starry clouds
+T:skin_hero_chef	Chef heroes
+T:skin_hero_wizard	Wizard heroes
+T:skin_hero_royal	Royal heroes
+T:skin_capy_santa	Santa Capy
+T:skin_capy_witch	Witch Capy
+T:skin_capy_flower	Flower Capy
+T:skin_capy_beach	Beach Capy
+T:skin_capy_autumn	Autumn Capy
+T:skin_hero_santa	Santa’s helpers
+T:skin_hero_witch	Little witches
+T:skin_shop_xmas	Christmas shop
+T:skin_shop_halloween	Halloween shop
+T:skin_shop_spring	Spring shop
+T:skin_shop_autumn	Autumn shop
+T:skin_street_snow	Snowy cobbles
+T:skin_street_leaves	Leafy cobbles
+T:skin_capy_mel	Capy the fox Mel
+T:skin_capy_nika	Capy the bunny Nika
+T:skinSay_capy_mel	I am Mel the fox. Sly only about the price: the price is fair, the discount is a secret.
+T:skinSay_capy_nika	I am Nika the bunny. I hop to the till faster than the queue!
+T:skinSay_capy_pirate	Yo-ho-ho! Every coin is treasure, and the shop is my ship!
+T:skinSay_capy_astro	Houston, we have a sale! The orbit of prices is here.
+T:skinSay_shop_candy	It smells of caramel in here. I do not lick the walls. Almost.
+T:skinSay_shop_gold	The golden shop shines so bright the cashier wears sunglasses.
+T:skinSay_weather_rainbow	A rainbow over town. Where is the pot of gold? Oh, that is the till!
+T:skinSay_weather_lightning	Purple lightning? That is not a storm, that is a promo!
+T:skinSay_hero_party	A party every day! Confetti helpers, serious prices.
+T:skinSay_hero_ninja	Ninja helpers are here. You have not seen them. And you will not.
+T:skinSay_capy_ep0	I am almost Leonardo. Just cheaper.
+T:skinSay_capy_ep1	Retro is when everything is cool and nobody explains why.
+T:skinSay_capy_ep2	The disco ball spins, and so does the revenue!
+T:skinSay_capy_ep3	New game: "Cashier vs. the Queue". Hard level.
+T:skinSay_capy_ep4	The internet was invented to sell things. And cats, too.
+T:skinSay_capy_ep5	Eco trade: the bag is reusable, so is the profit.
+T:skinSay_capy_ep6	In space nobody hears the till. But we do.
+T:skinSay_capy_ep7	Neon blinks, prices do not. Principle!
+T:skinSay_capy_wizard	Abracadabra! And the goods are on the shelf. Well, they were delivered.
+T:skinSay_capy_chef	I do not cook, I stock up. But the hat is serious.
+T:skinSay_capy_explorer	The map says the treasure is somewhere near the till.
+T:skinSay_capy_detective	Who overcharged the customer? Elementary: the price tag.
+T:skinSay_capy_sailor	Calm in trade? Hoisting the sails, I mean the prices.
+T:skinSay_shop_ice	The ice shop: discounts do not melt here.
+T:skinSay_shop_wood	A wooden cabin smells of resin and honest business.
+T:skinSay_shop_garden	In the garden shop everything grows except prices. Almost.
+T:skinSay_weather_cottoncloud	Cotton candy clouds. Who took a bite? I am not saying anything.
+T:skinSay_weather_goldcloud	Golden clouds: even the sky decided to earn.
+T:skinSay_weather_starcloud	Starry clouds. Make a wish: a generous shopper!
+T:skinSay_hero_chef	Chef helpers! It smells tasty, but do not eat the goods.
+T:skinSay_hero_wizard	Wizard helpers: who said the queue cannot get shorter?
+T:skinSay_hero_royal	A royal team! Your Majesty, the till is on the right.
+T:skinSay_street_wood	The wooden path creaks. So trade is going well.
+T:skinSay_street_brick	Brick pavement: a clear road to the till.
+T:skinSay_capy_santa	Ho-ho-ho! Gifts at a discount, and the sack has plenty of room.
+T:skinSay_capy_witch	I am not a witch, I am a manager with a broom. But I wear the hat.
+T:skinSay_capy_flower	Flowers on me. Bees queue up, like everyone else.
+T:skinSay_capy_beach	A beach in the middle of town. Prices like a vacation!
+T:skinSay_capy_autumn	Autumn: the leaves fall, the revenue does not.
+T:skinSay_hero_santa	Santa’s helpers wrap gifts without a queue.
+T:skinSay_hero_witch	Little witch helpers: magically fast service.
+T:skinSay_shop_xmas	Christmas shop: the lights blink, the prices do not.
+T:skinSay_shop_halloween	Halloween shop: sweets or a discount!
+T:skinSay_shop_spring	Spring shop: prices are blooming. Gently, no panic.
+T:skinSay_shop_autumn	Autumn shop: warm, cozy, leaves on the roof.
+T:skinSay_street_snow	Snowy cobbles. Do not eat the snow! I stop myself too.
+T:skinSay_street_leaves	Leaves on the pavement: crunch-crunch, my favorite sound.
+T:tab_skins	Skins
+T:skinsNote	Capy’s skin changes with the era by itself. Pick another one here, and tap “Switch to era skin” to get the era skin back. Arrows scroll the list.
+T:skinBackToEpoch	Switch to era skin
+T:skinWornToast	Now wearing: {0}
+T:skinDefaultToast	Default look
+T:skinHeroNone	Every animal wears it: shoppers already do, and heroes will once they join.
+T:skinCat_capyEpoch	Capy by era
+T:skinEpoch	Capy: {0}
+T:skinOtherEpoch	Other era
+T:skinCat_capy	Capy
+T:skinCat_shop	Shop
+T:skinCat_weather	Weather
+T:skinCat_hero	Heroes & animals
+T:skinCat_street	Pavement
+T:skin_street_wood	Wooden boardwalk
+T:skin_street_brick	Red brick
+T:skinsReset	Reset all skins to the default look
+T:skinsResetDone	All skins removed: default look. Your skins are still yours.
+T:skinsResetNone	Everything already has the default look.
+T:skinDefault	Default
+T:skinWorn	Worn
+T:skinWear	Wear
+T:skinLocked	Circus
+T:skinLockedToast	You can win this skin at the Fortune Circus.
+T:skinBuy	Buy · {0} 💎
+T:skinBuyTitle	Buy this skin?
+T:skinBuyText	“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.
+T:skinBuyYes	Buy
+T:skinNoCrystals	Not enough crystals: you need {0} 💎. You can also win it at the circus.
+T:skinBought	Bought: {0}
+T:lootTag	✨ EPIC LOOT ✨
+T:lootWear	Wear it
+T:lootClose	Awesome!
+T:rainOn	Rain is on 🌧
+T:rainOff	Rain is off
+T:goalTravel	⏳ Time travel is ready: +{0} 💎
+T:goalCrystal	⏳ Toward the first time shard: {0}%
+T:goalDept	🛒 Buy “{0}”: {1}/{2}
+T:goalHire	🐾 Level up to {1}: {0}
+T:goalExpandNow	🏪 You can expand the shop!
+T:goalExpand	🏪 Shop expansion: {0}%
+T:goalNext	🛒 Next: “{0}” · {1}%
+T:dailyRemind	📅 Daily quests: {0} of 3 done. Check the awards tab!
+T:dailyRemindClaim	📅 A daily quest is done. Claim your crystal in the awards tab!
+T:dailyTitle	📅 Daily quests
+T:dailyNote	Three goals a day. A crystal for each, and one more for all three.
+T:dailyClaim	Claim 💎
+T:dailyAll	All three: +1 💎 more
+T:dailyAllDone	All three done: +1 💎 received
+T:dailyDoneToast	Daily quest done! Claim the crystal in the awards tab.
+T:dailyGot	Crystal +{0} 💎
+T:daily_taps	Tap the shop {0} times
+T:daily_depts	Buy departments: {0}
+T:daily_team	Upgrade animals: {0} times
+T:daily_catch	Catch animals or ghosts: {0}
+T:daily_vip	Catch golden shoppers: {0}
+T:daily_earn	Earn coins: {0}
+T:daily_wheel	Play the circus or a bonus game
+T:vipWish	I want “{0}”!
+T:vipToast	🌟 A golden shopper has arrived! Tap them.
+T:vipThanks	Thank you! Here is your reward.
+T:vipCrystal	The golden shopper gave a crystal: +1 💎
+T:vipGold	The golden shopper gave ×5 gold: +{0} 🪙
+T:vipSayCrystal	Here, a crystal!
+T:vipSayGold	Here, ×5 gold!
+T:prize_income	Income ×{0} for {1} min!
+T:prize_tap	Tap ×{0} for {1} min!
+T:prize_jackpot	JACKPOT! +{0}
+T:soundTitle	Sound
+T:tabMore	More
+T:soundMusic	Music
+T:musicStyle	Music style
+T:musicStyle_classic	Classic
+T:musicStyle_chip	Adventure
+T:musicStyle_chill	Chill
+T:soundSfx	Sound effects
+T:soundMuteOn	🔇 Mute sound
+T:soundMuteOff	🔊 Unmute sound
+T:tab_workshop	Workshop
+T:tab_seasons	Seasons
+T:setTimeTitle	🕓 Time of day
+T:tab_achievements	Awards
+T:tab_settings	Settings
+T:statEpoch	Epoch
+T:epoch_0	Renaissance
+T:epoch_1	Retro
+T:epoch_2	Disco
+T:epoch_3	Arcade
+T:epoch_4	Internet
+T:epoch_5	Eco
+T:epoch_6	Space
+T:epoch_7	Neon
+T:ep1_title	Retro Age
+T:ep2_title	Disco Age
+T:ep3_title	Arcade Age
+T:ep4_title	Internet Age
+T:ep5_title	Eco Age
+T:ep6_title	Space Age
+T:ep7_title	Neon Age
+T:ep8_title	A New Circle
+T:speaker_pip	Pip the Penguin
+T:speaker_zina	Zina the Zebra
+T:speaker_maks	Max the Monkey
+T:speaker_bitik	Bitik the Robot
+T:speaker_lesyk	Lesyk the Deer
+T:speaker_orbit	Orbit the Dog
+T:speaker_lumi	Lumi the Firefly
+T:speaker_bruno	Bruno the Badger
+T:choiceTitle	What to say?
+T:choiceFun	Jokingly: tap ×5 for 10 min
+T:choiceSerious	Seriously: income ×2 for 10 min
+T:choiceBonusTap	Joke bonus: tap ×5 for 10 minutes.
+T:choiceBonusIncome	Serious-answer bonus: income ×2 for 10 minutes.

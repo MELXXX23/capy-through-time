@@ -1,0 +1,123 @@
+T:guestAsk_zina_1	Don't stop: a few more mirror balls and we play.
+T:guestDone_zina	The dance floor glows, the bass booms, and I'm in a great mood. Thanks!
+T:guestSay_maks_0	The claw machine is empty. The toys went looking for a better owner. I get it.
+T:guestSay_maks_1	The Token hamsters run along the grid, square by square: left, right, up. My eyes can't keep up.
+T:guestSay_maks_2	Another game? Only an honest one. Spike will write it down and I wouldn't survive that.
+T:guestAsk_maks_0	Hamsters hide tokens in their cheeks. Tap, and the token comes back!
+T:guestAsk_maks_1	I need more hamsters. The game isn't over!
+T:guestDone_maks	The machine is full, the hamsters are home. The record is ours!
+T:guestSay_bitik_0	Beep-boop. The system has eight bugs and nine and a half problems. I haven't found the half yet.
+T:guestSay_bitik_1	They say a bug is a user who didn't read the manual. But these are real. With antennas.
+T:guestSay_bitik_2	Everything is saved in the cloud. Except my nerves.
+T:guestAsk_bitik_0	Catch the bugs! They glitch, but a tap beats antivirus.
+T:guestAsk_bitik_1	A few more bugs and the server breathes out with relief.
+T:guestDone_bitik	System stable. Indicators green. Beep!
+T:guestSay_lesyk_0	My garden bed is moving. It's not the wind: there's been no wind here for ages.
+T:guestSay_lesyk_1	A chameleon on a leaf is camouflage. Almost. I'm looking for the little turret eyes.
+T:guestSay_lesyk_2	A weed is just a plant that didn't make a career. I love them all.
+T:guestAsk_lesyk_0	Look closely at the leaves: something just blinked. Tap!
+T:guestAsk_lesyk_1	There are still chameleons around. Look for the turret eyes.
+T:guestDone_lesyk	The bed is calm. The trees thank you, and so do I.
+T:guestSay_orbit_0	Earth, this is Orbit, come in. The fuel is scattered, but I'm not giving up.
+T:guestSay_orbit_1	Axolotls float in zero gravity carrying my canisters. Logistics as it is.
+T:guestSay_orbit_2	Space is quiet. So quiet that thoughts get loud. I'm tired of my own.
+T:guestAsk_orbit_0	Catch the astro axolotls: they've got my fuel. Tap!
+T:guestAsk_orbit_1	The canisters are still on their way. Catching the next axolotl.
+T:guestDone_orbit	Tanks are full. Preparing launch. Thanks, crew!
+T:guestSay_lumi_0	Blink-blink. The wheel is stuck because the lanterns ran off with the kittens.
+T:guestSay_lumi_1	Neon kittens jump across the roofs and shine my lanterns. Pretty, but not mine.
+T:guestSay_lumi_2	The light runs on good deeds. The budget is small, but it's enough.
+T:guestAsk_lumi_0	Catch the kittens: they took my lanterns. Tap!
+T:guestAsk_lumi_1	A few more kittens and the wheel shines in full.
+T:guestDone_lumi	Every cabin is glowing. Blink-blink, thanks!
+T:guestSay_bruno_0	An owl steals my paints. The worst part is her abstractions beat mine.
+T:guestSay_bruno_1	A stroke here, a stroke there, and suddenly there's an owl with colourful claws. She's even proud.
+T:guestSay_bruno_2	My masterpiece is still ahead. It usually stays there. But I don't get upset.
+T:guestAsk_bruno_0	The Mazok owls scattered my paints again! Tap them!
+T:guestAsk_bruno_1	A few more owls and the painting will be finished.
+T:guestDone_bruno	The paints are back. The painting can be finished. Thanks!
+T:guestSay_pietro_0	The Fountain of Wishes babbles, and the coins disappear. Wishes must be protected.
+T:guestSay_pietro_1	The Mazok owls love glitter. Because of them the coins vanish, and my fee after them.
+T:guestSay_pietro_2	The Renaissance is when old things suddenly sound new. I'm trying.
+T:guestAsk_pietro_0	Catch the owls that pull coins from the fountain! Tap!
+T:guestAsk_pietro_1	A few more owls and the wishes stay in the water.
+T:guestDone_pietro	Coins in the water, wishes in place. Thanks!
+T:itchRateBtn	⭐ Rate the game on itch.io
+T:itchRateHint	Enjoying the game? Rate it on itch.io: menu → Settings.
+T:epoch_8	Japan
+T:epochTitle_8	Land of the Rising Sun
+T:epochSub_8	Sakura, paper lanterns and a dragon above the roofs.
+T:crt_8	Origami Crane
+T:good_8_0	Tea Sets
+T:good_8_1	Onigiri & Rice
+T:good_8_2	Wave Flags
+T:good_8_3	Fans & Parasols
+T:good_8_4	Soap & Powder
+T:good_8_5	Mochi & Dango
+T:good_8_6	Ramen
+T:good_8_7	Kimonos
+T:good_8_8	Wooden Sandals
+T:good_8_9	Paper Lanterns
+T:good_8_10	Sushi Bar
+T:good_8_11	Kabuki Theatre
+T:epoch_say_8_0	Sakura falls so quietly you can hear it think.
+T:epoch_say_8_1	Lanterns float up, prices don’t. Principle.
+T:epoch_say_8_2	The dragon is over the roofs again. Probably checking the discounts.
+T:epoch_say_8_3	Tea, rice and calm. Now that is trade.
+T:epoch_say_8_4	Wooden sandals clatter like the heartbeat of the shop.
+T:epoch_say_8_5	A torii by the door: come in, and leave your money at the till.
+T:skinSay_capy_ep8	Kimono, a straw hat and tea with sweets. Business, Japanese style!
+T:team_nara	Nara the Doe
+T:team_nara_role	Quiet Guardian
+T:team_nara_trait	Knows where time moves slower. Adds a bit to all income for every level.
+T:team_nara_sit_0	Sit, let’s watch the sakura.
+T:team_nara_sit_1	I’ll sit. Just a minute. Or an hour.
+T:team_nara_cold_0	Snow on antlers is a lovely decoration.
+T:team_nara_cold_1	A warm shawl? Thanks. I smell of tea.
+T:team_nara_cold_2	The cold here is gentle. I’m used to it.
+T:naraJoined	Nara is on the team now. Check the “Team” tab: she adds a bit to all income.
+T:bonusAvail	🎌 Bonus chapters available! Your next time travel opens the bonus era: Japan.
+T:routeNextBonus	Next: the bonus “{0}” era
+T:speaker_sora	Sora the Fox
+T:guestDat_sora	Sora
+T:guestSay_sora_0	Tea steeps exactly as long as it needs. Hurry only adds bitterness.
+T:guestSay_sora_1	A crane is just a sheet of paper that believed in itself.
+T:guestSay_sora_2	The dragon peeks into my little house. Says he’s here for tea. I don’t believe it.
+T:guestSay_sora_3	Lanterns here shine until morning. Sometimes until lunch.
+T:guestSay_sora_4	Sakura falls so quietly you can hear it think.
+T:guestSay_sora_5	A fox can do many things. Except catch her own teapot.
+T:guestAsk_sora_0	Catch the cranes: they flew out of my tea. Tap!
+T:guestAsk_sora_1	A few more cranes and the teapot will sing again.
+T:guestDone_sora	All the cranes are home. The tea is hot and the dragon is happy. Thank you!
+T:ep10_title	Land of the Rising Sun
+T:ep10_0	The clock ticked and the street filled with pink light. Paper lanterns drift above the roofs, and by the tea house a fox helplessly stares at a tipped-over teapot.
+T:ep10_1	Good morning! I’m Sora. This is my tea house. All the tea leaves ran away when I looked aside for a second.
+T:ep10_2	The tea leaves ran away? Leaves don’t run.
+T:ep10_3	They do, and how. I saw them: green, with little wings. I didn’t touch anyone, of course. Didn’t sell anything to anybody.
+T:ep10_4	They’re origami cranes! Folded from my tea bags, and they flew all over town. Help me catch {0}: tap each one before they land on a roof.
+T:ep10_5	We’re on it. The counter at the top will show how many are in the basket.
+T:ep10_o1	Let’s race to the taiko drums: whoever catches more drinks the first tea.
+T:ep10_o2	Shnyr, give back the tea bags you “borrowed”, and we’ll catch the cranes together.
+T:ep10_r1	Taiko? I can hit a drum. Twice. At once, with a pause.
+T:ep10_r2	Tea bags? Well... they smelled so good. I’ll give back the rest.
+T:ep10_6	I’ll wait by the tea house. Catch {0} cranes and you get my thanks and the best tea in town.
+T:ep10_7	Deal. The tea is mine, and you catch. I mean, together.
+T:ep10_8	Together, Shnyr. Let’s go.
+T:ep10_9	Tick-tock. Help Sora during this era. If you don’t make it, time travel still waits, there just won’t be a thank you.
+T:thx10_0	All the leaves are home! The tea is hot again, and the smell was so good the dragon came down to listen. Thank you, friend.
+T:thx10_1	The dragon? Does he drink tea?
+T:thx10_2	Only from a saucer. Let him wander, and when you come back, the first cup is on me.
+T:team_spike_say_0	One day they'll trust me with a safe. A small one, hedgehog-sized.
+T:team_spike_say_1	Tonya has been walking to the door for an hour. I bet on "by lunch". I'm going to lose.
+T:team_spike_say_2	A coin stuck in my quills isn't theft, it's delivery. That's how I see it.
+T:team_spike_say_3	Counted it three times. It adds up. That scares me more than when it doesn't.
+T:team_spike_say_4	Mum used to say: whoever counts, sleeps well. Mum never worked in a shop.
+T:team_spike_say_5	Someone left a tip: three pennies and a ribbon. I'm taking both.
+T:team_spike_say_6	They say I have a prickly personality. I checked: it's just the quills.
+T:team_spike_say_7	Toma remembers the debts, I remember the change. Together we're unbeatable.
+T:team_spike_say_8	At night I dream about a safe. It smiles. I wake up happy.
+T:team_spike_say_9	Leo wants a report. I say, "The report is in the till". He nodded. Didn't get it.
+T:team_spike_hire	The till is mine. Hands off.
+T:team_bodya_say_0	One day I'll build a dam. A real one, with a plaque: "Built by Bodya".
+T:team_bodya_say_1	Mikhas carries crates past my stairs. I just straightened them. Just now!
+T:team_bodya_say_2	I have the blueprints. They're in my head for now. And a bit on a napkin.
