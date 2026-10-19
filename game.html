@@ -10416,10 +10416,16 @@ function showBubble(key, text, x, y, follow) {
   el._timer = setTimeout(() => { el.remove(); delete bubbleEls[key]; }, Math.max(CONFIG.BUBBLE_SECONDS, 1.8 + text.length * 0.055) * 1000);
 }
 // Бульбашки йдуть слідом за звірятком, яке говорить
+let bubLastCamX = null, bubScrollUntil = 0;       // поки камеру гортають, репліки миттєво ховаються (не тягнуться від краю), а потім повертаються на місце
 function updateBubbles() {
-  const bb = bubbleBounds();
+  const bb = bubbleBounds(), now = performance.now();
+  if (bubLastCamX !== null && Math.abs(viewCrop.x - bubLastCamX) > 0.01) bubScrollUntil = now + 160;
+  bubLastCamX = viewCrop.x;
+  const scrolling = now < bubScrollUntil;
   Object.keys(bubbleEls).forEach(k => {
     const el = bubbleEls[k];
+    if (scrolling) { el.style.visibility = 'hidden'; return; }
+    if (el.style.visibility) el.style.visibility = '';
     if (!el._follow) { if (el._x < bb.l + 3 || el._x > bb.r - 3) { dropBubble(k); return; } placeBubble(el, el._x, el._y, bb); return; }
     const p = el._follow();
     if (!p) { dropBubble(k); return; }
