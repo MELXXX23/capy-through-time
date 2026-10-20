@@ -154,9 +154,11 @@ function drum(dest, kind, t0, vol) {
 }
 
 /* ---------- Музика ---------- */
+// Музика Хелловіну — лише коли гравець сам обрав цю пору року (або ?holiday=halloween). На «Авто» в останні дні жовтня лишаються прикраси, а музика — епохи.
+function halloweenMusicOn() { return (state.settings.season === 'halloween' && !seasonPickLocked('halloween')) || forcedHoliday() === 'halloween'; }
 function desiredTrack() {
-  if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music]) return theme.holiday.music;
-  if (theme.season === 'halloween' && MUSIC.halloween) return 'halloween';
+  if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music] && (theme.holiday.music !== 'halloween' || halloweenMusicOn())) return theme.holiday.music;
+  if (theme.season === 'halloween' && MUSIC.halloween && halloweenMusicOn()) return 'halloween';
   const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
   const ep = viewEpoch() % EPOCH_MUSIC.length;
   if ((ep > 0 || st.id !== 'classic') && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)

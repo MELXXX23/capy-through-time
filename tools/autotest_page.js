@@ -166,13 +166,14 @@
     const sv = JSON.stringify(state.story);
     setWorld(1, 4, 0.5); state.story.guests[0] = 1; state.story.help[0] = HELP_NEED - 1; state.story.thx[0] = 0; state.crystals = 0;
     await check('допомога гостю: лови', () => {
+      const seasonKeep = theme.season; theme.season = 'summer';      // у Хелловін (20.10–2.11) замість героїв епохи літають привиди, допомога гостю не рахується
       startGhostHunt();
       const g = ghostHunt.ghosts[0]; g.alive = true; ghostHunt.t = 5; g.sy = g.y; g.sx = g.x; g.x = g.x;
       if (!hitGhost({ x: g.x, y: g.sy - 6 })) throw new Error('не влучили по істоті');
       if (!helpDone(0)) throw new Error('допомогу не зараховано: ' + state.story.help[0]);
       if (state.crystals < 1) throw new Error('кристал за допомогу не видано');
       if (!helpThanksNow().includes(0) && helpThanksLate().length === 0) throw new Error('подяка не поставлена в чергу');
-      endGhostHunt();
+      endGhostHunt(); theme.season = seasonKeep;
     }, 200);
     state.story = JSON.parse(sv); closeAll();
   }
