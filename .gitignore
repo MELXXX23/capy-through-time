@@ -6,3 +6,4 @@ desktop/dist-*/
 mobile/node_modules/
 mobile/www/
 previews/
+store/lang/dump.json
