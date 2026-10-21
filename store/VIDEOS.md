@@ -1,6 +1,6 @@
 # Нові відео (раунд 60): 2 ролики YouTube 16:9 + 2 Shorts 9:16
 
-Усе лежить у `previews/yt/` (не в git). Готові файли з музикою: `CapyTap_YT1_Seasons.mp4`, `CapyTap_YT2_Secrets.mp4`, `CapyTap_Short5_Metro.mp4`, `CapyTap_Short6_Halloween.mp4` (1080p, 60 к/с; YouTube 1920×1080, Shorts 1080×1920). Чернетки `*_draft.mp4` у публікацію не йдуть.
+Усе лежить у `previews/yt/` (не в git). ГОТОВІ файли зібрано в `previews/yt/READY/`: `CapyTap_YT1_Seasons.mp4`, `CapyTap_YT2_Secrets.mp4`, `CapyTap_Short5_Metro.mp4`, `CapyTap_Short6_Halloween.mp4`, `CapyTap_Market_SteamTrailer_v2.mp4` (60 с, 1080p60), обкладинки `thumb_yt1.png`, `thumb_yt2.png` (1280×720). Усі з музикою, без голосу (1080p, 60 к/с; YouTube 1920×1080, Shorts 1080×1920). Чернетки `*_draft.mp4` у публікацію не йдуть. Перерендер: `bash previews/yt/render_yt.sh <1|2> final` (≈7 хв), Short 5: `compose_metro.sh`, Steam-трейлер: `compose_steam_trailer.sh`.
 
 ## Що в роликах (чого не було в трейлері, тизері й Shorts 1–4)
 | Файл | Хвилин. | Що показує |
@@ -137,7 +137,7 @@ TAGS: halloween game, ghosts, witch, cauldron game, idle game, cozy game, pixel 
 ## Steam (що підготовлено)
 - Картинки й 9 скріншотів уже були в `previews/steam/ready/` (див. `store/STEAM.md`); додано нові чисті скріншоти пір року (раунд 60): `previews/steam/ready/screenshots/10_halloween.png` … (якщо файли є).
 - Тексти сторінки на 6 мов: `store/STEAM_LANGS.md` (pt-BR, es, it, pl + рядок про мови для uk/en).
-- Трейлер: `previews/video/out/CapyTap_trailer_final_1080p.mp4` (≈79 с, з музикою, без голосу). Голос ElevenLabs/живий для нього ще чекає (`store/TRAILER.md`).
+- Трейлер v2 (60 с, «геймплей спершу», з музикою): `previews/yt/READY/CapyTap_Market_SteamTrailer_v2.mp4`; старий кінотрейлер `previews/video/out/CapyTap_trailer_final_1080p.mp4` (≈79 с, без голосу). Голос ElevenLabs/живий для нього ще чекає (`store/TRAILER.md`).
 
 ## Справжня людина з зеленим екраном (за бажанням)
 Зніми вертикальне відео (9:16): людина тримає телефон екраном до камери, екран телефона повністю зелений (відкрий на телефоні повноекранний зелений колір, напр. сторінку з #00FF00), телефон тримай стабільно. Потім: `bash previews/yt/chroma_phone.sh твоє_відео.mp4 previews/yt/phone_game.mp4 previews/yt/з_грою.mp4` (перевірено на тестовому зеленому прямокутнику: гра з'являється в зеленій зоні). Для телефона, що сильно рухається чи повертається, потрібне відстеження кутів у відеоредакторі (CapCut «Chroma key» + «Overlay»): гру з `phone_game.mp4` (вертикаль) і `phone_game_land.mp4` (горизонталь) можна покласти як шар.
