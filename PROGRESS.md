@@ -2,12 +2,6 @@
 
 Тут лише ОСТАННІ раунди (максимум 6 пунктів). Старі: `archive/PROGRESS_*.md` (не читай без потреби; шукай через Grep). Новий пункт додавай у кінець, коротко (до ~8 рядків); ротація: `node tools/progress_rotate.js`.
 
-## 134. Тизер 12 с (16:9, 1080p60, чоловічий голос)
-- `previews/video/scn_teaser12.src.js` (збірка `node build_scn.js`, запис `rec2.js`): тап → будівництво x2 (`build.dur = BUILD_SECONDS/2`, анімація вся) → скіни Капі/бруківка/хмари з піксельними спалахами → бонус-гра «Фреска» до «Perfect!» → заставка з піксельним розсипанням. Лише Ренесанс, без спойлерів.
-- Голос: Edge `en-US-AndrewNeural`, `previews/voice/gen_teaser.js` (`ONLY=t4` — одна фраза). Звук: `node mix_short.js … ../shorts/teaser12_mix.json` (нове поле `len` обрізає музику).
-- Готове: `previews/video/out/teaser/CapyTap_Market_teaser_12s.mp4` (15 МБ).
-- Версія 15 с (`scn_teaser15.src.js`, `teaser15_mix.json`, музика такти 4–8 + 40–42 рівно 15 с): + найм 3 звірят зі спалахами, трус кадру й LEVEL UP!, іскри й Капі-лицар на заставці, фраза t3b. Файл `CapyTap_Market_teaser_15s.mp4` (19 МБ).
-
 ## 134. Нові мови: pt-BR, es, it, pl (р. 59; не опубліковано, мітка before-langs)
 - Інфраструктура: `LANGS` (6 мов), автовибір за `navigator.language` (і в завантажувачі `040`, підказки й тексти для 6 мов), формати чисел (`NUMBER_FORMAT`: суфікси й роздільники), газета/новини/поради на будь-яку мову (`newsLang`), основа `279_y_lang_base.js`. Інструменти: `tools/lang_dump.js`, `lang_extract.js`, `lang_merge.js`; автотест `--lang=xx`. Опис — `src/ARCH.md`, розділ «Мови».
 - Переклади (2245 рядків × 4 мови, з англійської): `store/lang/ch/<мова>_NN.tsv` → пакети `src/279_z_lang_<мова>.js` (по ~150 КБ; `game.html` виріс до ~2,5 МБ). Розбіжностей у `{0}`/тегах/емодзі немає. Тон — як в оригіналі (стиль B), без звертання за родом гравця; Капі — жіночого роду.
@@ -22,3 +16,7 @@
 - Відео в `previews/yt/` (не в git; опис і заголовки YouTube, голосові таблиці, ринок: `store/VIDEOS.md`): YT1 «Пори року й погода» (46,9 с), YT2 «4 секрети» (єнот, цирк, історії, газета; 46,9 с), Short 5 «Метро» (людина-ілюстрація, екран телефона = геймплей, переверни телефон, картка «Як встановити», 23 с), Short 6 «Хелловін» (привиди, відьма, казанки, скін; 22,5 с). Сценарії: `previews/video/scn_yt1|yt2|metro_a|metro_b|hw_short.src.js`, спільне `scn_yt_lib.js`, `scn_metro_lib.js`, збірка `build_yt.js`, рендер `previews/yt/render_yt.sh`, мікс `mix_short.js` + `previews/yt/*_mix.json`.
 - Голос: ролики без ШІ-голосу (підписи + музика); живий голос кладеться як `previews/voice/yt/<ім'я>.mp3|wav|m4a` (таблиця в `store/VIDEOS.md`), мікс сам його підхоплює.
 - Steam: `store/STEAM_LANGS.md` (описи pt-BR, es, it, pl); 5 нових чистих скріншотів пір року (`previews/steam/ready/screenshots/10…14_*.png`).
+
+## 137. Трейлер Steam v3 (2:18) і чернетки на YouTube (р. 60)
+- Новий трейлер 1080p60, 15 шотів по тактовій сітці (`previews/video/t3_s01…s15.src.js`, `t3_lib.js`; рендер `previews/t3/render.sh`, склейка `previews/t3/assemble.js`, звук `previews/t3/audio.js`, ефекти `sfx.js`): справжнє меню ПК із курсором, два повні будівництва, епохи, історії, скіни, бонус-ігри, цирк, пори року, Хелловін, єнот, Японія, підсумок. Жіночий голос Edge `en-US-AvaMultilingualNeural` (це синтез; підмінити живим — `previews/voice/t3_user/vNN.wav`). Опис, таблиця фраз і команди: `store/TRAILER3.md`. Файл `previews/yt/READY/CapyTap_Market_Trailer_v3.mp4` (346 МБ, 20 Мбіт/с).
+- YouTube: усі 5 відео (YT1, YT2, трейлер v3, Short 5, Short 6) завантажено в ЧЕРНЕТКИ (приватні) через Studio у Chrome користувачки: файли подає локальний сервер `previews/yt/serve_files.js`, сторінка бере їх через fetch і підставляє у поле файлу (інструмент file_upload обмежений 10 МБ). Не опубліковано; «Аудиторія» (для дітей чи ні) не обрана.

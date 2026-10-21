@@ -322,3 +322,9 @@
 
 ## 133. Репліки ховаються під час гортання (р. 59)
 - `updateBubbles` (`180_b`): поки камера рухається (`viewCrop.x` змінюється, +160 мс після зупинки), усі бульбашки миттєво `visibility:hidden`, не тягнуться від краю й не видаляються; після зупинки повертаються на місце, а таймер життя йде як завжди. Проба на 390 px: visible → hidden → visible. autotest --quick ✓.
+
+## 134. Тизер 12 с (16:9, 1080p60, чоловічий голос)
+- `previews/video/scn_teaser12.src.js` (збірка `node build_scn.js`, запис `rec2.js`): тап → будівництво x2 (`build.dur = BUILD_SECONDS/2`, анімація вся) → скіни Капі/бруківка/хмари з піксельними спалахами → бонус-гра «Фреска» до «Perfect!» → заставка з піксельним розсипанням. Лише Ренесанс, без спойлерів.
+- Голос: Edge `en-US-AndrewNeural`, `previews/voice/gen_teaser.js` (`ONLY=t4` — одна фраза). Звук: `node mix_short.js … ../shorts/teaser12_mix.json` (нове поле `len` обрізає музику).
+- Готове: `previews/video/out/teaser/CapyTap_Market_teaser_12s.mp4` (15 МБ).
+- Версія 15 с (`scn_teaser15.src.js`, `teaser15_mix.json`, музика такти 4–8 + 40–42 рівно 15 с): + найм 3 звірят зі спалахами, трус кадру й LEVEL UP!, іскри й Капі-лицар на заставці, фраза t3b. Файл `CapyTap_Market_teaser_15s.mp4` (19 МБ).
