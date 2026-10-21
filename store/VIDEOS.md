@@ -138,3 +138,6 @@ TAGS: halloween game, ghosts, witch, cauldron game, idle game, cozy game, pixel 
 - Картинки й 9 скріншотів уже були в `previews/steam/ready/` (див. `store/STEAM.md`); додано нові чисті скріншоти пір року (раунд 60): `previews/steam/ready/screenshots/10_halloween.png` … (якщо файли є).
 - Тексти сторінки на 6 мов: `store/STEAM_LANGS.md` (pt-BR, es, it, pl + рядок про мови для uk/en).
 - Трейлер: `previews/video/out/CapyTap_trailer_final_1080p.mp4` (≈79 с, з музикою, без голосу). Голос ElevenLabs/живий для нього ще чекає (`store/TRAILER.md`).
+
+## Справжня людина з зеленим екраном (за бажанням)
+Зніми вертикальне відео (9:16): людина тримає телефон екраном до камери, екран телефона повністю зелений (відкрий на телефоні повноекранний зелений колір, напр. сторінку з #00FF00), телефон тримай стабільно. Потім: `bash previews/yt/chroma_phone.sh твоє_відео.mp4 previews/yt/phone_game.mp4 previews/yt/з_грою.mp4` (перевірено на тестовому зеленому прямокутнику: гра з'являється в зеленій зоні). Для телефона, що сильно рухається чи повертається, потрібне відстеження кутів у відеоредакторі (CapCut «Chroma key» + «Overlay»): гру з `phone_game.mp4` (вертикаль) і `phone_game_land.mp4` (горизонталь) можна покласти як шар.
