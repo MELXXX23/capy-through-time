@@ -55,7 +55,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Нові мови! Гру перекладено португальською (Бразилія), іспанською, італійською та польською: обери мову в налаштуваннях (PT, ES, IT, PL). Мова обирається й сама, за мовою твого телефона чи браузера. Ще героїв, Капі, Мел і Ніку почуєш живіше: нові репліки в усіх епохах, а коли гортаєш екран, бульбашки більше не заважають.',
+    newH: 'Що нового', new: 'Нові екрани завантаження! Сім живих сцен: Хелловін із кажанами й відьмою, Свято вогнів із феєрверками, північне сяйво, блискавки, заметіль і вихор часу. А ще в налаштуваннях звуку тепер можна обрати музику: Класична, Пригодницька, Спокійна або 🎃 Хелловін.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -63,7 +63,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'New languages! The game is now in Portuguese (Brazil), Spanish, Italian and Polish: pick one in Settings (PT, ES, IT, PL). It also picks the language by itself from your phone or browser. You will also hear the heroes, Capy, Mel and Nika more vividly: new lines in every epoch, and speech bubbles no longer get in the way when you scroll the screen.',
+    newH: 'What is new', new: 'New loading screens! Seven living scenes: Halloween with bats and a witch, a Festival of Lights with fireworks, northern lights, lightning, a snowstorm and a time vortex. And in Sound settings you can now pick the music: Classic, Adventure, Chill or 🎃 Halloween.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
