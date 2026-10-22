@@ -328,3 +328,8 @@
 - Голос: Edge `en-US-AndrewNeural`, `previews/voice/gen_teaser.js` (`ONLY=t4` — одна фраза). Звук: `node mix_short.js … ../shorts/teaser12_mix.json` (нове поле `len` обрізає музику).
 - Готове: `previews/video/out/teaser/CapyTap_Market_teaser_12s.mp4` (15 МБ).
 - Версія 15 с (`scn_teaser15.src.js`, `teaser15_mix.json`, музика такти 4–8 + 40–42 рівно 15 с): + найм 3 звірят зі спалахами, трус кадру й LEVEL UP!, іскри й Капі-лицар на заставці, фраза t3b. Файл `CapyTap_Market_teaser_15s.mp4` (19 МБ).
+
+## 134. Нові мови: pt-BR, es, it, pl (р. 59; не опубліковано, мітка before-langs)
+- Інфраструктура: `LANGS` (6 мов), автовибір за `navigator.language` (і в завантажувачі `040`, підказки й тексти для 6 мов), формати чисел (`NUMBER_FORMAT`: суфікси й роздільники), газета/новини/поради на будь-яку мову (`newsLang`), основа `279_y_lang_base.js`. Інструменти: `tools/lang_dump.js`, `lang_extract.js`, `lang_merge.js`; автотест `--lang=xx`. Опис — `src/ARCH.md`, розділ «Мови».
+- Переклади (2245 рядків × 4 мови, з англійської): `store/lang/ch/<мова>_NN.tsv` → пакети `src/279_z_lang_<мова>.js` (по ~150 КБ; `game.html` виріс до ~2,5 МБ). Розбіжностей у `{0}`/тегах/емодзі немає. Тон — як в оригіналі (стиль B), без звертання за родом гравця; Капі — жіночого роду.
+- Не перекладено: сторінки Steam/itch/Google Play, `docs/privacy.html`, рід гравця (`GENDER_TEXTS` лише uk/en). Носієві мов варто дати вичитати найважливіші тексти.
