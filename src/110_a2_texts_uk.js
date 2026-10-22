@@ -155,7 +155,7 @@
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
 
     soundTitle: 'Звук',
-    tabMore: 'Ще', soundMusic: 'Музика', musicStyle: 'Стиль музики', musicStyle_classic: 'Класична', musicStyle_chip: 'Пригодницька', musicStyle_chill: 'Спокійна',
+    tabMore: 'Ще', soundMusic: 'Музика', musicStyle: 'Стиль музики', musicStyle_classic: 'Класична', musicStyle_chip: 'Пригодницька', musicStyle_chill: 'Спокійна', musicStyle_halloween: '🎃 Хелловін',
     soundSfx: 'Звукові ефекти',
     soundMuteOn: '🔇 Вимкнути звук',
     soundMuteOff: '🔊 Увімкнути звук',

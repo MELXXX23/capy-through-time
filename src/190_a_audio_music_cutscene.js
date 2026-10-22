@@ -155,11 +155,13 @@ function drum(dest, kind, t0, vol) {
 
 /* ---------- Музика ---------- */
 // Музика Хелловіну — лише коли гравець сам обрав цю пору року (або ?holiday=halloween). На «Авто» в останні дні жовтня лишаються прикраси, а музика — епохи.
-function halloweenMusicOn() { return (state.settings.season === 'halloween' && !seasonPickLocked('halloween')) || forcedHoliday() === 'halloween'; }
+function halloweenStyleOk() { return !!MUSIC.halloween && (!seasonPickLocked('halloween') || theme.season === 'halloween'); }
+function halloweenMusicOn() { return ((MUSIC_STYLES[state.settings.musicStyle] || {}).id === 'halloween' && halloweenStyleOk()) || forcedHoliday() === 'halloween'; }   // лише вибір «Хелловін» у стилі музики
 function desiredTrack() {
   if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music] && (theme.holiday.music !== 'halloween' || halloweenMusicOn())) return theme.holiday.music;
-  if (theme.season === 'halloween' && MUSIC.halloween && halloweenMusicOn()) return 'halloween';
-  const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
+  if (MUSIC.halloween && halloweenMusicOn()) return 'halloween';
+  let st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
+  if (st.id === 'halloween') st = MUSIC_STYLES[0];
   const ep = viewEpoch() % EPOCH_MUSIC.length;
   if ((ep > 0 || st.id !== 'classic') && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
   return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + ep;

@@ -353,6 +353,8 @@ body[data-epoch="1"] { --glow: #ff8fb3; } body[data-epoch="2"] { --glow: #ff5fa2
 .tabmore .tab-icon canvas { width: calc(var(--icw) * var(--icn, 1)); height: calc(var(--icw) * var(--icn, 1)); image-rendering: pixelated; image-rendering: crisp-edges; }
 #musicStyleRow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 #musicStyleRow .btn { flex: 1 1 28%; font-size: 11px; padding: 9px 4px; }
+#musicStyleRow .btn.hw { flex-basis: 100%; }
+#musicStyleRow .btn[hidden] { display: none; }
 .tab { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 2px 7px; font-size: 9px; line-height: 1.1; min-width: 0; --icw: 48px; }
 .tab .tab-icon { font-size: 20px; line-height: 1; display: flex; }
 .tab .tab-icon canvas { width: calc(var(--icw) * var(--icn, 1)); height: calc(var(--icw) * var(--icn, 1)); image-rendering: pixelated; image-rendering: crisp-edges; }
@@ -788,7 +790,31 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .toast.bad { background: #ffd3c9; }
 @keyframes toastIn { from { opacity: 0; transform: translateY(-16px); } }
 @keyframes toastOut { to { opacity: 0; transform: translateY(-10px); } }
-
+/* --- екран завантаження: сцени «Хелловін» і «Свято вогнів» (канва неба з кажанами / феєрверками) --- */
+#boot .b-cv { position: absolute; left: 0; top: 0; width: 100%; height: 100%; image-rendering: pixelated; pointer-events: none; }
+#boot #bootOrb .moon.hw { filter: drop-shadow(0 0 22px rgba(255, 150, 60, .75)) drop-shadow(0 0 60px rgba(255, 110, 40, .45)); animation: bMoonHw 6s ease-in-out infinite; }
+@keyframes bMoonHw { 50% { filter: drop-shadow(0 0 30px rgba(255, 160, 70, .9)) drop-shadow(0 0 80px rgba(255, 110, 40, .55)); } }
+#boot .b-capy .b-hat { position: absolute; z-index: 1; }
+#boot .b-capy .b-hat svg { display: block; }
+#boot .pg { position: absolute; left: 50%; top: 55%; width: 300%; height: 260%; transform: translate(-50%, -50%); background: radial-gradient(rgba(255, 190, 70, .5), rgba(255, 140, 40, 0) 65%); animation: bCandle 1.3s steps(3, end) infinite; pointer-events: none; }
+@keyframes bCandle { 0%, 100% { opacity: .9; } 33% { opacity: .55; } 66% { opacity: 1; } }
+#boot .gh { position: absolute; opacity: 0; animation: bGhost 7s ease-in-out infinite; }
+#boot .gh svg { display: block; }
+@keyframes bGhost { 0% { transform: translate(0, 30px); opacity: 0; } 20% { opacity: .8; } 50% { transform: translate(18px, -26px); opacity: .55; } 80% { opacity: .8; } 100% { transform: translate(-6px, -60px); opacity: 0; } }
+#boot .fog { position: absolute; left: 0; bottom: 18%; width: 200%; height: 22%; background: radial-gradient(ellipse 36% 50% at 20% 60%, rgba(190, 170, 230, .3), transparent 70%), radial-gradient(ellipse 40% 45% at 70% 50%, rgba(170, 220, 190, .2), transparent 70%); background-size: 50% 100%; background-repeat: repeat-x; animation: bFog 26s linear infinite; }
+#boot .fog.b { bottom: 11%; opacity: .75; animation-duration: 40s; animation-direction: reverse; }
+@keyframes bFog { to { transform: translateX(-50%); } }
+#boot .lf { position: absolute; top: -4%; width: var(--s); height: var(--s); background: var(--c); opacity: 0; animation: bLeaf 8s linear infinite; }
+@keyframes bLeaf { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 8% { opacity: 1; } 25% { transform: translate(28px, 22vh) rotate(90deg); } 50% { transform: translate(-14px, 46vh) rotate(200deg); } 75% { transform: translate(24px, 70vh) rotate(290deg); } 100% { transform: translate(-8px, 96vh) rotate(380deg); opacity: .8; } }
+#boot .ff.gr { background: #c8ff8a; box-shadow: 0 0 8px 3px rgba(160, 255, 110, .6); }
+#boot .lan { position: absolute; bottom: 22%; width: calc(10px * var(--s)); height: calc(13px * var(--s)); background: linear-gradient(#ffe39a, #ff9a3a 70%, #c8501a); box-shadow: 0 0 calc(14px * var(--s)) calc(5px * var(--s)) rgba(255, 170, 70, .55); opacity: 0; animation: bLantern 16s linear infinite; }
+#boot .lan::after { content: ''; position: absolute; left: 30%; bottom: 0; width: 40%; height: 25%; background: #fff6c8; }
+@keyframes bLantern { 0% { transform: translate(0, 0); opacity: 0; } 8% { opacity: .95; } 30% { transform: translate(12px, -22vh); } 60% { transform: translate(-10px, -46vh); } 88% { opacity: .9; } 100% { transform: translate(14px, -72vh) scale(.6); opacity: 0; } }
+#boot .cf { position: absolute; top: -3%; width: 5px; height: 8px; background: var(--c); animation: bConf 7s linear infinite; }
+@keyframes bConf { 0% { transform: translate(0, 0) rotate(0) scaleX(1); } 25% { transform: translate(16px, 24vh) rotate(160deg) scaleX(.2); } 50% { transform: translate(-10px, 50vh) rotate(320deg) scaleX(1); } 75% { transform: translate(14px, 76vh) rotate(480deg) scaleX(.3); } 100% { transform: translate(0, 104vh) rotate(640deg) scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { #boot .gh, #boot .fog, #boot .lf, #boot .lan, #boot .cf, #boot .pg, #boot #bootOrb .moon.hw { animation: none; } }
+#boot .b-cv.fr { z-index: 3; }
+#boot .b-car:not(.l) { z-index: 2; }                                       /* ближня смуга перед дальньою */
 /*#part 024_style_modal_phone.css*/
 /* ===== Вікно (офлайн-заробіток) ===== */
 #soundModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
@@ -1101,12 +1127,14 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
   var P = { O: '#302418', w: '#fff4dc', r: '#ef8fa3', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', b: '#7a4f35', s: '#9fd8f0', K: '#1b1224', Y: '#ffd98a', o: '#e8863c', u: '#8b6bb0', n: '#3d5a8c', e: '#9c9087', f: '#ff5fa2' };
 
   // ---- сцена: щоразу інша (не та, що була востаннє); ?boot=night|dawn|rain|snow|time — для перегляду
-  var SCENES = ['night', 'dawn', 'rain', 'snow', 'time'], scene = 'night';
+  var SCENES = ['night', 'dawn', 'rain', 'snow', 'time', 'halloween', 'fest'], scene = 'night';
   (function () {
     var m = /[?&]boot=(\w+)/.exec(q), last = '';
     try { last = localStorage.getItem('capyBootScene') || ''; } catch (e) { /* нічого */ }
     if (m && SCENES.indexOf(m[1]) >= 0) { scene = m[1]; return; }
-    var pool = SCENES.filter(function (n) { return n !== last; });
+    var md = new Date(), mo = md.getMonth() * 100 + md.getDate(), hw = mo >= 901 && mo <= 1010;          // 1 жовтня … 10 листопада
+    var pool = SCENES.filter(function (n) { return n !== last && (n !== 'halloween' || hw); });
+    if (hw && last !== 'halloween') pool.push('halloween');
     scene = pool[Math.floor(Math.random() * pool.length)];
     try { localStorage.setItem('capyBootScene', scene); } catch (e) { /* нічого */ }
   })();
@@ -1115,7 +1143,9 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
     dawn: { bg: 'linear-gradient(#4f9fd6 0%, #86c6e6 28%, #ffe2a8 60%, #ffb872 84%, #ff9a62 100%)', gr: '#8d6b56', gb: '#f1d3a4', rd: '90, 55, 40', puff: '#fff0d0' },
     rain: { bg: 'linear-gradient(#0a1120 0%, #14233a 38%, #23405c 70%, #3c6a88 100%)', gr: '#1a2436', gb: '#4a6a8c', rd: '8, 14, 28', puff: '#9fc4e6' },
     snow: { bg: 'linear-gradient(#0d1838 0%, #1d3874 38%, #4b72b4 70%, #b4cff0 100%)', gr: '#e2ecf8', gb: '#ffffff', rd: '120, 150, 190', puff: '#ffffff' },
-    time: { bg: 'linear-gradient(#12062a 0%, #371660 34%, #7a3a8f 62%, #e29a62 88%, #ffd88a 100%)', gr: '#2a1a40', gb: '#ffd36a', rd: '12, 6, 30', puff: '#ffe08a' }
+    time: { bg: 'linear-gradient(#12062a 0%, #371660 34%, #7a3a8f 62%, #e29a62 88%, #ffd88a 100%)', gr: '#2a1a40', gb: '#ffd36a', rd: '12, 6, 30', puff: '#ffe08a' },
+    halloween: { bg: 'linear-gradient(#07040f 0%, #1a0b2c 32%, #3a1446 56%, #7a2a3c 78%, #e0703a 94%, #ffb066 100%)', gr: '#1c1226', gb: '#6a3a7a', rd: '10, 5, 18', puff: '#c8ff8a' },
+    fest: { bg: 'linear-gradient(#04061a 0%, #0e1440 36%, #23246a 64%, #4a2f7a 86%, #8a4a86 100%)', gr: '#24203f', gb: '#ffd36a', rd: '8, 6, 26', puff: '#ffe9a8' }
   }[scene];
   bootEl.classList.add('s-' + scene);
   bootEl.style.background = SD.bg;
@@ -1123,7 +1153,7 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
 
   // ---- Капі із заставки (cutCapyHi + обличчя), готові PNG ×4; бігунок: підскок, гойдання, ніжки й моргання; приладдя за сценою
   var CUTCAPY = {"w":112,"h":96,"sets":{"base":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABgCAYAAADFNvbQAAAAAXNSR0IArs4c6QAABWVJREFUeF7t3b2KFEEQAOC5wEcQTjTcTBAFzUzMVIzEWIxFI5/B0EAUBSOfwMjgojMxU1AEE1kw0MMDQzEy8KjDPvt6+6eqpqpnero20r2e7rr6pnq6d/dmtwZ7NJ2Braajt+AHA2z8JDBAA2w8A42HbxVogI1noPHwrQINsPEMNB6+VaABNp6BxsO3CjTAdjNwfrX9F6L/uN4XOZGl+8NkViRwzEBzauMSHcbEhZTuj5KrrgBTieZCSvdHgXNtuwHEJttPYqoiJfvioPnHdA14Y7V9mIvX6/2xeSwez52eSx13ARhWjIMLk6MNqYFogJ6iNqAbShJy8YDY6nPJrYUotX0xQK8Cr1w+NTx4+SF52Xl050LpkhT9ea7PsZCLBkytFsNrIMC5RyzZXLhQUwPSAIdhkAS8/+zdRhU+uXvp2HOSkIsFxOzVoBJ9vLAKc5UXg0rNryFgrtqpC50uAB3EmOmRAhZCpgBzkNiV6iIBXfXFKihExF7fqIAltFi1hrFhEBcFGE6bNQA5UKWlLAVyMYAYPMo1rpRk7Z9jEbsE1E6+RP9dAVKqTyK5tfrAIDZdgVPD+QsbjWthapXqL26aBIzt8bCrSYnqSa1IP+/9HHYfXpcYYqOPVDWqAmI201K/bS1AwAMo9zh7+uThP/3nNBCrAtaEg+TVwoOxUoAOEUC1ptMYomgFLhnO4YXV5iqQ+uoLZ+ZRBayJV7Pi/ERTXo2pVYViFTj1woJzRlOP0QZ88/ZHMaTwDWcRwKmX88XfWqhBbvUJQ/jTKaUCMXDuVxAF7AXOJU8akAInDtgbXgnRL3JM9XHwYAyxCjTA9Lw8FtAhxT7+KALYKx6mCqXw3Fgh4ijA3uHCmuO+FpqbPkMgMUDDk1nKYq59KlOoAfIAVycuHh24/vN+wADmRmJNoYaHx/PBYkd92/t99PTOl118x/9akgANjpbfEh705gPC/6mIaEDDo+FBawOk52xWR8wG0KqPf17kEK89fj68uHUbfQ189en7cPPcmWPBoKZQA+QDhkf6oAAIjxAlNhrgxdoWAQ1PDi/Wk7/5j0E6uBS0Aer6FHuHfaCPlDogVaUGWEyxbgN/Ix+DzE2vIR58vHDjDV2bQusBUkcyQGrGFNpzX0qL4UF4VoEKSLkuDbBywqWH4wCmqs8qUFoH0R8FMAfnhrIpFJF0ySYYwNi9alJ/rWuAAjpf938le3m6sxYYIX1PUwMcmd4p8ewaOBIPDtcEZN3kwDbydNUQcey0iYGzRQzdCXVE7i5MFBjUYLaRx6YJ3y4GqAFnFYg3IbU0QFK65tcYc2cJyahtGyGZzWHYuN+o5vQZ3UbAk7YS5anWrj4D5Dklj5oNoFUhXXYKvGQFGuACAA0RjzhV9WUr0AAXAGiIZcQpq69YgQZ4HDD2zkP4wrX2vi88pVD3iel9X0h5y8gAy7NW9RbNA/Y8lebwIC9NTKFTAZaSFytFSKjUzfBggXLv6ipb8c0A1kTkwMWqgQvpryxzgFPjoVahsdNPe1EjBehip0IuHlCzGjl4mM+gYBHDfV2sAmPj1V59upMTtY3QqkJIVurrUN2YUl/IyAUs3SnJxdkc4JgqDM/yWt9pi0EsxUb51HSN/Q67Ag3wP89U1cdexPhnFnVBk/vYXY2vBS9VYSy+XFxT4qkAal7TsMnK3YBdOj5sTFrT6agp1AUVJkz6msZNUgpSKj5uXJKYswaUSpDWCSYV3xhQEcDYggae417TNBITq8Y5xcdFVAWkBqUBl5rmqbFBe834OPGILGJyK1JsULUSw/12mVrxYfPltxOrQA7kVInBQk4VHwVSBbA0bc0lMSnIucSHgTwA0Lh9FABvsWMAAAAASUVORK5CYII=","rain":"data:image/png;base64,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","winter":"data:image/png;base64,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","time":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABgCAYAAADFNvbQAAAAAXNSR0IArs4c6QAABkRJREFUeF7t3b2rHVUQAPANaAoLC4kQPyDNa5KQECF2KbRTEcGQWlLno0rIf5BGtAh+gVUqSwWxSBUt0kVQEqIgDyTk62HsRIskoMwjcz33vDnnzMzO2d2zO7fKu+/s2Xnz2zkf997s3dX5o+kM7Go6eg++c8DGLwIHdMDGM9B4+F6BDth4BhoP3yvQARvPQOPhewU6YOMZaDx8r0AHbDcDRzb2/gvR/7y5ZXIhW/fHyaxJ4JwTTakNJjqOSQtp3Z8kV4sCTCVaC2ndnwQO2y4GkJvsMImpisS+Hv3zZNV893PPZPOfq+4DL+/ZHsrh8cv9P0UmosaaK2Qqx1CA727s3Q7vu80tdpgh2jcfHlod9/6Fm1nMGDBES/XDwVwEYIyHcLFaDhLhwmSn1BEzrkpARDhJPzlIBwwUUoApvG+PfbY6+r1rp9c8KcQ+/aQQZw/IrT7MPoUIiQ8rJoSLqzCEBMSwCvv044BPM43D5/Mv/MGa9y7/8GgH3vl9+9eO/ej2r2s/x4gn39jdWfVz4av7a0U36wpMrTwBUQOIlVcCBE1EhCqMAfv044Bd1/UF5JQuB1DTz2IAOfs+gHzz2Es78nju8k/bz3188rXu7OfXV0Nobu5LzYVQgZ+cet2kH2oenO0QGgICBDwQJkw2/i5VDSEgtOEgxnNgDKjtZzGAiEfhxIglQEi2BJHCw4ujTz+LWIXGw6YlICDEm2/OPhCqLwTU9jN7QA4eJjKc4zgLCaxCKvnU8biJD/FKiLl+YC+Zei11NnOgBJCLRrWDYRAfqdcwKbi4L04/4YsAswYcCi+HwEHLLZTwd2E/8XxNITZdgWPBxcMh/NwHsDQi5CCbBKT2eJzVZClR3N+Hw194zK17D7urF9/hdiNql0KsCsjZTIv+ikzjoQABD6DwcfCVF7f/GT5XA3FQwCHhIHlD4eFqlAJERACtNZxSiKYVOGe4cCuRAgwHiBqIVQGHxBuy4kKU1NxHjew1AOE8MaJZBY69sLCaS3P91Ab8/tqD4p8Rv+FsAjj2cr74Vxs1yK0+4RS4oJFuKzhw+CeYAi4Fjtr3xdsHDaAEzhxwaXglROkCRoMH5zCrQAdMj8ucBUwOEJGojz+aAC4Vj1OFVnh4rhixF+DS4eKaCxc1HDg8nlN95oCOZ7OU5cx9VYZQB9QBbjx7dHXg5uMfOw5g7kyqIdTx+HghGHXUnXt/r56+8ttVfsdPW4oAHU6W3xIe9BYCws9SRDag48nwoLUDynM2qSMmA+jVp78ucohvX/qi+/LEB+w58Osbd7vjh19dC4Y1hDqgHjA+MgQFQHjEKNTZAI9qWwR0PDs8qqdw809BIlwK2gHr+hR7h31giJQ6IFWlDlhMcd0G4UaegswNrzEefE50xxu6PoQOByg9kwNKM1ahvfalNAoPwvMKrICU69IBB0649ek0gKnq8wq01mH0JwHMweGpfAhlJN2yCQeQulcN+7+X+SpUzvX71l/Jgz69sinvkDjCAU3SuLOTMfF8DjRArQnIuQGtz4EVEPsOmxw4X8QYwFFdUPeiwXYSGG54XoHcTDHbUYA14LwCmSDSZg4ozdjE2nPuLGEZsg+hltkk/gNmzeGT3EbAk76Z16kOXX0OqHNKHjUZQK9CuewYeMkKdMAZADoiH3Gs6stWoAPOANARy4hjVl+xAh1wHZB65yF+4br2vi++pFj3iVn6vlDylpEDlketwVs0D7jkoTSHB3lpYggdC7CUPKoUIaFWN8ODBcqZtzayFd8M4JCIGjiqGrSQ4coyBzg2HmsVSl1+tRc1VoAYuxRy9oA1q1GDx/kMChcx3tdRFUidb+jVJ16crG1ErSqEZKW+DhXPKfl+29xkpQUs3eoKz9kcYJ8qjK9yzXfaavYSHMRSbJJPTWtilB6jrkAH/D/VY1WfehETXiXSBU3uY3earwWXXrGlKqTiy8U1Jl4VwJpzGjdZuRuwW8fHjUl6oXHb9xpC8SRxwqznNG2SUpBW8Wnj4uJw2k0a0CpBtS4wq/g4UKk2JoDUggae085pNRJDVeOU4tMiVgWUBlUDLjXMS2OD9jXj08RjsojJrUi5QQ2VGO23ywwVHzdfYTuzCtRAjpUYLuRY8UkgqwCWhq2pJCYFOZX4OJD/ARIhOiP7gSSLAAAAAElFTkSuQmCC"},"blink":{"x":66,"y":24,"url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAKRJREFUSEtj3Nvi+Z8BD8iddhqfNF65yVmmOOUZqW0xPsuQXUG2xcRagMvLBC0mO5wJaBy1mFYhi2HuaFCPBjXNQoCoxEVKeU1siTayLN5/5DkDUT6mZkSDLAWBkWExzLd09/GAWIxsKU19rMJqAk+Td36fYaCZxcgWYcsFj59+hQvvuLWPOqmakKUgG5EtplpQjzyLQUGHz9eeE6czzAqJQ4ljAMhcfA1Ywg9sAAAAAElFTkSuQmCC"}};
-  var cset = { night: 'base', dawn: 'base', rain: 'rain', snow: 'winter', time: 'time' }[scene];
+  var cset = 'base';                                                                 // без шапок і окулярів у всіх сценах
   var cp = document.getElementById('bootCapy'), cK = Math.max(1.4, Math.min(2.2, Math.min(VW, VH) / 270)), CW = Math.round(CUTCAPY.w * cK), CH = Math.round(CUTCAPY.h * cK);
   cp.style.width = CW + 'px'; cp.style.height = CH + 'px'; cp.style.marginLeft = (-CW / 2) + 'px';
   var pf = document.getElementById('bootPuff'); pf.style.marginLeft = (-CW / 2 + 12) + 'px';
@@ -1199,14 +1229,16 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
     dawn: [city({ far: 1, cols: ['#c9a8b8', '#b79bb0'], winFar: '#fff0d0', lit: 2 }), city({ cols: ['#e9b98f', '#d9a07a', '#f0c9a0', '#c98a6a'], shade: '#6a3a2a', win: ['#fff1c8', '#9fd8f0'], anten: '#d9473d', chim: '#8a5a44', smoke: '#fff4e8', lit: 4 })],
     rain: [city({ far: 1, cols: ['#1b2c46', '#223552'], winFar: '#4a6a8c' }), city({ cols: ['#15233a', '#1e2f4c', '#18283f'], win: ['#ffd98a', '#9fe1ff'], anten: '#ff5fa2', neon: ['#ff5fa2', '#6ee7ff', '#ffd36a'], lit: 3 })],
     snow: [city({ far: 1, cols: ['#2d4a86', '#3a5a9a'], winFar: '#d8e8ff', snow: 1, lit: 2 }), city({ cols: ['#2a3f78', '#34508c', '#243968'], win: ['#ffe39a', '#ffb870'], snow: 1, anten: '#ffffff', lit: 4 })],
-    time: [eraCity(true), eraCity(false)]
+    time: [eraCity(true), eraCity(false)],
+    halloween: [city({ far: 1, cols: ['#2a1240', '#321650'], winFar: '#ff9a4a', lit: 1 }), city({ cols: ['#1a0d2a', '#22113a', '#1d0f30'], shade: '#000000', win: ['#ffb347', '#a6ff6a', '#ff8c2a'], anten: '#a6ff6a', chim: '#2a1a3a', neon: ['#ff8c2a', '#a6ff6a'], lit: 2 })],
+    fest: [city({ far: 1, cols: ['#1c2156', '#232a66'], winFar: '#ffe39a', lit: 3 }), city({ cols: ['#151a48', '#1c2258', '#191e50'], shade: '#000000', win: ['#ffe39a', '#ffb870', '#9fe1ff'], anten: '#ff5fa2', neon: ['#ff5fa2', '#6ee7ff', '#ffd36a'], lit: 4 })]
   }[scene];
   document.getElementById('bootCityFar').innerHTML = CITY[0] + CITY[0];
   document.getElementById('bootCity').innerHTML = CITY[1] + CITY[1];
 
   // ---- небесне тіло та зорі
   var orb = document.getElementById('bootOrb'), stars = bootEl.querySelector('.b-stars');
-  stars.style.display = (scene === 'dawn' || scene === 'rain') ? 'none' : '';
+  stars.style.display = 'none';                                                     // зорі-цятки прибрано (просила користувачка)
   function disc(r, fn) { return grid(r * 2, r * 2, function (x, y) { var dx = x + 0.5 - r, dy = y + 0.5 - r; return dx * dx + dy * dy <= r * r ? fn(x, y, dx, dy) : '.'; }); }
   if (scene === 'night' || scene === 'snow') {
     var mr = 12, moon = disc(mr, function (x, y, dx, dy) { var c = (dx + dy * 0.6) < -2 ? 'w' : (dx + dy) < 4 ? 'Y' : 'e'; if ((x === 6 && y === 7) || (x === 14 && y === 11) || (x === 9 && y === 16) || (x === 7 && y === 8) || (x === 15 && y === 12)) c = 'e'; return c; });
@@ -1221,7 +1253,13 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
     orb.innerHTML = '<svg class="bigclock" viewBox="-70 -70 140 140" width="' + Math.min(VW * 0.5, 260) + '" height="' + Math.min(VW * 0.5, 260) + '" shape-rendering="crispEdges"><g class="cg">' + teeth + '<circle r="52" fill="#ffd36a"/><circle r="47" fill="#fff4dc"/><circle r="47" fill="none" stroke="#302418" stroke-width="2"/>' + ticks + '<g class="hh"><rect x="-2" y="-28" width="4" height="30" fill="#302418"/></g><g class="mm"><rect x="-1.5" y="-40" width="3" height="42" fill="#302418"/></g><g class="ss"><rect x="-1" y="-42" width="2" height="48" fill="#d9473d"/></g><circle r="4" fill="#302418"/><circle r="1.6" fill="#ffd36a"/></g></svg>';
     orb.style.left = '50%'; orb.style.bottom = '54%';
   }
-  if (scene === 'rain') orb.style.display = 'none';
+  if (scene === 'rain' || scene === 'fest') orb.style.display = 'none';
+  if (scene === 'halloween') {                                                     // великий помаранчевий місяць із кратерами
+    var CR = [[9, 9, 2], [20, 12, 3], [12, 21, 2], [22, 23, 1], [7, 16, 1], [17, 27, 1]];
+    var hm = disc(16, function (x, y, dx, dy) { for (var ci = 0; ci < CR.length; ci++) { var ex = x - CR[ci][0], ey = y - CR[ci][1]; if (ex * ex + ey * ey <= CR[ci][2] * CR[ci][2]) return 'e'; } return (dx + dy * 0.5) < -6 ? 'w' : (dx + dy * 0.7) < 7 ? 'Y' : 'e'; });
+    orb.innerHTML = '<span class="moon hw">' + svg(hm, { w: '#ffe2a0', Y: '#ffab4a', e: '#d8702e' }, sc) + '</span>';
+    orb.style.left = '68%'; orb.style.bottom = '57%';
+  }
 
   // ---- вулиця: реквізит їде з тією ж швидкістю, що й дорога
   var LAMP = ['..OOOO..', '.OyyyyO.', '.OyyyyO.', '..OOOO..', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '...OO...', '..OOOO..', '.OOOOOO.'];
@@ -1236,6 +1274,12 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
   var HYD = ['..OOOO..', '.OrrrrO.', 'OOrrrrOO', 'OrrrrrrO', '.OrrrrO.', '.OrrrrO.', 'OOrrrrOO', 'OOOOOOOO'];
   var CLOCKPOST = ['..OOOOOOO..', '.OyyyyyyyO.', 'OyywwwwwyyO', 'OywwwKwwwyO', 'OywwwKKwwyO', 'OywwwwwwwyO', '.OyyyyyyyO.', '..OOOOOOO..', '....OyO....', '....OyO....', '....OyO....', '....OyO....', '....OyO....', '....OyO....', '...OOOOO...', '..OOOOOOO..'];
   var GEMTREE = ['....OOOOOO......', '..OOuuuuuuOO....', '.OuuuvuuuuuuO...', 'OuuvuuuuuuvuuO..', 'OuuuuuuUuuuuuO..', 'OuuuvuuuuuvuuO..', '.OuuuuvuuuuOO...', '..OOuuuuuuOO....', '....OOOOOO......', '......OyO.......', '......OyO.......', '......OyO.......', '.....OOyOO......'];
+  var PUMPKIN = ['......OGO.....', '.....OGO......', '..OOOOOOOOOO..', '.OfFfffFfffFO.', 'OffFyyfFfyyFfO', 'OffyyyfFfyyyfO', 'OfFffffyfffFfO', 'OfyyyyyyyyyyfO', 'OffyFyyFyyFffO', '.OfFfyyyyfFfO.', '..OOOOOOOOOO..'];
+  var GRAVE = ['..OOOOOO..', '.OeeeeeeO.', 'OeeeEEeeeO', 'OeeEEEEeeO', 'OeeeEEeeeO', 'OeeeEEeeeO', 'OeeeeeeeeO', 'OeeeeeeeeO', 'OOOOOOOOOO', '.gGgggGgg.'];
+  var DEADTREE = ['..O.........O.....', '...O...O...O..O...', '....O..O..O..O....', '.O...O.O.O..O.....', '..O...OOOO.O...O..', '...OO..OOOO...O...', '.....O.OObO..O....', '......OObbOOO.....', '.......ObbO.......', '.......ObbO.......', '.......ObbO.......', '......ObbbO.......', '......ObbbbO......', '.....ObbbbbO......', '....OOOOOOOOO.....'];
+  var FENCE = ['.O...O...O...O...O..', 'OOO.OOO.OOO.OOO.OOO.', '.O...O...O...O...O..', 'OOOOOOOOOOOOOOOOOOOO', '.O...O...O...O...O..', '.O...O...O...O...O..', 'OOOOOOOOOOOOOOOOOOOO', '.O...O...O...O...O..'];
+  var BALLOONS = ['....OOO.....', '...OyyyO....', '.OOOywyOOO..', 'OrrrOyyyOnnO', 'OrwrrOyOnwnO', 'OrrrrOOOnnnO', '.OrrO.O.OnO.', '..OO..O..O..', '...O..O.O...', '....O.OO....', '.....OO.....', '.....O......', '.....O......', '.....O......', '.....O......', '....OOO.....'];
+  var PK = { O: '#1b0e10', f: '#e8742a', F: '#b84a1a', y: '#ffd84a', G: '#4f8a3a' }, GP = { O: '#140a1c', e: '#7a7a94', E: '#4a4a62', g: '#2f4a34', G: '#22382a' }, BP = { O: '#302418', r: '#ff5fa2', w: '#fff4dc', n: '#6ee7ff', y: '#ffd36a' };
   var PA = { O: '#302418', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', n: '#3d5a8c', w: '#fff4dc', b: '#7a4f35', r: '#d9473d', o: '#8a5a30', f: '#e8863c', j: '#ffd36a', K: '#1b1224', W: '#f4f8ff', s: '#7fb6e0', S: '#3d6a96', u: '#8b6bb0', U: '#c7a6f0', v: '#ffd36a' };
   var per = Math.max(VW, 520), st = document.getElementById('bootStreet'), html = '', LAMPY = { y: '#ffe08a' };
   var LIST = {
@@ -1243,20 +1287,24 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
     dawn: [[0.02, STALL], [0.3, LAMP], [0.43, TREE], [0.6, STALL2], [0.84, BOX], [0.93, BENCH]],
     rain: [[0.06, LAMP], [0.2, PUDDLE], [0.36, HYD], [0.5, LAMP], [0.66, PUDDLE], [0.8, BOX], [0.9, PUDDLE]],
     snow: [[0.05, PINE], [0.2, LAMP], [0.4, SNOWMAN], [0.6, PINE], [0.78, LAMP], [0.9, PINE]],
-    time: [[0.08, CLOCKPOST], [0.3, LAMP], [0.5, GEMTREE], [0.7, CLOCKPOST], [0.88, LAMP]]
+    time: [[0.08, CLOCKPOST], [0.3, LAMP], [0.5, GEMTREE], [0.7, CLOCKPOST], [0.88, LAMP]],
+    halloween: [[0.03, DEADTREE], [0.18, PUMPKIN, PK], [0.25, GRAVE, GP], [0.36, LAMP], [0.46, FENCE], [0.6, PUMPKIN, PK], [0.67, GRAVE, GP], [0.76, DEADTREE], [0.9, LAMP], [0.95, PUMPKIN, PK]],
+    fest: [[0.02, STALL], [0.24, LAMP], [0.33, BALLOONS, BP], [0.45, STALL2], [0.72, LAMP], [0.83, BALLOONS, BP], [0.9, BENCH]]
   }[scene];
   var PAL2 = JSON.parse(JSON.stringify(PA));
   if (scene === 'snow') { PAL2.y = '#fff2b0'; PAL2.g = '#2f6b48'; PAL2.G = '#1f4f38'; }
   if (scene === 'rain') { PAL2.y = '#ffe08a'; PAL2.s = '#4f86b8'; PAL2.S = '#2b4d70'; PAL2.w = '#9fc4e6'; }
   if (scene === 'time') { PAL2.y = '#ffd36a'; PAL2.O = '#1b1224'; }
+  if (scene === 'halloween') { PAL2.y = '#c8ff8a'; PAL2.O = '#120a1a'; PAL2.b = '#2a1a30'; }
   LIST.forEach(function (it) {
     [0, 1].forEach(function (k) {
       var isP = it[1] === PUDDLE, extra = isP ? '<i class="rp"></i><i class="rp r2"></i>' : '';
-      html += '<span style="left:' + Math.round(it[0] * per + k * per) + 'px;' + (isP ? 'bottom:-14px' : '') + '">' + sp(it[1], PAL2, sc) + extra + '</span>';
+      if (it[1] === PUMPKIN) extra = '<i class="pg"></i>';
+      html += '<span' + (it[1] === BALLOONS ? ' class="bob"' : '') + ' style="left:' + Math.round(it[0] * per + k * per) + 'px;' + (isP ? 'bottom:-14px' : '') + '">' + sp(it[1], it[2] || PAL2, sc) + extra + '</span>';
     });
   });
-  if (scene === 'snow') {                                                           // гірлянда між ліхтарями
-    var gx0 = 0.2 * per + 4 * sc, gx1 = 0.78 * per + 4 * sc, gh = 6 * sc, gl = '';
+  if (scene === 'snow' || scene === 'fest') {                                       // гірлянда між ліхтарями
+    var GA = scene === 'fest' ? [0.24, 0.72] : [0.2, 0.78], gx0 = GA[0] * per + 4 * sc, gx1 = GA[1] * per + 4 * sc, gh = 6 * sc, gl = '';
     [0, 1].forEach(function (k) {
       var x0 = gx0 + k * per, w = gx1 - gx0, sv = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + (gh + 14 * sc) + '" shape-rendering="crispEdges">', cols = ['#ff5a4a', '#ffd36a', '#4fd0ff', '#6fe08a'];
       for (var gi = 0; gi <= 28; gi++) { var gx = gi / 28 * w, gy = 2 + Math.sin(gi / 28 * Math.PI) * gh * 1.4; sv += '<rect x="' + gx + '" y="' + gy + '" width="' + (w / 28 + 1) + '" height="2" fill="#302418"/>'; if (gi % 2) sv += '<rect class="bb" style="animation-delay:-' + ((gi % 4) * 0.35) + 's" x="' + (gx - 1) + '" y="' + (gy + 2) + '" width="' + (2 * cs) + '" height="' + (2 * cs) + '" fill="' + cols[gi % 4] + '"/>'; }
@@ -1276,61 +1324,296 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
   var sky = '';
   function cl(top, delay, dur, op, rows, pal, k) { return '<div class="b-fly" style="top:' + top + '%;--an:bFlyL;--d:' + dur + 's;--w:-' + delay + 's;opacity:' + op + '">' + sp(rows, pal, k) + '</div>'; }
   if (scene === 'night') {
-    sky += '<div class="b-fly" style="top:19%;--an:bFlyL;--d:' + ((VW + 300) / 17) + 's;--w:-3s">' + sp(BLIMP, P, sc) + '</div>';
+    sky += '<div class="b-fly" style="top:19%;--an:bFlyL;--d:' + ((VW + 300) / 17) + 's;--w:-3s">' + sp(BLIMP, P, sc + 1) + '</div>';
     [[27, 0, 70], [33, 1, 52], [14, 2, 62]].forEach(function (c, i) { sky += cl(c[0], i * 6, (VW + 300) / (9 + i * 3), 0.55, CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, sc + 1); });
-    for (var bi = 0; bi < 4; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs) + '</span></div>';
+    for (var bi = 0; bi < 4; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs + 1) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs + 1) + '</span></div>';
     sky += '<i class="b-shoot" style="top:8%"></i><i class="b-shoot s2" style="top:16%"></i>';
   } else if (scene === 'dawn') {
     [[16, 0, 60], [30, 5, 48], [8, 11, 74]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (7 + i * 2), 0.9, BIGCLOUD, { O: '#e9a98f', w: '#fff6ea' }, sc + 1); });
-    sky += '<div class="b-fly" style="top:22%;--an:bFlyL;--d:' + ((VW + 300) / 6) + 's;--w:-9s"><span class="bob">' + sp(BALLOON, { O: '#302418', r: '#d9473d', w: '#fff4dc', n: '#3d7ac9', y: '#ffd36a' }, sc) + '</span></div>';
-    sky += '<div class="b-fly" style="top:36%;--an:bFlyL;--d:' + ((VW + 300) / 5) + 's;--w:-3s"><span class="bob b2">' + sp(BALLOON, { O: '#302418', r: '#f0a030', w: '#fff4dc', n: '#4f9a63', y: '#ffd36a' }, cs + 1) + '</span></div>';
-    for (var di = 0; di < 5; di++) sky += '<div class="b-fly b-bird" style="top:' + (12 + (di % 3) * 4 + (di > 2 ? 6 : 0)) + '%;--an:bFlyR;--d:' + ((VW + 300) / (30 + di * 2)) + 's;--w:-' + (di * 1.3) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#6a3a2a' }, cs) + '</span><span class="f2">' + sp(B2, { O: '#6a3a2a' }, cs) + '</span></div>';
+    sky += '<div class="b-fly" style="top:22%;--an:bFlyL;--d:' + ((VW + 300) / 6) + 's;--w:-9s"><span class="bob">' + sp(BALLOON, { O: '#302418', r: '#d9473d', w: '#fff4dc', n: '#3d7ac9', y: '#ffd36a' }, sc + 1) + '</span></div>';
+    sky += '<div class="b-fly" style="top:36%;--an:bFlyL;--d:' + ((VW + 300) / 5) + 's;--w:-3s"><span class="bob b2">' + sp(BALLOON, { O: '#302418', r: '#f0a030', w: '#fff4dc', n: '#4f9a63', y: '#ffd36a' }, cs + 2) + '</span></div>';
+    for (var di = 0; di < 5; di++) sky += '<div class="b-fly b-bird" style="top:' + (12 + (di % 3) * 4 + (di > 2 ? 6 : 0)) + '%;--an:bFlyR;--d:' + ((VW + 300) / (30 + di * 2)) + 's;--w:-' + (di * 1.3) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#6a3a2a' }, cs + 1) + '</span><span class="f2">' + sp(B2, { O: '#6a3a2a' }, cs + 1) + '</span></div>';
   } else if (scene === 'rain') {
     [[6, 0], [17, 5], [28, 9], [11, 13]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 1.5), 0.95, BIGCLOUD, { O: '#0a1220', w: '#2a3c58' }, sc + 2); });
-    sky += '<div class="b-fly" style="top:30%;--an:bFlyL;--d:' + ((VW + 300) / 14) + 's;--w:-4s;opacity:.8">' + sp(BLIMP, { O: '#0a1220', w: '#3a4f70', r: '#ff5fa2', y: '#ffd36a' }, sc) + '</div>';
+    sky += '<div class="b-fly" style="top:30%;--an:bFlyL;--d:' + ((VW + 300) / 14) + 's;--w:-4s;opacity:.8">' + sp(BLIMP, { O: '#0a1220', w: '#3a4f70', r: '#ff5fa2', y: '#ffd36a' }, sc + 1) + '</div>';
   } else if (scene === 'snow') {
     [[18, 0, 60], [32, 4, 50]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 2), 0.6, BIGCLOUD, { O: '#5a78b0', w: '#c6d8f4' }, sc + 1); });
-    sky += '<div class="b-fly" style="top:14%;--an:bFlyR;--d:' + ((VW + 300) / 26) + 's;--w:-6s"><span class="bob">' + sp(DEER, { O: '#302418', b: '#8a5a30' }, cs) + sp(DEER, { O: '#302418', b: '#8a5a30' }, cs) + sp(SLEIGH, { O: '#302418', r: '#d9473d', w: '#fff4dc', b: '#7a4f35' }, cs) + '</span></div>';
+    sky += '<div class="b-fly" style="top:14%;--an:bFlyR;--d:' + ((VW + 300) / 26) + 's;--w:-6s"><span class="bob">' + sp(DEER, { O: '#302418', b: '#8a5a30' }, cs + 1) + sp(DEER, { O: '#302418', b: '#8a5a30' }, cs + 1) + sp(SLEIGH, { O: '#302418', r: '#d9473d', w: '#fff4dc', b: '#7a4f35' }, cs + 1) + '</span></div>';
+  } else if (scene === 'halloween') {
+    var WITCH = ['.........OO...............', '........OOOO..............', '.......OOOOOO.............', '......OOOOOOOO............', '....OOOOOOOOOOOO..........', '.......OOgO...............', '......OOOOOO..O...........', '.....OOOOOOOOO............', '....OOOOOOOOO.............', 'bbbbbbbbbbbbbbbbbbbOyOyOy.', '....OOOO.OO.......yOyOyOy.', '.....OO...O........yOyOyO.'];
+    var GHOST = ['...OOOOOO...', '..OwwwwwwO..', '.OwwwwwwwwO.', 'OwwKKwwKKwwO', 'OwwKKwwKKwwO', 'OwwwwwwwwwwO', 'OwwwwKKwwwwO', 'OwwwwKKwwwwO', 'OwwwwwwwwwwO', 'OwwwwwwwwwwO', 'OwwwOwwwOwwO', '.OOO.OOO.OO.'];
+    [[24, 0], [40, 7], [10, 13]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (5 + i * 2), 0.85, BIGCLOUD, { O: '#120818', w: '#2c1838' }, sc + 1); });
+    sky += '<div class="b-fly" style="top:36%;--an:bFlyL;--d:15s;--w:-8.5s"><span class="bob">' + sp(WITCH, { O: '#0c0612', g: '#8adf6a', b: '#5a3a24', y: '#c8963a' }, cs + 2) + '</span></div>';
+    for (var gq = 0; gq < 3; gq++) sky += '<span class="gh" style="left:' + [12, 40, 82][gq] + '%;bottom:' + [45, 52, 47][gq] + '%;animation-delay:-' + (gq * 2.3) + 's">' + sp(GHOST, { O: '#8a9ac0', w: '#f2f6ff', K: '#1b1224' }, cs + 1) + '</span>';
+  } else if (scene === 'fest') {
+    [[14, 3, 50], [30, 9, 40]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (5 + i * 2), 0.35, BIGCLOUD, { O: '#1c2156', w: '#3a3f86' }, sc + 1); });
   } else {
     [[20, 2, 50], [34, 8, 40]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 2), 0.5, CLOUD, { O: '#8a5ab0', w: '#e0b8ee' }, sc + 1); });
   }
+  var CX = { night: [CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, 0.55, 9], dawn: [BIGCLOUD, { O: '#e9a98f', w: '#fff6ea' }, 0.9, 7], rain: [BIGCLOUD, { O: '#0a1220', w: '#2a3c58' }, 0.95, 6], snow: [BIGCLOUD, { O: '#5a78b0', w: '#c6d8f4' }, 0.6, 6], time: [CLOUD, { O: '#8a5ab0', w: '#e0b8ee' }, 0.5, 6], halloween: [BIGCLOUD, { O: '#120818', w: '#2c1838' }, 0.85, 5], fest: [BIGCLOUD, { O: '#1c2156', w: '#3a3f86' }, 0.35, 5] }[scene];
+  [[7, 4], [26, 15]].forEach(function (c) { sky += cl(c[0], c[1], (VW + 300) / (CX[3] * 1.05), CX[2], CX[0], CX[1], sc + 1); });   // дві додаткові хмари, на 5% швидші
   document.getElementById('bootSky').innerHTML = sky;
+  // ---- канва неба (за містом): кажани в Хелловін, феєрверки на святі; 1 піксель канви = px екранних, як піксель-арт гри
+  if (scene === 'halloween' || scene === 'fest') (function () {
+    var px = Math.max(2, sc - 2), W = Math.ceil(VW / px), H = Math.ceil(VH / px), cv = document.createElement('canvas');
+    cv.width = W; cv.height = H; cv.className = 'b-cv';
+    bootEl.insertBefore(cv, document.getElementById('bootCityFar'));
+    var g = cv.getContext('2d'), last = performance.now(), step;
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var R = function (a, b) { return a + Math.random() * (b - a); };
+    if (scene === 'halloween') {
+      var BAT = [['O.......O', 'OO..O..OO', '.OOOrOOO.', '...OOO...'], ['...O.O...', 'OOOOrOOOO', '.OO.O.OO.', '.........'], ['...O.O...', '..OOrOO..', '.OOOOOOO.', 'OO.....OO']], bats = [];
+      for (var i = 0; i < 11; i++) bats.push({ x: R(0, W), y: R(H * 0.08, H * 0.42), v: R(10, 22) * (i % 3 ? 1 : 0.6), ph: R(0, 6), a: R(3, 9), far: i % 3 === 0, f: R(0, 4) });
+      step = function (dt) {
+        g.clearRect(0, 0, W, H);
+        bats.forEach(function (b) {
+          var k = b.far ? 2 : 3;
+          b.x -= b.v * dt; b.ph += dt * 1.6; b.f += dt * (b.far ? 9 : 12);
+          if (b.x < -10 * k) { b.x = W + R(4, 40); b.y = R(H * 0.08, H * 0.42); }
+          var fr = BAT[[0, 1, 2, 1][Math.floor(b.f) % 4]], bx = Math.round(b.x), by = Math.round(b.y + Math.sin(b.ph) * b.a);
+          for (var r = 0; r < fr.length; r++) for (var c = 0; c < 9; c++) {
+            var ch = fr[r][c]; if (ch === '.') continue;
+            g.fillStyle = ch === 'r' ? (b.far ? '#3a1a3a' : '#ffb347') : (b.far ? '#3a1f4a' : '#0a0510');
+            g.fillRect(bx + c * k, by + r * k, k, k);
+          }
+        });
+      };
+    } else {
+      var COLS = ['#ff5fa2', '#6ee7ff', '#ffd36a', '#a6ff6a', '#c79bff', '#ff7a4a', '#ffffff'], KINDS = ['peony', 'peony', 'ring', 'willow', 'crackle', 'heart', 'double'];
+      var rockets = [], parts = [], glows = [], wait = 0.15;
+      var pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+      var hexA = function (h, a) { return 'rgba(' + parseInt(h.substr(1, 2), 16) + ',' + parseInt(h.substr(3, 2), 16) + ',' + parseInt(h.substr(5, 2), 16) + ',' + Math.max(0, a).toFixed(3) + ')'; };
+      var launch = function () { var c = pick(COLS); rockets.push({ x: R(W * 0.1, W * 0.9), y: H * 0.66, vx: R(-6, 6), vy: -R(H * 0.58, H * 0.75), ty: R(H * 0.1, H * 0.36), c: c, c2: Math.random() < 0.4 ? pick(COLS) : c, k: pick(KINDS) }); };
+      var burst = function (r) {
+        var s = R(H * 0.16, H * 0.24), i, a, sp, n;
+        glows.push({ x: r.x, y: r.y, c: r.k === 'willow' ? '#ffd36a' : r.c, t: 0.35 });
+        if (r.k === 'heart') {                                                       // сердечко з іскор
+          for (i = 0; i < 56; i++) { a = i / 56 * Math.PI * 2; parts.push({ x: r.x, y: r.y, vx: 16 * Math.pow(Math.sin(a), 3) * s / 17, vy: -(13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) * s / 17, l: 1.6, m: 1.6, c: '#ff5fa2', d: 1.6, gr: 6 }); }
+          return;
+        }
+        n = r.k === 'ring' ? 44 : r.k === 'willow' ? 70 : 64;
+        for (i = 0; i < n; i++) {
+          var w = r.k === 'willow', life = w ? R(2.2, 3) : R(1.1, 1.7);
+          a = r.k === 'ring' ? i / n * Math.PI * 2 : R(0, Math.PI * 2); sp = (r.k === 'ring' ? s : s * Math.sqrt(R(0.15, 1))) * (w ? 0.7 : 1);
+          parts.push({ x: r.x, y: r.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, l: life, m: life, c: w ? '#ffd36a' : (i % 2 ? r.c : r.c2), d: w ? 2.4 : 1.7, gr: w ? 14 : 9, cr: r.k === 'crackle' });
+          if (r.k === 'double' && i % 2) parts.push({ x: r.x, y: r.y, vx: Math.cos(a) * sp * 0.45, vy: Math.sin(a) * sp * 0.45, l: life * 0.8, m: life * 0.8, c: '#ffffff', d: 1.7, gr: 9 });
+        }
+      };
+      step = function (dt) {
+        g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, W, H);   // щокадру чисто: без залишкових цяток
+        g.globalCompositeOperation = 'lighter';
+        wait -= dt; if (wait <= 0) { launch(); if (Math.random() < 0.25) { launch(); launch(); } wait = R(0.55, 1.4); }
+        glows = glows.filter(function (o) {                                          // спалах підсвічує небо
+          o.t -= dt; if (o.t <= 0) return false;
+          var rr = H * 0.32, gd = g.createRadialGradient(o.x, o.y, 0, o.x, o.y, rr);
+          gd.addColorStop(0, hexA(o.c, o.t * 0.45)); gd.addColorStop(1, hexA(o.c, 0)); g.fillStyle = gd; g.fillRect(o.x - rr, o.y - rr, rr * 2, rr * 2);
+          return true;
+        });
+        rockets = rockets.filter(function (r) {
+          r.x += r.vx * dt; r.y += r.vy * dt; r.vy += H * 0.35 * dt;
+          parts.push({ x: r.x + R(-0.5, 0.5), y: r.y + 1, vx: R(-3, 3), vy: R(2, 8), l: 0.45, m: 0.45, c: '#ffe39a', d: 3, gr: 4 });
+          g.fillStyle = '#fff6d0'; g.fillRect(Math.round(r.x), Math.round(r.y), 1, 2);
+          if (r.y <= r.ty || r.vy >= 0) { burst(r); return false; }
+          return true;
+        });
+        var born = [];
+        parts = parts.filter(function (p) {
+          p.l -= dt;
+          if (p.l <= 0) { if (p.cr && Math.random() < 0.6) for (var q = 0; q < 3; q++) born.push({ x: p.x, y: p.y, vx: R(-14, 14), vy: R(-14, 14), l: 0.25, m: 0.25, c: '#ffffff', d: 4, gr: 0 }); return false; }
+          var dr = Math.exp(-p.d * dt), f = p.l / p.m; p.vx *= dr; p.vy = p.vy * dr + p.gr * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+          if (p.cr && f < 0.4 && Math.random() < 0.5) return true;                   // тріскучі мерехтять
+          var al = Math.min(1, f * 1.4); g.fillStyle = f > 0.93 ? '#ffffff' : p.c; g.globalAlpha = al; g.fillRect(Math.round(p.x), Math.round(p.y), 1, 1);
+          g.globalAlpha = al * 0.45; g.fillRect(Math.round(p.x - p.vx * 0.05), Math.round(p.y - p.vy * 0.05), 1, 1); g.globalAlpha = al * 0.2; g.fillRect(Math.round(p.x - p.vx * 0.1), Math.round(p.y - p.vy * 0.1), 1, 1);   // короткий хвостик
+          return true;
+        });
+        g.globalAlpha = 1; parts = parts.concat(born);
+      };
+    }
+    function loop(now) { if (!bootEl.parentNode) return; var dt = Math.min(0.05, (now - last) / 1000); last = now; step(dt); requestAnimationFrame(loop); }
+    if (still) step(0.016); else requestAnimationFrame(loop);
+  })();
 
+
+  // ---- канва для решти сцен (b-cv fr — шар перед містом): сяйво + НЛО + зорепад (night), промені + відблиски (dawn), блискавки + бризки (rain), сяйво + заметіль (snow), портал часу (time)
+  if (['night', 'dawn', 'rain', 'snow', 'time'].indexOf(scene) >= 0) (function () {
+    var px = Math.max(2, sc - 2), W = Math.ceil(VW / px), H = Math.ceil(VH / px);
+    function mk(cls) { var c = document.createElement('canvas'); c.width = W; c.height = H; c.className = 'b-cv' + cls; return c; }
+    var cvB = mk(''), cvF = mk(' fr');
+    bootEl.insertBefore(cvB, document.getElementById('bootCityFar'));
+    bootEl.insertBefore(cvF, document.getElementById('bootFx'));
+    var gB = cvB.getContext('2d'), gF = cvF.getContext('2d'), T = 0, last = performance.now(), draw, i;
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var R = function (a, b) { return a + Math.random() * (b - a); };
+    var groundY = Math.round(H * 0.75);
+
+    function aurora(g, pal, y0, amp, al) {                                            // стрічки північного сяйва
+      var K = 8; g.globalCompositeOperation = 'lighter';
+      for (var b = 0; b < pal.length; b++) {
+        g.fillStyle = pal[b];
+        for (var x = 0; x < W; x++) {
+          var wv = Math.sin(x * 0.045 + T * 0.55 + b * 1.7) + Math.sin(x * 0.021 - T * 0.37 + b) * 0.8;
+          var top = y0 + b * H * 0.035 + wv * amp, h = H * 0.17 + Math.sin(x * 0.03 + T * 0.8 + b) * H * 0.05, vis = 0.55 + 0.45 * Math.sin(x * 0.012 + T * 0.3 + b * 2);
+          for (var k = 0; k < K; k++) { g.globalAlpha = Math.sin((k + 0.5) / K * Math.PI) * al * vis; g.fillRect(x, top + k * h / K, 1, h / K + 1); }
+        }
+      }
+      g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+    }
+
+    if (scene === 'night') {
+      var star = null, starWait = 2, ufo = { x: -40, y: H * 0.2, on: false, wait: 7 };
+      var UFO = ['...OOOO...', '..OsssssO..', '.OOOOOOOOO.', 'OgwgOgwgOgw', '.OOOOOOOOO.'];
+      draw = function (dt) {
+        aurora(gB, ['#4dffb0', '#3ad8d0', '#9a6bff'], H * 0.06, H * 0.04, 0.13);
+        starWait -= dt; if (!star && starWait <= 0) { star = { x: R(W * 0.05, W * 0.6), y: R(H * 0.04, H * 0.2), l: 0 }; starWait = R(2.5, 6); }
+        if (star) {                                                                   // зорепад зі шлейфом
+          star.l += dt; star.x += 120 * dt; star.y += 55 * dt;
+          for (i = 0; i < 16; i++) { gB.globalAlpha = (1 - i / 16) * Math.max(0, 1 - star.l / 1.1); gB.fillStyle = i < 2 ? '#ffffff' : '#bfe3ff'; gB.fillRect(Math.round(star.x - i * 2.2), Math.round(star.y - i * 1.0), 1, 1); }
+          gB.globalAlpha = 1; if (star.l > 1.1) star = null;
+        }
+        ufo.wait -= dt;
+        if (!ufo.on && ufo.wait <= 0) { ufo.on = true; ufo.x = W + 12; ufo.y = R(H * 0.14, H * 0.28); }
+        if (ufo.on) {                                                                 // тарілка з променем
+          ufo.x -= 16 * dt; var uy = Math.round(ufo.y + Math.sin(T * 3) * 2), ux = Math.round(ufo.x), U2 = 2;
+          gB.globalCompositeOperation = 'lighter'; gB.fillStyle = 'rgba(150,255,170,' + (0.1 + 0.05 * Math.sin(T * 8)).toFixed(3) + ')';
+          gB.beginPath(); gB.moveTo(ux + 6, uy + 10); gB.lineTo(ux + 16, uy + 10); gB.lineTo(ux + 28, uy + 52); gB.lineTo(ux - 6, uy + 52); gB.fill(); gB.globalCompositeOperation = 'source-over';
+          UFO.forEach(function (row, r) { for (var c = 0; c < row.length; c++) { var ch = row[c]; if (ch === '.') continue; gB.fillStyle = ch === 'O' ? '#2a3a5a' : ch === 's' ? '#9fe8ff' : (Math.floor(T * 5 + c) % 2 ? '#ffd36a' : '#ff5fa2'); gB.fillRect(ux + c * U2, uy + r * U2, U2, U2); } });
+          if (ux < -26) { ufo.on = false; ufo.wait = R(10, 18); }
+        }
+      };
+    } else if (scene === 'dawn') {
+      var sx = W * 0.26, sy = H * (1 - 0.53);
+      draw = function () {
+        gB.globalCompositeOperation = 'lighter';
+        for (i = 0; i < 14; i++) {                                                    // божі промені з-за обрію
+          var a = -Math.PI * 0.95 + i * Math.PI * 0.1 + Math.sin(T * 0.25 + i) * 0.03, w = 0.035 + 0.02 * Math.sin(T * 0.6 + i * 2);
+          gB.fillStyle = 'rgba(255,225,150,' + (0.07 + 0.04 * Math.sin(T * 0.7 + i * 1.3)).toFixed(3) + ')';
+          gB.beginPath(); gB.moveTo(sx, sy); gB.lineTo(sx + Math.cos(a - w) * W * 1.6, sy + Math.sin(a - w) * W * 1.6); gB.lineTo(sx + Math.cos(a + w) * W * 1.6, sy + Math.sin(a + w) * W * 1.6); gB.fill();
+        }
+        var cx = W * 0.5, cy = H * 0.5, FL = [[0.35, 5, '255,200,120', 0.16], [0.6, 9, '255,150,200', 0.10], [0.85, 4, '160,220,255', 0.14], [1.1, 12, '255,230,150', 0.08], [1.4, 6, '255,170,120', 0.10]];
+        FL.forEach(function (f) { gB.fillStyle = 'rgba(' + f[2] + ',' + (f[3] + 0.03 * Math.sin(T * 1.2 + f[0] * 5)).toFixed(3) + ')'; gB.beginPath(); gB.arc(sx + (cx - sx) * f[0] * 1.6, sy + (cy - sy) * f[0] * 1.6, f[1], 0, 7); gB.fill(); });   // ланцюжок відблисків
+        gB.globalCompositeOperation = 'source-over';
+      };
+    } else if (scene === 'rain') {
+      var bolt = null, boltWait = 1.6, splash = [];
+      var makeBolt = function () {
+        var x = R(W * 0.12, W * 0.88), y = 0, main = [[x, y]], br = [];
+        while (y < H * 0.5) {
+          y += R(3, 7); x += R(-7, 7); main.push([x, y]);
+          if (Math.random() < 0.16) { var bx = x, by = y, b2 = [[bx, by]], dir = Math.random() < 0.5 ? -1 : 1; for (var q = 0; q < 6; q++) { bx += dir * R(2, 6); by += R(2, 5); b2.push([bx, by]); } br.push(b2); }
+        }
+        return { main: main, br: br, l: 0 };
+      };
+      var stroke = function (g, pts, w, col, al) { g.globalAlpha = al; g.strokeStyle = col; g.lineWidth = w; g.beginPath(); pts.forEach(function (p, k) { k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }); g.stroke(); };
+      draw = function (dt) {
+        boltWait -= dt; if (!bolt && boltWait <= 0) { bolt = makeBolt(); boltWait = R(3.5, 7.5); }
+        if (bolt) {
+          bolt.l += dt; var l = bolt.l, a = l < 0.1 ? 1 : l < 0.16 ? 0.15 : l < 0.26 ? 1 : Math.max(0, 1 - (l - 0.26) / 0.35);
+          gB.fillStyle = 'rgba(200,225,255,' + (a * 0.4).toFixed(3) + ')'; gB.fillRect(0, 0, W, H);        // небо спалахує
+          gB.lineJoin = 'round'; gB.globalCompositeOperation = 'lighter';
+          stroke(gB, bolt.main, 7, '#5a8aff', a * 0.28); stroke(gB, bolt.main, 3, '#bcd6ff', a * 0.6); stroke(gB, bolt.main, 1, '#ffffff', a);
+          bolt.br.forEach(function (b) { stroke(gB, b, 3, '#7aa4ff', a * 0.3); stroke(gB, b, 1, '#e8f2ff', a * 0.85); });
+          gB.globalCompositeOperation = 'source-over'; gB.globalAlpha = 1; if (l > 0.65) bolt = null;
+        }
+        for (i = 0; i < 2; i++) if (Math.random() < dt * 22) splash.push({ x: R(0, W), y: R(groundY + 3, H - 2), l: 0 });   // бризки на дорозі
+        gF.fillStyle = '#cfe8ff';
+        splash = splash.filter(function (s) {
+          s.l += dt; if (s.l > 0.32) return false; var r = 1 + Math.floor(s.l * 12); gF.globalAlpha = 1 - s.l / 0.32;
+          gF.fillRect(Math.round(s.x - r), Math.round(s.y), 1, 1); gF.fillRect(Math.round(s.x + r), Math.round(s.y), 1, 1); gF.fillRect(Math.round(s.x - r * 0.5), Math.round(s.y - 1), 1, 1); gF.fillRect(Math.round(s.x + r * 0.5), Math.round(s.y - 1), 1, 1);
+          return true;
+        });
+        gF.globalAlpha = 1;
+      };
+    } else if (scene === 'snow') {
+      var fl = [];
+      for (i = 0; i < 46; i++) fl.push({ x: R(0, W), y: R(0, H), s: i % 3 === 0 ? 2 : 1, v: R(10, 26), ph: R(0, 6) });
+      draw = function (dt) {
+        aurora(gB, ['#7affd0', '#6ec8ff', '#d79bff'], H * 0.05, H * 0.035, 0.06);
+        var wind = 7 + Math.sin(T * 0.4) * 9;
+        gF.fillStyle = '#ffffff';
+        fl.forEach(function (f) {                                                     // великі сніжинки перед містом, вітер хвилями
+          f.y += f.v * (0.7 + f.s * 0.4) * dt; f.x += (wind * (0.5 + f.s * 0.3) + Math.sin(T * 1.5 + f.ph) * 5) * dt;
+          if (f.y > H) { f.y = -3; f.x = R(0, W); } if (f.x > W + 3) f.x = -3; if (f.x < -3) f.x = W + 2;
+          var x = Math.round(f.x), y = Math.round(f.y); gF.globalAlpha = 0.9;
+          if (f.s === 2) { gF.fillRect(x, y - 1, 1, 3); gF.fillRect(x - 1, y, 3, 1); } else gF.fillRect(x, y, 1, 1);
+        });
+        gF.globalAlpha = 1;
+      };
+    } else {
+      var cx2 = W * 0.5, cy2 = H * 0.46, PC = ['#ffd36a', '#c79bff', '#6ee7ff'];
+      draw = function () {
+        var rr = H * 0.52;
+        gB.globalCompositeOperation = 'lighter';
+        for (i = 0; i < 4; i++) { var p = (T * 0.35 + i / 4) % 1; gB.strokeStyle = 'rgba(255,211,106,' + ((1 - p) * 0.32).toFixed(3) + ')'; gB.lineWidth = 1; gB.beginPath(); gB.ellipse(cx2, cy2, p * rr * 1.5, p * rr * 0.95, 0, 0, 7); gB.stroke(); }   // кільця часу розходяться
+        for (i = 0; i < 300; i++) {                                                   // спіральний вихор
+          var u = i / 300, arm = i % 3, r = Math.pow(u, 0.8) * rr, a = arm * 2.094 + u * 7 - T * (0.7 + (1 - u) * 0.9);
+          gB.globalAlpha = (1 - u * 0.75) * 0.9; gB.fillStyle = PC[arm]; gB.fillRect(Math.round(cx2 + Math.cos(a) * r * 1.45), Math.round(cy2 + Math.sin(a) * r * 0.92), 1, 1);
+        }
+        for (i = 0; i < 16; i++) {                                                    // промені «варпу» назовні
+          var an = i * 0.3927 + T * 0.05, d = (T * 0.45 + i * 0.37) % 1, r0 = rr * (0.25 + d * 1.1), r1 = r0 + rr * 0.18 * d;
+          gB.globalAlpha = Math.sin(d * Math.PI) * 0.45; gB.strokeStyle = i % 2 ? '#c79bff' : '#ffe08a'; gB.lineWidth = 1; gB.beginPath(); gB.moveTo(cx2 + Math.cos(an) * r0 * 1.45, cy2 + Math.sin(an) * r0 * 0.92); gB.lineTo(cx2 + Math.cos(an) * r1 * 1.45, cy2 + Math.sin(an) * r1 * 0.92); gB.stroke();
+        }
+        gB.globalAlpha = 1; gB.globalCompositeOperation = 'source-over';
+      };
+    }
+    function loop(now) {
+      if (!bootEl.parentNode) return; var dt = Math.min(0.05, (now - last) / 1000); last = now; T += dt;
+      gB.clearRect(0, 0, W, H); gF.clearRect(0, 0, W, H); draw(dt); requestAnimationFrame(loop);
+    }
+    if (still) { T = 1; draw(0.016); } else requestAnimationFrame(loop);
+  })();
   // ---- транспорт на дорозі
-  var CAR = ['.....OOOOOOOO', '....OsssOsssO', '...OsssssOssssO', '.OOOBBBBBBBBBBOOO', 'OBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOO', '..OKKO......OKKO', '...OO........OO'];
-  var BUS = ['OOOOOOOOOOOOOOOOOOOOOOOO', 'OsssOsssOsssOsssOsssOssO', 'OsssOsssOsssOsssOsssOssO', 'OBBBBBBBBBBBBBBBBBBBBBBO', 'OBBBBBBBBBBBBBBBBBBBBBYO', 'OOOOOOOOOOOOOOOOOOOOOOOO', '..OKKO..........OKKO..', '...OO............OO...'];
-  function pal2(B, extra) { var p = {}; for (var k in P) p[k] = P[k]; p.B = B; if (extra) for (var e in extra) p[e] = extra[e]; return p; }
+  var CAR = ['......OOOOOOOOO.......', '.....OsswsOswssO......', '....OsssssOsssssO.....', '..OOOOOOOOOOOOOOOOO...', '.OBBBBBBBBOBBBBBBBBOO.', 'OBBBBBBBBBOBBBBBBBBBYO', 'OLBBBBBBBBOBBBBBBBBBBO', 'OOOOOOOOOOOOOOOOOOOOOO', '..OKKKO........OKKKO..', '..OKwKO........OKwKO..', '...OOO..........OOO...'];
+  var BUS = ['.OOOOOOOOOOOOOOOOOOOOOOOO.', 'OBBBBBBBBBBBBBBBBBBBBBBBBO', 'OBsssOsssOsssOsssOsssOssBO', 'OBsssOsssOsssOsssOsssOssBO', 'OBBBBBBBBBBBBBBBBBBBBBBBBO', 'OwwwwwwwwwwwwwwwwwwwwwwwwO', 'OBBBBBBBBBBBBBBBBBBBBBBBYO', 'OLBBBBBBBBBBBBBBBBBBBBBBBO', 'OOOOOOOOOOOOOOOOOOOOOOOOOO', '...OKKKO..........OKKKO...', '...OKwKO..........OKwKO...', '....OOO............OOO....'];
+  var TRUCK = ['OOOOOOOOOOOOOOOOOOOO..........', 'OCCCCCCCCCCCCCCCCCCO..........', 'OCwwwwwwwwwwwwwwwwCO..OOOOOO..', 'OCwwwwwwwwwwwwwwwwCO.OBBBBsO..', 'OCCCCCCCCCCCCCCCCCCO.OBBBBssO.', 'OCCCCCCCCCCCCCCCCCCOOOBBBBBBO.', 'OCCCCCCCCCCCCCCCCCCOBBBBBBBBYO', 'OCCCCCCCCCCCCCCCCCCOBBBBBBBBBO', 'OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO', '..OKKKO..OKKKO.........OKKKO..', '..OKwKO..OKwKO.........OKwKO..', '...OOO....OOO...........OOO...'];
+  var VAN = ['..OOOOOOOOOOOOOOOOO.....', '.OBBBBBBBBBBBBBBBBBO....', 'OBsssOsssOsssOsssssBOO..', 'OBsssOsssOsssOssssssBBO.', 'OBBBBBBBBBBBBBBBBBBBBBBO', 'OBBBBBBBBwwwwwwBBBBBBBYO', 'OLBBBBBBBBBBBBBBBBBBBBBO', 'OOOOOOOOOOOOOOOOOOOOOOOO', '..OKKKO..........OKKKO..', '..OKwKO..........OKwKO..', '...OOO............OOO...'];
+  function pal2(B, extra) { var p = {}; for (var k in P) p[k] = P[k]; p.B = B; p.L = '#ff4a4a'; p.C = '#efe8dc'; if (extra) for (var e in extra) p[e] = extra[e]; return p; }
   var cars = '';
-  function car(l, bottom, an, d, w, rows, pal, beam) { return '<div class="b-car' + (l ? ' l' : '') + '" style="bottom:' + bottom + ';--an:' + an + ';--d:' + d + 's;--w:-' + w + 's"><span>' + sp(rows, pal, sc) + (beam ? '<i class="beam"></i>' : '') + '</span></div>'; }
+  function car(l, bottom, an, d, w, rows, pal, beam) { return '<div class="b-car' + (l ? ' l' : '') + '" style="bottom:' + bottom + ';--an:' + an + ';--d:' + d + 's;--w:-' + w + 's"><span>' + sp(rows, pal, sc + 1) + (beam ? '<i class="beam"></i>' : '') + '</span></div>'; }
   if (scene === 'night') {
-    cars += car(0, 'calc(25% + 2px)', 'bCarR', 15, 1, CAR, pal2('#e8863c')) + car(0, 'calc(25% + 2px)', 'bCarR', 15, 9, CAR, pal2('#4f9a63'));
-    cars += car(1, 'calc(25% + 12px)', 'bBusL', 11, 2, BUS, pal2('#f2b84b')) + car(1, 'calc(25% + 12px)', 'bBusL', 11, 7, CAR, pal2('#ef5fa2'));
+    cars += car(0, 'calc(25% - 14px)', 'bCarR', 15, 1, CAR, pal2('#e8863c')) + car(0, 'calc(25% - 14px)', 'bCarR', 15, 9, CAR, pal2('#4f9a63'));
+    cars += car(1, 'calc(25% - 3px)', 'bBusL', 11, 2, BUS, pal2('#f2b84b')) + car(1, 'calc(25% - 3px)', 'bBusL', 11, 7, CAR, pal2('#ef5fa2'));
   } else if (scene === 'dawn') {
-    cars += car(0, 'calc(25% + 2px)', 'bCarR', 17, 2, CAR, pal2('#4f9ad9')) + car(0, 'calc(25% + 2px)', 'bCarR', 17, 11, CAR, pal2('#f2b84b'));
-    cars += car(1, 'calc(25% + 12px)', 'bBusL', 12, 3, BUS, pal2('#d9473d')) + car(1, 'calc(25% + 12px)', 'bBusL', 12, 9, CAR, pal2('#4f9a63'));
+    cars += car(0, 'calc(25% - 14px)', 'bCarR', 17, 2, CAR, pal2('#4f9ad9')) + car(0, 'calc(25% - 14px)', 'bCarR', 17, 11, CAR, pal2('#f2b84b'));
+    cars += car(1, 'calc(25% - 3px)', 'bBusL', 12, 3, BUS, pal2('#d9473d')) + car(1, 'calc(25% - 3px)', 'bBusL', 12, 9, CAR, pal2('#4f9a63'));
   } else if (scene === 'rain') {
     var taxi = pal2('#ffd36a', { s: '#4f86b8', Y: '#fff2b0' });
-    cars += car(0, 'calc(25% + 2px)', 'bCarR', 14, 1, CAR, taxi, 1) + car(0, 'calc(25% + 2px)', 'bCarR', 14, 8, CAR, pal2('#3d6aa6', { s: '#4f86b8' }), 1);
-    cars += car(1, 'calc(25% + 12px)', 'bBusL', 11, 2, BUS, pal2('#ff5fa2', { s: '#4f86b8' }), 1) + car(1, 'calc(25% + 12px)', 'bBusL', 11, 7, CAR, pal2('#9a2f2a', { s: '#4f86b8' }), 1);
+    cars += car(0, 'calc(25% - 14px)', 'bCarR', 14, 1, CAR, taxi, 1) + car(0, 'calc(25% - 14px)', 'bCarR', 14, 8, CAR, pal2('#3d6aa6', { s: '#4f86b8' }), 1);
+    cars += car(1, 'calc(25% - 3px)', 'bBusL', 11, 2, BUS, pal2('#ff5fa2', { s: '#4f86b8' }), 1) + car(1, 'calc(25% - 3px)', 'bBusL', 11, 7, CAR, pal2('#9a2f2a', { s: '#4f86b8' }), 1);
   } else if (scene === 'snow') {
-    cars += car(0, 'calc(25% + 2px)', 'bCarR', 18, 2, CAR, pal2('#d9473d', { s: '#cfe6ff' }), 1) + car(0, 'calc(25% + 2px)', 'bCarR', 18, 11, CAR, pal2('#3d7ac9', { s: '#cfe6ff' }), 1);
-    cars += car(1, 'calc(25% + 12px)', 'bBusL', 13, 4, BUS, pal2('#4f9a63', { s: '#cfe6ff' })) + car(1, 'calc(25% + 12px)', 'bBusL', 13, 10, CAR, pal2('#f0a030', { s: '#cfe6ff' }), 1);
+    cars += car(0, 'calc(25% - 14px)', 'bCarR', 18, 2, CAR, pal2('#d9473d', { s: '#cfe6ff' }), 1) + car(0, 'calc(25% - 14px)', 'bCarR', 18, 11, CAR, pal2('#3d7ac9', { s: '#cfe6ff' }), 1);
+    cars += car(1, 'calc(25% - 3px)', 'bBusL', 13, 4, BUS, pal2('#4f9a63', { s: '#cfe6ff' })) + car(1, 'calc(25% - 3px)', 'bBusL', 13, 10, CAR, pal2('#f0a030', { s: '#cfe6ff' }), 1);
+  } else if (scene === 'halloween') {
+    cars += car(0, 'calc(25% - 14px)', 'bCarR', 16, 2, CAR, pal2('#7a3a9a', { s: '#a6ff6a' }), 1) + car(0, 'calc(25% - 14px)', 'bCarR', 16, 10, CAR, pal2('#e8742a', { s: '#ffd84a' }), 1);
+    cars += car(1, 'calc(25% - 3px)', 'bBusL', 12, 4, BUS, pal2('#3a4a3a', { s: '#a6ff6a', Y: '#c8ff8a' }), 1);
+  } else if (scene === 'fest') {
+    cars += car(0, 'calc(25% - 14px)', 'bCarR', 17, 2, CAR, pal2('#ff5fa2', { s: '#9fe1ff' }), 1) + car(0, 'calc(25% - 14px)', 'bCarR', 17, 10, CAR, pal2('#6ee7ff', { s: '#fff4dc' }), 1);
+    cars += car(1, 'calc(25% - 3px)', 'bBusL', 12, 3, BUS, pal2('#ffd36a', { s: '#9fe1ff' }), 1) + car(1, 'calc(25% - 3px)', 'bBusL', 12, 9, CAR, pal2('#a6ff6a', { s: '#9fe1ff' }), 1);
   } else {
-    cars += car(0, 'calc(25% + 2px)', 'bCarR', 16, 2, CAR, pal2('#ffd36a', { s: '#8be0d6' })) + car(1, 'calc(25% + 12px)', 'bBusL', 12, 5, BUS, pal2('#8b6bb0', { s: '#8be0d6' }));
+    cars += car(0, 'calc(25% - 14px)', 'bCarR', 16, 2, CAR, pal2('#ffd36a', { s: '#8be0d6' })) + car(1, 'calc(25% - 3px)', 'bBusL', 12, 5, BUS, pal2('#8b6bb0', { s: '#8be0d6' }));
   }
+  var XT = { night: [15, 5, 11, 4.5], dawn: [17, 6.5, 12, 6], rain: [14, 4.5, 11, 4.5], snow: [18, 6.5, 13, 7], time: [16, 10, 12, 8.5], halloween: [16, 6, 12, 10], fest: [17, 6, 12, 6] }[scene];
+  var TK = { night: ['#3d7ac9', '#efe8dc'], dawn: ['#d9473d', '#fff4dc'], rain: ['#2b4d70', '#9fc4e6'], snow: ['#4f9a63', '#f4f8ff'], time: ['#8b6bb0', '#ffd36a'], halloween: ['#3a2a4a', '#e8742a'], fest: ['#ff5fa2', '#fff4dc'] }[scene];
+  var VC = { night: '#f2b84b', dawn: '#4f9ad9', rain: '#e8e2d6', snow: '#d9473d', time: '#4fd0c0', halloween: '#5a8a3a', fest: '#c79bff' }[scene];
+  cars += car(0, 'calc(25% - 14px)', 'bCarR', XT[0], XT[1], TRUCK, pal2(TK[0], { C: TK[1] }), 1) + car(1, 'calc(25% - 3px)', 'bBusL', XT[2], XT[3], VAN, pal2(VC), 1);   // вантажівка й фургон між машинами
   document.getElementById('bootCars').innerHTML = cars;
 
   // ---- погода й дрібні ефекти поверх усього (під текстом)
   function tile(w, h, n, seed, col, dw, dh) { var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" shape-rendering="crispEdges">'; for (var i = 0; i < n; i++) s += '<rect x="' + Math.floor(rnd(i, seed) * w) + '" y="' + Math.floor(rnd(seed, i) * h) + '" width="' + dw + '" height="' + dh + '" fill="' + col + '"/>'; return "url('data:image/svg+xml;utf8," + encodeURIComponent(s + '</svg>').replace(/'/g, '%27') + "')"; }
   var fx = document.getElementById('bootFx'), fh = '';
   if (scene === 'rain') {
-    fh += '<div class="b-flash"></div><div class="fx-rain a" style="background-image:' + tile(96, 96, 7, 3, '#bfe3ff', 2, 9) + '"></div><div class="fx-rain b" style="background-image:' + tile(64, 64, 4, 8, '#7fb0dd', 2, 6) + '"></div><div class="fx-rain c" style="background-image:' + tile(160, 160, 5, 5, '#e6f4ff', 3, 13) + '"></div>';
+    fh += '<div class="fx-rain a" style="background-image:' + tile(96, 96, 7, 3, '#bfe3ff', 2, 9) + '"></div><div class="fx-rain b" style="background-image:' + tile(64, 64, 4, 8, '#7fb0dd', 2, 6) + '"></div><div class="fx-rain c" style="background-image:' + tile(160, 160, 5, 5, '#e6f4ff', 3, 13) + '"></div>';
   } else if (scene === 'snow') {
     fh += '<div class="fx-snow a" style="background-image:' + tile(120, 120, 6, 2, '#ffffff', 4, 4) + '"></div><div class="fx-snow b" style="background-image:' + tile(80, 80, 5, 6, '#e8f2ff', 3, 3) + '"></div><div class="fx-snow c" style="background-image:' + tile(50, 50, 3, 9, '#cfe0ff', 2, 2) + '"></div>';
   } else if (scene === 'night') {
     for (var fi = 0; fi < 10; fi++) fh += '<i class="ff" style="left:' + Math.round(rnd(fi, 1) * 100) + '%;bottom:' + (26 + Math.round(rnd(2, fi) * 22)) + '%;animation-delay:-' + (fi * 0.9) + 's;animation-duration:' + (5 + (fi % 4)) + 's"></i>';
   } else if (scene === 'dawn') {
     for (var pi = 0; pi < 12; pi++) fh += '<i class="mote" style="left:' + Math.round(rnd(pi, 3) * 100) + '%;bottom:' + (27 + Math.round(rnd(4, pi) * 30)) + '%;animation-delay:-' + (pi * 0.8) + 's;animation-duration:' + (6 + (pi % 5)) + 's"></i>';
+  } else if (scene === 'halloween') {
+    fh += '<div class="fog a"></div><div class="fog b"></div>';
+    var LC = ['#e8742a', '#c94a2a', '#ffb347', '#8a4a2a'];
+    for (var li = 0; li < 14; li++) fh += '<i class="lf" style="left:' + Math.round(rnd(li, 5) * 100) + '%;--c:' + LC[li % 4] + ';--s:' + (sc + (li % 3)) + 'px;animation-delay:-' + (li * 0.85).toFixed(2) + 's;animation-duration:' + (7 + (li % 5)) + 's"></i>';
+    for (var hf = 0; hf < 8; hf++) fh += '<i class="ff gr" style="left:' + Math.round(rnd(hf, 9) * 100) + '%;bottom:' + (26 + Math.round(rnd(7, hf) * 18)) + '%;animation-delay:-' + (hf * 1.1).toFixed(1) + 's;animation-duration:' + (5 + (hf % 4)) + 's"></i>';
+  } else if (scene === 'fest') {
   } else {
     var COIN = ['..OOOO..', '.OyyyyO.', 'OyywwyyO', 'OywyyyyO', 'OyywyyyO', 'OyyyyyyO', '.OyyyyO.', '..OOOO..'];
     var GEAR = ['...yy...', '.y.yy.y.', '.yyyyyy.', 'yyyOOyyy', 'yyyOOyyy', '.yyyyyy.', '.y.yy.y.', '...yy...'];
@@ -2376,7 +2659,8 @@ MUSIC.chillB = { bpm: 92, channels: [
 const MUSIC_STYLES = [
   { id: 'classic', levels: ['calm', 'calm', 'market', 'market', 'mall', 'mall'] },
   { id: 'chip',    levels: ['chipA', 'chipA', 'chipA', 'chipB', 'chipB', 'chipB'] },
-  { id: 'chill',   levels: ['chillA', 'chillA', 'chillA', 'chillB', 'chillB', 'chillB'] }
+  { id: 'chill',   levels: ['chillA', 'chillA', 'chillA', 'chillB', 'chillB', 'chillB'] },
+  { id: 'halloween', levels: ['calm', 'calm', 'market', 'market', 'mall', 'mall'] }   // мелодія Хелловіну (кнопка видна в його пору або коли пору Хелловін відкрито)
 ];
 // Характер музики в кожній епосі (індекс — як в EPOCHS): bpm — множник темпу, shift — на скільки пів-тонів вище, lead/bass/arp — тембри, drums — малюнок ударних (null — без них).
 // Відродження (0) звучить без змін — як оригінал.
@@ -3984,7 +4268,7 @@ const translations = {
     prize_jackpot: 'ДЖЕКПОТ! +{0}',
 
     soundTitle: 'Звук',
-    tabMore: 'Ще', soundMusic: 'Музика', musicStyle: 'Стиль музики', musicStyle_classic: 'Класична', musicStyle_chip: 'Пригодницька', musicStyle_chill: 'Спокійна',
+    tabMore: 'Ще', soundMusic: 'Музика', musicStyle: 'Стиль музики', musicStyle_classic: 'Класична', musicStyle_chip: 'Пригодницька', musicStyle_chill: 'Спокійна', musicStyle_halloween: '🎃 Хелловін',
     soundSfx: 'Звукові ефекти',
     soundMuteOn: '🔇 Вимкнути звук',
     soundMuteOff: '🔊 Увімкнути звук',
@@ -4447,7 +4731,7 @@ const translations = {
     prize_jackpot: 'JACKPOT! +{0}',
 
     soundTitle: 'Sound',
-    tabMore: 'More', soundMusic: 'Music', musicStyle: 'Music style', musicStyle_classic: 'Classic', musicStyle_chip: 'Adventure', musicStyle_chill: 'Chill',
+    tabMore: 'More', soundMusic: 'Music', musicStyle: 'Music style', musicStyle_classic: 'Classic', musicStyle_chip: 'Adventure', musicStyle_chill: 'Chill', musicStyle_halloween: '🎃 Halloween',
     soundSfx: 'Sound effects',
     soundMuteOn: '🔇 Mute sound',
     soundMuteOff: '🔊 Unmute sound',
@@ -11198,11 +11482,13 @@ function drum(dest, kind, t0, vol) {
 
 /* ---------- Музика ---------- */
 // Музика Хелловіну — лише коли гравець сам обрав цю пору року (або ?holiday=halloween). На «Авто» в останні дні жовтня лишаються прикраси, а музика — епохи.
-function halloweenMusicOn() { return (state.settings.season === 'halloween' && !seasonPickLocked('halloween')) || forcedHoliday() === 'halloween'; }
+function halloweenStyleOk() { return !!MUSIC.halloween && (!seasonPickLocked('halloween') || theme.season === 'halloween'); }
+function halloweenMusicOn() { return ((MUSIC_STYLES[state.settings.musicStyle] || {}).id === 'halloween' && halloweenStyleOk()) || forcedHoliday() === 'halloween'; }   // лише вибір «Хелловін» у стилі музики
 function desiredTrack() {
   if (theme.holiday && theme.holiday.music && MUSIC[theme.holiday.music] && (theme.holiday.music !== 'halloween' || halloweenMusicOn())) return theme.holiday.music;
-  if (theme.season === 'halloween' && MUSIC.halloween && halloweenMusicOn()) return 'halloween';
-  const st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
+  if (MUSIC.halloween && halloweenMusicOn()) return 'halloween';
+  let st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
+  if (st.id === 'halloween') st = MUSIC_STYLES[0];
   const ep = viewEpoch() % EPOCH_MUSIC.length;
   if ((ep > 0 || st.id !== 'classic') && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
   return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + ep;
@@ -12309,11 +12595,12 @@ function updateSoundUI() {
   if (!ui.musicStyleRow.children.length) {
     MUSIC_STYLES.forEach((st, i) => {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'btn'; b.dataset.style = i;
+      b.type = 'button'; b.className = 'btn' + (st.id === 'halloween' ? ' hw' : ''); b.dataset.style = i;
       b.addEventListener('click', () => { state.settings.musicStyle = i; updateMusic(); updateSoundUI(); saveGame(); });
       ui.musicStyleRow.appendChild(b);
     });
   }
+  ui.musicStyleRow.querySelectorAll('button').forEach(b => { b.hidden = MUSIC_STYLES[b.dataset.style].id === 'halloween' && !halloweenStyleOk(); });
   ui.musicStyleRow.querySelectorAll('button').forEach(b => { b.textContent = t('musicStyle_' + MUSIC_STYLES[b.dataset.style].id); b.setAttribute('aria-pressed', String(Number(b.dataset.style) === (s.musicStyle | 0))); });
 }
 function setupSound() {
@@ -14031,7 +14318,7 @@ function setupProgression() {
   SEASONS.forEach(s => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn lang-pick'; b.dataset.season = s;
-    b.addEventListener('click', () => { if (seasonPickLocked(s)) { showToast(seasonLockText(s), 'bad'); return; } state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
+    b.addEventListener('click', () => { if (seasonPickLocked(s)) { showToast(seasonLockText(s), 'bad'); return; } const hwi = MUSIC_STYLES.findIndex(m => m.id === 'halloween'); if (s === 'halloween') state.settings.musicStyle = hwi; else if (state.settings.musicStyle === hwi) state.settings.musicStyle = 0; state.settings.season = s; theme.key = null; updateTheme(); updateMusic(); updateUI(); saveGame(); });
     ui.setSeason.appendChild(b);
   });
   // швидко перемкнути час доби (далі сонце й місяць рухаються самі)
@@ -23581,6 +23868,7 @@ installLang("es", {
     "musicStyle_classic": "Clásico",
     "musicStyle_chip": "Aventura",
     "musicStyle_chill": "Relax",
+    "musicStyle_halloween": "🎃 Halloween",
     "soundSfx": "Efectos de sonido",
     "soundMuteOn": "🔇 Silenciar el sonido",
     "soundMuteOff": "🔊 Activar el sonido",
@@ -25555,6 +25843,7 @@ installLang("it", {
     "musicStyle_classic": "Classico",
     "musicStyle_chip": "Avventura",
     "musicStyle_chill": "Relax",
+    "musicStyle_halloween": "🎃 Halloween",
     "soundSfx": "Effetti sonori",
     "soundMuteOn": "🔇 Disattiva l'audio",
     "soundMuteOff": "🔊 Attiva l'audio",
@@ -27529,6 +27818,7 @@ installLang("pl", {
     "musicStyle_classic": "Klasyczny",
     "musicStyle_chip": "Przygoda",
     "musicStyle_chill": "Relaks",
+    "musicStyle_halloween": "🎃 Halloween",
     "soundSfx": "Efekty dźwiękowe",
     "soundMuteOn": "🔇 Wycisz dźwięk",
     "soundMuteOff": "🔊 Włącz dźwięk",
@@ -29503,6 +29793,7 @@ installLang("pt", {
     "musicStyle_classic": "Clássico",
     "musicStyle_chip": "Aventura",
     "musicStyle_chill": "Relax",
+    "musicStyle_halloween": "🎃 Halloween",
     "soundSfx": "Efeitos sonoros",
     "soundMuteOn": "🔇 Silenciar o som",
     "soundMuteOff": "🔊 Ativar o som",

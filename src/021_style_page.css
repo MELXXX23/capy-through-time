@@ -216,6 +216,8 @@ body[data-epoch="1"] { --glow: #ff8fb3; } body[data-epoch="2"] { --glow: #ff5fa2
 .tabmore .tab-icon canvas { width: calc(var(--icw) * var(--icn, 1)); height: calc(var(--icw) * var(--icn, 1)); image-rendering: pixelated; image-rendering: crisp-edges; }
 #musicStyleRow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 #musicStyleRow .btn { flex: 1 1 28%; font-size: 11px; padding: 9px 4px; }
+#musicStyleRow .btn.hw { flex-basis: 100%; }
+#musicStyleRow .btn[hidden] { display: none; }
 .tab { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 2px 7px; font-size: 9px; line-height: 1.1; min-width: 0; --icw: 48px; }
 .tab .tab-icon { font-size: 20px; line-height: 1; display: flex; }
 .tab .tab-icon canvas { width: calc(var(--icw) * var(--icn, 1)); height: calc(var(--icw) * var(--icn, 1)); image-rendering: pixelated; image-rendering: crisp-edges; }

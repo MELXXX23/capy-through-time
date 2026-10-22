@@ -277,4 +277,28 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 .toast.bad { background: #ffd3c9; }
 @keyframes toastIn { from { opacity: 0; transform: translateY(-16px); } }
 @keyframes toastOut { to { opacity: 0; transform: translateY(-10px); } }
-
+/* --- екран завантаження: сцени «Хелловін» і «Свято вогнів» (канва неба з кажанами / феєрверками) --- */
+#boot .b-cv { position: absolute; left: 0; top: 0; width: 100%; height: 100%; image-rendering: pixelated; pointer-events: none; }
+#boot #bootOrb .moon.hw { filter: drop-shadow(0 0 22px rgba(255, 150, 60, .75)) drop-shadow(0 0 60px rgba(255, 110, 40, .45)); animation: bMoonHw 6s ease-in-out infinite; }
+@keyframes bMoonHw { 50% { filter: drop-shadow(0 0 30px rgba(255, 160, 70, .9)) drop-shadow(0 0 80px rgba(255, 110, 40, .55)); } }
+#boot .b-capy .b-hat { position: absolute; z-index: 1; }
+#boot .b-capy .b-hat svg { display: block; }
+#boot .pg { position: absolute; left: 50%; top: 55%; width: 300%; height: 260%; transform: translate(-50%, -50%); background: radial-gradient(rgba(255, 190, 70, .5), rgba(255, 140, 40, 0) 65%); animation: bCandle 1.3s steps(3, end) infinite; pointer-events: none; }
+@keyframes bCandle { 0%, 100% { opacity: .9; } 33% { opacity: .55; } 66% { opacity: 1; } }
+#boot .gh { position: absolute; opacity: 0; animation: bGhost 7s ease-in-out infinite; }
+#boot .gh svg { display: block; }
+@keyframes bGhost { 0% { transform: translate(0, 30px); opacity: 0; } 20% { opacity: .8; } 50% { transform: translate(18px, -26px); opacity: .55; } 80% { opacity: .8; } 100% { transform: translate(-6px, -60px); opacity: 0; } }
+#boot .fog { position: absolute; left: 0; bottom: 18%; width: 200%; height: 22%; background: radial-gradient(ellipse 36% 50% at 20% 60%, rgba(190, 170, 230, .3), transparent 70%), radial-gradient(ellipse 40% 45% at 70% 50%, rgba(170, 220, 190, .2), transparent 70%); background-size: 50% 100%; background-repeat: repeat-x; animation: bFog 26s linear infinite; }
+#boot .fog.b { bottom: 11%; opacity: .75; animation-duration: 40s; animation-direction: reverse; }
+@keyframes bFog { to { transform: translateX(-50%); } }
+#boot .lf { position: absolute; top: -4%; width: var(--s); height: var(--s); background: var(--c); opacity: 0; animation: bLeaf 8s linear infinite; }
+@keyframes bLeaf { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 8% { opacity: 1; } 25% { transform: translate(28px, 22vh) rotate(90deg); } 50% { transform: translate(-14px, 46vh) rotate(200deg); } 75% { transform: translate(24px, 70vh) rotate(290deg); } 100% { transform: translate(-8px, 96vh) rotate(380deg); opacity: .8; } }
+#boot .ff.gr { background: #c8ff8a; box-shadow: 0 0 8px 3px rgba(160, 255, 110, .6); }
+#boot .lan { position: absolute; bottom: 22%; width: calc(10px * var(--s)); height: calc(13px * var(--s)); background: linear-gradient(#ffe39a, #ff9a3a 70%, #c8501a); box-shadow: 0 0 calc(14px * var(--s)) calc(5px * var(--s)) rgba(255, 170, 70, .55); opacity: 0; animation: bLantern 16s linear infinite; }
+#boot .lan::after { content: ''; position: absolute; left: 30%; bottom: 0; width: 40%; height: 25%; background: #fff6c8; }
+@keyframes bLantern { 0% { transform: translate(0, 0); opacity: 0; } 8% { opacity: .95; } 30% { transform: translate(12px, -22vh); } 60% { transform: translate(-10px, -46vh); } 88% { opacity: .9; } 100% { transform: translate(14px, -72vh) scale(.6); opacity: 0; } }
+#boot .cf { position: absolute; top: -3%; width: 5px; height: 8px; background: var(--c); animation: bConf 7s linear infinite; }
+@keyframes bConf { 0% { transform: translate(0, 0) rotate(0) scaleX(1); } 25% { transform: translate(16px, 24vh) rotate(160deg) scaleX(.2); } 50% { transform: translate(-10px, 50vh) rotate(320deg) scaleX(1); } 75% { transform: translate(14px, 76vh) rotate(480deg) scaleX(.3); } 100% { transform: translate(0, 104vh) rotate(640deg) scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { #boot .gh, #boot .fog, #boot .lf, #boot .lan, #boot .cf, #boot .pg, #boot #bootOrb .moon.hw { animation: none; } }
+#boot .b-cv.fr { z-index: 3; }
+#boot .b-car:not(.l) { z-index: 2; }                                       /* ближня смуга перед дальньою */

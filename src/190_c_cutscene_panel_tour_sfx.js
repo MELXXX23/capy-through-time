@@ -338,11 +338,12 @@ function updateSoundUI() {
   if (!ui.musicStyleRow.children.length) {
     MUSIC_STYLES.forEach((st, i) => {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'btn'; b.dataset.style = i;
+      b.type = 'button'; b.className = 'btn' + (st.id === 'halloween' ? ' hw' : ''); b.dataset.style = i;
       b.addEventListener('click', () => { state.settings.musicStyle = i; updateMusic(); updateSoundUI(); saveGame(); });
       ui.musicStyleRow.appendChild(b);
     });
   }
+  ui.musicStyleRow.querySelectorAll('button').forEach(b => { b.hidden = MUSIC_STYLES[b.dataset.style].id === 'halloween' && !halloweenStyleOk(); });
   ui.musicStyleRow.querySelectorAll('button').forEach(b => { b.textContent = t('musicStyle_' + MUSIC_STYLES[b.dataset.style].id); b.setAttribute('aria-pressed', String(Number(b.dataset.style) === (s.musicStyle | 0))); });
 }
 function setupSound() {

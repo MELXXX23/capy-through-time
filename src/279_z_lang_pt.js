@@ -515,6 +515,7 @@ installLang("pt", {
     "musicStyle_classic": "Clássico",
     "musicStyle_chip": "Aventura",
     "musicStyle_chill": "Relax",
+    "musicStyle_halloween": "🎃 Halloween",
     "soundSfx": "Efeitos sonoros",
     "soundMuteOn": "🔇 Silenciar o som",
     "soundMuteOff": "🔊 Ativar o som",

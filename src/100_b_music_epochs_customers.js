@@ -119,7 +119,8 @@ MUSIC.chillB = { bpm: 92, channels: [
 const MUSIC_STYLES = [
   { id: 'classic', levels: ['calm', 'calm', 'market', 'market', 'mall', 'mall'] },
   { id: 'chip',    levels: ['chipA', 'chipA', 'chipA', 'chipB', 'chipB', 'chipB'] },
-  { id: 'chill',   levels: ['chillA', 'chillA', 'chillA', 'chillB', 'chillB', 'chillB'] }
+  { id: 'chill',   levels: ['chillA', 'chillA', 'chillA', 'chillB', 'chillB', 'chillB'] },
+  { id: 'halloween', levels: ['calm', 'calm', 'market', 'market', 'mall', 'mall'] }   // мелодія Хелловіну (кнопка видна в його пору або коли пору Хелловін відкрито)
 ];
 // Характер музики в кожній епосі (індекс — як в EPOCHS): bpm — множник темпу, shift — на скільки пів-тонів вище, lead/bass/arp — тембри, drums — малюнок ударних (null — без них).
 // Відродження (0) звучить без змін — як оригінал.

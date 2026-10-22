@@ -153,7 +153,7 @@
     prize_jackpot: 'JACKPOT! +{0}',
 
     soundTitle: 'Sound',
-    tabMore: 'More', soundMusic: 'Music', musicStyle: 'Music style', musicStyle_classic: 'Classic', musicStyle_chip: 'Adventure', musicStyle_chill: 'Chill',
+    tabMore: 'More', soundMusic: 'Music', musicStyle: 'Music style', musicStyle_classic: 'Classic', musicStyle_chip: 'Adventure', musicStyle_chill: 'Chill', musicStyle_halloween: '🎃 Halloween',
     soundSfx: 'Sound effects',
     soundMuteOn: '🔇 Mute sound',
     soundMuteOff: '🔊 Unmute sound',
