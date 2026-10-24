@@ -23,7 +23,7 @@ function outlineCanvas(c, col) {
   g.fillStyle = col; add.forEach(([x, y]) => g.fillRect(x, y, 1, 1));
 }
 function tabGlyph(id) {
-  const hd = tabGlyphHD(id); if (hd) return hd;                          // нові іконки 48×48; старі 24×24 нижче — запасні і для «⋯»
+  const hd = tabGlyphHD(id); if (hd) return hd;                          // нові іконки 32×32; старі 24×24 нижче — запасні і для «⋯»
   const c = document.createElement('canvas'); c.width = 24; c.height = 24;
   const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
   const P = (x, y, w, h, ch) => R(g, x, y, w, h, ch), C = (x, y, w, h) => g.clearRect(x, y, w, h);
@@ -115,7 +115,7 @@ function buildTabs() {
   ui.tabs.appendChild(more);
   ui.tabMore = more;
 }
-const TABS_PRIMARY = ['shop', 'departments', 'team', 'story'];
+const TABS_PRIMARY = ['departments', 'team', 'epochs', 'story'];
 // На телефоні вміст вкладки виїжджає над смужкою іконок; повторний дотик до тієї ж вкладки його ховає
 function setSheet(open) {
   ui.app.classList.toggle('sheet-open', open);
@@ -454,7 +454,8 @@ function updateTeamUI() {
   });
   const nextLocked = TEAM.find((m, i) => !isTeamUnlocked(i) && !m.needs);
   teamLockedEl.hidden = !nextLocked;
-  if (nextLocked) setText(teamLockedEl, t('lockedTeam', t('levelName_' + nextLocked.level)), 'tlocked');
+  const noteP = $('teamNoteP'); if (noteP) noteP.hidden = !!nextLocked;                       // підказка і «нові звірята прийдуть» — одним блоком унизу
+  if (nextLocked) setText(teamLockedEl, t('lockedTeam', t('levelName_' + nextLocked.level)) + '\n' + t('teamNote'), 'tlocked');
 }
 
 function updateDepartmentsUI() {

@@ -173,9 +173,9 @@ const LANGS = [
 
 // Вкладки панелі. ready: true — вже працює; false — з'явиться на наступних етапах
 const TABS = [
-  { id: 'shop',        icon: '🏪', ready: true  },
   { id: 'departments', icon: '🛒', ready: true  },
   { id: 'team',        icon: '🐾', ready: true  },
+  { id: 'epochs',      icon: '🌀', ready: true  },          // перегляд пройдених епох (раніше жив у налаштуваннях); «Крамничку» з меню прибрано
   { id: 'story',       icon: '📖', ready: true  },
   { id: 'workshop',    icon: '⏳', ready: true, needs: 'finale' },   // з'являється після фіналу сюжету
   { id: 'skins',       icon: '👗', ready: true },

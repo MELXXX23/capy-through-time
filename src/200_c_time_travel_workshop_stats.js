@@ -268,20 +268,22 @@ function updateEpochViewUI() {
   const box = ui.setEpochView, top = DEV_OPEN_ALL ? EPOCHS.length - 1 : Math.min(Math.max(state.epoch, curEpoch()), EPOCHS.length - 1), cur = viewEpoch() % EPOCHS.length, sig = state.lang + '|' + top;
   if (box._sig !== sig) {                          // кнопки створюються ОДИН раз (інакше клік губиться, коли вони перемальовуються між натисканням і відпусканням)
     box._sig = sig; box.innerHTML = '';
-    for (let e = 0; e <= top; e++) {
+    for (let e = 0; e < EPOCHS.length; e++) {                                  // усі епохи видно, ще не пройдені — із замочком
+      if (e === 8) { const sp = document.createElement('p'); sp.className = 'ws-line ev-sep'; sp.textContent = t('epochBonus'); box.appendChild(sp); }
       const bt = document.createElement('button');
       bt.type = 'button'; bt.className = 'btn lang-pick'; bt.dataset.ep = String(e);
       const n1 = document.createElement('span'); n1.textContent = t('epoch_' + e);
       const n2 = document.createElement('span'); n2.className = 'ev-earned';
       bt.append(n1, n2);
-      bt.addEventListener('click', () => { if (e === viewEpoch() % EPOCHS.length || warp) return; if (animOn()) startWarp(e); else setEpochPreview(e); });
+      if (e > top) { bt.classList.add('locked'); bt.append(lockImg('lock')); }
+      bt.addEventListener('click', () => { if (e > top) { showToast(t('epochLocked'), 'bad'); playSfx('pip'); return; } if (e === viewEpoch() % EPOCHS.length || warp) return; if (animOn()) startWarp(e); else setEpochPreview(e); });
       box.appendChild(bt);
     }
   }
   box.querySelectorAll('button').forEach(bt => {   // далі оновлюються лише підписи й стан «вибрано»
-    const e = +bt.dataset.ep, txt = '🪙 ' + fmt(Math.floor(e === curEpoch() ? state.coins : (state.epochEarned[e] || 0))), n2 = bt.querySelector('.ev-earned');
+    const e = +bt.dataset.ep, txt = e > top ? '' : '🪙 ' + fmt(Math.floor(e === curEpoch() ? state.coins : (state.epochEarned[e] || 0))), n2 = bt.querySelector('.ev-earned');
     if (n2.textContent !== txt) n2.textContent = txt;
-    const on = String(e === cur);
+    const on = String(e === cur && e <= top);
     if (bt.getAttribute('aria-pressed') !== on) bt.setAttribute('aria-pressed', on);
   });
 }
@@ -306,8 +308,9 @@ function setSwitch(el, label, on) {
   el.classList.toggle('on', !!on); el.setAttribute('aria-checked', String(!!on));
 }
 function updateSettingsUI() {
+  const pe = $('pane-epochs'); if (pe && !pe.hidden) updateEpochViewUI();       // кнопки епох живуть у вкладці «Епохи»
   if (ui.paneSettings.hidden) return;
-  updateEpochViewUI();
+  ui.setTime.querySelectorAll('button').forEach(b => { b.textContent = t('time_' + b.dataset.time); });          // «Час доби» живе в налаштуваннях: працює й поки «Пори року» закриті
   setSwitch(ui.setAnim, t('swAnim'), animOn());
   setSwitch(ui.setDayNight, t('swDayNight'), dayNightOn());
   const S = state.settings;
@@ -328,7 +331,6 @@ function updateSettingsUI() {
 }
 function updateSeasonsUI() {
   if (ui.paneSeasons.hidden) return;
-  ui.setTime.querySelectorAll('button').forEach(b => { b.textContent = t('time_' + b.dataset.time); });
   ui.setSeason.querySelectorAll('button').forEach(b => {
     const locked = seasonPickLocked(b.dataset.season);
     b.textContent = t('season_' + b.dataset.season);

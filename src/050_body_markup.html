@@ -43,7 +43,7 @@
   <aside id="panel" class="frame">
     <nav id="tabs" role="tablist"></nav>
     <section id="tabContent">
-      <div class="pane" id="pane-shop" role="tabpanel">
+      <div class="pane" id="pane-shop" role="tabpanel" hidden>
         <div class="card capi-card">
           <canvas id="capiPortrait" width="28" height="28" aria-hidden="true"></canvas>
           <div>
@@ -76,13 +76,21 @@
       </div>
 
       <div class="pane" id="pane-team" role="tabpanel" hidden>
-        <p class="team-note" data-i18n="teamNote"></p>
         <div id="teamList"></div>
+        <p class="team-note" id="teamNoteP" data-i18n="teamNote"></p>
       </div>
 
       <div class="pane" id="pane-story" role="tabpanel" hidden>
         <p class="story-note" data-i18n="storyNote"></p>
         <div id="storyList"></div>
+      </div>
+
+      <div class="pane" id="pane-epochs" role="tabpanel" hidden>
+        <div class="card" id="epochViewCard" hidden>
+          <h2 data-i18n="setEpochView"></h2>
+          <p class="ws-line" data-i18n="setEpochViewNote"></p>
+          <div class="row" id="setEpochView"></div>
+        </div>
       </div>
 
       <div class="pane" id="pane-workshop" role="tabpanel" hidden>
@@ -114,11 +122,6 @@
           <p class="ws-line" data-i18n="setSeasonNote"></p>
           <div class="row" id="setSeason"></div>
         </div>
-        <div class="card">
-          <h2 data-i18n="setTimeTitle"></h2>
-          <p class="ws-line" data-i18n="setTime"></p>
-          <div class="row" id="setTime"></div>
-        </div>
       </div>
 
       <div class="pane" id="pane-achievements" role="tabpanel" hidden>
@@ -138,10 +141,10 @@
           <p class="ws-line" data-i18n="setGenderNote"></p>
           <div class="row" id="setGender"></div>
         </div>
-        <div class="card" id="epochViewCard" hidden>
-          <h2 data-i18n="setEpochView"></h2>
-          <p class="ws-line" data-i18n="setEpochViewNote"></p>
-          <div class="row" id="setEpochView"></div>
+        <div class="card">
+          <h2 data-i18n="setTimeTitle"></h2>
+          <p class="ws-line" data-i18n="setTime"></p>
+          <div class="row" id="setTime"></div>
         </div>
         <div class="card">
           <h2 data-i18n="setView"></h2>

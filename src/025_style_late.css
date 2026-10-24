@@ -3,8 +3,8 @@
 /* рамка меню: товстий темний контур, широке кільце кольору епохи, темна лінія */
 #app #panel { box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 10px var(--honey), inset 0 0 0 12px var(--dark), inset 0 -10px 0 12px rgba(74,50,40,.12); }
 /* вкладки: кожна в темному контурі; невибрані трохи темніші, вибрана світла з кольоровою планкою знизу, як активний аркуш у таблиці */
-.tab, .tabmore { background: color-mix(in srgb, var(--panel-dark) 82%, var(--dark)); box-shadow: inset 0 0 0 3px var(--dark), inset 0 3px 0 3px rgba(255,244,220,.28), inset 0 -4px 0 3px rgba(0,0,0,.16); }
-.tab[aria-selected="true"], #app.more-open .tabmore { background: var(--cream); box-shadow: inset 0 0 0 3px var(--dark), inset 0 -8px 0 3px var(--honey), inset 0 -11px 0 3px var(--dark); }
+.tab, .tabmore { background: color-mix(in srgb, var(--panel-dark) 82%, var(--dark)); box-shadow: inset 0 0 0 3px var(--dark), inset 0 3px 0 3px rgba(255,244,220,.28); }
+.tab[aria-selected="true"], #app.more-open .tabmore { background: var(--cream); box-shadow: inset 0 0 0 3px var(--dark); }
 .tab:not([aria-selected="true"]):not(.locked):hover { filter: brightness(1.08); }
 @media (max-width: 820px) and (orientation: portrait), (max-width: 560px) {
   /* лічильник підлаштовується під ширину екрана, щоб великі числа монет, кристалів і осколків не вилазили */
@@ -82,8 +82,14 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
 #setEpochView .btn[data-ep="5"] { background: #9fd4ae; } #setEpochView .btn[data-ep="5"][aria-pressed="true"] { background: #4f9a63; }
 #setEpochView .btn[data-ep="6"] { background: #93a5cf; } #setEpochView .btn[data-ep="6"][aria-pressed="true"] { background: #4d6fb8; }
 #setEpochView .btn[data-ep="7"] { background: #8caee3; } #setEpochView .btn[data-ep="7"][aria-pressed="true"] { background: #ff5fa2; }
-#setEpochView .btn[data-ep="8"] { background: #d8c1a0; } #setEpochView .btn[data-ep="8"][aria-pressed="true"] { background: #c8102e; }
+#setEpochView .btn[data-ep="8"] { background: #ee9aa6; } #setEpochView .btn[data-ep="8"][aria-pressed="true"] { background: #c8102e; }
 #setEpochView .btn[aria-pressed="true"] { color: #fff; }
+#setEpochView .ev-sep { flex: 1 0 100%; grid-column: 1 / -1; margin: 6px 0 0; }
+#setEpochView .btn.locked { opacity: .55; filter: grayscale(.5); }
+#setEpochView .btn:not([aria-pressed="true"]) { filter: brightness(.89) saturate(1.11); }
+/* закриті кнопки «Купити / Найняти / Розширити»: фон помітніше відділений від картки (+11%; у темних епохах світліший) */
+.dept .btn.wide:disabled, .expand-card .btn.go:disabled, .team-card .btn.go:disabled { background: color-mix(in srgb, var(--tc-btn, var(--mint)) 89%, #000); }
+body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) :is(.dept .btn.wide, .expand-card .btn.go, .team-card .btn.go):disabled { background: color-mix(in srgb, var(--tc-btn, var(--mint)) 89%, #fff); }
 #setGender .btn[data-gender="f"] { background: #f7b3cb; } #setGender .btn[data-gender="f"][aria-pressed="true"] { background: #e8568a; color: #fff; }
 #setGender .btn[data-gender="m"] { background: #a9d3f4; } #setGender .btn[data-gender="m"][aria-pressed="true"] { background: #3f86d0; color: #fff; }
 /* Бонус-ігри: напис, що тут головний приз — лише скіни */

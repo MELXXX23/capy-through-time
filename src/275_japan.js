@@ -62,50 +62,58 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
-  function fuji(g, cx, bY, H, hw) {                       // Фудзі: об'ємна, м'які 9 тонів із легким дизером (як хмари); світло зліва, тінь справа, яри від вершини, снігова шапка, серпанок знизу; піксель 2×2
+  const fjTri = x => Math.abs((((x % 2) + 2) % 2) - 1);
+  function fjCloud(g, x, y, w, h, pink) {                      // чітка піксельна хмара: плоскі тони й контур на сітці 2×2
+    const lumps = [[0.2, 0.62, 0.2], [0.42, 0.42, 0.26], [0.68, 0.56, 0.24], [0.86, 0.68, 0.16], [0.5, 0.72, 0.34]];
+    const ins = (px, py) => lumps.some(l => ((px + 1 - l[0] * w) ** 2 + ((py + 1 - l[1] * h) * 1.7) ** 2) < (l[2] * w) ** 2 && py + 1 < h * 0.92);
+    for (let py = 0; py < h; py += 2) for (let px = 0; px < w; px += 2) {
+      if (!ins(px, py)) continue;
+      let c = py < h * 0.42 ? (pink ? '#fff1ee' : '#ffffff') : py < h * 0.66 ? (pink ? '#ffd9d6' : '#e3e9ff') : (pink ? '#e9b9c8' : '#bccaf3');
+      if (!(ins(px - 2, py) && ins(px + 2, py) && ins(px, py - 2) && ins(px, py + 2))) c = pink ? '#c98fa8' : '#8f9ed8';
+      g.fillStyle = c; g.fillRect(x + px, y + py, 2, 2);
+    }
+  }
+  function fjSun(g, cx, cy, r) {                               // червоне сонце за вершиною: два кільця сяйва ступінчасто, диск, відблиск
+    const disc2 = (rr, c, a) => { g.globalAlpha = a; g.fillStyle = c; for (let y = -rr; y <= rr; y += 2) { const hw2 = Math.floor(Math.sqrt(rr * rr - y * y) / 2) * 2; if (hw2 > 0) g.fillRect(cx - hw2, cy + y, hw2 * 2, 2); } g.globalAlpha = 1; };
+    disc2(Math.round(r * 2.1), '#ffe2dc', 0.35); disc2(Math.round(r * 1.6), '#ffc4c0', 0.45); disc2(r, '#e8453c', 1);
+    g.fillStyle = '#ff7a64'; for (let y = -r + 2; y <= -r * 0.2; y += 2) for (let x = -r * 0.7; x <= -r * 0.1; x += 2) if (x * x + y * y < (r - 3) * (r - 3)) g.fillRect(cx + Math.round(x / 2) * 2, cy + y, 2, 2);
+  }
+  function fuji(g, cx, bY, H, hw) {                            // Фудзі: чіткі плоскі тони (4 скелі + 4 снігу), зубчастий сніг, яри, кант силуету, ступінчастий серпанок; червоне сонце й хмари; пікселі 2×2
     const heightAt = dx => Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3));
-    const snowEndAt = dx => {
-      const nx = dx / hw, streak = Math.pow(Math.max(0, Math.sin(dx * 0.11 + 1)), 6) * 26 + Math.pow(Math.max(0, Math.sin(dx * 0.061 + 2.3)), 8) * 34;
-      return bY - H * 0.7 + 9 * Math.sin(dx * 0.04 + 0.6) + 5 * Math.sin(dx * 0.1 + 2) + (nx < 0.1 ? streak : streak * 0.4);
-    };
+    const snowEndAt = dx => { const streak = Math.pow(Math.max(0, Math.sin(dx * 0.11 + 1)), 6) * 22 + Math.pow(Math.max(0, Math.sin(dx * 0.061 + 2.3)), 8) * 28; return bY - H * 0.68 + 9 * fjTri(dx / 15) + 5 * fjTri(dx / 5.5 + 0.4) + streak * (Math.abs(dx) / hw < 0.1 ? 1 : 0.45); };
     const hex = c => [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
-    const RL = hex('#c2c8fb'), RS = hex('#454b90'), SL = hex('#ffffff'), SS = hex('#8fa1e6'), HZ = hex('#d0d4f8'), OT = hex('#2c2b66');
-    const RIDGE = 0.26, LEVELS = 9, DITHER = 0.6, HAZE = 0.5, HAZE_H = 70, RIM = 4;
-    const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const lerp = (A, B, t) => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
+    const RL = hex('#c2c8fb'), RS = hex('#454b90'), SL = hex('#ffffff'), SS = hex('#8fa1e6'), HZ = hex('#d0d4f8'), OT = hex('#2c2b66');
+    const ROCK = [0, 0.34, 0.68, 1].map(t => lerp(RS, RL, t)), SNOW = [SS, lerp(SS, SL, 0.5), lerp(SS, SL, 0.82), SL];
+    const s = hw / 300;                                        // сонце й хмари намальовані для hw = 300: масштабуємо
     const W = hw * 2 + 8, Hc = Math.ceil(H / 2) * 2 + 2, y0 = bY - Hc, x0 = cx - hw - 4;
     const fk = hw + '|' + H;
-    let oc = fujiOcCache[fk];                                // Фудзі однакова на всіх розмірах екрана з тим самим hw/H: кеш (~30 мс при подорожі)
+    let oc = fujiOcCache[fk];                                  // Фудзі однакова на всіх розмірах екрана з тим самим hw/H: кеш (~30 мс при подорожі)
     if (!oc) {
-    oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
-    const ox = oc.getContext('2d'), im = ox.createImageData(W, Hc), d = im.data;
-    for (let px = 0; px < W; px += 2) {
-      const dx = px + 1 - hw - 4, hh = heightAt(dx);
-      if (hh < 1) continue;
-      const sE = snowEndAt(dx);
-      for (let py = 0; py < Hc; py += 2) {
-        const y = y0 + py + 1, hgt = bY - y;
-        if (hgt < 0 || hgt > hh) continue;
-        const u = dx / (y - (bY - H) + 46);
-        const ridge = Math.sin(u * 15 + 0.9 * Math.sin(u * 4.3 + 1)) * 0.6 + Math.sin(u * 38 + 2) * 0.25 + Math.sin(u * 7 + 0.4) * 0.4;
-        const nxe = Math.max(-1, Math.min(1, dx / (hw * 0.75) + RIDGE * ridge));
-        let I = Math.max(0, Math.min(1, 0.5 - 0.46 * nxe + 0.1 * (hgt / H)));
-        I = I * I * (3 - 2 * I) * 0.85 + I * 0.15;
-        const bay = [0, 2, 3, 1][((px >> 1) & 1) + 2 * ((py >> 1) & 1)] / 4 - 0.375;
-        I = Math.max(0, Math.min(1, Math.round(I * LEVELS + bay * DITHER) / LEVELS));
-        const sb = sm(-5, 5, sE - y + ridge * 3);                                  // м'який край снігу
-        let c = lerp(lerp(RS, RL, I), lerp(SS, SL, Math.min(1, I * 1.15)), sb);
-        c = lerp(c, HZ, HAZE * Math.pow(Math.max(0, 1 - hgt / HAZE_H), 1.5));      // серпанок біля підніжжя
-        c = lerp(c, OT, Math.max(0, 1 - (hh - hgt) / RIM));                        // темний обідок силуету
-        for (let qy = 0; qy < 2; qy++) for (let qx = 0; qx < 2; qx++) {
-          if (px + qx >= W) continue;
-          const o = ((py + qy) * W + px + qx) * 4;
-          d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255;
+      oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
+      const ox = oc.getContext('2d'), im = ox.createImageData(W, Hc), d = im.data;
+      const inside = (px, py) => { if (px < 0 || py < 0 || px >= W || py >= Hc) return false; const dx = px + 1 - hw - 4, hgt = bY - (y0 + py + 1); return hgt >= 0 && hgt <= heightAt(dx); };
+      for (let px = 0; px < W; px += 2) {
+        const dx = px + 1 - hw - 4, hh = heightAt(dx);
+        if (hh < 1) continue;
+        const sE = Math.round(snowEndAt(dx) / 2) * 2;
+        for (let py = 0; py < Hc; py += 2) {
+          if (!inside(px, py)) continue;
+          const y = y0 + py + 1, hgt = bY - y, u = dx / (y - (bY - H) + 46);
+          const ridge = Math.sin(u * 15 + 0.9 * Math.sin(u * 4.3 + 1)) * 0.6 + Math.sin(u * 38 + 2) * 0.25 + Math.sin(u * 7 + 0.4) * 0.4;
+          const nxe = Math.max(-1, Math.min(1, dx / (hw * 0.75) + 0.26 * ridge));
+          let I = Math.max(0, Math.min(1, 0.5 - 0.46 * nxe + 0.1 * (hgt / H))); I = I * I * (3 - 2 * I) * 0.85 + I * 0.15;
+          let L = Math.min(3, Math.floor(I * 4));
+          const gul = Math.sin(u * 21 + 1.3 * Math.sin(u * 5 + 0.5)); if (gul > 0.9 && hgt > 12) L = Math.max(0, L - 2);
+          let c = y <= sE ? SNOW[L] : ROCK[L];
+          const hz = hgt < 10 ? 0.62 : hgt < 22 ? 0.4 : hgt < 36 ? 0.2 : 0; if (hz) c = lerp(c, HZ, hz);
+          if (!(inside(px - 2, py) && inside(px + 2, py) && inside(px, py - 2) && inside(px, py + 2))) c = OT;
+          else if (!inside(px - 4, py - 2) && dx < 0) c = lerp(c, SL, 0.55);
+          for (let qy = 0; qy < 2; qy++) for (let qx = 0; qx < 2; qx++) { if (px + qx >= W) continue; const o = ((py + qy) * W + px + qx) * 4; d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255; }
         }
       }
-    }
-    ox.putImageData(im, 0, 0);
-    fujiOcCache[fk] = oc;
+      ox.putImageData(im, 0, 0);
+      fujiOcCache[fk] = oc;
     }
     g.drawImage(oc, x0, y0);
   }

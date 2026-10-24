@@ -4,7 +4,7 @@
     langLabel: 'Language',
     sceneLabel: "A pixel street with Capy's shop. Tap the shop to earn coins.",
     perSecond: '{0} / sec', perSecondHud: '{0}/s',
-    tab_shop: 'Shop',
+    tab_shop: 'Shop', tab_epochs: 'Epochs',
     tab_departments: 'Depts.',
     tab_team: 'Team',
     tab_story: 'Diary',
@@ -73,7 +73,7 @@
     adBoostChip: '×2 income 10 min',
     adBonusYes: '🎬 Watch a video',
 
-    teamNote: "Hire staff: each gives their own bonus. Tap someone on the scene, you might hear something interesting.",
+    teamNote: "Hire animals: each gives its own bonus. Tap one on the scene and it will say something.",
     teamLevel: 'Level {0} / {1}',
     teamHire: 'Hire · {0}',
     teamUpgrade: 'Upgrade · {0}',

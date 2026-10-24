@@ -7,7 +7,7 @@
    ===================================================================== */
 
 let helpChipUntil = 0;                                          // рядок «Допоможи …» видно лише кілька секунд після впійманої істоти
-const HELP_NEED = 12;                                           // скільки істот треба впіймати для допомоги одному гостеві
+const HELP_NEED = 24;                                           // скільки істот треба впіймати для допомоги одному гостеві
 function guestEpochOf(k) { return GUEST_STAND_EPOCH[GUEST_IDS[k]]; }
 function helpCount(k) { return Math.min(HELP_NEED, ((state.story.help && state.story.help[k]) | 0)); }
 function helpDone(k) { return helpCount(k) >= HELP_NEED; }

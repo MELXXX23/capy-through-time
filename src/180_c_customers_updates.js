@@ -443,6 +443,15 @@ function spaceHelmet() {                                                       /
   g.fillStyle = PALETTE.e; for (let x = 4; x <= 14; x++) if (inE(x, H - 3, 0) && !inE(x, H - 3, 1)) g.fillRect(x, H - 3, 1, 1);      // нижній обідок шолома
   return (spaceHelmetCv = c);
 }
+const CUST_K = 1.05;                                                         // покупці на 5% більші (рівномірне збільшення пікселів, без розмиву)
+const UMB_COLS = [['r', 'w'], ['n', 'S'], ['h', 'y'], ['f', 'q'], ['g', 'm'], ['v', 'u'], ['o', 'y']];
+const UMB_ART = ['....ddddddd....', '..ddabbbbbadd..', '.daabbbbbbbaad.', 'daaabbbbbbbaaad', 'd.dd.dd.dd.dd.d'];
+function drawUmbrella(hx, ty, seed, swing, pole) {                                // парасолька 15×5 над головою: смугастий купол із контуром, блік, ручка за головою
+  const [a, b] = UMB_COLS[((seed % 7) + 7) % 7], x = hx - 7 + swing;
+  UMB_ART.forEach((row, j) => { for (let i = 0; i < 15; i++) { const ch = row[i]; if (ch !== '.') R(ctx, x + i, ty + j, 1, 1, ch === 'a' ? a : ch === 'b' ? b : 'd'); } });
+  R(ctx, x + 5, ty + 1, 2, 1, 'w'); R(ctx, x + 3, ty + 2, 2, 1, 'w');      // блік
+  R(ctx, hx + swing, ty + 5, 1, pole, 'd');                                    // ручка
+}
 function drawCustomer(c) {
   const exitPause = c.mode === 'exiting' && c.t < 0.38;
   const moving = (c.fear && c.fear.stage !== 1) ? false : (c.mode === 'homeKnock' || c.mode === 'doorWait' || exitPause) ? false : c.mode === 'inside' ? !!c.moving : true;
@@ -451,13 +460,19 @@ function drawCustomer(c) {
   const sx = Math.round(c.x - 9) + (c.fear ? c.fear.sx : 0), sy = Math.round(c.y - 23) + bob + (c.fear ? Math.round(c.fear.fy) : 0) - ((c.mode === 'exiting' || c.mode === 'toEntrance' || c.mode === 'entering' || c.mode === 'doorWait') ? Math.round(curbLift(c.y)) : 0) - (exitPause ? Math.round(Math.abs(Math.sin(c.t / 0.38 * Math.PI * 2)) * 3) : 0);            // спрайт 18×23: ноги внизу, центр по x
   if ((c.mode === 'homeKnock' || c.mode === 'homeIn' || c.mode === 'homeOut') && c.homeDoor) drawHomeDoor(c);
   ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 3, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
+  const ext = (c.vip || (c.scale || 1) !== 1) ? 0 : evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K).height - 23;    // на скільки пікселів покупець став вищим
+  const rainy = weather.rain > 0.35 && !c.inside && c.mode !== 'inside' && c.alpha > 0.9 && !c.fear && !c.vip;
   if (c.vip) {
     const pulse = animOn() ? Math.sin(animClock * 5) : 0;
     ctx.globalAlpha = (0.2 + 0.08 * pulse) * c.alpha; disc(ctx, sx + 9, sy + 8, 21, 'y'); ctx.globalAlpha = 1;
     drawCanvasSprite(ctx, evenScaled(goldCanvas(c.type, frame), 1.56), sx, sy, { flip: c.dir < 0, alpha: c.alpha });
     for (let k = 0; k < 3; k++) { const a = animClock * 2.2 + k * 2.1, px = Math.round(sx + 9 + Math.cos(a) * 13), py = Math.round(sy + 7 + Math.sin(a * 1.3) * 12); if (Math.floor(animClock * 6 + k) % 2) { R(ctx, px, py - 1, 1, 3, 'y'); R(ctx, px - 1, py, 3, 1, 'y'); } }
     if (!c.vipDone) { const by = sy - 13 + (animOn() ? Math.round(Math.sin(animClock * 4)) : 0); R(ctx, sx + 7, by + 2, 5, 3, 'd'); R(ctx, sx + 8, by + 1, 3, 1, 'd'); R(ctx, sx + 8, by + 2, 3, 2, 'h'); R(ctx, sx + 9, by, 1, 1, 'y'); }
-  } else { const sc = c.scale || 1; drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc, sy: sc }); }
+  } else {
+    const sc = c.scale || 1;
+    if (sc === 1) drawCanvasSprite(ctx, evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K), sx, sy - ext, { flip: c.dir < 0, alpha: c.alpha });
+    else drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc, sy: sc });
+  }
   if (c.fear) {                                                               // жартівливий переляк
     const f = c.fear;
     if (f.stage === 0) {                                                      // великий «!» і волоски дибки
@@ -476,17 +491,22 @@ function drawCustomer(c) {
   const gx = sx + (c.dir < 0 ? -1 : 0);                                       // у дзеркальному вигляді тіло зсунуте на піксель, одяг іде слідом
   const hs = skinOn('hero');
   if (c.vip) return;                                                           // золотий покупець: без скінів, капелюхів і шарфів
-  if (hs && c.alpha > 0.9) drawSkinGear(gx, sy, hs, !hasHats());
+  if (hs && c.alpha > 0.9) drawSkinGear(gx, sy - ext, hs, true);
   const suited = viewEpoch() % EPOCHS.length === 6;                            // Космос: усі покупці в скляних шоломах (шапочки свят під ними не потрібні)
-  if (suited && c.alpha > 0.9) drawCanvasSprite(ctx, spaceHelmet(), gx, sy + 4, {});
-  if (hasHats() && !suited && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(gx + 9, sy + 8, c.hat); }
+  if (suited && c.alpha > 0.9) drawCanvasSprite(ctx, spaceHelmet(), gx, sy + 4 - ext, {});
+  if (hasHats() && !hs && !suited && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(gx + 9, sy + 8 - ext, c.hat); }
   if (hasScarves() && c.alpha > 0.9) {       // шарфик на шиї покупця
     const sc = SCARF_COLORS[CUSTOMER_TYPES.indexOf(c.type) % SCARF_COLORS.length], nx = c.dir > 0 ? gx + 10 : gx + 5;
-    R(ctx, gx + 4, sy + 16, 10, 2, sc); R(ctx, gx + 4, sy + 17, 10, 1, 'w'); R(ctx, nx, sy + 18, 3, 4, sc);
+    R(ctx, gx + 4, sy + 16 - ext, 10, 2, sc); R(ctx, gx + 4, sy + 17 - ext, 10, 1, 'w'); R(ctx, nx, sy + 18 - ext, 3, 4, sc);
+  }
+  if (rainy) {                                                                 // парасолька: над найвищою деталлю (скін, маска, шапка), ручка тягнеться до неї й не відстає
+    const lift = hs ? ({ wizard: 10, witch: 10, santa: 8, party: 7, chef: 7, royal: 6, gold: 6, diamond: 7, ninja: 2 }[hs] || 6) : (hasHats() && !suited ? (theme.decor.has('hats') ? 9 : 6) : 0);
+    const topY = lift ? sy - ext + 8 - lift : sy - ext, ty = topY - 7;
+    ctx.globalAlpha = c.alpha; drawUmbrella(gx + 9, ty, c.hat !== undefined ? c.hat : CUSTOMER_TYPES.indexOf(c.type), 0, 2); ctx.globalAlpha = 1;
   }
   if (c.bag && !(c.scale && c.scale < 0.9)) {   // пакет з покупками в лапці, злегка гойдається
     const bc = CHIBI.bag(c.bagKind || 0, c.bag), bx = c.dir > 0 ? sx + 14 : sx - 6;
-    drawCanvasSprite(ctx, bc, bx, sy + 11 + (frame ? 1 : 0), { alpha: c.alpha });
+    drawCanvasSprite(ctx, bc, bx, sy + 11 - ext + (frame ? 1 : 0), { alpha: c.alpha });
   }
 }
 

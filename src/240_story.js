@@ -365,6 +365,12 @@ const DIARY_EP_COL = ['t', 'p', 'P', 'T', 'n', 'g', 'u', 'f', 'r'];             
 const DIARY_THX = ['pietro', 'pip', 'zina', 'maks', 'bitik', 'lesyk', 'orbit', 'lumi', 'sora'];   // чия подяка закриває розділ епохи
 function diaryInk(hex) { const n = parseInt(hex.slice(1), 16); return (((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 > 150) ? PALETTE.k : PALETTE.w; }   // читабельний колір тексту на кольоровій кнопці
 // Вкладка «Історія»: відкриті глави з кнопкою «Читати»
+// Режим бога: тап «Читати» на 4-й главі епохи одразу приводить гостя(ів) цієї епохи (у грі вони приходять, коли ти потрапляєш в епоху)
+function godGuests(ek) {
+  const st = state.story, ks = ek === 0 ? [8, 7] : [guestIdxOfEpoch(ek)];
+  ks.forEach(k => { if (!st.guests[k]) { st.guests[k] = Math.max(...st.guests) + 1; syncGuests(k); } });
+  saveGame(); updateUI();
+}
 function updateStoryUI() {
   if (ui.paneStory.hidden) return;
   const god = !!DEV_OPEN_ALL;                                                                      // режим бога: у щоденнику відкриті всі глави й історії (лише для власника)
@@ -415,7 +421,7 @@ function updateStoryUI() {
   const lockCard = () => { const lock = document.createElement('div'); lock.className = 'card dept locked'; lock.textContent = t('storyLocked'); ui.storyList.appendChild(lock); };
   // епоха 0 (Відродження): 8 глав основного сюжету + подяка П'єтра
   if (sectionHead(0, mainDone) && isOpen(0)) {
-    for (let n = 1; n <= mainDone; n++) chapterCard(0, n, t('ch' + n + '_title'), () => startDialogue(n, true));
+    for (let n = 1; n <= mainDone; n++) chapterCard(0, n, t('ch' + n + '_title'), () => { startDialogue(n, true); if (god && n === 4) godGuests(0); });
     thxCard(0);
     if (!god && state.story.done < CHAPTERS.length) lockCard();
   }
@@ -423,7 +429,7 @@ function updateStoryUI() {
   for (let ek = 1; ek < EPOCHS.length; ek++) {
     const nd = god ? 8 : Math.min(8, (state.story.epDone && state.story.epDone[ek]) || 0);
     if (!sectionHead(ek, nd) || !isOpen(ek)) continue;
-    for (let n = 1; n <= nd; n++) chapterCard(ek, n, t('ec' + ek + '_' + n + '_title'), () => startDialogue(n, true, 'ec', n, ek));
+    for (let n = 1; n <= nd; n++) chapterCard(ek, n, t('ec' + ek + '_' + n + '_title'), () => { startDialogue(n, true, 'ec', n, ek); if (god && n === 4) godGuests(ek); });
     thxCard(ek);
     if (ek === curEp && nd < 8) lockCard();
   }

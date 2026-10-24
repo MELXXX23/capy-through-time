@@ -3,7 +3,7 @@
     МІСЦЯ ГОСТЕЙ ЕПОХ: біля магазину ліворуч кожен гість має своє місце (джубокс і бар, колонки, автомат-хапалка тощо).
     STANDS[id] = { w, h, draw(g, x, y, t) } — x центр, y земля, t — годинник анімації (с).
    ===================================================================== */
-const GUEST_STAND_EPOCH = { pietro: 0, bruno: 0, pip: 1, zina: 2, maks: 3, bitik: 4, lesyk: 5, orbit: 6, lumi: 7, sora: 8 };   // в якій епосі гість стоїть на своєму місці
+const GUEST_STAND_EPOCH = { pietro: 0, pip: 1, zina: 2, maks: 3, bitik: 4, lesyk: 5, orbit: 6, lumi: 7, sora: 8 };   // в якій епосі гість стоїть на своєму місці
 const STANDS = {};
 (function () {
   const rr = Math.round;
@@ -237,21 +237,6 @@ const STANDS = {};
       }
       disc(g, x, hy, 3, 'd'); disc(g, x, hy, 2, 'f'); px(g, x - 1, hy - 1, 'w');
       glow(g, x, hy, R0 - 2, 'N', 0.03);
-    }
-  };
-
-  /* ---------- Бруно (нове коло, борсук-художник): галерея-лоток із картинами ---------- */
-  STANDS.bruno = {
-    w: 52, h: 46, draw(g, x, y, t) {
-      shadow(g, x, y, 54);
-      awning(g, x - 24, y - 42, 48, 'P', 'f'); rc(g, x - 24, y - 37, 1, 37, 'b'); rc(g, x + 23, y - 37, 1, 37, 'b');
-      box(g, x - 22, y - 12, 44, 12, 'b', 'c', 'M'); rc(g, x - 20, y - 8, 40, 1, 'M');
-      [[-20, 'r', 's'], [-6, 'y', 'g'], [8, 'n', 'f']].forEach(([dx, c1, c2], i) => {
-        const L = x + dx; box(g, L, y - 34, 13, 20, 'h', 'y', 'c'); rc(g, L + 2, y - 32, 9, 16, c1); rc(g, L + 2, y - 24, 9, 8, c2); disc(g, L + 6, y - 27, 3, i === 1 ? 'y' : 'w');
-        if (Math.floor(t * 0.6 + i * 1.7) % 4 === 0) sparkPlus2(g, L + 10, y - 30, t);                                // блиск на картині
-      });
-      [[-14, 'r'], [0, 'y'], [14, 'n']].forEach(([dx, c]) => { rc(g, x + dx, y - 15, 3, 3, c); px(g, x + dx + 1, y - 16, 'w'); });   // баночки з фарбою
-      px(g, x - 22 + Math.round(Math.sin(t * 2) * 1), y - 43, 'f');
     }
   };
 

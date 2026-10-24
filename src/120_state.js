@@ -48,7 +48,7 @@ function createDefaultState() {
     cutSeen: false,                    // вступну заставку з Мел і Нікою вже показано
     buyMode: 1,                        // 1 | 10 | 100 | 'max'
     pendingOffline: 0,                 // офлайн-заробіток, який ще не забрали
-    tab: 'shop',
+    tab: 'departments',
     playTime: 0,                       // секунд у грі
     savedAt: 0
   };

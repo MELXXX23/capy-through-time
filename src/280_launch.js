@@ -54,7 +54,7 @@ function init() {
   const hadSave = loadGame();
   const awaySeconds = hadSave && state.savedAt > 0 ? (Date.now() - state.savedAt) / 1000 : 0;
   if (!translations[state.lang]) state.lang = detectLanguage();
-  if (!TABS.some(x => x.id === state.tab)) state.tab = 'shop';
+  if (!TABS.some(x => x.id === state.tab)) state.tab = 'departments';
   recalcIncome();
 
   // графіка

@@ -433,29 +433,57 @@ function updateShootingStar(dt) {
 }
 function drawSkyBody(kind, x, y) {
   x = Math.round(x); y = Math.round(y);
-  if (kind === 'sun') {
+  const jp = currentEpoch().id === 'japan', K = jp ? 1 : 1.15, S = v => Math.round(v * K);     // у всіх епохах сонце й місяць на 15% більші, в Японії як було
+  const dsc = (cx, cy, r, c) => { ctx.fillStyle = PALETTE[c] || c; for (let dy = -r; dy <= r; dy++) { const h = Math.round(Math.sqrt(r * r + 0.5 - dy * dy)); ctx.fillRect(cx - h, cy + dy, h * 2 + 1, 1); } };
+  const RS = (dx, dy, w, h, c) => R(ctx, x + S(dx), y + S(dy), Math.max(1, S(w)), Math.max(1, S(h)), c);
+  if (kind === 'sun' && jp) {                          // Японія: червоне сонце-диск (хіномару), рухається по небу вдень
+    ctx.globalAlpha = 0.35; dsc(x, y, 13, '#ffc4c0'); ctx.globalAlpha = 1;
+    dsc(x, y, 9, '#e8453c'); dsc(x - 2, y - 2, 4, '#ff7a64');
+  } else if (kind === 'sun') {
     const low = sky.h < 0.35;
-    ctx.globalAlpha = 0.45; disc(ctx, x, y, 13, low ? 'o' : 'w');
+    ctx.globalAlpha = 0.45; disc(ctx, x, y, S(13), low ? 'o' : 'w');
     ctx.globalAlpha = 1;
-    disc(ctx, x, y, 9, low ? 'o' : 'y'); disc(ctx, x, y, 6, low ? 'h' : 'w');
-  } else if (kind === 'hmoon') {                      // хелловінський місяць: великий, помаранчевий, з кратерами
+    disc(ctx, x, y, S(9), low ? 'o' : 'y'); disc(ctx, x, y, S(6), low ? 'h' : 'w');
+  } else if (kind === 'hsun') {                        // хелловінське сонце: помаранчеве, з темною ухмилкою гарбуза й зубами
+    ctx.globalAlpha = 0.3; dsc(x, y, S(15), '#ffb060'); ctx.globalAlpha = 1;
+    disc(ctx, x, y, 11, 'd'); disc(ctx, x, y, 10, 'o'); disc(ctx, x - 2, y - 2, 8, 'h'); disc(ctx, x - 3, y - 3, 4, 'y');
+    [-1, 1].forEach(s => { R(ctx, x + s * 4, y - 5, 1, 1, 'd'); R(ctx, x + s * 4 - 1, y - 4, 3, 1, 'd'); R(ctx, x + s * 4 - 2, y - 3, 5, 1, 'd'); });          // очі-трикутники
+    R(ctx, x - 7, y, 2, 1, 'd'); R(ctx, x + 6, y, 2, 1, 'd'); R(ctx, x - 6, y + 1, 13, 1, 'd'); R(ctx, x - 5, y + 2, 11, 1, 'd'); R(ctx, x - 3, y + 3, 7, 1, 'd'); R(ctx, x - 1, y + 4, 3, 1, 'd');   // широка ухмилка
+    R(ctx, x - 3, y + 1, 2, 1, 'y'); R(ctx, x + 1, y + 1, 2, 1, 'y'); R(ctx, x - 1, y + 3, 2, 1, 'y');                                                    // зуби
+  } else if (kind === 'hmoon') {                      // хелловінський місяць: помаранчевий, з кратерами, павутиння в куті й павук на нитці
     ctx.globalAlpha = 0.1; disc(ctx, x, y, 27, 'o'); ctx.globalAlpha = 0.16; disc(ctx, x, y, 22, 'o'); ctx.globalAlpha = 0.28; disc(ctx, x, y, 18, 'h'); ctx.globalAlpha = 1;
     disc(ctx, x, y, 14, 'd'); disc(ctx, x, y, 13, 'o'); disc(ctx, x - 2, y - 2, 11, 'h'); disc(ctx, x - 3, y - 3, 7, 'y');
     ctx.globalAlpha = 0.5; R(ctx, x - 8, y - 3, 4, 3, 'o'); R(ctx, x + 2, y - 8, 5, 3, 'o'); R(ctx, x + 4, y + 2, 4, 4, 'o'); R(ctx, x - 7, y + 4, 3, 3, 'o'); R(ctx, x - 1, y + 6, 3, 2, 'o'); ctx.globalAlpha = 1;
-  } else {                                           // місяць: ореол, освітлений бік, тінь, кратери й моря
-    ctx.globalAlpha = 0.09; disc(ctx, x, y, 20, 'w');
-    ctx.globalAlpha = 0.14; disc(ctx, x, y, 16, 'w');
-    ctx.globalAlpha = 0.24; disc(ctx, x, y, 13, 'w');
+    const wx = x + 9, wy = y - 10;                    // павутиння: промені з кута й дві дуги
+    ctx.globalAlpha = 0.9;
+    [[-9, 1], [-8, 5], [-5, 8], [-1, 10], [1, 7]].forEach(([dx, dy]) => lineG(ctx, wx, wy, wx + dx, wy + dy, 'w'));
+    [4, 7].forEach(r => { let px0 = wx - r, py0 = wy; for (let i = 1; i <= 4; i++) { const a = Math.PI * (i / 4) / 2, nx = Math.round(wx - Math.cos(a) * r), ny = Math.round(wy + Math.sin(a) * r); lineG(ctx, px0, py0, nx, ny, 'w'); px0 = nx; py0 = ny; } });
     ctx.globalAlpha = 1;
-    disc(ctx, x, y, 10, 'e');                         // темний контур
-    disc(ctx, x, y, 9, 'W');
-    disc(ctx, x - 1, y - 1, 8, 'w');                  // яскравий верхній лівий бік
+    const sw = animOn() ? Math.round(Math.sin(animClock * 1.4) * 2) : 0, sx0 = x - 6, sy0 = y + 12 + (animOn() ? Math.round(Math.sin(animClock * 2) * 1) : 0);    // павук гойдається на нитці
+    const bx = sx0 + sw, by = sy0 + 14;
+    lineG(ctx, sx0, y + 12, bx, by, 'w');
+    R(ctx, bx - 2, by, 5, 3, 'k'); R(ctx, bx - 1, by - 1, 3, 1, 'k'); R(ctx, bx - 1, by + 3, 3, 1, 'k'); R(ctx, bx - 1, by, 1, 1, 'r'); R(ctx, bx + 1, by, 1, 1, 'r');
+    [[-4, 0], [-4, 2], [3, 0], [3, 2]].forEach(([dx, dy]) => R(ctx, bx + dx, by + dy, 2, 1, 'Y'));
+  } else if (jp) {                                     // Японія: ідеальний напівмісяць (світла ліва половина) того ж розміру, що сонце
+    ctx.globalAlpha = 0.2; dsc(x, y, 13, '#ffffff'); ctx.globalAlpha = 0.1; dsc(x, y, 9, '#8f9ed8'); ctx.globalAlpha = 1;
+    for (let dy = -9; dy <= 9; dy++) { const h = Math.round(Math.sqrt(81.5 - dy * dy)); R(ctx, x - h, y + dy, h + 1, 1, 'W'); R(ctx, x - h + 1, y + dy, Math.max(0, h - 2), 1, 'w'); }
+    R(ctx, x, y - 9, 1, 19, 'e');                      // пряма межа напівмісяця
+    ctx.globalAlpha = 0.5; R(ctx, x - 6, y - 4, 3, 2, 'e'); R(ctx, x - 4, y + 3, 3, 3, 'e'); R(ctx, x - 7, y + 1, 2, 2, 'e'); ctx.globalAlpha = 1;
+  } else {                                           // місяць: ореол, освітлений бік, тінь, кратери й моря
+    ctx.globalAlpha = 0.09; disc(ctx, x, y, S(20), 'w');
+    ctx.globalAlpha = 0.14; disc(ctx, x, y, S(16), 'w');
+    ctx.globalAlpha = 0.24; disc(ctx, x, y, S(13), 'w');
+    ctx.globalAlpha = 1;
+    const r9 = S(9);
+    disc(ctx, x, y, S(10), 'e');                      // темний контур
+    disc(ctx, x, y, r9, 'W');
+    disc(ctx, x - 1, y - 1, S(8), 'w');               // яскравий верхній лівий бік
     ctx.globalAlpha = 0.35;
-    for (let dy = -9; dy <= 9; dy++) { const half = Math.round(Math.sqrt(81.5 - dy * dy)); R(ctx, x + Math.max(2, half - 4 - Math.max(0, dy)), y + dy, Math.max(0, half - Math.max(2, half - 4 - Math.max(0, dy)) + 1), 1, 'e'); }   // тінь справа-знизу
+    for (let dy = -r9; dy <= r9; dy++) { const half = Math.round(Math.sqrt(r9 * r9 + 0.5 - dy * dy)), st = Math.max(S(2), half - S(4) - Math.max(0, dy)); R(ctx, x + st, y + dy, Math.max(0, half - st + 1), 1, 'e'); }   // тінь справа-знизу
     ctx.globalAlpha = 0.55;
-    R(ctx, x - 6, y - 4, 4, 3, 'e'); R(ctx, x + 1, y - 6, 5, 3, 'e'); R(ctx, x + 2, y + 1, 4, 4, 'e'); R(ctx, x - 5, y + 2, 3, 3, 'e'); R(ctx, x - 1, y + 5, 3, 2, 'e');   // моря
+    RS(-6, -4, 4, 3, 'e'); RS(1, -6, 5, 3, 'e'); RS(2, 1, 4, 4, 'e'); RS(-5, 2, 3, 3, 'e'); RS(-1, 5, 3, 2, 'e');   // моря
     ctx.globalAlpha = 0.8;
-    R(ctx, x - 6, y - 5, 2, 1, 'w'); R(ctx, x + 1, y - 7, 3, 1, 'w'); R(ctx, x + 2, y, 2, 1, 'w'); R(ctx, x - 5, y + 1, 2, 1, 'w'); R(ctx, x - 1, y + 4, 2, 1, 'w');         // світлі краї кратерів
+    RS(-6, -5, 2, 1, 'w'); RS(1, -7, 3, 1, 'w'); RS(2, 0, 2, 1, 'w'); RS(-5, 1, 2, 1, 'w'); RS(-1, 4, 2, 1, 'w');         // світлі краї кратерів
     ctx.globalAlpha = 1;
   }
 }
