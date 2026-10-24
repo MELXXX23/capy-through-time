@@ -46,6 +46,7 @@ const DESC = {
   '190_a_audio_music_cutscene.js': 'звук і музика (Web Audio), початок кат-сцени',
   '190_b_cutscene_draw.js': 'кат-сцена: малювання',
   '190_c_cutscene_panel_tour_sfx.js': 'кат-сцена: панель; екскурсія по меню; playSfx',
+  '190_cz_cutscene_epic.js': 'кат-сцена v3: кіно-вступ, кінорамки, тапи (монетка, заряд), будівництво маркету з блоків',
   '190_d_epoch_tunes.js': 'музика епох 1–8: EPOCH_TUNES (дві мелодії на епоху, акорди), epochTrackDef/epochTrackKey',
   '200_a_travel_ui_warp_base.js': 'налаштування, вікна-підтвердження, основа анімації подорожі',
   '200_b_warp_epoch_animations.js': 'анімації подорожі для кожної епохи (WARP_BY_EPOCH)',

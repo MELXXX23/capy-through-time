@@ -431,7 +431,7 @@
       draw = function () {
         var rr = H * 0.52;
         gB.globalCompositeOperation = 'lighter';
-        for (i = 0; i < 4; i++) { var p = (T * 0.35 + i / 4) % 1; gB.strokeStyle = 'rgba(255,211,106,' + ((1 - p) * 0.32).toFixed(3) + ')'; gB.lineWidth = 1; gB.beginPath(); gB.ellipse(cx2, cy2, p * rr * 1.5, p * rr * 0.95, 0, 0, 7); gB.stroke(); }   // кільця часу розходяться
+        for (i = 0; i < 4; i++) { var p = ((T * 0.35 + i / 4) % 1 + 1) % 1; gB.strokeStyle = 'rgba(255,211,106,' + ((1 - p) * 0.32).toFixed(3) + ')'; gB.lineWidth = 1; gB.beginPath(); gB.ellipse(cx2, cy2, p * rr * 1.5, p * rr * 0.95, 0, 0, 7); gB.stroke(); }   // кільця часу розходяться
         for (i = 0; i < 300; i++) {                                                   // спіральний вихор
           var u = i / 300, arm = i % 3, r = Math.pow(u, 0.8) * rr, a = arm * 2.094 + u * 7 - T * (0.7 + (1 - u) * 0.9);
           gB.globalAlpha = (1 - u * 0.75) * 0.9; gB.fillStyle = PC[arm]; gB.fillRect(Math.round(cx2 + Math.cos(a) * r * 1.45), Math.round(cy2 + Math.sin(a) * r * 0.92), 1, 1);

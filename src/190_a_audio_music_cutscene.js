@@ -476,7 +476,7 @@ const SFX = {
 /* ====================== ПОЧАТКОВА КАТ-СЦЕНА (v2) ======================
    Малюнок удвічі дрібніший за гру (CUT_Q = 2 пікселі полотна на «піксель гри»): герої збільшені з плавним згладжуванням (EPX ×4),
    будинки, дерева, ліхтарі й бруківка беруться з самої гри. Час T — «сюжетні секунди» (1 с сюжету = CUT_SLOW справжніх).
-   Кадр — функція T, тому знімки: ?cut=A&seek=14. Варіанти: A весняний ранок, B осінній вечір, C зимова ніч. */
+   Кадр — функція T, тому знімки: ?cut=A&seek=14. Кіно-ефекти, тапи й будівництво — 190_cz_cutscene_epic.js. Варіанти: A весняний ранок, B осінній вечір, C зимова ніч. */
 const CUT_Q = 2, CUT_SLOW = 1.5;
 const CUT_STYLES = {
   A: { season: 'spring', sky: ['#4f9fe6', '#7cc0f0', '#b5defa', '#ffe6b4', '#ffc994'], tint: [255, 196, 140, 0.08], stars: 0, sun: 'sun', win: 0.0, lamp: 0, cloud: '#ffffff', fall: 'petal', glow: 0 },
@@ -492,7 +492,7 @@ const CUT_TXT = {
     m1: 'Hi! I am Mel,', n1: 'and I am Nika. We are the developers!', m2: 'We will show how it all works. Shall we start?', go: "LET'S GO!", tuk: 'TOCK!' }
 };
 // Часова шкала (сюжетні секунди)
-const CUT_PRE = 2.6;
+const CUT_PRE = 4.2;
 const CT = { walk: 4.2, ting1: 4.3, ting2: 5.2, pick: 6.2, bIn0: 6.6, bIn1: 7.8, fly0: 12.2, fly1: 13.0, charge: 13.9, big1: 14.7, flash: 14.9, asm0: 15.1, asm1: 19.0, sign0: 19.3, sign1: 21.0, flank0: 19.3, flank1: 20.7, TW: 23.5 };
 CT.u0 = CT.TW + 1.4; CT.fin = CT.u0 + 7.9; CT.finBtn = CT.fin + 7.6; CT.END = CT.finBtn + 1.0;
 const CUT_SAY = [[6.3, 7.5, 'c', 'p1'], [7.7, 8.5, 'b', 'hi'], [8.6, 10.4, 'b', 'b1'], [10.5, 11.3, 'c', 'c2'], [11.4, 13.0, 'b', 'b2'], [20.4, 21.5, 'b', 'b4'], [21.6, 22.5, 'c', 'c5'], [22.5, CT.TW, 'b', 'b5']];

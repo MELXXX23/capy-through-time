@@ -115,7 +115,7 @@ function cutCamCx(T, L) {
   if (T < CT.walk) return cutCapyX(T, L) + W * 0.14;
   return cutKf(T, [[CT.walk, L.capyStop + W * 0.14], [6.6, L.capyStop + W * 0.14], [8.0, (L.capyStop + L.bodyStop) / 2], [12.2, (L.capyStop + L.bodyStop) / 2], [13.2, L.shopCX]]);
 }
-function cutZoom(T) { return cutKf(T, [[5.35, 1], [5.9, 2.4], [6.3, 2.4], [6.9, 1], [12.95, 1], [13.9, 2.1], [14.6, 2.1], [14.62, 1], [CT.sign0, 1], [CT.sign0 + 0.7, 2.5], [CT.sign1 - 0.5, 2.5], [CT.sign1 + 0.3, 1]]); }
+function cutZoom(T) { return cutKf(T, [[5.35, 1], [5.9, 2.4], [6.3, 2.4], [6.9, 1], [12.95, 1], [13.9, 2.1], [14.6, 2.1], [14.62, 1], [CT.asm0 + 0.9, 1], [CT.asm0 + CB.roof0, 1.22], [CT.asm0 + CB.roof1 + 0.05, 1.3], [CT.asm0 + CB.light, 1.08], [CT.sign0, 1], [CT.sign0 + 0.7, 2.5], [CT.sign1 - 0.5, 2.5], [CT.sign1 + 0.3, 1]]); }
 function cutPrep() {
   if (cut.shopPx) return;
   const oe = state.epoch; let geo = [];
@@ -284,9 +284,9 @@ function cutRenderWorld(T) {
   // ділянка: паркан і земля
   if (!lotBuilt) {
     cutRc(g, L.lotL, 150, L.lotR - L.lotL, 22, '#a88c5e'); for (let k = 0; k < 18; k++) { const x = L.lotL + 6 + cutHash(k + 61) * (L.lotR - L.lotL - 14); cutRc(g, x, 152 + cutHash(k + 9) * 16, 3, 1.5, cutHash(k) < 0.5 ? '#8a6c40' : '#c0a374'); }
-    for (let k = 0; k < 8; k++) { const x = L.lotL + 4 + k * 22; cutRc(g, x, 120, 4, 28, '#8a5a30'); cutRc(g, x, 120, 4, 2, '#b88450'); cutRc(g, x, 122, 1, 26, '#a06a38'); } cutRc(g, L.lotL, 128, L.lotR - L.lotL, 3, '#a06a38'); cutRc(g, L.lotL, 138, L.lotR - L.lotL, 3, '#a06a38');
+    if (T < CT.asm0) { for (let k = 0; k < 8; k++) { const x = L.lotL + 4 + k * 22; cutRc(g, x, 120, 4, 28, '#8a5a30'); cutRc(g, x, 120, 4, 2, '#b88450'); cutRc(g, x, 122, 1, 26, '#a06a38'); } cutRc(g, L.lotL, 128, L.lotR - L.lotL, 3, '#a06a38'); cutRc(g, L.lotL, 138, L.lotR - L.lotL, 3, '#a06a38'); }
     for (let k = 0; k < 11; k++) { const x = L.lotL + 8 + cutHash(k + 71) * (L.lotR - L.lotL - 16); cutRc(g, x, 164, 1, 5, '#5f9a48'); cutRc(g, x + 2, 166, 1, 3, '#4f8a3a'); cutRc(g, x - 2, 167, 1, 2, '#6fb058'); }
-    cutRc(g, L.lotL + 6, 100, 3, 50, '#6b4a2a'); cutRc(g, L.lotL - 6, 96, 22, 14, '#d8c08a'); cutRc(g, L.lotL - 6, 96, 22, 2, '#a88c5e');
+    if (T < CT.asm0) { cutRc(g, L.lotL + 6, 100, 3, 50, '#6b4a2a'); cutRc(g, L.lotL - 6, 96, 22, 14, '#d8c08a'); cutRc(g, L.lotL - 6, 96, 22, 2, '#a88c5e'); }
     if (cut.style === 'C') { g.fillStyle = 'rgba(240,248,255,.75)'; g.fillRect(L.lotL, 150, L.lotR - L.lotL, 3); g.fillRect(L.lotL - 6, 94, 22, 2); }
   }
   const lamp = cutLampCv();
@@ -301,33 +301,14 @@ function cutRenderWorld(T) {
   cut.coinPos = coinPos;
   // магазин: збирається з пікселів монети; риштування й Бодя-будівельник
   const sx0 = L.shopCX - cut.shopW / 2, sy0 = 170 - cut.shopH;
-  if (T >= CT.asm0 - 0.4 && T < CT.asm1 + 0.6) {
-    const a = Math.min(1, (T - CT.asm0 + 0.4) / 0.8) * (T > CT.asm1 ? Math.max(0, 1 - (T - CT.asm1) / 0.6) : 1), pl = [sx0 - 8, sx0 + cut.shopW + 4];
-    g.globalAlpha = a; pl.forEach(px => { cutRc(g, px, 170 - cut.shopH - 12, 3, cut.shopH + 12, '#8a5a30'); cutRc(g, px, 170 - cut.shopH - 12, 1, cut.shopH + 12, '#b88450'); });
-    for (let lv = 0; lv < 5; lv++) { const y = 168 - lv * (cut.shopH + 10) / 5; cutRc(g, pl[0] - 2, y, pl[1] - pl[0] + 7, 2, '#a06a38'); cutRc(g, pl[0] - 2, y, pl[1] - pl[0] + 7, 0.5, '#d9a46a'); }
-    cutRc(g, pl[0] + 2, 170 - cut.shopH + 4, 2, cut.shopH, '#7a4a28'); g.globalAlpha = 1;
-  }
-  if (T >= CT.asm0) {
-    if (T >= CT.asm1) {
-      const k = Math.max(0, 1 - (T - CT.asm1) / 0.45), tap = cut.tapAmb >= 0 ? Math.max(0, 1 - (cut.amb - cut.tapAmb) / 0.18) : 0;
-      g.save(); g.translate(L.shopCX, 170); g.scale(1 + 0.03 * tap + 0.03 * k, 1 - 0.05 * tap + 0.03 * k); g.drawImage(cut.thumbs[0].c, -cut.shopW / 2, -cut.shopH); g.restore();
-      if (k > 0) { g.globalAlpha = k * 0.7; cutRc(g, sx0, sy0, cut.shopW, cut.shopH, '#fff6c8'); g.globalAlpha = 1; }
-    } else {
-      const px = cut.shopPx, cxp = L.shopCX, cyp = 96, spread = L.nar ? 70 : 110, span = CT.asm1 - CT.asm0 - 0.8, ex = cutSm((T - CT.asm0) / 0.5);
-      let front = 0;
-      for (let i = 0; i < px.length; i++) {
-        const p = px[i], tx = sx0 + p.x, ty = sy0 + p.y, scx = cxp + Math.cos(p.a) * (28 + p.r * spread), scy = cyp + Math.sin(p.a) * (20 + p.r * spread * 0.62), tl = CT.asm0 + 0.2 + p.o * span;
-        let x, y;
-        if (T < tl) { if (p.r > 0.4) continue; x = cutLerp(cxp, scx, ex) + Math.sin(T * 3 + p.w) * 1.5; y = cutLerp(cyp, scy, ex) + Math.cos(T * 2.6 + p.w) * 1.5; g.fillStyle = ['#ffe36a', '#f8cf4a', '#fff6c8', '#e8a92a'][Math.floor(p.w) % 4]; g.fillRect(Math.round(x), Math.round(y), 1.2, 1.2); continue; }
-        const u = Math.min(1, (T - tl) / 0.9), e = cutSm(u);
-        if (u >= 1) { front = Math.max(front, p.y); g.fillStyle = (T - tl - 0.9) < 0.14 ? '#fff6c8' : p.c; g.fillRect(tx, ty, 1, 1); continue; }
-        x = cutLerp(scx, tx, e); y = cutLerp(scy, ty, e) - Math.sin(Math.PI * u) * 12;
-        g.fillStyle = u < 0.45 ? ['#ffe36a', '#f8cf4a', '#fff6c8'][Math.floor(p.w) % 3] : p.c; g.fillRect(Math.round(x), Math.round(y), 1.5, 1.5);
-      }
-      const prog = Math.max(0, Math.min(1, (T - CT.asm0 - 0.2 - 0.9) / span)), ly = sy0 + cut.shopH * (1 - prog);       // яскрава лінія зведення рухається вгору
-      if (prog > 0.02 && prog < 0.98) { g.globalAlpha = 0.85; cutRc(g, sx0 - 2, ly, cut.shopW + 4, 1, '#fff6c8'); g.globalAlpha = 0.25; cutRc(g, sx0 - 2, ly - 3, cut.shopW + 4, 3, '#ffe36a'); g.globalAlpha = 1; }
-    }
-  }
+  const bOn = T >= CT.asm0 - 0.4 && T < CT.sign1 + 1;                 // будівництво маркету — 190_cz_cutscene_epic.js
+  if (bOn) cutBuildBack(g, T, L, sx0, sy0);
+  if (T >= CT.asm1) {
+    const k = Math.max(0, 1 - (T - CT.asm1) / 0.45), tap = cut.tapAmb >= 0 ? Math.max(0, 1 - (cut.amb - cut.tapAmb) / 0.18) : 0;
+    g.save(); g.translate(L.shopCX, 170); g.scale(1 + 0.03 * tap + 0.03 * k, 1 - 0.05 * tap + 0.03 * k); g.drawImage(cut.thumbs[0].c, -cut.shopW / 2, -cut.shopH); g.restore();
+    if (k > 0) { g.globalAlpha = k * 0.7; cutRc(g, sx0, sy0, cut.shopW, cut.shopH, '#fff6c8'); g.globalAlpha = 1; }
+  } else if (T >= CT.asm0) cutBuildShop(g, T, L, sx0, sy0);
+  if (bOn) cutBuildFront(g, T, L, sx0, sy0);
   if (coinPos && T < CT.flash) { cutCoin(g, coinPos[0], coinPos[1], coinR, spin, (T > CT.fly0 ? 0.9 + Math.sin(T * 6) * 0.2 : 0.5)); if (coinOn) { for (let k = 0; k < 3; k++) { const ph = (T * 1.6 + k * 0.33) % 1; if (ph < 0.5) cutSpark(g, coinPos[0] + (k - 1) * 9, coinPos[1] - 6 - ph * 8, ph < 0.25 ? 1 : 2, '#fff7c0'); } } }
   // пил за Капі
   if (T < CT.walk) for (let n = 0; n < 12; n++) { const tn = T - n * 0.22; if (tn < 0) break; const age = n * 0.22, x = cutCapyX(tn, L) - 16; g.globalAlpha = Math.max(0, 0.5 - age * 0.18); cutRc(g, x - age * 5, 164 - age * 6, 3 + age * 3, 3 + age * 2, '#e8dcc0'); }

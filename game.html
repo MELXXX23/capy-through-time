@@ -1543,7 +1543,7 @@ body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4
       draw = function () {
         var rr = H * 0.52;
         gB.globalCompositeOperation = 'lighter';
-        for (i = 0; i < 4; i++) { var p = (T * 0.35 + i / 4) % 1; gB.strokeStyle = 'rgba(255,211,106,' + ((1 - p) * 0.32).toFixed(3) + ')'; gB.lineWidth = 1; gB.beginPath(); gB.ellipse(cx2, cy2, p * rr * 1.5, p * rr * 0.95, 0, 0, 7); gB.stroke(); }   // кільця часу розходяться
+        for (i = 0; i < 4; i++) { var p = ((T * 0.35 + i / 4) % 1 + 1) % 1; gB.strokeStyle = 'rgba(255,211,106,' + ((1 - p) * 0.32).toFixed(3) + ')'; gB.lineWidth = 1; gB.beginPath(); gB.ellipse(cx2, cy2, p * rr * 1.5, p * rr * 0.95, 0, 0, 7); gB.stroke(); }   // кільця часу розходяться
         for (i = 0; i < 300; i++) {                                                   // спіральний вихор
           var u = i / 300, arm = i % 3, r = Math.pow(u, 0.8) * rr, a = arm * 2.094 + u * 7 - T * (0.7 + (1 - u) * 0.9);
           gB.globalAlpha = (1 - u * 0.75) * 0.9; gB.fillStyle = PC[arm]; gB.fillRect(Math.round(cx2 + Math.cos(a) * r * 1.45), Math.round(cy2 + Math.sin(a) * r * 0.92), 1, 1);
@@ -11803,7 +11803,7 @@ const SFX = {
 /* ====================== ПОЧАТКОВА КАТ-СЦЕНА (v2) ======================
    Малюнок удвічі дрібніший за гру (CUT_Q = 2 пікселі полотна на «піксель гри»): герої збільшені з плавним згладжуванням (EPX ×4),
    будинки, дерева, ліхтарі й бруківка беруться з самої гри. Час T — «сюжетні секунди» (1 с сюжету = CUT_SLOW справжніх).
-   Кадр — функція T, тому знімки: ?cut=A&seek=14. Варіанти: A весняний ранок, B осінній вечір, C зимова ніч. */
+   Кадр — функція T, тому знімки: ?cut=A&seek=14. Кіно-ефекти, тапи й будівництво — 190_cz_cutscene_epic.js. Варіанти: A весняний ранок, B осінній вечір, C зимова ніч. */
 const CUT_Q = 2, CUT_SLOW = 1.5;
 const CUT_STYLES = {
   A: { season: 'spring', sky: ['#4f9fe6', '#7cc0f0', '#b5defa', '#ffe6b4', '#ffc994'], tint: [255, 196, 140, 0.08], stars: 0, sun: 'sun', win: 0.0, lamp: 0, cloud: '#ffffff', fall: 'petal', glow: 0 },
@@ -11819,7 +11819,7 @@ const CUT_TXT = {
     m1: 'Hi! I am Mel,', n1: 'and I am Nika. We are the developers!', m2: 'We will show how it all works. Shall we start?', go: "LET'S GO!", tuk: 'TOCK!' }
 };
 // Часова шкала (сюжетні секунди)
-const CUT_PRE = 2.6;
+const CUT_PRE = 4.2;
 const CT = { walk: 4.2, ting1: 4.3, ting2: 5.2, pick: 6.2, bIn0: 6.6, bIn1: 7.8, fly0: 12.2, fly1: 13.0, charge: 13.9, big1: 14.7, flash: 14.9, asm0: 15.1, asm1: 19.0, sign0: 19.3, sign1: 21.0, flank0: 19.3, flank1: 20.7, TW: 23.5 };
 CT.u0 = CT.TW + 1.4; CT.fin = CT.u0 + 7.9; CT.finBtn = CT.fin + 7.6; CT.END = CT.finBtn + 1.0;
 const CUT_SAY = [[6.3, 7.5, 'c', 'p1'], [7.7, 8.5, 'b', 'hi'], [8.6, 10.4, 'b', 'b1'], [10.5, 11.3, 'c', 'c2'], [11.4, 13.0, 'b', 'b2'], [20.4, 21.5, 'b', 'b4'], [21.6, 22.5, 'c', 'c5'], [22.5, CT.TW, 'b', 'b5']];
@@ -12012,7 +12012,7 @@ function cutCamCx(T, L) {
   if (T < CT.walk) return cutCapyX(T, L) + W * 0.14;
   return cutKf(T, [[CT.walk, L.capyStop + W * 0.14], [6.6, L.capyStop + W * 0.14], [8.0, (L.capyStop + L.bodyStop) / 2], [12.2, (L.capyStop + L.bodyStop) / 2], [13.2, L.shopCX]]);
 }
-function cutZoom(T) { return cutKf(T, [[5.35, 1], [5.9, 2.4], [6.3, 2.4], [6.9, 1], [12.95, 1], [13.9, 2.1], [14.6, 2.1], [14.62, 1], [CT.sign0, 1], [CT.sign0 + 0.7, 2.5], [CT.sign1 - 0.5, 2.5], [CT.sign1 + 0.3, 1]]); }
+function cutZoom(T) { return cutKf(T, [[5.35, 1], [5.9, 2.4], [6.3, 2.4], [6.9, 1], [12.95, 1], [13.9, 2.1], [14.6, 2.1], [14.62, 1], [CT.asm0 + 0.9, 1], [CT.asm0 + CB.roof0, 1.22], [CT.asm0 + CB.roof1 + 0.05, 1.3], [CT.asm0 + CB.light, 1.08], [CT.sign0, 1], [CT.sign0 + 0.7, 2.5], [CT.sign1 - 0.5, 2.5], [CT.sign1 + 0.3, 1]]); }
 function cutPrep() {
   if (cut.shopPx) return;
   const oe = state.epoch; let geo = [];
@@ -12181,9 +12181,9 @@ function cutRenderWorld(T) {
   // ділянка: паркан і земля
   if (!lotBuilt) {
     cutRc(g, L.lotL, 150, L.lotR - L.lotL, 22, '#a88c5e'); for (let k = 0; k < 18; k++) { const x = L.lotL + 6 + cutHash(k + 61) * (L.lotR - L.lotL - 14); cutRc(g, x, 152 + cutHash(k + 9) * 16, 3, 1.5, cutHash(k) < 0.5 ? '#8a6c40' : '#c0a374'); }
-    for (let k = 0; k < 8; k++) { const x = L.lotL + 4 + k * 22; cutRc(g, x, 120, 4, 28, '#8a5a30'); cutRc(g, x, 120, 4, 2, '#b88450'); cutRc(g, x, 122, 1, 26, '#a06a38'); } cutRc(g, L.lotL, 128, L.lotR - L.lotL, 3, '#a06a38'); cutRc(g, L.lotL, 138, L.lotR - L.lotL, 3, '#a06a38');
+    if (T < CT.asm0) { for (let k = 0; k < 8; k++) { const x = L.lotL + 4 + k * 22; cutRc(g, x, 120, 4, 28, '#8a5a30'); cutRc(g, x, 120, 4, 2, '#b88450'); cutRc(g, x, 122, 1, 26, '#a06a38'); } cutRc(g, L.lotL, 128, L.lotR - L.lotL, 3, '#a06a38'); cutRc(g, L.lotL, 138, L.lotR - L.lotL, 3, '#a06a38'); }
     for (let k = 0; k < 11; k++) { const x = L.lotL + 8 + cutHash(k + 71) * (L.lotR - L.lotL - 16); cutRc(g, x, 164, 1, 5, '#5f9a48'); cutRc(g, x + 2, 166, 1, 3, '#4f8a3a'); cutRc(g, x - 2, 167, 1, 2, '#6fb058'); }
-    cutRc(g, L.lotL + 6, 100, 3, 50, '#6b4a2a'); cutRc(g, L.lotL - 6, 96, 22, 14, '#d8c08a'); cutRc(g, L.lotL - 6, 96, 22, 2, '#a88c5e');
+    if (T < CT.asm0) { cutRc(g, L.lotL + 6, 100, 3, 50, '#6b4a2a'); cutRc(g, L.lotL - 6, 96, 22, 14, '#d8c08a'); cutRc(g, L.lotL - 6, 96, 22, 2, '#a88c5e'); }
     if (cut.style === 'C') { g.fillStyle = 'rgba(240,248,255,.75)'; g.fillRect(L.lotL, 150, L.lotR - L.lotL, 3); g.fillRect(L.lotL - 6, 94, 22, 2); }
   }
   const lamp = cutLampCv();
@@ -12198,33 +12198,14 @@ function cutRenderWorld(T) {
   cut.coinPos = coinPos;
   // магазин: збирається з пікселів монети; риштування й Бодя-будівельник
   const sx0 = L.shopCX - cut.shopW / 2, sy0 = 170 - cut.shopH;
-  if (T >= CT.asm0 - 0.4 && T < CT.asm1 + 0.6) {
-    const a = Math.min(1, (T - CT.asm0 + 0.4) / 0.8) * (T > CT.asm1 ? Math.max(0, 1 - (T - CT.asm1) / 0.6) : 1), pl = [sx0 - 8, sx0 + cut.shopW + 4];
-    g.globalAlpha = a; pl.forEach(px => { cutRc(g, px, 170 - cut.shopH - 12, 3, cut.shopH + 12, '#8a5a30'); cutRc(g, px, 170 - cut.shopH - 12, 1, cut.shopH + 12, '#b88450'); });
-    for (let lv = 0; lv < 5; lv++) { const y = 168 - lv * (cut.shopH + 10) / 5; cutRc(g, pl[0] - 2, y, pl[1] - pl[0] + 7, 2, '#a06a38'); cutRc(g, pl[0] - 2, y, pl[1] - pl[0] + 7, 0.5, '#d9a46a'); }
-    cutRc(g, pl[0] + 2, 170 - cut.shopH + 4, 2, cut.shopH, '#7a4a28'); g.globalAlpha = 1;
-  }
-  if (T >= CT.asm0) {
-    if (T >= CT.asm1) {
-      const k = Math.max(0, 1 - (T - CT.asm1) / 0.45), tap = cut.tapAmb >= 0 ? Math.max(0, 1 - (cut.amb - cut.tapAmb) / 0.18) : 0;
-      g.save(); g.translate(L.shopCX, 170); g.scale(1 + 0.03 * tap + 0.03 * k, 1 - 0.05 * tap + 0.03 * k); g.drawImage(cut.thumbs[0].c, -cut.shopW / 2, -cut.shopH); g.restore();
-      if (k > 0) { g.globalAlpha = k * 0.7; cutRc(g, sx0, sy0, cut.shopW, cut.shopH, '#fff6c8'); g.globalAlpha = 1; }
-    } else {
-      const px = cut.shopPx, cxp = L.shopCX, cyp = 96, spread = L.nar ? 70 : 110, span = CT.asm1 - CT.asm0 - 0.8, ex = cutSm((T - CT.asm0) / 0.5);
-      let front = 0;
-      for (let i = 0; i < px.length; i++) {
-        const p = px[i], tx = sx0 + p.x, ty = sy0 + p.y, scx = cxp + Math.cos(p.a) * (28 + p.r * spread), scy = cyp + Math.sin(p.a) * (20 + p.r * spread * 0.62), tl = CT.asm0 + 0.2 + p.o * span;
-        let x, y;
-        if (T < tl) { if (p.r > 0.4) continue; x = cutLerp(cxp, scx, ex) + Math.sin(T * 3 + p.w) * 1.5; y = cutLerp(cyp, scy, ex) + Math.cos(T * 2.6 + p.w) * 1.5; g.fillStyle = ['#ffe36a', '#f8cf4a', '#fff6c8', '#e8a92a'][Math.floor(p.w) % 4]; g.fillRect(Math.round(x), Math.round(y), 1.2, 1.2); continue; }
-        const u = Math.min(1, (T - tl) / 0.9), e = cutSm(u);
-        if (u >= 1) { front = Math.max(front, p.y); g.fillStyle = (T - tl - 0.9) < 0.14 ? '#fff6c8' : p.c; g.fillRect(tx, ty, 1, 1); continue; }
-        x = cutLerp(scx, tx, e); y = cutLerp(scy, ty, e) - Math.sin(Math.PI * u) * 12;
-        g.fillStyle = u < 0.45 ? ['#ffe36a', '#f8cf4a', '#fff6c8'][Math.floor(p.w) % 3] : p.c; g.fillRect(Math.round(x), Math.round(y), 1.5, 1.5);
-      }
-      const prog = Math.max(0, Math.min(1, (T - CT.asm0 - 0.2 - 0.9) / span)), ly = sy0 + cut.shopH * (1 - prog);       // яскрава лінія зведення рухається вгору
-      if (prog > 0.02 && prog < 0.98) { g.globalAlpha = 0.85; cutRc(g, sx0 - 2, ly, cut.shopW + 4, 1, '#fff6c8'); g.globalAlpha = 0.25; cutRc(g, sx0 - 2, ly - 3, cut.shopW + 4, 3, '#ffe36a'); g.globalAlpha = 1; }
-    }
-  }
+  const bOn = T >= CT.asm0 - 0.4 && T < CT.sign1 + 1;                 // будівництво маркету — 190_cz_cutscene_epic.js
+  if (bOn) cutBuildBack(g, T, L, sx0, sy0);
+  if (T >= CT.asm1) {
+    const k = Math.max(0, 1 - (T - CT.asm1) / 0.45), tap = cut.tapAmb >= 0 ? Math.max(0, 1 - (cut.amb - cut.tapAmb) / 0.18) : 0;
+    g.save(); g.translate(L.shopCX, 170); g.scale(1 + 0.03 * tap + 0.03 * k, 1 - 0.05 * tap + 0.03 * k); g.drawImage(cut.thumbs[0].c, -cut.shopW / 2, -cut.shopH); g.restore();
+    if (k > 0) { g.globalAlpha = k * 0.7; cutRc(g, sx0, sy0, cut.shopW, cut.shopH, '#fff6c8'); g.globalAlpha = 1; }
+  } else if (T >= CT.asm0) cutBuildShop(g, T, L, sx0, sy0);
+  if (bOn) cutBuildFront(g, T, L, sx0, sy0);
   if (coinPos && T < CT.flash) { cutCoin(g, coinPos[0], coinPos[1], coinR, spin, (T > CT.fly0 ? 0.9 + Math.sin(T * 6) * 0.2 : 0.5)); if (coinOn) { for (let k = 0; k < 3; k++) { const ph = (T * 1.6 + k * 0.33) % 1; if (ph < 0.5) cutSpark(g, coinPos[0] + (k - 1) * 9, coinPos[1] - 6 - ph * 8, ph < 0.25 ? 1 : 2, '#fff7c0'); } } }
   // пил за Капі
   if (T < CT.walk) for (let n = 0; n < 12; n++) { const tn = T - n * 0.22; if (tn < 0) break; const age = n * 0.22, x = cutCapyX(tn, L) - 16; g.globalAlpha = Math.max(0, 0.5 - age * 0.18); cutRc(g, x - age * 5, 164 - age * 6, 3 + age * 3, 3 + age * 2, '#e8dcc0'); }
@@ -12261,17 +12242,20 @@ function cutW2S(wx, wy, z, f) { const sx = wx - cut.camX, sy = wy + cut.shift; r
 function cutDrawFrame(T) {
   const Tn = T; T = Math.max(0, T);
   const g = cut.g, W = cut.W, H = cut.H, Q = CUT_Q, txt = CUT_TXT[state.lang] || CUT_TXT.uk, amb = cut.amb;
-  cutRenderWorld(T); const L = cut.L;
+  cutRenderWorld(Tn < 0 ? Math.max(-CUT_PRE, Tn) : T); const L = cut.L;
   let z = cutZoom(T), f = [W / 2, H / 2];
   if (z > 1.001) {
     const sh = cut.shift; let target;
     if (T < 7.2 && cut.coinPos) target = [cut.coinPos[0] - cut.camX, cut.coinPos[1] + sh];
     else if (T < 15) target = [L.shopCX - cut.camX, 96 + sh];
+    else if (T < CT.sign0) target = [L.shopCX - cut.camX, 170 - cut.shopH * 0.5 + sh];
     else target = [L.shopCX - cut.camX, 170 - cut.shopH + 22 + sh];
     f = [Math.max(10, Math.min(W - 10, target[0])), Math.max(10, Math.min(H - 10, target[1]))];
   }
-  let shk = 0; [[CT.flash, 4], [16.2, 1.6], [17.0, 1.6], [17.8, 1.8], [18.6, 2.2]].forEach(([te, a]) => { const d = T - te; if (d >= 0 && d < 0.3) shk = Math.max(shk, a * (1 - d / 0.3)); });
+  if (Tn < 0) { const ic = cutIntroCam(Tn, W, H); z = ic[0]; f = ic[1]; }
+  let shk = 0; [[CT.flash, 4], [CT.asm0 + 0.02, 2.5], [CT.asm0 + CB.roof1, 4.5], [CT.asm0 + CB.scDown + 0.1, 1.2]].forEach(([te, a]) => { const d = T - te; if (d >= 0 && d < 0.3) shk = Math.max(shk, a * (1 - d / 0.3)); });
   if (cut.tapAmb >= 0) { const d = amb - cut.tapAmb; if (d >= 0 && d < 0.25) shk = Math.max(shk, 1.5 * (1 - d / 0.25)); }
+  if (cut.chgAmb >= 0) { const d = amb - cut.chgAmb; if (d >= 0 && d < 0.15) shk = Math.max(shk, (0.6 + cut.chg * 0.25) * (1 - d / 0.15)); }
   const ox = shk ? Math.round(Math.sin(T * 91) * shk * Q) : 0, oy = shk ? Math.round(Math.cos(T * 77) * shk * Q) : 0;
   g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.fillStyle = '#000'; g.fillRect(0, 0, W * Q, H * Q);
   g.drawImage(cut.wc, f[0] * (1 - 1 / z) * Q, f[1] * (1 - 1 / z) * Q, W * Q / z, H * Q / z, ox, oy, W * Q, H * Q);
@@ -12285,6 +12269,7 @@ function cutDrawFrame(T) {
     cutCoin(g, cx, cy, r, T * (5 + u * 14), 0.8);
   }
   const fl = cutKf(T, [[14.55, 0], [CT.flash, 1], [CT.flash + 0.06, 1], [15.9, 0]]); if (fl > 0.01) { g.fillStyle = 'rgba(255,248,205,' + fl + ')'; g.fillRect(0, 0, W, H); }
+  cutFxScreen(g, T, Tn, w2s, W, H);
   const F = cutFinale(T, L, w2s);
   if (F) {
     g.fillStyle = 'rgba(8,6,22,' + (0.68 * cutSm(F.fT / 0.9)) + ')'; g.fillRect(0, 0, W, H);
@@ -12321,12 +12306,8 @@ function cutDrawFrame(T) {
     cutRc(g, bx - 2, by - 2, bw + 4, bh + 4, '#fff6c8'); cutRc(g, bx, by, bw, bh, '#2a7a3a'); cutRc(g, bx, by, bw, 3, '#7aff7a'); cutRc(g, bx, by + bh - 3, bw, 3, '#1d5a2a'); g.globalAlpha = 0.25 * pul; cutRc(g, bx, by, bw, bh, '#ffffff'); g.globalAlpha = 1;
     cutTextPx(g, txt.go, W / 2, by + bh / 2 + 0.5, 3, '#ffffff', '#1d5a2a', 'center'); cut.btn = [bx, by, bw, bh];
   }
-  if (Tn < 0) {                                                                  // вступний текст на чорному
-    const nar = W < 300, lines = nar ? txt.introN : txt.intro, k = nar ? 2 : 3, cw = 8 * k / CUT_Q; let left = Math.floor((Tn + CUT_PRE) * 20);
-    g.fillStyle = '#05060f'; g.fillRect(0, 0, W, H);
-    lines.forEach((l, i) => { if (left > 0) { cutTextPx(g, l.slice(0, left), Math.round((W - l.length * cw) / 2), H / 2 - (lines.length - 1) * 9 + i * (nar ? 16 : 20), k, '#fff6c8', '#6b3a10', 'left'); left -= l.length; } });
-  }
-  const goT = cut.goAmb >= 0 ? cut.amb - cut.goAmb : -1, fade = Math.max(Tn < 0 ? 0 : cutKf(T, [[0, 1], [0.9, 0]]), goT >= 0 ? cutSm(goT / 0.7) : 0);
+  if (Tn < 0) cutIntroText(g, Tn, W, H, txt);                                   // вступ: текст над небом
+  const goT = cut.goAmb >= 0 ? cut.amb - cut.goAmb : -1, fade = Math.max(Tn < 0 ? Math.max(0, 1 - (Tn + CUT_PRE) / 0.9) : 0, goT >= 0 ? cutSm(goT / 0.7) : 0);
   if (fade > 0.01) { g.fillStyle = goT >= 0 ? 'rgba(255,248,205,' + fade + ')' : 'rgba(0,0,0,' + fade + ')'; g.fillRect(0, 0, W, H); }
   g.drawImage(cutCache('vig' + W + 'x' + H, () => { const c = document.createElement('canvas'); c.width = W * Q; c.height = H * Q; const v = c.getContext('2d'), gr = v.createRadialGradient(W * Q / 2, H * Q / 2, H * Q * 0.45, W * Q / 2, H * Q / 2, Math.max(W, H) * Q * 0.75); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.42)'); v.fillStyle = gr; v.fillRect(0, 0, W * Q, H * Q); return c; }), 0, 0, W, H);
 }
@@ -12391,19 +12372,20 @@ Object.assign(SFX, {
   },
   cutDoor() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'sine', 880, t, 0.25, 0.2, 880); tone(audio.sfxGain, 'sine', 1175, t + 0.18, 0.4, 0.18, 1175); }
 });
-const CUT_EV = [[CT.ting1, 'cutTing'], [CT.ting2, 'cutTing'], [CT.pick, 'cutPick'], [CT.fly0, 'cutWhoosh'], [CT.charge, 'cutCharge'], [CT.flash, 'cutBoom'], [16.2, 'cutThud'], [17.0, 'cutThud'], [17.8, 'cutThud'], [18.6, 'cutThud'], [CT.asm1, 'cutDone'], [CT.fin + 0.4, 'cutDoor'],
+const CUT_EV = [[CT.ting1, 'cutTing'], [CT.ting2, 'cutTing'], [CT.pick, 'cutPick'], [CT.fly0, 'cutWhoosh'], [CT.charge, 'cutCharge'], [CT.flash, 'cutBoom'], [CT.asm1, 'cutDone'], [CT.fin + 0.4, 'cutDoor'],
   ...CUT_SAY.map(s => [s[0], s[2] === 'c' ? 'cutBlipC' : 'cutBlipB'])];
 function cutFire(T) {
-  const fire = (key, name, arg) => { if (!cut.fired[key] && T >= key) { cut.fired[key] = 1; playSfx(name, arg); } };
-  CUT_EV.forEach(([te, n]) => fire(te + n, n));
-  for (let k = 0; k < 14; k++) { const te = CT.asm0 + 0.6 + k * 0.5; if (te < CT.asm1) { if (!cut.fired['tk' + k] && T >= te) { cut.fired['tk' + k] = 1; playSfx('cutTock'); } } }
+  if (cut.seek >= 0) return;                                                     // перегляд кадру (seek) — без звуків
+  const fire = (te, name, arg) => { const key = te + name; if (!cut.fired[key] && T >= te) { cut.fired[key] = 1; playSfx(name, arg); } };
+  CUT_EV.forEach(([te, n]) => fire(te, n));
+  cutFireBuild(T);
   if (cut.tapAmb >= 0) {
-    [[0, 'cutClick'], [0.05, 'cutWhoosh'], [0.75, 'cutPick']].forEach(([d, n]) => fire(CT.TW + d + n, n));
+    [[0, 'cutClick'], [0.05, 'cutWhoosh'], [0.75, 'cutPick']].forEach(([d, n]) => fire(CT.TW + d, n));
     for (let i = 0; i < 4; i++) { const te = CT.u0 + 0.2 + 0.6 * i; if (!cut.fired['ch' + i] && T >= te) { cut.fired['ch' + i] = 1; playSfx('cutChain', i); } }
     for (let i = 0; i < 3; i++) { const te = CT.u0 + 3.3 + 0.5 * i; if (!cut.fired['gr' + i] && T >= te) { cut.fired['gr' + i] = 1; playSfx('cutChain', i + 1); } }
     for (let i = 0; i < 3; i++) { const te = CT.u0 + 5.5 + 0.6 * i; if (!cut.fired['wd' + i] && T >= te) { cut.fired['wd' + i] = 1; playSfx('cutWord', i); } }
     if (!cut.fired.fan && T >= CT.u0 + 7.3) { cut.fired.fan = 1; playSfx('levelup'); }
-    [[CT.fin + 2.2, 'cutBlipC'], [CT.fin + 3.4, 'cutBlipC'], [CT.fin + 5.3, 'cutBlipC']].forEach(([te, n]) => fire(te + n, n));
+    [[CT.fin + 2.2, 'cutBlipC'], [CT.fin + 3.4, 'cutBlipC'], [CT.fin + 5.3, 'cutBlipC']].forEach(([te, n]) => fire(te, n));
   }
 }
 function cutLayout() {
@@ -12425,8 +12407,10 @@ function cutTick(now) {
   else {
     let lim = CT.END;
     if (cut.tapAmb < 0) lim = Math.min(lim, CT.TW);
+    if (cut.g1 < 0) lim = Math.min(lim, CT.g1);
+    if (cut.g2 < 0) lim = Math.min(lim, CT.g2);
     if (cut.goAmb < 0) lim = Math.min(lim, CT.finBtn);
-    cut.T = Math.min(lim, cut.T + dt / CUT_SLOW);
+    cut.T = Math.min(lim, cut.T + dt / CUT_SLOW * cutRate(cut.T));
   }
   cutFire(cut.T);
   try { cutDrawFrame(cut.T); } catch (e) { console.error('cutscene', e); }
@@ -12438,6 +12422,8 @@ function playCutscene(style, opts) {
   const box = document.getElementById('cutscene'); box.hidden = false; box.classList.remove('picking');
   cut.cv = document.getElementById('cutCv'); cut.style = CUT_STYLES[style] ? style : 'A'; cut.cb = opts.done || null;
   cut.fired = {}; cut.tapAmb = -1; cut.goAmb = -1; cut.T = (opts.seek !== undefined) ? 0 : -CUT_PRE; cut.amb = 0; cut.hit = null; cut.seek = opts.seek !== undefined ? opts.seek : -1;
+  cut.g1 = cut.g2 = cut.chgAmb = -1; cut.chg = 0; cut.taps = []; cut.coinScr = null;
+  if (opts.seek !== undefined || opts.tapped) { cut.g1 = cut.g2 = 0; cut.chg = CUT_CHG; }
   if (opts.tapped) cut.tapAmb = 0;
   if (opts.go) cut.goAmb = 0;
   document.getElementById('cutSkip').textContent = (CUT_TXT[state.lang] || CUT_TXT.uk).skip + ' ▶▶';
@@ -12478,10 +12464,11 @@ function initCutscene() {
   box.addEventListener('pointerdown', e => {
     if (!cut.on) return;
     const r = cut.cv.getBoundingClientRect(), x = (e.clientX - r.left) / cut.S, y = (e.clientY - r.top) / cut.S;
+    if (cutGateTap(x, y)) return;
     if (cut.tapAmb < 0 && cut.T >= CT.TW - 0.01 && cut.rect) { const q = cut.rect, pad = 14; if (x >= q[0] - pad && x <= q[0] + q[2] + pad && y >= q[1] - pad && y <= q[1] + q[3] + pad) { cut.tapAmb = cut.amb; cut.hit = [x, y]; } }
     else if (cut.goAmb < 0 && cut.btn) { const q = cut.btn; if (x >= q[0] - 6 && x <= q[0] + q[2] + 6 && y >= q[1] - 6 && y <= q[1] + q[3] + 6) cut.goAmb = cut.amb; }
   });
-  addEventListener('keydown', e => { if (cut.on && e.key === 'Escape') cutStop(true); });
+  addEventListener('keydown', e => { if (cut.on && e.key === 'Escape') cutStop(true); else if (cut.on && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); cutKeyTap(); } });
   addEventListener('resize', () => { if (cut.on) cutLayout(); });
   const q = new URLSearchParams(location.search);
   if (q.has('cutpick')) setTimeout(cutPicker, 900);
@@ -12621,6 +12608,241 @@ function setupSound() {
   updateSoundUI();
 }
 
+//#part 190_cz_cutscene_epic.js
+/* ====================== КАТ-СЦЕНА v3: КІНО, ТАПИ Й БУДІВНИЦТВО МАРКЕТУ ======================
+   Уповільнення (cutRate), кінорамки, вступ-проліт камери з неба, два клікабельні моменти (тапнути монетку; CUT_CHG тапів — зарядити)
+   і окрема анімація зведення маркету: удар світла → креслення → риштування → блоки летять з монетки-ядра знизу вгору →
+   дах із вивіскою падає в уповільненні → риштування ховається → смуга світла, промені, іскри. Усе — функції сюжетного часу T. */
+const CUT_CHG = 5;
+CT.g1 = 5.95; CT.g2 = 13.85;                                          // де сцена чекає тапу гравця
+// фази будівництва в сюжетних секундах від CT.asm0 (будівництво йде уповільнено, див. cutRate)
+const CB = { bp0: 0.12, bp1: 0.75, sc0: 0.35, sc1: 0.75, t0: 0.55, fly: 0.42, t1: 2.35, orbUp: 2.42, roof0: 2.5, roof1: 2.78, scDown: 3.0, light: 3.22, rays: 3.0 };
+const CUT_TXT2 = {
+  uk: { tapCoin: 'ТАПНИ МОНЕТКУ!', charge: 'ТАПАЙ-ТАПАЙ!' }, en: { tapCoin: 'TAP THE COIN!', charge: 'TAP FAST!' },
+  es: { tapCoin: '¡TOCA LA MONEDA!', charge: '¡TOCA RÁPIDO!' }, it: { tapCoin: 'TOCCA LA MONETA!', charge: 'TOCCA VELOCE!' },
+  pl: { tapCoin: 'DOTKNIJ MONETY!', charge: 'STUKAJ SZYBKO!' }, pt: { tapCoin: 'TOCA NA MOEDA!', charge: 'TOCA RÁPIDO!' }
+};
+const cutT2 = k => (CUT_TXT2[state.lang] || CUT_TXT2.en)[k];
+function cutRate(T) {                                                 // швидкість сюжетного часу: <1 — уповільнення
+  const b = T - CT.asm0;
+  if (T >= CT.pick - 0.05 && T < CT.pick + 0.85) return 0.5;          // монетка летить у рюкзак
+  if (b >= CB.roof1 - 0.14 && b < CB.roof1 + 0.22) return 0.3;        // дах падає
+  if (b >= -0.1 && b < 4.0) return 0.62;                              // будівництво
+  return 1;
+}
+function cutBars(T, Tn) { return Tn < 0 ? 1 : cutKf(T, [[0.5, 1], [1.6, 0], [CT.g2 + 0.05, 0], [14.3, 1], [CT.sign1 - 0.2, 1], [CT.sign1 + 0.6, 0]]); }
+function cutIntroCam(Tn, W, H) {                                      // вступ: камера дивиться в небо, потім відʼїжджає до вулиці
+  const s = Tn + CUT_PRE, e = cutSm((s - 1.7) / (CUT_PRE - 1.7)), sky = [W * 0.5 + s * 2, (156 + cut.shift) * 0.34];
+  return [cutLerp(2.3, 1, e), [cutLerp(sky[0], W / 2, e), cutLerp(sky[1], H / 2, e)]];
+}
+function cutIntroText(g, Tn, W, H, txt) {
+  const s = Tn + CUT_PRE, nar = W < 300, lines = nar ? txt.introN : txt.intro, k = nar ? 2 : 3, cw = 8 * k / CUT_Q, a = 1 - cutSm((s - (CUT_PRE - 1.5)) / 0.8);
+  if (a <= 0) return;
+  const lh = nar ? 16 : 20, y0 = Math.round(H * 0.3 - (lines.length - 1) * lh / 2), gr = g.createLinearGradient(0, y0 - 40, 0, y0 + lines.length * lh + 30);
+  gr.addColorStop(0, 'rgba(5,6,15,0)'); gr.addColorStop(0.5, 'rgba(5,6,15,' + 0.5 * a + ')'); gr.addColorStop(1, 'rgba(5,6,15,0)'); g.fillStyle = gr; g.fillRect(0, y0 - 40, W, lines.length * lh + 70);
+  let left = Math.floor((s - 0.5) * 22); g.globalAlpha = a;
+  lines.forEach((l, i) => { if (left > 0) { cutTextPx(g, l.slice(0, left), Math.round((W - l.length * cw) / 2), y0 + i * lh, k, '#fff6c8', '#6b3a10', 'left'); left -= l.length; } });
+  g.globalAlpha = 1;
+}
+// Підготовка будівництва: блоки 4×4 (без верхньої смуги — дах падає цілим), контур креслення, синій «привид» магазину
+function cutBuildPrep() {
+  const src = cut.thumbs[0].c; if (cut.bt && cut.bt.src === src) return cut.bt;
+  const w = cut.shopW, h = cut.shopH, TS = 4, d = src.getContext('2d').getImageData(0, 0, w, h).data;
+  const al = (x, y) => x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] > 40;
+  const lum = (x, y) => { const i = (y * w + x) * 4; return d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11; };
+  const top = Math.max(TS, Math.round(h * 0.27 / TS) * TS), span = CB.t1 - CB.t0 - CB.fly, tiles = [];
+  for (let ty = top; ty < h; ty += TS) for (let tx = 0; tx < w; tx += TS) {
+    let n = 0; for (let y = ty; y < Math.min(h, ty + TS); y++) for (let x = tx; x < Math.min(w, tx + TS); x++) if (al(x, y)) n++;
+    if (!n) continue;
+    const r = 1 - (ty - top) / Math.max(1, h - TS - top);            // 0 — низ, 1 — верх: будується знизу вгору
+    tiles.push({ x: tx, y: ty, w: Math.min(TS, w - tx), h: Math.min(TS, h - ty), land: CB.t0 + CB.fly + Math.min(1, r * 0.8 + cutHash(tx * 7.3 + ty * 1.7) * 0.2) * span,
+      side: cutHash(tx * 3.1 + ty * 13) < 0.5 ? -1 : 1, arc: 10 + cutHash(tx + ty * 5) * 16 });
+  }
+  const gh = document.createElement('canvas'); gh.width = w; gh.height = h; const gg = gh.getContext('2d'), edge = [];
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (!al(x, y)) continue;
+    if (!al(x - 1, y) || !al(x + 1, y) || !al(x, y - 1) || !al(x, y + 1)) { edge.push([x, y, Math.abs(Math.atan2(x - w / 2, y - h * 0.5)) / Math.PI]); continue; }
+    const det = (al(x + 1, y) && Math.abs(lum(x, y) - lum(x + 1, y)) > 48) || (al(x, y + 1) && Math.abs(lum(x, y) - lum(x, y + 1)) > 48);
+    gg.fillStyle = det ? 'rgba(150,230,255,.75)' : (x % 6 === 0 || y % 6 === 0) ? 'rgba(90,190,255,.3)' : 'rgba(40,120,220,.15)'; gg.fillRect(x, y, 1, 1);
+  }
+  const wh = document.createElement('canvas'); wh.width = w; wh.height = top; const wg = wh.getContext('2d');      // біла тінь даху для спалаху
+  wg.drawImage(src, 0, 0); wg.globalCompositeOperation = 'source-in'; wg.fillStyle = '#fff6c8'; wg.fillRect(0, 0, w, top);
+  return (cut.bt = { src, w, h, TS, top, tiles, gh, wh, edge, sw: null });
+}
+function cutPuff(g, seed, x0, y0, t, n, spd, col) {                    // хмарка пилу
+  if (t < 0 || t > 1.3) return;
+  g.fillStyle = col;
+  for (let i = 0; i < n; i++) {
+    const a = Math.PI * (1.02 + cutHash(seed + i) * 0.96), v = spd * (0.4 + cutHash(seed + i * 3.7)), m = 1 - Math.exp(-t * 3.2);
+    const x = x0 + Math.cos(a) * v * m, y = y0 + Math.sin(a) * v * 0.32 * m - t * 7, r = 1.5 + t * 6 * (0.5 + cutHash(i + seed * 2));
+    g.globalAlpha = 0.5 * (1 - t / 1.3); g.beginPath(); g.arc(x, y, r, 0, 6.283); g.fill();
+  }
+  g.globalAlpha = 1;
+}
+// Позаду магазину: промені, стовп світла, ударні хвилі, креслення, риштування
+function cutBuildBack(g, T, L, sx0, sy0) {
+  const b = T - CT.asm0, B = cutBuildPrep(), amb = cut.amb, cx = L.shopCX, sh = cut.shift;
+  g.save(); g.globalCompositeOperation = 'lighter';
+  const ra = cutSm((b - CB.rays) / 0.5) * (1 - cutSm((T - CT.sign1) / 0.8));
+  if (ra > 0.01) {
+    const ox = cx, oy = sy0 + B.h * 0.42;
+    for (let i = 0; i < 16; i++) {
+      const a = amb * 0.22 + i / 16 * 6.283, wd = 0.07 + 0.035 * Math.sin(i * 1.7), R2 = 280; if (Math.sin(a) > 0.12) continue;    // лише вгору й убоки
+      g.fillStyle = 'rgba(255,214,130,' + (0.12 * ra) + ')'; g.beginPath(); g.moveTo(ox, oy); g.lineTo(ox + Math.cos(a - wd) * R2, oy + Math.sin(a - wd) * R2); g.lineTo(ox + Math.cos(a + wd) * R2, oy + Math.sin(a + wd) * R2); g.fill();
+    }
+    const gr = g.createRadialGradient(ox, oy, 4, ox, oy, 110); gr.addColorStop(0, 'rgba(255,236,170,' + 0.4 * ra + ')'); gr.addColorStop(1, 'rgba(255,200,120,0)'); g.fillStyle = gr; g.fillRect(ox - 110, oy - 110, 220, 220);
+  }
+  if (b > -0.4 && b < 1.0) {                                           // стовп світла з неба
+    const u = (b + 0.4) / 1.4, wd = 30 * (1 - u) * cutSm((b + 0.4) / 0.25) + 1, top = -sh - 4, gr = g.createLinearGradient(cx - wd, 0, cx + wd, 0);
+    gr.addColorStop(0, 'rgba(255,220,120,0)'); gr.addColorStop(0.5, 'rgba(255,250,220,' + (0.9 * (1 - u)) + ')'); gr.addColorStop(1, 'rgba(255,220,120,0)'); g.fillStyle = gr; g.fillRect(cx - wd, top, wd * 2, 170 - top);
+  }
+  for (let k = 0; k < 2; k++) {                                        // ударні хвилі по землі
+    const u = (b - k * 0.14) / 0.75; if (u <= 0 || u >= 1) continue; const rx = 8 + cutSm(u) * 200;
+    g.strokeStyle = 'rgba(255,240,190,' + (0.85 * (1 - u)) + ')'; g.lineWidth = 2.5 * (1 - u) + 0.5; g.beginPath(); g.ellipse(cx, 170, rx, rx * 0.16, 0, 0, 6.283); g.stroke();
+  }
+  if (b >= 0 && b < 1.6) { const u = b / 1.6, gr = g.createRadialGradient(cx, 170, 2, cx, 170, 90); gr.addColorStop(0, 'rgba(255,220,140,' + 0.6 * (1 - u) + ')'); gr.addColorStop(1, 'rgba(255,200,120,0)'); g.save(); g.translate(cx, 170); g.scale(1, 0.3); g.fillStyle = gr; g.fillRect(-90, -90, 180, 180); g.restore(); }
+  const bpEnd = 1 - cutSm((b - CB.light) / 0.5);                       // креслення: контур малюється з низу вгору, потім синій «привид»
+  if (b > CB.bp0 && bpEnd > 0) {
+    const p = cutSm((b - CB.bp0) / (CB.bp1 - CB.bp0)), ga = cutSm((b - CB.bp1 + 0.25) / 0.35) * bpEnd;
+    if (ga > 0) { g.globalAlpha = ga; g.drawImage(B.gh, sx0, sy0); }
+    g.globalAlpha = bpEnd;
+    for (const e of B.edge) { if (e[2] > p) continue; g.fillStyle = p < 1 && p - e[2] < 0.03 ? '#ffffff' : 'rgba(120,220,255,.9)'; g.fillRect(sx0 + e[0], sy0 + e[1], 1, 1); }
+    g.globalAlpha = 1;
+    if (p < 1) for (const e of B.edge) if (Math.abs(e[2] - p) < 0.004) cutSpark(g, sx0 + e[0], sy0 + e[1], 1, '#dff6ff');
+  }
+  g.restore();
+  if (b > CB.sc0 && b < CB.scDown + 0.45) {                            // риштування вистрибує з землі, потім ховається
+    const u = Math.min(1, (b - CB.sc0) / (CB.sc1 - CB.sc0)), c1 = 1.70158, up = 1 + (c1 + 1) * Math.pow(u - 1, 3) + c1 * Math.pow(u - 1, 2);
+    const dn = cutSm((b - CB.scDown) / 0.4), Hs = (B.h + 12) * up, base = 170 + dn * (B.h + 16), pl = [sx0 - 8, sx0 + B.w + 4];
+    g.save(); g.beginPath(); g.rect(sx0 - 40, -400, B.w + 80, 570); g.clip();
+    pl.forEach(px => { cutRc(g, px, base - Hs, 3, Hs, '#8a5a30'); cutRc(g, px, base - Hs, 1, Hs, '#b88450'); });
+    for (let lv = 0; lv < 5; lv++) {
+      const t = CB.t0 + CB.fly + lv * 0.34; if (b < t) break;
+      const pop = Math.min(1, (b - t) / 0.12), y = base - 2 - lv * (B.h + 10) / 5, wd = (pl[1] - pl[0] + 7) * pop;
+      cutRc(g, pl[0] - 2, y, wd, 2, '#a06a38'); cutRc(g, pl[0] - 2, y, wd, 0.5, '#d9a46a');
+    }
+    g.restore();
+  }
+}
+// Сам магазин під час будівництва: покладені блоки й дах, що падає
+function cutBuildShop(g, T, L, sx0, sy0) {
+  const b = T - CT.asm0, B = cutBuildPrep(), src = B.src;
+  for (const t of B.tiles) {
+    if (b < t.land) continue;
+    g.drawImage(src, t.x, t.y, t.w, t.h, sx0 + t.x, sy0 + t.y, t.w, t.h);
+    const f = b - t.land; if (f < 0.14) { g.globalAlpha = (1 - f / 0.14) * 0.85; cutRc(g, sx0 + t.x, sy0 + t.y, t.w, t.h, '#fff6c8'); g.globalAlpha = 1; }
+  }
+  if (b >= CB.roof0) {
+    const u = Math.min(1, (b - CB.roof0) / (CB.roof1 - CB.roof0)), v = b - CB.roof1, fall = (1 - u * u) * (sy0 + cut.shift + B.top + 30);
+    const y = sy0 - fall + (v > 0 ? Math.sin(Math.min(1, v / 0.22) * Math.PI) * 2.5 * Math.max(0, 1 - v / 0.22) : 0);
+    if (u < 1) for (let k = 3; k >= 1; k--) { g.globalAlpha = 0.22 / k; g.drawImage(src, 0, 0, B.w, B.top, sx0, y - k * 10, B.w, B.top); }      // слід руху
+    g.globalAlpha = 1; g.drawImage(src, 0, 0, B.w, B.top, sx0, y, B.w, B.top);
+    if (v >= 0 && v < 0.18) { g.globalAlpha = (1 - v / 0.18) * 0.9; g.drawImage(B.wh, sx0, y); g.globalAlpha = 1; }
+  }
+}
+// Спереду: блоки в польоті, монетка-ядро, пил, уламки паркану, смуга світла, іскри
+function cutBuildFront(g, T, L, sx0, sy0) {
+  const b = T - CT.asm0, B = cutBuildPrep(), amb = cut.amb, cx = L.shopCX, src = B.src;
+  let ox = cx, oy = sy0 - 26 + Math.sin(amb * 3) * 1.5;
+  if (b > CB.orbUp) oy -= Math.pow((b - CB.orbUp) / 0.3, 2) * 260;
+  if (b >= 0 && b < 1.4) for (let k = 0; k < 8; k++) {                 // паркан розлітається від удару
+    const x0 = L.lotL + 6 + k * 22, dir = x0 < cx ? -1 : 1, vx = dir * (50 + cutHash(k * 9) * 70), vy = -(70 + cutHash(k * 5) * 70), x = x0 + vx * b, y = 134 + vy * b + 230 * b * b;
+    if (y > 200) continue; g.save(); g.translate(x, y); g.rotate(dir * b * (6 + cutHash(k) * 6)); cutRc(g, -2, -14, 4, 28, '#8a5a30'); cutRc(g, -2, -14, 4, 2, '#b88450'); g.restore();
+  }
+  for (const t of B.tiles) {                                           // блоки летять дугами з монетки на свої місця
+    const s = b - (t.land - CB.fly); if (s < 0 || s >= CB.fly) continue;
+    const u = s / CB.fly, tx = sx0 + t.x, ty = sy0 + t.y, pos = q => { const e = 1 - Math.pow(1 - q, 3); return [cutLerp(ox, tx, e) + t.side * Math.sin(Math.PI * q) * t.arc, cutLerp(oy, ty, e) - Math.sin(Math.PI * q) * t.arc * 0.6]; };
+    for (let k = 3; k >= 1; k--) { const p = pos(Math.max(0, u - k * 0.07)); g.globalAlpha = 0.5 / k; cutRc(g, p[0] + 1, p[1] + 1, 2, 2, '#ffd75a'); }
+    const p = pos(u); g.globalAlpha = 1; g.drawImage(src, t.x, t.y, t.w, t.h, p[0], p[1], t.w, t.h); g.globalAlpha = 0.75 * (1 - u); cutRc(g, p[0], p[1], t.w, t.h, '#ffe36a'); g.globalAlpha = 1;
+  }
+  if (b > CB.t0 - 0.25 && b < CB.orbUp + 0.35) {                       // монетка-ядро: світиться, крутиться, меншає з кожним блоком
+    let left = 0; for (const t of B.tiles) if (t.land - CB.fly > b) left++;
+    const r = Math.max(1.5, (3 + 5 * left / B.tiles.length) * cutSm((b - CB.t0 + 0.25) / 0.3) + Math.sin(amb * 14) * 0.4);
+    g.save(); g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(ox, oy, 1, ox, oy, r * 5); gr.addColorStop(0, 'rgba(255,240,180,.9)'); gr.addColorStop(0.35, 'rgba(255,200,90,.35)'); gr.addColorStop(1, 'rgba(255,180,60,0)');
+    g.fillStyle = gr; g.fillRect(ox - r * 5, oy - r * 5, r * 10, r * 10);
+    if (b > CB.orbUp) { const lg = g.createLinearGradient(0, oy, 0, oy + 60); lg.addColorStop(0, 'rgba(255,240,180,.8)'); lg.addColorStop(1, 'rgba(255,200,90,0)'); g.fillStyle = lg; g.fillRect(ox - 2, oy, 4, 60); }
+    g.restore();
+    cutCoin(g, ox, oy, r, amb * 9, 0);
+    for (let k = 0; k < 6; k++) { const a = amb * 4 + k / 6 * 6.283; cutSpark(g, ox + Math.cos(a) * (r + 7), oy + Math.sin(a) * (r + 7) * 0.5, 1, k % 2 ? '#fff6c8' : '#ffe36a'); }
+  }
+  const dc = cut.style === 'C' ? '#e8eef8' : '#cdb894';
+  cutPuff(g, 11, cx, 168, b, 22, 95, dc);                              // пил від удару, від даху, від риштування
+  cutPuff(g, 41, sx0, sy0 + B.top, b - CB.roof1, 9, 40, dc); cutPuff(g, 53, sx0 + B.w, sy0 + B.top, b - CB.roof1, 9, 40, dc); cutPuff(g, 67, cx, 169, b - CB.roof1, 14, 120, dc);
+  cutPuff(g, 83, cx, 169, b - CB.scDown, 10, 75, dc);
+  if (b > CB.light && b < CB.light + 0.55) {                           // смуга світла пробігає по новому магазину
+    const u = (b - CB.light) / 0.55; if (!B.sw) { B.sw = document.createElement('canvas'); B.sw.width = B.w; B.sw.height = B.h; }
+    const sg = B.sw.getContext('2d'); sg.globalCompositeOperation = 'source-over'; sg.clearRect(0, 0, B.w, B.h); sg.drawImage(src, 0, 0); sg.globalCompositeOperation = 'source-in';
+    const bx = cutLerp(-B.w * 0.4, B.w * 1.4, u), gr = sg.createLinearGradient(bx - 16, -8, bx + 16, 8); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, 'rgba(255,255,240,.95)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    sg.fillStyle = gr; sg.fillRect(0, 0, B.w, B.h); g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.9; g.drawImage(B.sw, sx0, sy0); g.restore();
+  }
+  if (b > CB.light - 0.1 && T < CT.sign1 + 0.8) {                      // іскри піднімаються над магазином
+    for (let i = 0; i < 18; i++) {
+      const ph = ((b - CB.light) / 1.4 + cutHash(i * 4.1)) % 1, x = sx0 - 6 + cutHash(i * 2.3) * (B.w + 12) + Math.sin(amb * 2 + i) * 3, y = sy0 + B.h - ph * (B.h + 30);
+      g.globalAlpha = Math.sin(ph * Math.PI) * (1 - cutSm((T - CT.sign1) / 0.8)); cutSpark(g, x, y, 1 + (i % 2), i % 3 ? '#fff6c8' : '#ffe36a');
+    }
+    g.globalAlpha = 1;
+  }
+}
+// Екранний шар: кінорамки, підказки клікабельних моментів, хвилі від тапів
+function cutDownArrow(g, ax, ay) {
+  g.fillStyle = '#3a2a22'; g.fillRect(ax - 7, ay - 1, 15, 3); g.fillRect(ax - 5, ay + 2, 11, 3); g.fillRect(ax - 3, ay + 5, 7, 3); g.fillRect(ax - 1, ay + 8, 3, 3);
+  g.fillStyle = '#ffe36a'; g.fillRect(ax - 6, ay - 1, 13, 2); g.fillRect(ax - 4, ay + 1, 9, 2); g.fillRect(ax - 2, ay + 3, 5, 2); g.fillRect(ax, ay + 5, 1, 2);
+}
+function cutFxScreen(g, T, Tn, w2s, W, H) {
+  const amb = cut.amb, bar = Math.round(Math.min(H * 0.085, W * 0.1) * cutBars(T, Tn)), cp = cut.coinPos ? w2s(cut.coinPos[0], cut.coinPos[1]) : null; cut.coinScr = cp;
+  if (bar > 0) { g.fillStyle = '#05060f'; g.fillRect(0, 0, W, bar); g.fillRect(0, H - bar, W, bar); }
+  const hintTxt = s => cutTextPx(g, s, W / 2, Math.max(22, Math.round(H * 0.12)), W < 300 ? 2 : 3, '#fff6c8', '#3a2a22', 'center');
+  if (cut.g1 < 0 && T >= CT.g1 - 0.01 && cp) {                        // 1) тапни монетку
+    const R = 18 + Math.sin(amb * 6) * 1.5;
+    g.strokeStyle = 'rgba(255,246,200,' + (0.6 + 0.4 * Math.sin(amb * 6)) + ')'; g.lineWidth = 1.5; g.beginPath(); g.arc(cp[0], cp[1], R, 0, 6.283); g.stroke();
+    const rp = (amb % 0.9) / 0.9; g.strokeStyle = 'rgba(255,227,106,' + (1 - rp) + ')'; g.beginPath(); g.arc(cp[0], cp[1], R + rp * 16, 0, 6.283); g.stroke();
+    cutDownArrow(g, Math.round(cp[0]), Math.round(cp[1] - R - 16 - Math.abs(Math.sin(amb * 5)) * 4)); hintTxt(cutT2('tapCoin'));
+  }
+  if (cut.g2 < 0 && T >= CT.g2 - 0.01 && cp) {                        // 2) тапай — зарядити монетку
+    const n = cut.chg, pulse = cut.chgAmb >= 0 ? Math.max(0, 1 - (amb - cut.chgAmb) / 0.25) : 0, cr = (8 + n * 1.8) * (1 + pulse * 0.25), R = cr + 11 + n;
+    g.save(); g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(cp[0], cp[1], 2, cp[0], cp[1], R * 2.4); gr.addColorStop(0, 'rgba(255,230,140,' + (0.3 + 0.1 * n + 0.3 * pulse) + ')'); gr.addColorStop(1, 'rgba(255,200,90,0)');
+    g.fillStyle = gr; g.fillRect(cp[0] - R * 2.4, cp[1] - R * 2.4, R * 4.8, R * 4.8); g.restore();
+    cutCoin(g, cp[0], cp[1], cr, amb * (4 + n * 3), 0);
+    for (let i = 0; i < CUT_CHG; i++) {
+      const a0 = -Math.PI / 2 + i * 6.283 / CUT_CHG + 0.1, a1 = a0 + 6.283 / CUT_CHG - 0.2;
+      g.lineWidth = 4; g.strokeStyle = '#3a2a22'; g.beginPath(); g.arc(cp[0], cp[1], R, a0, a1); g.stroke();
+      g.lineWidth = 2.4; g.strokeStyle = i < n ? (i === n - 1 && pulse > 0 ? '#ffffff' : '#ffd23a') : 'rgba(255,255,255,.22)'; g.beginPath(); g.arc(cp[0], cp[1], R, a0, a1); g.stroke();
+    }
+    for (let k = 0; k < n * 2; k++) { const a = amb * (3 + n) + k / (n * 2) * 6.283; cutSpark(g, cp[0] + Math.cos(a) * (R + 6), cp[1] + Math.sin(a) * (R + 6), 1, '#fff6c8'); }
+    if (n === 0) cutDownArrow(g, Math.round(cp[0]), Math.round(cp[1] - R - 16 - Math.abs(Math.sin(amb * 5)) * 4));
+    hintTxt(cutT2('charge'));
+  }
+  if (cut.taps) {
+    cut.taps = cut.taps.filter(t => amb - t[2] < 0.45);
+    cut.taps.forEach(t => {
+      const d = (amb - t[2]) / 0.45; g.strokeStyle = 'rgba(255,246,200,' + (1 - d) + ')'; g.lineWidth = 2 * (1 - d) + 0.5; g.beginPath(); g.arc(t[0], t[1], 3 + d * 22, 0, 6.283); g.stroke();
+      for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283 + 0.5; g.globalAlpha = 1 - d; cutSpark(g, t[0] + Math.cos(a) * (6 + d * 26), t[1] + Math.sin(a) * (6 + d * 26), 1, '#ffe36a'); }
+      g.globalAlpha = 1;
+    });
+  }
+}
+// Тапи: спершу клікабельні моменти; повертає true, якщо тап «зʼїдено»
+function cutGateTap(x, y) {
+  (cut.taps || (cut.taps = [])).push([x, y, cut.amb]);
+  if (cut.g1 < 0 && cut.T >= CT.g1 - 0.01) { cut.g1 = cut.amb; playSfx('cutClick'); return true; }
+  if (cut.g2 < 0 && cut.T >= CT.g2 - 0.01) { cut.chg++; cut.chgAmb = cut.amb; playSfx('cutPop', cut.chg * 3); if (cut.chg >= CUT_CHG) cut.g2 = cut.amb; return true; }
+  return false;
+}
+function cutKeyTap() {                                                 // пробіл / Enter на ПК = тап у потрібне місце
+  const c = cut.coinScr || [cut.W / 2, cut.H / 2];
+  if (cutGateTap(c[0], c[1])) return;
+  if (cut.tapAmb < 0 && cut.T >= CT.TW - 0.01 && cut.rect) { const q = cut.rect; cut.tapAmb = cut.amb; cut.hit = [q[0] + q[2] / 2, q[1] + q[3] / 2]; }
+  else if (cut.goAmb < 0 && cut.btn) cut.goAmb = cut.amb;
+}
+function cutFireBuild(T) {                                             // звуки будівництва
+  const b = T - CT.asm0, f = (k, te, n, a) => { if (!cut.fired[k] && b >= te) { cut.fired[k] = 1; playSfx(n, a); } };
+  for (let i = 0; i < 16; i++) f('bp' + i, CB.t0 + CB.fly + i * (CB.t1 - CB.t0 - CB.fly) / 15, 'cutPop', i);
+  f('bUp', CB.orbUp, 'cutWhoosh'); f('bRf', CB.roof1, 'cutBoom'); f('bSc', CB.scDown + 0.1, 'cutThud'); f('bLt', CB.light, 'cutShine');
+}
+Object.assign(SFX, {
+  cutPop(i) { const t = audio.ctx.currentTime + 0.01, fq = 330 * Math.pow(2, (i || 0) / 9); tone(audio.sfxGain, 'square', fq, t, 0.05, 0.07, fq * 1.5); tone(audio.sfxGain, 'triangle', fq * 2, t, 0.06, 0.08); },
+  cutShine() { melody('sine', [['G6', 0.05], ['C7', 0.05], ['E7', 0.05], ['G7', 0.22]], 0.18); }
+});
 //#part 190_d_epoch_tunes.js
 /* =====================================================================
    МУЗИКА ЕПОХ: у кожної епохи 1…8 (Ретро … Японія) свої дві мелодії (A — перші рівні магазину, B — пізні) й акорди,

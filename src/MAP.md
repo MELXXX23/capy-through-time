@@ -8,13 +8,13 @@
 |---|---|---|---|
 | `010_head.html` | 5 | HTML: шапка, мета, назва |  |
 | `020_style_base.css` | 3 | CSS: змінні кольорів, базові стилі |  |
-| `021_style_page.css` | 14 | CSS: сторінка, сцена, верхня панель |  |
+| `021_style_page.css` | 15 | CSS: сторінка, сцена, верхня панель |  |
 | `022_style_panels.css` | 11 | CSS: меню, вкладки, картки |  |
-| `023_style_boot.css` | 30 | CSS: екран завантаження, бульбашки, кат-сцена, газета |  |
+| `023_style_boot.css` | 34 | CSS: екран завантаження, бульбашки, кат-сцена, газета |  |
 | `024_style_modal_phone.css` | 21 | CSS: модальні вікна, телефон |  |
 | `025_style_late.css` | 7 | CSS: пізні правки (поверх решти) |  |
 | `030_body_open.html` | 1 | HTML: початок body |  |
-| `040_boot_script.html` | 50 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
+| `040_boot_script.html` | 75 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
 | `050_body_markup.html` | 18 | HTML: розмітка гри (панель, меню, вікна) |  |
 | `100_a_core_config.js` | 38 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
 | `100_b_music_epochs_customers.js` | 44 | музика (MUSIC, EPOCH_MUSIC), майстерня часу, EPOCHS, досягнення, SPRITES, PALETTE, покупці CHIBI | arpBar, DRUMS_CALM, DRUMS_BOUNCE, MUSIC, DRUMS_CHIP, DRUMS_CHILL, MUSIC_STYLES, EPOCH_MUSIC |
@@ -48,8 +48,9 @@
 | `180_b_actor_draw_lines.js` | 45 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, ACTOR_K, actorK, evenScaleCache, evenScaled, crispFigCache, crispFigure |
 | `180_c_customers_updates.js` | 37 | покупці (spawnCustomer, drawCustomer, spaceHelmet), updateAnimations, спливаючі числа | skinLineLast, skinLine, capySay, buyStar, hireOrUpgrade, customerTarget, passEdge, spawnX |
 | `190_a_audio_music_cutscene.js` | 47 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
-| `190_b_cutscene_draw.js` | 41 | кат-сцена: малювання | cutFace, cutMark, cutEmo, cutTextPx, cutPopText, cutSpark, cutBubble, cutSayState |
-| `190_c_cutscene_panel_tour_sfx.js` | 38 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |
+| `190_b_cutscene_draw.js` | 39 | кат-сцена: малювання | cutFace, cutMark, cutEmo, cutTextPx, cutPopText, cutSpark, cutBubble, cutSayState |
+| `190_c_cutscene_panel_tour_sfx.js` | 39 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |
+| `190_cz_cutscene_epic.js` | 21 | кат-сцена v3: кіно-вступ, кінорамки, тапи (монетка, заряд), будівництво маркету з блоків | CUT_CHG, CB, CUT_TXT2, cutT2, cutRate, cutBars, cutIntroCam, cutIntroText |
 | `190_d_epoch_tunes.js` | 15 | музика епох 1–8: EPOCH_TUNES (дві мелодії на епоху, акорди), epochTrackDef/epochTrackKey | TUNE_Q, ARP_FAST, ARP_SOFT, LEAD_VOL, BASS_VOL, ARP_VOL, EPOCH_TUNES, chordInfo |
 | `200_a_travel_ui_warp_base.js` | 43 | налаштування, вікна-підтвердження, основа анімації подорожі | warp, confirmCb, savingDisabled, achTimer, autoTapAcc, stars, leaves, wsEls |
 | `200_b_warp_epoch_animations.js` | 34 | анімації подорожі для кожної епохи (WARP_BY_EPOCH) | warpPix, warpCapy, warpFont, warpText, drawWarpDisco, WARP_INV, drawWarpArcade, drawWarpNet |
@@ -90,5 +91,5 @@
 | `279_z_lang_es.js` | 165 | — |  |
 | `279_z_lang_it.js` | 165 | — |  |
 | `279_z_lang_pl.js` | 158 | — |  |
-| `279_z_lang_pt.js` | 163 | — |  |
+| `279_z_lang_pt.js` | 162 | — |  |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |

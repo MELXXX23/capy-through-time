@@ -4,17 +4,20 @@ function cutW2S(wx, wy, z, f) { const sx = wx - cut.camX, sy = wy + cut.shift; r
 function cutDrawFrame(T) {
   const Tn = T; T = Math.max(0, T);
   const g = cut.g, W = cut.W, H = cut.H, Q = CUT_Q, txt = CUT_TXT[state.lang] || CUT_TXT.uk, amb = cut.amb;
-  cutRenderWorld(T); const L = cut.L;
+  cutRenderWorld(Tn < 0 ? Math.max(-CUT_PRE, Tn) : T); const L = cut.L;
   let z = cutZoom(T), f = [W / 2, H / 2];
   if (z > 1.001) {
     const sh = cut.shift; let target;
     if (T < 7.2 && cut.coinPos) target = [cut.coinPos[0] - cut.camX, cut.coinPos[1] + sh];
     else if (T < 15) target = [L.shopCX - cut.camX, 96 + sh];
+    else if (T < CT.sign0) target = [L.shopCX - cut.camX, 170 - cut.shopH * 0.5 + sh];
     else target = [L.shopCX - cut.camX, 170 - cut.shopH + 22 + sh];
     f = [Math.max(10, Math.min(W - 10, target[0])), Math.max(10, Math.min(H - 10, target[1]))];
   }
-  let shk = 0; [[CT.flash, 4], [16.2, 1.6], [17.0, 1.6], [17.8, 1.8], [18.6, 2.2]].forEach(([te, a]) => { const d = T - te; if (d >= 0 && d < 0.3) shk = Math.max(shk, a * (1 - d / 0.3)); });
+  if (Tn < 0) { const ic = cutIntroCam(Tn, W, H); z = ic[0]; f = ic[1]; }
+  let shk = 0; [[CT.flash, 4], [CT.asm0 + 0.02, 2.5], [CT.asm0 + CB.roof1, 4.5], [CT.asm0 + CB.scDown + 0.1, 1.2]].forEach(([te, a]) => { const d = T - te; if (d >= 0 && d < 0.3) shk = Math.max(shk, a * (1 - d / 0.3)); });
   if (cut.tapAmb >= 0) { const d = amb - cut.tapAmb; if (d >= 0 && d < 0.25) shk = Math.max(shk, 1.5 * (1 - d / 0.25)); }
+  if (cut.chgAmb >= 0) { const d = amb - cut.chgAmb; if (d >= 0 && d < 0.15) shk = Math.max(shk, (0.6 + cut.chg * 0.25) * (1 - d / 0.15)); }
   const ox = shk ? Math.round(Math.sin(T * 91) * shk * Q) : 0, oy = shk ? Math.round(Math.cos(T * 77) * shk * Q) : 0;
   g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.fillStyle = '#000'; g.fillRect(0, 0, W * Q, H * Q);
   g.drawImage(cut.wc, f[0] * (1 - 1 / z) * Q, f[1] * (1 - 1 / z) * Q, W * Q / z, H * Q / z, ox, oy, W * Q, H * Q);
@@ -28,6 +31,7 @@ function cutDrawFrame(T) {
     cutCoin(g, cx, cy, r, T * (5 + u * 14), 0.8);
   }
   const fl = cutKf(T, [[14.55, 0], [CT.flash, 1], [CT.flash + 0.06, 1], [15.9, 0]]); if (fl > 0.01) { g.fillStyle = 'rgba(255,248,205,' + fl + ')'; g.fillRect(0, 0, W, H); }
+  cutFxScreen(g, T, Tn, w2s, W, H);
   const F = cutFinale(T, L, w2s);
   if (F) {
     g.fillStyle = 'rgba(8,6,22,' + (0.68 * cutSm(F.fT / 0.9)) + ')'; g.fillRect(0, 0, W, H);
@@ -64,12 +68,8 @@ function cutDrawFrame(T) {
     cutRc(g, bx - 2, by - 2, bw + 4, bh + 4, '#fff6c8'); cutRc(g, bx, by, bw, bh, '#2a7a3a'); cutRc(g, bx, by, bw, 3, '#7aff7a'); cutRc(g, bx, by + bh - 3, bw, 3, '#1d5a2a'); g.globalAlpha = 0.25 * pul; cutRc(g, bx, by, bw, bh, '#ffffff'); g.globalAlpha = 1;
     cutTextPx(g, txt.go, W / 2, by + bh / 2 + 0.5, 3, '#ffffff', '#1d5a2a', 'center'); cut.btn = [bx, by, bw, bh];
   }
-  if (Tn < 0) {                                                                  // вступний текст на чорному
-    const nar = W < 300, lines = nar ? txt.introN : txt.intro, k = nar ? 2 : 3, cw = 8 * k / CUT_Q; let left = Math.floor((Tn + CUT_PRE) * 20);
-    g.fillStyle = '#05060f'; g.fillRect(0, 0, W, H);
-    lines.forEach((l, i) => { if (left > 0) { cutTextPx(g, l.slice(0, left), Math.round((W - l.length * cw) / 2), H / 2 - (lines.length - 1) * 9 + i * (nar ? 16 : 20), k, '#fff6c8', '#6b3a10', 'left'); left -= l.length; } });
-  }
-  const goT = cut.goAmb >= 0 ? cut.amb - cut.goAmb : -1, fade = Math.max(Tn < 0 ? 0 : cutKf(T, [[0, 1], [0.9, 0]]), goT >= 0 ? cutSm(goT / 0.7) : 0);
+  if (Tn < 0) cutIntroText(g, Tn, W, H, txt);                                   // вступ: текст над небом
+  const goT = cut.goAmb >= 0 ? cut.amb - cut.goAmb : -1, fade = Math.max(Tn < 0 ? Math.max(0, 1 - (Tn + CUT_PRE) / 0.9) : 0, goT >= 0 ? cutSm(goT / 0.7) : 0);
   if (fade > 0.01) { g.fillStyle = goT >= 0 ? 'rgba(255,248,205,' + fade + ')' : 'rgba(0,0,0,' + fade + ')'; g.fillRect(0, 0, W, H); }
   g.drawImage(cutCache('vig' + W + 'x' + H, () => { const c = document.createElement('canvas'); c.width = W * Q; c.height = H * Q; const v = c.getContext('2d'), gr = v.createRadialGradient(W * Q / 2, H * Q / 2, H * Q * 0.45, W * Q / 2, H * Q / 2, Math.max(W, H) * Q * 0.75); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.42)'); v.fillStyle = gr; v.fillRect(0, 0, W * Q, H * Q); return c; }), 0, 0, W, H);
 }
@@ -134,19 +134,20 @@ Object.assign(SFX, {
   },
   cutDoor() { const t = audio.ctx.currentTime + 0.01; tone(audio.sfxGain, 'sine', 880, t, 0.25, 0.2, 880); tone(audio.sfxGain, 'sine', 1175, t + 0.18, 0.4, 0.18, 1175); }
 });
-const CUT_EV = [[CT.ting1, 'cutTing'], [CT.ting2, 'cutTing'], [CT.pick, 'cutPick'], [CT.fly0, 'cutWhoosh'], [CT.charge, 'cutCharge'], [CT.flash, 'cutBoom'], [16.2, 'cutThud'], [17.0, 'cutThud'], [17.8, 'cutThud'], [18.6, 'cutThud'], [CT.asm1, 'cutDone'], [CT.fin + 0.4, 'cutDoor'],
+const CUT_EV = [[CT.ting1, 'cutTing'], [CT.ting2, 'cutTing'], [CT.pick, 'cutPick'], [CT.fly0, 'cutWhoosh'], [CT.charge, 'cutCharge'], [CT.flash, 'cutBoom'], [CT.asm1, 'cutDone'], [CT.fin + 0.4, 'cutDoor'],
   ...CUT_SAY.map(s => [s[0], s[2] === 'c' ? 'cutBlipC' : 'cutBlipB'])];
 function cutFire(T) {
-  const fire = (key, name, arg) => { if (!cut.fired[key] && T >= key) { cut.fired[key] = 1; playSfx(name, arg); } };
-  CUT_EV.forEach(([te, n]) => fire(te + n, n));
-  for (let k = 0; k < 14; k++) { const te = CT.asm0 + 0.6 + k * 0.5; if (te < CT.asm1) { if (!cut.fired['tk' + k] && T >= te) { cut.fired['tk' + k] = 1; playSfx('cutTock'); } } }
+  if (cut.seek >= 0) return;                                                     // перегляд кадру (seek) — без звуків
+  const fire = (te, name, arg) => { const key = te + name; if (!cut.fired[key] && T >= te) { cut.fired[key] = 1; playSfx(name, arg); } };
+  CUT_EV.forEach(([te, n]) => fire(te, n));
+  cutFireBuild(T);
   if (cut.tapAmb >= 0) {
-    [[0, 'cutClick'], [0.05, 'cutWhoosh'], [0.75, 'cutPick']].forEach(([d, n]) => fire(CT.TW + d + n, n));
+    [[0, 'cutClick'], [0.05, 'cutWhoosh'], [0.75, 'cutPick']].forEach(([d, n]) => fire(CT.TW + d, n));
     for (let i = 0; i < 4; i++) { const te = CT.u0 + 0.2 + 0.6 * i; if (!cut.fired['ch' + i] && T >= te) { cut.fired['ch' + i] = 1; playSfx('cutChain', i); } }
     for (let i = 0; i < 3; i++) { const te = CT.u0 + 3.3 + 0.5 * i; if (!cut.fired['gr' + i] && T >= te) { cut.fired['gr' + i] = 1; playSfx('cutChain', i + 1); } }
     for (let i = 0; i < 3; i++) { const te = CT.u0 + 5.5 + 0.6 * i; if (!cut.fired['wd' + i] && T >= te) { cut.fired['wd' + i] = 1; playSfx('cutWord', i); } }
     if (!cut.fired.fan && T >= CT.u0 + 7.3) { cut.fired.fan = 1; playSfx('levelup'); }
-    [[CT.fin + 2.2, 'cutBlipC'], [CT.fin + 3.4, 'cutBlipC'], [CT.fin + 5.3, 'cutBlipC']].forEach(([te, n]) => fire(te + n, n));
+    [[CT.fin + 2.2, 'cutBlipC'], [CT.fin + 3.4, 'cutBlipC'], [CT.fin + 5.3, 'cutBlipC']].forEach(([te, n]) => fire(te, n));
   }
 }
 function cutLayout() {
@@ -168,8 +169,10 @@ function cutTick(now) {
   else {
     let lim = CT.END;
     if (cut.tapAmb < 0) lim = Math.min(lim, CT.TW);
+    if (cut.g1 < 0) lim = Math.min(lim, CT.g1);
+    if (cut.g2 < 0) lim = Math.min(lim, CT.g2);
     if (cut.goAmb < 0) lim = Math.min(lim, CT.finBtn);
-    cut.T = Math.min(lim, cut.T + dt / CUT_SLOW);
+    cut.T = Math.min(lim, cut.T + dt / CUT_SLOW * cutRate(cut.T));
   }
   cutFire(cut.T);
   try { cutDrawFrame(cut.T); } catch (e) { console.error('cutscene', e); }
@@ -181,6 +184,8 @@ function playCutscene(style, opts) {
   const box = document.getElementById('cutscene'); box.hidden = false; box.classList.remove('picking');
   cut.cv = document.getElementById('cutCv'); cut.style = CUT_STYLES[style] ? style : 'A'; cut.cb = opts.done || null;
   cut.fired = {}; cut.tapAmb = -1; cut.goAmb = -1; cut.T = (opts.seek !== undefined) ? 0 : -CUT_PRE; cut.amb = 0; cut.hit = null; cut.seek = opts.seek !== undefined ? opts.seek : -1;
+  cut.g1 = cut.g2 = cut.chgAmb = -1; cut.chg = 0; cut.taps = []; cut.coinScr = null;
+  if (opts.seek !== undefined || opts.tapped) { cut.g1 = cut.g2 = 0; cut.chg = CUT_CHG; }
   if (opts.tapped) cut.tapAmb = 0;
   if (opts.go) cut.goAmb = 0;
   document.getElementById('cutSkip').textContent = (CUT_TXT[state.lang] || CUT_TXT.uk).skip + ' ▶▶';
@@ -221,10 +226,11 @@ function initCutscene() {
   box.addEventListener('pointerdown', e => {
     if (!cut.on) return;
     const r = cut.cv.getBoundingClientRect(), x = (e.clientX - r.left) / cut.S, y = (e.clientY - r.top) / cut.S;
+    if (cutGateTap(x, y)) return;
     if (cut.tapAmb < 0 && cut.T >= CT.TW - 0.01 && cut.rect) { const q = cut.rect, pad = 14; if (x >= q[0] - pad && x <= q[0] + q[2] + pad && y >= q[1] - pad && y <= q[1] + q[3] + pad) { cut.tapAmb = cut.amb; cut.hit = [x, y]; } }
     else if (cut.goAmb < 0 && cut.btn) { const q = cut.btn; if (x >= q[0] - 6 && x <= q[0] + q[2] + 6 && y >= q[1] - 6 && y <= q[1] + q[3] + 6) cut.goAmb = cut.amb; }
   });
-  addEventListener('keydown', e => { if (cut.on && e.key === 'Escape') cutStop(true); });
+  addEventListener('keydown', e => { if (cut.on && e.key === 'Escape') cutStop(true); else if (cut.on && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); cutKeyTap(); } });
   addEventListener('resize', () => { if (cut.on) cutLayout(); });
   const q = new URLSearchParams(location.search);
   if (q.has('cutpick')) setTimeout(cutPicker, 900);
