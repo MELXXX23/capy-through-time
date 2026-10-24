@@ -55,7 +55,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Нові екрани завантаження! Сім живих сцен: Хелловін із кажанами й відьмою, Свято вогнів із феєрверками, північне сяйво, блискавки, заметіль і вихор часу. А ще в налаштуваннях звуку тепер можна обрати музику: Класична, Пригодницька, Спокійна або 🎃 Хелловін.',
+    newH: 'Що нового', new: 'Нова вступна кат-сцена! Тепер ти допомагаєш Капі сам: тапни монетку, заряди її п\'ятьма тапами — і дивись, як із неї зводиться маркет: синє креслення, риштування, сотні блоків злітають на свої місця, дах із вивіскою падає з неба, спалахують промені. Переглянути можна будь-коли: «Щоденник» → 🎬 «Заставка».',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -63,7 +63,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'New loading screens! Seven living scenes: Halloween with bats and a witch, a Festival of Lights with fireworks, northern lights, lightning, a snowstorm and a time vortex. And in Sound settings you can now pick the music: Classic, Adventure, Chill or 🎃 Halloween.',
+    newH: 'What is new', new: 'A brand-new intro cutscene! Now you help Capy yourself: tap the coin, charge it with five taps and watch the market rise from it: a blue blueprint, scaffolding, hundreds of blocks flying into place, the roof with the sign dropping from the sky and bursting rays of light. Watch it again any time: Diary → 🎬 «Intro».',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
