@@ -129,7 +129,7 @@ function showSeasonsIntro() {
   state.seasonsIntro = 1; saveGame();
   ui.siTitle.textContent = t('seasonIntroTitle'); ui.siText.textContent = t('seasonIntroText');
   ui.siGo.textContent = t('seasonIntroGo'); ui.siLater.textContent = t('seasonIntroLater');
-  const g = ui.siIcon.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, 24, 24); g.drawImage(tabGlyph('seasons'), 0, 0);
+  const g = ui.siIcon.getContext('2d'); g.imageSmoothingEnabled = false; const sic = tabGlyph('seasons'), sdraw = () => { g.clearRect(0, 0, 48, 48); g.drawImage(sic, 0, 0, 48, 48); }; sdraw(); if (sic._cb) sic._cb.push(sdraw);
   ui.siModal.hidden = false; playSfx('wheelWin');
 }
 function updateSeasonsIntro() {

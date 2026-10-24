@@ -3,7 +3,7 @@
    БОНУС-ІГРИ ПІД ЕПОХИ: окрема іконка у верхньому правому куті (там, де був барабан). Цирк Фортуни лишається цирком з колесом.
    Гра відкривається у тому самому вікні, що й цирк (circusModal), у «бонус-режимі» (circus.bonus). Перезарядка 12 год
    (BONUS_COOLDOWN_MIN), один спільний таймер на всі епохи (час виграшу пишеться в state.wheel.mg[eid], діє найпізніший). Приз лише скін: ціль goalP виконано → скін і 12 год чекання;
-   не вийшло → можна одразу ще раз (BONUS_RETRY_ON_MISS). Ігри епох 0,1,3,5,6,7 — у 279_c_bonus_games_more.js.
+   не вийшло → можна одразу ще раз (BONUS_RETRY_ON_MISS). Ігри епох 0,1,3,5,6,7 — у 279_c_bonus_games_more.js; Японія (8) і Хелловін (9) — у 279_d_bonus_games_jp_hw.js.
    Реєстр MG_DEFS[номер епохи] → опис гри; їх робить mgMake: таймер (dur), ціль «ідеально» (goalP) і «майже» (goalN),
    рахунок G.score, фази idle → play → reveal → done. Гра задає: init() → стан, tick(G, dt), tap(G, lx, ly) (полотно 192×120),
    draw(g, G, T). Додати гру: mgMake(eid, {...}) + тексти mg<Ім'я>Title/Sub/Start/Done. Лапшична (Японія) і відьма — окремі, на візку.
@@ -13,6 +13,7 @@ const BONUS_RETRY_ON_MISS = true;                                    // не в�
 const MG_DEFS = {};
 const mgGame = { phase: 'idle', t: 0, left: 0, score: 0, rt: 0, res: '', prize: null, main: false, s: null };
 function mgForEpoch(eid) { return MG_DEFS[eid] || null; }
+function mgActive() { return (theme.season === 'halloween' && MG_DEFS[9]) || mgForEpoch(viewEpoch()); }   // гра, на яку зараз показує кнопка: Хелловін перебиває гру епохи
 function mgCur() { return circus.bonusDef; }                         // гра, що зараз у вікні (circus.bonus)
 function bonusCooldownMs() { return BONUS_COOLDOWN_MIN * 60000; }
 function bonusLastWin() { return (state.wheel.mg || []).reduce((m, v) => Math.max(m, v || 0), 0); }   // один таймер на всі епохи: береться найпізніший виграш
@@ -24,7 +25,7 @@ function mgSkinSector() {                                            // приз
 }
 function openBonus(def) {                                            // def — лише для тестів; інакше гра поточної епохи
   if (dialog.active || !ui.circusModal.hidden) return;
-  const d = def || mgForEpoch(viewEpoch()); if (!d) return;
+  const d = def || mgActive(); if (!d) return;
   const w = bonusWaitMs(d.eid);
   if (w > 0) { if (typeof adsOfferBonusSkip !== 'function' || !adsOfferBonusSkip(def, w)) showToast(t('mgWait', fmtTime(w / 1000))); return; }
   circus.bonus = true; circus.bonusDef = d;
@@ -32,13 +33,13 @@ function openBonus(def) {                                            // def — 
   ui.circusWheel.width = 192; ui.circusWheel.height = 120;
   mgReset(d.o);
   ui.circusModal.hidden = false;
-  ui.circusTitle.textContent = t(d.k.title); ui.circusSub.textContent = t(d.k.sub);
+  ui.circusTitle.textContent = t(d.k.title); ui.circusSub.textContent = t(d.k.sub); ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = false;
   ui.circusClose.textContent = t('wheelClose'); ui.circusResult.textContent = '';
   updateCircusButtons();
 }
 function updateBonusBtn(dt) {                                        // іконка: є лише в епохах із грою; світиться, коли готова
   circus.bt = (circus.bt || 0) - dt; if (circus.bt > 0) return; circus.bt = 0.4;
-  const d = mgForEpoch(viewEpoch()), b = ui.bonusOpen;
+  const d = mgActive(), b = ui.bonusOpen;
   b.hidden = !d; if (!d) return;
   const w = bonusWaitMs(viewEpoch());
   b.classList.toggle('ready', w <= 0); b.classList.toggle('wait', w > 0);
@@ -255,13 +256,13 @@ function mgPrize(g, G, T, cx, cy) {
 
 (function () {
   const UK = {
-    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
+    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише скіни', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
     mgDanceTitle: 'Танцпол Диско-Капі',
     mgDanceSub: 'Плитки спалахують і гаснуть. Тапай світні вчасно, а на темні не наступай!', mgDanceStart: 'Танцювати!', mgDanceDone: 'Гарно потанцювали!',
     mgSpamTitle: 'Спам-бомба', mgSpamSub: 'Вікна-спам лізуть на екран. Закривай їх тапом, поки не завалило!', mgSpamStart: 'Закривати!', mgSpamDone: 'Екран чистий!'
   };
   const EN = {
-    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
+    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Skins only here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
     mgDanceTitle: 'Disco Capy Dance Floor',
     mgDanceSub: 'Tiles light up and fade. Tap the glowing ones in time and keep off the dark ones!', mgDanceStart: 'Dance!', mgDanceDone: 'What a dance!',
     mgSpamTitle: 'Spam Bomb', mgSpamSub: 'Spam windows pop up everywhere. Tap them shut before they pile up!', mgSpamStart: 'Close them!', mgSpamDone: 'Screen is clean!'

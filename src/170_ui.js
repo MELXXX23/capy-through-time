@@ -23,6 +23,7 @@ function outlineCanvas(c, col) {
   g.fillStyle = col; add.forEach(([x, y]) => g.fillRect(x, y, 1, 1));
 }
 function tabGlyph(id) {
+  const hd = tabGlyphHD(id); if (hd) return hd;                          // нові іконки 48×48; старі 24×24 нижче — запасні і для «⋯»
   const c = document.createElement('canvas'); c.width = 24; c.height = 24;
   const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
   const P = (x, y, w, h, ch) => R(g, x, y, w, h, ch), C = (x, y, w, h) => g.clearRect(x, y, w, h);

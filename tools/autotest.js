@@ -27,7 +27,7 @@ app.whenReady().then(async () => {
     const win = new BrowserWindow({ width: p.w, height: p.h, show: true, x: -4000, y: 0, focusable: false, skipTaskbar: true, useContentSize: true, webPreferences: { backgroundThrottling: false, partition: 'at' + Date.now() } });
     win.webContents.setAudioMuted(true);       // звук гри в тестах вимкнено
     const consoleErrs = [];
-    win.webContents.on('console-message', (e, level, msg) => { if (level >= 3 && !/Failed to load resource|fonts\.g|ResizeObserver loop|navigator\.vibrate/.test(msg)) consoleErrs.push(msg.slice(0, 160)); });
+    win.webContents.on('console-message', (e, level, msg, line) => { if (level >= 3 && !/Failed to load resource|fonts\.g|ResizeObserver loop|navigator\.vibrate/.test(msg)) consoleErrs.push(msg.slice(0, 160) + ' @game.html:' + line); });
     let crashed = false;
     win.webContents.on('render-process-gone', (e, d) => { crashed = true; say('  ✗ ПРОЦЕС ГРИ ВПАВ: ' + d.reason); });
     win.webContents.on('unresponsive', () => say('  ! вікно гри не відповідає'));

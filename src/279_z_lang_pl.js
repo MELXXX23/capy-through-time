@@ -351,6 +351,7 @@ installLang("pl", {
     "skinSay_capy_diamond": "Diamentowa Capy. Stukaj śmiało: błyszczę, ale jestem twarda jak kryształ.",
     "skinSay_hero_gold": "Złoci pomocnicy: pracują jak w zegarku i lśnią jak monety.",
     "skinSay_hero_diamond": "Diamentowi pomocnicy błyszczą tak, że kasa mruży oczy.",
+    "mgSkinOnly": "🎁 Tu tylko skiny",
     "skinSay_shop_diamond": "Diamentowy sklep! Kryształowe witryny i kryształowo uczciwe ceny.",
     "skinSay_street_diamond": "Diamentowa droga. Chodzenie po niej to jak spacer po żyrandolu.",
     "skinSay_weather_diamondcloud": "Diamentowe chmury: tu nie pada deszcz, tylko iskry.",

@@ -397,6 +397,14 @@ function drawSkinGear(sx, sy, kind, head) {
   } else if (kind === 'ninja') {
     if (head) { R(ctx, cx - 4, ht - 2, 9, 4, 'z'); R(ctx, cx - 4, ht, 9, 1, 'r'); R(ctx, cx + 4, ht + 1, 2, 2, 'r'); }
     R(ctx, cx - 4, sy + 19, 9, 1, 'r'); R(ctx, cx - 4, sy + 17, 9, 2, 'z');
+  } else if (kind === 'gold') {                                              // золоті герої: корона із самоцвітами й золота накидка
+    if (head) { R(ctx, cx - 4, ht - 3, 9, 3, 'h'); R(ctx, cx - 4, ht - 3, 9, 1, 'y'); R(ctx, cx - 4, ht - 5, 2, 2, 'h'); R(ctx, cx - 1, ht - 6, 3, 3, 'h'); R(ctx, cx + 3, ht - 5, 2, 2, 'h'); R(ctx, cx, ht - 2, 1, 1, 'r'); R(ctx, cx - 3, ht - 2, 1, 1, 's'); R(ctx, cx + 3, ht - 2, 1, 1, 's'); R(ctx, cx, ht - 5, 1, 1, 'w'); }
+    R(ctx, cx - 5, sy + 16, 11, 5, 'h'); R(ctx, cx - 5, sy + 16, 11, 1, 'y'); R(ctx, cx - 4, sy + 17, 1, 3, 'y'); R(ctx, cx - 2, sy + 18, 1, 1, 'w'); R(ctx, cx + 2, sy + 19, 1, 1, 'w'); R(ctx, cx - 5, sy + 21, 11, 1, 'c');
+    if (Math.floor(animClock * 3 + sx * 0.1) % 4 === 0) R(ctx, cx + 3, sy + 17, 1, 1, 'w');
+  } else if (kind === 'diamond') {                                           // діамантові герої: кришталева корона й блискуча накидка
+    if (head) { R(ctx, cx - 4, ht - 3, 9, 3, 'S'); R(ctx, cx - 4, ht - 3, 9, 1, 'w'); R(ctx, cx - 4, ht - 5, 2, 2, 's'); R(ctx, cx - 1, ht - 7, 3, 4, 'S'); R(ctx, cx + 3, ht - 5, 2, 2, 's'); R(ctx, cx, ht - 6, 1, 2, 'w'); R(ctx, cx - 3, ht - 2, 1, 1, 'n'); R(ctx, cx + 3, ht - 2, 1, 1, 'n'); }
+    R(ctx, cx - 5, sy + 16, 11, 5, 's'); R(ctx, cx - 5, sy + 16, 11, 1, 'w'); R(ctx, cx - 4, sy + 17, 1, 3, 'S'); R(ctx, cx - 1, sy + 18, 1, 1, 'w'); R(ctx, cx + 2, sy + 19, 1, 1, 'w'); R(ctx, cx - 5, sy + 21, 11, 1, 'n');
+    if (Math.floor(animClock * 4 + sx * 0.13) % 3 === 0) R(ctx, cx - 2 + Math.floor(animClock * 2) % 5, sy + 18, 1, 1, 'w');
   }
 }
 // Двері будиночка: відчиненість 0…1 залежить від етапу (стук → відчиняються → зачиняються)

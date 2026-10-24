@@ -1091,6 +1091,22 @@ body[data-epoch="4"] { --vivid: #8cc6f5; } body[data-epoch="5"] { --vivid: #86d9
 body[data-epoch="8"] { --panel: #f2e4d0; --panel-dark: #d8c1a0; --card: #fff7ea; --honey: #c8102e; --mint: #2c6fbf; --brown: #1c2f5a; --glow: #ffc9d4; }
 body[data-epoch="8"] #sign { color: #fff7ea; text-shadow: 0 0 calc(var(--u) * 2) #ff5f7a, 0 0 calc(var(--u) * 4) #ff2a4a; }
 body[data-epoch="8"] :is(.team-card, .dept, .expand-card) { --tc-portrait: #f2e4d0; --tc-card: #fff7ea; --tc-btn: #c8102e; --tc-btn-text: #fff7ea; --tc-name: #1c2f5a; --tc-role: #c8102e; --tc-trait: #4a3228; --tc-now: #2c6fbf; }
+/* Налаштування: кнопки «Перегляд епох» у кольорах своїх епох (вибрана — насичений колір епохи), стать — блакитна й рожева */
+#setEpochView .btn[data-ep="0"] { background: #8fc3dc; } #setEpochView .btn[data-ep="0"][aria-pressed="true"] { background: #5f9fc9; }
+#setEpochView .btn[data-ep="1"] { background: #f2adc2; } #setEpochView .btn[data-ep="1"][aria-pressed="true"] { background: #e8789a; }
+#setEpochView .btn[data-ep="2"] { background: #bd93cf; } #setEpochView .btn[data-ep="2"][aria-pressed="true"] { background: #b04fd0; }
+#setEpochView .btn[data-ep="3"] { background: #a493e2; } #setEpochView .btn[data-ep="3"][aria-pressed="true"] { background: #7a5cc9; }
+#setEpochView .btn[data-ep="4"] { background: #a5d2f2; } #setEpochView .btn[data-ep="4"][aria-pressed="true"] { background: #3d8fd6; }
+#setEpochView .btn[data-ep="5"] { background: #9fd4ae; } #setEpochView .btn[data-ep="5"][aria-pressed="true"] { background: #4f9a63; }
+#setEpochView .btn[data-ep="6"] { background: #93a5cf; } #setEpochView .btn[data-ep="6"][aria-pressed="true"] { background: #4d6fb8; }
+#setEpochView .btn[data-ep="7"] { background: #8caee3; } #setEpochView .btn[data-ep="7"][aria-pressed="true"] { background: #ff5fa2; }
+#setEpochView .btn[data-ep="8"] { background: #d8c1a0; } #setEpochView .btn[data-ep="8"][aria-pressed="true"] { background: #c8102e; }
+#setEpochView .btn[aria-pressed="true"] { color: #fff; }
+#setGender .btn[data-gender="f"] { background: #f7b3cb; } #setGender .btn[data-gender="f"][aria-pressed="true"] { background: #e8568a; color: #fff; }
+#setGender .btn[data-gender="m"] { background: #a9d3f4; } #setGender .btn[data-gender="m"][aria-pressed="true"] { background: #3f86d0; color: #fff; }
+/* Бонус-ігри: напис, що тут головний приз — лише скіни */
+#circusSkinNote { margin: 0 0 8px; padding: 6px 8px; font-size: 11px; line-height: 1.4; text-align: center; color: #6a3e08; background: #fff0b0; box-shadow: inset 0 0 0 2px #e8a42a, inset 0 -3px 0 2px rgba(180,110,20,.25); }
+#circusSkinNote[hidden] { display: none; }
 </style>
 <!--#part 030_body_open.html-->
 </head>
@@ -1895,6 +1911,7 @@ function bootDone() {
     <div class="clown-win"><canvas id="clownCanvas" width="72" height="40" aria-hidden="true"></canvas></div>
     <h2 id="circusTitle"></h2>
     <p id="circusSub"></p>
+    <p id="circusSkinNote" hidden></p>
     <div class="wheel-wrap"><canvas id="circusWheel" width="128" height="140" aria-hidden="true"></canvas></div>
     <span class="big" id="circusResult"></span>
     <button type="button" class="btn wide go" id="circusBtn"></button>
@@ -1915,7 +1932,7 @@ function bootDone() {
 <div id="seasonBanner" hidden aria-hidden="true"><b id="sbTitle"></b><small id="sbSub"></small></div>
 <div id="seasonIntroModal" hidden>
   <div class="frame modal-box" role="dialog" aria-modal="true" aria-labelledby="siTitle">
-    <canvas id="siIcon" width="24" height="24" aria-hidden="true"></canvas>
+    <canvas id="siIcon" width="48" height="48" aria-hidden="true"></canvas>
     <h2 id="siTitle"></h2>
     <p id="siText"></p>
     <button type="button" class="btn wide go" id="siGo"></button>
@@ -9037,7 +9054,7 @@ const ui = {
   paneStory: $('pane-story'), storyList: $('storyList'),
   panL: $('panL'), panR: $('panR'), cleanToggle: $('cleanToggle'), eventBanner: $('eventBanner'), boosts: $('boosts'),
   lootModal: $('lootModal'), lootCanvas: $('lootCanvas'), lootName: $('lootName'), lootType: $('lootType'), lootTag: $('lootTag'), lootWear: $('lootWear'), lootClose: $('lootClose'),
-  circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), bonusOpen: $('bonusOpen'), bonusOpenT: $('bonusOpenT'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
+  circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusSkinNote: $('circusSkinNote'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), bonusOpen: $('bonusOpen'), bonusOpenT: $('bonusOpenT'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), routeTitle: $('routeTitle'), routeNext: $('routeNext'), routeList: $('routeList'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),
   paneSkins: $('pane-skins'), paneSeasons: $('pane-seasons'), skinsList: $('skinsList'), paneAch: $('pane-achievements'), achList: $('achList'), achSummary: $('achSummary'), statsCard: $('statsCard'),
   app: $('app'), panelToggle: $('panelToggle'), setGender: $('setGender'), setSeason: $('setSeason'), setEpochView: $('setEpochView'), setTime: $('setTime'), setDayNight: $('setDayNight'), setRain: $('setRain'), setEco: $('setEco'), exportLast: $('exportLast'), reportBox: $('reportBox'), reportBtn: $('reportBtn'), privacyBtn: $('privacyBtn'), aboutInfo: $('aboutInfo'), licenseBtn: $('licenseBtn'), setBirds: $('setBirds'), setBirdsLate: $('setBirdsLate'), setClouds: $('setClouds'), setSteam: $('setSteam'), setBigText: $('setBigText'), setVibrate: $('setVibrate'),
@@ -9279,6 +9296,19 @@ function fitSign() {
   }
 }
 
+//#part 165_tab_icons_hd.js
+/* Іконки вкладок меню 48×48 (чисті пікселі без розмиву сходинок, намальовані окремо й вбудовані як PNG). Малюнок і скрипт: previews/mock10 (art.js, icons.js, gen_icons.js).
+   tabGlyphHD(id) віддає полотно 48×48, що домальовується, щойно картинка завантажилась; c._cb — виклики після завантаження. Старі 24×24 глифи (tabGlyph у 170_ui.js) лишаються для «⋯». */
+const TAB_ICONS_HD = {"shop":"data:image/png;base64,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","departments":"data:image/png;base64,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","team":"data:image/png;base64,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","story":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAABTJJREFUaEPtWV1MHFUU/hCywXRjwaYKWBraImaTQuIK0hirVlse8KH4D2KMlaRPTWqCRnnAB3lAU4ia+NSH2hiRJm0JJLUmWEtDH8q2dI2lycYKtAoC/hUw25hsaGvOnT3Dndk7O3d2F7sk3ifYuXPO+X7umdmzOVjlK2eV14//AdxpBVeFAoX3rrtNROXevombObkmZ/PX/8rJagBc+H2xtfGiowD8JoDffYvZeQbkwjsmL6IWPqPo/ETDZp0CVDwx3nH2IvCAUbAAoCiermUNAJn1p/ftN6n+8hc/2h/LR9nL9ajNjyshCZEVAJj18NdrEHz2hiiPrGOyb7NPaCKGlgN9eG1jNLsUIOvQwaQlbOTi/wQLERPUqtaXlllOyx9T1yztiy5SC8vkM4AtxDG5ZRKQwckx9zPAMgJRVDU3oTlYKGL1hOdxqafX0r7oc2KKk6QKhgmj3r7cKhmCtY53W7+IX7iO4ieexOzwOVGTYHG5eCA8N6RNbLCoRgTxAiax6CjCcxc85Nwh9rLV0gIgZ5XBqCxmfSh5K9qaZxmA+SROVQEVbd/2fA6SmxniPWSRj7pfx67mPdpsqzYGi1YYACdlRYz/nRk/eqANzz2+TuzK853B0dOVeOmdTkeQ2gCISXE+SspRvWO7Z9Zi0ZDlHp+/Vhlj6VwXblVuR9/HLXhx5xvIi5wB3jyRPgBVhKtXfsXowGcoKKkQl5PZwQSwAKAASAYAG4Fjhw6vPAAnWmLTIQz09ovLLL8ugNlDAawPtAjmlwJP4dipw2hsv5y+AqNDZzE/M56yjXQBUIIje7eicVsZjoxcQ+NB5+Jpr/YZcGT7cggD3/QLGyU7H14AOOWSLct2TRuAm428WojisdoLM1ewqbo+adPwBEAOXL17HzZVxF/QNXqSSoFYXD26fXdTA3wb1J0pWXhPAJwCEbCroyfFZSfG0rWQU8fLCIBk58O31WBVF4AOGXI+zwD4gUb+9GIjFQAuNlX7ZKQLMRtuzOkqoPXAfGUPkGfs1FfgHwB3a5xWhy06ANxIUIXWByDdnYqNlF1o2ng/SqX7cDkpAUilG+kowHGZoPKaOtdWrQ2Agqbz7p4MAFvH7aGVEQvxw2yXdJB0ToYXBXTiZcxCLLebOlkLQJetOwdgeghvf9iPgslBjBeWi/GKG9sqUJkAQGrTWKd8fhwLm+vQ9V4DghuSfCee+bQBJfv7xZdv1erpHcSl0TnzUrIRjBcA3FkocFV1EZqb6pT5aVjw2wuluP/4lBgaJEwlCEBF1wnUVT6I2mdqQK8PP0YW8VBgrfk10h6ZB04Hez+wvAa7daG9Te+LUE5k2XOHvruAwbGfMPFocXIApEBb6zZL4XQzLQIl/+0EhpRRAWCmVUU75ZCBdHaPuCtART1yfAKzw2PwlxovIO1vvWpRgz6TlaHkskpstXDjGuAHIBi5YbEGF2VX2R6345OvRP7o1BLu2nwPZh82fqlJsBB9mPhzjsEv2Sp3+E8AP4sbVaDkQlilvpMRyACerw+YCjJYGbhcLPmcF+WUFw/MeB6bMGG2T4npZnnwajBRFY9JoCLwlxYgOrWAttadpjIktwxAtmVn96n4PUvCEry2nJ8VbPOyT/foc/sgWWtEbgdlnyRbQQFbzo+IQmQApBwdQF7F3y/i1uTfSnb5Q52ptxYA+2F1U4n3ywDsMXTYtd+j+j8lAKpAKpVkAPaCddj9TwHIyeRpt+znTBUt58qYAioA8u9d/OTUYdXLnhUBwG2ZGSdFVoJ9yvMvpgvXcIS5EhEAAAAASUVORK5CYII=","workshop":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAA4lJREFUaEPtmV9IU1Ecx7+CrYGDzFltWFALFIKK1NoSlPChHgZBEOSDQU9WIkIvIsJ6kSR87KF6SBB8MRIEYT1IRAjBVmkPPoRCyzD/NP8GK2wZi3Ovv+1su3+2u3HPHXTetns55/s55/zu718ZSnyUlbh+6AIcrHImREJubW5oatR8yMQfjh8QqR9R2w9oQagC1Dk8iTONLjxrbxAK0P14BKF5G+ZiUUWtin/Szs8EKyTxu65LKF99YyoIv2a9/6fqSWgC+M5vSqIf9d1E98CIqQD8mqH3VfkBMKV0Co5j5aYKz1wstriraQe6RkwTeo44QZPJhh0rMpgjOR8zXH4YMmKagLeHznuLkkG5Wy6i88EwUJNaxgtb6oddgW0HwA4QtseBpezngeYGvBv3Y+zVMAbHE5ibj+l+4tksui+pAnR0wdvUhDDikpqCAL5+QKD9tnkAG/vicP6xYXL5C8I7hQMEmusAOMwDiNr+gtnB5PJskQBkX2PaFSp5AOYVyTb6I9MF2QAzXvbVYSdq2gnwAHSNjBqxMADe2bFTMAJA4tlcpp9App+YjMzm5QdIPHNSdB1NvUK8KyIBSQgdRxbwyPeePKxwAP46SRB2oDLcm+Zut88+lDzx5VOns2IbSwDwEBSGZwYMamGxZQAIggV+U0/3p+lvufMbke8bitmV5QDYF2VmQE6GaNT3qScllgJggutqHYmea2Voqzku6R9dWtCMMP8DKETvyb+Uwmm1BJs35ODAatq0/j6XamZlqRNgYpgRP7/7Dfi4x3AOuPHkqPWNOOnQljmvTOfAfIAn2wfwpybMEys5sqxruZdSWtKRlXQokSWebX0OSb0lgjk+qSm5cDqXjKxyRQ7ott1yIKdUVhGW0OgBqEWjmXUhIQCU1FM+zHaZv0LVn3yKvnH9REixsMUg2DDtM8oDeO02qbRCANWjyuKJKNg2lVWZMx2AClv9kTkQQP1oDdw4qRWVJJ+t4DNmmlP1RdMLW1JttKMLaGrElYn7WPs1lJNwpZcYyMLblxjqDRT/ClF/TIrvgxWg4q7PGUegVS4pFmv4X7jSAKLrqYTIUHXaCv0x2hytPplmh6bn6hqut94q1iYbmmfs9TAGJw7l16FJxufTfqk3JrJHxta+0BA0BuCrlXtkokdovoAemWjxbP28bYBEi+7Skw5DXyEr7HwuGnR7ZLlMIvKdkgf4B9mGMm23ffdeAAAAAElFTkSuQmCC","skins":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAABUhJREFUaEPtmW1oW1UYx/9ZmuCwZq1tZ7vaMf0yh1rq5nxB+6IfhhOnY5siarGsoDK0G4h+UCrD4JeC0FUQV+gIFFFkVqkflDnd0iooQy3TMAviauvWbk3ti5FK0hh5TvLcnntybu9NSpMUer60zT055/973s5zel1Y5cO1yvVjDaD0+rKEOxFHeHomI2OUl5Yk4i43pv+ayuh7asQs68skfmN0A4AIpjxRxxAkvizmBVCMq97ZZUFkDUDiyRoEcGX//aj66TzGf5/HTGR4yTVLircmqm5ej/E7anHDx98IABrZeiJjAFk4bbzr0nH0tvUi3lAO90AYC8Hv4ZkLpwmi78V85ShqvDs59/0pRLufQE3dSwIgWxDHADrhcjyern9FWLW5qwunqrcLQbGKUjHFMzktPLXr0o/obWsT3vqj7y1TOGcLYgtgJ1xWcar6eRFOzV3NAHYicPJN8bjlwBsAzglPUdiMDb1jEu/+bML4e1N7EsypRywBMhHOu/dMRsWvZE0CkYdOOD2XxcvznYJoARarSzLGnQwW72Quz7ESbwWiS/Q0ABbvVDhttlLiVRBdyV02QC7EEwiFlC2Aav3AiVH0tNyHwXVj2sjIiXhfCJi7VeyvgzB5QAWoPwMMPqCP6pyIT23tHgoiXtdoD7Ctti5x272NqOx4BGT9loOb82d5ZWeCoEEHZWRk8bQ3PODU+rm0vMwgvNBQjk2HPzXlghbAyvr5Em+U3aGg0T9xSRUAuuRVwyff4sWhp8mFNACd9QtBvJUXBEDTw48lbv/gRW3iZiOeW4T4nkrLViGTE1vMTZVTzoVERz8iw7+5XHYnLwGozZbajKlieP6+/pfFo75H33akl+r85WN7zXPpDOCzQPrJyWwAXPa/brvJji/7MT7ws+gmWyu82hZChu08d0SseWRnp+3afFBduase8afLjPl0x9ANvgyZcmAeHkz7X7XcjDtEKwBZPFm/6z1qq4G2F3odeYHXZy/oxNM5UB2OGaXUVEZpM7p46EASxzrETYueqwAkXMR78CvsGTgBz2jSBgRQNHEWh44mW5HYZiB2zbP44pZarZG4VeCbmzxJFk6fm8qoPFG9B3Bo8eIqgBzvbHFe778N9eJX77DfJJiAdHkh78H3CSvhvKDthYa9wjckKwCax2HDwlUzE4gQ/8zB5KNUk8bzGEDdU7a4uqbtlZK+QF4hl3HF4hCiM8OoEKmVCeLdozVYqGwCg6ybHTRCiS3Ph5IsSO42eU/LhEw9cATAi2gB6KHU8tKfE9s7Ed3abtrb+5EflfFkVaJhB2An3DaEdAswAOUFtRrCAwrAQ7+eR+Cpr4UHKIFpLESbUHThLFpCDxoJXLAAHEIfHh/BwLhbADRUxfHkPVtw6JPF5C1oABItEjWVpOStub2PCxjLHPCF0lplJ2GUVQ5QCKX1OepxL8W5EW5SrnBPIyDpc7oyKr3+igLQ4iYIJZHlRDXlC+cM/ZTE5wXAKpHVSqMCGPGfsjzPz7kHsgLwhcQ/gel6qI41ALukkc8Bmit7QFcWTZ9J4VIwHpCBlwTwhdByYDcCJz9PnsKFEkKOAJRYtxKflyrEAD1N+/Bc52F0d76G1sC34t+RrX3daJ/fAf/6H9BTthutF0dxuv5OBL/7BVtu3IiRP6/CH/vXOAPyCqDNnSWqjVWurXgVoo3ldwfpQiIorinBdTdtw1AFvb1cHHWTs/j74gVExmbE20ndyOaNZUatBG/KtzZVBL0vpne/MXc5cK3y9B/AEw+D5+gAsnlTmRWAXbnN5fM1gFxaW7fXqvfA/5rdzsiSJkF/AAAAAElFTkSuQmCC","seasons":"data:image/png;base64,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","achievements":"data:image/png;base64,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","settings":"data:image/png;base64,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"};
+const tabImgHD = {};
+function tabGlyphHD(id) {
+  const src = TAB_ICONS_HD[id]; if (!src) return null;
+  const c = document.createElement('canvas'); c.width = 48; c.height = 48; c._cb = [];
+  const im = tabImgHD[id] || (tabImgHD[id] = Object.assign(new Image(), { src }));
+  const paint = () => { const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, 48, 48); g.drawImage(im, 0, 0); c._cb.forEach(f => f()); };
+  if (im.complete && im.naturalWidth) paint(); else im.addEventListener('load', paint);
+  return c;
+}
 //#part 170_ui.js
 /* =====================================================================
    МОВА ТА ІНТЕРФЕЙС
@@ -9304,6 +9334,7 @@ function outlineCanvas(c, col) {
   g.fillStyle = col; add.forEach(([x, y]) => g.fillRect(x, y, 1, 1));
 }
 function tabGlyph(id) {
+  const hd = tabGlyphHD(id); if (hd) return hd;                          // нові іконки 48×48; старі 24×24 нижче — запасні і для «⋯»
   const c = document.createElement('canvas'); c.width = 24; c.height = 24;
   const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
   const P = (x, y, w, h, ch) => R(g, x, y, w, h, ch), C = (x, y, w, h) => g.clearRect(x, y, w, h);
@@ -11155,6 +11186,14 @@ function drawSkinGear(sx, sy, kind, head) {
   } else if (kind === 'ninja') {
     if (head) { R(ctx, cx - 4, ht - 2, 9, 4, 'z'); R(ctx, cx - 4, ht, 9, 1, 'r'); R(ctx, cx + 4, ht + 1, 2, 2, 'r'); }
     R(ctx, cx - 4, sy + 19, 9, 1, 'r'); R(ctx, cx - 4, sy + 17, 9, 2, 'z');
+  } else if (kind === 'gold') {                                              // золоті герої: корона із самоцвітами й золота накидка
+    if (head) { R(ctx, cx - 4, ht - 3, 9, 3, 'h'); R(ctx, cx - 4, ht - 3, 9, 1, 'y'); R(ctx, cx - 4, ht - 5, 2, 2, 'h'); R(ctx, cx - 1, ht - 6, 3, 3, 'h'); R(ctx, cx + 3, ht - 5, 2, 2, 'h'); R(ctx, cx, ht - 2, 1, 1, 'r'); R(ctx, cx - 3, ht - 2, 1, 1, 's'); R(ctx, cx + 3, ht - 2, 1, 1, 's'); R(ctx, cx, ht - 5, 1, 1, 'w'); }
+    R(ctx, cx - 5, sy + 16, 11, 5, 'h'); R(ctx, cx - 5, sy + 16, 11, 1, 'y'); R(ctx, cx - 4, sy + 17, 1, 3, 'y'); R(ctx, cx - 2, sy + 18, 1, 1, 'w'); R(ctx, cx + 2, sy + 19, 1, 1, 'w'); R(ctx, cx - 5, sy + 21, 11, 1, 'c');
+    if (Math.floor(animClock * 3 + sx * 0.1) % 4 === 0) R(ctx, cx + 3, sy + 17, 1, 1, 'w');
+  } else if (kind === 'diamond') {                                           // діамантові герої: кришталева корона й блискуча накидка
+    if (head) { R(ctx, cx - 4, ht - 3, 9, 3, 'S'); R(ctx, cx - 4, ht - 3, 9, 1, 'w'); R(ctx, cx - 4, ht - 5, 2, 2, 's'); R(ctx, cx - 1, ht - 7, 3, 4, 'S'); R(ctx, cx + 3, ht - 5, 2, 2, 's'); R(ctx, cx, ht - 6, 1, 2, 'w'); R(ctx, cx - 3, ht - 2, 1, 1, 'n'); R(ctx, cx + 3, ht - 2, 1, 1, 'n'); }
+    R(ctx, cx - 5, sy + 16, 11, 5, 's'); R(ctx, cx - 5, sy + 16, 11, 1, 'w'); R(ctx, cx - 4, sy + 17, 1, 3, 'S'); R(ctx, cx - 1, sy + 18, 1, 1, 'w'); R(ctx, cx + 2, sy + 19, 1, 1, 'w'); R(ctx, cx - 5, sy + 21, 11, 1, 'n');
+    if (Math.floor(animClock * 4 + sx * 0.13) % 3 === 0) R(ctx, cx - 2 + Math.floor(animClock * 2) % 5, sy + 18, 1, 1, 'w');
   }
 }
 // Двері будиночка: відчиненість 0…1 залежить від етапу (стук → відчиняються → зачиняються)
@@ -14733,7 +14772,7 @@ function showSeasonsIntro() {
   state.seasonsIntro = 1; saveGame();
   ui.siTitle.textContent = t('seasonIntroTitle'); ui.siText.textContent = t('seasonIntroText');
   ui.siGo.textContent = t('seasonIntroGo'); ui.siLater.textContent = t('seasonIntroLater');
-  const g = ui.siIcon.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, 24, 24); g.drawImage(tabGlyph('seasons'), 0, 0);
+  const g = ui.siIcon.getContext('2d'); g.imageSmoothingEnabled = false; const sic = tabGlyph('seasons'), sdraw = () => { g.clearRect(0, 0, 48, 48); g.drawImage(sic, 0, 0, 48, 48); }; sdraw(); if (sic._cb) sic._cb.push(sdraw);
   ui.siModal.hidden = false; playSfx('wheelWin');
 }
 function updateSeasonsIntro() {
@@ -16867,7 +16906,7 @@ const HAG_X = [34, 96, 158], HAG_CY = 104;
 const hagGame = { phase: 'idle', t: 0, c: [], si: 0, st: 0, swaps: [], pairs: [], rt: 0, pick: -1, top: 0 };
 //#part 230_a2_skins_circus_hag.js
 function hagReset() {
-  const main = rollCircusSector(true, true).sec, dec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u' }, top = Math.floor(Math.random() * 3);
+  const main = mgSkinSector(), dec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u' }, top = Math.floor(Math.random() * 3);
   hagGame.c = [0, 1, 2].map(i => ({ slot: i, lid: 1, prize: i === top ? main : dec, main: i === top, dim: false }));
   hagGame.phase = 'idle'; hagGame.t = 0; hagGame.pick = -1; hagGame.top = top; hagGame.si = 0; hagGame.st = 0; hagGame.rt = 0;
   hagGame.swaps = [0.55, 0.5, 0.46, 0.42, 0.38, 0.35, 0.32];
@@ -17250,6 +17289,7 @@ function openCircus() {
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
   ui.circusModal.hidden = false;
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
+  ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = !(nd || hag);                 // у бонус-іграх головний приз — лише скін
   ui.circusClose.textContent = t(state.circus.spun ? (nd ? 'noodleDone' : hag ? 'hagDone' : 'circusDone') : 'wheelClose');
   ui.circusResult.textContent = '';
   updateCircusButtons();
@@ -21794,7 +21834,7 @@ function noodleTake() {                                              // вийн
   const G = noodleGame; if (G.phase !== 'cook') return;
   const d = Math.abs(G.p - G.zc);
   let sec, key;
-  if (d <= NOODLE_ZH) { sec = rollCircusSector(true, true).sec; key = 'noodlePerfect'; G.res = 'perfect'; }
+  if (d <= NOODLE_ZH) { sec = mgSkinSector(); key = 'noodlePerfect'; G.res = 'perfect'; }
   else if (d <= NOODLE_ZN) { sec = { kind: 'crystal', amount: 2, icon: 'gem2', color: 'v', weight: 0 }; key = 'noodleNear'; G.res = 'near'; }
   else { sec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u', weight: 0 }; key = G.p < G.zc ? 'noodleRaw' : 'noodleSoft'; G.res = 'miss'; }
   G.main = G.res === 'perfect'; G.prize = sec; G.phase = 'reveal'; G.rt = 0;
@@ -22882,7 +22922,7 @@ function buildThemeRender() { return BTH.render(); }
    БОНУС-ІГРИ ПІД ЕПОХИ: окрема іконка у верхньому правому куті (там, де був барабан). Цирк Фортуни лишається цирком з колесом.
    Гра відкривається у тому самому вікні, що й цирк (circusModal), у «бонус-режимі» (circus.bonus). Перезарядка 12 год
    (BONUS_COOLDOWN_MIN), один спільний таймер на всі епохи (час виграшу пишеться в state.wheel.mg[eid], діє найпізніший). Приз лише скін: ціль goalP виконано → скін і 12 год чекання;
-   не вийшло → можна одразу ще раз (BONUS_RETRY_ON_MISS). Ігри епох 0,1,3,5,6,7 — у 279_c_bonus_games_more.js.
+   не вийшло → можна одразу ще раз (BONUS_RETRY_ON_MISS). Ігри епох 0,1,3,5,6,7 — у 279_c_bonus_games_more.js; Японія (8) і Хелловін (9) — у 279_d_bonus_games_jp_hw.js.
    Реєстр MG_DEFS[номер епохи] → опис гри; їх робить mgMake: таймер (dur), ціль «ідеально» (goalP) і «майже» (goalN),
    рахунок G.score, фази idle → play → reveal → done. Гра задає: init() → стан, tick(G, dt), tap(G, lx, ly) (полотно 192×120),
    draw(g, G, T). Додати гру: mgMake(eid, {...}) + тексти mg<Ім'я>Title/Sub/Start/Done. Лапшична (Японія) і відьма — окремі, на візку.
@@ -22892,6 +22932,7 @@ const BONUS_RETRY_ON_MISS = true;                                    // не в�
 const MG_DEFS = {};
 const mgGame = { phase: 'idle', t: 0, left: 0, score: 0, rt: 0, res: '', prize: null, main: false, s: null };
 function mgForEpoch(eid) { return MG_DEFS[eid] || null; }
+function mgActive() { return (theme.season === 'halloween' && MG_DEFS[9]) || mgForEpoch(viewEpoch()); }   // гра, на яку зараз показує кнопка: Хелловін перебиває гру епохи
 function mgCur() { return circus.bonusDef; }                         // гра, що зараз у вікні (circus.bonus)
 function bonusCooldownMs() { return BONUS_COOLDOWN_MIN * 60000; }
 function bonusLastWin() { return (state.wheel.mg || []).reduce((m, v) => Math.max(m, v || 0), 0); }   // один таймер на всі епохи: береться найпізніший виграш
@@ -22903,7 +22944,7 @@ function mgSkinSector() {                                            // приз
 }
 function openBonus(def) {                                            // def — лише для тестів; інакше гра поточної епохи
   if (dialog.active || !ui.circusModal.hidden) return;
-  const d = def || mgForEpoch(viewEpoch()); if (!d) return;
+  const d = def || mgActive(); if (!d) return;
   const w = bonusWaitMs(d.eid);
   if (w > 0) { if (typeof adsOfferBonusSkip !== 'function' || !adsOfferBonusSkip(def, w)) showToast(t('mgWait', fmtTime(w / 1000))); return; }
   circus.bonus = true; circus.bonusDef = d;
@@ -22911,13 +22952,13 @@ function openBonus(def) {                                            // def — 
   ui.circusWheel.width = 192; ui.circusWheel.height = 120;
   mgReset(d.o);
   ui.circusModal.hidden = false;
-  ui.circusTitle.textContent = t(d.k.title); ui.circusSub.textContent = t(d.k.sub);
+  ui.circusTitle.textContent = t(d.k.title); ui.circusSub.textContent = t(d.k.sub); ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = false;
   ui.circusClose.textContent = t('wheelClose'); ui.circusResult.textContent = '';
   updateCircusButtons();
 }
 function updateBonusBtn(dt) {                                        // іконка: є лише в епохах із грою; світиться, коли готова
   circus.bt = (circus.bt || 0) - dt; if (circus.bt > 0) return; circus.bt = 0.4;
-  const d = mgForEpoch(viewEpoch()), b = ui.bonusOpen;
+  const d = mgActive(), b = ui.bonusOpen;
   b.hidden = !d; if (!d) return;
   const w = bonusWaitMs(viewEpoch());
   b.classList.toggle('ready', w <= 0); b.classList.toggle('wait', w > 0);
@@ -23134,13 +23175,13 @@ function mgPrize(g, G, T, cx, cy) {
 
 (function () {
   const UK = {
-    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
+    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише скіни', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
     mgDanceTitle: 'Танцпол Диско-Капі',
     mgDanceSub: 'Плитки спалахують і гаснуть. Тапай світні вчасно, а на темні не наступай!', mgDanceStart: 'Танцювати!', mgDanceDone: 'Гарно потанцювали!',
     mgSpamTitle: 'Спам-бомба', mgSpamSub: 'Вікна-спам лізуть на екран. Закривай їх тапом, поки не завалило!', mgSpamStart: 'Закривати!', mgSpamDone: 'Екран чистий!'
   };
   const EN = {
-    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
+    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Skins only here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
     mgDanceTitle: 'Disco Capy Dance Floor',
     mgDanceSub: 'Tiles light up and fade. Tap the glowing ones in time and keep off the dark ones!', mgDanceStart: 'Dance!', mgDanceDone: 'What a dance!',
     mgSpamTitle: 'Spam Bomb', mgSpamSub: 'Spam windows pop up everywhere. Tap them shut before they pile up!', mgSpamStart: 'Close them!', mgSpamDone: 'Screen is clean!'
@@ -23551,6 +23592,155 @@ function mgPrize(g, G, T, cx, cy) {
   };
   Object.assign(translations.uk, UK); Object.assign(translations.en, EN);
 })();
+//#part 279_d_bonus_games_jp_hw.js
+/* =====================================================================
+   БОНУС-ІГРИ ЯПОНІЇ І ХЕЛЛОВІНУ (як в усіх епохах: іконка-кнопка, спільна перезарядка 12 год, приз — лише скін; ядро — 279_bonus_games.js).
+   Японія (епоха 8) — «Тайко»: кільця стискаються до барабана, бий вчасно. Хелловін (пора, ключ 9 у MG_DEFS) — «Привиди з могил»: тапай привидів, не чіпай кажанів.
+   Хелловін перебиває гру епохи, поки вибрана пора Хелловін (mgActive). Полотно 192×120; смужки часу/рахунку — y 0…13.
+   ===================================================================== */
+
+const dsc = (g, cx, cy, r, c) => {                                    // диск, як disc(), але колір — літера палітри або будь-який CSS-колір
+  g.fillStyle = PALETTE[c] || c;
+  for (let dy = -r; dy <= r; dy++) { const half = Math.round(Math.sqrt(r * r + 0.5 - dy * dy)); g.fillRect(cx - half, cy + dy, half * 2 + 1, 1); }
+};
+
+/* ---- Японія: «Тайко» ---- */
+(function () {
+  const DX = [36, 96, 156], DY = 74, R0 = 16, LIFE = 1.15, WIN = 0.34;
+  const o = {
+    id: 'taiko', dur: 22, goalP: 20, goalN: 12,
+    k: { title: 'mgTaikoTitle', sub: 'mgTaikoSub', start: 'mgTaikoStart', done: 'mgTaikoDone' },
+    init() { return { notes: [], sp: 0.5, hit: [0, 0, 0], bad: [0, 0, 0], fx: [], last: -1 }; },
+    tick(G, dt) {
+      const S = G.s, k = 1 - G.left / o.dur;
+      for (let i = 0; i < 3; i++) { if (S.hit[i] > 0) S.hit[i] -= dt; if (S.bad[i] > 0) S.bad[i] -= dt; }
+      S.fx.forEach(f => { f.t += dt; }); S.fx = S.fx.filter(f => f.t < 0.5);
+      S.notes.forEach(n => { n.t += dt; });
+      S.notes = S.notes.filter(n => n.t < LIFE + WIN && !n.done);
+      S.sp -= dt;
+      if (S.sp <= 0) {
+        let d = Math.floor(Math.random() * 3); if (d === S.last && Math.random() < 0.6) d = (d + 1 + Math.floor(Math.random() * 2)) % 3;
+        S.last = d; S.notes.push({ d, t: 0, done: false }); S.sp = 0.78 - 0.34 * k + Math.random() * 0.1;
+      }
+    },
+    tap(G, lx, ly) {
+      const S = G.s; let best = -1, bd = 1e9;
+      for (let i = 0; i < 3; i++) { const dd = Math.hypot(lx - DX[i], ly - DY); if (dd < 30 && dd < bd) { bd = dd; best = i; } }
+      if (best < 0) return;
+      const cand = S.notes.filter(n => n.d === best && !n.done).sort((a, b) => b.t - a.t)[0];
+      if (cand && Math.abs(LIFE - cand.t) <= WIN) { cand.done = true; G.score++; S.hit[best] = 0.18; S.fx.push({ x: DX[best], y: DY - 12, t: 0, p: Math.abs(LIFE - cand.t) < 0.13 }); playSfx('wheelTick'); }
+      else S.bad[best] = 0.16;
+    },
+    draw(g, G, T) {
+      const W = 192, H = 120, S = G.s, show = G.phase === 'reveal' || G.phase === 'done';
+      g.clearRect(0, 0, W, H);
+      R(g, 0, 0, W, H, '#1b1740'); R(g, 0, 14, W, 40, '#2a2058'); R(g, 0, 40, W, 20, '#3a2468');
+      for (let i = 0; i < 18; i++) { const sx = (i * 37 + 11) % 190, sy = 16 + (i * 53) % 26; if (Math.sin(T * 2 + i) > -0.2) R(g, sx, sy, 1, 1, 'w'); }
+      dsc(g, 164, 30, 11, '#fff0c0'); dsc(g, 164, 30, 9, '#ffe6a0'); dsc(g, 160, 27, 2, '#f2d68a');            // повний місяць
+      R(g, 0, 56, W, 64, '#241238');                                                                                // сцена
+      R(g, 0, 98, W, 22, '#6a3e22'); R(g, 0, 98, W, 2, '#a8683a'); for (let x = 0; x < W; x += 16) R(g, x, 100, 1, 20, '#4e2c16');
+      R(g, 4, 17, 184, 1, 'd');                                                                                     // мотузка з ліхтариками
+      for (let i = 0; i < 9; i++) { const lx = 12 + i * 21, ly = 18 + Math.round(Math.sin(i * 1.7) * 1), sw = Math.round(Math.sin(T * 2 + i)); R(g, lx + sw, ly, 9, 11, i % 2 ? '#d4302a' : '#e8582a'); R(g, lx + sw, ly, 9, 2, '#ffd23a'); R(g, lx + sw, ly + 9, 9, 2, '#ffd23a'); R(g, lx + 2 + sw, ly + 3, 2, 4, '#ff9a5a'); R(g, lx + 4 + sw, ly + 11, 1, 3, 'd'); }
+      for (let i = 0; i < 3; i++) {                                                                                 // барабани
+        const x = DX[i], y = DY, hitU = S.hit[i] > 0 ? S.hit[i] / 0.18 : 0, sq = Math.round(hitU * 3), bad = S.bad[i] > 0;
+        R(g, x - 16, y + 18, 32, 4, '#1a0e22'); R(g, x - 13, y + 16, 3, 8, 'd'); R(g, x + 10, y + 16, 3, 8, 'd');
+        dsc(g, x, y + sq * 0, 17 - (sq ? 1 : 0), 'd'); dsc(g, x, y, 15 - (sq ? 1 : 0), bad ? '#a05a40' : '#d4302a'); dsc(g, x, y, 11, bad ? '#d8b090' : '#fff0d0'); dsc(g, x - 4, y - 5, 3, '#fffaf0');
+        for (let a = 0; a < 12; a++) { const an = a * Math.PI / 6; R(g, Math.round(x + Math.cos(an) * 14), Math.round(y + Math.sin(an) * 14), 2, 2, '#ffd23a'); }
+        R(g, x - 2, y - 2, 4, 4, '#d4302a'); R(g, x - 1, y - 1, 2, 2, '#ffd23a');
+        if (hitU > 0) { g.globalAlpha = hitU * 0.5; dsc(g, x, y, 22, '#ffe08a'); g.globalAlpha = 1; }
+      }
+      S.notes.forEach(n => {                                                                                         // кільця, що стискаються
+        const r = R0 + 26 * Math.max(0, 1 - n.t / LIFE), x = DX[n.d], good = Math.abs(LIFE - n.t) <= WIN;
+        g.strokeStyle = good ? '#ffe36a' : '#ffffff'; g.lineWidth = good ? 2.4 : 1.6; g.globalAlpha = Math.min(1, n.t / 0.25) * (n.t > LIFE ? Math.max(0, 1 - (n.t - LIFE) / WIN) : 1);
+        g.beginPath(); g.arc(x, DY, r, 0, 7); g.stroke(); g.globalAlpha = 1;
+      });
+      S.fx.forEach(f => { const u = f.t / 0.5; g.globalAlpha = 1 - u; for (let i = 0; i < 8; i++) { const an = i * 0.785 + 0.2, d = 6 + u * 20; R(g, Math.round(f.x + Math.cos(an) * d), Math.round(f.y + 12 + Math.sin(an) * d * 0.7), 3, 2, i % 2 ? '#ffc9d4' : '#ff8fb3'); } if (f.p) R(g, f.x - 7, Math.round(f.y - u * 12), 14, 5, '#ffe36a'); g.globalAlpha = 1; });
+      if (show) { g.globalAlpha = 0.55; R(g, 0, 14, W, 106, '#120c2a'); g.globalAlpha = 1; }
+      mgPrize(g, G, T, 96, 62);
+      mgBars(g, o, G);
+    }
+  };
+  mgMake(8, o);
+})();
+
+/* ---- Хелловін: «Привиди з могил» ---- */
+(function () {
+  const HX = [32, 96, 160], HY = [58, 98], LIFE0 = 1.25;
+  const o = {
+    id: 'ghost', dur: 18, goalP: 18, goalN: 10,
+    k: { title: 'mgGhostTitle', sub: 'mgGhostSub', start: 'mgGhostStart', done: 'mgGhostDone' },
+    init() { return { up: [null, null, null, null, null, null], sp: 0.4, fx: [], shake: 0 }; },
+    tick(G, dt) {
+      const S = G.s, k = 1 - G.left / o.dur;
+      S.fx.forEach(f => { f.t += dt; }); S.fx = S.fx.filter(f => f.t < 0.45);
+      if (S.shake > 0) S.shake -= dt;
+      for (let i = 0; i < 6; i++) { const u = S.up[i]; if (u) { u.t += dt; if (u.t >= u.life) S.up[i] = null; } }
+      S.sp -= dt;
+      if (S.sp <= 0) {
+        const free = []; for (let i = 0; i < 6; i++) if (!S.up[i]) free.push(i);
+        if (free.length) { const i = free[Math.floor(Math.random() * free.length)]; S.up[i] = { t: 0, life: LIFE0 - 0.5 * k + Math.random() * 0.15, bat: Math.random() < 0.22 }; }
+        S.sp = 0.62 - 0.26 * k + Math.random() * 0.12;
+      }
+    },
+    tap(G, lx, ly) {
+      const S = G.s; let best = -1, bd = 1e9;
+      for (let i = 0; i < 6; i++) { const u = S.up[i]; if (!u) continue; const x = HX[i % 3], y = HY[Math.floor(i / 3)] - 8, dd = Math.hypot(lx - x, ly - y); if (dd < 24 && dd < bd) { bd = dd; best = i; } }
+      if (best < 0) return;
+      const u = S.up[best], x = HX[best % 3], y = HY[Math.floor(best / 3)];
+      if (u.bat) { G.score = Math.max(0, G.score - 1); S.shake = 0.25; S.fx.push({ x, y: y - 10, t: 0, bad: true }); playSfx('pip'); }
+      else { G.score++; S.fx.push({ x, y: y - 10, t: 0, bad: false }); playSfx('wheelTick'); }
+      S.up[best] = null;
+    },
+    draw(g, G, T) {
+      const W = 192, H = 120, S = G.s, show = G.phase === 'reveal' || G.phase === 'done';
+      g.clearRect(0, 0, W, H);
+      R(g, 0, 0, W, H, '#1a0f2e'); R(g, 0, 14, W, 26, '#2e1850'); R(g, 0, 30, W, 18, '#5a2a6a'); R(g, 0, 44, W, 10, '#8a4a5a');
+      dsc(g, 40, 26, 11, '#ffe8b0'); dsc(g, 40, 26, 9, '#ffd98a'); dsc(g, 37, 24, 2, '#e8c070'); dsc(g, 43, 29, 1, '#e8c070');
+      for (let i = 0; i < 4; i++) { const bx = ((T * 14 + i * 60) % 230) - 20, by = 20 + i * 7 + Math.round(Math.sin(T * 5 + i) * 3), wg = Math.floor(T * 8 + i) % 2; R(g, bx, by, 6, 2, 'd'); R(g, bx - 2, by - wg * 2 + 1, 3, 2, 'd'); R(g, bx + 5, by - wg * 2 + 1, 3, 2, 'd'); }
+      R(g, 0, 52, W, 68, '#2a3a2a'); R(g, 0, 52, W, 2, '#4a6a3a'); R(g, 0, 88, W, 32, '#223022');
+      for (let i = 0; i < 14; i++) { const gx = (i * 29 + 9) % 188; R(g, gx, 56 + (i * 7) % 8, 1, 4, '#4f7a3f'); }
+      for (let row = 0; row < 2; row++) for (let c = 0; c < 3; c++) {
+        const i = row * 3 + c, x = HX[c], y = HY[row], u = S.up[i], sh = S.shake > 0 ? Math.round(Math.sin(T * 60 + i) * 1) : 0;
+        R(g, x - 14, y, 28, 6, '#10200f'); dsc(g, x, y + 2, 10, '#10200f');                                          // яма
+        if (u) {
+          const rise = Math.min(1, u.t / 0.25) * (u.t > u.life - 0.2 ? Math.max(0, (u.life - u.t) / 0.2) : 1), hh = Math.round(22 * rise), top = y - hh + 4;
+          g.save(); g.beginPath(); g.rect(x - 16 + sh, y - 30, 32, 30 + 3); g.clip();
+          if (u.bat) {
+            const wg = Math.floor(T * 10 + i) % 2; dsc(g, x + sh, top + 8, 7, '#2a1838'); dsc(g, x + sh, top + 8, 5, '#3e2658');
+            R(g, x - 15 + sh, top + 4 - wg * 3, 9, 6, '#2a1838'); R(g, x + 6 + sh, top + 4 - wg * 3, 9, 6, '#2a1838'); R(g, x - 5 + sh, top, 3, 4, '#2a1838'); R(g, x + 2 + sh, top, 3, 4, '#2a1838');
+            R(g, x - 3 + sh, top + 6, 2, 2, '#ff4a4a'); R(g, x + 1 + sh, top + 6, 2, 2, '#ff4a4a'); R(g, x - 2 + sh, top + 10, 1, 2, 'w'); R(g, x + 1 + sh, top + 10, 1, 2, 'w');
+          } else {
+            const wob = Math.round(Math.sin(T * 6 + i) * 1);
+            g.globalAlpha = 0.85; dsc(g, x + wob + sh, top + 8, 9, '#ffffff'); R(g, x - 9 + wob + sh, top + 8, 19, 14, '#ffffff');
+            for (let w = 0; w < 4; w++) R(g, x - 9 + w * 5 + wob + sh, top + 22 - (w % 2) * 3, 5, 3 + (w % 2) * 3, '#ffffff');
+            g.globalAlpha = 1; R(g, x - 5 + wob + sh, top + 7, 3, 4, '#2a1838'); R(g, x + 2 + wob + sh, top + 7, 3, 4, '#2a1838'); R(g, x - 2 + wob + sh, top + 13, 5, 3, '#2a1838'); R(g, x - 8 + wob + sh, top + 5, 2, 2, '#d8e4ff');
+          }
+          g.restore();
+        }
+        R(g, x - 15, y + 3, 30, 3, '#1a2e1a');                                                                       // край ями спереду
+        R(g, x - 15, y + 1, 4, 5, '#6a6a7a'); R(g, x - 15, y + 1, 4, 1, '#9a9aaa');                                  // камінчики
+        R(g, x + 11, y + 2, 4, 4, '#6a6a7a');
+      }
+      for (const f of S.fx) { const u = f.t / 0.45; g.globalAlpha = 1 - u; for (let i = 0; i < 7; i++) { const an = i * 0.9, d = 4 + u * 18; R(g, Math.round(f.x + Math.cos(an) * d), Math.round(f.y + Math.sin(an) * d * 0.8), 2, 2, f.bad ? '#ff4a4a' : '#bfe8ff'); } g.globalAlpha = 1; }
+      if (show) { g.globalAlpha = 0.55; R(g, 0, 14, W, 106, '#0a0618'); g.globalAlpha = 1; }
+      mgPrize(g, G, T, 96, 62);
+      mgBars(g, o, G);
+    }
+  };
+  mgMake(9, o);
+})();
+
+(function () {
+  const UK = {
+    mgTaikoTitle: 'Тайко діда Рьо', mgTaikoSub: 'Кільця стискаються до барабана. Бий, коли кільце збігається з ободом! Скін — за ритм.', mgTaikoStart: 'Бити!', mgTaikoDone: 'Гарний ритм!',
+    mgGhostTitle: 'Привиди з могил', mgGhostSub: 'Привиди визирають із ям. Тапай їх, а на кажанів не чіпай!', mgGhostStart: 'Ловити!', mgGhostDone: 'Могили спокійні!'
+  };
+  const EN = {
+    mgTaikoTitle: 'Grandpa Ryo’s Taiko', mgTaikoSub: 'Rings shrink onto the drum. Strike when the ring meets the rim! The skin is for the rhythm.', mgTaikoStart: 'Strike!', mgTaikoDone: 'Great rhythm!',
+    mgGhostTitle: 'Ghosts of the Graves', mgGhostSub: 'Ghosts peek out of the pits. Tap them, but leave the bats alone!', mgGhostStart: 'Catch!', mgGhostDone: 'The graves are quiet!'
+  };
+  Object.assign(translations.uk, UK); Object.assign(translations.en, EN);
+})();
 //#part 279_y_lang_base.js
 /* =====================================================================
    НОВІ МОВИ (pt, es, it, pl): спільна основа.
@@ -23926,6 +24116,7 @@ installLang("es", {
     "skinSay_capy_diamond": "Capy Diamante. Toca sin miedo: brillo, pero soy dura como el cristal.",
     "skinSay_hero_gold": "Ayudantes dorados: trabajan como un reloj y brillan como monedas.",
     "skinSay_hero_diamond": "Los ayudantes de diamante brillan tanto que la caja entrecierra los ojos.",
+    "mgSkinOnly": "🎁 Aquí solo skins",
     "skinSay_shop_diamond": "¡Una tienda de diamante! Escaparates de cristal y precios cristalinos.",
     "skinSay_street_diamond": "Una calle de diamante. Pisarla es como caminar sobre una lámpara de araña.",
     "skinSay_weather_diamondcloud": "Nubes de diamante: aquí no llueve, saltan chispas.",
@@ -25901,6 +26092,7 @@ installLang("it", {
     "skinSay_capy_diamond": "Capy Diamante. Tocca senza paura: scintillo, ma sono dura come il cristallo.",
     "skinSay_hero_gold": "Aiutanti dorati: lavorano come un orologio e brillano come monete.",
     "skinSay_hero_diamond": "Gli aiutanti di diamante brillano così tanto che la cassa strizza gli occhi.",
+    "mgSkinOnly": "🎁 Qui solo skin",
     "skinSay_shop_diamond": "Un negozio di diamante! Vetrine di cristallo e prezzi cristallini.",
     "skinSay_street_diamond": "Una strada di diamante. Camminarci sopra è come camminare su un lampadario.",
     "skinSay_weather_diamondcloud": "Nuvole di diamante: qui non piove, volano scintille.",
@@ -27876,6 +28068,7 @@ installLang("pl", {
     "skinSay_capy_diamond": "Diamentowa Capy. Stukaj śmiało: błyszczę, ale jestem twarda jak kryształ.",
     "skinSay_hero_gold": "Złoci pomocnicy: pracują jak w zegarku i lśnią jak monety.",
     "skinSay_hero_diamond": "Diamentowi pomocnicy błyszczą tak, że kasa mruży oczy.",
+    "mgSkinOnly": "🎁 Tu tylko skiny",
     "skinSay_shop_diamond": "Diamentowy sklep! Kryształowe witryny i kryształowo uczciwe ceny.",
     "skinSay_street_diamond": "Diamentowa droga. Chodzenie po niej to jak spacer po żyrandolu.",
     "skinSay_weather_diamondcloud": "Diamentowe chmury: tu nie pada deszcz, tylko iskry.",
@@ -29851,6 +30044,7 @@ installLang("pt", {
     "skinSay_capy_diamond": "Capy Diamante. Toque sem medo: eu brilho, mas sou dura como cristal.",
     "skinSay_hero_gold": "Ajudantes dourados: trabalham como um relógio e brilham como moedas.",
     "skinSay_hero_diamond": "Os ajudantes de diamante brilham tanto que o caixa fica de olhos apertados.",
+    "mgSkinOnly": "🎁 Aqui só skins",
     "skinSay_shop_diamond": "Uma loja de diamante! Vitrines de cristal e preços cristalinos.",
     "skinSay_street_diamond": "Uma rua de diamante. Andar nela é como andar num lustre.",
     "skinSay_weather_diamondcloud": "Nuvens de diamante: aqui não chove, saem faíscas.",

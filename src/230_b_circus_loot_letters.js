@@ -107,6 +107,7 @@ function openCircus() {
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
   ui.circusModal.hidden = false;
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
+  ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = !(nd || hag);                 // у бонус-іграх головний приз — лише скін
   ui.circusClose.textContent = t(state.circus.spun ? (nd ? 'noodleDone' : hag ? 'hagDone' : 'circusDone') : 'wheelClose');
   ui.circusResult.textContent = '';
   updateCircusButtons();
