@@ -2558,7 +2558,7 @@ const HOLIDAYS = [
     decor: ['snow', 'garlands', 'tree', 'hats'], skyTint: null, lights: ['r', 'y', 'g', 'n', 'p'],
     music: 'newyear', bonus: { global: 0.25 } },
   { id: 'halloween', icon: '🎃', from: [10, 20], to: [11, 2],
-    decor: ['pumpkins', 'bats', 'witchhats'], skyTint: { color: 'V', alpha: 0.5 }, lights: ['o', 'u'],
+    decor: ['pumpkins', 'bats'], skyTint: { color: 'V', alpha: 0.5 }, lights: ['o', 'u'],
     music: 'halloween', bonus: { depts: { 1: 1.0 } } }     // солодощі: +100%
 ];
 // Чорна п'ятниця — остання п'ятниця листопада (за реальною датою)
@@ -10746,7 +10746,7 @@ function showBubble(key, text, x, y, follow) {
   el.textContent = text; el._w = 0; el._h = 0;
   playSfx('pip');
   el._follow = follow || null;                  // follow — функція, що дає поточне місце того, хто говорить
-  el._x = x; el._y = Math.max(24, y);
+  el._x = x; el._y = follow && (follow() || {}).sky ? y : Math.max(24, y);          // сказ неба (дракон) може бути вище за 24
   placeBubble(el, x, el._y);
   Object.keys(bubbleEls).forEach(k => {                  // нова бульбашка прибирає старі поруч, щоб репліки не налазили одна на одну
     const o = bubbleEls[k];
@@ -10771,7 +10771,7 @@ function updateBubbles() {
     const p = el._follow();
     if (!p) { dropBubble(k); return; }
     if (p.x < bb.l + 3 || p.x > bb.r - 3) { dropBubble(k); return; }        // звірятко пішло за межі кадру (або камеру посунули) — репліка зникає
-    placeBubble(el, p.x, Math.max(24, p.y), bb);
+    placeBubble(el, p.x, p.sky ? p.y : Math.max(24, p.y), bb);
   });
 }
 // Репліку обирає ситуація: взимку часто «холодні» фрази, часом — загальна репліка епохи, інакше — власна фраза звірятка; та сама фраза підряд не повторюється
@@ -14829,7 +14829,7 @@ function updateTheme() {
   theme.holiday = holiday;
   theme.blackFriday = bf;
   // прикраси свята за датою малюємо лише в режимі «Авто»; якщо пору року обрано вручну — діють її прикраси
-  const seasonDecor = { winter: ['snow'], halloween: ['pumpkins', 'bats', 'witchhats'], autumn: ['autumnleaves'], spring: ['petals'], summer: ['heat'] }[season] || [];
+  const seasonDecor = { winter: ['snow'], halloween: ['pumpkins', 'bats'], autumn: ['autumnleaves'], spring: ['petals'], summer: ['heat'] }[season] || [];
   theme.decor = new Set([...(auto && holiday ? holiday.decor : []), ...seasonDecor, ...(bf ? BLACK_FRIDAY.decor : [])]);
   theme.skyTint = bf ? BLACK_FRIDAY.skyTint : (auto && holiday && holiday.skyTint) || (season === 'halloween' ? { color: 'V', alpha: 0.5 } : currentEpoch().tint);
   theme.lights = bf ? BLACK_FRIDAY.lights : ((holiday && auto && holiday.lights) || (season === 'halloween' ? ['o', 'u'] : ['r', 'y', 'g', 'n', 'p']));
@@ -15070,7 +15070,9 @@ function drawSackDrop() {
 }
 
 // Прикраса на голові звірятка (Новий рік — шапка Діда Мороза, Хелловін — карнавальна маска на обличчі)
-const HAT_COLORS = ['f', 'v', 'h', 'T', 'r', 'o', 'a'];     // яскраві кольори хелловінських масок (на темному тлі краще видно)
+const HAT_COLORS = ['#ff3d8b', '#35e3ff', '#ffd21a', '#8dff3a', '#ff4a3a', '#ff8a1c', '#b866ff'];
+const HAT_BRIGHT = { o: '#ff8a1c', h: '#ffc43a', r: '#ff3a3a', g: '#5dff4a', y: '#fff23a', w: '#ffffff', q: '#ff9be6', V: '#a14bff', v: '#e0a8ff', k: '#14091f' };      // яскраві відтінки замість приглушених палітрових
+const hatCol = ch => HAT_BRIGHT[ch] || ch;     // яскраві кольори хелловінських масок (на темному тлі краще видно)
 function drawHat(cx, ht, seed) {
   if (theme.decor.has('hats')) {
     R(ctx, cx - 4, ht - 1, 9, 2, 'w'); R(ctx, cx - 3, ht - 3, 7, 2, 'r'); R(ctx, cx - 2, ht - 5, 5, 2, 'r'); R(ctx, cx - 1, ht - 7, 3, 2, 'r'); R(ctx, cx + 1, ht - 9, 3, 2, 'w');
@@ -15099,9 +15101,11 @@ function drawHat(cx, ht, seed) {
         body = [[-5, 1, 11, 6, 'V'], [-9, 1, 4, 3, 'V'], [6, 1, 4, 3, 'V'], [-8, 4, 3, 2, 'V'], [6, 4, 3, 2, 'V'], [-5, -2, 3, 4, 'V'], [3, -2, 3, 4, 'V'], [-4, 1, 9, 1, 'v']];
         holes = [[-4, 3, 3, 3, 'o'], [2, 3, 3, 3, 'o'], [-3, 3, 1, 3, 'k'], [3, 3, 1, 3, 'k']]; break;
     }
-    body.forEach(r => R(ctx, cx + r[0] - 1, ht + r[1] - 1, r[2] + 2, r[3] + 2, 'k'));       // чорний контур
-    body.forEach(r => R(ctx, cx + r[0], ht + r[1], r[2], r[3], r[4]));
-    holes.forEach(r => { R(ctx, cx + r[0], ht + r[1], r[2], r[3], r[4]); if (r[5]) R(ctx, cx + r[0], ht + r[1], 1, 1, r[5]); });
+    ctx.globalAlpha = 0.3; body.forEach(r => R(ctx, cx + r[0] - 2, ht + r[1] - 2, r[2] + 4, r[3] + 4, hatCol(r[4]))); ctx.globalAlpha = 1;       // м'яке кольорове сяйво навколо маски
+    body.forEach(r => R(ctx, cx + r[0] - 1, ht + r[1] - 1, r[2] + 2, r[3] + 2, '#14091f'));       // темний контур
+    body.forEach(r => R(ctx, cx + r[0], ht + r[1], r[2], r[3], hatCol(r[4])));
+    body.forEach(r => R(ctx, cx + r[0], ht + r[1], r[2], 1, '#ffffffaa'));                          // світлий блік зверху кожної деталі
+    holes.forEach(r => { R(ctx, cx + r[0], ht + r[1], r[2], r[3], hatCol(r[4])); if (r[5]) R(ctx, cx + r[0], ht + r[1], 1, 1, hatCol(r[5])); });
   }
 }
 function hasHats() { return theme.decor.has('hats') || theme.decor.has('witchhats'); }
@@ -17567,7 +17571,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 26;
+const NEWS_VERSION = 27;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -17763,7 +17767,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Нова вступна кат-сцена! Тепер ти допомагаєш Капі сам: тапни монетку, заряди її п\'ятьма тапами — і дивись, як із неї зводиться маркет: синє креслення, риштування, сотні блоків злітають на свої місця, дах із вивіскою падає з неба, спалахують промені. Переглянути можна будь-коли: «Щоденник» → 🎬 «Заставка».',
+    newH: 'Що нового', new: 'Нічний дракон у Японії! Щоразу, коли сідає сонце, великий дракон підлітає до Фудзі, озирається, скаржиться, що від японського чаю хочеться спати, обвиває гору й засинає з «Zzz». Кожної ночі він прилітає з іншого боку. Ще: чіткіші піксельні контури; маски Хелловіну прибрано.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -17771,7 +17775,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'A brand-new intro cutscene! Now you help Capy yourself: tap the coin, charge it with five taps and watch the market rise from it: a blue blueprint, scaffolding, hundreds of blocks flying into place, the roof with the sign dropping from the sky and bursting rays of light. Watch it again any time: Diary → 🎬 «Intro».',
+    newH: 'What is new', new: 'A night dragon in Japan! Every sunset a big dragon flies to Mount Fuji, looks back, grumbles that Japanese tea makes him sleepy, coils around the peak and falls asleep with Zzz. Each night he comes from a different side. Also: crisper pixel outlines; Halloween masks removed.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
@@ -21366,20 +21370,25 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
       g.drawImage(s, Math.round(x - s.width / 2), Math.round(y - s.height / 2));
     }
   }
-  let headSp = null;
-  function headSprite() {                               // голова дракона (дивиться ліворуч)
-    if (headSp) return headSp;
-    const c = cvs(58, 44), g = c.getContext('2d');
-    [[40, 12, 5, 8], [34, 6, 4, 7], [28, 10, 4, 6], [44, 20, 4, 6], [38, 26, 3, 5]].forEach(([x, y, a, b], i) => shadeEllipse(g, x, y, a, b, i % 2 ? '#ff7a30' : '#e8503a'));
-    const horn = (x, y) => { for (let i = 0; i < 12; i++) { const px = x + i * 1.2, py = y - Math.sin(i / 11 * Math.PI * 0.8) * 7 + i * 0.5, w = Math.max(1, 3 - i * 0.2); g.fillStyle = i < 3 ? '#fff2b0' : '#ffd24a'; g.fillRect(Math.round(px), Math.round(py), Math.round(w), 2); g.fillStyle = '#a07818'; g.fillRect(Math.round(px), Math.round(py) + 2, Math.round(w), 1); } };
+  const headCache = {};
+  function headSprite(s, sleep) {                       // голова дракона (дивиться ліворуч); s — масштаб (1 — звичайний), sleep — заплющені очі
+    s = s || 1; const key = s + (sleep ? 's' : ''); if (headCache[key]) return headCache[key];
+    const c = cvs(Math.ceil(58 * s), Math.ceil(44 * s)), g = c.getContext('2d');
+    const Rr = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(Math.round(x * s), Math.round(y * s), Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s))); };
+    [[40, 12, 5, 8], [34, 6, 4, 7], [28, 10, 4, 6], [44, 20, 4, 6], [38, 26, 3, 5]].forEach(([x, y, a, b], i) => shadeEllipse(g, x * s, y * s, a * s, b * s, i % 2 ? '#ff7a30' : '#e8503a'));
+    const h2 = Math.max(2, Math.round(2 * s)), h1 = Math.max(1, Math.round(s));
+    const horn = (x, y) => { const n = Math.round(12 * s); for (let i = 0; i < n; i++) { const u = i / s, px = (x + u * 1.2) * s, py = (y - Math.sin(u / 11 * Math.PI * 0.8) * 7 + u * 0.5) * s, w = Math.max(1, Math.round(Math.max(1, 3 - u * 0.2) * s)); g.fillStyle = u < 3 ? '#fff2b0' : '#ffd24a'; g.fillRect(Math.round(px), Math.round(py), w, h2); g.fillStyle = '#a07818'; g.fillRect(Math.round(px), Math.round(py) + h2, w, h1); } };
     horn(30, 11); horn(22, 9);
-    shadeEllipse(g, 30, 22, 13, 11, '#2fbf86'); shadeEllipse(g, 14, 25, 12, 6, '#2fbf86'); shadeEllipse(g, 15, 31, 10, 3, '#f0d890'); shadeEllipse(g, 5, 23, 4, 3, '#5fe0a8');
-    g.fillStyle = '#ffffff'; [[6, 28], [10, 29], [15, 29]].forEach(([x, y]) => g.fillRect(x, y, 1, 2));
-    g.fillStyle = '#12301f'; g.fillRect(3, 22, 2, 2);
-    g.fillStyle = '#ffffff'; g.fillRect(22, 17, 6, 5); g.fillStyle = '#e8503a'; g.fillRect(23, 18, 4, 4); g.fillStyle = '#1a1a1a'; g.fillRect(24, 18, 2, 3); g.fillStyle = '#ffffff'; g.fillRect(24, 18, 1, 1);
-    g.fillStyle = '#12301f'; g.fillRect(21, 15, 8, 2); g.fillRect(20, 16, 2, 2);
-    g.fillStyle = '#e8503a'; g.fillRect(34, 26, 3, 5); g.fillRect(36, 29, 2, 3);
-    return (headSp = c);
+    shadeEllipse(g, 30 * s, 22 * s, 13 * s, 11 * s, '#2fbf86'); shadeEllipse(g, 14 * s, 25 * s, 12 * s, 6 * s, '#2fbf86'); shadeEllipse(g, 15 * s, 31 * s, 10 * s, 3 * s, '#f0d890'); shadeEllipse(g, 5 * s, 23 * s, 4 * s, 3 * s, '#5fe0a8');
+    [[6, 28], [10, 29], [15, 29]].forEach(([x, y]) => Rr(x, y, 1, 2, '#ffffff'));
+    Rr(3, 22, 2, 2, '#12301f');
+    if (sleep) { Rr(22, 17, 6, 5, '#2fbf86'); Rr(22, 19, 6, 1, '#12301f'); Rr(22, 20, 1, 1, '#12301f'); Rr(27, 20, 1, 1, '#12301f'); Rr(24, 21, 3, 1, '#5fe0a8'); }       // заплющене око: рисочка з віями
+    else { Rr(22, 17, 6, 5, '#ffffff'); Rr(23, 18, 4, 4, '#e8503a'); Rr(24, 18, 2, 3, '#1a1a1a'); Rr(24, 18, 1, 1, '#ffffff'); }
+    Rr(21, 15, 8, 2, '#12301f'); Rr(20, 16, 2, 2, '#12301f');
+    Rr(34, 26, 3, 5, '#e8503a'); Rr(36, 29, 2, 3, '#e8503a');
+    const sil = cvs(c.width, c.height), sgc = sil.getContext('2d'); sgc.drawImage(c, 0, 0); sgc.globalCompositeOperation = 'source-in'; sgc.fillStyle = '#143d2e'; sgc.fillRect(0, 0, sil.width, sil.height);
+    const oc = cvs(c.width + 2, c.height + 2), og = oc.getContext('2d'); [[0, 1], [2, 1], [1, 0], [1, 2]].forEach(([dx, dy]) => og.drawImage(sil, dx, dy)); og.drawImage(c, 1, 1);       // 1px темний контур голови
+    return (headCache[key] = oc);
   }
   function dragonPath(t, wl, wr, top, span) {           // повільний політ по всьому небу: хвилі, розвороти, петлі
     const W = wr - wl, cxm = wl + W * 0.5, a = t * 0.07;
@@ -21401,31 +21410,199 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     g.globalAlpha = night > 0 ? GA : ga;
   }
   function dragon(g, t, wl, wr, top, span, night) { return dragonDraw(g, t, tt => dragonPath(tt, wl, wr, top, span), night); }
-  function dragonDraw(g, t, pos, night) {                // pos(tt) → [x, y] голови в момент tt; однаковий для неба й будівництва
-    const N = 30, SP = 7.4, pts = [], dt = 0.04, h0 = pos(t);
-    pts.push(h0);
-    let tt = t, prev = h0, acc = 0;
+  function dragonDraw(g, t, pos, night, o) {            // pos(tt) → [x, y, ззаду?] голови в момент tt; однаковий для неба й будівництва. o: k — масштаб, headX — поворот голови (-1…1), tilt — нахил морди донизу, sleep, from — час, з якого береться тіло, коли дракон стоїть, wob — хвиля тіла, hbob — дихання голови, noFire, clip — обрізка «лише над горою» для частин за Фудзі
+    o = o || {}; const kk = o.k || 1, S = n => Math.max(1, Math.round(n * kk)), N = 30, SP = 7.4 * kk, pts = [], dt = 0.04, h0 = pos(t), wob = (o.wob != null ? o.wob : 3) * kk;
+    pts.push([h0[0], h0[1] + (o.hbob || 0), h0[2]]);
+    let tt = o.from != null ? o.from : t, prev = o.from != null ? pos(tt) : h0, acc = 0;
     for (let it = 0; it < 4000 && pts.length < N; it++) {
       tt -= dt; const p = pos(tt); acc += Math.hypot(p[0] - prev[0], p[1] - prev[1]); prev = p;
-      if (acc >= SP) { acc = 0; pts.push([p[0], p[1] + Math.sin(t * 2.2 - pts.length * 0.5) * 3]); }
+      if (acc >= SP) { acc = 0; pts.push([p[0], p[1] + Math.sin(t * (o.sleep ? 1.1 : 2.2) - pts.length * 0.5) * wob, p[2]]); }
     }
     while (pts.length < N) pts.push(pts[pts.length - 1]);
-    const back = pos(t - 0.15), hv = [pts[0][0] - back[0], pts[0][1] - back[1]], faceL = hv[0] < 0;
-    const bodyR = i => Math.max(3, Math.round(11 - i * 0.27));
-    const [tx, ty] = pts[N - 1];
-    for (let k = 0; k < 6; k++) P(g, tx + (faceL ? 3 : -5) + (faceL ? k : -k) * 2, ty - 2 + Math.round(Math.sin(t * 3 + k) * 2), 3, 2, k % 2 ? '#e8503a' : '#ffd24a');
-    for (let i = N - 1; i >= 1; i--) {
-      const [x, y] = pts[i], r = bodyR(i);
-      if (i % 2 === 0 && i < N - 5) { const dx = pts[i][0] - pts[i - 1][0], dy = pts[i][1] - pts[i - 1][1], n = Math.hypot(dx, dy) || 1, sx = x + (dy / n) * (r + 1), sy = y + (-dx / n) * (r + 1); P(g, Math.round(sx) - 1, Math.round(sy) - 2, 3, 4, '#e8503a'); P(g, Math.round(sx), Math.round(sy) - 4, 1, 2, '#ffd24a'); P(g, Math.round(sx) - 1, Math.round(sy) - 2, 1, 4, '#ff9a80'); }
-      g.drawImage(ball(r, i % 2 ? '#2fbf86' : '#38c88e'), Math.round(x - r - 2), Math.round(y - r - 2));
-      if (i > 1) { const rb = Math.max(1, Math.round(r * 0.55)); g.drawImage(ball(rb, '#f4e4a0'), Math.round(x - rb - 2), Math.round(y + r * 0.45 - rb - 2)); }
-    }
-    [6, 12, 19].forEach(li => { const [x, y] = pts[li], r = bodyR(li); P(g, x - 1, y + r - 1, 3, 6, '#1c7a58'); P(g, x - 1, y + r - 1, 1, 6, '#5fe0a8'); P(g, x - 3, y + r + 5, 7, 2, '#2fbf86'); [-2, 0, 2].forEach(d => P(g, x + d, y + r + 7, 1, 2, '#ffd24a')); });
-    const [hx, hy] = pts[0], hs = headSprite(), ang = Math.max(-0.7, Math.min(0.7, Math.atan2(hv[1], Math.abs(hv[0]) + 0.001))) * (faceL ? 1 : -1) * -1;
-    g.save(); g.translate(Math.round(hx), Math.round(hy)); if (!faceL) g.scale(-1, 1); g.rotate(Math.round((faceL ? ang : -ang) * 6) / 6); breathFire(g, t, night); g.drawImage(hs, -30, -22); g.restore();
+    const back = pos(t - 0.15), hv = [pts[0][0] - back[0], pts[0][1] - back[1]], faceL = o.headX != null ? o.headX < 0 : hv[0] < 0;
+    const bodyR = i => Math.max(3, Math.round((11 - i * 0.27) * kk));
+    const isBk = pt => !!(pt[2] && o.clip);             // частина тіла за горою: малюється лише там, де її не закриває Фудзі
+    const [tx, ty] = pts[N - 1], OUT = '#143d2e';
+    const body = bk => {
+      if (isBk(pts[N - 1]) === bk) for (let k = 0; k < 6; k++) P(g, tx + (faceL ? 3 : -5) * kk + (faceL ? k : -k) * 2 * kk, ty - 2 * kk + Math.round(Math.sin(t * 3 + k) * 2), S(3), S(2), k % 2 ? '#e8503a' : '#ffd24a');
+      for (let i = N - 1; i >= 1; i--) if (isBk(pts[i]) === bk) D(g, Math.round(pts[i][0]), Math.round(pts[i][1]), bodyR(i) + 1, OUT);        // чіткий темний контур усього силуету
+      for (let i = N - 1; i >= 1; i--) {
+        if (isBk(pts[i]) !== bk) continue;
+        const [x, y] = pts[i], r = bodyR(i);
+        if (i % 2 === 0 && i < N - 5) { const dx = pts[i][0] - pts[i - 1][0], dy = pts[i][1] - pts[i - 1][1], n = Math.hypot(dx, dy) || 1, sx = x + (dy / n) * (r + 1), sy = y + (-dx / n) * (r + 1); P(g, Math.round(sx) - S(1), Math.round(sy) - S(2), S(3), S(4), '#e8503a'); P(g, Math.round(sx), Math.round(sy) - S(4), S(1), S(2), '#ffd24a'); P(g, Math.round(sx) - S(1), Math.round(sy) - S(2), S(1), S(4), '#ff9a80'); }
+        g.drawImage(ball(r, i % 2 ? '#2fbf86' : '#38c88e'), Math.round(x - r - 2), Math.round(y - r - 2));
+        if (i > 1) { const rb = Math.max(1, Math.round(r * 0.55)); g.drawImage(ball(rb, '#f4e4a0'), Math.round(x - rb - 2), Math.round(y + r * 0.45 - rb - 2)); }
+      }
+      [6, 12, 19].forEach(li => { if (isBk(pts[li]) !== bk) return; const [x, y] = pts[li], r = bodyR(li); P(g, x - S(1), y + r - S(1), S(3), S(6), '#1c7a58'); P(g, x - S(1), y + r - S(1), S(1), S(6), '#5fe0a8'); P(g, x - S(3), y + r + S(5), S(7), S(2), '#2fbf86'); [-2, 0, 2].forEach(d => P(g, x + d * kk, y + r + S(7), S(1), S(2), '#ffd24a')); });
+    };
+    if (o.clip && pts.some(isBk)) { g.save(); o.clip(g); body(true); g.restore(); }
+    body(false);
+    const [hx, hy] = pts[0], hs = headSprite(kk, o.sleep), ang = o.tilt != null ? -o.tilt : Math.max(-0.7, Math.min(0.7, Math.atan2(hv[1], Math.abs(hv[0]) + 0.001))) * (faceL ? 1 : -1) * -1;
+    const hh = isBk(pts[0]); if (hh) { g.save(); o.clip(g); }
+    g.save(); g.translate(Math.round(hx), Math.round(hy));
+    const sxh = o.headX != null ? Math.max(0.12, Math.abs(o.headX)) : 1; g.scale((faceL ? 1 : -1) * sxh, 1); g.imageSmoothingEnabled = false;
+    g.rotate(Math.round((o.tilt != null ? ang : (faceL ? ang : -ang)) * 6) / 6); if (!o.noFire && kk === 1) breathFire(g, t, night); g.drawImage(hs, Math.round(-30 * kk) - 1, Math.round(-22 * kk) - 1); g.restore();
     const dir = faceL ? -1 : 1;
-    for (let k = 0; k < 14; k++) { const wx = hx + dir * (14 + k * 2), wy = hy + 6 + Math.round(Math.sin(t * 3 + k * 0.5) * 3) + k * 0.4; P(g, wx, wy, 2, 1, '#ffd24a'); P(g, wx, wy - 7 - Math.round(Math.sin(t * 3 + k * 0.4) * 2), 2, 1, '#ffe08a'); }
-    const px = hx + dir * 36, py = hy + 8 + Math.sin(t * 2) * 2; g.globalAlpha = 0.25 * GA; D(g, Math.round(px), Math.round(py), 7, '#fff2b0'); g.globalAlpha = GA; g.drawImage(ball(3, '#ffffff'), Math.round(px - 5), Math.round(py - 5));
+    for (let k = 0; k < 14; k++) { const wx = hx + dir * (14 + k * 2) * kk, wy = hy + 6 * kk + Math.round(Math.sin(t * 3 + k * 0.5) * 3) + k * 0.4 * kk; P(g, wx, wy, S(2), S(1), '#ffd24a'); P(g, wx, wy - 7 * kk - Math.round(Math.sin(t * 3 + k * 0.4) * 2), S(2), S(1), '#ffe08a'); }
+    const px = hx + dir * 36 * kk, py = hy + 8 * kk + Math.sin(t * 2) * 2, pr = Math.max(3, Math.round(3 * kk)); g.globalAlpha = 0.25 * GA; D(g, Math.round(px), Math.round(py), 7 * kk, '#fff2b0'); g.globalAlpha = GA; g.drawImage(ball(pr, '#ffffff'), Math.round(px - pr - 2), Math.round(py - pr - 2));
+    if (hh) g.restore();
+    return { x: hx, y: hy, faceL };
+  }
+
+  /* ---------- нічний дракон: щоразу, коли сонце сідає, летить до Фудзі, зупиняється, озирається, каже репліку, лягає спати на гору й хропе до ранку.
+     Три маршрути (нічна черга): ліворуч, праворуч і над вершиною. Усе залежить лише від фази доби (state.dayPhase) — тому однаково працює й при перемотуванні ---------- */
+  const DSEQ = { p0: 0.73, p1: 0.205, K: 1.75, KR: 1.5, wake: 10 };      // початок вечора (фаза), ранок, масштаб великого дракона, секунд на відліт уранці
+  const DSEQ_TXT = {
+    uk: [['Ох… я так втомився. Хочу відпочити.', 'Той японський чай… очі самі закриваються.', 'Фудзі, пусти на подушку. Хр-р…'],
+         ['Шостий чайник за вечір. Усе, я здався.', 'Фудзі, посунься! Я тільки на хвилинку.', 'Спокійної ночі, Капі. Хр-р…'],
+         ['Цілий день над дахами. Крила не тримають.', 'Гора м’яка, як ковдра. Лягаю.', 'Тільки не будіть… Zzz']],
+    en: [['Ugh… I’m so tired. I need a rest.', 'That Japanese tea… my eyes close by themselves.', 'Fuji, lend me a pillow. Zzz…'],
+         ['Sixth teapot tonight. I give up.', 'Fuji, scoot over! Just for a minute.', 'Good night, Capy. Zzz…'],
+         ['All day over the roofs. My wings give up.', 'This mountain is soft as a blanket. Lying down.', 'Don’t wake me… Zzz']],
+    es: [['Uf… estoy agotado. Quiero descansar.', 'Ese té japonés… los ojos se cierran solos.', 'Fuji, déjame tu almohada. Zzz…'],
+         ['La sexta tetera de la noche. Me rindo.', '¡Fuji, hazme sitio! Solo un minuto.', 'Buenas noches, Capy. Zzz…'],
+         ['Todo el día sobre los tejados. Las alas no dan más.', 'Esta montaña es suave como una manta. Me tumbo.', 'No me despiertes… Zzz']],
+    it: [['Uff… sono stanchissimo. Voglio riposare.', 'Quel tè giapponese… gli occhi si chiudono da soli.', 'Fuji, prestami il cuscino. Zzz…'],
+         ['Sesta teiera stasera. Mi arrendo.', 'Fuji, fai posto! Solo un minuto.', 'Buonanotte, Capy. Zzz…'],
+         ['Tutto il giorno sopra i tetti. Le ali non reggono.', 'Questa montagna è morbida come una coperta. Mi sdraio.', 'Non svegliarmi… Zzz']],
+    pl: [['Uff… jestem tak zmęczony. Chcę odpocząć.', 'Ta japońska herbata… oczy same się zamykają.', 'Fuji, daj poduszkę. Zzz…'],
+         ['Szósty czajnik dziś. Poddaję się.', 'Fuji, przesuń się! Tylko na chwilę.', 'Dobranoc, Capy. Zzz…'],
+         ['Cały dzień nad dachami. Skrzydła nie niosą.', 'Ta góra jest miękka jak koc. Kładę się.', 'Nie budź mnie… Zzz']],
+    pt: [['Ufa… estou exausto. Quero descansar.', 'Aquele chá japonês… os olhos fecham sozinhos.', 'Fuji, empresta o travesseiro. Zzz…'],
+         ['Sexto bule desta noite. Desisto.', 'Fuji, chega para lá! Só um minutinho.', 'Boa noite, Capy. Zzz…'],
+         ['O dia todo sobre os telhados. As asas não aguentam.', 'Esta montanha é macia como um cobertor. Deito.', 'Não me acorde… Zzz']]
+  };
+  let dseq = null, dseqN = Math.floor(Math.random() * 3), dseqWas = false;
+  const smooth01 = u => { u = Math.max(0, Math.min(1, u)); return u * u * (3 - 2 * u); };
+  function hermPath(kn) {                               // кноти {s,x,y,stop?,vx?,vy?} → s ↦ [x, y]; швидкості за Катмулом–Ромом, у зупинках нуль
+    const n = kn.length;
+    kn.forEach((k, i) => {
+      if (k.stop) { k.vx = 0; k.vy = 0; }
+      else if (k.vx == null) { const a = kn[Math.max(0, i - 1)], b = kn[Math.min(n - 1, i + 1)], d = Math.max(0.01, b.s - a.s); k.vx = (b.x - a.x) / d; k.vy = (b.y - a.y) / d; }
+    });
+    return s => {
+      if (s <= kn[0].s) return [kn[0].x, kn[0].y];
+      if (s >= kn[n - 1].s) return [kn[n - 1].x, kn[n - 1].y];
+      let i = 0; while (i < n - 2 && s > kn[i + 1].s) i++;
+      const a = kn[i], b = kn[i + 1], d = b.s - a.s, u = (s - a.s) / d, u2 = u * u, u3 = u2 * u;
+      const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+      return [h00 * a.x + h10 * d * a.vx + h01 * b.x + h11 * d * b.vx, h00 * a.y + h10 * d * a.vy + h01 * b.y + h11 * d * b.vy];
+    };
+  }
+  function dseqGeo(wl, wr, top, span) {                 // та сама Фудзі, що в buildSky: центр, основа, вершина
+    const H = 315, hw = 600, cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
+    return { cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3)) };
+  }
+  function dseqBuild(route, G, T0) {                    // будує політ: підліт → зупинка (3 фіксовані точки неба) → розворот → спуск на гору → сон → відліт уранці
+    const { cx, top, surf, ex } = G, room = Math.max(60, G.sy - (top + 36));
+    const normal = tt => dragonPath(tt, G.wl, G.wr, G.top + 12, G.span);
+    const st = normal(T0), st2 = normal(T0 + 0.05), st1 = normal(T0 - 0.05);
+    const kn = [{ s: 0, x: st[0], y: st[1], vx: (st2[0] - st1[0]) / 0.1, vy: (st2[1] - st1[1]) / 0.1 }];
+    const sg = route === 1 ? 1 : -1;                    // бік, на якому дракон ляже (маршрут 0 — ліворуч, 1 — праворуч; 2 — через вершину)
+    const ox = Math.min(170, ex * 0.62), PT = [[cx - ox, Math.max(top + 34, G.sy - Math.min(130, room * 0.55))], [cx + ox, Math.max(top + 34, G.sy - Math.min(95, room * 0.4))], [cx + 10, Math.max(top + 30, G.sy - Math.min(170, room * 0.85))]][route];   // ТРИ ТОЧКИ НЕБА, де дракон зупиняється й дивиться на Фудзі
+    const W1 = route === 2 ? [cx + ex * 1.1, PT[1] + 14] : [cx - sg * ex * 0.9, PT[1] + 10], dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const dirA = PT[0] < W1[0] ? -1 : 1;                // у якому напрямку дракон підлітає (потім обертається до гори)
+    const d1 = Math.max(7, dist(st, W1) / 60 + 2), d2 = Math.max(5, dist(W1, PT) / 45);
+    const ux = (PT[0] - W1[0]) / Math.max(1, dist(W1, PT)), uy = (PT[1] - W1[1]) / Math.max(1, dist(W1, PT));
+    kn.push({ s: d1, x: W1[0], y: W1[1], vx: ux * 55, vy: uy * 55 });
+    const sP = d1 + d2; kn.push({ s: sP, x: PT[0], y: PT[1], stop: true });
+    const leave = sP + 5.4; kn.push({ s: leave, x: PT[0], y: PT[1], stop: true });
+    const faceRest = sg, tlRest = 0.28;                 // дракон лягає, обвивши Фудзі спіраллю, як змія дерево: спершу заходить за гору (ззаду її не видно), потім виринає спереду
+    const depthCap = Math.max(18, ((typeof shop !== 'undefined' && shop) ? shop.y : G.sy + 90) - G.sy - 70), pitch = 22, ryC = 12, H0 = 315 * 0.985;
+    const th0 = [Math.PI, Math.PI, Math.PI * 1.5][route], thEnd = Math.PI * 6.5, thC = Math.PI * 3.5;      // орбіта від точки зупинки до thC, далі обвиває верхівку (1 виток) і лягає спереду
+    const rxBig = Math.min(ex * 0.62, 150),  ryBig = 28, itop = (typeof bubbleBounds === 'function') ? bubbleBounds().it + 80 : top + 80, cyO = route === 2 ? Math.max(itop + ryBig, G.sy - 46) : Math.max(itop, G.sy - 42);      // голова не лізе під верхню панель: над нею ще місце для репліки          // великий овал навколо гори: центр на висоті точки зупинки
+    const depth0 = Math.max(6, Math.min([14, 12, 8][route], depthCap - pitch * 1.5));
+    const depF = th => depth0 + Math.max(0, th - thC) / (2 * Math.PI) * pitch;
+    const rxCone = th => 600 * (1 - Math.pow(Math.max(0.05, (H0 - depF(th)) / 315), 1 / 1.3)) + 12;         // півширина гори на тій висоті + товщина тіла
+    const wOf = th => smooth01((th - th0) / (thC - th0));
+    const hxf = th => { const w = wOf(th); return cx - sg * (rxBig + (rxCone(th) - rxBig) * w) * Math.cos(th); };
+    const hyf = th => { const w = wOf(th), cy = cyO + (G.sy + depF(th) - cyO) * w, ry = ryBig + (ryC - ryBig) * w; return cy + ry * Math.sin(th); };
+    PT[0] = hxf(th0); PT[1] = hyf(th0);                       // зупинка — це початок орбіти
+    kn[kn.length - 2].x = PT[0]; kn[kn.length - 2].y = PT[1]; kn[kn.length - 1].x = PT[0]; kn[kn.length - 1].y = PT[1];
+    const nH = Math.round((thEnd - th0) / (Math.PI / 6)); let sc = leave, prevP = [PT[0], PT[1]];
+    for (let i = 0; i <= nH; i++) { const th = th0 + (thEnd - th0) * i / nH, x = hxf(th), y = hyf(th); sc += Math.max(0.5, Math.hypot(x - prevP[0], y - prevP[1]) / (i > nH - 4 ? 40 : 78)); prevP = [x, y]; kn.push({ s: sc, x, y, th, stop: i === nH }); }
+    const hk = kn.filter(k => k.th != null);
+    const thAt = ss => { if (ss < hk[0].s - 0.01 || ss > hk[hk.length - 1].s) return null; let i = 0; while (i < hk.length - 2 && ss > hk[i + 1].s) i++; const a = hk[i], b = hk[i + 1]; return a.th + (b.th - a.th) * Math.max(0, Math.min(1, (ss - a.s) / Math.max(1e-6, b.s - a.s))); };
+    const back = ss => { const th = thAt(ss); return th != null && Math.sin(th) < -0.02 ? 1 : 0; };     // 1 — тіло за горою
+    const sR = kn[kn.length - 1].s, R = kn[kn.length - 1];
+    const p1 = ((DSEQ.p1 - DSEQ.p0 + 1) % 1) * CONFIG.DAY_SECONDS, sWake = Math.max(sR + 6, p1);
+    kn.push({ s: sWake, x: R.x, y: R.y, stop: true });
+    const fin = normal(T0 + sWake + DSEQ.wake), f2 = normal(T0 + sWake + DSEQ.wake + 0.05), f1 = normal(T0 + sWake + DSEQ.wake - 0.05);
+    kn.push({ s: sWake + 5.5, x: R.x - faceRest * 40, y: R.y - 120 });
+    kn.push({ s: sWake + DSEQ.wake, x: fin[0], y: fin[1], vx: (f2[0] - f1[0]) / 0.1, vy: (f2[1] - f1[1]) / 0.1 });
+    return { route, T0, G, path: hermPath(kn), back, normal, sP, leave, sR, sWake, end: sWake + DSEQ.wake, dirA, faceRest, tlRest, tlPause: route === 2 ? 0.55 : 0.12, hx: dirA, lastT: null, f: [0, 0, 0], head: null, key: [cx, G.bY, G.top, G.span, G.wl, G.wr].join('|'), says: [sP + 1.4, sP + 4.4, sR + 1.2] };
+  }
+  function dseqSay(sq, i) {                             // репліка дракона над головою
+    const lines = DSEQ_TXT[state.lang] || DSEQ_TXT.en, txt = lines[sq.route][i];
+    if (typeof showBubble !== 'function') return;
+    const follow = () => { const h = sq.head; if (!h) return null; return { x: h.x, y: h.y - 30 * (sq.kNow || 1), sky: true }; };
+    if (!sq.head) return;
+    showBubble('dragon', txt, sq.head.x, sq.head.y - 30 * (sq.kNow || 1), follow);
+  }
+  function dseqUpdate(t, wl, wr, top, span) {            // стан нічного маршруту на цей кадр (або null — дракон літає як удень)
+    if (!dayNightOn() || state.settings.noFly || build) { dseq = null; dseqWas = false; return null; }
+    const DAY = CONFIG.DAY_SECONDS, s = ((state.dayPhase - DSEQ.p0 + 1) % 1) * DAY;
+    const G = dseqGeo(wl, wr, top - 12, span), key = [G.cx, G.bY, G.top, span, wl, wr].join('|');
+    const total = Math.max(((DSEQ.p1 - DSEQ.p0 + 1) % 1) * DAY, 0) + DSEQ.wake;
+    if (s >= total) { dseq = null; dseqWas = false; return null; }
+    if (!dseqWas) { dseqWas = true; dseq = null; dseqN++; }
+    const T0 = t - s;
+    if (!dseq || dseq.key !== key || dseq.route !== dseqN % 3) {
+      const keep = dseq && dseq.key !== key ? dseq : null;
+      dseq = dseqBuild(dseqN % 3, G, T0);
+      if (keep) { dseq.hx = keep.hx; dseq.f = keep.f; }
+      else if (s >= dseq.sR) dseq.hx = dseq.faceRest;
+      dseq.f = keep ? keep.f : [s > dseq.says[0] + 2.5 ? 1 : 0, s > dseq.says[1] + 2.5 ? 1 : 0, s > dseq.says[2] + 2.5 ? 1 : 0];
+    }
+    const sq = dseq; sq.T0 = T0; sq.s = s;
+    const pos = tt => {
+      const ss = tt - sq.T0; if (ss < 0 || ss >= sq.end) return sq.normal(tt);
+      const p = sq.path(ss); if (ss > sq.sP && ss < sq.leave) return [p[0], p[1] + Math.sin(tt * 1.7) * 2, 0];
+      const a = sq.path(ss - 0.06), b = sq.path(ss + 0.06), vx = (b[0] - a[0]) / 0.12, vy = (b[1] - a[1]) / 0.12, sp = Math.hypot(vx, vy), f = Math.min(1, sp / 45), am = 7 * f * (sq.kNow || 1) * (1 - smooth01((ss - sq.sR + 5) / 5)), w = Math.sin(ss * 2.7) * am;      // тіло пливе хвилею, на зупинці хвиля згасає
+      return [p[0] - vy / (sp || 1) * w, p[1] + vx / (sp || 1) * w, sq.back(ss)];
+    };
+    sq.pos = pos;
+    const sp0 = sq.path(s), sp1 = sq.path(s + 0.1), vx = (sp1[0] - sp0[0]) / 0.1, vy = (sp1[1] - sp0[1]) / 0.1;
+    let target = sq.hx;                                 // куди дивиться голова: за рухом, а на зупинці — ось сценарій: спершу туди, куди летів, потім до Фудзі
+    if (s < sq.sP) target = vx < -4 ? -1 : vx > 4 ? 1 : sq.hx;
+    else if (s < sq.leave) target = s < sq.sP + 0.7 ? sq.dirA : -sq.dirA;
+    else if (s < sq.sR - 1) target = vx < -6 ? -1 : vx > 6 ? 1 : sq.hx;
+    else if (s < sq.sWake) target = sq.faceRest;
+    else target = vx < -6 ? -1 : vx > 6 ? 1 : sq.hx;
+    const dt = sq.lastT == null ? 9 : Math.max(0, t - sq.lastT); sq.lastT = t;
+    if (dt > 0.5) sq.hx = target; else { const d = target - sq.hx, m = 2.4 * dt; sq.hx += Math.abs(d) <= m ? d : Math.sign(d) * m; }
+    // нахил морди: за рухом; на зупинці дивиться на гору вниз; на відпочинку голова лежить на схилі
+    let tilt = Math.max(-0.7, Math.min(0.7, Math.atan2(vy, Math.abs(vx) + 0.001)));
+    if (s > sq.sP && s < sq.leave + 1.2) tilt += (sq.tlPause - tilt) * smooth01((s - sq.sP - 0.8) / 1.2) * (s < sq.leave ? 1 : smooth01((sq.leave + 1.2 - s) / 1.2));
+    if (s >= sq.sR - 2.4 && s < sq.sWake) tilt += (sq.tlRest - tilt) * smooth01((s - (sq.sR - 2.4)) / 2.2);
+    else if (s >= sq.sWake) tilt = tilt * smooth01((s - sq.sWake) / 1.6);
+    const kBase = s < sq.leave + 1 ? 1 + (DSEQ.K - 1) * smooth01(s / 12) : DSEQ.K + (DSEQ.KR - DSEQ.K) * smooth01((s - sq.leave - 1) / Math.max(1, sq.sR - sq.leave - 1));      // удалині дракон меншає (але не надто)
+    const k = 1 + (kBase - 1) * (1 - smooth01((s - sq.sWake - 1) / (DSEQ.wake - 1)));
+    sq.kNow = k;
+    const resting = s >= sq.sR && s < sq.sWake;
+    const GG = sq.G; sq.o = { clip: g => { const x0 = GG.cx - 640; g.beginPath(); g.moveTo(x0, GG.top - 90); for (let i = 0; i <= 214; i++) { const x = x0 + i * 6; g.lineTo(x, GG.surf(x - GG.cx)); } g.lineTo(x0 + 214 * 6, GG.top - 90); g.closePath(); g.clip(); }, k, headX: sq.hx, tilt, sleep: s >= sq.sR - 1.2 && s < sq.sWake + 0.8, noFire: true, wob: resting ? 1.3 : 3, hbob: resting ? Math.sin(t * 1.3) * 1.5 * k : 0, from: resting ? sq.T0 + sq.sR : null };
+    sq.sleeping = resting && s > sq.sR + 1.5;
+    sq.says.forEach((ts, i) => { if (!sq.f[i] && s >= ts) { sq.f[i] = 1; if (s - ts < 2.5) sq.sayQ = i; } });
+    return sq;
+  }
+  function zzz(g, x, y, t, kk, dir) {                   // «Zzz»: пікселькові літери ростуть і пливуть угору
+    const Z = [[0, 0, 5, 1], [3, 1, 1, 1], [2, 2, 1, 1], [1, 3, 1, 1], [0, 4, 5, 1]];
+    for (let i = 0; i < 4; i++) {
+      const u = (t * 0.2 + i / 4) % 1, zs = Math.max(1, Math.round((0.9 + u * 1.8) * Math.max(1, kk * 0.8)));
+      const px = Math.round(x + dir * u * 30 * kk + Math.sin(u * 7 + i * 2) * 4), py = Math.round(y - u * 70 * kk);
+      g.globalAlpha = Math.min(1, u * 5) * Math.min(1, (1 - u) * 3);
+      [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([ox, oy]) => Z.forEach(([rx, ry, rw, rh]) => P(g, px + rx * zs + ox, py + ry * zs + oy, rw * zs, rh * zs, '#1a2a5a')));
+      Z.forEach(([rx, ry, rw, rh]) => P(g, px + rx * zs, py + ry * zs, rw * zs, rh * zs, '#ffffff'));
+    }
+    g.globalAlpha = 1;
+  }
+  function drawNightDragon(g, t, wl, wr, top, span, mode, night) {      // true — малює великий нічний політ замість денного; mode: 'sky' (під затемненням) або 'night' (світиться поверх)
+    const sq = dseqUpdate(t, wl, wr, top, span); if (!sq) return false;
+    const h = dragonDraw(g, t, sq.pos, mode === 'night' ? night : 0, sq.o);
+    sq.head = { x: h.x, y: h.y, faceL: h.faceL };
+    if (sq.sayQ != null) { const i = sq.sayQ; sq.sayQ = null; dseqSay(sq, i); }
+    if (sq.sleeping && (mode === 'night' || sky.night < 0.05)) { const sa = g.globalAlpha; g.globalAlpha = 1; zzz(g, h.x + (h.faceL ? -8 : 8) * sq.kNow, h.y - 16 * sq.kNow, t, sq.kNow, h.faceL ? -1 : 1); g.globalAlpha = sa; }
+    return true;
   }
   function neonNight() {                                  // уночі вивіски світяться яскравіше за затемнення, з ореолом і легким мерехтінням
     const Lm = sky.lamp; if (!neonSigns.length || Lm <= 0.02) return;
@@ -21438,7 +21615,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
   }
   function skyExtra(time, noFly) {
     const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
-    if (!noFly) { if (!build) dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }       // під час будівництва той самий дракон літає біля будинку (278)
+    if (!noFly) { if (!build && !drawNightDragon(g, time, wl, wr, top + 12, span, 'sky', 0)) dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }       // під час будівництва той самий дракон літає біля будинку (278)
     const nP = Math.min(420, Math.round(90 * Math.max(1, W / Math.max(200, visR() - visL()))));      // лепестки теж у світі; щільність на екрані та сама
     for (let i = 0; i < nP; i++) { const hs = hash2(i * 13, 5), px = wl + ((hs % 1000) / 1000 * W + time * (6 + hs % 5)) % W, py = top + 8 + (((hs >>> 10) % 1000) / 1000 * 170 + time * (8 + hs % 6)) % 170; P(g, Math.round(px), Math.round(py), 2, 1, '#ffc9d4'); P(g, Math.round(px) + (hs % 2), Math.round(py) + 1, 1, 1, '#ef8fa3'); }
   }
@@ -21508,13 +21685,14 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     },
     filterNeon(keep) { neonSigns = neonSigns.filter(s => keep([s.x, s.y, s.w, s.h])); neonLayer = null; },
     skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
-    drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),          // той самий дракон, що в небі (використовує будівництво, 278)
+    drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),
+    dragonNight: { set(n) { dseqN = n - 1; dseq = null; dseqWas = false; }, state: () => dseq && { route: dseq.route, s: Math.round(dseq.s * 10) / 10, sP: dseq.sP, leave: dseq.leave, sR: dseq.sR, sWake: dseq.sWake, hx: dseq.hx, head: dseq.head } },      // перевірка: set(n) — маршрут наступної ночі (0 ліворуч, 1 праворуч, 2 над вершиною)          // той самий дракон, що в небі (використовує будівництво, 278)
     nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
       neonNight();
       const n = sky.night; if (noFly || n < 0.05 || build) return;
       const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24);
       GA = Math.min(0.5, n * 0.55); ctx.globalAlpha = GA;
-      dragon(ctx, time, wl, wr, top + 12, span, n);
+      if (!drawNightDragon(ctx, time, wl, wr, top + 12, span, 'night', n)) dragon(ctx, time, wl, wr, top + 12, span, n);
       GA = 1; ctx.globalAlpha = 1;
     },
     roof: shopRoof, facadeDeco: shopDeco, facadeFx, facadeExtra() { /* немає */ }, signMotif, roofProp() { /* дахові прикраси лишились у торіях і ліхтарях */ }, noRoofExtras: true

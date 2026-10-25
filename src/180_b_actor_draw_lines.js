@@ -248,7 +248,7 @@ function showBubble(key, text, x, y, follow) {
   el.textContent = text; el._w = 0; el._h = 0;
   playSfx('pip');
   el._follow = follow || null;                  // follow — функція, що дає поточне місце того, хто говорить
-  el._x = x; el._y = Math.max(24, y);
+  el._x = x; el._y = follow && (follow() || {}).sky ? y : Math.max(24, y);          // сказ неба (дракон) може бути вище за 24
   placeBubble(el, x, el._y);
   Object.keys(bubbleEls).forEach(k => {                  // нова бульбашка прибирає старі поруч, щоб репліки не налазили одна на одну
     const o = bubbleEls[k];
@@ -273,7 +273,7 @@ function updateBubbles() {
     const p = el._follow();
     if (!p) { dropBubble(k); return; }
     if (p.x < bb.l + 3 || p.x > bb.r - 3) { dropBubble(k); return; }        // звірятко пішло за межі кадру (або камеру посунули) — репліка зникає
-    placeBubble(el, p.x, Math.max(24, p.y), bb);
+    placeBubble(el, p.x, p.sky ? p.y : Math.max(24, p.y), bb);
   });
 }
 // Репліку обирає ситуація: взимку часто «холодні» фрази, часом — загальна репліка епохи, інакше — власна фраза звірятка; та сама фраза підряд не повторюється

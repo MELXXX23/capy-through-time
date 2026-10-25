@@ -153,7 +153,7 @@ function updateTheme() {
   theme.holiday = holiday;
   theme.blackFriday = bf;
   // прикраси свята за датою малюємо лише в режимі «Авто»; якщо пору року обрано вручну — діють її прикраси
-  const seasonDecor = { winter: ['snow'], halloween: ['pumpkins', 'bats', 'witchhats'], autumn: ['autumnleaves'], spring: ['petals'], summer: ['heat'] }[season] || [];
+  const seasonDecor = { winter: ['snow'], halloween: ['pumpkins', 'bats'], autumn: ['autumnleaves'], spring: ['petals'], summer: ['heat'] }[season] || [];
   theme.decor = new Set([...(auto && holiday ? holiday.decor : []), ...seasonDecor, ...(bf ? BLACK_FRIDAY.decor : [])]);
   theme.skyTint = bf ? BLACK_FRIDAY.skyTint : (auto && holiday && holiday.skyTint) || (season === 'halloween' ? { color: 'V', alpha: 0.5 } : currentEpoch().tint);
   theme.lights = bf ? BLACK_FRIDAY.lights : ((holiday && auto && holiday.lights) || (season === 'halloween' ? ['o', 'u'] : ['r', 'y', 'g', 'n', 'p']));
@@ -394,7 +394,9 @@ function drawSackDrop() {
 }
 
 // Прикраса на голові звірятка (Новий рік — шапка Діда Мороза, Хелловін — карнавальна маска на обличчі)
-const HAT_COLORS = ['f', 'v', 'h', 'T', 'r', 'o', 'a'];     // яскраві кольори хелловінських масок (на темному тлі краще видно)
+const HAT_COLORS = ['#ff3d8b', '#35e3ff', '#ffd21a', '#8dff3a', '#ff4a3a', '#ff8a1c', '#b866ff'];
+const HAT_BRIGHT = { o: '#ff8a1c', h: '#ffc43a', r: '#ff3a3a', g: '#5dff4a', y: '#fff23a', w: '#ffffff', q: '#ff9be6', V: '#a14bff', v: '#e0a8ff', k: '#14091f' };      // яскраві відтінки замість приглушених палітрових
+const hatCol = ch => HAT_BRIGHT[ch] || ch;     // яскраві кольори хелловінських масок (на темному тлі краще видно)
 function drawHat(cx, ht, seed) {
   if (theme.decor.has('hats')) {
     R(ctx, cx - 4, ht - 1, 9, 2, 'w'); R(ctx, cx - 3, ht - 3, 7, 2, 'r'); R(ctx, cx - 2, ht - 5, 5, 2, 'r'); R(ctx, cx - 1, ht - 7, 3, 2, 'r'); R(ctx, cx + 1, ht - 9, 3, 2, 'w');
@@ -423,9 +425,11 @@ function drawHat(cx, ht, seed) {
         body = [[-5, 1, 11, 6, 'V'], [-9, 1, 4, 3, 'V'], [6, 1, 4, 3, 'V'], [-8, 4, 3, 2, 'V'], [6, 4, 3, 2, 'V'], [-5, -2, 3, 4, 'V'], [3, -2, 3, 4, 'V'], [-4, 1, 9, 1, 'v']];
         holes = [[-4, 3, 3, 3, 'o'], [2, 3, 3, 3, 'o'], [-3, 3, 1, 3, 'k'], [3, 3, 1, 3, 'k']]; break;
     }
-    body.forEach(r => R(ctx, cx + r[0] - 1, ht + r[1] - 1, r[2] + 2, r[3] + 2, 'k'));       // чорний контур
-    body.forEach(r => R(ctx, cx + r[0], ht + r[1], r[2], r[3], r[4]));
-    holes.forEach(r => { R(ctx, cx + r[0], ht + r[1], r[2], r[3], r[4]); if (r[5]) R(ctx, cx + r[0], ht + r[1], 1, 1, r[5]); });
+    ctx.globalAlpha = 0.3; body.forEach(r => R(ctx, cx + r[0] - 2, ht + r[1] - 2, r[2] + 4, r[3] + 4, hatCol(r[4]))); ctx.globalAlpha = 1;       // м'яке кольорове сяйво навколо маски
+    body.forEach(r => R(ctx, cx + r[0] - 1, ht + r[1] - 1, r[2] + 2, r[3] + 2, '#14091f'));       // темний контур
+    body.forEach(r => R(ctx, cx + r[0], ht + r[1], r[2], r[3], hatCol(r[4])));
+    body.forEach(r => R(ctx, cx + r[0], ht + r[1], r[2], 1, '#ffffffaa'));                          // світлий блік зверху кожної деталі
+    holes.forEach(r => { R(ctx, cx + r[0], ht + r[1], r[2], r[3], hatCol(r[4])); if (r[5]) R(ctx, cx + r[0], ht + r[1], 1, 1, hatCol(r[5])); });
   }
 }
 function hasHats() { return theme.decor.has('hats') || theme.decor.has('witchhats'); }

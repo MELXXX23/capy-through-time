@@ -539,7 +539,7 @@ const HOLIDAYS = [
     decor: ['snow', 'garlands', 'tree', 'hats'], skyTint: null, lights: ['r', 'y', 'g', 'n', 'p'],
     music: 'newyear', bonus: { global: 0.25 } },
   { id: 'halloween', icon: '🎃', from: [10, 20], to: [11, 2],
-    decor: ['pumpkins', 'bats', 'witchhats'], skyTint: { color: 'V', alpha: 0.5 }, lights: ['o', 'u'],
+    decor: ['pumpkins', 'bats'], skyTint: { color: 'V', alpha: 0.5 }, lights: ['o', 'u'],
     music: 'halloween', bonus: { depts: { 1: 1.0 } } }     // солодощі: +100%
 ];
 // Чорна п'ятниця — остання п'ятниця листопада (за реальною датою)
