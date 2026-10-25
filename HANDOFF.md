@@ -21,4 +21,4 @@
 - Лишаються мертві функції `fjCloud`/`fjSun` у `275_japan.js`.
 
 ## Чекає (з минулого)
-Save на itch (ZIP `desktop/dist/CapyTapMarket-itch-html.zip` — оновлено в р. 65); Play Console/AdMob/Steamworks; публікація 5 відео з чернеток YouTube; голос трейлера; `store/STEAM_LANGS.md`; Android AAB і закритий тест. Не комітяться: `desktop/*.bat`, `tools/autotest_last.txt`, `previews/`, `backups/`.
+Save на itch (новий ZIP уже завантажено, «played in browser» увімкнено; користувачка натискає Save); Play Console/AdMob/Steamworks; публікація 5 відео з чернеток YouTube; голос трейлера; `store/STEAM_LANGS.md`; Android AAB і закритий тест. Не комітяться: `desktop/*.bat`, `tools/autotest_last.txt`, `previews/`, `backups/`.
