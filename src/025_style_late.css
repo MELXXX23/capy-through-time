@@ -95,4 +95,8 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 /* Бонус-ігри: напис, що тут головний приз — лише скіни */
 #circusSkinNote { margin: 0 0 8px; padding: 6px 8px; font-size: 11px; line-height: 1.4; text-align: center; color: #6a3e08; background: #fff0b0; box-shadow: inset 0 0 0 2px #e8a42a, inset 0 -3px 0 2px rgba(180,110,20,.25); }
 #circusSkinNote[hidden] { display: none; }
+/* живий фон вікна бонусів (279_e_bonus_bg.js): полотно під вмістом, усередині рамки */
+#circusModal .modal-box, #circusModal.mg .modal-box { position: relative; padding-top: 34px; }
+#circusModal .modal-box > :not(.bonus-bg) { position: relative; z-index: 1; }
+#circusModal .bonus-bg { position: absolute; left: 8px; top: 8px; z-index: 0; pointer-events: none; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
 </style>

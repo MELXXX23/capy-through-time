@@ -114,7 +114,7 @@ function updateCircus(dt) {
   if (c.hag) updateHagGame(dt);
   if (c.noodle) updateNoodleGame(dt);
   updateBonusGame(dt); updateBonusBtn(dt);
-  if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
+  if (!ui.circusModal.hidden) { if (typeof drawBonusBg === 'function') drawBonusBg(dt); const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
 }
 /* ---- Баба Яга ---- */
 // відьма в небі: політ, коло й спуск — у 230_a3_hag_v2.js (hagFly, hagStartFlight, hagTap, updateHagFly, drawHagFlyer)

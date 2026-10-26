@@ -8,7 +8,7 @@
 |---|---|---|---|
 | `010_head.html` | 5 | HTML: шапка, мета, назва |  |
 | `020_style_base.css` | 3 | CSS: змінні кольорів, базові стилі |  |
-| `021_style_page.css` | 15 | CSS: сторінка, сцена, верхня панель |  |
+| `021_style_page.css` | 16 | CSS: сторінка, сцена, верхня панель |  |
 | `022_style_panels.css` | 11 | CSS: меню, вкладки, картки |  |
 | `023_style_boot.css` | 34 | CSS: екран завантаження, бульбашки, кат-сцена, газета |  |
 | `024_style_modal_phone.css` | 21 | CSS: модальні вікна, телефон |  |
@@ -36,31 +36,32 @@
 | `150_a3_skins_new_decor.js` | 11 | — | SHOP_DECO_EXTRA, STREET_EXTRA, sprG, thickG, roofRecolor, SPR_STAR7, SPR_CHEST, wheelG |
 | `150_b_facade_epoch_props_roof.js` | 34 | магазин: епохальні деталі, вивіски (signMotif), дах (roofProp, drawRoof) | withPal, bandG, vinesG, neonLine, barrelG, crateG, speakerG, cabinetG |
 | `150_c_facade_pavilions_build.js` | 43 | магазин: павільйони поверхів, кінозал, buildShopCanvas | snowCap, PAV_SEQ, PAV_PAL, PAV_BACK, PAV_CANOPY, PAV_TECH, artG, garmentG |
-| `151_a_arch_core_renaissance.js` | 30 | ARCH: примітиви AR + епоха 0 (Відродження) | AR |
-| `151_b_arch_retro_disco.js` | 21 | ARCH: епохи 1–2 (Ретро, Диско) |  |
-| `151_c_arch_arcade_internet_eco.js` | 29 | ARCH: епохи 3–5 (Аркади, Інтернет, Еко) |  |
-| `151_d_arch_space_neon.js` | 19 | ARCH: епохи 6–7 (Космос, Неон) |  |
+| `151_a_arch_core_renaissance.js` | 36 | ARCH: примітиви AR + епоха 0 (Відродження) | AR |
+| `151_b_arch_retro_disco.js` | 26 | ARCH: епохи 1–2 (Ретро, Диско) |  |
+| `151_c_arch_arcade_internet_eco.js` | 39 | ARCH: епохи 3–5 (Аркади, Інтернет, Еко) |  |
+| `151_d_arch_space_neon.js` | 26 | ARCH: епохи 6–7 (Космос, Неон) |  |
 | `160_refs.js` | 7 | посилання на елементи DOM (ui) | $, ui, ctx, skyLayer, shop, uiCache, sceneUnit, viewCrop |
 | `165_shop.js` | 15 | rebuildShop, layoutScene, камера, панель на телефоні | rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK, layoutScene |
 | `165_tab_icons_hd.js` | 14 | — | TAB_ICONS_HD, tabImgHD, tabGlyphHD |
-| `170_ui.js` | 31 | інтерфейс: вкладки, картки відділів і команди | detectLanguage, setText, outlineCanvas, tabGlyph, tabIconCanvas, buildTabs, TABS_PRIMARY, setSheet |
+| `170_ui.js` | 32 | інтерфейс: вкладки, картки відділів і команди | detectLanguage, setText, outlineCanvas, tabGlyph, tabIconCanvas, buildTabs, TABS_PRIMARY, setSheet |
 | `175_buy.js` | 1 | купівля | buyDept, expandShop |
 | `178_offline.js` | 2 | дохід, поки гравця не було | addOfflineEarnings, refreshOfflineModal, showOfflineModal, claimOffline |
 | `180_a_anim_weather_actors.js` | 41 | анімації: погода, хмари, звірята-помічники (actorHome, syncActors, updateActors) | shopAnim, capyAnim, fx, clouds, weather, raindrops, updateWeather, rainSpotCache |
 | `180_b_actor_draw_lines.js` | 46 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, ACTOR_K, actorK, evenScaleCache, evenScaled, crispFigCache, crispFigure |
 | `180_c_customers_updates.js` | 40 | покупці (spawnCustomer, drawCustomer, spaceHelmet), updateAnimations, спливаючі числа | skinLineLast, skinLine, capySay, buyStar, hireOrUpgrade, customerTarget, passEdge, spawnX |
-| `190_a_audio_music_cutscene.js` | 47 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
+| `190_a_audio_music_cutscene.js` | 48 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
 | `190_b_cutscene_draw.js` | 39 | кат-сцена: малювання | cutFace, cutMark, cutEmo, cutTextPx, cutPopText, cutSpark, cutBubble, cutSayState |
 | `190_c_cutscene_panel_tour_sfx.js` | 39 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |
 | `190_cz_cutscene_epic.js` | 21 | кат-сцена v3: кіно-вступ, кінорамки, тапи (монетка, заряд), будівництво маркету з блоків | CUT_CHG, CB, CUT_TXT2, cutT2, cutRate, cutBars, cutIntroCam, cutIntroText |
-| `190_d_epoch_tunes.js` | 16 | музика епох 1–8: EPOCH_TUNES (дві мелодії на епоху, акорди), epochTrackDef/epochTrackKey | TUNE_Q, ARP_FAST, ARP_SOFT, LEAD_VOL, BASS_VOL, ARP_VOL, EPOCH_TUNES, chordInfo |
+| `190_d_epoch_tunes.js` | 17 | музика епох 1–8: EPOCH_TUNES (дві мелодії на епоху, акорди), epochTrackDef/epochTrackKey | TUNE_Q, ARP_FAST, ARP_SOFT, LEAD_VOL, BASS_VOL, ARP_VOL, EPOCH_TUNES, chordInfo |
 | `200_a_travel_ui_warp_base.js` | 43 | налаштування, вікна-підтвердження, основа анімації подорожі | warp, confirmCb, savingDisabled, achTimer, autoTapAcc, stars, leaves, wsEls |
 | `200_b_warp_epoch_animations.js` | 34 | анімації подорожі для кожної епохи (WARP_BY_EPOCH) | warpPix, warpCapy, warpFont, warpText, drawWarpDisco, WARP_INV, drawWarpArcade, drawWarpNet |
 | `200_c_time_travel_workshop_stats.js` | 27 | подорож (applyTimeTravel), майстерня часу, досягнення, статистика, налаштування | applyTimeTravelSteps, applyTimeTravel, wsEffectText, buildWorkshop, wsNeedTrips, buyWorkshop, routeSig, updateRouteCard |
-| `210_skins.js` | 30 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust, DUST_COLS |
+| `210_skins.js` | 31 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust, DUST_COLS |
 | `211_skins_new_fx.js` | 3 | — | SHOP_FX_DRAW, FX_SEA_COLS |
 | `212_skins_shop_anim.js` | 9 | — | SKIN_SIGN_ANIM, signStripes, signFlakes, signSpark, drawRoofFountains, aquariumSpot, drawSkinInterior, drawSkinShopExtras |
-| `220_a_events_weather.js` | 37 | події, сезони, погода, райдуга, дощ, блискавки (початок) | theme, snow, bats, trouble, sackDrop, eventTimer, inRange, isBlackFriday |
+| `213_epoch_roof_anim.js` | 3 | — | drawEpochRoofAnim, drawSpaceTelescope |
+| `220_a_events_weather.js` | 38 | події, сезони, погода, райдуга, дощ, блискавки (початок) | theme, snow, bats, trouble, sackDrop, eventTimer, inRange, isBlackFriday |
 | `220_b1_rainbow_lightning_skyx.js` | 23 | райдуга, блискавки, прикраси неба (початок) | RAINBOW_M, rainbowM, rainbowCanvas, rainbowGeom, drawRainbowSkin, bolts, boltTimer, boltPath |
 | `220_b2_rainbow_lightning_skyx.js` | 23 | прикраси неба (skyx*), кеш-спрайти | skyxDrone, skyxIsland, skyBlockCache, skyHash, skyxBlock, islandCanvas, skyxIsland2, droneBody |
 | `220_c_epoch_sky_fx.js` | 43 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, discoLamps, drawSkyExtra |
@@ -84,6 +85,7 @@
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
 | `260_render.js` | 29 | головний render, будівельна техніка | render, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum, drawTruckWheel |
 | `270_loop.js` | 2 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frame |
+| `275_a_sakura.js` | 12 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild |
 | `275_ads.js` | 9 | реклама AdMob (лише Android-обгортка, прапорець window.__ADS з mobile/sync-web.js): Ads.init/available/showRewarded, кнопки «×2» у вікні офлайну й пропуск очікування бонус-гри; див. store/ADS_PLAN.md | Ads, adsAddPrivacyButton, adsLog, adOfflineDone, updateAdButtons, adsOfferOffline, adsBoostClick, adsOfferBonusSkip |
 | `275_japan.js` | 77 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `275_k_stand_sora.js` | 7 | — |  |
@@ -97,6 +99,7 @@
 | `279_bonus_games.js` | 19 | бонус-ігри під епохи: реєстр MG_DEFS, спільний мінірушій mgMake (таймер, ціль, приз), «Танцпол» (епоха 2), «Спам» (епоха 4); перезарядка 12 год на епоху, приз-скін | BONUS_COOLDOWN_MIN, BONUS_RETRY_ON_MISS, MG_DEFS, mgGame, mgForEpoch, mgActive, mgCur, bonusCooldownMs |
 | `279_c_bonus_games_more.js` | 25 | бонус-ігри епох 0 Фреска, 1 Джубокс, 3 Клешня, 5 Сортування, 6 Кристали, 7 Нічна траса (mgMake) + їх тексти |  |
 | `279_d_bonus_games_jp_hw.js` | 12 | — | dsc |
+| `279_e_bonus_bg.js` | 11 | — | BBG_P, BBG_THEMES, BBG_ART, bbg, bbgShade, bbgMix, bbgThemeId, bbgSprite |
 | `279_y_lang_base.js` | 1 | — | installLang |
 | `279_z_lang_es.js` | 165 | — |  |
 | `279_z_lang_it.js` | 165 | — |  |
