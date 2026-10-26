@@ -829,6 +829,9 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @media (prefers-reduced-motion: reduce) { #boot .gh, #boot .fog, #boot .lf, #boot .lan, #boot .cf, #boot .pg, #boot #bootOrb .moon.hw { animation: none; } }
 #boot .b-cv.fr { z-index: 3; }
 #boot .b-car:not(.l) { z-index: 2; }                                       /* ближня смуга перед дальньою */
+/* низьке вікно ПК (панель задач, не на весь екран): підказка компактна, щоб смужка й підказка вміщались у землю під Капі */
+@media (max-height: 640px) { #boot .b-tip { min-height: 0; padding: 6px 10px; gap: 3px; bottom: 2%; } #boot .b-tip small { display: none; } #boot .b-load { bottom: calc(2% + 70px); } #boot .b-bar { margin-top: 6px; } }
+@media (max-height: 420px) { #boot .b-tip { display: none; } #boot .b-load { bottom: 6%; } }
 /*#part 024_style_modal_phone.css*/
 /* ===== Вікно (офлайн-заробіток) ===== */
 #soundModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
@@ -1168,16 +1171,22 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
   function grid(w, h, fn) { var out = []; for (var y = 0; y < h; y++) { var r = ''; for (var x = 0; x < w; x++) r += fn(x, y) || '.'; out.push(r); } return out; }
   var P = { O: '#302418', w: '#fff4dc', r: '#ef8fa3', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', b: '#7a4f35', s: '#9fd8f0', K: '#1b1224', Y: '#ffd98a', o: '#e8863c', u: '#8b6bb0', n: '#3d5a8c', e: '#9c9087', f: '#ff5fa2' };
 
-  // ---- сцена: щоразу інша (не та, що була востаннє); ?boot=night|dawn|rain|snow|time — для перегляду
+  // ---- сцена: щоразу інша (черга з усіх сцен); ?boot=night|dawn|rain|snow|time — для перегляду
   var SCENES = ['night', 'dawn', 'rain', 'snow', 'time', 'halloween', 'fest'], scene = 'night';
   (function () {
     var m = /[?&]boot=(\w+)/.exec(q), last = '';
     try { last = localStorage.getItem('capyBootScene') || ''; } catch (e) { /* нічого */ }
     if (m && SCENES.indexOf(m[1]) >= 0) { scene = m[1]; return; }
-    var md = new Date(), mo = md.getMonth() * 100 + md.getDate(), hw = mo >= 901 && mo <= 1010;          // 1 жовтня … 10 листопада
-    var pool = SCENES.filter(function (n) { return n !== last && (n !== 'halloween' || hw); });
-    if (hw && last !== 'halloween') pool.push('halloween');
-    scene = pool[Math.floor(Math.random() * pool.length)];
+    // черга: усі сцени (і Хелловін) по колу в перемішаному порядку — кожен запуск інша, поки не покажуться всі
+    var bag = [];
+    try { bag = (localStorage.getItem('capyBootBag') || '').split(',').filter(function (n) { return SCENES.indexOf(n) >= 0; }); } catch (e) { /* нічого */ }
+    if (!bag.length) {
+      bag = SCENES.slice();
+      for (var i = bag.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tm = bag[i]; bag[i] = bag[j]; bag[j] = tm; }
+      if (bag[0] === last && bag.length > 1) { bag.push(bag.shift()); }     // не повторювати останню сцену на стику кіл
+    }
+    scene = bag.shift();
+    try { localStorage.setItem('capyBootBag', bag.join(',')); } catch (e) { /* нічого */ }
     try { localStorage.setItem('capyBootScene', scene); } catch (e) { /* нічого */ }
   })();
   var SD = {

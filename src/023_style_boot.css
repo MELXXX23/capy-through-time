@@ -302,3 +302,6 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @media (prefers-reduced-motion: reduce) { #boot .gh, #boot .fog, #boot .lf, #boot .lan, #boot .cf, #boot .pg, #boot #bootOrb .moon.hw { animation: none; } }
 #boot .b-cv.fr { z-index: 3; }
 #boot .b-car:not(.l) { z-index: 2; }                                       /* ближня смуга перед дальньою */
+/* низьке вікно ПК (панель задач, не на весь екран): підказка компактна, щоб смужка й підказка вміщались у землю під Капі */
+@media (max-height: 640px) { #boot .b-tip { min-height: 0; padding: 6px 10px; gap: 3px; bottom: 2%; } #boot .b-tip small { display: none; } #boot .b-load { bottom: calc(2% + 70px); } #boot .b-bar { margin-top: 6px; } }
+@media (max-height: 420px) { #boot .b-tip { display: none; } #boot .b-load { bottom: 6%; } }
