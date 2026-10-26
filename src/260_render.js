@@ -159,6 +159,7 @@ function drawShopLayered(sc) {
   ctx.translate(dx, dy); ctx.scale(dw / w, dh / h); ctx.translate(-shop.x, -shop.y);     // далі малюємо у світових координатах
   ctx.beginPath(); ctx.rect(shop.x + 8, shop.y + shop.yB, w - 16, h - shop.yB); ctx.clip();
   drawCinemaMovie();
+  drawSkinInterior();                                                            // акваріум скіна «Океан» (212_skins_shop_anim.js)
   customers.filter(c => c.inside).sort((p, q) => p.y - q.y).forEach(drawCustomer);
   ctx.restore();
   ctx.drawImage(shop.front, dx, dy, dw, dh);
@@ -166,6 +167,7 @@ function drawShopLayered(sc) {
   ctx.translate(dx, dy); ctx.scale(dw / w, dh / h);
   drawDoorLeaves(ctx, shop.door, shop.doorOpen || 0);
   ctx.restore();
+  drawSkinShopExtras(sc);                                                        // рухома вивіска скіна, фонтанчики (212_skins_shop_anim.js)
   if ((skinOn('shop') === 'gold' || skinOn('shop') === 'diamond') && animOn()) {               // золотий і діамантовий магазини мерехтять: зірочки по черзі спалахують
     withShopScale(sc, () => [[0.12, 0.3], [0.88, 0.26], [0.5, 0.12], [0.33, 0.62], [0.7, 0.5]].forEach((p, i) => {
       if (Math.sin(animClock * 2.2 + i * 2.1) < 0.7) return;

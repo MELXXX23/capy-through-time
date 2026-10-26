@@ -61,6 +61,7 @@ function crystalG(g, x, yb, hh) {                  // кристал-стовп�
 
 function skinShopDeco(g, skin, w, h, look, yG, door) {
   const top = look.top, rb = top + 3;
+  if (SHOP_DECO_EXTRA[skin]) { SHOP_DECO_EXTRA[skin](g, w, h, look, yG, door, top); return; }       // нові скіни: 150_a3_skins_new_decor.js
   if (skin === 'xmas') {
     for (let x = 4; x < w - 4; x += 4) { const c = ['r', 'y', 'g', 'n'][(x >> 2) % 4], wy = yG + 11 + ((x >> 2) % 2); R(g, x, wy, 2, 2, c); R(g, x, wy - 1, 1, 1, 'd'); }
     treeXmasG(g, door.x + door.w + 14, h - 7);

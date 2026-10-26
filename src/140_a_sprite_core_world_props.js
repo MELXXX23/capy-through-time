@@ -513,6 +513,7 @@ function farSkyline(g, x0, W) {
 function cobbleExtra(g, X0, Y0, W, H, style) {                       // нові варіанти бруківки; true — намальовано
   const RH = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
   const ANCHOR = -2600;
+  if (STREET_EXTRA[style]) { STREET_EXTRA[style](g, X0, Y0, W, H); return true; }              // цукерна, піщана: 150_a3_skins_new_decor.js
   if (style === 'moss') {                                          // стародавні замшілі камені з травою в швах і квіточками
     RH(X0, Y0, W, H, '#4e5a48');
     for (let r = 0, y = Y0; y < Y0 + H; r++) {

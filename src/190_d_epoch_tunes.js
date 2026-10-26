@@ -120,19 +120,28 @@ const EPOCH_TUNES = {
       'C6:8 Eb6:8', 'Bb5:8 G6:8', 'F6:6 D6:2 Bb5:8', 'Eb6:6 C6:2 G5:8',
       'C6:4 Eb6:4 C6:8', 'Bb5:4 Eb6:4 G6:8', 'F6:4 D6:4 F6:4 D6:4', 'G5:12 .:4'] }
   },
-  /* 8. ЯПОНІЯ (1868): гірадзьосі (ля, сі, до, мі, фа), кото-щипки з паузами, дрон флейти-сякухачі з вібрато, тайко й дерев'яний блок */
+  /* 8. ЯПОНІЯ (1868) «Стежка-вальс»: вальс на 3 долі (такт = 12 кроків) у японській гамі йо (ре-мі-соль-ля-сі): мелодія «Стежки до Фудзі» в ритмі «Вальсу сакури».
+     Класична — флейта-сякухачі з вібрато + кото-щипки; пригодницька (leadChip/arpChip/arpFast) — мелодія на кото й жвавіший перебір; спокійна (leadSoft/arpSoft) — повільніше, лише флейта й тихий щипок. БЕЗ ударних. 16 тактів на частину. */
   8: {
-    bpm: 76, lead: { wave: 'triangle', env: 'pluck', vol: 0.24 },
-    arp: { wave: 'sine', env: 'soft', vib: 1, pat: '2:8 3:8', vol: 0.06 },
-    bass: { wave: 'sine', pat: 'R:12 F:4', soft: 'R:16', vol: 0.2 },
-    drums: { main: ['T:8 .:4 T:2 T:2', '.:2 w:2 .:4 .:2 w:2 .:4'], chip: ['T:4 .:4 T:4 w:2 w:2'], soft: ['g:16'] },
-    leadSoft: { wave: 'sine', env: 'pluck', vib: 0, vol: 0.2 },
-    A: { ch: ['Am', 'Am', 'F', 'E5', 'Am', 'F', 'E5', 'Am'], mel: [
-      'A5:4 .:2 E5:2 C5:4 E5:4', 'F5:4 .:2 E5:2 C5:4 B4:4', 'A4:4 C5:4 E5:4 F5:4', 'E5:8 C5:4 B4:4',
-      'A5:2 B5:2 C6:4 B5:2 A5:2 F5:4', 'E5:4 F5:4 E5:2 C5:2 B4:4', 'C5:2 E5:2 A5:4 F5:4 E5:4', 'A4:12 .:4'] },
-    B: { ch: ['Am', 'Am', 'F', 'E5', 'Am', 'F', 'E5', 'Am'], mel: [
-      'A5:1 A5:1 A5:1 A5:1 C6:4 E6:4 C6:4', 'B5:2 C6:2 B5:2 A5:2 E5:8', 'F5:2 A5:2 C6:2 A5:2 F6:4 C6:4', 'E6:4 C6:4 B5:4 E5:4',
-      'A5:2 C6:2 E6:2 C6:2 A5:2 C6:2 E6:4', 'F6:4 E6:2 C6:2 A5:4 F5:4', 'B5:4 C6:2 B5:2 A5:4 E5:4', 'A5:8 E5:4 A4:4'] }
+    bpm: 96, lead: { wave: 'sine', env: 'soft', vib: 1, vol: 0.2 },
+    arp: { wave: 'triangle', env: 'pluck', pat: '1:2 3:2 2:2 3:2 2:2 3:2', vol: 0.075 },
+    bass: { wave: 'sine', pat: 'R:4 F:4 F:4', soft: 'R:12', vol: 0.2 },
+    drums: { main: ['.:12'], chip: ['.:12'], soft: ['.:12'] },
+    leadChip: { wave: 'triangle', env: 'pluck', vib: 0, vol: 0.24 },
+    arpChip: { wave: 'sine', env: 'pluck', vol: 0.06 },
+    arpFast: '1:1 2:1 3:1 2:1 1:1 2:1 3:1 2:1 1:1 2:1 3:1 2:1',
+    leadSoft: { wave: 'sine', env: 'soft', vib: 0, vol: 0.2 },
+    arpSoft: '1:4 3:4 2:4',
+    A: { ch: ['D', 'D', 'G', 'Asus', 'D', 'Bm', 'G', 'Asus', 'D', 'Bm', 'G', 'D', 'Bm', 'G', 'Asus', 'Asus'], mel: [
+      'D5:4 E5:4 G5:4', 'A5:6 G5:2 E5:4', 'B5:4 A5:4 G5:4', 'E5:8 D5:2 E5:2',
+      'D5:4 G5:4 A5:4', 'B5:6 A5:2 G5:4', 'A5:4 B5:4 D6:4', 'A5:8 E5:4',
+      'A5:4 G5:4 E5:4', 'D6:6 B5:2 A5:4', 'B5:4 D6:4 G6:4', 'A5:6 G5:2 E5:4',
+      'D6:4 B5:4 G5:4', 'A5:6 B5:2 D6:4', 'E6:6 D6:2 B5:4', 'A5:8 E5:4'] },
+    B: { ch: ['D', 'G', 'D', 'Asus', 'Bm', 'G', 'Asus', 'D', 'G', 'D', 'Bm', 'Asus', 'G', 'D', 'Asus', 'D'], mel: [
+      'A5:4 D6:4 G6:4', 'E6:6 D6:2 B5:4', 'D6:4 B5:4 A5:4', 'A5:8 B5:2 A5:2',
+      'B5:4 D6:4 E6:4', 'G6:6 E6:2 D6:4', 'E6:4 D6:4 B5:4', 'D6:8 A5:4',
+      'B5:4 D6:4 G6:4', 'E6:6 D6:2 A5:4', 'B5:4 D6:4 E6:4', 'A5:6 B5:2 D6:4',
+      'E6:6 D6:2 B5:4', 'D6:4 E6:4 G6:4', 'E6:4 D6:4 B5:4', 'D6:8 A5:4'] }
   }
 };
 
@@ -169,9 +178,9 @@ function epochTrackDef(key) {
   const tune = P[tuneId], full = fullS === '1', chords = tune.ch.map(chordInfo), bars = tune.mel.length;
   const chill = style === 'chill', chip = style === 'chip';
   // тембри ролей за стилем
-  const lead = Object.assign({}, P.lead, chip ? { wave: 'square', env: null, vib: 0, vol: LEAD_VOL.square } : chill ? Object.assign({ wave: 'triangle', env: 'soft', vib: 0, vol: LEAD_VOL.triangle }, P.leadSoft || {}) : {});
+  const lead = Object.assign({}, P.lead, chip ? Object.assign({ wave: 'square', env: null, vib: 0, vol: LEAD_VOL.square }, P.leadChip || {}) : chill ? Object.assign({ wave: 'triangle', env: 'soft', vib: 0, vol: LEAD_VOL.triangle }, P.leadSoft || {}) : {});
   if (!lead.vol) lead.vol = LEAD_VOL[lead.wave];
-  const arp = chip ? { wave: 'square', pat: P.arpFast || ARP_FAST, vol: ARP_VOL.square } : chill ? { wave: 'sine', env: 'soft', pat: P.arpSoft || ARP_SOFT, vol: ARP_VOL.sine, vib: 0 } : Object.assign({}, P.arp);
+  const arp = chip ? Object.assign({ wave: 'square', pat: P.arpFast || ARP_FAST, vol: ARP_VOL.square }, P.arpChip || {}) : chill ? { wave: 'sine', env: 'soft', pat: P.arpSoft || ARP_SOFT, vol: ARP_VOL.sine, vib: 0 } : Object.assign({}, P.arp);
   if (!arp.vol) arp.vol = ARP_VOL[arp.wave];
   const bass = chip ? { wave: 'triangle', pat: P.bass.pat } : chill ? { wave: 'triangle', pat: P.bass.soft } : P.bass;
   const bvol = (!chip && !chill && P.bass.vol) || BASS_VOL[bass.wave];

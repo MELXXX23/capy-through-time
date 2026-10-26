@@ -24,6 +24,7 @@ function skinOn(type) {
   if (skinPreview[type] !== undefined) return skinPreview[type];
   const i = state.skins[type];
   if (type === 'capy' && i === -2) return 'ep' + (viewEpoch() % EPOCHS.length);          // скін епохи: сам змінюється, коли перемикається епоха
+  if (SKIN_POOL[i] === 'street_diamond') return null;                                       // діамантову дорогу прибрано (слот лишається заради збережень)
   return (i >= 0 && skinOwned(i)) ? SKIN_POOL[i].slice(type.length + 1) : null;
 }
 function drawCapiPortrait() {

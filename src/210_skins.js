@@ -23,7 +23,7 @@ function updateShopSkinFx(dt) {
     else if (side < 0.5) { x = rand(w - 8, w + 18); y = rand(h * 0.2, h - 6); }        // праворуч
     else { x = rand(2, w - 2); y = rand(-12, h * 0.2); }                                // над дахом і по верху фасаду
     if (cfg.fall) { x = rand(-16, w + 16); y = rand(-24, h * 0.3); }
-    shopFx.list.push({ fall: cfg.fall ? 1 : 0, x, y, age: 0, life: cfg.fall ? rand(6, 10) : rand(5, 9), vy: cfg.fall ? rand(5, 10) : rand(1.2, 3.6), amp: rand(1.5, 4.5), f: rand(0.7, 1.6), ph: rand(0, 6.28), kind: Math.floor(Math.random() * 3), col: Math.floor(Math.random() * 7), spin: rand(0, 4), j: rand(0.6, 1.5) });
+    shopFx.list.push({ fall: cfg.fall ? 1 : 0, x, y, age: 0, life: cfg.fall ? rand(6, 10) : rand(5, 9), vy: cfg.fall ? rand(5, 10) : rand(1.2, 3.6), amp: rand(1.5, 4.5), f: rand(0.7, 1.6), ph: rand(0, 6.28), kind: Math.floor(Math.random() * (cfg.kinds || 3)), col: Math.floor(Math.random() * 7), spin: rand(0, 4), j: rand(0.6, 1.5) });
   }
   for (let i = shopFx.list.length - 1; i >= 0; i--) { const p = shopFx.list[i]; p.age += dt; if (p.age >= p.life) shopFx.list.splice(i, 1); }
 }
@@ -70,7 +70,8 @@ function drawShopSkinFx() {
     const k = p.age / p.life, a = Math.min(1, k * 5, (1 - k) * 3.5);
     const x = Math.round(shop.x + p.x + Math.sin(p.age * p.f + p.ph) * p.amp), y = Math.round(shop.y + p.y + (p.fall ? 1 : -1) * p.age * p.vy + hop * p.j);
     ctx.globalAlpha = a;
-    if (sk === 'candy') {
+    if (SHOP_FX_DRAW[sk]) { SHOP_FX_DRAW[sk](p, x, y); }                              // нові скіни: 211_skins_new_fx.js
+    else if (sk === 'candy') {
       const c = FX_CANDY_COLS[p.col], c2 = FX_CANDY_COLS[(p.col + 3) % 7];
       if (p.kind === 0) {                                                               // цукерка в обгортці з крильцями
         R(ctx, x - 3, y - 2, 7, 5, 'd'); R(ctx, x - 2, y - 1, 5, 3, c); R(ctx, x - 2, y - 1, 2, 1, 'w');
@@ -204,10 +205,10 @@ function skinPreviewCanvas(type, name) {
 }
 function updateSkinsUI() {
   const tabEl = ui.tabs.querySelector('[data-tab="skins"]');
-  if (tabEl) tabEl.classList.toggle('alert', ((state.skinsMask & ~state.skinsSeen) !== 0 || (state.skinsMask2 & ~state.skinsSeen2) !== 0) && state.tab !== 'skins');
+  if (tabEl) tabEl.classList.toggle('alert', ((state.skinsMask & ~state.skinsSeen) !== 0 || (state.skinsMask2 & ~state.skinsSeen2) !== 0 || (state.skinsMask3 & ~state.skinsSeen3) !== 0) && state.tab !== 'skins');
   if (ui.paneSkins.hidden) return;
-  state.skinsSeen = state.skinsMask; state.skinsSeen2 = state.skinsMask2;
-  const sig = [state.skinsMask, state.skinsMask2, state.crystals >= SKIN_PRICE, SKIN_TYPES.map(ty => state.skins[ty]).join(), JSON.stringify(skinPage), state.lang, state.shopLevel, viewEpoch(), state.settings.gender, seasonNow()].join('|');
+  state.skinsSeen = state.skinsMask; state.skinsSeen2 = state.skinsMask2; state.skinsSeen3 = state.skinsMask3;
+  const sig = [state.skinsMask, state.skinsMask2, state.skinsMask3, state.crystals >= SKIN_PRICE, SKIN_TYPES.map(ty => state.skins[ty]).join(), JSON.stringify(skinPage), state.lang, state.shopLevel, viewEpoch(), state.settings.gender, seasonNow()].join('|');
   if (sig === skinsSig) return;
   skinsSig = sig;
   // список перебудовується повністю: запам'ятовуємо прокрутку, щоб після вибору скіна гравця не кидало на початок
