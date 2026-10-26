@@ -163,7 +163,7 @@ function desiredTrack() {
   let st = MUSIC_STYLES[state.settings.musicStyle] || MUSIC_STYLES[0];
   if (st.id === 'halloween') st = MUSIC_STYLES[0];
   const ep = viewEpoch() % EPOCH_MUSIC.length;
-  if ((ep > 0 || st.id !== 'classic') && typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
+  if (typeof epochTrackKey === 'function') return epochTrackKey(ep, state.shopLevel, st.id);       // власні мелодії епох (190_d_epoch_tunes.js)
   return st.levels[Math.min(st.levels.length, state.shopLevel) - 1] + '#' + ep;
 }
 // Перемикає мелодію плавно: стара стихає, нова наростає

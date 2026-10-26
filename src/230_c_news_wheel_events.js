@@ -55,7 +55,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Нічний дракон у Японії! Щоразу, коли сідає сонце, великий дракон підлітає до Фудзі, озирається, скаржиться, що від японського чаю хочеться спати, обвиває гору й засинає з «Zzz». Кожної ночі він прилітає з іншого боку. Ще: чіткіші піксельні контури; маски Хелловіну прибрано.',
+    newH: 'Що нового', new: 'Нова музика в кожній епосі! Відродження грає гальярду з лютнею, Ретро — рок-н-рол із закусочної, Диско — синт-диско, Аркади — пісеньку чарівного замку, Інтернет — євроденс, Еко — фолк з укулеле, Космос — космічну одіссею, Неон — нічні перегони. А ще: нові сакури й дракон над торговим центром у Японії, нові фасади всіх епох, телескоп на даху Космосу й зручніші плашки бонусів.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -63,7 +63,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'A night dragon in Japan! Every sunset a big dragon flies to Mount Fuji, looks back, grumbles that Japanese tea makes him sleepy, coils around the peak and falls asleep with Zzz. Each night he comes from a different side. Also: crisper pixel outlines; Halloween masks removed.',
+    newH: 'What is new', new: 'New music in every era! The Renaissance plays a lute galliard, Retro a diner rock and roll, Disco a synth-disco groove, Arcade a magic castle tune, Internet a eurodance anthem, Eco a ukulele folk song, Space a cosmic odyssey and Neon a night race. Plus: new sakura trees and a dragon over the mall in Japan, new facades in every era, a telescope on the Space roof and handier bonus tiles.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
