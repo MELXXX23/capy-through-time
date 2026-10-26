@@ -203,7 +203,7 @@ function updateSkyExtra(dt) {
     else { SKYX.tBanner -= dt; if (SKYX.tBanner <= 0) SKYX.banner = { x: worldL() - 90, y: rand(top + 12, 44), vx: rand(38, 52) }; }
   }
   if (SKYX.ep === 6) {
-    SKYX.tMeteor -= dt; if (SKYX.tMeteor <= 0) { SKYX.tMeteor = rand(0.35, 1.1); SKYX.meteors.push({ x: rand(worldL() + 20, worldR() + 40), y: rand(top - 6, 30), vx: -rand(70, 110), vy: rand(30, 50), life: 0 }); }
+    SKYX.tMeteor -= dt; if (SKYX.tMeteor <= 0) { SKYX.tMeteor = rand(0.23, 0.73); SKYX.meteors.push({ x: rand(worldL() + 20, worldR() + 40), y: rand(top - 6, 30), vx: -rand(70, 110), vy: rand(30, 50), life: 0 }); }
     for (let i = SKYX.meteors.length - 1; i >= 0; i--) { const m = SKYX.meteors[i]; m.x += m.vx * dt; m.y += m.vy * dt; m.life += dt; if (m.life > 1.1) SKYX.meteors.splice(i, 1); }
   }
 }

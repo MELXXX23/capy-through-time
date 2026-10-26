@@ -32,15 +32,18 @@ const skinDust = [];
 const DUST_COLS = { gold: ['#fff6b0', '#ffd24a', '#ffffff', '#f2b84b'], diamond: ['#ffffff', '#d8f6ff', '#9be8ff', '#b4a8ff'] };
 let dustAcc = { shop: 0, capy: 0, hero: 0 };
 function dustKind(type) { const s = skinOn(type); return (s === 'gold' || s === 'diamond') ? s : null; }
+function skinBurst() { return (animClock % 10) < 1.5; }      // вікно спалаху блиску скінів (1,5 с із кожних 10)
 function updateSkinDust(dt) {
   if (!animOn() || build || !layoutReady) { skinDust.length = 0; return; }
   const cap = ecoOn() ? 50 : 110, mk = (kind, x, y, big) => { if (skinDust.length < cap) skinDust.push({ kind, x, y, vx: rand(-3, 3), vy: rand(-7, -1.5), age: 0, life: rand(0.9, 2.2), c: Math.floor(Math.random() * 4), big, ph: rand(0, 6.28) }); };
+  const bw = skinBurst() ? 2.2 : 0; dt *= bw;      // золото й діамант блищать спалахом раз на ~10 с, а не весь час
   const sk = dustKind('shop');
   if (sk && shop) { dustAcc.shop += dt * 26; while (dustAcc.shop >= 1) { dustAcc.shop -= 1; const e = Math.random(); mk(sk, shop.x + rand(-10, shop.w + 10), shop.y + rand(-8, shop.h - 4), e < 0.18); } }
   const ck = dustKind('capy'), cp = LAYOUT.capy;
   if (ck && cp) { dustAcc.capy += dt * 12; while (dustAcc.capy >= 1) { dustAcc.capy -= 1; mk(ck, cp.x + 14 + rand(-21, 21), cp.footY - rand(2, 38), Math.random() < 0.3); } }
   const hk = dustKind('hero');
   if (hk) { dustAcc.hero += dt * 2.2 * actors.length; while (dustAcc.hero >= 1 && actors.length) { dustAcc.hero -= 1; const a = actors[Math.floor(Math.random() * actors.length)]; mk(hk, a.x + rand(-9, 9), a.y - rand(2, 24), Math.random() < 0.3); } }
+  if (bw) dt /= bw;
   for (let i = skinDust.length - 1; i >= 0; i--) { const p = skinDust[i]; p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.age >= p.life) skinDust.splice(i, 1); }
 }
 function drawSkinDust() {
@@ -133,7 +136,7 @@ function equipSkin(type, i) {
   }
   setSkin(type, i >= 0 && state.skins[type] === i ? (type === 'capy' ? -2 : -1) : i);   // повторний тап знімає скін (Капі тоді повертається до скіна епохи)
   const now = state.skins[type];
-  showToast(now === -2 ? t('skinWornToast', t('skinEpoch', t('epoch_' + (viewEpoch() % EPOCHS.length)))) : now < 0 ? t('skinDefaultToast') : t('skinWornToast', skinName(now)), 'good');
+  // вдягання — лише м'який звук (у setSkin), без написів
   if (type === 'hero' && !state.team.some(v => v > 0)) showToast(t('skinHeroNone'), 'bad');
 }
 // Знімає всі вдягнені скіни: усе повертається до початкового вигляду (куплені й виграні скіни лишаються)
@@ -152,7 +155,7 @@ function setSkin(type, i) {
   else if (type === 'hero') refreshTeamPortraits();
   else if (type === 'shop') rebuildShop(true);
   else if (type === 'street') groundLayer = buildGroundLayer();
-  playSfx('upgrade');
+  playSfx('wear');
   skinsSig = '';
   updateSkinsUI();
   saveGame();

@@ -36,7 +36,7 @@
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   let fujiC = null, fujiT = null, fujiKey = '';
   function fujiDims() { const avail = LAYOUT.horizonY - (8 - view.offY), H = Math.round(Math.max(315, Math.min(560, avail - 40 - 70 / Math.max(0.3, sceneUnit)))); return { H, hw: Math.round(600 + (H - 315) * 1.2) }; }      // Фудзі росте, поки на екрані є місце над горизонтом (телефон-горизонт лишається як був)
-  function roofTopY() { return (typeof shop !== 'undefined' && shop) ? shop.y - (shop.level >= 6 && clockReady() ? CLOCK_H : 0) : LAYOUT.horizonY - MAX_HOUSE_H; }      // найвища точка ТЦ (з годинниковою вежею)
+  function roofTopY() { return (typeof shop !== 'undefined' && shop) ? shop.y + (shop.level >= 6 ? Math.max(0, (shop.roofTop | 0) - 2) - CLOCK_H : 0) : LAYOUT.horizonY - MAX_HOUSE_H; }      // найвища точка ТЦ (з годинниковою вежею)
   function skySpan(top) { return Math.max(60, Math.min(LAYOUT.horizonY - MAX_HOUSE_H - 6, roofTopY() - 24) - top - 24); }      // дракон літає лише в небі над ТЦ
   const fujiOcCache = {};
   function buildSky() {
@@ -132,20 +132,7 @@
       P(g, px, base - 58, 1, 8, '#5a4f98');
     });
   }
-  function tree(g, x, v, season) {                      // сакура: товстий стовбур, пишна крона (восени — клени, взимку — гола)
-    if (season === 'winter') { drawBareTree(g, x, v, season); return; }
-    const base = LAYOUT.horizonY + 8, seed = x * 7 + v * 13, autumn = season === 'autumn';
-    const C = autumn ? ['#a8382a', '#e8863c', '#f2b84b'] : ['#c8587a', '#ef8fa3', '#ffc9d4'];
-    A(g, 0.26, () => { P(g, x - 27, base, 54, 4, 'd'); P(g, x - 19, base + 4, 38, 2, 'd'); });
-    P(g, x - 4, base - 26, 8, 28, '#2a1d1a'); P(g, x - 3, base - 26, 6, 28, '#6b4a3a'); P(g, x - 3, base - 26, 2, 28, '#8a6450'); P(g, x - 7, base - 1, 5, 3, '#4a3228'); P(g, x + 3, base - 1, 5, 3, '#4a3228');
-    P(g, x - 10, base - 30, 7, 2, '#4a3228'); P(g, x + 4, base - 34, 8, 2, '#4a3228'); P(g, x - 1, base - 36, 2, 10, '#4a3228');
-    const blobs = [[0, -50, 17], [-17, -42, 12], [17, -42, 12], [-9, -58, 11], [10, -58, 11], [0, -38, 14], [-25, -34, 8], [25, -34, 8]];
-    blobs.forEach(b => D(g, x + b[0] + 1, base + b[1] + 2, b[2], C[0]));
-    blobs.forEach(b => D(g, x + b[0], base + b[1], b[2], C[1]));
-    blobs.forEach(b => D(g, x + b[0] - 1, base + b[1] - 2, Math.round(b[2] * 0.7), C[2]));
-    for (let i = 0; i < 38; i++) { const hs = hash2(seed + i * 3, 17), bx = x - 28 + hs % 56, by = base - 72 + (hs >>> 6) % 50; P(g, bx, by, 2, 1, i % 3 ? (autumn ? '#ffd9a0' : '#fff0f4') : '#ffffff'); if (i % 5 === 0) P(g, bx, by + 1, 1, 1, C[0]); }
-    for (let i = 0; i < 16; i++) { const hs = hash2(seed + i * 5, 29); P(g, x - 30 + hs % 60, base + 1 + (hs >>> 7) % 5, 2, 1, i % 2 ? C[2] : (autumn ? '#e8863c' : '#fff0f4')); }
-  }
+  const tree = drawSakura;                              // сакура v2: 275_a_sakura.js
   function bush(g, x, y) {                              // замість куща: торії, бамбук, кам'яний ліхтар
     const k = Math.abs(Math.round(x / 7)) % 3;
     if (x === 40) {
@@ -222,14 +209,14 @@
     const floors = Math.max(2, Math.floor((h - 6) / 18)), doorX = x + (w >> 1) - 5;
     /* вивіски рахуємо ДО вікон: вікна обходять їх, а не лежать під ними */
     const kb = KANBAN[(hs >>> 7) % KANBAN.length], kh = KANBAN[(hs >>> 14) % KANBAN.length], wh = WORDS_H[(hs >>> 17) % WORDS_H.length];
-    const gy = base - 23, gw = Math.min(w - 8, wh.length * 11 + 8), gx = x + 4 + ((w - 8 - gw) >> 1), gsz = Math.max(7, Math.min(11, Math.floor((gw - 6) / wh.length)));
+    const gy = base - 23, gw = 16, gx = doorX - 3;      // зона над дверима (нижньої вивіски вже немає): вікна обходять лише двері
     const kLeft = !((hs >>> 2) % 2), sy = top + 6 + ((hs >>> 9) % 12), kMax = Math.min(4, Math.floor((gy - 5 - sy - 5) / 10));
-    const wordsV = WORDS_V.filter(wd => wd.length <= kMax), word = wordsV.length ? wordsV[(hs >>> 11) % wordsV.length] : '', n = word.length, sh = n * 10 + 5;
-    const hasK = h > 66 && n >= 2, sx = kLeft ? x + 5 : x + w - 19, ky0 = sy - 7, ky1 = sy + sh + 2;
+    const wordsV = WORDS_V.filter(wd => wd.length <= kMax), word = wordsV.length ? wordsV[(hs >>> 11) % wordsV.length] : '', n = word.length, sh = n * 10 + 8;      // вертикальна вивіска: рамка ширша й довша, щоб ієрогліфи не тиснулись до трубки
+    const hasK = h > 66 && n >= 2, sx = kLeft ? x + 4 : x + w - 21, ky0 = sy - 7, ky1 = sy + sh + 2;
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 18 + 4;
       let ax0 = x + 4, aw = w - 8;
-      if (hasK && y0 - 1 < ky1 && y0 + 18 > ky0) { aw -= 17; if (kLeft) ax0 += 17; }         // стовпчик вертикальної вивіски на цьому поверсі
+      if (hasK && y0 - 1 < ky1 && y0 + 18 > ky0) { aw -= 20; if (kLeft) ax0 += 20; }         // стовпчик вертикальної вивіски на цьому поверсі
       const cols = aw < 13 ? 0 : Math.max(1, Math.floor(aw / 15)), sp = cols ? aw / cols : 0;
       if (f > 0) { P(g, x + 3, y0 - 5, w - 6, 2, '#3a2418'); P(g, x + 3, y0 - 5, w - 6, 1, S[1]); }
       if (f > 0 && f % 2 === 1) eave(g, x + 1, y0 - 9, w - 2, true);
@@ -250,11 +237,9 @@
         else if (k === 3) { P(g, wx + 2, y0 + 12, 1, 5, '#d3342c'); D(g, wx + 2, y0 + 15, 2, '#d3342c'); D(g, wx + 2, y0 + 15, 1, '#ffd45c'); }
       }
     }
-    if (hasK) { P(g, sx + 6, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 18, 1, DKW); neonBox(g, sx, sy, 14, sh, kb[0]); neonText(g, (dx, dy, col) => vtext(g, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]);
-      neonSigns.push({ x: sx, y: sy, w: 14, h: sh, c: kb[0], draw: g2 => { neonBox(g2, sx, sy, 14, sh, kb[0]); neonText(g2, (dx, dy, col) => vtext(g2, word, sx + 2 + dx, sy + 3 + dy, col, 11, true), kb[0]); } }); }
-    P(g, gx - 2, gy - 3, gw + 4, 2, TILE[1]); P(g, gx - 2, gy - 3, gw + 4, 1, TILE[2]); P(g, gx - 3, gy - 4, 1, 2, TILE[1]); P(g, gx + gw + 2, gy - 4, 1, 2, TILE[1]);   // тонкий навіс над вивіскою (нижче вікон верхнього поверху)
-    neonBox(g, gx, gy, gw, 14, kh[0]); neonText(g, (dx, dy, col) => text(g, wh, gx + 3 + dx, gy + 1 + ((11 - gsz) >> 1) + dy, col, gsz, true), kh[0]);
-    neonSigns.push({ x: gx, y: gy, w: gw, h: 14, c: kh[0], draw: g2 => { neonBox(g2, gx, gy, gw, 14, kh[0]); neonText(g2, (dx, dy, col) => text(g2, wh, gx + 3 + dx, gy + 1 + ((11 - gsz) >> 1) + dy, col, gsz, true), kh[0]); } });
+    if (hasK) { P(g, sx + 7, sy - 6, 2, 5, DKW); P(g, sx - 2, sy - 6, 21, 1, DKW); neonBox(g, sx, sy, 17, sh, kb[0]); neonText(g, (dx, dy, col) => vtext(g, word, sx + 3 + dx, sy + 4 + dy, col, 11, true), kb[0]);
+      neonSigns.push({ x: sx, y: sy, w: 17, h: sh, c: kb[0], draw: g2 => { neonBox(g2, sx, sy, 17, sh, kb[0]); neonText(g2, (dx, dy, col) => vtext(g2, word, sx + 3 + dx, sy + 4 + dy, col, 11, true), kb[0]); } }); }
+    // нижні горизонтальні вивіски прибрано (р. 68): лишились вертикальні; неон тепер і на самому маркеті
     houseDoors.push({ x: doorX + 5, y: base });
     P(g, doorX, base - 14, 10, 14, DKW); P(g, doorX + 1, base - 13, 8, 13, '#e8dcb8'); A(g, 0.7, () => { P(g, doorX + 4, base - 13, 1, 13, '#4a3020'); for (let k = -10; k < 0; k += 3) P(g, doorX + 1, base + k, 8, 1, '#4a3020'); });
     ['#1c3a78', '#f4ece0', '#1c3a78'].forEach((c, i) => { P(g, doorX - 1 + i * 4, base - 17, 4, 6, c); P(g, doorX - 1 + i * 4, base - 17, 4, 1, DKW); });
@@ -393,7 +378,7 @@
 
   /* ---------- нічний дракон: щоразу, коли сонце сідає, летить до Фудзі, зупиняється, озирається, каже репліку, лягає спати на гору й хропе до ранку.
      Три маршрути (нічна черга): ліворуч, праворуч і над вершиною. Усе залежить лише від фази доби (state.dayPhase) — тому однаково працює й при перемотуванні ---------- */
-  const DSEQ = { p0: 0.73, p1: 0.205, K: 1.75, KR: 1.5, wake: 10 };      // початок вечора (фаза), ранок, масштаб великого дракона, секунд на відліт уранці
+  const DSEQ = { p0: 0.73, p1: 0.205, wake: 10 };      // початок вечора (фаза), ранок, секунд на відліт уранці
   const DSEQ_TXT = {
     uk: [['Ох… я так втомився. Хочу відпочити.', 'Той японський чай… очі самі закриваються.', 'Фудзі, пусти на подушку. Хр-р…'],
          ['Шостий чайник за вечір. Усе, я здався.', 'Фудзі, посунься! Я тільки на хвилинку.', 'Спокійної ночі, Капі. Хр-р…'],
@@ -435,45 +420,51 @@
     const { H, hw } = fujiDims(), cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
     return { H, hw, kS: Math.max(0.6, Math.min(1, (bY - top - 250) / 150)), cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3) };
   }
-  function dseqBuild(route, G, T0) {                    // будує політ: підліт → зупинка (3 фіксовані точки неба) → розворот → спуск на гору → сон → відліт уранці
-    const { cx, top, surf, ex } = G, room = Math.max(60, G.sy - (top + 36));
+  function dseqBuild(route, G, T0) {                    // політ: підліт (дракон меншає — віддаляється до гори) → зупинка в небі над дахами → виток навколо верхівки Фудзі → лягає дугою на передній схил (хвіст за горою) → сон → відліт уранці. Ніде не заходить на ТЦ, вежу й будинки
+    const { cx, top, surf, ex, H, hw } = G;
     const normal = tt => dragonPath(tt, G.wl, G.wr, G.top + 12, G.span);
     const st = normal(T0), st2 = normal(T0 + 0.05), st1 = normal(T0 - 0.05);
     const kn = [{ s: 0, x: st[0], y: st[1], vx: (st2[0] - st1[0]) / 0.1, vy: (st2[1] - st1[1]) / 0.1 }];
-    const sg = route === 1 ? 1 : -1;                    // бік, на якому дракон ляже (маршрут 0 — ліворуч, 1 — праворуч; 2 — через вершину)
-    const ox = Math.min(170, ex * 0.62), PT = [[cx - ox, Math.max(top + 34, G.sy - Math.min(130, room * 0.55))], [cx + ox, Math.max(top + 34, G.sy - Math.min(95, room * 0.4))], [cx + 10, Math.max(top + 30, G.sy - Math.min(170, room * 0.85))]][route];   // ТРИ ТОЧКИ НЕБА, де дракон зупиняється й дивиться на Фудзі
-    const W1 = route === 2 ? [cx + ex * 1.1, PT[1] + 14] : [cx - sg * ex * 0.9, PT[1] + 10], dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
-    const dirA = PT[0] < W1[0] ? -1 : 1;                // у якому напрямку дракон підлітає (потім обертається до гори)
+    const hasShop = typeof shop !== 'undefined' && shop, tower = hasShop && shop.level >= 6, tcx = hasShop ? shop.x + (shop.w >> 1) : 0;
+    const bTop = x => tower && Math.abs(x - tcx) < 6 ? roofTopY() : tower && Math.abs(x - tcx) < 28 ? roofTopY() + 12 : hasShop ? shop.y : LAYOUT.horizonY - MAX_HOUSE_H;   // нижче цього дракон не опускається: шпиль і дах вежі ТЦ, а скрізь — рівень даху (строго над маркетом)
+    const fits = (x, y, r) => y + r + 3 < bTop(x);
+    const coneW = d => hw * (1 - Math.pow(Math.max(0, 1 - d / H), 1 / 1.3));       // півширина гори на глибині d від вершини
+    const BODY = 29 * 7.4;                              // довжина тіла при масштабі 1 (N - 1 кроків по SP)
+    const ringAt = (d, r, ry) => { const rx = coneW(d) + r * 0.8, cy = G.sy + d; for (let dx = -rx; dx <= rx; dx += 3) if (!fits(cx + dx, cy + ry * Math.sqrt(Math.max(0, 1 - (dx / rx) ** 2)), r)) return 0; return rx; };      // виток на глибині d: передня дуга над дахами? → півширина
+    let kR = 0.86, r, ry, dR, rxR; for (; ; kR -= 0.02) {      // масштаб сну (біля гори дракон менший, ніби віддалився): найбільший, за якого виток не торкається ТЦ
+      r = Math.max(3, 11 * kR); ry = Math.max(4, Math.round(8 * kR)); let dF = 0; for (let d = r; d < H * 0.5 && ringAt(d, r, ry); d += 2) dF = d;
+      let dT = r; while (dT < H * 0.5 && coneW(dT) + r * 0.8 < BODY * kR * 0.5) dT += 2;      // бажаний виток: спереду вміщається половина тіла, решта — за горою
+      dR = Math.max(r, Math.min(dF, dT)); rxR = coneW(dR) + r * 0.8;
+      if (kR <= 0.5 || (dF && rxR >= BODY * kR * 0.32)) break;
+    }
+    const sg = route === 1 ? 1 : -1, kStop = (1 + kR) / 2, cyR = G.sy + dR;      // бік, з якого починається виток (маршрут 0 і 2 — ліворуч, 1 — праворуч)
+    const itop = (typeof bubbleBounds === 'function') ? bubbleBounds().it + 34 + 26 * kStop : top + 70;      // над головою ще місце для репліки
+    const ox = Math.min(170, ex * 0.62), PX = [cx - ox, cx + ox, cx + 10][route];
+    const W1x = route === 2 ? cx + ex * 1.1 : cx - sg * ex * 0.9, bd = Math.sign(W1x - PX) || 1;
+    let lowTop = 1e9; for (let d = -40 * kStop; d <= BODY * kStop; d += 3) lowTop = Math.min(lowTop, bTop(PX + bd * d));      // і голова, і все тіло на зупинці — над дахами
+    const PY = Math.min(Math.max(itop, G.sy - (route === 2 ? 70 : 40) * kStop), lowTop - 16 * kStop - 8);   // ТРИ ТОЧКИ НЕБА, де дракон зупиняється й дивиться на Фудзі
+    const W1 = [W1x, Math.min(PY + (route === 2 ? 14 : 10), lowTop - 24)];
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]), PT = [PX, PY];
+    const dirA = PX < W1[0] ? -1 : 1;                   // у якому напрямку дракон підлітає (потім обертається до гори)
     const d1 = Math.max(7, dist(st, W1) / 60 + 2), d2 = Math.max(5, dist(W1, PT) / 45);
-    const ux = (PT[0] - W1[0]) / Math.max(1, dist(W1, PT)), uy = (PT[1] - W1[1]) / Math.max(1, dist(W1, PT));
+    const ux = (PX - W1[0]) / Math.max(1, dist(W1, PT)), uy = (PY - W1[1]) / Math.max(1, dist(W1, PT));
     kn.push({ s: d1, x: W1[0], y: W1[1], vx: ux * 55, vy: uy * 55 });
-    const sP = d1 + d2; kn.push({ s: sP, x: PT[0], y: PT[1], stop: true });
-    const leave = sP + 5.4; kn.push({ s: leave, x: PT[0], y: PT[1], stop: true });
-    const faceRest = sg, tlRest = 0.28;                 // дракон лягає, обвивши Фудзі спіраллю, як змія дерево: спершу заходить за гору (ззаду її не видно), потім виринає спереду
-    const depthCap = Math.max(18, ((typeof shop !== 'undefined' && shop) ? shop.y : G.sy + 90) - G.sy - 70), phone = landscapePhoneMQ.matches || mobileMQ.matches, pitch = phone ? 12 : 22, ryC = 12, H0 = G.H * 0.985;      // на телефоні виток тісніший, а сон піднято над дахом ТЦ (нижче)
-    const th0 = [Math.PI, Math.PI, Math.PI * 1.5][route], thEnd = Math.PI * 4.5, thC = Math.PI * 2.5;      // орбіта від точки зупинки до thC, далі обвиває верхівку (1 виток) і лягає спереду
-    const rxBig = Math.min(ex * 0.62, 150),  ryBig = 28, itop = (typeof bubbleBounds === 'function') ? bubbleBounds().it + 80 : top + 80, cyO = route === 2 ? Math.max(itop + ryBig, G.sy - 46) : Math.max(itop, G.sy - 42);      // голова не лізе під верхню панель: над нею ще місце для репліки          // великий овал навколо гори: центр на висоті точки зупинки
-    const roofY = roofTopY(), depth0 = Math.max(3, Math.min(G.H * 0.3, roofY - 36 - G.sy - pitch - ryC));      // дракон лягає на схил (приблизно на 30% висоти від вершини), але не нижче даху ТЦ
-    const headY = G.sy + depth0 + pitch + ryC, lift = Math.max(0, Math.min(headY - (roofY - 36), headY - (G.top + 70)));      // голова сплячого дракона не нижче ніж на 36 від даху ТЦ (чи вежі з годинником)
-    const depF = th => depth0 + Math.max(0, th - thC) / (2 * Math.PI) * pitch;
-    const rxCone = th => Math.min(Math.max(70, ex * 0.7), G.hw * (1 - Math.pow(Math.max(0.05, (H0 - depF(th)) / G.H), 1 / 1.3)) + 12);         // півширина гори на тій висоті + товщина тіла
-    const wOf = th => smooth01((th - th0) / (thC - th0));
-    const hxf = th => { const w = wOf(th); return cx - sg * (rxBig + (rxCone(th) - rxBig) * w) * Math.cos(th); };
-    const hyf = th => { const w = wOf(th), cy = cyO + (G.sy + depF(th) - lift - cyO) * w, ry = ryBig + (ryC - ryBig) * w; return cy + ry * Math.sin(th); };
-    PT[0] = hxf(th0); PT[1] = hyf(th0);                       // зупинка — це початок орбіти
-    kn[kn.length - 2].x = PT[0]; kn[kn.length - 2].y = PT[1]; kn[kn.length - 1].x = PT[0]; kn[kn.length - 1].y = PT[1];
-    const nH = Math.round((thEnd - th0) / (Math.PI / 6)); let sc = leave, prevP = [PT[0], PT[1]];
-    for (let i = 0; i <= nH; i++) { const th = th0 + (thEnd - th0) * i / nH, x = hxf(th), y = hyf(th); sc += Math.max(0.5, Math.hypot(x - prevP[0], y - prevP[1]) / (i > nH - 4 ? 40 : 78)); prevP = [x, y]; kn.push({ s: sc, x, y, th, stop: i === nH }); }
+    const sP = d1 + d2; kn.push({ s: sP, x: PX, y: PY, stop: true });
+    const leave = sP + 5.4; kn.push({ s: leave, x: PX, y: PY, stop: true });
+    const th0 = Math.PI, thE = 4.5 * Math.PI, hxf = th => cx - sg * rxR * Math.cos(th), hyf = th => cyR + ry * Math.sin(th);      // збоку → за горою → спереду (повний виток) → знову за горою → лягає спереду дугою на схил; хвіст ховається за горою
+    let prev = [hxf(th0), hyf(th0)], sc = leave + Math.max(3, dist(PT, prev) / 50), sCalm = 0;
+    kn.push({ s: sc, x: prev[0], y: prev[1], th: th0 });
+    const nH = 42; for (let i = 1; i <= nH; i++) { const th = th0 + (thE - th0) * i / nH, x = hxf(th), y = hyf(th), u = (th - 4 * Math.PI) / (0.5 * Math.PI); if (!sCalm && th >= 4 * Math.PI) sCalm = sc; sc += Math.max(0.2, dist([x, y], prev) / (u > 0 ? 60 - 38 * u : 60)); prev = [x, y]; kn.push({ s: sc, x, y, th, stop: i === nH }); }      // наприкінці плавно сповільнюється
     const hk = kn.filter(k => k.th != null);
     const thAt = ss => { if (ss < hk[0].s - 0.01 || ss > hk[hk.length - 1].s) return null; let i = 0; while (i < hk.length - 2 && ss > hk[i + 1].s) i++; const a = hk[i], b = hk[i + 1]; return a.th + (b.th - a.th) * Math.max(0, Math.min(1, (ss - a.s) / Math.max(1e-6, b.s - a.s))); };
     const back = ss => { const th = thAt(ss); return th != null && Math.sin(th) < -0.02 ? 1 : 0; };     // 1 — тіло за горою
-    const sR = kn[kn.length - 1].s, R = kn[kn.length - 1];
+    const sR = kn[kn.length - 1].s, R = kn[kn.length - 1], faceRest = sg, tlRest = 0.28;
     const p1 = ((DSEQ.p1 - DSEQ.p0 + 1) % 1) * CONFIG.DAY_SECONDS, sWake = Math.max(sR + 6, p1);
     kn.push({ s: sWake, x: R.x, y: R.y, stop: true });
     const fin = normal(T0 + sWake + DSEQ.wake), f2 = normal(T0 + sWake + DSEQ.wake + 0.05), f1 = normal(T0 + sWake + DSEQ.wake - 0.05);
-    kn.push({ s: sWake + 5.5, x: R.x - faceRest * 40, y: R.y - 120 });
+    kn.push({ s: sWake + 5.5, x: R.x - faceRest * 40, y: Math.min(R.y - 120, PY) });
     kn.push({ s: sWake + DSEQ.wake, x: fin[0], y: fin[1], vx: (f2[0] - f1[0]) / 0.1, vy: (f2[1] - f1[1]) / 0.1 });
-    return { route, T0, G, path: hermPath(kn), back, normal, sP, leave, sR, sWake, end: sWake + DSEQ.wake, dirA, faceRest, tlRest, tlPause: route === 2 ? 0.55 : 0.12, hx: dirA, lastT: null, f: [0, 0, 0], head: null, key: [cx, G.bY, G.top, G.span, G.wl, G.wr].join('|'), says: [sP + 1.4, sP + 4.4, sR + 1.2] };
+    return { route, T0, G, path: hermPath(kn), back, normal, sP, leave, sCalm, sR, sWake, end: sWake + DSEQ.wake, kR, kStop, dirA, faceRest, tlRest, tlPause: route === 2 ? 0.55 : 0.12, hx: dirA, lastT: null, f: [0, 0, 0], head: null, key: [cx, G.bY, G.top, G.span, G.wl, G.wr].join('|'), says: [sP + 1.4, sP + 4.4, sR + 1.2], dbg: { R: [Math.round(R.x), Math.round(R.y)], sg, dR, rxR: Math.round(rxR), cyR: Math.round(cyR), PY: Math.round(PY), r } };
   }
   function dseqSay(sq, i) {                             // репліка дракона над головою
     const lines = DSEQ_TXT[state.lang] || DSEQ_TXT.en, txt = lines[sq.route][i];
@@ -501,7 +492,7 @@
     const pos = tt => {
       const ss = tt - sq.T0; if (ss < 0 || ss >= sq.end) return sq.normal(tt);
       const p = sq.path(ss); if (ss > sq.sP && ss < sq.leave) return [p[0], p[1] + Math.sin(tt * 1.7) * 2, 0];
-      const a = sq.path(ss - 0.06), b = sq.path(ss + 0.06), vx = (b[0] - a[0]) / 0.12, vy = (b[1] - a[1]) / 0.12, sp = Math.hypot(vx, vy), f = Math.min(1, sp / 45), am = 7 * f * (sq.kNow || 1) * (1 - smooth01((ss - sq.sR + 5) / 5)), w = Math.sin(ss * 2.7) * am;      // тіло пливе хвилею, на зупинці хвиля згасає
+      const a = sq.path(ss - 0.06), b = sq.path(ss + 0.06), vx = (b[0] - a[0]) / 0.12, vy = (b[1] - a[1]) / 0.12, sp = Math.hypot(vx, vy), f = Math.min(1, sp / 45), am = 7 * f * (sq.kNow || 1) * (1 - smooth01((ss - sq.sCalm + 1.5) / 1.5)), w = Math.sin(ss * 2.7) * am;      // тіло пливе хвилею, на зупинці хвиля згасає
       return [p[0] - vy / (sp || 1) * w, p[1] + vx / (sp || 1) * w, sq.back(ss)];
     };
     sq.pos = pos;
@@ -519,11 +510,11 @@
     if (s > sq.sP && s < sq.leave + 1.2) tilt += (sq.tlPause - tilt) * smooth01((s - sq.sP - 0.8) / 1.2) * (s < sq.leave ? 1 : smooth01((sq.leave + 1.2 - s) / 1.2));
     if (s >= sq.sR - 2.4 && s < sq.sWake) tilt += (sq.tlRest - tilt) * smooth01((s - (sq.sR - 2.4)) / 2.2);
     else if (s >= sq.sWake) tilt = tilt * smooth01((s - sq.sWake) / 1.6);
-    const kBase = s < sq.leave + 1 ? 1 + (DSEQ.K - 1) * smooth01(s / 12) : DSEQ.K + (DSEQ.KR - DSEQ.K) * smooth01((s - sq.leave - 1) / Math.max(1, sq.sR - sq.leave - 1));      // удалині дракон меншає (але не надто)
-    const wk = 1 - smooth01((s - sq.sWake - 1) / (DSEQ.wake - 1)), k = (1 + (kBase - 1) * wk) * (1 + (sq.G.kS - 1) * smooth01(s / 12) * wk);      // на низькому екрані (телефон-горизонт) дракон дрібніший
+    const kBase = s < sq.sP ? 1 + (sq.kStop - 1) * smooth01(s / sq.sP) : s < sq.leave ? sq.kStop : sq.kStop + (sq.kR - sq.kStop) * smooth01((s - sq.leave) / Math.max(1, sq.sCalm - sq.leave));      // дракон меншає, віддаляючись до гори; масштаб сну — щоб тіло вмістилось на гребені над дахами
+    const wk = 1 - smooth01((s - sq.sWake - 1) / (DSEQ.wake - 1)), k = 1 + (kBase - 1) * wk;
     sq.kNow = k;
     const resting = s >= sq.sR && s < sq.sWake;
-    const GG = sq.G; sq.o = { clip: g => { const x0 = GG.cx - 640; g.beginPath(); g.moveTo(x0, GG.top - 90); for (let i = 0; i <= 214; i++) { const x = x0 + i * 6; g.lineTo(x, GG.surf(x - GG.cx)); } g.lineTo(x0 + 214 * 6, GG.top - 90); g.closePath(); g.clip(); }, k, headX: sq.hx, tilt, sleep: s >= sq.sR - 1.2 && s < sq.sWake + 0.8, noFire: true, wob: resting ? 1.3 : 3, hbob: resting ? Math.sin(t * 1.3) * 1.5 * k : 0, from: resting ? sq.T0 + sq.sR : null };
+    const GG = sq.G; sq.o = { clip: g => { const x0 = GG.cx - 640; g.beginPath(); g.moveTo(x0, GG.top - 90); for (let i = 0; i <= 214; i++) { const x = x0 + i * 6; g.lineTo(x, GG.surf(x - GG.cx)); } g.lineTo(x0 + 214 * 6, GG.top - 90); g.closePath(); g.clip(); }, k, headX: sq.hx, tilt, sleep: s >= sq.sR - 1.2 && s < sq.sWake + 0.8, noFire: true, wob: s >= sq.sCalm ? 1.2 : 3, hbob: resting ? Math.sin(t * 1.3) * 1.5 * k : 0, from: resting ? sq.T0 + sq.sR : null };
     sq.sleeping = resting && s > sq.sR + 1.5;
     sq.says.forEach((ts, i) => { if (!sq.f[i] && s >= ts) { sq.f[i] = 1; if (s - ts < 2.5) sq.sayQ = i; } });
     return sq;
@@ -591,7 +582,12 @@
     [0, w - 3].forEach(px => { P(g, px, top + 7, 3, h - 6 - (top + 7), '#7a0f1c'); P(g, px + (px ? 0 : 1), top + 7, 1, h - 6 - (top + 7), '#d3342c'); });      // бічні червоні стовпи: фасад на всю ширину без сходинок
     floors.forEach((fl, i) => { if (i > 0) eave(g, 3, fl.top - 3, w - 6, true); });
     eave(g, 2, yG + 4, w - 4, true);
-    floors.filter(fl => fl.f >= 1).forEach(fl => A(g, 0.5, () => { for (let x = 8; x < w - 8; x += 6) P(g, x, fl.top + 3, 1, fl.fy - fl.top - 6, '#fff7e8'); for (let y = fl.top + 7; y < fl.fy - 4; y += 7) P(g, 8, y, w - 16, 1, '#fff7e8'); }));
+    const nC = Math.max(2, Math.round((w - 16) / 28)), cw = (w - 16) / nC;      // рами вікон крупні (≈28 px, по висоті — навпіл): покупців за ними добре видно (р. 68; було 6×7 px)
+    floors.filter(fl => fl.f >= 1).forEach(fl => A(g, 0.55, () => { for (let k = 1; k < nC; k++) P(g, Math.round(8 + k * cw), fl.top + 3, 1, fl.fy - fl.top - 6, '#fff7e8'); P(g, 8, Math.round((fl.top + fl.fy) / 2) - 1, w - 16, 1, '#fff7e8'); }));
+    const upper = floors.filter(fl => fl.f >= 1);      // неонові вивіски самого маркету: вертикальні короби на бічних стовпах верхніх поверхів
+    if (upper.length) { const fl = upper.reduce((a, b) => (a.top < b.top ? a : b)), room = Math.max(...upper.map(u => u.fy)) - fl.top - 6;
+      [['百貨店', 3, KANBAN[0][0]], ['カピ', w - 20, KANBAN[1][0]]].forEach(([wd, sx, c]) => { const n = Math.min(wd.length, Math.floor((room - 8) / 10)); if (n < 2) return; const word = wd.slice(0, n), sh = n * 10 + 8, sy = fl.top + 4;
+        P(g, sx + 7, sy - 4, 2, 4, DKW); neonBox(g, sx, sy, 17, sh, c); neonText(g, (dx, dy, col) => vtext(g, word, sx + 3 + dx, sy + 4 + dy, col, 11, true), c); }); }
     const tx0 = door.x - 6, tx1 = door.x + door.w + 3, tyT = yG + 2;
     P(g, tx0, tyT, 3, yb - tyT, '#7a0f1c'); P(g, tx0 + 1, tyT, 1, yb - tyT, '#d3342c'); P(g, tx1, tyT, 3, yb - tyT, '#7a0f1c'); P(g, tx1 + 1, tyT, 1, yb - tyT, '#d3342c');
     P(g, tx0 - 4, tyT - 3, tx1 - tx0 + 11, 3, DKW); P(g, tx0 - 3, tyT - 2, tx1 - tx0 + 9, 1, '#d3342c'); P(g, tx0 - 6, tyT - 5, 3, 2, DKW); P(g, tx1 + 7, tyT - 5, 3, 2, DKW);
@@ -629,7 +625,7 @@
     filterNeon(keep) { neonSigns = neonSigns.filter(s => keep([s.x, s.y, s.w, s.h])); neonLayer = null; },
     skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
     drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),
-    dragonNight: { set(n) { dseqN = n - 1; dseq = null; dseqWas = false; }, state: () => dseq && { route: dseq.route, s: Math.round(dseq.s * 10) / 10, sP: dseq.sP, leave: dseq.leave, sR: dseq.sR, sWake: dseq.sWake, hx: dseq.hx, head: dseq.head } },      // перевірка: set(n) — маршрут наступної ночі (0 ліворуч, 1 праворуч, 2 над вершиною)          // той самий дракон, що в небі (використовує будівництво, 278)
+    dragonNight: { set(n) { dseqN = n - 1; dseq = null; dseqWas = false; }, state: () => dseq && { route: dseq.route, s: Math.round(dseq.s * 10) / 10, sP: dseq.sP, leave: dseq.leave, sR: dseq.sR, sCalm: dseq.sCalm, kR: dseq.kR, dbg: dseq.dbg, G: { H: dseq.G.H, hw: dseq.G.hw, sy: Math.round(dseq.G.sy), cx: dseq.G.cx, top: dseq.G.top, it: (typeof bubbleBounds === 'function') ? bubbleBounds().it : null }, roof: roofTopY(), shopY: (typeof shop !== 'undefined' && shop) ? shop.y : null, sWake: dseq.sWake, hx: dseq.hx, head: dseq.head } },      // перевірка: set(n) — маршрут наступної ночі (0 ліворуч, 1 праворуч, 2 над вершиною)          // той самий дракон, що в небі (використовує будівництво, 278)
     nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
       neonNight();
       const n = sky.night; if (noFly || n < 0.05 || build) return;

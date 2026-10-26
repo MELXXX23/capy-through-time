@@ -149,14 +149,14 @@ const FEAR_LINES = 6, GFEAR_LINES = 5;
 let lastFearSay = 0;
 function startFear(c, hz) {
   c.fear = { t: 0, stage: 0, ty: mailRoadY() - 27 - rand(0, 6), fy: 0, sx: 0, origDir: c.dir, away: c.x < hz.x ? -1 : 1, said: false, wait: 0 };
-  playSfx('pip'); buzz(10);
+  playSfx('soft'); buzz(10);
 }
 function scareNear(gx, gy) {
   let n = 0;
   customers.forEach(c => {
     if (n >= 2 || c.fear || c.inside || c.alpha < 0.9 || !animOn() || !(c.mode === 'pass' || c.mode === 'toDoor' || c.mode === 'toHome')) return;
     if (Math.abs(c.x - gx) > 56 || c.x < visL() + 4 || c.x > visR() - 4) return;
-    n++; c.fear = { ghost: true, t: 0, stage: 0, ty: c.y, fy: 0, sx: 0, origDir: c.dir, away: c.x < gx ? -1 : 1, said: false, wait: 0, run: 0 }; playSfx('pip'); buzz(10);
+    n++; c.fear = { ghost: true, t: 0, stage: 0, ty: c.y, fy: 0, sx: 0, origDir: c.dir, away: c.x < gx ? -1 : 1, said: false, wait: 0, run: 0 }; playSfx('soft'); buzz(10);
   });
 }
 function updateFear(c, dt) {

@@ -48,6 +48,7 @@ const AR = (function () {
   const ST = ramp('#dcc693'), SL = ramp('#f0e4c0'), TC = ramp('#c9643a'), GR = ramp('#4f7a45');
   const OUT = '#3a2a1e', GOLD = ['#fff3a8', '#f4cc4c', '#c8962a', '#8a5f18'];
 
+  const RV2 = () => window.RENAI_V2 !== false;                                  // Відродження v2 (р. 68); false — як було (для зразка)
   function hip(g, x0, x1, yT, yB, inset, pal, snow) {                           // черепичний дах-«шатро»: ряди черепиці, коник, звис і тінь
     const H = yB - yT;
     for (let y = yT; y <= yB; y++) {
@@ -66,6 +67,7 @@ const AR = (function () {
     for (let k = x + 3; k < x + pw - 2; k += 2) A(g, 0.5, () => P(g, k, y0 + 4, 1, y1 - y0 - 8, ST[4]));
     P(g, x - 1, y0, pw + 2, 1, ST[0]); P(g, x - 1, y0 + 1, pw + 2, 2, ST[2]); P(g, x - 1, y0 + 2, pw + 2, 1, ST[3]);   // капітель
     P(g, x, y0 + 3, pw, 1, ST[4]);
+    if (RV2()) { P(g, x - 2, y0, 1, 2, GOLD[2]); P(g, x + pw + 1, y0, 1, 2, GOLD[2]); P(g, x - 2, y0, 1, 1, GOLD[0]); P(g, x + pw + 1, y0, 1, 1, GOLD[0]); for (let k = 0; k < pw; k += 2) P(g, x + k, y0 + 2, 1, 1, GOLD[1]); P(g, x + (pw >> 1) - 1, y0 + 4, 2, 2, GOLD[1]); }      // v2: волюти й золотий акант
     P(g, x - 1, y1 - 2, pw + 2, 2, ST[2]); P(g, x - 1, y1 - 2, pw + 2, 1, ST[0]); P(g, x, y1, pw, 1, ST[4]);          // база
   }
   function spandrels(g, bx, bw, yTop, ry) {                                     // кам'яні кути над прорізом: пологе еліптичне склепіння з архівольтом і замковим каменем
@@ -90,6 +92,22 @@ const AR = (function () {
     P(g, x - 2, y - 1, 5, 1, ST[3]); P(g, x - 1, y - 2, 3, 1, ST[2]); P(g, x - 3, y - 5, 7, 3, ST[2]); P(g, x - 3, y - 5, 1, 3, ST[1]); P(g, x + 3, y - 5, 1, 3, ST[3]);
     P(g, x - 1, y - 6, 3, 1, ST[1]); P(g, x - 2, y - 7, 5, 1, ST[0]); P(g, x, y - 10, 1, 3, GOLD[1]); P(g, x - 1, y - 9, 3, 1, '#ff9a3a'); P(g, x, y - 11, 1, 1, '#ffe08a');
   }
+  function statue(g, x, y, flip) {                                             // мармурова статуя на постаменті: тога, піднята рука з лавровим вінком
+    P(g, x - 2, y - 3, 5, 3, ST[2]); P(g, x - 2, y - 3, 5, 1, ST[0]);
+    P(g, x - 1, y - 10, 3, 7, SL[1]); P(g, x - 1, y - 10, 1, 7, SL[0]); P(g, x + 1, y - 10, 1, 7, SL[3]); P(g, x - 1, y - 6, 3, 1, SL[2]);
+    P(g, x, y - 12, 1, 2, SL[0]); P(g, x - 1, y - 12, 1, 1, SL[2]); const ax = flip ? x + 2 : x - 2; P(g, ax, y - 13, 1, 4, SL[1]); P(g, ax - 1, y - 14, 3, 1, '#4f8a4a'); P(g, ax, y - 15, 1, 1, '#4f8a4a');
+  }
+  function dormer(g, x, y) {                                                    // слухове вікно: кам'яний фронтончик із круглим вікном-окуляром
+    P(g, x - 5, y - 6, 11, 6, ST[4]); P(g, x - 4, y - 5, 9, 5, ST[2]); P(g, x - 4, y - 5, 9, 1, ST[0]); P(g, x - 4, y - 5, 1, 5, ST[1]); P(g, x + 4, y - 5, 1, 5, ST[3]);
+    for (let i = 0; i < 3; i++) { P(g, x - 4 + i, y - 7 - i, 9 - i * 2, 1, i ? ST[1] : ST[3]); P(g, x - 5 + i, y - 7 - i, 1, 1, ST[4]); P(g, x + 5 - i, y - 7 - i, 1, 1, ST[4]); }
+    P(g, x - 1, y - 11, 3, 1, ST[4]); P(g, x, y - 12, 1, 1, GOLD[1]);
+    P(g, x - 2, y - 5, 5, 4, ST[4]); P(g, x - 1, y - 4, 3, 2, '#4a5a8a'); P(g, x - 1, y - 4, 1, 1, '#9fc4f0'); P(g, x - 2, y - 5, 1, 1, ST[2]); P(g, x + 2, y - 5, 1, 1, ST[2]);
+  }
+  function chimney(g, x, y) {                                                   // теракотовий димар із кам'яною шапкою й легким димком
+    P(g, x - 2, y, 5, 8, OUT); P(g, x - 1, y + 1, 3, 7, TC[2]); P(g, x - 1, y + 1, 1, 7, TC[1]); P(g, x - 1, y + 4, 3, 1, TC[3]);
+    P(g, x - 3, y - 1, 7, 2, ST[1]); P(g, x - 3, y - 1, 7, 1, ST[0]);
+    A(g, 0.35, () => { P(g, x - 1, y - 4, 2, 2, '#e8e4ee'); P(g, x + 1, y - 7, 3, 2, '#e8e4ee'); P(g, x - 1, y - 10, 2, 2, '#e8e4ee'); });
+  }
   function pennant(g, x, y, c, flip) {                                          // стяг на древку
     P(g, x, y, 1, 12, OUT); P(g, x - 1, y - 1, 3, 1, GOLD[1]);
     const d = flip ? -1 : 1; P(g, x + (d > 0 ? 1 : -6), y + 1, 6, 4, c); P(g, x + (d > 0 ? 1 : -6), y + 1, 6, 1, mix(c, '#ffffff', 0.35)); P(g, x + (d > 0 ? 7 : -7), y + 2, 1, 2, c);
@@ -111,6 +129,7 @@ const AR = (function () {
     P(g, 4, top - 1, w - 8, 1, ST[0]); P(g, 4, top, w - 8, 1, ST[2]); P(g, 4, top + 2, w - 8, 1, ST[3]);
     // карниз із зубчиками й модильйонами
     P(g, 0, top + 3, w, 1, ST[0]); P(g, 0, top + 4, w, 2, ST[2]); for (let x = 1; x < w - 1; x += 3) P(g, x, top + 4, 2, 2, ST[3]); P(g, 0, top + 6, w, 1, ST[3]); P(g, 0, top + 7, w, 1, ST[4]);
+    if (RV2()) for (let x = 2; x < w - 3; x += 4) { P(g, x, top + 6, 2, 1, ST[1]); P(g, x + 2, top + 6, 1, 1, ST[4]); }      // v2: «яйця-стрілки» під карнизом
     // аттик навколо дахової вивіски
     const ax0 = cx - (pw >> 1) - 5, aw = pw + 10, ay = ys - 3;
     if (ay >= 0) {
@@ -131,11 +150,14 @@ const AR = (function () {
         P(g, cx - 2, topY - 8, 5, 2, TC[2]); P(g, cx, topY - 11, 1, 3, GOLD[1]); P(g, cx - 1, topY - 10, 3, 1, GOLD[1]);
       }
     }
+    if (RV2() && ay >= 12) [ax0 - 1, ax0 + aw].forEach((sx, i) => statue(g, sx, top - 2, i));      // v2: статуї на кутах аттика
     roofSignG(g, cx, ys, false);                                                  // дахова вивіска CAPYTAP (малюється останньою)
     // вази на балюстраді й стяги
     if (level >= 2) [10, w - 10].forEach(x => urn(g, x, top - 1));
     if (level >= 4) { urn(g, Math.round(w * 0.3), top - 1); urn(g, Math.round(w * 0.7), top - 1); }
     if (level >= 3) { pennant(g, 20, Math.max(0, top - 12), '#2a4a8c', false); pennant(g, w - 20, Math.max(0, top - 12), '#b8312a', true); }
+    if (RV2() && level >= 2 && top >= 10) [Math.round(w * 0.22), Math.round(w * 0.78)].forEach(dx => dormer(g, dx, top - 1));      // слухові вікна-окуляри в черепиці (р. 68)
+    if (RV2() && level >= 3 && top >= 14) [Math.max(34, Math.round(w * 0.14)), w - Math.max(34, Math.round(w * 0.14))].forEach(dx => chimney(g, dx, Math.max(2, top - 10)));   // теракотові димарі з димком
 
     // ---- вивіска: різьблена рама з позолотою (текст накладається HTML-елементом у тому ж місці)
     P(g, 4, top + 7, w - 8, 19, ST[4]); P(g, 5, top + 8, w - 10, 17, ST[1]); P(g, 6, top + 9, w - 12, 15, GOLD[2]); P(g, 6, top + 9, w - 12, 1, GOLD[0]); P(g, 7, top + 10, w - 14, 13, fill);
@@ -152,6 +174,7 @@ const AR = (function () {
       const bs = bays(innerX, innerX + innerW, n, 6), hF = fl.fy - fl.top;
       // шар-стрічка під поверхом (поясок)
       P(g, 0, fl.fy, w, 1, ST[0]); P(g, 0, fl.fy + 1, w, 2, ST[2]); for (let x = 1; x < w - 1; x += 3) P(g, x, fl.fy + 3, 2, 1, ST[3]); P(g, 0, fl.fy + 4, w, 1, ST[3]); P(g, 0, fl.fy + 5, w, 1, ST[4]);
+      if (RV2()) for (let x = 2; x < w - 2; x += 6) { P(g, x, fl.fy + 1, 3, 1, TC[2]); P(g, x + 1, fl.fy + 2, 1, 1, GOLD[1]); }      // v2: теракотово-золотий орнамент (сграфіто)
       // стіна між прорізами (під склепіннями) і пілястри
       P(g, innerX, fl.top - 3, innerW, 3, ST[2]); P(g, innerX, fl.top - 3, innerW, 1, ST[1]);
       bs.forEach(([bx, bw], i) => {
@@ -161,6 +184,11 @@ const AR = (function () {
         P(g, bx, fl.top + Math.round(hF * 0.42), bw, 1, ST[4]);                                                          // фрамуга
         A(g, 0.2, () => { for (let k = 0; k < 8; k++) P(g, bx + 3 + k, fl.top + 12 + (7 - k), 1, 2, '#ffffff'); });
         if (i < bs.length - 1) pilaster(g, bx + bw, fl.top - 3, fl.fy, 6);
+        if (RV2()) {
+          if (i < bs.length - 1 && hF > 22) { const tx = bx + bw + 3, ty = fl.top + 2; D(g, tx, ty, 3, GOLD[2]); D(g, tx, ty, 2, '#3a6ab8'); P(g, tx, ty - 1, 1, 2, '#ffffff'); P(g, tx - 1, ty, 3, 1, '#e8f0ff'); }      // тондо
+          const kx = Math.round(bx + bw / 2); P(g, kx - 1, fl.top + 1, 3, 3, GOLD[2]); P(g, kx - 1, fl.top + 1, 3, 1, GOLD[0]); P(g, kx - 1, fl.top + 2, 1, 1, '#5a3a10'); P(g, kx + 1, fl.top + 2, 1, 1, '#5a3a10');      // левова маска
+          if (level >= 2 && (i + fl.f) % 2 === 1 && bw > 18) { const by = fl.fy - 6; P(g, bx + 1, by, bw - 2, 1, ST[0]); for (let k = bx + 3; k < bx + bw - 2; k += 3) { P(g, k, by + 1, 2, 3, ST[1]); P(g, k + 1, by + 1, 1, 3, ST[3]); } P(g, bx, by + 4, bw, 2, ST[2]); P(g, bx, by + 4, bw, 1, ST[0]); }      // балкончик із балясинами
+        }
         P(g, bx, fl.fy - 2, bw, 2, ST[2]); P(g, bx, fl.fy - 2, bw, 1, ST[1]);                                            // підвіконня
         if (level >= 3 && (i + fl.f) % 2 === 0) { P(g, bx + 3, fl.fy - 6, bw - 6, 4, '#7a4a2a'); for (let k = 0; k < bw - 8; k += 3) { P(g, bx + 4 + k, fl.fy - 9, 2, 3, ['#e8353a', '#ffd84f', '#ff8fd0'][(k / 3 | 0) % 3]); P(g, bx + 4 + k, fl.fy - 7, 2, 2, '#4f9a63'); } }    // квіти у вазонах
       });
@@ -298,9 +326,11 @@ const AR = (function () {
         if (f === floors - 1 && wx + 9 >= (doorOk ? doorX : -9999) - 2 && wx <= (doorOk ? doorX : -9999) + doorW + 2) continue;
         winArch(g, wx, y0, ((c + f + x) % 4 === 0), shut && f < floors - 1, pedF && f % 2 === 1);
         houseGlass.push([wx + 1, y0 + 1, 6, 9]);
+        if (RV2() && f < floors - 1 && hash2(wx, y0 + 4) % 3 === 0) { P(g, wx, y0 + 11, 8, 2, TC[2]); P(g, wx, y0 + 11, 8, 1, TC[1]); [0, 3, 6].forEach((dx, k) => { P(g, wx + dx, y0 + 9, 2, 2, '#4f8a4a'); P(g, wx + dx + (k % 2), y0 + 9, 1, 1, ['#e8353a', '#ffd84f', '#ff8fd0'][k]); }); }      // v2: вазон із геранню на підвіконні
         (winX[f] = winX[f] || []).push(wx);
       }
     }
+    if (RV2() && hs % 3 === 0 && floors >= 2 && w >= 34) { const ly = base - 6 - floors * 19 + 3 + 19 * (floors - 2) - 3, x0 = x + 3, x1 = x + w - 3; for (let xx = x0; xx < x1; xx++) P(g, xx, ly + Math.round(Math.sin((xx - x0) / (x1 - x0) * Math.PI) * 3), 1, 1, '#5a4a3a'); for (let xx = x0 + 4; xx < x1 - 6; xx += 7) { const yy = ly + Math.round(Math.sin((xx - x0) / (x1 - x0) * Math.PI) * 3); P(g, xx, yy + 1, 4, 5, ['#ffffff', '#8ac0e8', '#f4b8c8', '#f4e08a'][(xx >> 3) % 4]); P(g, xx, yy + 1, 4, 1, '#d8d0c0'); } }      // v2: мотузка з білизною — італійський двір
     // балкони: кожен другий поверх (над першим — ближче до землі), вікна на ньому виходять на балюстраду
     if (floors >= 2) {
       const hb = hash2(x * 5 + 9, h + 23), par = hb & 1, mode = (hb >>> 1) % 3, iron = ((hb >>> 4) & 1) === 1;

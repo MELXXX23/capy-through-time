@@ -15,6 +15,7 @@
     </div>
     <div id="topRight">
       <button type="button" id="bonusOpen" class="btn" hidden><svg viewBox="0 0 16 16" width="22" height="22" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="4" width="14" height="9" fill="#2a1d1a"/><rect x="2" y="5" width="12" height="7" fill="#8b6bb0"/><rect x="3" y="8" width="4" height="1" fill="#fff4dc"/><rect x="4" y="7" width="2" height="3" fill="#fff4dc"/><rect x="9" y="7" width="2" height="2" fill="#ffe08a"/><rect x="11" y="9" width="2" height="2" fill="#ef8fa3"/><rect x="2" y="12" width="3" height="1" fill="#8b6bb0"/><rect x="11" y="12" width="3" height="1" fill="#8b6bb0"/></svg><span id="bonusOpenT"></span></button>
+      <div id="evCol" aria-live="polite"></div>
     </div>
   </header>
 
@@ -94,17 +95,17 @@
       </div>
 
       <div class="pane" id="pane-workshop" role="tabpanel" hidden>
-        <div class="card">
-          <h2 data-i18n="wsTitle"></h2>
-          <p class="ws-line" id="wsInfo"></p>
-          <p class="ws-line" id="wsBonus"></p>
-        </div>
-        <div class="card" id="routeCard"><h2 id="routeTitle"></h2><p class="ws-line" id="routeNext"></p><div id="routeList"></div></div>
         <div class="card warp-card">
-          <h2 data-i18n="warpTitle"></h2>
+          <h2 data-i18n="wsTitle"></h2>
+          <h3 class="ws-sub" data-i18n="warpTitle"></h3>
           <p class="ws-line" data-i18n="warpText"></p>
           <p class="ws-gain" id="warpPreview"></p>
           <button type="button" class="btn wide go" id="warpBtn"></button>
+          <div class="ws-route" id="routeCard"><h3 class="ws-sub" id="routeTitle"></h3><p class="ws-line" id="routeNext"></p><div id="routeList"></div></div>
+        </div>
+        <div class="card">
+          <p class="ws-line" id="wsInfo"></p>
+          <p class="ws-line" id="wsBonus"></p>
         </div>
         <h2 class="ws-shop-title" data-i18n="wsShopTitle"></h2>
         <div id="wsList"></div>

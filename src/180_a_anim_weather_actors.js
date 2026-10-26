@@ -243,7 +243,8 @@ function drawCloudsLayer() {
     drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), o);
     if ((sk === 'goldcloud' || sk === 'diamondcloud') && animOn()) {
       const b = cloudBox(c);
-      cv.litPts.forEach(([px, py], i) => { if (i % 3) return; const v = Math.sin(animClock * 1.9 + i * 2.7 + c.x * 0.02); if (v > 0.8) sparkPlus(b.x + Math.round(px * sc), b.y + Math.round(py * sc), (v - 0.8) / 0.2, sk === 'diamondcloud' ? '#d8f6ff' : '#fff2b0'); });      // золоті й діамантові відблиски
+      const dia = sk === 'diamondcloud', step = dia ? 2 : 3, thr = dia ? 0.62 : 0.8;      // діамантові: удвічі більше відблисків, довші спалахи, кольорові іскорки
+      cv.litPts.forEach(([px, py], i) => { if (i % step) return; const v = Math.sin(animClock * (dia ? 2.3 : 1.9) + i * 2.7 + c.x * 0.02); if (v > thr) sparkPlus(b.x + Math.round(px * sc), b.y + Math.round(py * sc), (v - thr) / (1 - thr), dia ? ['#d8f6ff', '#ffffff', '#ffd6f4', '#c8fff0'][i % 4] : '#fff2b0'); });      // золоті й діамантові відблиски
     }
   });
   ctx.globalAlpha = 1;
@@ -255,7 +256,7 @@ function updateCloudSkinFx(dt) {
   if (sk === 'goldcloud') {
     cloudCoinT -= dt;
     if (cloudCoinT <= 0) {
-      cloudCoinT = rand(2.2, 5.5);
+      cloudCoinT = rand(1.5, 3.8);      // монетки трохи частіше (було 2,2–5,5 с)
       if (vis.length) { const b = cloudBox(vis[Math.floor(Math.random() * vis.length)]); cloudCoins.push({ x: b.x + rand(b.w * 0.25, b.w * 0.75), y: b.y + b.h * 0.8, vy: rand(6, 20), age: 0, spin: rand(0, 4), bounces: 0, ground: Math.min(worldB() - 8, LAYOUT.curbY + rand(8, 38)), rest: 0 }); }
     }
     for (let i = cloudCoins.length - 1; i >= 0; i--) {
@@ -268,7 +269,7 @@ function updateCloudSkinFx(dt) {
     }
   } else {
     cloudCoins.length = 0;
-    vis.forEach(c => { if (Math.random() < dt * 5) { const b = cloudBox(c); starDust.push({ x: b.x + rand(b.w * 0.1, b.w * 0.9), y: b.y + b.h * rand(0.6, 0.9), vx: rand(-4, 4), vy: rand(7, 15), age: 0, life: rand(1.2, 2.4), c: (sk === 'diamondcloud' ? ['#ffffff', '#d8f6ff', '#9be8ff', '#b4e2fa'] : ['#fff6c0', '#c9b8ff', '#9be8ff', '#ffc4ec'])[Math.floor(Math.random() * 4)] }); } });
+    vis.forEach(c => { if (Math.random() < dt * (sk === 'diamondcloud' ? 10 : 5)) { const b = cloudBox(c); starDust.push({ x: b.x + rand(b.w * 0.1, b.w * 0.9), y: b.y + b.h * rand(0.6, 0.9), vx: rand(-4, 4), vy: rand(7, 15), age: 0, life: rand(1.2, 2.4), c: (sk === 'diamondcloud' ? ['#ffffff', '#d8f6ff', '#9be8ff', '#b4e2fa'] : ['#fff6c0', '#c9b8ff', '#9be8ff', '#ffc4ec'])[Math.floor(Math.random() * 4)] }); } });
     for (let i = starDust.length - 1; i >= 0; i--) { const p = starDust[i]; p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.age >= p.life) starDust.splice(i, 1); }
     while (starDust.length > 90) starDust.shift();
   }

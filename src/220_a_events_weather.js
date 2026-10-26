@@ -193,29 +193,40 @@ function fmtTime(sec) {
 function updateBoostsUI() {
   const now = Date.now(), power = eventPowerMult(), items = [];
   const ev = state.events;
-  const bannerBusy = !!ghostHunt || !!(trouble && trouble.type === 'thief' && trouble.state === 'run');   // інакше цю подію вже показує банер — не дублюємо
-  if (!bannerBusy) { /* банер вище покаже розпродаж / чорну п'ятницю */ }
-  else if (theme.blackFriday) items.push({ cls: 'dark', icon: BLACK_FRIDAY.icon, text: t('boost_bf', fmt(1 + (CONFIG.BLACK_FRIDAY_MULT - 1) * power, 2)) });
-  else if (ev.saleUntil > now) items.push({ icon: '🏷️', text: t('boost_sale', fmt(1 + (CONFIG.SALE_MULT - 1) * power, 2)) + ' ' + fmtTime((ev.saleUntil - now) / 1000) });
+  const left = u => fmtTime((u - now) / 1000);
+  if (theme.blackFriday) items.push({ cls: 'dark', icon: BLACK_FRIDAY.icon, text: t('boost_bf', fmt(1 + (CONFIG.BLACK_FRIDAY_MULT - 1) * power, 2)), short: fmtTime(secondsToMidnight()) });
+  else if (ev.saleUntil > now) items.push({ icon: '🏷️', text: t('boost_sale', fmt(1 + (CONFIG.SALE_MULT - 1) * power, 2)) + ' ' + left(ev.saleUntil), short: left(ev.saleUntil), soon: ev.saleUntil - now < 30000 });
   if (theme.holiday) {
     const h = theme.holiday;
     let bonus = '';
     if (h.bonus.global) bonus = t('hb_global', Math.round(h.bonus.global * power * 100));
     else if (h.bonus.depts) bonus = Object.keys(h.bonus.depts).map(i => t('hb_dept', deptName(i), fmt(1 + h.bonus.depts[i] * power, 2))).join(', ');
-    items.push({ icon: h.icon, text: t('holiday_' + h.id) + ': ' + bonus });
+    items.push({ icon: h.icon, text: t('holiday_' + h.id) + ': ' + bonus, short: h.bonus.global ? '+' + Math.round(h.bonus.global * power * 100) + '%' : h.bonus.depts ? '×' + fmt(1 + Math.max(...Object.values(h.bonus.depts)) * power, 1) : '' });
   }
   // під рахунком завжди: перша рамка — баланс, біля неї — епоха
   items.unshift({ cls: 'quiet', icon: '🕰️', text: t('epochViewing', t('epoch_' + (viewEpoch() % EPOCHS.length))) });
-  if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + fmtTime((ev.incomeBoostUntil - now) / 1000) });
-  if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + fmtTime((ev.tapBoostUntil - now) / 1000) });
-  if (typeof Ads !== 'undefined' && Ads.available() && !(ev.incomeBoostUntil > now)) items.push({ cls: 'ad', icon: '🎬', text: t('adBoostChip'), act: adsBoostClick });   // «×2 за ролик» (лише Android-обгортка з рекламою)
+  if (ev.incomeBoostUntil > now) items.push({ icon: '⚡', text: t('boost_income', ev.incomeBoostMult) + ' ' + left(ev.incomeBoostUntil), short: left(ev.incomeBoostUntil), soon: ev.incomeBoostUntil - now < 30000 });
+  if (ev.tapBoostUntil > now) items.push({ icon: '👆', text: t('boost_tap', ev.tapBoostMult) + ' ' + left(ev.tapBoostUntil), short: left(ev.tapBoostUntil), soon: ev.tapBoostUntil - now < 30000 });
+  if (typeof Ads !== 'undefined' && Ads.available() && !(ev.incomeBoostUntil > now)) items.push({ cls: 'ad', icon: '🎬', text: t('adBoostChip'), short: '×2', act: adsBoostClick });   // «×2 за ролик» (лише Android-обгортка з рекламою)
   items.splice(1, 0, ...helpChips());                                                    // «Допоможи Піпу: 4/12»
-  const sig = items.map(i => i.icon + i.text).join('|');
+  const sig = items.map(i => i.icon + i.text + (i.soon ? '!' : '')).join('|');
   if (uiCache.boostSig === sig) return;
   uiCache.boostSig = sig;
   uiCache.bannerSig = null;                                     // рамки змінились — банер підлаштується під них
-  ui.boosts.innerHTML = '';
+  ui.boosts.innerHTML = ''; ui.evCol.innerHTML = '';
   items.forEach(it => {
+    if (it.cls !== 'quiet') {                                    // схема 2: подія — квадратна плитка праворуч (значок + таймер), дотик — повний текст
+      const b = document.createElement('div');
+      b.className = 'evt' + (it.cls ? ' ' + it.cls : '') + (it.soon ? ' soon' : ''); b.title = it.text; b.setAttribute('role', 'button'); b.tabIndex = 0;
+      const ico = document.createElement('span'); ico.className = 'ei'; ico.textContent = it.icon;
+      const tx = document.createElement('span'); tx.className = 'et'; tx.textContent = it.short != null ? it.short : (/\d+\s*\/\s*\d+/.exec(it.text) || [''])[0];
+      b.append(ico, tx);
+      const go = () => { if (it.act) it.act(); else showToast(it.text); };
+      b.addEventListener('click', go);
+      b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      ui.evCol.appendChild(b);
+      return;
+    }
     const chip = document.createElement('span');
     chip.className = 'chip' + (it.cls ? ' ' + it.cls : '');
     const ico = document.createElement('span'); ico.className = 'ico'; ico.textContent = it.icon;
@@ -236,11 +247,7 @@ function updateBanner() {
     kind = 'game'; text = ghostHunt.crt < 0 ? t('banner_ghost', ghostHunt.caught, ghostHunt.total, Math.max(0, Math.ceil(ghostHunt.dur - ghostHunt.t))) : t('banner_crt', EPOCH_CREATURES[ghostHunt.crt].icon, t('crt_' + ghostHunt.crt), ghostHunt.caught, ghostHunt.total, Math.max(0, Math.ceil(ghostHunt.dur - ghostHunt.t)));
   } else if (trouble && trouble.type === 'thief' && trouble.state === 'run') {
     kind = 'game'; text = t('banner_thief', trouble.hits, CONFIG.RACCOON_HITS, Math.max(0, Math.ceil(CONFIG.RACCOON_SECONDS - trouble.t)));
-  } else if (theme.blackFriday) {
-    kind = 'bf'; text = t('banner_bf', fmt(1 + (CONFIG.BLACK_FRIDAY_MULT - 1) * power, 2), fmtTime(secondsToMidnight()));
-  } else if (ev.saleUntil > now) {
-    kind = 'sale'; text = t('banner_sale', fmt(1 + (CONFIG.SALE_MULT - 1) * power, 2), fmtTime((ev.saleUntil - now) / 1000));
-  }
+  }                                                             // розпродаж і чорна п'ятниця — плитками праворуч (схема 2), банер лише для ігор
   const sig = kind + '|' + text;
   if (uiCache.bannerSig === sig) return;
   uiCache.bannerSig = sig;

@@ -292,7 +292,9 @@ function currentGoal() {
   return best >= 0 ? t('goalNext', deptName(best), Math.min(100, Math.floor(state.coins / bc * 100))) : '';
 }
 function updateGoal() {
-  const txt = state.story.done >= 1 ? currentGoal() : '';
+  const travel = !!state.story.finale && prestigeGain() >= 1, ep = ui.tabs.querySelector('[data-tab="epochs"]');
+  if (ep) ep.classList.toggle('alert', travel && state.tab !== 'epochs');      // «можна в подорож» — крапка на 🌀
+  const txt = state.story.done >= 1 && !state.story.finale ? currentGoal() : '';      // схема 2: після фіналу рядок цілі не займає небо
   ui.goalLine.hidden = !txt;
   setText(ui.goalLine, txt, 'goal');
 }

@@ -246,7 +246,7 @@ function showBubble(key, text, x, y, follow) {
     bubbleEls[key] = el;
   }
   el.textContent = text; el._w = 0; el._h = 0;
-  playSfx('pip');
+  playSfx('soft');
   el._follow = follow || null;                  // follow — функція, що дає поточне місце того, хто говорить
   el._x = x; el._y = follow && (follow() || {}).sky ? y : Math.max(24, y);          // сказ неба (дракон) може бути вище за 24
   placeBubble(el, x, el._y);

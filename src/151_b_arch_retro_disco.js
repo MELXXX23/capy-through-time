@@ -5,6 +5,7 @@
   const TQ = ramp('#4fc6ba'), CR = ramp('#f7edcf'), RD = ramp('#e2453b'), PK = ramp('#f59ab6'), YL = ramp('#ffd84a');
   const CH = ['#ffffff', '#e6eff7', '#b4c3d3', '#74839a', '#3c4660'], BK = '#1e1e28';
 
+  const V2 = () => window.ARCH_V2 !== false;                                     // деталі v2 (р. 68); false — як було (для зразка)
   function star(g, x, y, r, c1, c2) {                                              // атомна зірка: промені з кульками на кінцях
     const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1], [0.7, 0.7], [-0.7, 0.7], [0.7, -0.7], [-0.7, -0.7]];
     dirs.forEach(([dx, dy], i) => {
@@ -29,6 +30,10 @@
     P(g, cx - 31, Math.max(0, ys - 2), 1, top - Math.max(0, ys - 2), CH[0]); P(g, cx + 29, Math.max(0, ys - 2), 1, top - Math.max(0, ys - 2), CH[0]);
     const sy = Math.max(9, top - 8); if (level >= 2) { star(g, 22, sy, 5, RD[2], YL[2]); star(g, w - 22, sy, 5, YL[2], RD[2]); }
     if (level >= 3) { star(g, 46, sy + 1, 3, TQ[2], PK[2]); star(g, w - 46, sy + 1, 3, PK[2], TQ[2]); }
+    if (V2()) {                                                                   // v2: хромовані «плавники» на кутах і лампочки-маркіза по парапету
+      [[2, 1], [w - 3, -1]].forEach(([x0, d]) => { for (let k = 0; k < 9; k++) { const hh = Math.round(14 - k * 1.4); P(g, x0 + d * k, top - 2 - hh, 1, hh, k < 2 ? CH[0] : k < 6 ? RD[2] : RD[3]); P(g, x0 + d * k, top - 2 - hh, 1, 1, CH[0]); } P(g, x0 + d * 1, top - 14, 1, 2, '#ffe9a0'); });
+      for (let x = 14; x < w - 14; x += 5) { if (Math.abs(x - cx) < 36) continue; P(g, x, top - 2, 2, 1, (x / 5 | 0) % 2 ? '#ffe9a0' : '#ffffff'); }
+    }
     roofSignG(g, cx, ys, false);
     // пояс зі смугастою кромкою, шахи
     checker(g, 0, top + 4, w, 2, 2, BK, '#ffffff'); P(g, 0, top + 3, w, 1, CH[0]); P(g, 0, top + 6, w, 1, CH[2]);
@@ -52,6 +57,7 @@
       bs.forEach(([bx, bw], i) => {
         pillFill(g, bx - 2, fl.top - 2, bw + 4, hF + 3, 6, CH[2]); pillFill(g, bx - 1, fl.top - 1, bw + 2, hF + 1, 5, RD[2]); pillClear(g, bx, fl.top, bw, hF - 1, 4);          // хромована рамка, червоний кант, заокруглений проріз
         P(g, bx + 5, fl.top - 2, bw - 10, 1, CH[0]);
+        if (V2()) { P(g, bx - 3, fl.top - 4, bw + 6, 2, CH[1]); P(g, bx - 3, fl.top - 4, bw + 6, 1, CH[0]); A(g, 0.25, () => P(g, bx - 1, fl.top - 2, bw + 2, 2, '#000000')); }      // v2: хромований козирок над вікном
         A(g, 0.22, () => { for (let k = 0; k < 8; k++) P(g, bx + 5 + k, fl.top + 5 + (7 - k), 1, 2, '#ffffff'); });
         if (i < bs.length - 1) { const px = bx + bw + 2; atom(g, px + 2, fl.top + (hF >> 1)); for (let k = 0; k < 3; k++) P(g, px + 1, fl.top + 2 + k * 4, 2, 1, '#ffffff'); }
       });
@@ -71,6 +77,7 @@
     checker(g, 0, h - 5, w, 4, 4, BK, '#ffffff'); P(g, 0, h - 6, w, 1, CH[1]); P(g, 0, h - 1, w, 1, CH[3]);
     P(g, door.x - 6, h - 3, door.w + 12, 3, CH[2]); P(g, door.x - 6, h - 3, door.w + 12, 1, CH[0]);
     if (level <= 4) { lanternG(g, door.x - 9, yG + 15); lanternG(g, door.x + door.w + 10, yG + 15); }
+    if (V2() && level >= 2) { const ax0 = door.x - 34, ay = yG + 16; if (ax0 > innerX + 2) { P(g, ax0, ay, 18, 5, BK); P(g, ax0 + 1, ay + 1, 16, 3, RD[2]); for (let k = 0; k < 5; k++) P(g, ax0 + 18 + k, ay - 2 + k, 1, 9 - k * 2, k ? RD[2] : BK); for (let k = 0; k < 16; k += 3) P(g, ax0 + 1 + k, ay + 2, 1, 1, '#ffe9a0'); } }      // v2: неонова стрілка «сюди» з лампочками
   }
   function deco(g, C) {
     const { w, h, level, door } = C;
@@ -94,6 +101,8 @@
     if (roofK === 0) { const ax = x + 6 + (hs >>> 5) % Math.max(1, w - 24); P(g, ax + 5, top - 16, 1, 12, CH[3]); P(g, ax, top - 14, 11, 1, CH[3]); P(g, ax + 2, top - 11, 7, 1, CH[3]); P(g, ax + 3, top - 8, 5, 1, CH[3]); }
     else if (roofK === 2 && w >= 38) { const bx = x + w - 26; for (let i = 0; i < 12; i++) P(g, bx + i, top - 5 - Math.round(Math.sqrt(36 - (i - 5.5) * (i - 5.5)) * 0.8), 1, Math.round(Math.sqrt(36 - (i - 5.5) * (i - 5.5)) * 0.8) + 1, CH[2]); P(g, bx, top - 5, 12, 1, CH[3]); P(g, bx + 4, top - 12, 4, 8, CH[1]); P(g, bx + 4, top - 12, 4, 1, CH[0]); }
     else if (roofK === 3 && w >= 36) { const nx = x + 4 + (hs >>> 6) % Math.max(1, w - 36); const word = ['EAT', 'BAR', 'SODA', 'DINER'][(hs >>> 8) % 4], sw = word.length * 4 + 4; P(g, nx + 2, top - 14, 1, 10, CH[3]); P(g, nx + sw - 3, top - 14, 1, 10, CH[3]); P(g, nx, top - 17, sw, 13, BK); P(g, nx + 1, top - 16, sw - 2, 11, RD[2]); AR.txt(g, nx + 3, top - 14, word, 'w'); P(g, nx + 1, top - 16, sw - 2, 1, RD[0]); }
+    if (V2() && roofK === 1 && w >= 34) { const bx = x + 4 + (hs >>> 6) % Math.max(1, w - 30); P(g, bx + 3, top - 6, 1, 4, CH[3]); P(g, bx + 18, top - 6, 1, 4, CH[3]); P(g, bx, top - 18, 22, 12, BK); P(g, bx + 1, top - 17, 20, 10, '#fff4d6'); P(g, bx + 3, top - 16, 3, 8, RD[2]); P(g, bx + 4, top - 18, 1, 2, RD[2]); P(g, bx + 8, top - 15, 11, 2, RD[2]); P(g, bx + 8, top - 12, 8, 1, TQ[2]); P(g, bx + 8, top - 10, 10, 1, TQ[2]); }      // v2: щит із пляшкою содової
+    if (V2() && roofK === 4) { const cxh = x + w - 10; P(g, cxh, top - 9, 5, 9, PK[3]); P(g, cxh, top - 9, 5, 1, PK[1]); P(g, cxh - 1, top - 10, 7, 1, CH[2]); A(g, 0.35, () => { P(g, cxh + 1, top - 13, 2, 2, '#ffffff'); P(g, cxh + 3, top - 16, 2, 2, '#ffffff'); }); }      // v2: пастельний димар
     // поверхи: широкі панорамні вікна по два
     const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 24, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
@@ -105,6 +114,7 @@
         P(g, wx - 1, y0 - 1, 22, 13, CH[0]); P(g, wx - 1, y0 + 11, 22, 1, CH[3]); P(g, wx, y0, 20, 11, lit ? '#ffd45c' : '#9fd6ec');
         if (!lit) { P(g, wx, y0, 20, 3, '#cfeefa'); P(g, wx + 2, y0 + 1, 2, 1, '#ffffff'); P(g, wx + 5, y0 + 2, 1, 1, '#ffffff'); }
         P(g, wx + 9, y0, 2, 11, CH[1]); P(g, wx + 9, y0, 1, 11, CH[0]);
+        if (V2() && lit && hash2(wx, y0 + 7) % 2) A(g, 0.35, () => { for (let k = 1; k < 10; k += 2) P(g, wx, y0 + k, 20, 1, '#c89030'); });      // v2: жалюзі в освітлених вікнах
         if (hash2(wx + 5, y0 + 3) % 3) { P(g, wx + 1, y0, 3, 8, PK[2]); P(g, wx + 16, y0, 3, 8, PK[2]); P(g, wx + 1, y0, 1, 8, PK[0]); }
         P(g, wx - 2, y0 + 12, 24, 1, '#ffffff');
         houseGlass.push([wx, y0, 20, 11]);
@@ -143,6 +153,9 @@
     P(g, cx - r + 1, cy - r + 2, 1, 1, '#ffffff'); P(g, cx + 2, cy - 1, 2, 1, '#ffffff'); P(g, cx + 3, cy - 2, 1, 3, '#ffffff');
   }
   function sparkle(g, x, y, c) { P(g, x, y - 2, 1, 5, c); P(g, x - 2, y, 5, 1, c); }
+  const V2 = () => window.ARCH_V2 !== false;                                     // деталі v2 (р. 68)
+  function speaker(g, x, y) { P(g, x, y - 12, 8, 12, DK); P(g, x + 1, y - 11, 6, 10, '#3a2450'); D(g, x + 4, y - 4, 2, '#1a0a26'); D(g, x + 4, y - 4, 1, '#9aa4b8'); D(g, x + 4, y - 9, 1, '#9aa4b8'); P(g, x, y - 12, 8, 1, PU[1]); }
+  function searchlight(g, x, y, d) { A(g, 0.12, () => { for (let k = 0; k < 26; k++) P(g, x + d * Math.round(k * 0.45), y - 4 - k, 3 + (k >> 3), 1, '#fff6c0'); }); P(g, x - 2, y - 4, 5, 4, '#9aa4b8'); P(g, x - 1, y - 5, 3, 1, '#fff6c0'); P(g, x - 2, y - 1, 5, 1, DK); }
   function bulbs(g, x0, x1, y, step) { for (let x = x0, i = 0; x < x1; x += step, i++) { P(g, x, y, 2, 2, i % 3 === 0 ? '#ffffff' : i % 3 === 1 ? YL[0] : OR[0]); } }
 
   function front(g, C) {
@@ -154,6 +167,7 @@
     [[20, 6], [w - 20, 6]].forEach(([x, r]) => { P(g, x, by + r, 1, top - by - r, '#9aa4b8'); mirrorBall(g, x, by, r); });
     if (level >= 3) [[44, 4], [w - 44, 4]].forEach(([x, r]) => { P(g, x, by - 1 + r, 1, top - by - r + 1, '#9aa4b8'); mirrorBall(g, x, by - 1, r); });
     sparkle(g, 12, Math.max(4, by - 8), '#ffffff'); sparkle(g, w - 10, Math.max(4, by - 6), YL[0]); if (level >= 2) { sparkle(g, 34, Math.max(3, by - 9), MG[0]); sparkle(g, w - 32, Math.max(3, by - 8), '#ffffff'); }
+    if (V2() && level >= 2) { [[30, -1], [w - 30, 1]].forEach(([x, d]) => searchlight(g, x, top - 2, d)); if (level >= 3) { speaker(g, 2, top - 2); speaker(g, w - 10, top - 2); } }      // v2: прожектори з променями й колонки на даху
     roofSignG(g, cx, ys, false);
     // карниз: смуги заходу сонця
     P(g, 0, top + 4, w, 3, DK); for (let x = 0; x < w; x += 8) { P(g, x, top + 5, 4, 1, OR[2]); P(g, x + 4, top + 5, 4, 1, MG[2]); }
@@ -169,6 +183,7 @@
       const hF = fl.fy - fl.top, y0 = fl.top - 3, H2 = hF + 3, n = Math.max(2, Math.round(innerW / 34)), pitch = innerW / n;
       P(g, 0, fl.fy, w, 1, YL[1]); for (let i = 0; i < 4; i++) P(g, 0, fl.fy + 1 + i, w, 1, [YL[2], OR[2], MG[2], PU[3]][i]); P(g, 0, fl.fy + 5, w, 1, DK);
       for (let j = 0; j < H2; j++) { const ci = Math.min(SUN.length - 1, Math.floor(j / (H2 / SUN.length))); P(g, innerX, y0 + j, innerW, 1, SUN[ci]); }
+      if (V2()) for (let i = 1; i < n; i++) { const sx = Math.round(innerX + pitch * i); P(g, sx, fl.top - 2, 1, hF + 1, MG[1]); A(g, 0.35, () => P(g, sx - 1, fl.top - 2, 3, hF + 1, MG[0])); sparkle(g, sx, fl.top + 3, '#ffffff'); }      // v2: неонові рожеві ребра між ілюмінаторами з блискітками
       for (let i = 0; i < n; i++) {
         const mx = innerX + pitch * (i + 0.5), cy = fl.top + (hF >> 1) - 1, r = Math.min(12, (hF >> 1) - 3, Math.floor(pitch / 2) - 4);
         D(g, mx, cy, r + 3, DK); D(g, mx, cy, r + 2, OR[2]); D(g, mx, cy, r + 1, YL[1]); clearDisc(g, mx, cy, r);
@@ -188,6 +203,7 @@
   }
   function deco(g, C) {
     const { w, h, level, door, yG } = C;
+    if (V2() && level >= 2) { const y = h - 6; P(g, door.x - 2, y - 1, door.w + 4, 1, '#c8243a'); [door.x - 12, door.x - 5, door.x + door.w + 4, door.x + door.w + 11].forEach(px => { P(g, px, y - 8, 2, 8, YL[2]); P(g, px, y - 8, 2, 1, YL[0]); P(g, px - 1, y - 1, 4, 1, YL[3]); }); [[door.x - 11, door.x - 4], [door.x + door.w + 5, door.x + door.w + 12]].forEach(([a, b]) => { for (let px = a; px < b; px++) P(g, px, y - 6 + (Math.abs(px - (a + b) / 2) < 2 ? 1 : 0), 1, 1, '#c8243a'); }); }      // v2: червона доріжка, золоті стовпчики й оксамитова мотузка
     if (level >= 2) { const x = door.x - 18, y = yG + 14; P(g, x, yG + 10, 1, 4, '#9aa4b8'); mirrorBall(g, x, y + 1, 3); }
   }
 
@@ -208,6 +224,8 @@
     const roofK = hs % 6;
     if (roofK === 0) { const bx = x + 8 + (hs >>> 5) % Math.max(1, w - 16); P(g, bx, top - 14, 1, 6, '#9aa4b8'); mirrorBall(g, bx, top - 16, 4); sparkle(g, bx + 6, top - 20, '#ffffff'); }
     else if (roofK === 1 && w >= 30) { const wd = ['DISCO', 'FUNK', 'SOUL', 'GO GO'][(hs >>> 8) % 4], sw = wd.length * 4 + 5, sx = x + Math.max(2, Math.min(w - sw - 2, 4 + (hs >>> 9) % Math.max(1, w - sw))); P(g, sx, top - 15, sw, 6, DK); P(g, sx + 1, top - 14, sw - 2, 4, MG[2]); AR.txt(g, sx + 3, top - 13, wd, 'w'); }
+    if (V2() && roofK === 2 && w >= 30) { const rx = x + (w >> 1), R0 = Math.min(12, (w >> 1) - 4); [MG[2], OR[2], YL[2], CY[2]].forEach((c, i) => { const r = R0 - i * 2; for (let a = 0; a <= 20; a++) { const t = Math.PI * a / 20; P(g, Math.round(rx - Math.cos(t) * r), Math.round(top - 6 - Math.sin(t) * r * 0.8), 2, 2, c); } }); }      // v2: веселкова дуга 70-х на даху
+    else if (V2() && roofK === 3 && w >= 26) speaker(g, x + 4 + (hs >>> 6) % Math.max(1, w - 14), top - 5);
     // поверхи з круглими вікнами
     const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 15, 4, 2), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
@@ -218,6 +236,7 @@
         D(g, wx, cy, 6, DK); D(g, wx, cy, 5, c % 2 ? OR[2] : YL[2]); D(g, wx, cy, 4, lit ? '#ffd45c' : '#9fd6ec');
         if (!lit) { P(g, wx - 3, cy - 3, 2, 1, '#ffffff'); P(g, wx - 2, cy - 2, 1, 1, '#ffffff'); } else { A(g, 0.3, () => D(g, wx, cy, 3, '#ffffff')); }
         P(g, wx - 1, cy - 4, 1, 9, DK); P(g, wx - 4, cy, 9, 1, DK);
+        if (V2() && hash2(Math.round(wx), y0 + 9) % 3 === 0) { P(g, wx - 4, cy + 7, 8, 2, OR[3]); P(g, wx - 4, cy + 7, 8, 1, OR[1]); for (let k = 0; k < 8; k += 2) P(g, wx - 4 + k, cy + 5 + (k % 4 ? 1 : 0), 2, 2, k % 4 ? '#4f9a3a' : MG[1]); }      // v2: кашпо під вікном
         houseGlass.push([Math.round(wx) - 3, cy - 3, 7, 7]);
       }
     }

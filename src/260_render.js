@@ -120,11 +120,11 @@ function drawStreetShine() {                                    // золота 
   const stDia = stSk === 'diamond';
   const x0 = -view.offX, W = view.w, top = LAYOUT.streetTop + 1, bot = worldB() - (view.extraB >= 30 ? 36 : 0);
   if (bot <= top) return;
-  const cyc = (animClock * 0.18) % 1, span = W + (bot - top) * 0.8 + 60, bx = x0 - 30 + cyc * span;
+  const cyc = (animClock % 10) / 2.2, span = W + (bot - top) * 0.8 + 60, bx = x0 - 30 + cyc * span;      // смуга раз на 10 с
   ctx.save(); ctx.beginPath(); ctx.rect(x0, top, W, bot - top); ctx.clip();
   for (let y = top; y < bot; y += 2) { const x = Math.round(bx - (y - top) * 0.8); ctx.globalAlpha = 0.30; R(ctx, x - 8, y, 34, 2, stDia ? '#d8f4ff' : '#fff7c0'); ctx.globalAlpha = 0.55; R(ctx, x, y, 14, 2, '#ffffff'); }
   ctx.globalAlpha = 1;
-  for (let r = 0, y = top; y < bot; r++, y += 6) for (let x = Math.floor((x0 - 12) / 12) * 12 + (r % 2) * 6 - 12; x < x0 + W; x += 12) {                    // ті самі цеглини, що малює cobbleExtra
+  if (skinBurst()) for (let r = 0, y = top; y < bot; r++, y += 6) for (let x = Math.floor((x0 - 12) / 12) * 12 + (r % 2) * 6 - 12; x < x0 + W; x += 12) {                    // ті самі цеглини, що малює cobbleExtra
     const hs = hash2(x + 11, r * 3 + 1); if (hs % 3 !== 0) continue;
     const v = Math.sin(animClock * 2.1 + (hs % 628) / 100); if (v < 0.3) continue;
     sparkPlus(x + 4 + (hs >>> 5) % 5, y + 3, (v - 0.3) / 0.7, stDia ? '#d8f6ff' : '#fff6b0');
@@ -135,11 +135,11 @@ function drawShopShine(sc) {                                    // золоти�
   const shSk = skinOn('shop');
   if (!shop || !shop.glints || !shop.glints.length || (shSk !== 'gold' && shSk !== 'diamond') || !animOn() || build) return;
   const dia = shSk === 'diamond';
-  const w = shop.w, h = shop.h, cyc = (animClock * 0.44) % 1, show = cyc < 0.8;                    // смуга ходить із паузами
+  const w = shop.w, h = shop.h, cyc = (animClock % 10) / 1.5, show = cyc < 1;                    // смуга пробігає раз на 10 с (1,5 с), разом зі спалахом блиску
   if (show) {
     if (shineTmp.width !== w || shineTmp.height !== h) { shineTmp.width = w; shineTmp.height = h; }
     const g = shineTmp.getContext('2d'); g.imageSmoothingEnabled = false; g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, w, h);
-    const x0 = (cyc / 0.8) * (w + h * 0.7 + 24) - 12;
+    const x0 = cyc * (w + h * 0.7 + 24) - 12;
     for (let y = 0; y < h; y++) { const x = Math.round(x0 - y * 0.7); g.fillStyle = dia ? 'rgba(205,240,255,0.5)' : 'rgba(255,248,210,0.42)'; g.fillRect(x, y, 8, 1); g.fillStyle = 'rgba(255,255,255,0.8)'; g.fillRect(x + 2, y, 3, 1); }
     g.globalCompositeOperation = 'destination-in'; g.drawImage(shop.canvas, 0, 0);               // лише блиск, обрізаний за формою фасаду (сам фасад не малюємо, щоб не закривати двері й покупців)
     g.globalCompositeOperation = 'destination-out'; if (shop.door) g.fillRect(shop.door.x, shop.door.y, shop.door.w, shop.door.h);
@@ -147,7 +147,7 @@ function drawShopShine(sc) {                                    // золоти�
   }
   withShopScale(sc, () => {
     if (show) ctx.drawImage(shineTmp, shop.x, shop.y);
-    shop.glints.forEach(([gx, gy, big], i) => { const v = Math.sin(animClock * 2.4 + i * 1.7); if (v < 0.25) return; sparkPlus(shop.x + gx, shop.y + gy, (v - 0.25) / 0.75, dia ? '#d8f6ff' : '#fff6b0'); if (big && v > 0.7) { ctx.globalAlpha = (v - 0.7) / 0.3; R(ctx, shop.x + gx - 2, shop.y + gy, 5, 1, '#ffffff'); R(ctx, shop.x + gx, shop.y + gy - 2, 1, 5, '#ffffff'); ctx.globalAlpha = 1; } });
+    if (skinBurst()) shop.glints.forEach(([gx, gy, big], i) => { const v = Math.sin(animClock * 2.4 + i * 1.7); if (v < 0.25) return; sparkPlus(shop.x + gx, shop.y + gy, (v - 0.25) / 0.75, dia ? '#d8f6ff' : '#fff6b0'); if (big && v > 0.7) { ctx.globalAlpha = (v - 0.7) / 0.3; R(ctx, shop.x + gx - 2, shop.y + gy, 5, 1, '#ffffff'); R(ctx, shop.x + gx, shop.y + gy - 2, 1, 5, '#ffffff'); ctx.globalAlpha = 1; } });
   });
 }
 function drawShopLayered(sc) {
@@ -167,6 +167,7 @@ function drawShopLayered(sc) {
   ctx.translate(dx, dy); ctx.scale(dw / w, dh / h);
   drawDoorLeaves(ctx, shop.door, shop.doorOpen || 0);
   ctx.restore();
+  drawEpochRoofAnim(sc);                                                         // рухомі прикраси даху за епохою (213_epoch_roof_anim.js)
   drawSkinShopExtras(sc);                                                        // рухома вивіска скіна, фонтанчики (212_skins_shop_anim.js)
   if ((skinOn('shop') === 'gold' || skinOn('shop') === 'diamond') && animOn()) {               // золотий і діамантовий магазини мерехтять: зірочки по черзі спалахують
     withShopScale(sc, () => [[0.12, 0.3], [0.88, 0.26], [0.5, 0.12], [0.33, 0.62], [0.7, 0.5]].forEach((p, i) => {

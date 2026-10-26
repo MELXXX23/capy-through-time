@@ -69,6 +69,8 @@ body[data-epoch="2"] :is(.team-card, .dept, .expand-card), body[data-epoch="3"] 
 .ws-line { font-size: 11px; line-height: 1.8; color: var(--brown); margin-bottom: 6px; }
 .ws-gain { font-size: 13px; line-height: 1.7; color: var(--red); margin: 6px 0 4px; }
 .warp-card { background: #efe4ff; }
+.warp-card .ws-sub { margin: 8px 0 4px; font-size: 13px; }      /* Майстерня часу: подорож і умови переходу в одній картці зверху */
+.ws-route { margin-top: 10px; padding-top: 8px; border-top: 2px dashed rgba(74, 50, 40, .25); }
 .ws-card .ws-now { font-size: 11px; line-height: 1.7; color: var(--green); margin-top: 6px; }
 .ws-card .ws-next { font-size: 10px; line-height: 1.7; color: var(--brown); }
 .row { display: flex; gap: 8px; margin: 6px 0; }
@@ -98,6 +100,7 @@ body[data-epoch="2"] :is(.team-card, .dept, .expand-card), body[data-epoch="3"] 
 .skin-item[aria-pressed="true"] { background: var(--honey); }
 .skin-prev { width: 100%; height: 72px; object-fit: contain; image-rendering: pixelated; image-rendering: crisp-edges; background: var(--mint); box-shadow: 0 0 0 2px var(--brown); }
 .skin-prev.shop { object-fit: cover; object-position: 50% 30%; }
+.skin-prev.weather, .skin-prev.street { object-fit: cover; object-position: 50% 62%; }      /* небо й бруківка — на всю ширину картки, без бічних смуг */
 .skin-item.locked { background: #b9b2a8; color: #5e554c; }
 .skin-item.locked .skin-prev { filter: grayscale(1) brightness(.85) contrast(.9); opacity: .8; }
 .skin-item { container-type: inline-size; }

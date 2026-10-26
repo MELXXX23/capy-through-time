@@ -18,7 +18,7 @@ const ui = {
   buyModes: $('buyModes'), deptList: $('deptList'),
   paneTeam: $('pane-team'), teamList: $('teamList'), bubbles: $('bubbles'),
   paneStory: $('pane-story'), storyList: $('storyList'),
-  panL: $('panL'), panR: $('panR'), cleanToggle: $('cleanToggle'), eventBanner: $('eventBanner'), boosts: $('boosts'),
+  panL: $('panL'), panR: $('panR'), cleanToggle: $('cleanToggle'), eventBanner: $('eventBanner'), boosts: $('boosts'), evCol: $('evCol'),
   lootModal: $('lootModal'), lootCanvas: $('lootCanvas'), lootName: $('lootName'), lootType: $('lootType'), lootTag: $('lootTag'), lootWear: $('lootWear'), lootClose: $('lootClose'),
   circusModal: $('circusModal'), circusWheel: $('circusWheel'), clownCanvas: $('clownCanvas'), circusTitle: $('circusTitle'), circusSub: $('circusSub'), circusSkinNote: $('circusSkinNote'), circusResult: $('circusResult'), circusBtn: $('circusBtn'), bonusOpen: $('bonusOpen'), bonusOpenT: $('bonusOpenT'), circusClose: $('circusClose'), dbgCircus: $('dbgCircus'),
   paneWorkshop: $('pane-workshop'), wsList: $('wsList'), wsInfo: $('wsInfo'), routeTitle: $('routeTitle'), routeNext: $('routeNext'), routeList: $('routeList'), wsBonus: $('wsBonus'), warpPreview: $('warpPreview'), warpBtn: $('warpBtn'),

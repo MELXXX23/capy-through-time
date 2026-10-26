@@ -10,7 +10,7 @@
   const COLS = 8, ROWS = 3, TW = 22, TH = 16, X0 = 8, Y0 = 17, PX = 46, PY = 74;
   const POT = ['r', 'n', 'g', 'h'];
   const o = {
-    id: 'fresco', dur: 36, goalP: 24, goalN: 14,
+    id: 'fresco', dur: 36, goalP: 29, goalN: 17,      /* р. 68: на 20% важче (було 24/14) */
     k: { title: 'mgFrescoTitle', sub: 'mgFrescoSub', start: 'mgFrescoStart', done: 'mgFrescoDone' },
     init() {
       const seq = []; for (let i = 0; i < 3; i++) seq.push(Math.floor(Math.random() * 4));
@@ -82,7 +82,7 @@
 (function () {
   const CX = [53, 96, 139], LINE = 100, COL = ['r', 'y', 'T'];
   const o = {
-    id: 'jukebox', dur: 16, goalP: 20, goalN: 12,
+    id: 'jukebox', dur: 16, goalP: 24, goalN: 14,      /* р. 68: на 20% важче (було 20/12) */
     k: { title: 'mgJukeTitle', sub: 'mgJukeSub', start: 'mgJukeStart', done: 'mgJukeDone' },
     init() { return { notes: [], sp: 0.35, last: -1, fx: [], bad: [0, 0, 0] }; },
     tick(G, dt) {
@@ -150,7 +150,7 @@
     return 16 + Math.floor(Math.random() * 160);
   }
   const o = {
-    id: 'claw', dur: 20, goalP: 8, goalN: 4,
+    id: 'claw', dur: 20, goalP: 10, goalN: 5,      /* р. 68: на 20% важче (було 8/4) */
     k: { title: 'mgClawTitle', sub: 'mgClawSub', start: 'mgClawStart', done: 'mgClawDone' },
     init() {
       const toys = []; for (let i = 0; i < 5; i++) toys.push({ x: freeX(toys), c: TC[i % TC.length], kind: i % 3, carried: false });
@@ -220,7 +220,7 @@
     else { R(g, cx - 3, cy - 4, 7, 11, '#8ad8ff'); R(g, cx - 2, cy - 8, 5, 4, 'n'); R(g, cx - 1, cy - 3, 1, 8, 'w'); R(g, cx - 3, cy + 1, 7, 2, '#5aa8d8'); }
   }
   const o = {
-    id: 'sort', dur: 16, goalP: 15, goalN: 9,
+    id: 'sort', dur: 16, goalP: 18, goalN: 11,      /* р. 68: на 20% важче (було 15/9) */
     k: { title: 'mgSortTitle', sub: 'mgSortSub', start: 'mgSortStart', done: 'mgSortDone' },
     init() { return { items: [], sp: 0.3, fx: [], bad: 0 }; },
     tick(G, dt) {
@@ -269,7 +269,7 @@
 /* ---- епоха 6 (Космос): «Кристали» — лети під кристали й обминай астероїди ---- */
 (function () {
   const o = {
-    id: 'crystals', dur: 18, goalP: 14, goalN: 8,
+    id: 'crystals', dur: 18, goalP: 17, goalN: 10,      /* р. 68: на 20% важче (було 14/8) */
     k: { title: 'mgCrysTitle', sub: 'mgCrysSub', start: 'mgCrysStart', done: 'mgCrysDone' },
     init() { return { x: 96, tx: 96, items: [], sp: 0.35, fx: [], hit: 0 }; },
     tick(G, dt) {
@@ -324,7 +324,7 @@
   const CX = [52, 96, 140], PY = 98;
   const CARC = ['f', 'o', 'u', 'r'];
   const o = {
-    id: 'road', dur: 16, goalP: 13, goalN: 7,
+    id: 'road', dur: 16, goalP: 16, goalN: 8,      /* р. 68: на 20% важче (було 13/7) */
     k: { title: 'mgRoadTitle', sub: 'mgRoadSub', start: 'mgRoadStart', done: 'mgRoadDone' },
     init() { return { lane: 1, items: [], sp: 0.4, fx: [], hit: 0 }; },
     tick(G, dt) {

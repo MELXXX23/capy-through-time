@@ -125,7 +125,7 @@ function mgPrize(g, G, T, cx, cy) {
   const COLS = 4, ROWS = 2, TW = 42, TH = 32, X0 = 8, Y0 = 46, PX = 44, PY = 34;
   const LIT = ['f', 'y', 'T', 'm', 'o', 'p'];
   const o = {
-    id: 'dance', dur: 16, goalP: 20, goalN: 11,
+    id: 'dance', dur: 16, goalP: 24, goalN: 13,      /* р. 68: на 20% важче (було 20/11) */
     k: { title: 'mgDanceTitle', sub: 'mgDanceSub', start: 'mgDanceStart', done: 'mgDanceDone' },
     init() {
       const tiles = []; for (let i = 0; i < COLS * ROWS; i++) tiles.push({ life: 0, max: 1, col: 'f', pop: 0, bad: 0 });
@@ -201,7 +201,7 @@ function mgPrize(g, G, T, cx, cy) {
   const MAXW = 7;                                                   // стільки відкритих вікон — і «система не витримала»
   const BAR = ['r', 'o', 'u', 'T', 'n', 'f'];
   const o = {
-    id: 'spam', dur: 16, goalP: 18, goalN: 10,
+    id: 'spam', dur: 16, goalP: 22, goalN: 12,      /* р. 68: на 20% важче (було 18/10) */
     k: { title: 'mgSpamTitle', sub: 'mgSpamSub', start: 'mgSpamStart', done: 'mgSpamDone' },
     init() { return { wins: [], sp: 0.4, fx: [], crash: 0 }; },
     tick(G, dt) {
@@ -256,13 +256,13 @@ function mgPrize(g, G, T, cx, cy) {
 
 (function () {
   const UK = {
-    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише бонуси', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
+    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише скіни', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
     mgDanceTitle: 'Танцпол Диско-Капі',
     mgDanceSub: 'Плитки спалахують і гаснуть. Тапай світні вчасно, а на темні не наступай!', mgDanceStart: 'Танцювати!', mgDanceDone: 'Гарно потанцювали!',
     mgSpamTitle: 'Спам-бомба', mgSpamSub: 'Вікна-спам лізуть на екран. Закривай їх тапом, поки не завалило!', mgSpamStart: 'Закривати!', mgSpamDone: 'Екран чистий!'
   };
   const EN = {
-    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Only bonuses here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
+    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Only skins here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
     mgDanceTitle: 'Disco Capy Dance Floor',
     mgDanceSub: 'Tiles light up and fade. Tap the glowing ones in time and keep off the dark ones!', mgDanceStart: 'Dance!', mgDanceDone: 'What a dance!',
     mgSpamTitle: 'Spam Bomb', mgSpamSub: 'Spam windows pop up everywhere. Tap them shut before they pile up!', mgSpamStart: 'Close them!', mgSpamDone: 'Screen is clean!'

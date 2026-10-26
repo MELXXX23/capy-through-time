@@ -14,7 +14,7 @@ const dsc = (g, cx, cy, r, c) => {                                    // дис�
 (function () {
   const DX = [36, 96, 156], DY = 74, R0 = 16, LIFE = 1.15, WIN = 0.34;
   const o = {
-    id: 'taiko', dur: 22, goalP: 20, goalN: 12,
+    id: 'taiko', dur: 22, goalP: 24, goalN: 14,      /* р. 68: на 20% важче (було 20/12) */
     k: { title: 'mgTaikoTitle', sub: 'mgTaikoSub', start: 'mgTaikoStart', done: 'mgTaikoDone' },
     init() { return { notes: [], sp: 0.5, hit: [0, 0, 0], bad: [0, 0, 0], fx: [], last: -1 }; },
     tick(G, dt) {
@@ -73,7 +73,7 @@ const dsc = (g, cx, cy, r, c) => {                                    // дис�
 (function () {
   const HX = [32, 96, 160], HY = [58, 98], LIFE0 = 1.25;
   const o = {
-    id: 'ghost', dur: 18, goalP: 18, goalN: 10,
+    id: 'ghost', dur: 18, goalP: 22, goalN: 12,      /* р. 68: на 20% важче (було 18/10) */
     k: { title: 'mgGhostTitle', sub: 'mgGhostSub', start: 'mgGhostStart', done: 'mgGhostDone' },
     init() { return { up: [null, null, null, null, null, null], sp: 0.4, fx: [], shake: 0 }; },
     tick(G, dt) {

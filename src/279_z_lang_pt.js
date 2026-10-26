@@ -355,7 +355,7 @@ installLang("pt", {
     "skinSay_capy_diamond": "Capy Diamante. Toque sem medo: eu brilho, mas sou dura como cristal.",
     "skinSay_hero_gold": "Ajudantes dourados: trabalham como um relógio e brilham como moedas.",
     "skinSay_hero_diamond": "Os ajudantes de diamante brilham tanto que o caixa fica de olhos apertados.",
-    "mgSkinOnly": "🎁 Aqui só bônus",
+    "mgSkinOnly": "🎁 Aqui só skins",
     "skinSay_shop_diamond": "Uma loja de diamante! Vitrines de cristal e preços cristalinos.",
     "skinSay_street_diamond": "Uma rua de diamante. Andar nela é como andar num lustre.",
     "skinSay_weather_diamondcloud": "Nuvens de diamante: aqui não chove, saem faíscas.",

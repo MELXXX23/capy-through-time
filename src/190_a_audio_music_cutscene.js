@@ -383,6 +383,16 @@ const SFX = {
   },
   typing(pitch) { tone(audio.sfxGain, 'square', pitch || 500, audio.ctx.currentTime, 0.03, 0.1); },
   pip()       { tone(audio.sfxGain, 'square', 880, audio.ctx.currentTime, 0.07, 0.15, 1320); },
+  wear()      {      // вдягання скіна: плавний дзвіночок із двох нот (синус, м'яка атака), без різкості
+    const ac = audio.ctx; if (!audio.softLP) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 1500; fl.Q.value = 0.2; fl.connect(audio.sfxGain); audio.softLP = fl; }
+    const now = ac.currentTime + 0.004;
+    tone(audio.softLP, 'sine', 784, now, 0.22, 0.12); tone(audio.softLP, 'sine', 1175, now + 0.09, 0.32, 0.1); tone(audio.softLP, 'triangle', 392, now, 0.18, 0.05);
+  },
+  soft()      {      // м'який «бульк» для реплік і переляку звірят: трикутна хвиля, нижче й тихіше за pip, верхи зрізано
+    const ac = audio.ctx; if (!audio.softLP) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 1500; fl.Q.value = 0.2; fl.connect(audio.sfxGain); audio.softLP = fl; }
+    const now = ac.currentTime; if (now - (SFX._softLast || 0) < 0.08) return; SFX._softLast = now;
+    tone(audio.softLP, 'triangle', 520 + Math.random() * 60, now + 0.004, 0.11, 0.09, 700);
+  },
   themeArrive(ep) {   // прильот команди тематичного будівництва: коротка «візитка» епохи
     const ac = audio.ctx, t = ac.currentTime + 0.02, g = audio.sfxGain;
     switch (ep % 9) {

@@ -110,7 +110,17 @@
 .chip.dark { background: var(--darker); color: var(--yellow); box-shadow: 0 0 0 2px var(--honey); }
 .chip .ico { font-size: 11px; }
 .chip.ad { pointer-events: auto; cursor: pointer; background: var(--mint); box-shadow: 0 0 0 2px var(--dark); }   /* «×2 за ролик»: кнопка в смужці (HUD сам клікань не приймає) */
-#topRight { display: flex; align-items: center; gap: 8px; flex: none; }
+#topRight { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex: none; }
+/* події (схема 2): стовпчик квадратних плиток під кнопкою бонусу — значок + таймер; дотик показує повний текст */
+#evCol { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; pointer-events: auto; }
+#evCol:empty { display: none; }
+.evt { width: 34px; display: flex; flex-direction: column; align-items: center; padding-top: 3px; background: var(--card, var(--cream)); box-shadow: 0 0 0 2px var(--honey), 0 2px 0 2px rgba(0, 0, 0, .28); cursor: pointer; }
+.evt .ei { font-size: 16px; line-height: 18px; height: 18px; }
+.evt .et { width: 100%; margin-top: 2px; padding: 2px 0 1px; font-size: 7px; line-height: 1; text-align: center; white-space: nowrap; background: var(--darker); color: var(--yellow); }
+.evt .et:empty { display: none; }
+.evt.ad { background: var(--mint); box-shadow: 0 0 0 2px var(--dark), 0 2px 0 2px rgba(0, 0, 0, .28); }
+.evt.dark { background: var(--darker); }
+.evt.soon .et { animation: blink 1s steps(2, jump-none) infinite; }
 #bonusOpen { display: flex; align-items: center; gap: 6px; padding: 5px 8px; }
 #bonusOpen[hidden] { display: none; }
 #bonusOpen.wait { opacity: .75; }

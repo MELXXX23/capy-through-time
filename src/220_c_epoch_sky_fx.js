@@ -425,7 +425,7 @@ function updateShootingStar(dt) {
   if (shootingStar) {
     const q = shootingStar;
     q.t += dt; q.x += q.vx * dt; q.y += q.vy * dt;
-    if (q.t >= q.life) { shootingStar = null; shootTimer = rand(2.5, 8); }
+    if (q.t >= q.life) { shootingStar = null; shootTimer = currentEpoch().id === 'space' ? rand(1.65, 5.3) : rand(1.9, 6.15); }      // уночі зорепади частіші: Космос +50%, решта +30%
   } else {
     shootTimer -= dt;
     if (shootTimer <= 0) shootingStar = { x: rand(view.w * 0.1, view.w * 0.8), y: rand(4, view.offY + 40), vx: rand(110, 160), vy: rand(40, 70), t: 0, life: 0.7 };
