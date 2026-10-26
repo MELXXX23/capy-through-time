@@ -11,8 +11,8 @@ const NOODLE_BUST = [                                  // голова діда 
   '..kEkWkWWWWkWkEk..', '...kkWWWWWWWWkk...', '....kWqWllWqWk....', '....kwwwwwwwwk....', '...kwwwEwwEwwwk...', '...kwwwwwwwwwwk...', '....kwwwwwwwwk....',
   '.nnnnkwwwwwwknnnn.', 'nnnnnnkwwwwknnnnnn', 'nnnnnnnkwwknnnnnnn', 'nnnnnnnnnnnnnnnnnn'
 ].map(r => r.replace(/W/g, 'c'));   // шкіра — пісочна, щоб біла борода читалась
-const noodleGame = { phase: 'idle', t: 0, p: 0, zc: 0.6, rt: 0, res: '', prize: null, main: false };
-const NOODLE_ZH = 0.055, NOODLE_ZN = 0.15;             // половина ширини ідеальної й «майже» зон (частка шкали)
+const noodleGame = { phase: 'idle', t: 0, p: 0, zc: 0.6, zb: 0.6, ph: 0, rt: 0, res: '', prize: null, main: false };
+const NOODLE_ZH = 0.025, NOODLE_ZN = 0.08;             // половина ширини ідеальної й «майже» зон (частка шкали)
 const NOODLE_ART = (function () {
   function head(g, x0, y0, rows, k) {                    // k — масштаб 1 або 2; рядки 0…rows-1 з NOODLE_BUST
     for (let j = 0; j < rows; j++) { const r = NOODLE_BUST[j]; for (let i = 0; i < r.length; i++) { const c = r[i]; if (c !== '.') R(g, x0 + i * k, y0 + j * k, k, k, c); } }
@@ -114,7 +114,7 @@ const NOODLE_ART = (function () {
 /* ---- гра «Звари лапшу» (полотно 192×120 у вікні цирку) ---- */
 function noodleReset() {
   noodleGame.phase = 'idle'; noodleGame.t = 0; noodleGame.p = 0; noodleGame.rt = 0; noodleGame.res = ''; noodleGame.prize = null; noodleGame.main = false;
-  noodleGame.zc = 0.5 + Math.random() * 0.25;
+  noodleGame.zb = 0.45 + Math.random() * 0.35; noodleGame.zc = noodleGame.zb; noodleGame.ph = Math.random() * 6.28;
 }
 function noodleStart() {
   if (noodleGame.phase !== 'idle' || state.circus.spun) return;
@@ -139,7 +139,7 @@ function noodleTake() {                                              // вийн
 function updateNoodleGame(dt) {
   const G = noodleGame; G.t += dt;
   if (G.phase === 'cook') {
-    G.p += dt * (0.3 + 0.16 * G.p);                                  // лапша «розганяється» під кінець — треба встигнути
+    G.p += dt * (0.5 + 0.4 * G.p); G.zc = G.zb + 0.09 * Math.sin(G.t * 4.2 + G.ph);        // важча версія: лапша швидша, ідеальна зона вужча й «пливе»
     if (Math.floor(G.t * 8) !== Math.floor((G.t - dt) * 8) && Math.random() < 0.35) playSfx('wheelTick');
     if (G.p >= 1) { G.p = 1; noodleTake(); }
   } else if (G.phase === 'reveal') {

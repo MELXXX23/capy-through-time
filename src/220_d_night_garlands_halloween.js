@@ -384,7 +384,7 @@ function drawHalloweenFog() {
 }
 function drawHalloweenAir() {
   if (theme.season !== 'halloween') return;
-  if (hwitch.on) drawWitchSprite(Math.round(hwitch.x), Math.round(hwitch.y + Math.sin(hwitch.t * 1.8) * 6), hwitch.dir, hwitch.t);
+  if (hwitch.on) witchV2(ctx, Math.round(hwitch.x), Math.round(hwitch.y + Math.sin(hwitch.t * 1.8) * 6), hwitch.dir, hwitch.t, { pitch: Math.atan2(-Math.cos(hwitch.t * 1.8) * 10.8, 40) });       // та сама відьма v2, що й у хатці
 }
 function updateGhostHunt(dt) {
   updateHalloweenAir(dt);

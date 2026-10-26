@@ -253,5 +253,5 @@ const CIRCUS_ART = (function () {
 })();
 function circusFlagText() { return t('circusFlag'); }
 /* ---- гра Баби Яги: у трьох казанках лежать призи, їх показують, накривають гарбузами-кришками й перемішують; треба вказати казанок з головним призом ---- */
-const HAG_X = [34, 96, 158], HAG_CY = 104;
+const HAG_X = [48, 128, 208], HAG_CY = 136;
 const hagGame = { phase: 'idle', t: 0, c: [], si: 0, st: 0, swaps: [], pairs: [], rt: 0, pick: -1, top: 0 };

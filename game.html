@@ -1393,7 +1393,7 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
           var k = b.far ? 2 : 3;
           b.x -= b.v * dt; b.ph += dt * 1.6; b.f += dt * (b.far ? 9 : 12);
           if (b.x < -10 * k) { b.x = W + R(4, 40); b.y = R(H * 0.08, H * 0.42); }
-          var fr = BAT[[0, 1, 2, 1][Math.floor(b.f) % 4]], bx = Math.round(b.x), by = Math.round(b.y + Math.sin(b.ph) * b.a);
+          var fr = BAT[[0, 1, 2, 1][Math.floor(Math.abs(b.f)) % 4]], bx = Math.round(b.x), by = Math.round(b.y + Math.sin(b.ph) * b.a);
           for (var r = 0; r < fr.length; r++) for (var c = 0; c < 9; c++) {
             var ch = fr[r][c]; if (ch === '.') continue;
             g.fillStyle = ch === 'r' ? (b.far ? '#3a1a3a' : '#ffb347') : (b.far ? '#3a1f4a' : '#0a0510');
@@ -9191,7 +9191,7 @@ function layoutScene() {
     const lvl = shop ? shop.level : 1, kW = shop ? availW * dpr * (lvl === 1 ? 0.46 : lvl === 2 ? 0.42 : 0.34 + 0.03 * (lvl - 1)) / shop.w : kH;       // частка ширини екрана під магазин росте з рівнем: торговий центр ~49%, нижчі рівні менші, але теж великі
     // неба над найвищим будинком чи дахом лишаємо не менше ~30% висоти кадру (для всіх епох і з відкритим меню, і з закритим); торговий центр — менше, бо він і так високий
     const topRel = Math.min(LAYOUT.horizonY - MAX_HOUSE_H, shop ? LAYOUT.curbY - shop.h - 6 - (shop.level >= 6 ? CLOCK_H : 0) : 999); let skyF = shop && shop.level >= 6 ? (pcOpen ? 0.2 : 0.1) : (pcOpen ? 0.4 : 0.28);
-    if (Math.min(innerWidth, innerHeight) < 600) skyF += 0.06;                       // телефон горизонтально: ще більше неба над будинками
+    if (Math.min(innerWidth, innerHeight) < 600) skyF += 0.06;       if (state.eid === 8 && shop && shop.level >= 6 && Math.min(innerWidth, innerHeight) < 600) skyF += 0.3;       // Японія, телефон горизонтально: ще більше неба й гори для нічного дракона                       // телефон горизонтально: ще більше неба над будинками
     const kSkyPC = availH * dpr * (1 - skyF) / (H0 + EB - topRel);
     k = snapK(Math.max(1, Math.min(availW * dpr / CONFIG.MIN_VIEW_W, kH, kW, kSkyPC) * 0.92));       // ПК: трохи менший масштаб, щоб лишалося більше неба і бруківки
     kz = k;
@@ -16608,7 +16608,7 @@ function drawHalloweenFog() {
 }
 function drawHalloweenAir() {
   if (theme.season !== 'halloween') return;
-  if (hwitch.on) drawWitchSprite(Math.round(hwitch.x), Math.round(hwitch.y + Math.sin(hwitch.t * 1.8) * 6), hwitch.dir, hwitch.t);
+  if (hwitch.on) witchV2(ctx, Math.round(hwitch.x), Math.round(hwitch.y + Math.sin(hwitch.t * 1.8) * 6), hwitch.dir, hwitch.t, { pitch: Math.atan2(-Math.cos(hwitch.t * 1.8) * 10.8, 40) });       // та сама відьма v2, що й у хатці
 }
 function updateGhostHunt(dt) {
   updateHalloweenAir(dt);
@@ -16966,14 +16966,14 @@ const CIRCUS_ART = (function () {
 })();
 function circusFlagText() { return t('circusFlag'); }
 /* ---- гра Баби Яги: у трьох казанках лежать призи, їх показують, накривають гарбузами-кришками й перемішують; треба вказати казанок з головним призом ---- */
-const HAG_X = [34, 96, 158], HAG_CY = 104;
+const HAG_X = [48, 128, 208], HAG_CY = 136;
 const hagGame = { phase: 'idle', t: 0, c: [], si: 0, st: 0, swaps: [], pairs: [], rt: 0, pick: -1, top: 0 };
 //#part 230_a2_skins_circus_hag.js
 function hagReset() {
   const main = mgSkinSector(), dec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u' }, top = Math.floor(Math.random() * 3);
   hagGame.c = [0, 1, 2].map(i => ({ slot: i, lid: 1, prize: i === top ? main : dec, main: i === top, dim: false }));
   hagGame.phase = 'idle'; hagGame.t = 0; hagGame.pick = -1; hagGame.top = top; hagGame.si = 0; hagGame.st = 0; hagGame.rt = 0;
-  hagGame.swaps = [0.55, 0.5, 0.46, 0.42, 0.38, 0.35, 0.32];
+  hagGame.swaps = [0.36, 0.32, 0.29, 0.26, 0.24, 0.22, 0.2, 0.19, 0.18, 0.17];
   hagGame.pairs = hagGame.swaps.map((d, i) => { let a = Math.floor(Math.random() * 3), b = (a + 1 + Math.floor(Math.random() * 2)) % 3; return [a, b]; });
 }
 function hagStart() {
@@ -17005,8 +17005,8 @@ function hagPos(c) {                                          // де зараз
   const G = hagGame; let x = HAG_X[c.slot], y = HAG_CY;
   if (G.phase === 'shuffle' && G.si < G.swaps.length) {
     const [a, b] = G.pairs[G.si], u0 = Math.min(1, G.st / G.swaps[G.si]), u = u0 * u0 * (3 - 2 * u0);
-    if (c.slot === a) { x = HAG_X[a] + (HAG_X[b] - HAG_X[a]) * u; y += Math.sin(u * Math.PI) * 13; }
-    else if (c.slot === b) { x = HAG_X[b] + (HAG_X[a] - HAG_X[b]) * u; y -= Math.sin(u * Math.PI) * 9; }
+    if (c.slot === a) { x = HAG_X[a] + (HAG_X[b] - HAG_X[a]) * u; y += Math.sin(u * Math.PI) * 18; }
+    else if (c.slot === b) { x = HAG_X[b] + (HAG_X[a] - HAG_X[b]) * u; y -= Math.sin(u * Math.PI) * 12; }
   }
   return { x: Math.round(x), y: Math.round(y) };
 }
@@ -17015,7 +17015,7 @@ function hagClick(e) {
   if (state.circus.noodle) { noodleClick(); return; }
   const G = hagGame; if (G.phase !== 'pick') return;
   const cv = ui.circusWheel, r = cv.getBoundingClientRect(), lx = (e.clientX - r.left) * cv.width / r.width, ly = (e.clientY - r.top) * cv.height / r.height;
-  let best = -1, bd = 1e9; G.c.forEach((c, i) => { const p = hagPos(c), d = Math.abs(lx - p.x); if (d < 21 && ly > 40 && d < bd) { bd = d; best = i; } });
+  let best = -1, bd = 1e9; G.c.forEach((c, i) => { const p = hagPos(c), d = Math.abs(lx - p.x); if (d < 27 && ly > 56 && d < bd) { bd = d; best = i; } });
   if (best < 0) return;
   G.pick = best; G.phase = 'reveal'; G.rt = 0;
   const c = G.c[best], pr = applyCircusSector(c.prize, Date.now());
@@ -17024,52 +17024,7 @@ function hagClick(e) {
   if (pr.skin >= 0) setTimeout(() => openLoot(pr.skin), 1500); else showToast(pr.text, 'good');
   updateUI(); saveGame(); updateCircusButtons();
 }
-function hagCauldron(g, x, y, lid, t, dim, jump) {
-  // вогонь під казанком
-  const fy = y + 1;
-  for (let k = -9; k <= 9; k += 3) { const h = 4 + Math.round(Math.abs(Math.sin(t * 9 + k)) * 5); R(g, x + k, fy - h, 3, h, 'o'); R(g, x + k, fy - Math.max(2, h - 3), 3, Math.max(2, h - 3), 'y'); }
-  R(g, x - 13, fy, 27, 3, 'd'); R(g, x - 11, fy - 1, 5, 2, 'b'); R(g, x + 5, fy - 1, 5, 2, 'b');
-  // чавунний казан
-  const cy = y - 12;
-  R(g, x - 10, y - 4, 3, 5, 'd'); R(g, x + 8, y - 4, 3, 5, 'd');
-  for (let dy = -11; dy <= 10; dy++) { const half = Math.round(Math.sqrt(Math.max(0, 1 - (dy / 11.5) * (dy / 11.5))) * 13.5); R(g, x - half, cy + dy, half * 2 + 1, 1, 'd'); }
-  for (let dy = -10; dy <= 9; dy++) { const half = Math.round(Math.sqrt(Math.max(0, 1 - (dy / 11) * (dy / 11))) * 12.5); R(g, x - half, cy + dy, half * 2 + 1, 1, 'k'); }
-  R(g, x - 9, cy - 4, 3, 7, 'z'); R(g, x - 8, cy - 3, 1, 4, 'e');
-  R(g, x - 14, cy - 11, 29, 4, 'd'); R(g, x - 13, cy - 10, 27, 2, 'e'); R(g, x - 13, cy - 10, 27, 1, 'Y');
-  R(g, x - 12, cy - 11, 25, 2, 'm'); R(g, x - 10, cy - 11, 6, 1, 'S');                 // зілля
-  R(g, x + 6, cy - 6, 3, 8, 'e'); R(g, x + 7, cy - 4, 1, 4, 'Y'); R(g, x - 15, cy - 4, 3, 3, 'e'); R(g, x + 13, cy - 4, 3, 3, 'e');       // відблиск і вушка казана
-  if (lid < 0.99) for (let k = 0; k < 3; k++) { const ph = (t * 0.8 + k / 3) % 1; g.globalAlpha = (1 - ph) * 0.9; disc(g, x - 6 + k * 6 + Math.round(Math.sin(t * 3 + k) * 2), Math.round(cy - 12 - ph * 12), 1 + (k % 2), 'S'); }
-  g.globalAlpha = 1;
-  // кришка — капелюх відьми: коли відкрито, підіймається вгору й вбік
-  if (lid > 0.02) {
-    const up = Math.round((1 - lid) * 22), sx = Math.round((1 - lid) * 8), lx = x + sx, ly = cy - 10 - up;
-    R(g, lx - 15, ly - 3, 31, 4, 'k'); R(g, lx - 14, ly - 3, 29, 3, 'P'); R(g, lx - 14, ly - 3, 29, 1, 'v');
-    for (let r = 0; r < 15; r++) { const half = Math.round(11 * (1 - r / 15)) + 2, off = -Math.round(r * 0.25); R(g, lx + off - half - 1, ly - 4 - r, half * 2 + 3, 1, 'k'); R(g, lx + off - half, ly - 4 - r, half * 2 + 1, 1, r < 4 ? 'V' : 'P'); R(g, lx + off - half, ly - 4 - r, 2, 1, 'v'); }
-    R(g, lx - 9, ly - 8, 19, 3, 'V'); R(g, lx - 3, ly - 8, 6, 3, 'y'); R(g, lx - 1, ly - 7, 2, 1, 'k');
-  }
-  if (dim) { g.globalAlpha = 0.35; R(g, x - 14, cy - 12, 29, 25, 'V'); g.globalAlpha = 1; }
-}
-function drawHagGame() {
-  const cv = ui.circusWheel; if (cv.width !== 192) return;
-  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-  const G = hagGame, tt = G.t, W = 192, H = 120;
-  g.clearRect(0, 0, W, H);
-  R(g, 0, 0, W, 40, 'z'); R(g, 0, 40, W, 40, 'V'); R(g, 0, 80, W, 40, 'P');
-  for (let i = 0; i < 18; i++) if (Math.sin(tt * 2 + i) > -0.5) R(g, (i * 53 + 11) % W, (i * 17 + 5) % 52, 1, 1, i % 3 ? 'w' : 'y');
-  disc(g, 168, 18, 9, 'd'); disc(g, 168, 18, 8, 'o'); disc(g, 166, 16, 5, 'h');
-  R(g, 0, 93, W, 27, 'z'); R(g, 0, 93, W, 1, 'u'); for (let x = 0; x < W; x += 12) R(g, x, 100 + ((x / 12) % 2) * 6, 7, 1, 'P');
-  const list = G.c.map((c, i) => ({ c, i, p: hagPos(c) })).sort((a, b) => a.p.y - b.p.y);
-  list.forEach(({ c, i, p }) => {
-    hagCauldron(g, p.x, p.y, c.lid, tt, c.dim, 0);
-    if (c.lid < 0.6) {                                            // приз плаває над казанком у золотому сяйві
-      const bob = Math.round(Math.sin(tt * 3 + i) * 2), a = Math.min(1, (0.6 - c.lid) / 0.4);
-      g.globalAlpha = 0.3 * a; disc(g, p.x, p.y - 40 + bob, 16, 'w'); g.globalAlpha = 0.45 * a; disc(g, p.x, p.y - 40 + bob, 12, 'y'); g.globalAlpha = a;
-      drawCircusIcon(g, c.prize.icon || 'gem', p.x, p.y - 40 + bob); g.globalAlpha = 1;
-      if (G.phase === 'reveal' && i === G.pick && Math.floor(tt * 6) % 2) { R(g, p.x - 18, p.y - 52, 1, 3, 'y'); R(g, p.x - 19, p.y - 51, 3, 1, 'y'); R(g, p.x + 18, p.y - 46, 1, 3, 'y'); R(g, p.x + 17, p.y - 45, 3, 1, 'y'); }
-    }
-  });
-  if (G.phase === 'pick' && Math.floor(tt * 3) % 2) { list.forEach(({ p }) => { R(g, p.x - 1, p.y - 52, 3, 2, 'y'); R(g, p.x, p.y - 50, 1, 2, 'y'); }); }
-}
+// казанок і сцена — у 230_a5_hag_scene.js (hagCauldronV2, drawHagGame)
 
 /* ---- логіка ---- */
 function circusStopX() { return mailBoxX() + 150; }   // стоїть на дорозі прямо над поштоматом (так, щоб шатра повністю його закрили) — прив'язаний до дороги, а не до екрана
@@ -17103,7 +17058,7 @@ function updateCircus(dt) {
   } else if (c.phase === 2.5) {                    // їде справа наліво
     if (c.hag && circus.hold) {                    // спершу Баба Яга пролітає, потім хатка виходить на дорогу
       circus.holdT += dt; circus.x = circusStartX(); circus.drive = 0; circus.setup = 0;
-      if (!hagFly.on || hagFly.x < (visL() + visR()) / 2 || circus.holdT > 7) circus.hold = false;
+      if (!hagFly.on || circus.holdT > 1.6) circus.hold = false;
     }
     if (!(c.hag && circus.hold)) circus.drive += dt;
     const k = Math.min(1, circus.drive / (c.hag ? 6 : CONFIG.CIRCUS_DRIVE_SECONDS));
@@ -17132,21 +17087,7 @@ function updateCircus(dt) {
   if (!ui.circusModal.hidden) { const g = ui.clownCanvas.getContext('2d'); g.imageSmoothingEnabled = false; if (circus.bonus) { mgDraw(); } else if (c.hag) { drawHagGame(); HAG_ART.window(g, circus.t); } else if (c.noodle) { drawNoodleGame(); NOODLE_ART.window(g, circus.t); } else { drawCircusWheel(); CIRCUS_ART.clownWindow(g, circus.t); } }
 }
 /* ---- Баба Яга ---- */
-const hagFly = { on: false, x: 0, y: 0, dir: -1, t: 0, wait: 0, fast: false };            // Баба Яга в ступі летить небом
-function hagStartFlight() { hagFly.on = true; hagFly.dir = -1; hagFly.x = visR() + 60; hagFly.y = hallowSkyY() + rand(-4, 12); hagFly.t = 0; playSfx('hagCackle'); }
-function updateHagFly(dt) {
-  const c = state.circus;
-  if (!(c.hag && (c.phase === 1 || (c.phase === 2.5 && (hagFly.on || hagFly.fast))))) { hagFly.on = false; hagFly.fast = false; return; }
-  if (!hagFly.on) { if (c.phase !== 1) return; hagFly.wait -= dt; if (hagFly.wait <= 0) hagStartFlight(); return; }
-  hagFly.t += dt; hagFly.x += hagFly.dir * (hagFly.fast ? 150 : 38) * dt;
-  if (hagFly.x < visL() - 100) { hagFly.on = false; hagFly.fast = false; hagFly.wait = rand(2.5, 5); }
-}
-function drawHagFlyer() {                                           // єдина відьма: летить на мітлі замість цирку (лише на Хелловін)
-  if (!hagFly.on) return;
-  const x = Math.round(hagFly.x), y = Math.round(hagFly.y + Math.sin(hagFly.t * 2.2) * 5), dir = hagFly.dir;
-  drawWitchSprite(x, y, dir, hagFly.t);
-  if (hagFly.fast) { ctx.globalAlpha = 0.7; const P = (dx, dy, w) => R(ctx, dir < 0 ? x + dx : x - dx - w + 1, y + dy, w, 1, 'w'); P(30, -8, 10); P(36, 0, 12); P(28, 8, 8); ctx.globalAlpha = 1; }
-}
+// відьма в небі: політ, коло й спуск — у 230_a3_hag_v2.js (hagFly, hagStartFlight, hagTap, updateHagFly, drawHagFlyer)
 
 const HAG_ART = (function () {
   function leg(g, x, hipY, footY, lift, sw) {                   // куряча лапа спереду: пухнасте «галіфе», гомілка нахиляється разом із кроком, пальці віялом із кігтями
@@ -17242,8 +17183,383 @@ const HAG_ART = (function () {
     R(g, 0, 36, 72, 4, 'd'); R(g, 0, 36, 72, 1, 'b');
     for (let i = 0; i < 5; i++) { R(g, 6 + i * 14, 33, 1, 4, 'w'); R(g, 5 + i * 14, 32, 3, 2, 'w'); }
   }
-  return { draw, window: window_ };
+  return { draw: (g, t, s, moving) => hutV2(g, t, s, moving), window: hagPortraitV2 };
 })();
+//#part 230_a3_hag_v2.js
+/* «Хатка відьми» v2 (Хелловін): відьма на мітлі (політ, коло, спуск у хатку), хатка на курячих лапках, портрет і сцена з казанками.
+   Палітра гри, 1px темні контури, світло зліва-зверху. Усе малюється кодом (R/disc/lineG), кожен кадр, тож усе анімоване. */
+function hvEll(g, cx, cy, rx, ry, c) {                          // заповнений еліпс з пікселів
+  for (let dy = -ry; dy <= ry; dy++) { const half = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry + 0.0001)))); R(g, cx - half, cy + dy, half * 2 + 1, 1, c); }
+}
+function witchV2(g, x, y, dir, t, o) {                           // відьма на мітлі; (x, y) — сідло; dir −1 дзеркалить; o.pitch — нахил мітли (рад, + носом угору); повертає кінець віника у світі
+  o = o || {};
+  const th = Math.max(-0.7, Math.min(0.7, o.pitch || 0)), ca = Math.cos(th), sa = Math.sin(th), lean = Math.round(-th * 3);
+  const mx = dx => dir < 0 ? x - dx : x + dx;
+  const P = (dx, dy, w, h, c) => R(g, dir < 0 ? x - dx - w + 1 : x + dx, y + dy, w, h, c);
+  const L = (x0, y0, x1, y1, c) => lineG(g, mx(Math.round(x0)), Math.round(y + y0), mx(Math.round(x1)), Math.round(y + y1), c);
+  const fw = Math.sin(t * 8), sw = Math.round(Math.sin(t * 5) * 1.5);
+  const Ax = -17 * ca, Ay = 2 + 17 * sa, Bx = 19 * ca, By = 2 - 19 * sa;     // тильний і передній кінці держака
+  // плащ позаду: широкий, хвилястий, зі «ластівчиним» краєм
+  for (let i = 0; i < 17; i++) {
+    const w = Math.sin(t * 7 - i * 0.55) * (0.5 + i * 0.12), top = -8 + Math.round(i * 0.18 + w), h = Math.max(3, 11 - Math.round(i * 0.45)) + (i % 4 === 3 ? -1 : 0);
+    P(-4 - i + lean, top - 1, 1, h + 2, 'k'); P(-4 - i + lean, top, 1, h, i % 6 < 3 ? 'v' : 'P'); P(-4 - i + lean, top, 1, 1, 'u'); P(-4 - i + lean, top + h - 2, 1, 2, 'P');
+  }
+  // віник: стеблини віялом, перев'язь
+  for (let i = -4; i <= 4; i++) {
+    const d = i * 0.17 + Math.sin(t * 10 + i * 1.3) * 0.09, len = 10 + (Math.abs(i) < 3 ? 3 : 0) + (i & 1);
+    const ex = Ax - len * Math.cos(th + d), ey = Ay + len * Math.sin(th + d);
+    L(Ax, Ay + i * 0.4, ex, ey + i * 0.4, Math.abs(i) > 2 ? 'd' : Math.abs(i) > 0 ? 'o' : 'h');
+    if (Math.abs(i) < 2) L(Ax - 2 * ca, Ay + 2 * sa + i * 0.4, ex + 1, ey + i * 0.4, 'y');
+  }
+  P(Math.round(Ax) - 1, Math.round(Ay) - 3, 3, 6, 'k'); P(Math.round(Ax), Math.round(Ay) - 2, 1, 4, 'r');
+  // держак: три лінії (блік, тіло, контур)
+  L(Ax, Ay - 1, Bx, By - 1, 'c'); L(Ax, Ay, Bx, By, 'b'); L(Ax, Ay + 1, Bx, By + 1, 'd');
+  P(Math.round(Bx), Math.round(By) - 1, 3, 3, 'd'); P(Math.round(Bx), Math.round(By) - 1, 2, 1, 'c');
+  // задня нога
+  P(-4 + lean, 1, 5, 8, 'k'); P(-3 + lean, 1, 3, 6, 'V'); P(-5 + lean, 8, 6, 3, 'k'); P(-4 + lean, 8, 4, 1, 'V');
+  // тулуб: коротка сукня зі складками, пояс із пряжкою
+  P(-5 + lean, -9, 11, 11, 'k'); P(-4 + lean, -8, 9, 10, 'P'); P(-4 + lean, -8, 3, 10, 'v'); P(-4 + lean, -8, 1, 10, 'u'); P(3 + lean, -8, 2, 10, 'V');
+  P(-4 + lean, -3, 9, 2, 'V'); P(-1 + lean, -3, 3, 2, 'y'); P(0 + lean, -3, 1, 2, 'h');
+  P(-5, 0, 12, 3, 'k'); P(-4, 0, 10, 2, 'P'); P(-4, 0, 3, 1, 'u'); P(-5, 2, 1, 1, 'k'); P(1, 2, 1, 1, 'V'); P(4, 2, 1, 1, 'V');
+  // передня нога: коліно на держаку, гомілка й гострий чобіт гойдаються
+  P(0, 0, 7, 4, 'k'); P(1, 0, 5, 3, 'v'); P(1, 0, 3, 1, 'u');
+  P(3 + sw, 3, 5, 7, 'k'); P(4 + sw, 3, 3, 6, 'P'); P(4 + sw, 3, 1, 6, 'v');
+  P(2 + sw, 9, 8, 4, 'k'); P(3 + sw, 9, 6, 2, 'V'); P(9 + sw, 10, 3, 2, 'k'); P(3 + sw, 9, 2, 1, 'v'); P(3 + sw, 12, 6, 1, 'd');
+  // рука до держака
+  const hx = Math.round(9 * ca), hy = Math.round(1 - 9 * sa);
+  L(1 + lean, -6, hx, hy - 1, 'k'); L(1 + lean, -5, hx, hy, 'v'); L(2 + lean, -7, hx + 1, hy - 1, 'k');
+  P(hx - 1, hy - 2, 4, 4, 'k'); P(hx, hy - 1, 2, 2, 'W');
+  // голова (велика, мила): лице, ніс, око з відблиском, рум'янець, усмішка
+  const cx = 2 + lean, cy = -14;
+  P(cx - 5, cy - 4, 11, 10, 'k'); P(cx - 4, cy - 3, 9, 8, 'W'); P(cx - 4, cy - 3, 9, 1, 'q'); P(cx + 5, cy, 3, 3, 'k'); P(cx + 5, cy + 1, 2, 2, 'W');
+  P(cx + 2, cy - 1, 2, 3, 'k'); P(cx + 2, cy - 1, 1, 1, 'w'); P(cx - 1, cy + 2, 2, 1, 'f'); P(cx + 2, cy + 4, 3, 1, 'r'); P(cx + 5, cy + 3, 1, 1, 'r');
+  // волосся: рожеві пасма розвіваються назад
+  for (let i = 0; i < 4; i++) {
+    let px = cx - 5, py = cy - 2 + i * 2;
+    for (let j = 0; j < 9; j++) { px -= 1; py += Math.round(Math.sin(t * 9 - j * 0.6 + i) * 0.8 * (j / 8)) + (j % 3 === 2 ? 1 : 0); P(px, py - 1, 1, 3, 'k'); P(px, py, 1, 2, i === 0 ? 'q' : i === 3 ? 'J' : 'f'); }
+  }
+  P(cx - 4, cy - 6, 10, 3, 'f'); P(cx - 4, cy - 6, 5, 1, 'q'); P(cx + 4, cy - 4, 2, 3, 'f');
+  // капелюх: широкі крисси, конус із вигином і пряжка
+  P(cx - 9, cy - 9, 19, 4, 'k'); P(cx - 8, cy - 8, 17, 2, 'v'); P(cx - 8, cy - 9, 17, 1, 'u'); P(cx - 8, cy - 7, 17, 1, 'P'); P(cx - 9, cy - 8, 1, 1, 'u');
+  for (let r = 0; r < 13; r++) {
+    const half = Math.max(1, Math.round(5.5 * (1 - r / 13)) + 1), bend = -Math.round(r * 0.4) - (r > 6 ? Math.round((r - 6) * 0.35 + Math.sin(t * 6) * 0.6) : 0);
+    P(cx + bend - half - 1, cy - 10 - r, half * 2 + 3, 1, 'k'); P(cx + bend - half, cy - 10 - r, half * 2 + 1, 1, 'v'); P(cx + bend - half, cy - 10 - r, 2, 1, 'u'); P(cx + bend + half - 1, cy - 10 - r, 2, 1, 'P');
+    if (r === 0 || r === 1) P(cx + bend - half, cy - 10 - r, half * 2 + 1, 1, r === 0 ? 'h' : 'y');
+  }
+  P(cx - 1, cy - 10, 3, 2, 'o'); P(cx, cy - 10, 1, 2, 'k');
+  // ліхтарик-гарбуз на мотузці (м'яке сяйво)
+  const sx = Bx + Math.sin(t * 3) * 2.2, sy = By + 7;
+  L(Bx + 1, By + 1, sx, sy, 'd');
+  const px = Math.round(sx) - 3, py = Math.round(sy), ga = o.k == null ? 1 : o.k;
+  g.globalAlpha = ga * 0.1; disc(g, mx(px + 3), y + py + 3, 13, 'y'); g.globalAlpha = ga * 0.16; disc(g, mx(px + 3), y + py + 3, 9, 'y'); g.globalAlpha = ga;
+  P(px - 1, py, 8, 7, 'k'); P(px, py, 6, 6, 'o'); P(px, py, 2, 6, 'h'); P(px + 4, py, 2, 6, 'r'); P(px + 2, py + 2, 1, 2, 'y'); P(px + 4, py + 2, 1, 2, 'y'); P(px + 2, py + 4, 3, 1, 'y'); P(px + 2, py - 2, 2, 2, 'g');
+  return { tx: mx(Math.round(Ax - 11 * Math.cos(th))), ty: Math.round(y + Ay + 11 * Math.sin(th)) };
+}
+
+/* ---- відьма в небі ---- */
+const hagFly = { on: false, x: 0, y: 0, dir: -1, t: 0, wait: 0, mode: 'cruise', pitch: 0, base: 0, parts: [], emit: 0, ot: 0, ph: 0, ox: 0, oy: 0, du: 0, sx: 0, sy: 0 };      // mode: cruise — плавно небом; orbit — коло над хаткою після тапу; dive — спуск у двері
+const hagOrbitPos = ph => ({ x: circusStopX() + 58 * Math.cos(ph), y: hallowSkyY() + 16 + 15 * Math.sin(ph) });
+const hagEase = u => { u = Math.max(0, Math.min(1, u)); return u * u * (3 - 2 * u); };
+function hagCruiseY(t) { return hagFly.base + Math.sin(t * 1.25) * 15 + Math.sin(t * 0.47 + 1) * 7; }
+function hagStartFlight() { const F = hagFly; F.on = true; F.mode = 'cruise'; F.dir = -1; F.x = visR() + 60; F.base = hallowSkyY() + rand(0, 12); F.y = hagCruiseY(0); F.t = 0; F.pitch = 0; playSfx('hagCackle'); }
+function hagTap() {                                                  // тап по «!»: відьма робить коло над місцем стоянки
+  const F = hagFly; if (!F.on) hagStartFlight();
+  F.mode = 'orbit'; F.ot = 0; let best = 0, bd = 1e9;
+  for (let k = 0; k < 24; k++) { const p = hagOrbitPos(k / 24 * Math.PI * 2), d = Math.hypot(p.x - F.x, p.y - F.y); if (d < bd) { bd = d; best = k / 24 * Math.PI * 2; } }
+  F.ph = best; const p0 = hagOrbitPos(best); F.ox = F.x - p0.x; F.oy = F.y - p0.y;
+}
+function hagDoor() { return { x: circus.x + 2, y: circusY() - 11 }; }
+function hagPosAt(F, dt) {                                           // нова позиція за режимом
+  if (F.mode === 'cruise') return { x: F.x + F.dir * 54 * dt, y: hagCruiseY(F.t) };
+  if (F.mode === 'orbit') { const p = hagOrbitPos(F.ph), k = 1 - hagEase(F.ot / 1.3); return { x: p.x + F.ox * k, y: p.y + F.oy * k }; }
+  const u = Math.min(1, F.du / 1.5), e = hagEase(u), D = hagDoor(), r = Math.sin(u * Math.PI) * 30, a = u * 8;
+  return { x: F.sx + (D.x - F.sx) * e + Math.cos(a) * r, y: F.sy + (D.y - F.sy) * e + Math.sin(a) * r * 0.45 };
+}
+function hagBurst(x, y, n) { for (let i = 0; i < n; i++) { const a = Math.random() * 6.283, sp = rand(12, 46); hagFly.parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 10, life: rand(0.5, 1.1), max: 1.1, big: i % 4 === 0 }); } }
+function updateHagFly(dt) {
+  const c = state.circus, F = hagFly;
+  for (let i = F.parts.length - 1; i >= 0; i--) { const p = F.parts[i]; p.life -= dt; if (p.life <= 0) { F.parts.splice(i, 1); continue; } p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 22 * dt; p.vx *= 0.985; }
+  const active = c.hag && (c.phase === 1 || ((c.phase === 2.5 || c.phase === 2.7) && F.on));
+  if (!active) { F.on = false; F.mode = 'cruise'; return; }
+  if (!F.on) { if (c.phase !== 1) return; F.wait -= dt; if (F.wait <= 0) hagStartFlight(); return; }
+  F.t += dt;
+  if (F.mode === 'orbit') { F.ot += dt; F.ph += 2.1 * dt; if (c.phase === 2.7) { F.mode = 'dive'; F.du = 0; F.sx = F.x; F.sy = F.y; } }
+  if (F.mode === 'dive') F.du += dt;
+  const q = hagPosAt(F, dt), vx = (q.x - F.x) / Math.max(dt, 1e-3), vy = (q.y - F.y) / Math.max(dt, 1e-3);
+  F.x = q.x; F.y = q.y;
+  if (Math.abs(vx) > 6) F.dir = vx < 0 ? -1 : 1;
+  F.pitch += (Math.max(-0.6, Math.min(0.6, Math.atan2(-vy, Math.max(20, Math.abs(vx))))) - F.pitch) * Math.min(1, dt * 6);
+  F.emit -= dt;                                                       // зоряний шлейф із віника
+  while (F.emit <= 0) { F.emit += 0.03; const tl = hagTail(F); F.parts.push({ x: tl.x, y: tl.y, vx: -F.dir * rand(4, 22), vy: rand(-10, 8), life: rand(0.6, 1.1), max: 1.1, big: Math.random() < 0.2 }); }
+  if (F.mode === 'dive' && F.du >= 1.5) { const D = hagDoor(); hagBurst(D.x, D.y, 22); spawnDust(D.x, D.y + 10, 8); playSfx('pip'); F.on = false; F.mode = 'cruise'; }
+  if (F.mode === 'cruise' && F.x < visL() - 100) { F.on = false; F.wait = rand(2.5, 5); }
+}
+function hagTail(F) { const th = F.pitch, a = Math.cos(th), s = Math.sin(th); return { x: Math.round(F.x - F.dir * (17 + 11) * a), y: Math.round(F.y + 2 + (17 + 11) * s) }; }
+function drawHagFlyer() {                                           // єдина відьма: летить на мітлі замість цирку (лише на Хелловін)
+  const F = hagFly;
+  F.parts.forEach(p => { const a = p.life / p.max, col = a > 0.7 ? 'w' : a > 0.45 ? 'y' : a > 0.25 ? 'o' : 'f'; ctx.globalAlpha = Math.min(1, a * 1.6); const px = Math.round(p.x), py = Math.round(p.y); R(ctx, px, py, 1, 1, col); if (p.big && a > 0.3) { R(ctx, px - 1, py, 3, 1, col); R(ctx, px, py - 1, 1, 3, col); } });
+  ctx.globalAlpha = 1;
+  if (!F.on) return;
+  witchV2(ctx, Math.round(F.x), Math.round(F.y), F.dir, F.t, { pitch: F.pitch });
+}
+//#part 230_a4_hag_hut.js
+/* Хатка на курячих лапках v2 (канва 160×84): лапи, паркан із черепами, колоди, вікна з котом і свічкою, двері з черепом, вигнутий дах-капелюх, сова, димар. */
+function hutLeg(g, x, hipY, footY, lift, sw) {                      // куряча лапа: пір'яста «галіфе», луската гомілка, суглоб, три пальці з пазурами й задній
+  const fy = footY - lift, ax = x + sw, ay = fy - 6, y0 = hipY + 8;
+  for (let d = -3; d <= 3; d++) lineG(g, x + d, y0, ax + d, ay, 'k');
+  for (let d = -2; d <= 2; d++) lineG(g, x + d, y0, ax + d, ay, 'h');
+  for (let d = -2; d <= -1; d++) lineG(g, x + d, y0, ax + d, ay, 'y');
+  for (let d = 1; d <= 2; d++) lineG(g, x + d, y0, ax + d, ay, 'o');
+  for (let k = 1; k < 5; k++) { const px = Math.round(x + (ax - x) * k / 5), py = Math.round(y0 + (ay - y0) * k / 5); R(g, px - 2, py, 5, 1, 'd'); R(g, px - 2, py - 1, 2, 1, 'y'); }
+  R(g, x - 10, hipY - 1, 21, 10, 'k'); R(g, x - 9, hipY, 19, 8, 'w'); R(g, x - 9, hipY, 6, 8, 'W'); R(g, x + 5, hipY, 5, 8, 'E');
+  for (let i = 0; i < 5; i++) { R(g, x - 9 + i * 4, hipY + 8, 3, 2 + (i % 2), 'k'); R(g, x - 8 + i * 4, hipY + 8, 1, 1 + (i % 2), 'w'); }
+  R(g, x - 6, hipY + 2, 1, 4, 'E'); R(g, x - 1, hipY + 1, 1, 5, 'E'); R(g, x + 3, hipY + 2, 1, 4, 'E');
+  R(g, ax - 6, ay - 1, 12, 5, 'k'); R(g, ax - 5, ay, 10, 3, 'h'); R(g, ax - 5, ay, 4, 1, 'y'); R(g, ax + 2, ay + 2, 3, 1, 'o');
+  [[-1, -10], [0, 0], [1, 10]].forEach(([s0, dx]) => {            // пальці віялом із темними пазурами
+    for (let d = 0; d < 3; d++) lineG(g, ax + s0 + d - 1, ay + 3, ax + dx + d - 1, fy, 'k');
+    lineG(g, ax + s0, ay + 3, ax + dx, fy, 'h'); lineG(g, ax + s0 + 1, ay + 3, ax + dx + 1, fy, 'o');
+    R(g, ax + dx - 2, fy - 1, 5, 2, 'k'); R(g, ax + dx - 1, fy - 1, 3, 1, 'w');
+  });
+  R(g, ax - 14, fy - 1, 4, 2, 'k'); R(g, ax + 11, fy - 1, 4, 2, 'k');
+}
+function hutFace(g, cx, top, t) {                                   // Баба Яга у дверях: капелюх, рожеве волосся, усмішка
+  const blink = (t % 3.2) > 3.05;
+  R(g, cx - 2, top - 2, 5, 1, 'k'); R(g, cx - 3, top - 1, 7, 1, 'k'); R(g, cx - 1, top - 1, 3, 1, 'v'); R(g, cx - 6, top, 13, 3, 'k'); R(g, cx - 5, top, 11, 2, 'v'); R(g, cx - 5, top + 1, 11, 1, 'P'); R(g, cx - 1, top - 1, 3, 1, 'y');
+  R(g, cx - 6, top + 3, 3, 9, 'f'); R(g, cx + 4, top + 3, 3, 9, 'f'); R(g, cx - 6, top + 3, 1, 9, 'J'); R(g, cx + 6, top + 3, 1, 9, 'J');
+  R(g, cx - 3, top + 3, 7, 8, 'W'); R(g, cx - 3, top + 3, 7, 1, 'f'); R(g, cx - 3, top + 3, 2, 2, 'f');
+  if (blink) { R(g, cx - 2, top + 7, 2, 1, 'k'); R(g, cx + 2, top + 7, 2, 1, 'k'); } else { R(g, cx - 2, top + 6, 1, 2, 'k'); R(g, cx + 2, top + 6, 1, 2, 'k'); }
+  R(g, cx - 3, top + 8, 2, 1, 'q'); R(g, cx + 3, top + 8, 2, 1, 'q'); R(g, cx, top + 9, 2, 1, 'r'); R(g, cx - 2, top + 11, 5, 1, 'W');
+}
+function hutV2(g, t, s, moving) {                                   // 160×84; s — присідання (0 — на лапках, 1 — стоїть), moving — іде
+  g.clearRect(0, 0, 160, 84);
+  const ss = s * s * (3 - 2 * s), walk = moving ? t * 5.2 : 0;
+  const bob = moving ? Math.round(Math.abs(Math.sin(walk)) * 1.6) : 0, hipY = 56 + Math.round(ss * 18) - bob;
+  const cabB = hipY + 3, cabH = 32, cabT = cabB - cabH, x0 = 44, x1 = 116, W = x1 - x0, groundY = 83;
+  const stA = moving ? Math.sin(walk) : 0, stB = moving ? Math.sin(walk + Math.PI) : 0;
+  hutLeg(g, 66, hipY, groundY, Math.round(Math.max(0, stA) * 8), Math.round(stA * 3));
+  hutLeg(g, 96, hipY, groundY, Math.round(Math.max(0, stB) * 8), Math.round(stB * 3));
+  // кістяний паркан, черепи з вогником і гарбузи, коли хатка присіла
+  if (ss > 0.5) {
+    const a = Math.min(1, (ss - 0.5) * 2); g.globalAlpha = a;
+    R(g, 24, 74, 112, 1, 'k'); R(g, 24, 75, 112, 1, 'E');
+    [[14, 0], [26, 1], [134, 1], [146, 0]].forEach(([fx, tall]) => {
+      const ty = 62 + tall * 3; R(g, fx - 1, ty + 6, 4, 22 - tall * 3, 'k'); R(g, fx, ty + 6, 2, 21 - tall * 3, 'w');
+      R(g, fx - 4, ty, 10, 8, 'k'); R(g, fx - 3, ty + 1, 8, 6, 'w'); R(g, fx - 3, ty + 1, 3, 3, 'W');
+      const fl = Math.floor(t * 7 + fx) % 3; R(g, fx - 2, ty + 3, 2, 2, fl ? 'o' : 'y'); R(g, fx + 2, ty + 3, 2, 2, fl ? 'o' : 'y');
+      R(g, fx - 2, ty + 7, 6, 1, 'k'); R(g, fx - 1, ty + 7, 1, 1, 'w'); R(g, fx + 1, ty + 7, 1, 1, 'w'); R(g, fx - 5, ty + 14, 2, 1, 'E'); R(g, fx + 4, ty + 17, 2, 1, 'E');
+    });
+    [[52, 80, 0], [108, 80, 1]].forEach(([px, py, v]) => {
+      const gl = 0.2 + 0.1 * Math.sin(t * 5 + px); g.globalAlpha = a * gl; disc(g, px, py - 3, 10, 'y'); g.globalAlpha = a;
+      R(g, px - 7, py - 7, 15, 9, 'k'); R(g, px - 6, py - 6, 13, 7, 'o'); R(g, px - 6, py - 6, 4, 7, 'h'); R(g, px + 3, py - 6, 4, 7, 'r'); R(g, px - 1, py - 6, 1, 7, 'r');
+      R(g, px - 4, py - 4, 2, 2, 'y'); R(g, px + 2, py - 4, 2, 2, 'y'); R(g, px - 3, py - 1, 7, 1, 'y'); R(g, px - 2, py - 1, 1, 1, 'k'); R(g, px + 1, py - 1, 1, 1, 'k');
+      R(g, px - 1, py - 9, 3, 3, 'k'); R(g, px, py - 9, 2, 2, 'g'); R(g, px + 2, py - 10, 3, 1, 'g'); R(g, px + (v ? 4 : -4), py - 9, 1, 1, 'g');
+    });
+    g.globalAlpha = 1;
+  }
+  // стіни з колод: світло зліва-зверху, торці колод по кутах, мох
+  R(g, x0, cabT, W, cabH, 'k'); R(g, x0 + 1, cabT + 1, W - 2, cabH - 2, 'b');
+  for (let y = cabT + 1, k = 0; y < cabB - 3; y += 6, k++) {
+    R(g, x0 + 1, y, W - 2, 1, 'l'); R(g, x0 + 1, y + 5, W - 2, 1, 'd');
+    for (let i = 0; i < 4; i++) R(g, x0 + 5 + ((i * 19 + k * 11) % (W - 12)), y + 2 + (i + k) % 2, 3 + (i % 2), 1, 'd');
+    R(g, x0 - 3, y, 6, 6, 'k'); R(g, x0 - 2, y + 1, 4, 4, 'c'); R(g, x0 - 1, y + 2, 2, 2, 'h'); R(g, x1 - 3, y, 6, 6, 'k'); R(g, x1 - 2, y + 1, 4, 4, 'c'); R(g, x1 - 1, y + 2, 2, 2, 'h');
+  }
+  R(g, x0 + 1, cabB - 7, 9, 3, 'g'); R(g, x0 + 2, cabB - 7, 4, 1, 'm'); R(g, x1 - 12, cabB - 6, 11, 3, 'g'); R(g, x1 - 10, cabB - 6, 4, 1, 'm'); R(g, x0 + 30, cabT + 1, 10, 2, 'g');
+  // вікна: тепле мерехтливе світло, фіолетові віконниці з місяцем, підвіконня, кіт і свічка
+  const wf = Math.floor(t * 6) % 7 === 0 ? 'h' : 'y';
+  [50, 98].forEach((wx, wi) => {
+    const wy = cabT + 8;
+    [-5, 13].forEach((ox, si) => { R(g, wx + ox, wy - 1, 5, 15, 'k'); R(g, wx + ox + 1, wy, 3, 13, 'P'); R(g, wx + ox + 1, wy, 1, 13, 'v'); R(g, wx + ox + 2, wy + 3 + si, 1, 1, 'y'); R(g, wx + ox + 2, wy + 9, 1, 2, 'V'); });
+    R(g, wx - 1, wy - 2, 14, 16, 'k'); R(g, wx + 1, wy - 2, 10, 1, 'd');
+    [[0, 0], [7, 0], [0, 7], [7, 7]].forEach(([dx, dy]) => { R(g, wx + dx, wy + dy, 5, 6, wf); R(g, wx + dx, wy + dy, 2, 1, 'w'); R(g, wx + dx, wy + dy + 5, 5, 1, 'h'); });
+    R(g, wx + 5, wy, 2, 13, 'd'); R(g, wx, wy + 5, 12, 2, 'd');
+    R(g, wx, wy, 3, 2, 'r'); R(g, wx + 9, wy, 3, 2, 'r'); R(g, wx, wy + 2, 1, 2, 'r'); R(g, wx + 11, wy + 2, 1, 2, 'r');
+    R(g, wx - 3, wy + 13, 18, 3, 'k'); R(g, wx - 2, wy + 13, 16, 1, 'l'); R(g, wx - 2, wy + 14, 16, 1, 'd');
+    if (wi === 0) { const bl = (t % 4) > 3.8; R(g, wx + 1, wy + 7, 5, 6, 'k'); R(g, wx + 1, wy + 5, 2, 3, 'k'); R(g, wx + 5, wy + 5, 2, 3, 'k'); R(g, wx + 2, wy + 8, 1, 1, bl ? 'k' : 'y'); R(g, wx + 4, wy + 8, 1, 1, bl ? 'k' : 'y'); R(g, wx + 6, wy + 9, 3, 1, 'k'); R(g, wx + 7, wy + 8, 1, 1, 'k'); }
+    else { R(g, wx + 7, wy + 7, 3, 6, 'w'); R(g, wx + 7, wy + 7, 1, 6, 'E'); R(g, wx + 8, wy + 5, 1, 2, Math.floor(t * 9) % 2 ? 'h' : 'o'); R(g, wx + 8, wy + 4, 1, 1, 'y'); }
+  });
+  // двері: дошки, залізні пояси, череп-стукалка; відчиняються й видно Бабу Ягу
+  const open = Math.max(0, Math.min(1, (s - 0.6) / 0.3));
+  R(g, 71, cabB - 26, 19, 26, 'k'); R(g, 72, cabB - 27, 17, 1, 'k'); R(g, 73, cabB - 25, 15, 25, open > 0.05 ? 'k' : 'P');
+  if (open > 0.05) {
+    R(g, 74, cabB - 24, 13, 24, 'o'); R(g, 74, cabB - 24, 13, 9, 'h'); R(g, 74, cabB - 24, 13, 2, 'y');
+    if (s > 0.85) { const wv = Math.floor(t * 2.5) % 2; hutFace(g, 80, cabB - 22, t); R(g, 76, cabB - 9, 9, 9, 'k'); R(g, 77, cabB - 9, 7, 9, 'P'); R(g, 77, cabB - 9, 2, 9, 'v'); R(g, wv ? 85 : 86, cabB - 13 - wv * 2, 2, 5, 'm'); R(g, wv ? 85 : 86, cabB - 14 - wv * 2, 2, 2, 'W'); }
+    R(g, 73, cabB - 25, Math.max(1, Math.round(3 * (1 - open))), 25, 'P');
+  } else {
+    R(g, 74, cabB - 24, 13, 24, 'P'); R(g, 74, cabB - 24, 3, 24, 'v'); R(g, 80, cabB - 24, 1, 24, 'V'); R(g, 85, cabB - 24, 2, 24, 'V');
+    R(g, 74, cabB - 19, 13, 2, 'k'); R(g, 74, cabB - 18, 13, 1, 'Y'); R(g, 74, cabB - 9, 13, 2, 'k'); R(g, 74, cabB - 8, 13, 1, 'Y');
+    R(g, 78, cabB - 16, 6, 6, 'k'); R(g, 79, cabB - 15, 4, 4, 'w'); R(g, 79, cabB - 15, 1, 1, 'W'); R(g, 79, cabB - 14, 1, 1, 'k'); R(g, 81, cabB - 14, 1, 1, 'k'); R(g, 80, cabB - 12, 2, 1, 'k');
+    const kg = Math.floor(t * 3) % 2; R(g, 84, cabB - 4, 2, 2, kg ? 'y' : 'h');
+  }
+  R(g, 70, cabB, 21, 3, 'k'); R(g, 71, cabB, 19, 2, 'E'); R(g, 71, cabB, 19, 1, 'w');
+  // дах: вигнутий капелюх-конус із фіолетової черепиці, місячні латки, загнута верхівка
+  const apex = cabT - 27, rows = 27, ov = 9, half0 = W / 2 + ov;
+  for (let r = 0; r < rows; r++) {
+    const u = (r + 1) / rows, half = Math.max(1, Math.round(half0 * Math.pow(u, 0.78))), bend = -Math.round(Math.pow(Math.max(0, (9 - r) / 9), 2) * 6), cx = 80 + bend, y = apex + r;
+    R(g, cx - half, y, half * 2, 1, 'k');
+    const tr = Math.floor(r / 3), rr = r % 3;
+    R(g, cx - half + 1, y, half * 2 - 2, 1, rr === 2 ? 'V' : 'P');
+    for (let k = ((tr % 2) * 3); k < half * 2 - 2; k += 6) { if (rr === 0) R(g, cx - half + 1 + k, y, 3, 1, 'v'); if (rr === 2) R(g, cx - half + 1 + k + 5, y, 1, 1, 'k'); }
+    if (rr === 0) R(g, cx - half + 1, y, Math.min(4, half * 2 - 2), 1, 'u');
+    if ((r * 7 + 3) % 13 < 2 && half > 8) { const px = cx - half + 6 + (r * 5) % Math.max(4, half * 2 - 14); R(g, px, y, 3, 1, 'h'); R(g, px + 1, y - 1, 1, 1, 'y'); }
+  }
+  R(g, 80 - half0, cabT - 2, half0 * 2, 4, 'k'); R(g, 80 - half0 + 1, cabT - 1, half0 * 2 - 2, 2, 'E'); R(g, 80 - half0 + 1, cabT - 1, half0 * 2 - 2, 1, 'w');
+  for (let i = 0; i < 9; i++) { R(g, 80 - half0 + 4 + i * 9, cabT + 2, 2, 3 + (i % 3), 'k'); R(g, 80 - half0 + 4 + i * 9, cabT + 2, 1, 2 + (i % 3), 'w'); }
+  R(g, 74, apex - 1, 4, 3, 'k'); R(g, 75, apex - 1, 2, 2, 'y');
+  // димар із каменю, зелений дим
+  R(g, 101, apex + 8, 11, 17, 'k'); R(g, 102, apex + 9, 9, 16, 'e'); R(g, 102, apex + 9, 3, 16, 'E'); R(g, 100, apex + 7, 13, 3, 'k'); R(g, 101, apex + 7, 11, 2, 'E');
+  for (let r = 0; r < 4; r++) R(g, 102, apex + 12 + r * 4, 9, 1, 'd');
+  for (let k = 0; k < 5; k++) { const ph = (t * 0.45 + k / 5) % 1; g.globalAlpha = Math.sin(ph * Math.PI) * 0.7; const sz = 3 + Math.round(ph * 3); R(g, 103 + Math.round(Math.sin(t * 1.3 + k * 2) * 4) + Math.round(ph * 9), apex + 3 - Math.round(ph * 24), sz, sz - 1, k % 2 ? 'm' : 'g'); }
+  g.globalAlpha = 1;
+  // сова на даху, ліхтарик і гірлянда мініатюрних гарбузів
+  const ob = (t % 3.6) > 3.45;
+  R(g, 55, apex + 15, 9, 10, 'k'); R(g, 56, apex + 16, 7, 8, 'b'); R(g, 56, apex + 16, 2, 8, 'c'); R(g, 55, apex + 14, 2, 2, 'k'); R(g, 62, apex + 14, 2, 2, 'k');
+  R(g, 57, apex + 18, 2, 2, ob ? 'b' : 'y'); R(g, 61, apex + 18, 2, 2, ob ? 'b' : 'y'); R(g, 59, apex + 20, 2, 2, 'h'); R(g, 57, apex + 24, 5, 1, 'w');
+  const lf = wf === 'h' ? 'h' : 'o';
+  R(g, 52, cabT + 1, 1, 6, 'k'); R(g, 49, cabT + 7, 7, 9, 'k'); R(g, 50, cabT + 8, 5, 7, lf); R(g, 50, cabT + 8, 2, 7, 'y'); R(g, 52, cabT + 10, 1, 3, 'w');
+  for (let i = 0; i < 7; i++) { const gx = 52 + i * 10, gy = cabT + 3 + Math.round(Math.sin(i * 0.9) * 1.5); if (gx > 112) break; R(g, gx - 2, gy, 5, 4, 'k'); R(g, gx - 1, gy, 3, 3, i % 2 ? 'o' : 'h'); R(g, gx, gy, 1, 3, 'r'); }
+}
+//#part 230_a5_hag_scene.js
+/* «Хатка відьми» v2: портрет у вікні хатки (144×80) і сцена з трьома казанками (256×160). Палітра гри, 1px контури, нічний цвинтар із місяцем, кажанами, туманом і світлячками. */
+const HAG_W = 256, HAG_H = 160;
+const hvHash = n => { let h = (n * 2654435761) >>> 0; h ^= h >>> 15; return (h >>> 0) / 4294967296; };
+function hvBat(g, x, y, t, c) {                                       // кажан: тіло, два крила, що змахують
+  const up = Math.floor(t * 9) % 2;
+  R(g, x - 1, y, 3, 2, c); R(g, x - 1, y - 1, 1, 1, c); R(g, x + 1, y - 1, 1, 1, c);
+  if (up) { R(g, x - 5, y - 2, 4, 1, c); R(g, x - 7, y - 3, 2, 1, c); R(g, x + 2, y - 2, 4, 1, c); R(g, x + 6, y - 3, 2, 1, c); }
+  else { R(g, x - 5, y + 1, 4, 1, c); R(g, x - 7, y + 2, 2, 1, c); R(g, x + 2, y + 1, 4, 1, c); R(g, x + 6, y + 2, 2, 1, c); }
+}
+function hvMoon(g, cx, cy, r, t) {                                    // великий місяць: сяйво, диск, кратери, блік
+  g.globalAlpha = 0.07 + 0.02 * Math.sin(t * 1.4); disc(g, cx, cy, r + 14, 'y'); g.globalAlpha = 0.12; disc(g, cx, cy, r + 8, 'y'); g.globalAlpha = 0.2; disc(g, cx, cy, r + 3, 'h'); g.globalAlpha = 1;
+  disc(g, cx, cy, r + 1, 'o'); disc(g, cx, cy, r, 'h'); disc(g, cx - 2, cy - 2, r - 3, 'y');
+  disc(g, cx + Math.round(r * 0.35), cy + Math.round(r * 0.3), 3, 'o'); disc(g, cx - Math.round(r * 0.4), cy + Math.round(r * 0.45), 2, 'o'); disc(g, cx + Math.round(r * 0.45), cy - Math.round(r * 0.45), 1, 'o');
+  R(g, cx - Math.round(r * 0.6), cy - Math.round(r * 0.55), 3, 1, 'w');
+}
+function hvTree(g, x, y, h, dir, c) {                                  // голе покручене дерево
+  let px = x, py = y; const rnd = i => hvHash(x * 7 + i);
+  for (let i = 0; i < h; i++) { px += Math.round((rnd(i) - 0.5) * 1.6 + dir * 0.12); py--; R(g, px, py, i < h * 0.5 ? 3 : 2, 1, c); }
+  const br = (bx, by, len, d, dep) => { let cx = bx, cy = by; for (let i = 0; i < len; i++) { cx += d; cy -= (rnd(i + len) > 0.4 ? 1 : 0); R(g, cx, cy, 1, 1, c); if (dep < 2 && i === Math.floor(len / 2)) br(cx, cy, Math.floor(len * 0.7), -d, dep + 1); } };
+  br(px, py + Math.floor(h * 0.3), Math.floor(h * 0.5), -1, 0); br(px, py + Math.floor(h * 0.18), Math.floor(h * 0.45), 1, 0); br(px, py, Math.floor(h * 0.35), dir, 1);
+}
+let hagBg = null;
+function hagBgBuild() {                                               // нерухомий задник: небо, пагорби, дерева, далека хатка, плити двору
+  const c = document.createElement('canvas'); c.width = HAG_W; c.height = HAG_H; const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+  R(g, 0, 0, HAG_W, 34, 'z'); R(g, 0, 34, HAG_W, 24, 'V'); R(g, 0, 58, HAG_W, 18, 'P'); R(g, 0, 76, HAG_W, 12, 'u'); R(g, 0, 88, HAG_W, 40, 'P');
+  for (let x = 0; x < HAG_W; x += 2) { R(g, x, 33 + (x % 4 ? 1 : 0), 2, 1, 'V'); R(g, x, 57 + (x % 4 ? 1 : 0), 2, 1, 'P'); R(g, x, 75 + (x % 4 ? 1 : 0), 2, 1, 'u'); }
+  for (let x = 0; x < HAG_W; x++) { const h1 = 92 + Math.round(Math.sin(x * 0.035 + 1) * 8 + Math.sin(x * 0.09) * 3); R(g, x, h1, 1, HAG_H, 'u'); R(g, x, h1, 1, 1, 'v'); }
+  for (let x = 0; x < HAG_W; x++) { const h2 = 104 + Math.round(Math.sin(x * 0.05 + 3) * 7 + Math.sin(x * 0.13) * 2); R(g, x, h2, 1, HAG_H, 'P'); R(g, x, h2, 1, 1, 'u'); }
+  // далека хатка на лапках на горі (силует із теплими віконцями)
+  { const hx = 176, hy = 88;
+    R(g, hx + 1, hy, 1, 8, 'z'); R(g, hx + 11, hy, 1, 8, 'z'); R(g, hx - 1, hy + 8, 5, 1, 'z'); R(g, hx + 9, hy + 8, 5, 1, 'z'); R(g, hx - 1, hy + 3, 1, 1, 'z'); R(g, hx + 13, hy + 3, 1, 1, 'z');
+    R(g, hx - 1, hy - 9, 15, 9, 'z'); for (let r = 0; r < 9; r++) R(g, hx + 6 - (r + 1), hy - 18 + r, (r + 1) * 2 + 1, 1, 'z');
+    R(g, hx + 1, hy - 6, 3, 3, 'y'); R(g, hx + 9, hy - 6, 3, 3, 'y'); R(g, hx + 5, hy - 7, 3, 7, 'k'); R(g, hx + 5, hy - 3, 1, 1, 'h'); R(g, hx + 10, hy - 19, 3, 5, 'z'); }
+  hvTree(g, 22, 112, 52, 1, 'V'); hvTree(g, 238, 114, 46, -1, 'V'); hvTree(g, 96, 106, 30, 1, 'z');
+  [[60, 108], [76, 110], [118, 107], [214, 108]].forEach(([tx, ty], i) => { R(g, tx - 4, ty - 8, 9, 9, 'z'); R(g, tx - 3, ty - 9, 7, 1, 'z'); R(g, tx - 2, ty - 10, 5, 1, 'z'); R(g, tx - 2, ty - 7, 1, 4, 'P'); R(g, tx, ty - 6, 1, 3, 'P'); R(g, tx - 3, ty - 8, 1, 1, 'u'); });
+  // двір: плити з кількома відтінками
+  R(g, 0, 118, HAG_W, 42, 'V'); R(g, 0, 118, HAG_W, 1, 'u'); R(g, 0, 119, HAG_W, 1, 'P');
+  for (let row = 0; row < 4; row++) { const y = 120 + row * 10 + (row > 1 ? row - 1 : 0); R(g, 0, y + 9, HAG_W, 1, 'z'); for (let x = (row % 2) * 14; x < HAG_W; x += 28) { R(g, x, y, 1, 10, 'z'); R(g, x + 1, y, 26, 1, 'P'); R(g, x + 1, y + 1, 12, 1, 'u'); } }
+  for (let i = 0; i < 40; i++) { const x = Math.floor(hvHash(i * 3 + 1) * HAG_W), y = 122 + Math.floor(hvHash(i * 5 + 2) * 36); R(g, x, y, 2 + (i % 3), 1, i % 3 ? 'z' : 'P'); }
+  // трава й кістки по краях
+  for (let x = 0; x < HAG_W; x += 3) { const h = 3 + Math.floor(hvHash(x + 77) * 5); R(g, x, 160 - h, 1, h, 'G'); R(g, x + 1, 160 - h + 1, 1, h - 1, 'g'); }
+  R(g, 6, 144, 10, 8, 'k'); R(g, 7, 145, 8, 6, 'w'); R(g, 7, 145, 3, 3, 'W'); R(g, 8, 148, 2, 2, 'k'); R(g, 12, 148, 2, 2, 'k'); R(g, 8, 152, 6, 1, 'k'); R(g, 4, 153, 14, 2, 'w'); R(g, 4, 155, 14, 1, 'k');
+  R(g, 236, 150, 14, 2, 'k'); R(g, 237, 150, 12, 1, 'w'); R(g, 234, 148, 3, 3, 'k'); R(g, 235, 149, 1, 1, 'w'); R(g, 249, 148, 3, 3, 'k'); R(g, 250, 149, 1, 1, 'w');
+  return c;
+}
+function hagCauldronV2(g, x, y, lid, t, dim, i) {                      // чавунний казан на трьох лапках з вогнем, зеленим варивом, бульбашками й капелюхом-кришкою
+  g.globalAlpha = 0.35; hvEll(g, x, y + 1, 21, 4, 'k'); g.globalAlpha = 1;
+  g.globalAlpha = 0.16; hvEll(g, x, y, 22, 5, 'o'); g.globalAlpha = 1;
+  for (let k = -11; k <= 11; k += 3) { const h = 5 + Math.round(Math.abs(Math.sin(t * 9 + k + i * 2)) * 7); R(g, x + k, y - h, 3, h, 'o'); R(g, x + k + 1, y - Math.max(2, h - 4), 1, Math.max(2, h - 4), 'y'); if (h > 9) R(g, x + k + 1, y - h - 1, 1, 1, 'w'); }
+  R(g, x - 16, y - 7, 5, 8, 'k'); R(g, x - 15, y - 7, 3, 7, 'd'); R(g, x + 12, y - 7, 5, 8, 'k'); R(g, x + 13, y - 7, 3, 7, 'd'); R(g, x - 3, y - 6, 7, 7, 'k'); R(g, x - 2, y - 6, 5, 6, 'd');
+  const cy = y - 24;
+  hvEll(g, x, cy, 19, 16, 'k'); hvEll(g, x, cy, 18, 15, 'z');
+  for (let dy = -14; dy <= 14; dy++) { const half = Math.round(18 * Math.sqrt(Math.max(0, 1 - (dy / 15) * (dy / 15)))); R(g, x + half - 5, cy + dy, 5, 1, 'k'); R(g, x - half + 1, cy + dy, 2, 1, 'n'); }
+  R(g, x - 13, cy - 8, 3, 12, 'n'); R(g, x - 13, cy - 8, 1, 3, 'Y'); R(g, x - 10, cy + 5, 2, 1, 'n');
+  R(g, x - 16, cy + 2, 33, 2, 'k'); for (let k = -14; k <= 14; k += 4) { R(g, x + k, cy + 2, 2, 2, 'e'); }
+  R(g, x - 21, cy - 7, 6, 6, 'k'); R(g, x - 19, cy - 5, 2, 2, 'z'); R(g, x + 16, cy - 7, 6, 6, 'k'); R(g, x + 18, cy - 5, 2, 2, 'z');
+  R(g, x - 20, cy - 8, 41, 6, 'k'); R(g, x - 19, cy - 7, 39, 4, 'e'); R(g, x - 19, cy - 7, 39, 1, 'E'); R(g, x - 19, cy - 4, 39, 1, 'd');
+  const by = cy - 7;
+  R(g, x - 17, by - 1, 35, 4, 'g'); R(g, x - 15, by - 2, 31, 2, 'm'); R(g, x - 15, by - 2, 8, 1, 'a');
+  g.globalAlpha = 0.16 + 0.06 * Math.sin(t * 3 + i); disc(g, x, by - 4, 18, 'm'); g.globalAlpha = 1;
+  const open = 1 - Math.max(0, Math.min(1, lid / 0.9));
+  if (lid < 0.99) {
+    for (let k = 0; k < 4; k++) { const ph = (t * 0.55 + k / 4 + i * 0.13) % 1; g.globalAlpha = Math.min(1, ph * 4) * (1 - ph) * 0.9 * open; const bx = x - 11 + k * 7 + Math.round(Math.sin(t * 3 + k + i) * 2), byy = Math.round(by - 3 - ph * 18); disc(g, bx, byy, 2 + (k % 2), 'm'); R(g, bx - 1, byy - 1, 1, 1, 'w'); }
+    for (let k = 0; k < 3; k++) { const ph = (t * 0.3 + k / 3 + i * 0.2) % 1; g.globalAlpha = (1 - ph) * 0.5 * open; R(g, x - 9 + k * 9 + Math.round(Math.sin(t * 2 + k * 2) * 4), Math.round(by - 12 - ph * 26), 4 + Math.round(ph * 4), 3, 'a'); }
+    g.globalAlpha = 1;
+    R(g, x + 17, cy - 1, 1, 8 + Math.floor(t * 3 + i) % 3, 'm'); R(g, x + 17, cy + 6 + Math.floor(t * 3 + i) % 3, 2, 2, 'g');
+  }
+  if (lid > 0.02) {
+    const up = Math.round((1 - lid) * 34), sx = Math.round((1 - lid) * 16), lx = x + sx, ly = by - 6 - up, tilt = Math.round((1 - lid) * 4);
+    R(g, lx - 19, ly - 3 + Math.floor(tilt / 2), 39, 5, 'k'); R(g, lx - 18, ly - 3 + Math.floor(tilt / 2), 37, 4, 'v'); R(g, lx - 18, ly - 3 + Math.floor(tilt / 2), 37, 1, 'u'); R(g, lx - 18, ly + Math.floor(tilt / 2), 37, 1, 'P');
+    for (let r = 0; r < 18; r++) { const half = Math.max(1, Math.round(12 * (1 - r / 18)) + 1), off = -Math.round(r * 0.3) + (r > 11 ? -Math.round((r - 11) * 0.4) : 0); R(g, lx + off - half - 1, ly - 4 - r, half * 2 + 3, 1, 'k'); R(g, lx + off - half, ly - 4 - r, half * 2 + 1, 1, 'v'); R(g, lx + off - half, ly - 4 - r, 3, 1, 'u'); R(g, lx + off + half - 2, ly - 4 - r, 3, 1, 'P'); }
+    R(g, lx - 12, ly - 9, 25, 3, 'k'); R(g, lx - 11, ly - 8, 23, 2, 'h'); R(g, lx - 11, ly - 8, 23, 1, 'y'); R(g, lx - 3, ly - 10, 7, 5, 'k'); R(g, lx - 2, ly - 9, 5, 3, 'o'); R(g, lx - 1, ly - 8, 3, 1, 'k');
+    R(g, lx - 6, ly - 14, 1, 3, 'y'); R(g, lx - 7, ly - 13, 3, 1, 'y'); R(g, lx + 5, ly - 19, 1, 3, 'y'); R(g, lx + 4, ly - 18, 3, 1, 'y');
+  }
+  if (dim) { g.globalAlpha = 0.45; hvEll(g, x, cy, 19, 16, 'V'); R(g, x - 20, cy - 8, 41, 6, 'V'); g.globalAlpha = 1; }
+}
+function drawHagGame() {
+  const cv = ui.circusWheel; if (cv.width !== HAG_W) return;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+  const G = hagGame, tt = G.t;
+  if (!hagBg) hagBg = hagBgBuild();
+  g.clearRect(0, 0, HAG_W, HAG_H); g.drawImage(hagBg, 0, 0);
+  // небо: зорі, місяць, хмари, кажани
+  for (let i = 0; i < 34; i++) { const sx = Math.floor(hvHash(i * 11 + 3) * HAG_W), sy = Math.floor(hvHash(i * 13 + 5) * 78), tw = Math.sin(tt * (1.2 + (i % 5) * 0.4) + i); if (tw > -0.4) { R(g, sx, sy, 1, 1, i % 4 ? 'w' : 'y'); if (i % 7 === 0 && tw > 0.5) { R(g, sx - 1, sy, 3, 1, 'y'); R(g, sx, sy - 1, 1, 3, 'y'); } } }
+  hvMoon(g, 214, 34, 15, tt);
+  [[18, 0.07, 3], [52, 0.05, 2], [70, 0.04, 2]].forEach(([cy, sp, sz], i) => { const cx = Math.round(((tt * sp * 60 + i * 110) % 330) - 40); g.globalAlpha = 0.85; hvEll(g, cx, cy, 20 * sz / 2 + 8, 4 + sz, 'P'); hvEll(g, cx + 12, cy - 3, 11 + sz * 2, 3 + sz, 'P'); R(g, cx - 14, cy + 2, 30, 1, 'V'); g.globalAlpha = 1; });
+  for (let i = 0; i < 3; i++) hvBat(g, Math.round(((tt * (20 + i * 5) + i * 95) % 300) - 22), Math.round(26 + i * 15 + Math.sin(tt * 2 + i * 2) * 6), tt + i, 'k');
+  // туман і світлячки над двором
+  for (let L = 0; L < 2; L++) for (let k = 0; k < 4; k++) { const fx = Math.round(((tt * (4 + L * 3) + k * 84 + L * 40) % 340) - 40); g.globalAlpha = 0.08 + L * 0.03; hvEll(g, fx, 122 + L * 18, 40, 4 + L, 'w'); }
+  g.globalAlpha = 1;
+  for (let i = 0; i < 9; i++) { const fx = Math.round(20 + hvHash(i * 7) * 216 + Math.sin(tt * 0.7 + i) * 9), fy = Math.round(100 + hvHash(i * 5 + 1) * 48 + Math.cos(tt * 0.9 + i * 2) * 6), pl = 0.5 + 0.5 * Math.sin(tt * 2.3 + i * 1.7); g.globalAlpha = 0.12 * pl; disc(g, fx, fy, 4, 'y'); g.globalAlpha = 0.5 + 0.5 * pl; R(g, fx, fy, 1, 1, 'y'); g.globalAlpha = 1; }
+  // грибочки, що світяться
+  [[34, 150], [222, 152], [128, 156]].forEach(([mx, my], i) => { const gl = 0.5 + 0.5 * Math.sin(tt * 2 + i * 2); g.globalAlpha = 0.18 * gl; disc(g, mx, my - 3, 8, 'm'); g.globalAlpha = 1; R(g, mx - 1, my - 1, 3, 4, 'w'); R(g, mx - 3, my - 5, 7, 4, 'k'); R(g, mx - 2, my - 5, 5, 3, 'T'); R(g, mx - 1, my - 5, 2, 1, 'a'); R(g, mx - 2, my - 3, 1, 1, 'w'); });
+  const list = G.c.map((c, i) => ({ c, i, p: hagPos(c) })).sort((a, b) => a.p.y - b.p.y);
+  list.forEach(({ c, i, p }) => {
+    hagCauldronV2(g, p.x, p.y, c.lid, tt, c.dim, i);
+    if (c.lid < 0.6) {                                            // приз у золотому сяйві з променями
+      const bob = Math.round(Math.sin(tt * 3 + i) * 2), a = Math.min(1, (0.6 - c.lid) / 0.4), py = p.y - 64 + bob;
+      g.globalAlpha = 0.22 * a; disc(g, p.x, py, 22, 'w'); g.globalAlpha = 0.4 * a; disc(g, p.x, py, 15, 'y');
+      g.globalAlpha = 0.5 * a; for (let k = 0; k < 8; k++) { const an = tt * 0.8 + k * Math.PI / 4; lineG(g, p.x + Math.round(Math.cos(an) * 14), py + Math.round(Math.sin(an) * 14), p.x + Math.round(Math.cos(an) * 24), py + Math.round(Math.sin(an) * 24), 'y'); }
+      g.globalAlpha = a; drawCircusIcon(g, c.prize.icon || 'gem', p.x, py); g.globalAlpha = 1;
+      if (G.phase === 'reveal' && i === G.pick) for (let k = 0; k < 10; k++) { const an = k * 0.628 + tt * 2, rr = 22 + (tt * 30 + k * 7) % 14; if (Math.floor(tt * 7 + k) % 2) R(g, p.x + Math.round(Math.cos(an) * rr), py + Math.round(Math.sin(an) * rr), 1, 1, k % 2 ? 'y' : 'w'); }
+    }
+  });
+  if (G.phase === 'pick') list.forEach(({ p }) => { const b = Math.round(Math.abs(Math.sin(tt * 4)) * 4); R(g, p.x - 3, p.y - 68 - b, 7, 1, 'y'); R(g, p.x - 2, p.y - 67 - b, 5, 1, 'y'); R(g, p.x - 1, p.y - 66 - b, 3, 1, 'y'); R(g, p.x, p.y - 65 - b, 1, 1, 'y'); R(g, p.x - 4, p.y - 69 - b, 9, 1, 'h'); });
+}
+function hagPortraitV2(g, t) {                                         // портрет відьми 144×80: місяць, кажани, цвинтар, відьма з котом і свічкою
+  if (g.canvas.width !== 144) { g.canvas.width = 144; g.canvas.height = 80; g.imageSmoothingEnabled = false; }
+  g.clearRect(0, 0, 144, 80);
+  R(g, 0, 0, 144, 18, 'V'); R(g, 0, 18, 144, 16, 'P'); R(g, 0, 34, 144, 12, 'v'); R(g, 0, 46, 144, 34, 'u');
+  for (let x = 0; x < 144; x += 2) { R(g, x, 17 + (x % 4 ? 1 : 0), 2, 1, 'P'); R(g, x, 33 + (x % 4 ? 1 : 0), 2, 1, 'v'); R(g, x, 45 + (x % 4 ? 1 : 0), 2, 1, 'u'); }
+  for (let i = 0; i < 24; i++) { const sx = Math.floor(hvHash(i * 9 + 2) * 144), sy = Math.floor(hvHash(i * 3 + 1) * 40); if (Math.sin(t * 2 + i) > -0.5) R(g, sx, sy, 1, 1, i % 3 ? 'w' : 'y'); }
+  hvMoon(g, 22, 18, 11, t);
+  hvBat(g, Math.round(((t * 14) % 190) - 20), Math.round(14 + Math.sin(t * 1.7) * 5), t, 'k'); hvBat(g, Math.round(130 - ((t * 10) % 170)), Math.round(30 + Math.sin(t * 1.3 + 1) * 4), t + 1, 'k');
+  for (let x = 0; x < 144; x++) { const h = 56 + Math.round(Math.sin(x * 0.06 + 2) * 4); R(g, x, h, 1, 30, 'P'); }
+  hvTree(g, 124, 62, 34, -1, 'V'); hvTree(g, 8, 64, 26, 1, 'V');
+  [[100, 62], [112, 64], [20, 63]].forEach(([tx, ty]) => { R(g, tx - 3, ty - 6, 7, 7, 'V'); R(g, tx - 2, ty - 7, 5, 1, 'V'); R(g, tx - 1, ty - 5, 1, 3, 'P'); });
+  // відьма: волосся ззаду, плащ, обличчя, капелюх
+  const bob = Math.round(Math.sin(t * 2) * 1), cx = 68, cy = 46 + bob, blink = (t % 3.2) > 3.05;
+  hvEll(g, cx, cy + 4, 19, 20, 'k'); hvEll(g, cx, cy + 4, 18, 19, 'f'); R(g, cx - 18, cy + 8, 5, 22, 'J'); R(g, cx + 13, cy + 8, 5, 22, 'J'); R(g, cx - 12, cy + 12, 2, 18, 'q');
+  hvEll(g, cx, 82 + bob, 36, 20, 'k'); hvEll(g, cx, 82 + bob, 35, 19, 'P'); hvEll(g, cx - 6, 84 + bob, 28, 14, 'v'); R(g, cx - 36, 66 + bob, 72, 1, 'k');
+  R(g, cx - 13, cy + 17, 27, 7, 'k'); R(g, cx - 12, cy + 17, 25, 6, 'V'); R(g, cx - 12, cy + 17, 4, 6, 'P'); R(g, cx - 6, cy + 22, 13, 3, 'k'); R(g, cx - 4, cy + 22, 9, 2, 'y'); R(g, cx - 1, cy + 22, 3, 3, 'f'); R(g, cx, cy + 22, 1, 1, 'q');
+  R(g, cx - 24, cy + 26, 5, 20, 'k'); R(g, cx - 23, cy + 26, 3, 19, 'V');
+  hvEll(g, cx, cy + 2, 13, 13, 'k'); hvEll(g, cx, cy + 2, 12, 12, 'W'); hvEll(g, cx, cy - 6, 11, 4, 'q');
+  R(g, cx - 13, cy - 9, 27, 7, 'f'); R(g, cx - 13, cy - 9, 12, 2, 'q'); R(g, cx - 14, cy - 6, 4, 14, 'f'); R(g, cx + 11, cy - 6, 4, 14, 'f'); R(g, cx - 14, cy - 6, 1, 14, 'J'); R(g, cx + 14, cy - 6, 1, 14, 'J');
+  R(g, cx - 4, cy - 10, 9, 4, 'f'); R(g, cx - 1, cy - 9, 3, 3, 'W');
+  [-6, 5].forEach(ex => { if (blink) { R(g, cx + ex - 1, cy + 2, 5, 1, 'k'); } else { R(g, cx + ex, cy - 2, 3, 6, 'k'); R(g, cx + ex, cy - 2, 1, 2, 'w'); R(g, cx + ex + 1, cy + 3, 2, 1, 'z'); R(g, cx + ex - 1, cy - 3, 2, 1, 'k'); } });
+  R(g, cx - 9, cy + 6, 5, 2, 'q'); R(g, cx + 6, cy + 6, 5, 2, 'q'); R(g, cx - 1, cy + 5, 3, 2, 'q');
+  R(g, cx - 4, cy + 9, 9, 1, 'r'); R(g, cx - 5, cy + 8, 1, 1, 'r'); R(g, cx + 5, cy + 8, 1, 1, 'r'); R(g, cx - 3, cy + 10, 7, 1, 'r'); R(g, cx - 3, cy + 9, 1, 1, 'w'); R(g, cx + 3, cy + 9, 1, 1, 'w');
+  R(g, cx - 24, cy - 14, 49, 7, 'k'); R(g, cx - 23, cy - 13, 47, 5, 'v'); R(g, cx - 23, cy - 13, 47, 1, 'u'); R(g, cx - 23, cy - 9, 47, 1, 'P');
+  for (let r = 0; r < 30; r++) { const half = Math.max(1, Math.round(13 * (1 - r / 30)) + 1), off = -Math.round(r * 0.2) + (r > 20 ? -Math.round((r - 20) * 0.7 + Math.sin(t * 2) * 0.8) : 0); R(g, cx + off - half - 1, cy - 15 - r, half * 2 + 3, 1, 'k'); R(g, cx + off - half, cy - 15 - r, half * 2 + 1, 1, 'v'); R(g, cx + off - half, cy - 15 - r, 3, 1, 'u'); R(g, cx + off + half - 3, cy - 15 - r, 4, 1, 'P'); }
+  R(g, cx - 14, cy - 20, 29, 5, 'k'); R(g, cx - 13, cy - 19, 27, 3, 'h'); R(g, cx - 13, cy - 19, 27, 1, 'y'); R(g, cx - 4, cy - 22, 9, 8, 'k'); R(g, cx - 3, cy - 21, 7, 6, 'o'); R(g, cx - 2, cy - 20, 5, 4, 'y'); R(g, cx - 1, cy - 19, 3, 2, 'k');
+  R(g, cx + 6, cy - 32, 1, 3, 'y'); R(g, cx + 5, cy - 31, 3, 1, 'y'); R(g, cx - 10, cy - 28, 1, 3, 'y'); R(g, cx - 11, cy - 27, 3, 1, 'y');
+  // кіт на правому плечі, свічка й гарбузик на підвіконні
+  const bl = (t % 4) > 3.8, tw = Math.round(Math.sin(t * 2.5) * 2);
+  R(g, 100, 54, 13, 16, 'k'); R(g, 99, 52, 4, 5, 'k'); R(g, 109, 52, 4, 5, 'k'); hvEll(g, 106, 58, 6, 6, 'k'); R(g, 102, 58, 2, 2, bl ? 'k' : 'y'); R(g, 108, 58, 2, 2, bl ? 'k' : 'y'); R(g, 105, 61, 2, 1, 'q'); R(g, 112, 62, 4, 2, 'k'); R(g, 115 + tw, 58, 2, 6, 'k'); R(g, 116 + tw, 56, 2, 3, 'k');
+  R(g, 0, 70, 144, 10, 'k'); R(g, 0, 71, 144, 3, 'b'); R(g, 0, 71, 144, 1, 'l'); R(g, 0, 74, 144, 6, 'd'); for (let x = 6; x < 144; x += 22) R(g, x, 75, 8, 1, 'k');
+  R(g, 10, 60, 7, 11, 'w'); R(g, 10, 60, 2, 11, 'E'); R(g, 12, 56, 3, 4, Math.floor(t * 9) % 2 ? 'h' : 'o'); R(g, 13, 54, 1, 3, 'y'); g.globalAlpha = 0.09; disc(g, 13, 58, 17, 'y'); g.globalAlpha = 0.14; disc(g, 13, 58, 11, 'y'); g.globalAlpha = 1;
+  R(g, 26, 62, 11, 9, 'k'); R(g, 27, 63, 9, 7, 'o'); R(g, 27, 63, 3, 7, 'h'); R(g, 29, 65, 2, 2, 'y'); R(g, 33, 65, 2, 2, 'y'); R(g, 29, 68, 5, 1, 'y'); R(g, 30, 60, 3, 3, 'g');
+  R(g, 118, 64, 12, 7, 'w'); R(g, 119, 64, 10, 1, 'E'); R(g, 120, 66, 2, 2, 'k'); R(g, 126, 66, 2, 2, 'k'); R(g, 122, 69, 4, 1, 'k');
+}
 //#part 230_b_circus_loot_letters.js
 const circusCanvas = document.createElement('canvas'); circusCanvas.width = 160; circusCanvas.height = 84;
 function drawCircus() {
@@ -17271,7 +17587,7 @@ function hitCircus(p) {
     const b = bangPos();
     if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) {
       c.phase = 2.5; circus.drive = 0; circus.sx = undefined; circus.sx = circusStartX(); circus.x = circus.sx; saveGame();
-      if (c.hag) { circus.hold = true; circus.holdT = 0; hagFly.fast = true; if (!hagFly.on) hagStartFlight(); playSfx('hagCackle'); } else playSfx('build');
+      if (c.hag) { circus.hold = true; circus.holdT = 0; hagTap(); playSfx('hagCackle'); } else playSfx('build');
       return true;
     }
   } else if (c.phase === 3) {
@@ -17349,8 +17665,9 @@ function openCircus() {
   const hag = !!state.circus.hag, nd = !!state.circus.noodle;
   ui.circusModal.classList.toggle('hag', hag || nd); ui.circusModal.classList.remove('mg');
   if (nd) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (noodleGame.phase === 'idle' || noodleGame.phase === 'done') noodleReset(); if (state.circus.spun) noodleGame.phase = 'done'; }
-  else if (hag) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
+  else if (hag) { ui.circusWheel.width = HAG_W; ui.circusWheel.height = HAG_H; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
+  ui.clownCanvas.width = hag ? 144 : 72; ui.clownCanvas.height = hag ? 80 : 40;       // портрет відьми в подвійній роздільності
   ui.circusModal.hidden = false;
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
   ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = !(nd || hag);                 // у бонус-іграх головний приз — лише скін
@@ -18736,6 +19053,7 @@ function checkStory(dt) {
   if (state.epochIntroSeen < state.epoch) { playEpochIntro(state.epoch); return; }               // нова епоха: спершу заставка
   if (!ghostHunt) { const late = helpThanksLate(); if (late.length) { playThanksChain(late); return; } }       // гостям минулих епох, яким уже допомогли, подяка одразу
   if (state.story.done >= 1 && !state.tutorialDone) { startDialogue(1, false, 'tut'); return; }   // коротке навчання після першої глави
+  if (DEV_OPEN_ALL) return;                                                                      // режим бога: глави самі не вискакують (читати їх можна в щоденнику)
   if (state.story.done >= 4 && state.tutorialDone && !state.story.guests[8]) { startDialogue(9, false, 'ep', 1); return; }       // гість першої епохи
   { const ek = curEpoch(), st = state.story;                           // глави поточної епохи (з 2-ї): свій сюжет у кожній
     if (ek >= 1 && EPOCH_CHAPTERS[ek] && st.finale) { const nd = (st.epDone && st.epDone[ek]) || 0; if (nd < 8 && triggerMet(EPOCH_CHAPTERS[ek][nd].trigger, state)) { startDialogue(nd + 1, false, 'ec', nd + 1, ek); return; } } }
@@ -21096,6 +21414,9 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   let fujiC = null, fujiT = null, fujiKey = '';
+  function fujiDims() { const avail = LAYOUT.horizonY - (8 - view.offY), H = Math.round(Math.max(315, Math.min(560, avail - 40 - 70 / Math.max(0.3, sceneUnit)))); return { H, hw: Math.round(600 + (H - 315) * 1.2) }; }      // Фудзі росте, поки на екрані є місце над горизонтом (телефон-горизонт лишається як був)
+  function roofTopY() { return (typeof shop !== 'undefined' && shop) ? shop.y - (shop.level >= 6 && clockReady() ? CLOCK_H : 0) : LAYOUT.horizonY - MAX_HOUSE_H; }      // найвища точка ТЦ (з годинниковою вежею)
+  function skySpan(top) { return Math.max(60, Math.min(LAYOUT.horizonY - MAX_HOUSE_H - 6, roofTopY() - 24) - top - 24); }      // дракон літає лише в небі над ТЦ
   const fujiOcCache = {};
   function buildSky() {
     const { c, g } = newLayer();
@@ -21115,7 +21436,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
       }
     }
     g.putImageData(img, x0 + view.offX, top + view.offY);
-    { const L2 = newLayer(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, 315, 600); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
+    { const L2 = newLayer(); const FD = fujiDims(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, FD.H, FD.hw); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
     for (let i = 0; i < 9; i++) { const hs = hash2(i * 31, 9), cx = x0 + (hs % W), cy = top + rows * (0.4 + (hs >>> 8) % 40 / 100), ww = 40 + hs % 70; g.globalAlpha = 0.22; R(g, cx, cy, ww, 2, '#ffffff'); R(g, cx + 8, cy + 2, ww - 16, 1, '#ffd0d8'); g.globalAlpha = 1; }
@@ -21140,7 +21461,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     g.fillStyle = '#ff7a64'; for (let y = -r + 2; y <= -r * 0.2; y += 2) for (let x = -r * 0.7; x <= -r * 0.1; x += 2) if (x * x + y * y < (r - 3) * (r - 3)) g.fillRect(cx + Math.round(x / 2) * 2, cy + y, 2, 2);
   }
   function fuji(g, cx, bY, H, hw) {                            // Фудзі: чіткі плоскі тони (4 скелі + 4 снігу), зубчастий сніг, яри, кант силуету, ступінчастий серпанок; червоне сонце й хмари; пікселі 2×2
-    const heightAt = dx => Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3));
+    const heightAt = dx => H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3);      // гостра вершина
     const snowEndAt = dx => { const streak = Math.pow(Math.max(0, Math.sin(dx * 0.11 + 1)), 6) * 22 + Math.pow(Math.max(0, Math.sin(dx * 0.061 + 2.3)), 8) * 28; return bY - H * 0.68 + 9 * fjTri(dx / 15) + 5 * fjTri(dx / 5.5 + 0.4) + streak * (Math.abs(dx) / hw < 0.1 ? 1 : 0.45); };
     const hex = c => [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
     const lerp = (A, B, t) => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
@@ -21490,8 +21811,8 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     };
   }
   function dseqGeo(wl, wr, top, span) {                 // та сама Фудзі, що в buildSky: центр, основа, вершина
-    const H = 315, hw = 600, cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
-    return { cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3)) };
+    const { H, hw } = fujiDims(), cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
+    return { H, hw, kS: Math.max(0.6, Math.min(1, (bY - top - 250) / 150)), cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3) };
   }
   function dseqBuild(route, G, T0) {                    // будує політ: підліт → зупинка (3 фіксовані точки неба) → розворот → спуск на гору → сон → відліт уранці
     const { cx, top, surf, ex } = G, room = Math.max(60, G.sy - (top + 36));
@@ -21508,15 +21829,16 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     const sP = d1 + d2; kn.push({ s: sP, x: PT[0], y: PT[1], stop: true });
     const leave = sP + 5.4; kn.push({ s: leave, x: PT[0], y: PT[1], stop: true });
     const faceRest = sg, tlRest = 0.28;                 // дракон лягає, обвивши Фудзі спіраллю, як змія дерево: спершу заходить за гору (ззаду її не видно), потім виринає спереду
-    const depthCap = Math.max(18, ((typeof shop !== 'undefined' && shop) ? shop.y : G.sy + 90) - G.sy - 70), pitch = 22, ryC = 12, H0 = 315 * 0.985;
-    const th0 = [Math.PI, Math.PI, Math.PI * 1.5][route], thEnd = Math.PI * 6.5, thC = Math.PI * 3.5;      // орбіта від точки зупинки до thC, далі обвиває верхівку (1 виток) і лягає спереду
+    const depthCap = Math.max(18, ((typeof shop !== 'undefined' && shop) ? shop.y : G.sy + 90) - G.sy - 70), phone = landscapePhoneMQ.matches || mobileMQ.matches, pitch = phone ? 12 : 22, ryC = 12, H0 = G.H * 0.985;      // на телефоні виток тісніший, а сон піднято над дахом ТЦ (нижче)
+    const th0 = [Math.PI, Math.PI, Math.PI * 1.5][route], thEnd = Math.PI * 4.5, thC = Math.PI * 2.5;      // орбіта від точки зупинки до thC, далі обвиває верхівку (1 виток) і лягає спереду
     const rxBig = Math.min(ex * 0.62, 150),  ryBig = 28, itop = (typeof bubbleBounds === 'function') ? bubbleBounds().it + 80 : top + 80, cyO = route === 2 ? Math.max(itop + ryBig, G.sy - 46) : Math.max(itop, G.sy - 42);      // голова не лізе під верхню панель: над нею ще місце для репліки          // великий овал навколо гори: центр на висоті точки зупинки
-    const depth0 = Math.max(6, Math.min([14, 12, 8][route], depthCap - pitch * 1.5));
+    const roofY = roofTopY(), depth0 = Math.max(3, Math.min(G.H * 0.3, roofY - 36 - G.sy - pitch - ryC));      // дракон лягає на схил (приблизно на 30% висоти від вершини), але не нижче даху ТЦ
+    const headY = G.sy + depth0 + pitch + ryC, lift = Math.max(0, Math.min(headY - (roofY - 36), headY - (G.top + 70)));      // голова сплячого дракона не нижче ніж на 36 від даху ТЦ (чи вежі з годинником)
     const depF = th => depth0 + Math.max(0, th - thC) / (2 * Math.PI) * pitch;
-    const rxCone = th => 600 * (1 - Math.pow(Math.max(0.05, (H0 - depF(th)) / 315), 1 / 1.3)) + 12;         // півширина гори на тій висоті + товщина тіла
+    const rxCone = th => Math.min(Math.max(70, ex * 0.7), G.hw * (1 - Math.pow(Math.max(0.05, (H0 - depF(th)) / G.H), 1 / 1.3)) + 12);         // півширина гори на тій висоті + товщина тіла
     const wOf = th => smooth01((th - th0) / (thC - th0));
     const hxf = th => { const w = wOf(th); return cx - sg * (rxBig + (rxCone(th) - rxBig) * w) * Math.cos(th); };
-    const hyf = th => { const w = wOf(th), cy = cyO + (G.sy + depF(th) - cyO) * w, ry = ryBig + (ryC - ryBig) * w; return cy + ry * Math.sin(th); };
+    const hyf = th => { const w = wOf(th), cy = cyO + (G.sy + depF(th) - lift - cyO) * w, ry = ryBig + (ryC - ryBig) * w; return cy + ry * Math.sin(th); };
     PT[0] = hxf(th0); PT[1] = hyf(th0);                       // зупинка — це початок орбіти
     kn[kn.length - 2].x = PT[0]; kn[kn.length - 2].y = PT[1]; kn[kn.length - 1].x = PT[0]; kn[kn.length - 1].y = PT[1];
     const nH = Math.round((thEnd - th0) / (Math.PI / 6)); let sc = leave, prevP = [PT[0], PT[1]];
@@ -21542,7 +21864,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
   function dseqUpdate(t, wl, wr, top, span) {            // стан нічного маршруту на цей кадр (або null — дракон літає як удень)
     if (!dayNightOn() || state.settings.noFly || build) { dseq = null; dseqWas = false; return null; }
     const DAY = CONFIG.DAY_SECONDS, s = ((state.dayPhase - DSEQ.p0 + 1) % 1) * DAY;
-    const G = dseqGeo(wl, wr, top - 12, span), key = [G.cx, G.bY, G.top, span, wl, wr].join('|');
+    const G = dseqGeo(wl, wr, top - 12, span), key = [G.cx, G.bY, G.top, span, wl, wr, G.H].join('|');
     const total = Math.max(((DSEQ.p1 - DSEQ.p0 + 1) % 1) * DAY, 0) + DSEQ.wake;
     if (s >= total) { dseq = null; dseqWas = false; return null; }
     if (!dseqWas) { dseqWas = true; dseq = null; dseqN++; }
@@ -21577,7 +21899,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     if (s >= sq.sR - 2.4 && s < sq.sWake) tilt += (sq.tlRest - tilt) * smooth01((s - (sq.sR - 2.4)) / 2.2);
     else if (s >= sq.sWake) tilt = tilt * smooth01((s - sq.sWake) / 1.6);
     const kBase = s < sq.leave + 1 ? 1 + (DSEQ.K - 1) * smooth01(s / 12) : DSEQ.K + (DSEQ.KR - DSEQ.K) * smooth01((s - sq.leave - 1) / Math.max(1, sq.sR - sq.leave - 1));      // удалині дракон меншає (але не надто)
-    const k = 1 + (kBase - 1) * (1 - smooth01((s - sq.sWake - 1) / (DSEQ.wake - 1)));
+    const wk = 1 - smooth01((s - sq.sWake - 1) / (DSEQ.wake - 1)), k = (1 + (kBase - 1) * wk) * (1 + (sq.G.kS - 1) * smooth01(s / 12) * wk);      // на низькому екрані (телефон-горизонт) дракон дрібніший
     sq.kNow = k;
     const resting = s >= sq.sR && s < sq.sWake;
     const GG = sq.G; sq.o = { clip: g => { const x0 = GG.cx - 640; g.beginPath(); g.moveTo(x0, GG.top - 90); for (let i = 0; i <= 214; i++) { const x = x0 + i * 6; g.lineTo(x, GG.surf(x - GG.cx)); } g.lineTo(x0 + 214 * 6, GG.top - 90); g.closePath(); g.clip(); }, k, headX: sq.hx, tilt, sleep: s >= sq.sR - 1.2 && s < sq.sWake + 0.8, noFire: true, wob: resting ? 1.3 : 3, hbob: resting ? Math.sin(t * 1.3) * 1.5 * k : 0, from: resting ? sq.T0 + sq.sR : null };
@@ -21614,7 +21936,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     ctx.globalAlpha = Math.min(1, Lm) * (0.92 + 0.08 * Math.sin(animClock * 3.1)); ctx.drawImage(neonLayer, -view.offX, -view.offY); ctx.globalAlpha = 1;
   }
   function skyExtra(time, noFly) {
-    const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
+    const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top), W = wr - wl;
     if (!noFly) { if (!build && !drawNightDragon(g, time, wl, wr, top + 12, span, 'sky', 0)) dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }       // під час будівництва той самий дракон літає біля будинку (278)
     const nP = Math.min(420, Math.round(90 * Math.max(1, W / Math.max(200, visR() - visL()))));      // лепестки теж у світі; щільність на екрані та сама
     for (let i = 0; i < nP; i++) { const hs = hash2(i * 13, 5), px = wl + ((hs % 1000) / 1000 * W + time * (6 + hs % 5)) % W, py = top + 8 + (((hs >>> 10) % 1000) / 1000 * 170 + time * (8 + hs % 6)) % 170; P(g, Math.round(px), Math.round(py), 2, 1, '#ffc9d4'); P(g, Math.round(px) + (hs % 2), Math.round(py) + 1, 1, 1, '#ef8fa3'); }
@@ -21684,13 +22006,13 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
       c.drawImage(fujiT, 0, 0);
     },
     filterNeon(keep) { neonSigns = neonSigns.filter(s => keep([s.x, s.y, s.w, s.h])); neonLayer = null; },
-    skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
+    skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
     drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),
     dragonNight: { set(n) { dseqN = n - 1; dseq = null; dseqWas = false; }, state: () => dseq && { route: dseq.route, s: Math.round(dseq.s * 10) / 10, sP: dseq.sP, leave: dseq.leave, sR: dseq.sR, sWake: dseq.sWake, hx: dseq.hx, head: dseq.head } },      // перевірка: set(n) — маршрут наступної ночі (0 ліворуч, 1 праворуч, 2 над вершиною)          // той самий дракон, що в небі (використовує будівництво, 278)
     nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
       neonNight();
       const n = sky.night; if (noFly || n < 0.05 || build) return;
-      const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24);
+      const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top);
       GA = Math.min(0.5, n * 0.55); ctx.globalAlpha = GA;
       if (!drawNightDragon(ctx, time, wl, wr, top + 12, span, 'night', n)) dragon(ctx, time, wl, wr, top + 12, span, n);
       GA = 1; ctx.globalAlpha = 1;
@@ -22211,8 +22533,8 @@ const NOODLE_BUST = [                                  // голова діда 
   '..kEkWkWWWWkWkEk..', '...kkWWWWWWWWkk...', '....kWqWllWqWk....', '....kwwwwwwwwk....', '...kwwwEwwEwwwk...', '...kwwwwwwwwwwk...', '....kwwwwwwwwk....',
   '.nnnnkwwwwwwknnnn.', 'nnnnnnkwwwwknnnnnn', 'nnnnnnnkwwknnnnnnn', 'nnnnnnnnnnnnnnnnnn'
 ].map(r => r.replace(/W/g, 'c'));   // шкіра — пісочна, щоб біла борода читалась
-const noodleGame = { phase: 'idle', t: 0, p: 0, zc: 0.6, rt: 0, res: '', prize: null, main: false };
-const NOODLE_ZH = 0.055, NOODLE_ZN = 0.15;             // половина ширини ідеальної й «майже» зон (частка шкали)
+const noodleGame = { phase: 'idle', t: 0, p: 0, zc: 0.6, zb: 0.6, ph: 0, rt: 0, res: '', prize: null, main: false };
+const NOODLE_ZH = 0.025, NOODLE_ZN = 0.08;             // половина ширини ідеальної й «майже» зон (частка шкали)
 const NOODLE_ART = (function () {
   function head(g, x0, y0, rows, k) {                    // k — масштаб 1 або 2; рядки 0…rows-1 з NOODLE_BUST
     for (let j = 0; j < rows; j++) { const r = NOODLE_BUST[j]; for (let i = 0; i < r.length; i++) { const c = r[i]; if (c !== '.') R(g, x0 + i * k, y0 + j * k, k, k, c); } }
@@ -22314,7 +22636,7 @@ const NOODLE_ART = (function () {
 /* ---- гра «Звари лапшу» (полотно 192×120 у вікні цирку) ---- */
 function noodleReset() {
   noodleGame.phase = 'idle'; noodleGame.t = 0; noodleGame.p = 0; noodleGame.rt = 0; noodleGame.res = ''; noodleGame.prize = null; noodleGame.main = false;
-  noodleGame.zc = 0.5 + Math.random() * 0.25;
+  noodleGame.zb = 0.45 + Math.random() * 0.35; noodleGame.zc = noodleGame.zb; noodleGame.ph = Math.random() * 6.28;
 }
 function noodleStart() {
   if (noodleGame.phase !== 'idle' || state.circus.spun) return;
@@ -22339,7 +22661,7 @@ function noodleTake() {                                              // вийн
 function updateNoodleGame(dt) {
   const G = noodleGame; G.t += dt;
   if (G.phase === 'cook') {
-    G.p += dt * (0.3 + 0.16 * G.p);                                  // лапша «розганяється» під кінець — треба встигнути
+    G.p += dt * (0.5 + 0.4 * G.p); G.zc = G.zb + 0.09 * Math.sin(G.t * 4.2 + G.ph);        // важча версія: лапша швидша, ідеальна зона вужча й «пливе»
     if (Math.floor(G.t * 8) !== Math.floor((G.t - dt) * 8) && Math.random() < 0.35) playSfx('wheelTick');
     if (G.p >= 1) { G.p = 1; noodleTake(); }
   } else if (G.phase === 'reveal') {
@@ -23666,13 +23988,13 @@ function mgPrize(g, G, T, cx, cy) {
 
 (function () {
   const UK = {
-    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише скіни', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
+    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише бонуси', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
     mgDanceTitle: 'Танцпол Диско-Капі',
     mgDanceSub: 'Плитки спалахують і гаснуть. Тапай світні вчасно, а на темні не наступай!', mgDanceStart: 'Танцювати!', mgDanceDone: 'Гарно потанцювали!',
     mgSpamTitle: 'Спам-бомба', mgSpamSub: 'Вікна-спам лізуть на екран. Закривай їх тапом, поки не завалило!', mgSpamStart: 'Закривати!', mgSpamDone: 'Екран чистий!'
   };
   const EN = {
-    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Skins only here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
+    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Only bonuses here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
     mgDanceTitle: 'Disco Capy Dance Floor',
     mgDanceSub: 'Tiles light up and fade. Tap the glowing ones in time and keep off the dark ones!', mgDanceStart: 'Dance!', mgDanceDone: 'What a dance!',
     mgSpamTitle: 'Spam Bomb', mgSpamSub: 'Spam windows pop up everywhere. Tap them shut before they pile up!', mgSpamStart: 'Close them!', mgSpamDone: 'Screen is clean!'
@@ -24608,7 +24930,7 @@ installLang("es", {
     "skinSay_capy_diamond": "Capy Diamante. Toca sin miedo: brillo, pero soy dura como el cristal.",
     "skinSay_hero_gold": "Ayudantes dorados: trabajan como un reloj y brillan como monedas.",
     "skinSay_hero_diamond": "Los ayudantes de diamante brillan tanto que la caja entrecierra los ojos.",
-    "mgSkinOnly": "🎁 Aquí solo skins",
+    "mgSkinOnly": "🎁 Aquí solo bonos",
     "skinSay_shop_diamond": "¡Una tienda de diamante! Escaparates de cristal y precios cristalinos.",
     "skinSay_street_diamond": "Una calle de diamante. Pisarla es como caminar sobre una lámpara de araña.",
     "skinSay_weather_diamondcloud": "Nubes de diamante: aquí no llueve, saltan chispas.",
@@ -26587,7 +26909,7 @@ installLang("it", {
     "skinSay_capy_diamond": "Capy Diamante. Tocca senza paura: scintillo, ma sono dura come il cristallo.",
     "skinSay_hero_gold": "Aiutanti dorati: lavorano come un orologio e brillano come monete.",
     "skinSay_hero_diamond": "Gli aiutanti di diamante brillano così tanto che la cassa strizza gli occhi.",
-    "mgSkinOnly": "🎁 Qui solo skin",
+    "mgSkinOnly": "🎁 Qui solo bonus",
     "skinSay_shop_diamond": "Un negozio di diamante! Vetrine di cristallo e prezzi cristallini.",
     "skinSay_street_diamond": "Una strada di diamante. Camminarci sopra è come camminare su un lampadario.",
     "skinSay_weather_diamondcloud": "Nuvole di diamante: qui non piove, volano scintille.",
@@ -28566,7 +28888,7 @@ installLang("pl", {
     "skinSay_capy_diamond": "Diamentowa Capy. Stukaj śmiało: błyszczę, ale jestem twarda jak kryształ.",
     "skinSay_hero_gold": "Złoci pomocnicy: pracują jak w zegarku i lśnią jak monety.",
     "skinSay_hero_diamond": "Diamentowi pomocnicy błyszczą tak, że kasa mruży oczy.",
-    "mgSkinOnly": "🎁 Tu tylko skiny",
+    "mgSkinOnly": "🎁 Tu tylko bonusy",
     "skinSay_shop_diamond": "Diamentowy sklep! Kryształowe witryny i kryształowo uczciwe ceny.",
     "skinSay_street_diamond": "Diamentowa droga. Chodzenie po niej to jak spacer po żyrandolu.",
     "skinSay_weather_diamondcloud": "Diamentowe chmury: tu nie pada deszcz, tylko iskry.",
@@ -30545,7 +30867,7 @@ installLang("pt", {
     "skinSay_capy_diamond": "Capy Diamante. Toque sem medo: eu brilho, mas sou dura como cristal.",
     "skinSay_hero_gold": "Ajudantes dourados: trabalham como um relógio e brilham como moedas.",
     "skinSay_hero_diamond": "Os ajudantes de diamante brilham tanto que o caixa fica de olhos apertados.",
-    "mgSkinOnly": "🎁 Aqui só skins",
+    "mgSkinOnly": "🎁 Aqui só bônus",
     "skinSay_shop_diamond": "Uma loja de diamante! Vitrines de cristal e preços cristalinos.",
     "skinSay_street_diamond": "Uma rua de diamante. Andar nela é como andar num lustre.",
     "skinSay_weather_diamondcloud": "Nuvens de diamante: aqui não chove, saem faíscas.",

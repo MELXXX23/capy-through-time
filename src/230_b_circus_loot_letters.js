@@ -25,7 +25,7 @@ function hitCircus(p) {
     const b = bangPos();
     if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) {
       c.phase = 2.5; circus.drive = 0; circus.sx = undefined; circus.sx = circusStartX(); circus.x = circus.sx; saveGame();
-      if (c.hag) { circus.hold = true; circus.holdT = 0; hagFly.fast = true; if (!hagFly.on) hagStartFlight(); playSfx('hagCackle'); } else playSfx('build');
+      if (c.hag) { circus.hold = true; circus.holdT = 0; hagTap(); playSfx('hagCackle'); } else playSfx('build');
       return true;
     }
   } else if (c.phase === 3) {
@@ -103,8 +103,9 @@ function openCircus() {
   const hag = !!state.circus.hag, nd = !!state.circus.noodle;
   ui.circusModal.classList.toggle('hag', hag || nd); ui.circusModal.classList.remove('mg');
   if (nd) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (noodleGame.phase === 'idle' || noodleGame.phase === 'done') noodleReset(); if (state.circus.spun) noodleGame.phase = 'done'; }
-  else if (hag) { ui.circusWheel.width = 192; ui.circusWheel.height = 120; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
+  else if (hag) { ui.circusWheel.width = HAG_W; ui.circusWheel.height = HAG_H; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
+  ui.clownCanvas.width = hag ? 144 : 72; ui.clownCanvas.height = hag ? 80 : 40;       // портрет відьми в подвійній роздільності
   ui.circusModal.hidden = false;
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
   ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = !(nd || hag);                 // у бонус-іграх головний приз — лише скін

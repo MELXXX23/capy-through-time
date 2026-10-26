@@ -35,6 +35,9 @@
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
   let fujiC = null, fujiT = null, fujiKey = '';
+  function fujiDims() { const avail = LAYOUT.horizonY - (8 - view.offY), H = Math.round(Math.max(315, Math.min(560, avail - 40 - 70 / Math.max(0.3, sceneUnit)))); return { H, hw: Math.round(600 + (H - 315) * 1.2) }; }      // Фудзі росте, поки на екрані є місце над горизонтом (телефон-горизонт лишається як був)
+  function roofTopY() { return (typeof shop !== 'undefined' && shop) ? shop.y - (shop.level >= 6 && clockReady() ? CLOCK_H : 0) : LAYOUT.horizonY - MAX_HOUSE_H; }      // найвища точка ТЦ (з годинниковою вежею)
+  function skySpan(top) { return Math.max(60, Math.min(LAYOUT.horizonY - MAX_HOUSE_H - 6, roofTopY() - 24) - top - 24); }      // дракон літає лише в небі над ТЦ
   const fujiOcCache = {};
   function buildSky() {
     const { c, g } = newLayer();
@@ -54,7 +57,7 @@
       }
     }
     g.putImageData(img, x0 + view.offX, top + view.offY);
-    { const L2 = newLayer(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, 315, 600); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
+    { const L2 = newLayer(); const FD = fujiDims(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, FD.H, FD.hw); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
     for (let i = 0; i < 9; i++) { const hs = hash2(i * 31, 9), cx = x0 + (hs % W), cy = top + rows * (0.4 + (hs >>> 8) % 40 / 100), ww = 40 + hs % 70; g.globalAlpha = 0.22; R(g, cx, cy, ww, 2, '#ffffff'); R(g, cx + 8, cy + 2, ww - 16, 1, '#ffd0d8'); g.globalAlpha = 1; }
@@ -79,7 +82,7 @@
     g.fillStyle = '#ff7a64'; for (let y = -r + 2; y <= -r * 0.2; y += 2) for (let x = -r * 0.7; x <= -r * 0.1; x += 2) if (x * x + y * y < (r - 3) * (r - 3)) g.fillRect(cx + Math.round(x / 2) * 2, cy + y, 2, 2);
   }
   function fuji(g, cx, bY, H, hw) {                            // Фудзі: чіткі плоскі тони (4 скелі + 4 снігу), зубчастий сніг, яри, кант силуету, ступінчастий серпанок; червоне сонце й хмари; пікселі 2×2
-    const heightAt = dx => Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3));
+    const heightAt = dx => H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3);      // гостра вершина
     const snowEndAt = dx => { const streak = Math.pow(Math.max(0, Math.sin(dx * 0.11 + 1)), 6) * 22 + Math.pow(Math.max(0, Math.sin(dx * 0.061 + 2.3)), 8) * 28; return bY - H * 0.68 + 9 * fjTri(dx / 15) + 5 * fjTri(dx / 5.5 + 0.4) + streak * (Math.abs(dx) / hw < 0.1 ? 1 : 0.45); };
     const hex = c => [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
     const lerp = (A, B, t) => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
@@ -429,8 +432,8 @@
     };
   }
   function dseqGeo(wl, wr, top, span) {                 // та сама Фудзі, що в buildSky: центр, основа, вершина
-    const H = 315, hw = 600, cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
-    return { cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - Math.min(H * 0.985, H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3)) };
+    const { H, hw } = fujiDims(), cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
+    return { H, hw, kS: Math.max(0.6, Math.min(1, (bY - top - 250) / 150)), cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3) };
   }
   function dseqBuild(route, G, T0) {                    // будує політ: підліт → зупинка (3 фіксовані точки неба) → розворот → спуск на гору → сон → відліт уранці
     const { cx, top, surf, ex } = G, room = Math.max(60, G.sy - (top + 36));
@@ -447,15 +450,16 @@
     const sP = d1 + d2; kn.push({ s: sP, x: PT[0], y: PT[1], stop: true });
     const leave = sP + 5.4; kn.push({ s: leave, x: PT[0], y: PT[1], stop: true });
     const faceRest = sg, tlRest = 0.28;                 // дракон лягає, обвивши Фудзі спіраллю, як змія дерево: спершу заходить за гору (ззаду її не видно), потім виринає спереду
-    const depthCap = Math.max(18, ((typeof shop !== 'undefined' && shop) ? shop.y : G.sy + 90) - G.sy - 70), pitch = 22, ryC = 12, H0 = 315 * 0.985;
-    const th0 = [Math.PI, Math.PI, Math.PI * 1.5][route], thEnd = Math.PI * 6.5, thC = Math.PI * 3.5;      // орбіта від точки зупинки до thC, далі обвиває верхівку (1 виток) і лягає спереду
+    const depthCap = Math.max(18, ((typeof shop !== 'undefined' && shop) ? shop.y : G.sy + 90) - G.sy - 70), phone = landscapePhoneMQ.matches || mobileMQ.matches, pitch = phone ? 12 : 22, ryC = 12, H0 = G.H * 0.985;      // на телефоні виток тісніший, а сон піднято над дахом ТЦ (нижче)
+    const th0 = [Math.PI, Math.PI, Math.PI * 1.5][route], thEnd = Math.PI * 4.5, thC = Math.PI * 2.5;      // орбіта від точки зупинки до thC, далі обвиває верхівку (1 виток) і лягає спереду
     const rxBig = Math.min(ex * 0.62, 150),  ryBig = 28, itop = (typeof bubbleBounds === 'function') ? bubbleBounds().it + 80 : top + 80, cyO = route === 2 ? Math.max(itop + ryBig, G.sy - 46) : Math.max(itop, G.sy - 42);      // голова не лізе під верхню панель: над нею ще місце для репліки          // великий овал навколо гори: центр на висоті точки зупинки
-    const depth0 = Math.max(6, Math.min([14, 12, 8][route], depthCap - pitch * 1.5));
+    const roofY = roofTopY(), depth0 = Math.max(3, Math.min(G.H * 0.3, roofY - 36 - G.sy - pitch - ryC));      // дракон лягає на схил (приблизно на 30% висоти від вершини), але не нижче даху ТЦ
+    const headY = G.sy + depth0 + pitch + ryC, lift = Math.max(0, Math.min(headY - (roofY - 36), headY - (G.top + 70)));      // голова сплячого дракона не нижче ніж на 36 від даху ТЦ (чи вежі з годинником)
     const depF = th => depth0 + Math.max(0, th - thC) / (2 * Math.PI) * pitch;
-    const rxCone = th => 600 * (1 - Math.pow(Math.max(0.05, (H0 - depF(th)) / 315), 1 / 1.3)) + 12;         // півширина гори на тій висоті + товщина тіла
+    const rxCone = th => Math.min(Math.max(70, ex * 0.7), G.hw * (1 - Math.pow(Math.max(0.05, (H0 - depF(th)) / G.H), 1 / 1.3)) + 12);         // півширина гори на тій висоті + товщина тіла
     const wOf = th => smooth01((th - th0) / (thC - th0));
     const hxf = th => { const w = wOf(th); return cx - sg * (rxBig + (rxCone(th) - rxBig) * w) * Math.cos(th); };
-    const hyf = th => { const w = wOf(th), cy = cyO + (G.sy + depF(th) - cyO) * w, ry = ryBig + (ryC - ryBig) * w; return cy + ry * Math.sin(th); };
+    const hyf = th => { const w = wOf(th), cy = cyO + (G.sy + depF(th) - lift - cyO) * w, ry = ryBig + (ryC - ryBig) * w; return cy + ry * Math.sin(th); };
     PT[0] = hxf(th0); PT[1] = hyf(th0);                       // зупинка — це початок орбіти
     kn[kn.length - 2].x = PT[0]; kn[kn.length - 2].y = PT[1]; kn[kn.length - 1].x = PT[0]; kn[kn.length - 1].y = PT[1];
     const nH = Math.round((thEnd - th0) / (Math.PI / 6)); let sc = leave, prevP = [PT[0], PT[1]];
@@ -481,7 +485,7 @@
   function dseqUpdate(t, wl, wr, top, span) {            // стан нічного маршруту на цей кадр (або null — дракон літає як удень)
     if (!dayNightOn() || state.settings.noFly || build) { dseq = null; dseqWas = false; return null; }
     const DAY = CONFIG.DAY_SECONDS, s = ((state.dayPhase - DSEQ.p0 + 1) % 1) * DAY;
-    const G = dseqGeo(wl, wr, top - 12, span), key = [G.cx, G.bY, G.top, span, wl, wr].join('|');
+    const G = dseqGeo(wl, wr, top - 12, span), key = [G.cx, G.bY, G.top, span, wl, wr, G.H].join('|');
     const total = Math.max(((DSEQ.p1 - DSEQ.p0 + 1) % 1) * DAY, 0) + DSEQ.wake;
     if (s >= total) { dseq = null; dseqWas = false; return null; }
     if (!dseqWas) { dseqWas = true; dseq = null; dseqN++; }
@@ -516,7 +520,7 @@
     if (s >= sq.sR - 2.4 && s < sq.sWake) tilt += (sq.tlRest - tilt) * smooth01((s - (sq.sR - 2.4)) / 2.2);
     else if (s >= sq.sWake) tilt = tilt * smooth01((s - sq.sWake) / 1.6);
     const kBase = s < sq.leave + 1 ? 1 + (DSEQ.K - 1) * smooth01(s / 12) : DSEQ.K + (DSEQ.KR - DSEQ.K) * smooth01((s - sq.leave - 1) / Math.max(1, sq.sR - sq.leave - 1));      // удалині дракон меншає (але не надто)
-    const k = 1 + (kBase - 1) * (1 - smooth01((s - sq.sWake - 1) / (DSEQ.wake - 1)));
+    const wk = 1 - smooth01((s - sq.sWake - 1) / (DSEQ.wake - 1)), k = (1 + (kBase - 1) * wk) * (1 + (sq.G.kS - 1) * smooth01(s / 12) * wk);      // на низькому екрані (телефон-горизонт) дракон дрібніший
     sq.kNow = k;
     const resting = s >= sq.sR && s < sq.sWake;
     const GG = sq.G; sq.o = { clip: g => { const x0 = GG.cx - 640; g.beginPath(); g.moveTo(x0, GG.top - 90); for (let i = 0; i <= 214; i++) { const x = x0 + i * 6; g.lineTo(x, GG.surf(x - GG.cx)); } g.lineTo(x0 + 214 * 6, GG.top - 90); g.closePath(); g.clip(); }, k, headX: sq.hx, tilt, sleep: s >= sq.sR - 1.2 && s < sq.sWake + 0.8, noFire: true, wob: resting ? 1.3 : 3, hbob: resting ? Math.sin(t * 1.3) * 1.5 * k : 0, from: resting ? sq.T0 + sq.sR : null };
@@ -553,7 +557,7 @@
     ctx.globalAlpha = Math.min(1, Lm) * (0.92 + 0.08 * Math.sin(animClock * 3.1)); ctx.drawImage(neonLayer, -view.offX, -view.offY); ctx.globalAlpha = 1;
   }
   function skyExtra(time, noFly) {
-    const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24), W = wr - wl;
+    const g = ctx, wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top), W = wr - wl;
     if (!noFly) { if (!build && !drawNightDragon(g, time, wl, wr, top + 12, span, 'sky', 0)) dragon(g, time, wl, wr, top + 12, span); drawLanterns(g, time, wl, wr, top + 12, span); }       // під час будівництва той самий дракон літає біля будинку (278)
     const nP = Math.min(420, Math.round(90 * Math.max(1, W / Math.max(200, visR() - visL()))));      // лепестки теж у світі; щільність на екрані та сама
     for (let i = 0; i < nP; i++) { const hs = hash2(i * 13, 5), px = wl + ((hs % 1000) / 1000 * W + time * (6 + hs % 5)) % W, py = top + 8 + (((hs >>> 10) % 1000) / 1000 * 170 + time * (8 + hs % 6)) % 170; P(g, Math.round(px), Math.round(py), 2, 1, '#ffc9d4'); P(g, Math.round(px) + (hs % 2), Math.round(py) + 1, 1, 1, '#ef8fa3'); }
@@ -623,13 +627,13 @@
       c.drawImage(fujiT, 0, 0);
     },
     filterNeon(keep) { neonSigns = neonSigns.filter(s => keep([s.x, s.y, s.w, s.h])); neonLayer = null; },
-    skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
+    skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
     drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),
     dragonNight: { set(n) { dseqN = n - 1; dseq = null; dseqWas = false; }, state: () => dseq && { route: dseq.route, s: Math.round(dseq.s * 10) / 10, sP: dseq.sP, leave: dseq.leave, sR: dseq.sR, sWake: dseq.sWake, hx: dseq.hx, head: dseq.head } },      // перевірка: set(n) — маршрут наступної ночі (0 ліворуч, 1 праворуч, 2 над вершиною)          // той самий дракон, що в небі (використовує будівництво, 278)
     nightExtra(time, noFly) {                                       // після нічного затемнення: дракон ледь підсвічений, вогонь світиться
       neonNight();
       const n = sky.night; if (noFly || n < 0.05 || build) return;
-      const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = Math.max(60, LAYOUT.horizonY - MAX_HOUSE_H - 6 - top - 24);
+      const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top);
       GA = Math.min(0.5, n * 0.55); ctx.globalAlpha = GA;
       if (!drawNightDragon(ctx, time, wl, wr, top + 12, span, 'night', n)) dragon(ctx, time, wl, wr, top + 12, span, n);
       GA = 1; ctx.globalAlpha = 1;

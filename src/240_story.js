@@ -335,6 +335,7 @@ function checkStory(dt) {
   if (state.epochIntroSeen < state.epoch) { playEpochIntro(state.epoch); return; }               // нова епоха: спершу заставка
   if (!ghostHunt) { const late = helpThanksLate(); if (late.length) { playThanksChain(late); return; } }       // гостям минулих епох, яким уже допомогли, подяка одразу
   if (state.story.done >= 1 && !state.tutorialDone) { startDialogue(1, false, 'tut'); return; }   // коротке навчання після першої глави
+  if (DEV_OPEN_ALL) return;                                                                      // режим бога: глави самі не вискакують (читати їх можна в щоденнику)
   if (state.story.done >= 4 && state.tutorialDone && !state.story.guests[8]) { startDialogue(9, false, 'ep', 1); return; }       // гість першої епохи
   { const ek = curEpoch(), st = state.story;                           // глави поточної епохи (з 2-ї): свій сюжет у кожній
     if (ek >= 1 && EPOCH_CHAPTERS[ek] && st.finale) { const nd = (st.epDone && st.epDone[ek]) || 0; if (nd < 8 && triggerMet(EPOCH_CHAPTERS[ek][nd].trigger, state)) { startDialogue(nd + 1, false, 'ec', nd + 1, ek); return; } } }

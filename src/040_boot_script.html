@@ -258,7 +258,7 @@
           var k = b.far ? 2 : 3;
           b.x -= b.v * dt; b.ph += dt * 1.6; b.f += dt * (b.far ? 9 : 12);
           if (b.x < -10 * k) { b.x = W + R(4, 40); b.y = R(H * 0.08, H * 0.42); }
-          var fr = BAT[[0, 1, 2, 1][Math.floor(b.f) % 4]], bx = Math.round(b.x), by = Math.round(b.y + Math.sin(b.ph) * b.a);
+          var fr = BAT[[0, 1, 2, 1][Math.floor(Math.abs(b.f)) % 4]], bx = Math.round(b.x), by = Math.round(b.y + Math.sin(b.ph) * b.a);
           for (var r = 0; r < fr.length; r++) for (var c = 0; c < 9; c++) {
             var ch = fr[r][c]; if (ch === '.') continue;
             g.fillStyle = ch === 'r' ? (b.far ? '#3a1a3a' : '#ffb347') : (b.far ? '#3a1f4a' : '#0a0510');
