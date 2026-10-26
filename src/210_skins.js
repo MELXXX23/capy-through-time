@@ -153,7 +153,7 @@ function setSkin(type, i) {
   if (i !== -1) { const nm = skinOn(type); if (nm) setTimeout(() => capySay(type + '_' + nm), 350); }       // Капі коментує новий скін
   if (type === 'capy') drawCapiPortrait();
   else if (type === 'hero') refreshTeamPortraits();
-  else if (type === 'shop') rebuildShop(true);
+  else if (type === 'shop') { rebuildShop(true); groundLayer = buildGroundLayer(); }      // скін «Будівлі» міняє і задні будинки
   else if (type === 'street') groundLayer = buildGroundLayer();
   playSfx('wear');
   skinsSig = '';
@@ -177,10 +177,11 @@ function skinPreviewCanvas(type, name) {
     } else if (type === 'street') {
       cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
       paintCobble(g, 0, 0, 64, 40, name || 'stone');
-    } else if (type === 'shop') {
+    } else if (type === 'shop') {                                   // «Будівлі»: маркет на тлі задніх будинків у стилі скіна
       const geo = buildShopCanvas(state.shopLevel, state.depts.map(tierOf));
-      cv.width = geo.w; cv.height = geo.h; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-      g.drawImage(geo.canvas, 0, 0);
+      cv.width = geo.w + 64; cv.height = geo.h + 6; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+      skinTownPreview(g, cv.width, cv.height);
+      g.drawImage(geo.canvas, 32, 4);
     } else {
       cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
       for (let y = 0; y < 40; y++) { g.fillStyle = y < 14 ? '#8fd3ea' : y < 28 ? '#b8e3f5' : '#dff3fa'; g.fillRect(0, y, 64, 1); }
@@ -222,7 +223,7 @@ function updateSkinsUI() {
   if (keepH) ui.skinsList.style.minHeight = keepH + 'px';
   Promise.resolve().then(() => { ui.skinsList.style.minHeight = ''; if (sc) sc.scrollTop = keepTop; });
   ui.skinsList.innerHTML = '';
-  [['capy', false], ['shop', false], ['weather', false], ['street', false], ['hero', false]].forEach(([type, epochGroup]) => {
+  [['capy', false], ['weather', false], ['street', false], ['hero', false], ['shop', false]].forEach(([type, epochGroup]) => {
     const card = document.createElement('div');
     card.className = 'card skin-cat';
     const gkey = type + (epochGroup ? 'E' : '');

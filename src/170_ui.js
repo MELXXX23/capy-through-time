@@ -115,7 +115,7 @@ function buildTabs() {
   ui.tabs.appendChild(more);
   ui.tabMore = more;
 }
-const TABS_PRIMARY = ['departments', 'team', 'epochs', 'story'];
+const TABS_PRIMARY = ['departments', 'team', 'epochs', 'skins'];
 // На телефоні вміст вкладки виїжджає над смужкою іконок; повторний дотик до тієї ж вкладки його ховає
 function setSheet(open) {
   ui.app.classList.toggle('sheet-open', open);

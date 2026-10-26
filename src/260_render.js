@@ -15,6 +15,8 @@ function render(time) {
   drawBirds();
   drawEpochSky(time);
   ctx.drawImage(groundLayer, -view.offX, -view.offY);
+  drawSkinTownAnim(time);
+  drawSkyLife();                                           // листя й вогники на вітрі перед будинками (221_sky_life.js)                                  // рухомі прикраси задніх будинків під скін (214_skin_town.js)
   drawStreetShine();
   drawDecorDusk();
   ctx.drawImage(propsLayer, -view.offX, -view.offY);

@@ -530,7 +530,7 @@ function updateAnimations(dt) {
 
   // хмаринки пливуть
   clouds.forEach(c => {
-    c.x += c.speed * dt;
+    c.x += c.speed * 1.6 * dt;                     // хмари пливуть жвавіше
     if (c.x > worldR() + 4) c.x = worldL() - 28;
   });
 

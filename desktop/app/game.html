@@ -827,6 +827,9 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 @media (prefers-reduced-motion: reduce) { #boot .gh, #boot .fog, #boot .lf, #boot .lan, #boot .cf, #boot .pg, #boot #bootOrb .moon.hw { animation: none; } }
 #boot .b-cv.fr { z-index: 3; }
 #boot .b-car:not(.l) { z-index: 2; }                                       /* ближня смуга перед дальньою */
+/* низьке вікно ПК (панель задач, не на весь екран): підказка компактна, щоб смужка й підказка вміщались у землю під Капі */
+@media (max-height: 640px) { #boot .b-tip { min-height: 0; padding: 6px 10px; gap: 3px; bottom: 2%; } #boot .b-tip small { display: none; } #boot .b-load { bottom: calc(2% + 70px); } #boot .b-bar { margin-top: 6px; } }
+@media (max-height: 420px) { #boot .b-tip { display: none; } #boot .b-load { bottom: 6%; } }
 /*#part 024_style_modal_phone.css*/
 /* ===== Вікно (офлайн-заробіток) ===== */
 #soundModal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(42,29,26,.72); }
@@ -1166,16 +1169,22 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
   function grid(w, h, fn) { var out = []; for (var y = 0; y < h; y++) { var r = ''; for (var x = 0; x < w; x++) r += fn(x, y) || '.'; out.push(r); } return out; }
   var P = { O: '#302418', w: '#fff4dc', r: '#ef8fa3', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', b: '#7a4f35', s: '#9fd8f0', K: '#1b1224', Y: '#ffd98a', o: '#e8863c', u: '#8b6bb0', n: '#3d5a8c', e: '#9c9087', f: '#ff5fa2' };
 
-  // ---- сцена: щоразу інша (не та, що була востаннє); ?boot=night|dawn|rain|snow|time — для перегляду
+  // ---- сцена: щоразу інша (черга з усіх сцен); ?boot=night|dawn|rain|snow|time — для перегляду
   var SCENES = ['night', 'dawn', 'rain', 'snow', 'time', 'halloween', 'fest'], scene = 'night';
   (function () {
     var m = /[?&]boot=(\w+)/.exec(q), last = '';
     try { last = localStorage.getItem('capyBootScene') || ''; } catch (e) { /* нічого */ }
     if (m && SCENES.indexOf(m[1]) >= 0) { scene = m[1]; return; }
-    var md = new Date(), mo = md.getMonth() * 100 + md.getDate(), hw = mo >= 901 && mo <= 1010;          // 1 жовтня … 10 листопада
-    var pool = SCENES.filter(function (n) { return n !== last && (n !== 'halloween' || hw); });
-    if (hw && last !== 'halloween') pool.push('halloween');
-    scene = pool[Math.floor(Math.random() * pool.length)];
+    // черга: усі сцени (і Хелловін) по колу в перемішаному порядку — кожен запуск інша, поки не покажуться всі
+    var bag = [];
+    try { bag = (localStorage.getItem('capyBootBag') || '').split(',').filter(function (n) { return SCENES.indexOf(n) >= 0; }); } catch (e) { /* нічого */ }
+    if (!bag.length) {
+      bag = SCENES.slice();
+      for (var i = bag.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), tm = bag[i]; bag[i] = bag[j]; bag[j] = tm; }
+      if (bag[0] === last && bag.length > 1) { bag.push(bag.shift()); }     // не повторювати останню сцену на стику кіл
+    }
+    scene = bag.shift();
+    try { localStorage.setItem('capyBootBag', bag.join(',')); } catch (e) { /* нічого */ }
     try { localStorage.setItem('capyBootScene', scene); } catch (e) { /* нічого */ }
   })();
   var SD = {
@@ -2213,9 +2222,9 @@ const TABS = [
   { id: 'departments', icon: '🛒', ready: true  },
   { id: 'team',        icon: '🐾', ready: true  },
   { id: 'epochs',      icon: '🌀', ready: true  },          // перегляд пройдених епох (раніше жив у налаштуваннях); «Крамничку» з меню прибрано
-  { id: 'story',       icon: '📖', ready: true  },
+  { id: 'skins',       icon: '👗', ready: true },          // скіни — серед головних вкладок, щоденник — у «Ще» (р. 70)
   { id: 'workshop',    icon: '⏳', ready: true, needs: 'finale' },   // з'являється після фіналу сюжету
-  { id: 'skins',       icon: '👗', ready: true },
+  { id: 'story',       icon: '📖', ready: true  },
   { id: 'seasons',    icon: '🍂', ready: true, lock: 'themes' },   // замок до проходження 2-ї епохи
   { id: 'achievements', icon: '🏆', ready: true },
   { id: 'settings',    icon: '⚙️', ready: true }
@@ -4299,10 +4308,10 @@ const translations = {
     skin_hero_party: 'Герої у святкових костюмах', skin_hero_ninja: 'Герої-ніндзя',
     skin_capy_knight: 'Капі-лицар', skin_capy_hero: 'Капі-супергерой', skin_capy_cowboy: 'Капі-ковбой', skin_capy_fairy: 'Капі-фея', skin_capy_viking: 'Капі-вікінг', skin_capy_pilot: 'Капі-пілот',
     skinSay_capy_knight: "Мій меч гострий, а ціни чесні. Майже.", skinSay_capy_hero: "Моя суперсила — знижки. Плащ безкоштовний.", skinSay_capy_cowboy: "У цьому місті один шериф. І він торгує.", skinSay_capy_fairy: "Дрібка чарів, і цінники самі підстрибують до небес.", skinSay_capy_viking: "На абордаж... ой, на розпродаж!", skinSay_capy_pilot: "Пристебніться: наш прибуток набирає висоту.",
-    skin_shop_ocean: 'Океанський магазин', skin_street_candy: 'Цукерна бруківка', skin_street_sand: 'Піщана доріжка', skin_capy_gold: 'Золота Капі', skin_capy_diamond: 'Діамантова Капі', skin_hero_gold: 'Золоті герої', skin_hero_diamond: 'Діамантові герої', skin_shop_diamond: 'Діамантовий магазин', skin_street_diamond: 'Діамантова дорога', skin_weather_diamondcloud: 'Діамантові хмари',
+    skin_shop_ocean: 'Океанська вулиця', skin_street_candy: 'Цукерна бруківка', skin_street_sand: 'Піщана доріжка', skin_capy_gold: 'Золота Капі', skin_capy_diamond: 'Діамантова Капі', skin_hero_gold: 'Золоті герої', skin_hero_diamond: 'Діамантові герої', skin_shop_diamond: 'Діамантова вулиця', skin_street_diamond: 'Діамантова дорога', skin_weather_diamondcloud: 'Діамантові хмари',
     skinSay_capy_gold: "Золота шерсть — і жодних знижок на моє сяйво. Хоча для вас, так і бути, є.", skinSay_capy_diamond: "Діамантова Капі. Тапайте сміливо: я блищу, але я міцна, мов кришталь.", skinSay_hero_gold: "Золоті помічники: працюють як годинник і блищать як монети.", skinSay_hero_diamond: "Діамантові помічники сяють так, що каса аж мружиться.", skinSay_shop_diamond: "Діамантовий магазин! Вітрина кришталева, а ціни — кришталево чесні.", skinSay_street_diamond: "Діамантова дорога. Іти нею — наче по люстрі.", skinSay_weather_diamondcloud: "Діамантові хмари: тут не дощ, а іскри.",
-    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукерковий магазин', skin_shop_gold: 'Золотий магазин', skin_weather_rainbow: 'Веселка над містом', skin_weather_lightning: 'Фіолетові блискавки', skin_street_moss: 'Замшіла бруківка', skin_street_gold: 'Золота дорога', skin_weather_lightninggreen: 'Зелені блискавки', skin_weather_lightningred: 'Червоні блискавки', skin_capy_wizard: 'Капі-чарівник', skin_capy_chef: 'Капі-шеф', skin_capy_explorer: 'Капі-дослідник', skin_capy_detective: 'Капі-детектив', skin_capy_sailor: 'Капі-моряк', skin_shop_ice: 'Крижаний магазин', skin_shop_wood: 'Дерев’яна хатина', skin_shop_garden: 'Магазин-сад', skin_weather_cottoncloud: 'Цукрові хмари', skin_weather_goldcloud: 'Золоті хмари', skin_weather_starcloud: 'Зоряні хмари', skin_hero_chef: 'Герої-кухарі', skin_hero_wizard: 'Герої-чарівники', skin_hero_royal: 'Герої-королі', skin_capy_santa: 'Капі — Дід Мороз', skin_capy_witch: 'Капі-відьма', skin_capy_flower: 'Капі у квітах', skin_capy_beach: 'Капі на пляжі', skin_capy_autumn: 'Осінній Капі', skin_hero_santa: 'Помічники Діда Мороза', skin_hero_witch: 'Герої-відьмочки', skin_shop_xmas: 'Різдвяний магазин', skin_shop_halloween: 'Магазин на Хелловін', skin_shop_spring: 'Весняний магазин', skin_shop_autumn: 'Осінній магазин', skin_street_snow: 'Сніжна бруківка', skin_street_leaves: 'Бруківка з листям', skin_capy_mel: 'Капі-лис Мел', skin_capy_nika: 'Капі-зайка Ніка', skinSay_capy_mel: 'Я Мел, лис. Хитрий лише в ціні: ціна чесна, а знижка — секрет.', skinSay_capy_nika: 'Я Ніка, зайка. Стрибаю до каси швидше за чергу!', skinSay_capy_pirate: "Йо-хо-хо! Кожна монета — скарб, а крамниця — мій корабель!", skinSay_capy_astro: "Х’юстоне, у нас розпродаж! Орбіта цін уже тут.", skinSay_shop_candy: "Тут пахне карамеллю. Я не облизую стіни. Майже.", skinSay_shop_gold: "Золотий магазин сяє так, що касир ходить в окулярах.", skinSay_weather_rainbow: "Веселка над містом. Де горщик із золотом? О, це ж каса!", skinSay_weather_lightning: "Фіолетова блискавка? Це не гроза, це акція!", skinSay_hero_party: "Свято щодня! Помічники в конфеті, а ціни серйозні.", skinSay_hero_ninja: "Помічники-ніндзя вже тут. Ви їх не бачили. І не побачите.", skinSay_capy_ep0: "Я майже Леонардо. Тільки дешевший.", skinSay_capy_ep1: "Ретро — це коли все круто і ніхто не пояснює чому.", skinSay_capy_ep2: "Диско-куля крутиться, виручка теж!", skinSay_capy_ep3: "Нова гра: «Касир проти черги». Рівень складний.", skinSay_capy_ep4: "Інтернет вигадали, щоб продавати. Ну, і котиків.", skinSay_capy_ep5: "Еко-торгівля: пакет багаторазовий, прибуток теж.", skinSay_capy_ep6: "У космосі ніхто не почує касу. Але ми почуємо.", skinSay_capy_ep7: "Неон блимає, ціни ні. Принцип!", skinSay_capy_wizard: "Абракадабра! І товар на полиці. Ну, його привезли.", skinSay_capy_chef: "Я не готую, я комплектую. Але ковпак серйозний.", skinSay_capy_explorer: "Мапа каже, що скарб десь біля каси.", skinSay_capy_detective: "Хто обрахував покупця? Елементарно: ціна на ціннику.", skinSay_capy_sailor: "Штиль у торгівлі? Піднімаю вітрила, тобто ціни.", skinSay_shop_ice: "Крижаний магазин: знижки тут не розтануть.", skinSay_shop_wood: "Дерев’яна хатина пахне смолою й чесним бізнесом.", skinSay_shop_garden: "У магазині-саду росте все, крім цін. Майже.", skinSay_weather_cottoncloud: "Хмарки з цукрової вати. Хто надкусив? Я нічого не кажу.", skinSay_weather_goldcloud: "Золоті хмари: небо теж вирішило заробляти.", skinSay_weather_starcloud: "Зоряні хмари. Загадай бажання: щедрий покупець!", skinSay_hero_chef: "Помічники-кухарі! Смачно пахне, але товар не їсти.", skinSay_hero_wizard: "Помічники-чарівники: хто казав, що чергу не вдасться зменшити?", skinSay_hero_royal: "Королівська команда! Ваша величносте, каса праворуч.", skinSay_street_wood: "Дерев’яна доріжка скрипить. Отже, торгівля йде.", skinSay_street_brick: "Цегляна бруківка: чіткий шлях до каси.", skinSay_capy_santa: "Хо-хо-хо! Подарунки зі знижкою, а мішок із запасом.", skinSay_capy_witch: "Я не відьма, я менеджер із мітлою. Але капелюх ношу.", skinSay_capy_flower: "Квіти на мені. Бджоли теж у черзі, як усі.", skinSay_capy_beach: "Пляж у центрі міста. Ціни як відпустка!", skinSay_capy_autumn: "Осінь: листя падає, а виручка навпаки.", skinSay_hero_santa: "Помічники Діда Мороза пакують подарунки без черги.", skinSay_hero_witch: "Відьмочки-помічники: чарівно швидко обслуговуємо.", skinSay_shop_xmas: "Різдвяний магазин: вогники блимають, ціни ні.", skinSay_shop_halloween: "Магазин на Хелловін: цукерки або знижка!", skinSay_shop_spring: "Весняний магазин: ціни квітнуть. Ніжно, без паніки.", skinSay_shop_autumn: "Осінній магазин: тепло, затишно, листя на даху.", skinSay_street_snow: "Сніжна бруківка. Не їсти сніг! Я себе теж зупиняю.", skinSay_street_leaves: "Листя на бруківці: хрум-хрум, мій улюблений звук.",
-    tab_skins: 'Скіни', skinsNote: 'Скін Капі сам змінюється разом з епохою. Захочеш інший — обери його тут, а щоб повернути скін епохи, тапни «Змінити на скін епохи». Стрілки гортають список.', skinBackToEpoch: 'Змінити на скін епохи', skinWornToast: 'Вдягнено: {0}', skinDefaultToast: 'Звичайний вигляд', skinHeroNone: 'Костюм вдягнуть усі звірята: покупці вже в ньому, а герої — щойно приїдуть.', skinCat_capyEpoch: 'Капі по епохах', skinEpoch: 'Капі: {0}', skinOtherEpoch: 'Інша епоха', skinCat_capy: 'Капі', skinCat_shop: 'Магазин', skinCat_weather: 'Погода', skinCat_hero: 'Герої та звірі', skinCat_street: 'Бруківка', skin_street_wood: 'Дерев’яний настил', skin_street_brick: 'Червона цегла',
+    skin_capy_pirate: 'Капі-пірат', skin_capy_astro: 'Капі-астронавт', skin_shop_candy: 'Цукеркова вулиця', skin_shop_gold: 'Золота вулиця', skin_weather_rainbow: 'Веселка над містом', skin_weather_lightning: 'Фіолетові блискавки', skin_street_moss: 'Замшіла бруківка', skin_street_gold: 'Золота дорога', skin_weather_lightninggreen: 'Зелені блискавки', skin_weather_lightningred: 'Червоні блискавки', skin_capy_wizard: 'Капі-чарівник', skin_capy_chef: 'Капі-шеф', skin_capy_explorer: 'Капі-дослідник', skin_capy_detective: 'Капі-детектив', skin_capy_sailor: 'Капі-моряк', skin_shop_ice: 'Крижана вулиця', skin_shop_wood: 'Дерев’яна вулиця', skin_shop_garden: 'Вулиця-сад', skin_weather_cottoncloud: 'Цукрові хмари', skin_weather_goldcloud: 'Золоті хмари', skin_weather_starcloud: 'Зоряні хмари', skin_hero_chef: 'Герої-кухарі', skin_hero_wizard: 'Герої-чарівники', skin_hero_royal: 'Герої-королі', skin_capy_santa: 'Капі — Дід Мороз', skin_capy_witch: 'Капі-відьма', skin_capy_flower: 'Капі у квітах', skin_capy_beach: 'Капі на пляжі', skin_capy_autumn: 'Осінній Капі', skin_hero_santa: 'Помічники Діда Мороза', skin_hero_witch: 'Герої-відьмочки', skin_shop_xmas: 'Різдвяна вулиця', skin_shop_halloween: 'Хелловінська вулиця', skin_shop_spring: 'Весняна вулиця', skin_shop_autumn: 'Осіння вулиця', skin_street_snow: 'Сніжна бруківка', skin_street_leaves: 'Бруківка з листям', skin_capy_mel: 'Капі-лис Мел', skin_capy_nika: 'Капі-зайка Ніка', skinSay_capy_mel: 'Я Мел, лис. Хитрий лише в ціні: ціна чесна, а знижка — секрет.', skinSay_capy_nika: 'Я Ніка, зайка. Стрибаю до каси швидше за чергу!', skinSay_capy_pirate: "Йо-хо-хо! Кожна монета — скарб, а крамниця — мій корабель!", skinSay_capy_astro: "Х’юстоне, у нас розпродаж! Орбіта цін уже тут.", skinSay_shop_candy: "Тут пахне карамеллю. Я не облизую стіни. Майже.", skinSay_shop_gold: "Золотий магазин сяє так, що касир ходить в окулярах.", skinSay_weather_rainbow: "Веселка над містом. Де горщик із золотом? О, це ж каса!", skinSay_weather_lightning: "Фіолетова блискавка? Це не гроза, це акція!", skinSay_hero_party: "Свято щодня! Помічники в конфеті, а ціни серйозні.", skinSay_hero_ninja: "Помічники-ніндзя вже тут. Ви їх не бачили. І не побачите.", skinSay_capy_ep0: "Я майже Леонардо. Тільки дешевший.", skinSay_capy_ep1: "Ретро — це коли все круто і ніхто не пояснює чому.", skinSay_capy_ep2: "Диско-куля крутиться, виручка теж!", skinSay_capy_ep3: "Нова гра: «Касир проти черги». Рівень складний.", skinSay_capy_ep4: "Інтернет вигадали, щоб продавати. Ну, і котиків.", skinSay_capy_ep5: "Еко-торгівля: пакет багаторазовий, прибуток теж.", skinSay_capy_ep6: "У космосі ніхто не почує касу. Але ми почуємо.", skinSay_capy_ep7: "Неон блимає, ціни ні. Принцип!", skinSay_capy_wizard: "Абракадабра! І товар на полиці. Ну, його привезли.", skinSay_capy_chef: "Я не готую, я комплектую. Але ковпак серйозний.", skinSay_capy_explorer: "Мапа каже, що скарб десь біля каси.", skinSay_capy_detective: "Хто обрахував покупця? Елементарно: ціна на ціннику.", skinSay_capy_sailor: "Штиль у торгівлі? Піднімаю вітрила, тобто ціни.", skinSay_shop_ice: "Крижаний магазин: знижки тут не розтануть.", skinSay_shop_wood: "Дерев’яна хатина пахне смолою й чесним бізнесом.", skinSay_shop_garden: "У магазині-саду росте все, крім цін. Майже.", skinSay_weather_cottoncloud: "Хмарки з цукрової вати. Хто надкусив? Я нічого не кажу.", skinSay_weather_goldcloud: "Золоті хмари: небо теж вирішило заробляти.", skinSay_weather_starcloud: "Зоряні хмари. Загадай бажання: щедрий покупець!", skinSay_hero_chef: "Помічники-кухарі! Смачно пахне, але товар не їсти.", skinSay_hero_wizard: "Помічники-чарівники: хто казав, що чергу не вдасться зменшити?", skinSay_hero_royal: "Королівська команда! Ваша величносте, каса праворуч.", skinSay_street_wood: "Дерев’яна доріжка скрипить. Отже, торгівля йде.", skinSay_street_brick: "Цегляна бруківка: чіткий шлях до каси.", skinSay_capy_santa: "Хо-хо-хо! Подарунки зі знижкою, а мішок із запасом.", skinSay_capy_witch: "Я не відьма, я менеджер із мітлою. Але капелюх ношу.", skinSay_capy_flower: "Квіти на мені. Бджоли теж у черзі, як усі.", skinSay_capy_beach: "Пляж у центрі міста. Ціни як відпустка!", skinSay_capy_autumn: "Осінь: листя падає, а виручка навпаки.", skinSay_hero_santa: "Помічники Діда Мороза пакують подарунки без черги.", skinSay_hero_witch: "Відьмочки-помічники: чарівно швидко обслуговуємо.", skinSay_shop_xmas: "Різдвяний магазин: вогники блимають, ціни ні.", skinSay_shop_halloween: "Магазин на Хелловін: цукерки або знижка!", skinSay_shop_spring: "Весняний магазин: ціни квітнуть. Ніжно, без паніки.", skinSay_shop_autumn: "Осінній магазин: тепло, затишно, листя на даху.", skinSay_street_snow: "Сніжна бруківка. Не їсти сніг! Я себе теж зупиняю.", skinSay_street_leaves: "Листя на бруківці: хрум-хрум, мій улюблений звук.",
+    tab_skins: 'Скіни', skinsNote: 'Скін Капі сам змінюється разом з епохою. Захочеш інший — обери його тут, а щоб повернути скін епохи, тапни «Змінити на скін епохи». Стрілки гортають список.', skinBackToEpoch: 'Змінити на скін епохи', skinWornToast: 'Вдягнено: {0}', skinDefaultToast: 'Звичайний вигляд', skinHeroNone: 'Костюм вдягнуть усі звірята: покупці вже в ньому, а герої — щойно приїдуть.', skinCat_capyEpoch: 'Капі по епохах', skinEpoch: 'Капі: {0}', skinOtherEpoch: 'Інша епоха', skinCat_capy: 'Капі', skinCat_shop: 'Будівлі', skinCat_weather: 'Погода', skinCat_hero: 'Герої та звірі', skinCat_street: 'Бруківка', skin_street_wood: 'Дерев’яний настил', skin_street_brick: 'Червона цегла',
     skinsReset: 'Скинути всі скіни до звичайного вигляду', skinsResetDone: 'Усі скіни зняті: звичайний вигляд. Куплені скіни нікуди не поділись.', skinsResetNone: 'Усе вже в звичайному вигляді.',
     skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}', lootTag: '✨ ЕПІЧНА ЗДОБИЧ ✨', lootWear: 'Вдягнути', lootClose: 'Чудово!', rainOn: 'Дощ увімкнено 🌧', rainOff: 'Дощ вимкнено', goalTravel: '⏳ Можна в подорож: +{0} 💎', goalCrystal: "⏳ До першого осколка часу: {0}%", goalDept: '🛒 Купи «{0}»: {1}/{2}', goalHire: '🐾 Прокачай до {1} рівня: {0}', goalExpandNow: '🏪 Можна розширити магазин!', goalExpand: '🏪 Розширення магазину: {0}%', goalNext: '🛒 Далі: «{0}» · {1}%',
     dailyRemind: '📅 Завдання дня: виконано {0} із 3. Загляни у вкладку нагород!', dailyRemindClaim: '📅 Завдання дня виконано. Забери кристал у вкладці нагород!', dailyTitle: '📅 Завдання дня', dailyNote: 'Три цілі щодоби. За кожну — кристал, а за всі три ще один.', dailyClaim: 'Забрати 💎', dailyAll: 'Усі три: ще +1 💎', dailyAllDone: 'Усі три виконано: +1 💎 отримано', dailyDoneToast: 'Завдання дня виконано! Забери кристал у вкладці нагород.', dailyGot: 'Кристал +{0} 💎',
@@ -4762,10 +4771,10 @@ const translations = {
     skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',
     skin_capy_knight: 'Knight Capy', skin_capy_hero: 'Superhero Capy', skin_capy_cowboy: 'Cowboy Capy', skin_capy_fairy: 'Fairy Capy', skin_capy_viking: 'Viking Capy', skin_capy_pilot: 'Pilot Capy',
     skinSay_capy_knight: "My sword is sharp and my prices are fair. Almost.", skinSay_capy_hero: "My superpower is discounts. The cape is free.", skinSay_capy_cowboy: "This town has one sheriff. And he sells things.", skinSay_capy_fairy: "A pinch of magic, and the price tags jump to the sky.", skinSay_capy_viking: "To the sale! Raid the discounts!", skinSay_capy_pilot: "Fasten your seatbelts: our profit is gaining altitude.",
-    skin_shop_ocean: 'Ocean shop', skin_street_candy: 'Candy pavement', skin_street_sand: 'Sandy path', skin_capy_gold: 'Golden Capy', skin_capy_diamond: 'Diamond Capy', skin_hero_gold: 'Golden heroes', skin_hero_diamond: 'Diamond heroes', skin_shop_diamond: 'Diamond shop', skin_street_diamond: 'Diamond road', skin_weather_diamondcloud: 'Diamond clouds',
+    skin_shop_ocean: 'Ocean street', skin_street_candy: 'Candy pavement', skin_street_sand: 'Sandy path', skin_capy_gold: 'Golden Capy', skin_capy_diamond: 'Diamond Capy', skin_hero_gold: 'Golden heroes', skin_hero_diamond: 'Diamond heroes', skin_shop_diamond: 'Diamond street', skin_street_diamond: 'Diamond road', skin_weather_diamondcloud: 'Diamond clouds',
     skinSay_capy_gold: "Golden fur and no discount on the shine. Well, for you there is one.", skinSay_capy_diamond: "Diamond Capy. Tap boldly: I sparkle, but I am tough as crystal.", skinSay_hero_gold: "Golden helpers: they work like clockwork and shine like coins.", skinSay_hero_diamond: "Diamond helpers shine so much the till squints.", skinSay_shop_diamond: "A diamond shop! Crystal windows and crystal-honest prices.", skinSay_street_diamond: "A diamond road. Walking on it feels like walking on a chandelier.", skinSay_weather_diamondcloud: "Diamond clouds: not rain here, but sparks.",
-    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy shop', skin_shop_gold: 'Golden shop', skin_weather_rainbow: 'Rainbow over town', skin_weather_lightning: 'Purple lightning', skin_street_moss: 'Mossy cobbles', skin_street_gold: 'Golden road', skin_weather_lightninggreen: 'Green lightning', skin_weather_lightningred: 'Red lightning', skin_capy_wizard: 'Wizard Capy', skin_capy_chef: 'Chef Capy', skin_capy_explorer: 'Explorer Capy', skin_capy_detective: 'Detective Capy', skin_capy_sailor: 'Sailor Capy', skin_shop_ice: 'Ice shop', skin_shop_wood: 'Wooden cabin', skin_shop_garden: 'Garden shop', skin_weather_cottoncloud: 'Cotton-candy clouds', skin_weather_goldcloud: 'Golden clouds', skin_weather_starcloud: 'Starry clouds', skin_hero_chef: 'Chef heroes', skin_hero_wizard: 'Wizard heroes', skin_hero_royal: 'Royal heroes', skin_capy_santa: 'Santa Capy', skin_capy_witch: 'Witch Capy', skin_capy_flower: 'Flower Capy', skin_capy_beach: 'Beach Capy', skin_capy_autumn: 'Autumn Capy', skin_hero_santa: 'Santa’s helpers', skin_hero_witch: 'Little witches', skin_shop_xmas: 'Christmas shop', skin_shop_halloween: 'Halloween shop', skin_shop_spring: 'Spring shop', skin_shop_autumn: 'Autumn shop', skin_street_snow: 'Snowy cobbles', skin_street_leaves: 'Leafy cobbles', skin_capy_mel: 'Capy the fox Mel', skin_capy_nika: 'Capy the bunny Nika', skinSay_capy_mel: 'I am Mel the fox. Sly only about the price: the price is fair, the discount is a secret.', skinSay_capy_nika: 'I am Nika the bunny. I hop to the till faster than the queue!', skinSay_capy_pirate: "Yo-ho-ho! Every coin is treasure, and the shop is my ship!", skinSay_capy_astro: "Houston, we have a sale! The orbit of prices is here.", skinSay_shop_candy: "It smells of caramel in here. I do not lick the walls. Almost.", skinSay_shop_gold: "The golden shop shines so bright the cashier wears sunglasses.", skinSay_weather_rainbow: "A rainbow over town. Where is the pot of gold? Oh, that is the till!", skinSay_weather_lightning: "Purple lightning? That is not a storm, that is a promo!", skinSay_hero_party: "A party every day! Confetti helpers, serious prices.", skinSay_hero_ninja: "Ninja helpers are here. You have not seen them. And you will not.", skinSay_capy_ep0: "I am almost Leonardo. Just cheaper.", skinSay_capy_ep1: "Retro is when everything is cool and nobody explains why.", skinSay_capy_ep2: "The disco ball spins, and so does the revenue!", skinSay_capy_ep3: "New game: \"Cashier vs. the Queue\". Hard level.", skinSay_capy_ep4: "The internet was invented to sell things. And cats, too.", skinSay_capy_ep5: "Eco trade: the bag is reusable, so is the profit.", skinSay_capy_ep6: "In space nobody hears the till. But we do.", skinSay_capy_ep7: "Neon blinks, prices do not. Principle!", skinSay_capy_wizard: "Abracadabra! And the goods are on the shelf. Well, they were delivered.", skinSay_capy_chef: "I do not cook, I stock up. But the hat is serious.", skinSay_capy_explorer: "The map says the treasure is somewhere near the till.", skinSay_capy_detective: "Who overcharged the customer? Elementary: the price tag.", skinSay_capy_sailor: "Calm in trade? Hoisting the sails, I mean the prices.", skinSay_shop_ice: "The ice shop: discounts do not melt here.", skinSay_shop_wood: "A wooden cabin smells of resin and honest business.", skinSay_shop_garden: "In the garden shop everything grows except prices. Almost.", skinSay_weather_cottoncloud: "Cotton candy clouds. Who took a bite? I am not saying anything.", skinSay_weather_goldcloud: "Golden clouds: even the sky decided to earn.", skinSay_weather_starcloud: "Starry clouds. Make a wish: a generous shopper!", skinSay_hero_chef: "Chef helpers! It smells tasty, but do not eat the goods.", skinSay_hero_wizard: "Wizard helpers: who said the queue cannot get shorter?", skinSay_hero_royal: "A royal team! Your Majesty, the till is on the right.", skinSay_street_wood: "The wooden path creaks. So trade is going well.", skinSay_street_brick: "Brick pavement: a clear road to the till.", skinSay_capy_santa: "Ho-ho-ho! Gifts at a discount, and the sack has plenty of room.", skinSay_capy_witch: "I am not a witch, I am a manager with a broom. But I wear the hat.", skinSay_capy_flower: "Flowers on me. Bees queue up, like everyone else.", skinSay_capy_beach: "A beach in the middle of town. Prices like a vacation!", skinSay_capy_autumn: "Autumn: the leaves fall, the revenue does not.", skinSay_hero_santa: "Santa’s helpers wrap gifts without a queue.", skinSay_hero_witch: "Little witch helpers: magically fast service.", skinSay_shop_xmas: "Christmas shop: the lights blink, the prices do not.", skinSay_shop_halloween: "Halloween shop: sweets or a discount!", skinSay_shop_spring: "Spring shop: prices are blooming. Gently, no panic.", skinSay_shop_autumn: "Autumn shop: warm, cozy, leaves on the roof.", skinSay_street_snow: "Snowy cobbles. Do not eat the snow! I stop myself too.", skinSay_street_leaves: "Leaves on the pavement: crunch-crunch, my favorite sound.",
-    tab_skins: 'Skins', skinsNote: 'Capy’s skin changes with the era by itself. Pick another one here, and tap “Switch to era skin” to get the era skin back. Arrows scroll the list.', skinBackToEpoch: 'Switch to era skin', skinWornToast: 'Now wearing: {0}', skinDefaultToast: 'Default look', skinHeroNone: 'Every animal wears it: shoppers already do, and heroes will once they join.', skinCat_capyEpoch: 'Capy by era', skinEpoch: 'Capy: {0}', skinOtherEpoch: 'Other era', skinCat_capy: 'Capy', skinCat_shop: 'Shop', skinCat_weather: 'Weather', skinCat_hero: 'Heroes & animals', skinCat_street: 'Pavement', skin_street_wood: 'Wooden boardwalk', skin_street_brick: 'Red brick',
+    skin_capy_pirate: 'Pirate Capy', skin_capy_astro: 'Astronaut Capy', skin_shop_candy: 'Candy street', skin_shop_gold: 'Golden street', skin_weather_rainbow: 'Rainbow over town', skin_weather_lightning: 'Purple lightning', skin_street_moss: 'Mossy cobbles', skin_street_gold: 'Golden road', skin_weather_lightninggreen: 'Green lightning', skin_weather_lightningred: 'Red lightning', skin_capy_wizard: 'Wizard Capy', skin_capy_chef: 'Chef Capy', skin_capy_explorer: 'Explorer Capy', skin_capy_detective: 'Detective Capy', skin_capy_sailor: 'Sailor Capy', skin_shop_ice: 'Ice street', skin_shop_wood: 'Wooden street', skin_shop_garden: 'Garden street', skin_weather_cottoncloud: 'Cotton-candy clouds', skin_weather_goldcloud: 'Golden clouds', skin_weather_starcloud: 'Starry clouds', skin_hero_chef: 'Chef heroes', skin_hero_wizard: 'Wizard heroes', skin_hero_royal: 'Royal heroes', skin_capy_santa: 'Santa Capy', skin_capy_witch: 'Witch Capy', skin_capy_flower: 'Flower Capy', skin_capy_beach: 'Beach Capy', skin_capy_autumn: 'Autumn Capy', skin_hero_santa: 'Santa’s helpers', skin_hero_witch: 'Little witches', skin_shop_xmas: 'Christmas street', skin_shop_halloween: 'Halloween street', skin_shop_spring: 'Spring street', skin_shop_autumn: 'Autumn street', skin_street_snow: 'Snowy cobbles', skin_street_leaves: 'Leafy cobbles', skin_capy_mel: 'Capy the fox Mel', skin_capy_nika: 'Capy the bunny Nika', skinSay_capy_mel: 'I am Mel the fox. Sly only about the price: the price is fair, the discount is a secret.', skinSay_capy_nika: 'I am Nika the bunny. I hop to the till faster than the queue!', skinSay_capy_pirate: "Yo-ho-ho! Every coin is treasure, and the shop is my ship!", skinSay_capy_astro: "Houston, we have a sale! The orbit of prices is here.", skinSay_shop_candy: "It smells of caramel in here. I do not lick the walls. Almost.", skinSay_shop_gold: "The golden shop shines so bright the cashier wears sunglasses.", skinSay_weather_rainbow: "A rainbow over town. Where is the pot of gold? Oh, that is the till!", skinSay_weather_lightning: "Purple lightning? That is not a storm, that is a promo!", skinSay_hero_party: "A party every day! Confetti helpers, serious prices.", skinSay_hero_ninja: "Ninja helpers are here. You have not seen them. And you will not.", skinSay_capy_ep0: "I am almost Leonardo. Just cheaper.", skinSay_capy_ep1: "Retro is when everything is cool and nobody explains why.", skinSay_capy_ep2: "The disco ball spins, and so does the revenue!", skinSay_capy_ep3: "New game: \"Cashier vs. the Queue\". Hard level.", skinSay_capy_ep4: "The internet was invented to sell things. And cats, too.", skinSay_capy_ep5: "Eco trade: the bag is reusable, so is the profit.", skinSay_capy_ep6: "In space nobody hears the till. But we do.", skinSay_capy_ep7: "Neon blinks, prices do not. Principle!", skinSay_capy_wizard: "Abracadabra! And the goods are on the shelf. Well, they were delivered.", skinSay_capy_chef: "I do not cook, I stock up. But the hat is serious.", skinSay_capy_explorer: "The map says the treasure is somewhere near the till.", skinSay_capy_detective: "Who overcharged the customer? Elementary: the price tag.", skinSay_capy_sailor: "Calm in trade? Hoisting the sails, I mean the prices.", skinSay_shop_ice: "The ice shop: discounts do not melt here.", skinSay_shop_wood: "A wooden cabin smells of resin and honest business.", skinSay_shop_garden: "In the garden shop everything grows except prices. Almost.", skinSay_weather_cottoncloud: "Cotton candy clouds. Who took a bite? I am not saying anything.", skinSay_weather_goldcloud: "Golden clouds: even the sky decided to earn.", skinSay_weather_starcloud: "Starry clouds. Make a wish: a generous shopper!", skinSay_hero_chef: "Chef helpers! It smells tasty, but do not eat the goods.", skinSay_hero_wizard: "Wizard helpers: who said the queue cannot get shorter?", skinSay_hero_royal: "A royal team! Your Majesty, the till is on the right.", skinSay_street_wood: "The wooden path creaks. So trade is going well.", skinSay_street_brick: "Brick pavement: a clear road to the till.", skinSay_capy_santa: "Ho-ho-ho! Gifts at a discount, and the sack has plenty of room.", skinSay_capy_witch: "I am not a witch, I am a manager with a broom. But I wear the hat.", skinSay_capy_flower: "Flowers on me. Bees queue up, like everyone else.", skinSay_capy_beach: "A beach in the middle of town. Prices like a vacation!", skinSay_capy_autumn: "Autumn: the leaves fall, the revenue does not.", skinSay_hero_santa: "Santa’s helpers wrap gifts without a queue.", skinSay_hero_witch: "Little witch helpers: magically fast service.", skinSay_shop_xmas: "Christmas shop: the lights blink, the prices do not.", skinSay_shop_halloween: "Halloween shop: sweets or a discount!", skinSay_shop_spring: "Spring shop: prices are blooming. Gently, no panic.", skinSay_shop_autumn: "Autumn shop: warm, cozy, leaves on the roof.", skinSay_street_snow: "Snowy cobbles. Do not eat the snow! I stop myself too.", skinSay_street_leaves: "Leaves on the pavement: crunch-crunch, my favorite sound.",
+    tab_skins: 'Skins', skinsNote: 'Capy’s skin changes with the era by itself. Pick another one here, and tap “Switch to era skin” to get the era skin back. Arrows scroll the list.', skinBackToEpoch: 'Switch to era skin', skinWornToast: 'Now wearing: {0}', skinDefaultToast: 'Default look', skinHeroNone: 'Every animal wears it: shoppers already do, and heroes will once they join.', skinCat_capyEpoch: 'Capy by era', skinEpoch: 'Capy: {0}', skinOtherEpoch: 'Other era', skinCat_capy: 'Capy', skinCat_shop: 'Buildings', skinCat_weather: 'Weather', skinCat_hero: 'Heroes & animals', skinCat_street: 'Pavement', skin_street_wood: 'Wooden boardwalk', skin_street_brick: 'Red brick',
     skinsReset: 'Reset all skins to the default look', skinsResetDone: 'All skins removed: default look. Your skins are still yours.', skinsResetNone: 'Everything already has the default look.',
     skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}', lootTag: '✨ EPIC LOOT ✨', lootWear: 'Wear it', lootClose: 'Awesome!', rainOn: 'Rain is on 🌧', rainOff: 'Rain is off', goalTravel: '⏳ Time travel is ready: +{0} 💎', goalCrystal: "⏳ Toward the first time shard: {0}%", goalDept: '🛒 Buy “{0}”: {1}/{2}', goalHire: '🐾 Level up to {1}: {0}', goalExpandNow: '🏪 You can expand the shop!', goalExpand: '🏪 Shop expansion: {0}%', goalNext: '🛒 Next: “{0}” · {1}%',
     dailyRemind: '📅 Daily quests: {0} of 3 done. Check the awards tab!', dailyRemindClaim: '📅 A daily quest is done. Claim your crystal in the awards tab!', dailyTitle: '📅 Daily quests', dailyNote: 'Three goals a day. A crystal for each, and one more for all three.', dailyClaim: 'Claim 💎', dailyAll: 'All three: +1 💎 more', dailyAllDone: 'All three done: +1 💎 received', dailyDoneToast: 'Daily quest done! Claim the crystal in the awards tab.', dailyGot: 'Crystal +{0} 💎',
@@ -5740,6 +5749,7 @@ function hslHex(h, sat, l) {
 }
 // п'ять кольорів стін по колу (на кожну епоху свої відтінки), дахи — парні до стін
 function houseColors(i) {
+  const tw = skinTownOn(); if (tw) { const k = ((i % 5) + 5) % 5; return { wall: tw.walls[k], roof: tw.roofs[k] }; }      // скін «Будівлі» (214_skin_town.js) фарбує будинки у свої кольори
   const tone = HOUSE_TONE[viewEpoch() % EPOCHS.length] || HOUSE_TONE[0], k = ((i % 5) + 5) % 5, hue = tone[2] + k * 72;
   return { wall: hslHex(hue, tone[0], tone[1]), roof: hslHex(hue + 170 + (k % 2) * 25, tone[0] * 0.8, 0.38) };
 }
@@ -6201,11 +6211,12 @@ function buildGroundLayer() {
   }
   farSkyline(g, x0, W);
   // будиночки
+  townHouses.length = 0; townHouses.glassReady = false;
   HOUSES.concat(extraHouses()).forEach((h0, i) => {
     const h = Object.assign({}, h0, { h: Math.round(h0.h * HOUSE_SCALE) });         // будинки вищі: верхівки сягають середини 4-го поверху торгового центру
     const spec = Object.assign({}, h, houseColors(i));                                // кожен будинок має свій колір стін і даху
 
-    drawHouse(g, spec, lamps);
+    if (!skinTownHouse(g, spec, i, lamps)) drawHouse(g, spec, lamps);      // скін «Будівлі» додає свої прикраси (214_skin_town.js)
     if (buildSeason === 'halloween') drawHalloweenHouse(g, spec);
   });
   drawBush(g, 40, 121);
@@ -9716,7 +9727,7 @@ function buildTabs() {
   ui.tabs.appendChild(more);
   ui.tabMore = more;
 }
-const TABS_PRIMARY = ['departments', 'team', 'epochs', 'story'];
+const TABS_PRIMARY = ['departments', 'team', 'epochs', 'skins'];
 // На телефоні вміст вкладки виїжджає над смужкою іконок; повторний дотик до тієї ж вкладки його ховає
 function setSheet(open) {
   ui.app.classList.toggle('sheet-open', open);
@@ -11613,7 +11624,7 @@ function updateAnimations(dt) {
 
   // хмаринки пливуть
   clouds.forEach(c => {
-    c.x += c.speed * dt;
+    c.x += c.speed * 1.6 * dt;                     // хмари пливуть жвавіше
     if (c.x > worldR() + 4) c.x = worldL() - 28;
   });
 
@@ -12840,13 +12851,13 @@ function initCutscene() {
 
 /* ====================== ЕКСКУРСІЯ ПО МЕНЮ ======================
    Після заставки: стрілка веде до кожної вкладки меню по черзі, гравець натискає на неї, а в куті стоять Мел і Ніка й пояснюють. */
-const TOUR_IDS = ['shop', 'departments', 'team', 'story', 'skins', 'seasons', 'achievements', 'settings', 'news'];
+const TOUR_IDS = ['shop', 'departments', 'team', 'skins', 'story', 'seasons', 'achievements', 'settings', 'news'];
 const TOUR_TXT = {
   uk: { shop: ['m', 'Це «Магазин». Тут ти тапаєш, прокачуєш тап і розширюєш магазин. Натисни сюди!'], departments: ['n', '«Відділи» самі приносять монети, навіть коли ти не граєш. Тисни!'], team: ['m', 'У «Команді» наймаєш звірят-помічників. Кожен допомагає по-своєму.'],
-    story: ['n', '«Щоденник»: глави історії та історії епох. Їх можна перечитати.'], skins: ['m', '«Скіни»: змінюй вигляд Капі, магазину й героїв за кристали.'], seasons: ['n', '«Пори року» і час доби. Замок відкриється після 2-ї епохи.'],
+    story: ['n', '«Щоденник»: глави історії та історії епох. Їх можна перечитати.'], skins: ['m', '«Скіни»: змінюй вигляд Капі, будівель і героїв за кристали.'], seasons: ['n', '«Пори року» і час доби. Замок відкриється після 2-ї епохи.'],
     achievements: ['m', '«Нагороди»: тут чекають призи за досягнення.'], settings: ['n', '«Налаштування»: мова, звук, перегляд епох та анімації.'], news: ['m', 'А це скринька розробників! Там новини про оновлення, а ще можна написати нам. Відкрий її!'], end: ['m', 'От і все! Тапай по магазину й розвивай його. Ми завжди поруч!'], endBtn: 'ГРАТИ!', skip: 'Пропустити тур' },
   en: { shop: ['m', 'This is the Shop. Tap, boost your tap and expand the shop here. Press it!'], departments: ['n', 'Departments earn coins by themselves, even when you are away. Press!'], team: ['m', 'In Team you hire animal helpers. Each one helps in their own way.'],
-    story: ['n', 'Diary: story chapters and epoch stories. You can reread them.'], skins: ['m', 'Skins: change the look of Capy, the shop and heroes for crystals.'], seasons: ['n', 'Seasons and time of day. The lock opens after the 2nd epoch.'],
+    story: ['n', 'Diary: story chapters and epoch stories. You can reread them.'], skins: ['m', 'Skins: change the look of Capy, the buildings and heroes for crystals.'], seasons: ['n', 'Seasons and time of day. The lock opens after the 2nd epoch.'],
     achievements: ['m', 'Awards: prizes wait here for your achievements.'], settings: ['n', 'Settings: language, sound, epoch viewing and animations.'], news: ['m', 'And this is the developers mailbox! News about updates are there, and you can write to us. Open it!'], end: ['m', 'That is all! Tap the shop and grow it. We are always nearby!'], endBtn: 'PLAY!', skip: 'Skip tour' }
 };
 const tour = { on: false, i: 0, cb: null, timer: 0, btn: null, handler: null, talk: 0, news: false, wrapped: false };
@@ -14757,7 +14768,7 @@ function setSkin(type, i) {
   if (i !== -1) { const nm = skinOn(type); if (nm) setTimeout(() => capySay(type + '_' + nm), 350); }       // Капі коментує новий скін
   if (type === 'capy') drawCapiPortrait();
   else if (type === 'hero') refreshTeamPortraits();
-  else if (type === 'shop') rebuildShop(true);
+  else if (type === 'shop') { rebuildShop(true); groundLayer = buildGroundLayer(); }      // скін «Будівлі» міняє і задні будинки
   else if (type === 'street') groundLayer = buildGroundLayer();
   playSfx('wear');
   skinsSig = '';
@@ -14781,10 +14792,11 @@ function skinPreviewCanvas(type, name) {
     } else if (type === 'street') {
       cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
       paintCobble(g, 0, 0, 64, 40, name || 'stone');
-    } else if (type === 'shop') {
+    } else if (type === 'shop') {                                   // «Будівлі»: маркет на тлі задніх будинків у стилі скіна
       const geo = buildShopCanvas(state.shopLevel, state.depts.map(tierOf));
-      cv.width = geo.w; cv.height = geo.h; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-      g.drawImage(geo.canvas, 0, 0);
+      cv.width = geo.w + 64; cv.height = geo.h + 6; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+      skinTownPreview(g, cv.width, cv.height);
+      g.drawImage(geo.canvas, 32, 4);
     } else {
       cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
       for (let y = 0; y < 40; y++) { g.fillStyle = y < 14 ? '#8fd3ea' : y < 28 ? '#b8e3f5' : '#dff3fa'; g.fillRect(0, y, 64, 1); }
@@ -14826,7 +14838,7 @@ function updateSkinsUI() {
   if (keepH) ui.skinsList.style.minHeight = keepH + 'px';
   Promise.resolve().then(() => { ui.skinsList.style.minHeight = ''; if (sc) sc.scrollTop = keepTop; });
   ui.skinsList.innerHTML = '';
-  [['capy', false], ['shop', false], ['weather', false], ['street', false], ['hero', false]].forEach(([type, epochGroup]) => {
+  [['capy', false], ['weather', false], ['street', false], ['hero', false], ['shop', false]].forEach(([type, epochGroup]) => {
     const card = document.createElement('div');
     card.className = 'card skin-cat';
     const gkey = type + (epochGroup ? 'E' : '');
@@ -15121,6 +15133,7 @@ function drawSkinShopExtras(sc) {
   withShopScale(sc, () => {
     if (SKIN_SIGN_ANIM[sk]) { ctx.save(); ctx.beginPath(); ctx.rect(shop.x + s.x, shop.y + s.y, s.w, s.h); ctx.clip(); SKIN_SIGN_ANIM[sk](shop.x + s.x, shop.y + s.y, s.w, s.h, t); ctx.restore(); }
     if (sk === 'ocean') drawRoofFountains(t);
+    drawSkinShopAnim(sk, t);                                  // рухомі деталі маркету під скін (214_skin_town.js)
   });
 }
 //#part 213_epoch_roof_anim.js
@@ -15156,6 +15169,578 @@ function drawSpaceTelescope(t) {
   R(ctx, ex - 1, ey - 1, 3, 3, '#5fb8ff'); ctx.globalAlpha = g; R(ctx, ex, ey - 1, 1, 1, W); R(ctx, ex - 1, ey, 1, 1, W); ctx.globalAlpha = 1;
   if (animOn() && (t % 7) < 0.6) { const u = (t % 7) / 0.6; ctx.globalAlpha = 1 - u; R(ctx, ex + Math.round(ca * 3), ey + Math.round(sa * 3) - 2, 1, 5, W); R(ctx, ex + Math.round(ca * 3) - 2, ey + Math.round(sa * 3), 5, 1, W); ctx.globalAlpha = 1; }   // спалах-хрестик раз на 7 с
 }
+//#part 214_skin_town.js
+/* =====================================================================
+   СКІНИ «БУДІВЛІ»: скін маркету міняє і задні будинки вулиці.
+   SHOP_TOWN[скін] = { walls, roofs — 5 кольорів по колу (архітектура епохи лишається), deco — нерухомі прикраси на шарі землі,
+   anim — рухомі деталі на будинках (щокадру, лише на рівні даху й вище, щоб дерева не перекривались), shop — рухомі деталі маркету }.
+   Гачки: houseColors (140_a), buildGroundLayer (140_b), setSkin (210), render (260), drawSkinShopExtras (212).
+   ===================================================================== */
+const townHouses = [];            // будинки поточного шару землі: { x, w, h, top, tops[], roofY, cx, i, glass }
+function skinTownOn() { const sk = skinOn('shop'); return (sk && SHOP_TOWN[sk]) || null; }
+const TW = {
+  px(g, x, y, c) { R(g, Math.round(x), Math.round(y), 1, 1, c); },
+  disc(g, cx, cy, r, c) { cx = Math.round(cx); cy = Math.round(cy); for (let dy = -r; dy <= r; dy++) { const h = Math.round(Math.sqrt(r * r + 0.5 - dy * dy)); R(g, cx - h, cy + dy, h * 2 + 1, 1, c); } },
+  stamp(g, x0, y0, rows, pal, flip) { rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) { const c = pal[row[flip ? row.length - 1 - i : i]]; if (c) R(g, x0 + i, y0 + j, 1, 1, c); } }); },
+  top(hs, x) { const v = hs.tops[Math.round(x) - hs.x + 6]; return v == null ? hs.top : v; },
+  night() { return (typeof sky !== 'undefined' && sky.night) || 0; },
+  // рядок вогників уздовж силуету даху (шпилі й антени пропускає)
+  roofLine(hs, step, fn) {
+    for (let x = hs.x + 2, k = 0; x < hs.x + hs.w - 2; x += step, k++) {
+      let y = TW.top(hs, x); const a = TW.top(hs, x - 2), b = TW.top(hs, x + 2);
+      if (y < Math.min(a, b) - 2) y = Math.min(a, b);
+      if (y < hs.roofY - 16) continue;
+      fn(x, y, k);
+    }
+  },
+  // прапорець, що майорить: древко від (x, yb) угору, полотно w×h, кольори смуг
+  flag(g, x, yb, pole, w, h, cols, t, dir) {
+    R(g, x, yb - pole, 1, pole, '#4a3a2a'); R(g, x, yb - pole - 1, 1, 1, '#ffe08a');
+    for (let i = 0; i < w; i++) {
+      const off = Math.round(Math.sin(t * 5.2 - i * 0.75) * Math.min(1.6, 0.4 + i * 0.3)), xx = x + (dir < 0 ? -1 - i : 1 + i);
+      for (let j = 0; j < h; j++) R(g, xx, yb - pole + j + off, 1, 1, cols[Math.floor(j * cols.length / h)]);
+      if (i === w - 1 || i % 3 === 0) R(g, xx, yb - pole + h + off, 1, 1, 'rgba(0,0,0,0.18)');
+    }
+  },
+  puffs(g, x, y, t, cols, n, rise, spd) {             // клубочки диму чи вати, що піднімаються й тануть
+    for (let k = 0; k < n; k++) {
+      const u = ((t * spd + k / n) % 1 + 1) % 1, r = 1 + Math.round(u * 3);
+      g.globalAlpha = Math.max(0, 1 - u * u) * 0.9;
+      TW.disc(g, x + Math.sin(u * 5 + k * 2) * 2.4 + u * 4, y - u * rise, r, cols[k % cols.length]);
+    }
+    g.globalAlpha = 1;
+  },
+  bat(g, x, y, t, ph, c) {
+    const up = Math.floor(t * 9 + ph) % 2 === 0;
+    TW.stamp(g, Math.round(x) - 3, Math.round(y) - 1, up ? ['W.....W', 'WW.B.WW', '..BBB..'] : ['...B...', 'WWBBBWW', 'W.....W'], { W: c, B: c });
+    TW.px(g, x - 1, y + (up ? 1 : 0), '#ffcf4a'); TW.px(g, x + 1, y + (up ? 1 : 0), '#ffcf4a');
+  },
+  lolly(g, x, yb, t, c1, c2, r) {                     // льодяник, що крутиться: паличка й спіральний диск
+    R(g, x, yb - 7, 1, 7, '#ffffff'); R(g, x + 1, yb - 7, 1, 7, '#e8d6e0');
+    const cy = yb - 7 - r;
+    for (let dy = -r - 1; dy <= r + 1; dy++) for (let dx = -r - 1; dx <= r + 1; dx++) {
+      const d = Math.sqrt(dx * dx + dy * dy); if (d > r + 0.6) continue;
+      let c = '#6a2440';
+      if (d <= r - 0.4) { const a = Math.atan2(dy, dx) + t * 3 - d * 0.9; c = (Math.floor(a / (Math.PI / 3)) % 2 + 2) % 2 ? c1 : c2; }
+      R(g, x + dx, cy + dy, 1, 1, c);
+    }
+    TW.px(g, x - Math.round(r * 0.45), cy - Math.round(r * 0.45), '#ffffff');
+  },
+  coin(g, x, y, t, r) {                              // монета, що обертається (ширина за косинусом)
+    const k = Math.abs(Math.cos(t * 2.2)), hw = Math.max(0, Math.round(r * k));
+    for (let dy = -r; dy <= r; dy++) { const h = Math.round(Math.sqrt(r * r + 0.5 - dy * dy) * k); R(g, x - h - 1, y + dy, h * 2 + 3, 1, '#7a4a14'); }
+    for (let dy = -r + 1; dy <= r - 1; dy++) { const h = Math.round(Math.sqrt((r - 1) * (r - 1) + 0.5 - dy * dy) * k); R(g, x - h, y + dy, h * 2 + 1, 1, dy < 0 ? '#ffd84a' : '#f2b62e'); }
+    if (hw >= 2) { R(g, x - Math.floor(hw / 2), y - 1, 1, 3, '#b8862a'); R(g, x + Math.floor(hw / 2), y - 1, 1, 3, '#b8862a'); R(g, x - 1, y - r + 1, 1, 1, '#fff6c0'); }
+    else R(g, x, y - r, 1, r * 2 + 1, '#b8862a');
+  }
+};
+
+// ---------- малювання будинку під скін: міряємо силует даху (до/після), далі прикраси ----------
+function skinTownHouse(g, spec, i, lamps) {
+  const tw = skinTownOn();
+  if (!tw) return false;
+  const top = LAYOUT.horizonY - spec.h, cw = g.canvas.width, ch = g.canvas.height, tf = g.getTransform(), ox = Math.round(tf.e), oy = Math.round(tf.f);
+  const y0 = Math.max(-oy, top - 44), hh = LAYOUT.horizonY - y0;
+  const sx = spec.x - 6 + ox, ax = Math.max(0, sx), aw = Math.min(cw, sx + spec.w + 12) - ax, ay = y0 + oy;
+  const g0 = houseGlass.length;
+  let before = null;
+  if (aw > 0 && hh > 0 && ay + hh <= ch) before = g.getImageData(ax, ay, aw, hh).data;
+  drawHouse(g, spec, lamps);
+  const tops = new Array(spec.w + 12).fill(null);
+  if (before) {
+    const img = g.getImageData(ax, ay, aw, hh), after = img.data, chg = new Uint8Array(aw * hh);
+    for (let c = 0; c < aw; c++) for (let r = 0; r < hh; r++) {
+      const k = (r * aw + c) * 4;
+      if (before[k] !== after[k] || before[k + 1] !== after[k + 1] || before[k + 2] !== after[k + 2] || before[k + 3] !== after[k + 3]) { chg[r * aw + c] = 1; if (tops[ax - sx + c] == null) tops[ax - sx + c] = y0 + r; }
+    }
+    townRecolor(after, chg, aw, hh, top - y0, sx - ax + 6, spec.w, tw.walls[((i % 5) + 5) % 5], tw.roofs[((i % 5) + 5) % 5]);
+    g.putImageData(img, ax, ay);
+  }
+  const mid = tops.slice(8, spec.w + 4).filter(v => v != null).sort((a, b) => a - b);
+  const roofY = mid.length ? mid[Math.floor(mid.length * 0.6)] : top;
+  const hs = { x: spec.x, w: spec.w, h: spec.h, top, tops, roofY, i, cx: spec.x + (spec.w >> 1), glass: houseGlass.slice(g0), seed: hash2(spec.x + 91, spec.h + 7) };
+  let best = 99;                                                       // точка на даху ближче до середини, де дах рівний
+  for (let x = spec.x + 6; x < spec.x + spec.w - 6; x++) { const y = TW.top(hs, x); if (Math.abs(y - roofY) <= 1 && Math.abs(x - hs.cx) < best) { best = Math.abs(x - hs.cx); hs.rx = x; } }
+  if (hs.rx == null) hs.rx = hs.cx;
+  hs.ry = TW.top(hs, hs.rx);
+  if (tw.deco) tw.deco(g, hs);
+  townHouses.push(hs);
+  return true;
+}
+
+// ---------- перефарбування: основний колір стін (і даху) з усіма відтінками переходить у колір скіна; вікна й дрібниці лишаються ----------
+function rgbHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  if (!d) return [0, 0, l];
+  const s = d / (1 - Math.abs(2 * l - 1));
+  const h = mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return [h * 60, s, l];
+}
+function hslRgb(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, k = Math.floor(((h % 360) + 360) % 360 / 60);
+  const [r, g, b] = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][k];
+  return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+}
+function townRecolor(d, chg, aw, hh, wallRow, hx, hw, wallHex, roofHex) {
+  const hex = s => rgbHsl(parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16));
+  const dom = (r0, r1) => {                                            // найчастіший колір серед намальованих пікселів у смузі рядків
+    const cnt = new Map(); let best = null, bn = 0;
+    for (let r = Math.max(0, r0); r < Math.min(hh, r1); r++) for (let c = 0; c < aw; c++) {
+      const p = r * aw + c; if (!chg[p] || d[p * 4 + 3] < 250) continue;
+      const e = c - hx, wt = e < 5 || e >= hw - 5 ? 0 : 1;                // кутові камені й пілястри не рахуються
+      if (!wt) continue;
+      const key = (d[p * 4] << 16) | (d[p * 4 + 1] << 8) | d[p * 4 + 2], n = (cnt.get(key) || 0) + wt; cnt.set(key, n);
+      if (n > bn) { bn = n; best = key; }
+    }
+    return best == null || bn < 12 ? null : rgbHsl(best >> 16, (best >> 8) & 255, best & 255);
+  };
+  const near = (p, q) => {
+    if (p[1] < 0.14 && q[1] < 0.14) return Math.abs(p[2] - q[2]) < 0.3;
+    const dh = Math.abs(((p[0] - q[0]) % 360 + 540) % 360 - 180);
+    return dh < 24 && Math.abs(p[1] - q[1]) < 0.32 && Math.abs(p[2] - q[2]) < 0.34;
+  };
+  const W = dom(wallRow + 3, hh - 3), Rf = dom(0, wallRow + 1), tW = hex(wallHex), tR = hex(roofHex);
+  const map = (k, src, tg) => {
+    const p = rgbHsl(d[k], d[k + 1], d[k + 2]), l = Math.max(0.04, Math.min(0.97, tg[2] + (p[2] - src[2]) * 1.1));
+    const [r, g, b] = hslRgb(tg[0] + (src[1] < 0.14 ? 0 : (((p[0] - src[0]) % 360 + 540) % 360 - 180) * 0.5), tg[1], l);
+    d[k] = r; d[k + 1] = g; d[k + 2] = b;
+  };
+  for (let r = 0; r < hh; r++) for (let c = 0; c < aw; c++) {
+    const p = r * aw + c; if (!chg[p] || d[p * 4 + 3] < 200) continue;
+    const k = p * 4, hsl = rgbHsl(d[k], d[k + 1], d[k + 2]);
+    if (W && r >= wallRow - 1 && near(hsl, W)) map(k, W, tW);
+    else if (Rf && r <= wallRow + 1 && near(hsl, Rf)) map(k, Rf, tR);
+  }
+}
+
+// ---------- тло картки скіна: небо епохи, ряд будинків під скін, тротуар (глобальні списки вікон і будинків не змінюються) ----------
+function skinTownPreview(g, W, H) {
+  const sky = currentEpoch().sky || ['s', 'S', 'w'], base = H - 9;
+  for (let y = 0; y < base; y++) R(g, 0, y, W, 1, sky[Math.min(2, Math.floor(y * 3 / base))]);
+  const keep = { glass: houseGlass, doors: houseDoors, list: townHouses.slice(), ready: townHouses.glassReady };
+  houseGlass = []; houseDoors = [];
+  g.save(); g.translate(0, base - LAYOUT.horizonY);
+  try {
+    for (let x = -10, i = 0; x < W; i++) {
+      const hs = hash2(i * 7 + 3, 11), w = 44 + hs % 14, spec = Object.assign({ x, w, h: Math.round((54 + (hs >>> 4) % 20) * HOUSE_SCALE) }, houseColors(i));
+      if (!skinTownHouse(g, spec, i, [])) drawHouse(g, spec, []);
+      x += w;
+    }
+  } finally { g.restore(); houseGlass = keep.glass; houseDoors = keep.doors; townHouses.length = 0; keep.list.forEach(h => townHouses.push(h)); townHouses.glassReady = keep.ready; }
+  g.globalAlpha = 0.12; R(g, 0, 0, W, base, 'W'); g.globalAlpha = 1;
+  R(g, 0, base, W, H - base, 'E'); R(g, 0, base, W, 1, 'e');
+}
+
+// ---------- рухомі деталі будинків (щокадру, після шару землі) ----------
+function drawSkinTownAnim(time) {
+  const tw = skinTownOn();
+  if (!tw || !tw.anim || !townHouses.length) return;
+  const t = animOn() ? animClock : 0, L = -view.offX - 30, Rr = -view.offX + view.w + 30;
+  if (!townHouses.glassReady) {                                        // вікна, сховані деревами чи магазином, не анімуються
+    const vis = new Set(houseGlass.map(r => r[0] + ',' + r[1]));
+    townHouses.forEach(hs => { hs.glass = hs.glass.filter(r => vis.has(r[0] + ',' + r[1])); });
+    townHouses.glassReady = true;
+  }
+  townHouses.forEach(hs => {
+    if (hs.x + hs.w < L || hs.x > Rr) return;
+    if (shop && hs.x + hs.w > shop.x + 6 && hs.x < shop.x + shop.w - 6 && hs.roofY > shop.y + 4) return;     // за маркетом не видно
+    tw.anim(ctx, hs, t);
+  });
+  ctx.globalAlpha = 1;
+}
+function drawSkinShopAnim(sk, t) {
+  const tw = SHOP_TOWN[sk];
+  if (tw && tw.shop && shop && shop.sign) { tw.shop(ctx, t, shop.x, shop.y + shop.sign.y - 9); ctx.globalAlpha = 1; }
+}
+// гірлянда з лампочок, що біжать по краю вивіски маркету
+function shopBulbs(g, t, cols, step) {
+  const s = shop.sign, x0 = shop.x + s.x - 1, y0 = shop.y + s.y - 2, x1 = shop.x + s.x + s.w, y1 = shop.y + s.y + s.h + 1;
+  const n = TW.night(), ph = Math.floor(t * 6);
+  let k = 0;
+  const bulb = (x, y) => { const on = (k + ph) % 3 !== 0, c = cols[(k + (ph >> 1)) % cols.length]; k++;
+    if (on && n > 0.15) { g.globalAlpha = 0.3 * n; R(g, x - 1, y - 1, 3, 3, c); g.globalAlpha = 1; }
+    R(g, x, y, 1, 1, on ? c : '#5a4a50'); };
+  for (let x = x0; x <= x1; x += step) bulb(x, y0);
+  for (let x = x1; x >= x0; x -= step) bulb(x, y1);
+}
+
+/* ======================= ЦУКЕРКИ ======================= */
+const SHOP_TOWN = {};
+SHOP_TOWN.candy = {
+  walls: ['#ffd3e4', '#c9f2df', '#fff1b8', '#ddd0ff', '#c4e8ff'],
+  roofs: ['#e8467c', '#3fb89a', '#ff8a5c', '#9b6ae0', '#4aa6e8'],
+  deco(g, hs) {
+    const { x, w, top } = hs, base = LAYOUT.horizonY;
+    for (let xx = x + 1; xx < x + w - 1; xx++) {                        // глазур по верху стін з патьоками
+      const d = (hash2(xx * 3 + 1, hs.seed) % 7) < 3 ? 1 + hash2(xx, 5) % 4 : 0;
+      R(g, xx, top, 1, 2 + d, '#fffafc'); R(g, xx, top + 2 + d, 1, 1, '#f3b6cf');
+      if (hash2(xx, top) % 9 === 0) R(g, xx, top + 1, 1, 1, ['#ff5c8a', '#4fc3f7', '#ffd23f', '#7ed957'][xx % 4]);
+    }
+    [x + 1, x + w - 3].forEach(cx => {                                    // кути — смугасті цукрові палички
+      for (let y = top + 3; y < base - 1; y++) for (let dx = 0; dx < 2; dx++) R(g, cx + dx, y, 1, 1, ((y + dx) % 6) < 3 ? '#e8467c' : '#ffffff');
+    });
+    hs.glass.forEach((r, k) => {                                          // під вікнами — ящики з драже
+      if (k % 2) return;
+      R(g, r[0] - 1, r[1] + r[3], r[2] + 2, 2, '#c43d78'); R(g, r[0] - 1, r[1] + r[3], r[2] + 2, 1, '#ff8fb8');
+      for (let i = 0; i < r[2]; i += 2) R(g, r[0] + i, r[1] + r[3] - 1, 1, 1, ['#ffd23f', '#7ed957', '#4fc3f7', '#ff5c8a'][(i >> 1) % 4]);
+    });
+    if (hs.i % 3 === 0) {                                                // кекс на даху
+      const cx = hs.rx, yb = hs.ry;
+      for (let j = 0; j < 4; j++) R(g, cx - 4 + (j >> 1), yb - 4 + j, 9 - (j >> 1) * 2, 1, j % 2 ? '#e8467c' : '#ff8fb8');
+      for (let k = -3; k <= 3; k += 2) R(g, cx + k, yb - 4, 1, 4, '#c43d78');
+      TW.disc(g, cx, yb - 7, 4, '#7a2a4a'); TW.disc(g, cx, yb - 7, 3, '#fffafc'); R(g, cx - 3, yb - 6, 7, 2, '#ffd3e4');
+      [[-2, -8, '#4fc3f7'], [1, -9, '#ffd23f'], [2, -6, '#7ed957'], [-1, -6, '#ff5c8a']].forEach(([dx, dy, c]) => R(g, cx + dx, yb + dy, 1, 1, c));
+      TW.disc(g, cx, yb - 12, 1, '#d8203c'); R(g, cx, yb - 14, 1, 1, '#3f8a3a');
+    }
+  },
+  anim(g, hs, t) {
+    const n = TW.night();
+    TW.roofLine(hs, 4, (x, y, k) => {                                    // вогники-драже по краю даху, переливаються
+      const c = ['#ff5c8a', '#ffd23f', '#7ed957', '#4fc3f7', '#c78bff'][(k + Math.floor(t * 2.5)) % 5];
+      if (n > 0.15) { g.globalAlpha = 0.28 * n; R(g, x - 1, y - 2, 3, 3, c); g.globalAlpha = 1; }
+      R(g, x, y - 1, 1, 1, c);
+    });
+    if (hs.i % 3 === 1) TW.lolly(g, hs.rx, hs.ry, t + hs.i, '#ff5c8a', '#ffffff', 4);
+    else if (hs.i % 3 === 2) {                                           // рожева труба з цукровою ватою
+      const x = hs.rx + 6, y = hs.ry;
+      R(g, x - 2, y - 6, 5, 6, '#7a2a4a'); R(g, x - 1, y - 6, 3, 6, '#ff8fb8'); R(g, x - 2, y - 7, 5, 1, '#e8467c'); R(g, x - 1, y - 5, 1, 4, '#ffd3e4');
+      TW.puffs(g, x, y - 9, t + hs.i * 0.37, ['#ffc4dc', '#fff0f6', '#ffb0d0'], 4, 20, 0.32);
+    }
+    if (hs.i % 4 === 0 && !state.settings.noFly) {                       // повітряна кулька злітає з даху й повертається
+      const u = ((t * 0.09 + hs.i * 0.21) % 1), y = hs.ry - 10 - u * 70, x = hs.x + 5 + Math.sin(u * 9 + hs.i) * 3;
+      g.globalAlpha = u > 0.85 ? (1 - u) / 0.15 : 1;
+      const c = ['#ff5c8a', '#4fc3f7', '#ffd23f'][hs.i % 3];
+      TW.disc(g, x, y, 3, '#5a2440'); TW.disc(g, x, y, 2, c); TW.px(g, x - 1, y - 1, '#ffffff'); TW.px(g, x, y + 4, '#5a2440');
+      for (let k = 5; k < 11; k++) TW.px(g, x + Math.round(Math.sin(t * 4 + k) * 0.6), y + k, '#ffffff');
+      g.globalAlpha = 1;
+    }
+  },
+  shop(g, t, sx, roofY) {
+    shopBulbs(g, t, ['#ff5c8a', '#ffd23f', '#7ed957', '#4fc3f7'], 4);
+    TW.lolly(g, sx + 9, roofY + 1, t, '#ff5c8a', '#ffffff', 5);
+    TW.lolly(g, sx + shop.w - 10, roofY + 1, -t * 1.1, '#4fc3f7', '#ffffff', 5);
+    if (shop.roofSign && !state.settings.noFly) {                        // посипка злітає над вивіскою
+      const rs = shop.roofSign, cx = sx + rs.x + (rs.w >> 1);
+      for (let k = 0; k < 8; k++) {
+        const u = ((t * 0.45 + k / 8) % 1), x = cx + Math.round(Math.sin(k * 2.3) * (rs.w / 2 + 4) * u), y = shop.y + rs.y - 2 - Math.round(Math.sin(u * Math.PI) * 14);
+        g.globalAlpha = 1 - u * 0.6; R(g, x, y, 2, 1, ['#ff5c8a', '#ffd23f', '#7ed957', '#4fc3f7'][k % 4]);
+      }
+      g.globalAlpha = 1;
+    }
+  }
+};
+
+/* ======================= ЗОЛОТО ======================= */
+SHOP_TOWN.gold = {
+  walls: ['#f6e3a8', '#efd17e', '#fff2cc', '#e2bf6a', '#f3dc9a'],
+  roofs: ['#8a5a1c', '#b8862a', '#6e4518', '#a8742a', '#7a4a14'],
+  deco(g, hs) {
+    const { x, w, top } = hs, base = LAYOUT.horizonY;
+    R(g, x, top, w, 1, '#7a4a14'); R(g, x, top + 1, w, 2, '#f2c94c'); R(g, x, top + 1, w, 1, '#fff3b0'); R(g, x, top + 3, w, 1, '#b8862a');   // золотий карниз
+    for (let xx = x + 2; xx < x + w - 2; xx += 4) R(g, xx, top + 4, 2, 1, '#d9a83a');                                                       // зубчики під ним
+    R(g, x, base - 4, w, 1, '#7a4a14'); R(g, x, base - 3, w, 3, '#e2b648'); R(g, x, base - 3, w, 1, '#fff3b0');                               // цоколь
+    [x + 1, x + w - 4].forEach(cx => {                                   // пілястри з капітелями
+      R(g, cx, top + 5, 3, base - top - 9, '#f2c94c'); R(g, cx, top + 5, 1, base - top - 9, '#fff3b0'); R(g, cx + 2, top + 5, 1, base - top - 9, '#b8862a');
+      R(g, cx - 1, top + 5, 5, 2, '#b8862a'); R(g, cx - 1, top + 5, 5, 1, '#fff3b0');
+    });
+    hs.glass.forEach(r => { R(g, r[0] - 1, r[1] - 2, r[2] + 2, 1, '#b8862a'); R(g, r[0], r[1] - 3, r[2], 1, '#f2c94c'); TW.px(g, r[0] + (r[2] >> 1), r[1] - 4, '#f2c94c'); });   // золоті брівки над вікнами
+    if (hs.i % 2 === 0) {                                                // золотий купол зі шпилем
+      const cx = hs.rx, yb = hs.ry;
+      R(g, cx - 5, yb - 2, 11, 2, '#7a4a14'); R(g, cx - 4, yb - 2, 9, 1, '#e2b648');
+      for (let dy = 0; dy <= 5; dy++) { const h = Math.round(Math.sqrt(30.5 - dy * dy)); R(g, cx - h, yb - 3 - dy, h * 2 + 1, 1, '#7a4a14'); if (h > 1) R(g, cx - h + 1, yb - 3 - dy, h * 2 - 1, 1, dy > 3 ? '#ffe27a' : '#f2c94c'); }
+      R(g, cx - 2, yb - 7, 1, 3, '#fff3b0'); R(g, cx + 3, yb - 6, 1, 3, '#b8862a');
+      R(g, cx, yb - 13, 1, 5, '#b8862a'); TW.disc(g, cx, yb - 14, 1, '#ffe27a');
+    }
+  },
+  anim(g, hs, t) {
+    for (let xx = hs.x + 3, k = 0; xx < hs.x + hs.w - 3; xx += 7, k++) {   // зблиски бігають по карнизу
+      const v = Math.sin(t * 2.4 - xx * 0.09 + hs.i); if (v > 0.55) sparkPlus(xx, hs.top + 1, (v - 0.55) / 0.45, '#fff3b0');
+    }
+    if (hs.i % 2 === 1) TW.flag(g, hs.rx, hs.ry, 12, 8, 5, ['#ffd84a', '#d8203c', '#ffd84a'], t + hs.i, hs.i % 4 === 1 ? 1 : -1);
+    else { const v = Math.sin(t * 1.7 + hs.i * 2); if (v > 0.3) sparkPlus(hs.rx, hs.ry - 14, (v - 0.3) / 0.7, '#ffffff'); }
+  },
+  shop(g, t, sx, roofY) {
+    shopBulbs(g, t, ['#ffe27a', '#fff6c0', '#f2b62e'], 4);
+    TW.flag(g, sx + 6, roofY + 1, 16, 10, 6, ['#d8203c', '#ffd84a', '#d8203c'], t, 1);
+    TW.flag(g, sx + shop.w - 7, roofY + 1, 16, 10, 6, ['#d8203c', '#ffd84a', '#d8203c'], t + 0.7, -1);
+    if (shop.roofSign) { const rs = shop.roofSign; TW.coin(g, sx + rs.x + (rs.w >> 1), shop.y + rs.y - 8, t, 5); }
+  }
+};
+
+/* ======================= ХЕЛЛОВІН ======================= */
+SHOP_TOWN.halloween = {
+  walls: ['#5d4a78', '#465264', '#6e4c3c', '#53406e', '#5a6470'],
+  roofs: ['#2a1d33', '#c45a1c', '#1f2633', '#5c2a6e', '#3a2a1a'],
+  deco(g, hs) {
+    const { x, w, top } = hs, base = LAYOUT.horizonY;
+    for (let xx = x + 1; xx < x + w - 1; xx++) {                        // зелений слиз стікає з-під даху
+      if (hash2(xx * 5, hs.seed) % 5) continue;
+      const d = 2 + hash2(xx, 9) % 6; R(g, xx, top, 1, d, '#7ed957'); R(g, xx, top + d, 1, 1, '#3f8a3a'); TW.px(g, xx, top + 1, '#c8f59a');
+    }
+    const wx = x + 1, wy = top + 2;                                      // павутина в кутку
+    lineG(g, wx, wy, wx + 9, wy, '#e8e4f0'); lineG(g, wx, wy, wx, wy + 9, '#e8e4f0'); lineG(g, wx, wy, wx + 7, wy + 7, '#e8e4f0');
+    lineG(g, wx + 4, wy, wx, wy + 4, '#c8c0d8'); lineG(g, wx + 7, wy, wx + 5, wy + 5, '#c8c0d8'); lineG(g, wx + 5, wy + 5, wx, wy + 7, '#c8c0d8');
+    hs.glass.forEach((r, k) => {                                         // забиті дошками вікна
+      if ((k + hs.i) % 5) return;
+      lineG(g, r[0] - 1, r[1], r[0] + r[2], r[1] + r[3] - 1, '#6b4a2a'); lineG(g, r[0] - 1, r[1] + r[3] - 1, r[0] + r[2], r[1], '#4a301a');
+      TW.px(g, r[0], r[1] + 1, '#c8c0a0'); TW.px(g, r[0] + r[2] - 1, r[1] + 1, '#c8c0a0');
+    });
+    if (hs.i % 3 === 1) {                                                // криве опудало-флюгер з кажаном
+      const cx = hs.rx, yb = hs.ry;
+      R(g, cx, yb - 12, 1, 12, '#2a1d33'); lineG(g, cx - 4, yb - 9, cx + 4, yb - 10, '#2a1d33');
+      TW.stamp(g, cx - 3, yb - 15, ['W..B..W', 'WWBBBWW', '..B.B..'], { W: '#2a1d33', B: '#2a1d33' });
+    }
+    if (hs.i % 2 === 0) { const px = x + 5 + (hs.seed % Math.max(1, w - 14)); pumpkinG(g, px, base, 3); }   // гарбуз біля порога
+  },
+  anim(g, hs, t) {
+    const n = TW.night();
+    hs.glass.forEach((r, k) => {                                         // вікна тремтять оранжевим світлом свічок
+      if ((k + hs.i) % 3) return;
+      const f = 0.45 + 0.35 * Math.sin(t * 9 + k * 3.1) + 0.2 * Math.sin(t * 23 + k);
+      g.globalAlpha = Math.max(0, Math.min(1, (0.3 + 0.6 * n) * f)); R(g, r[0], r[1], r[2], r[3], '#ff9a2c');
+      g.globalAlpha = Math.max(0, Math.min(1, (0.2 + 0.4 * n) * f)); R(g, r[0] + 1, r[1] + 1, r[2] - 2, r[3] - 2, '#ffe07a');
+    });
+    g.globalAlpha = 1;
+    if (!state.settings.noFly) {
+      if (hs.i % 2 === 0) {                                              // кажани кружляють над дахом вісімкою
+        for (let b = 0; b < 2; b++) { const a = t * 1.3 + hs.i * 1.7 + b * Math.PI; TW.bat(g, hs.cx + Math.cos(a) * (hs.w * 0.45), hs.ry - 16 + Math.sin(a * 2) * 6 - b * 5, t, b + hs.i, '#2a1d33'); }
+      }
+      if (hs.i % 3 === 2) {                                              // привид виринає з даху й тане
+        const u = ((t * 0.12 + hs.i * 0.29) % 1); if (u < 0.6) {
+          const v = u / 0.6, y = hs.ry - 4 - Math.round(v * 22), x = hs.rx + Math.round(Math.sin(v * 7) * 3);
+          g.globalAlpha = Math.sin(v * Math.PI) * 0.85;
+          TW.stamp(g, x - 3, y - 5, ['.OOOOO.', 'OWWWWWO', 'OWKWKWO', 'OWWWWWO', 'OWWOWWO', 'OWWWWWO', 'OW.W.WO'], { O: '#9a90b8', W: '#f4f0ff', K: '#2a1d33' });
+          g.globalAlpha = 1;
+        }
+      }
+    }
+  },
+  shop(g, t, sx, roofY) {
+    shopBulbs(g, t, ['#ff8c2a', '#9b5de5', '#7ed957'], 5);
+    if (!state.settings.noFly) for (let b = 0; b < 4; b++) {               // зграйка кажанів над маркетом
+      const a = t * 1.1 + b * 1.6; TW.bat(g, sx + shop.w / 2 + Math.cos(a) * shop.w * 0.42, roofY - 20 + Math.sin(a * 2) * 7 - (b % 2) * 6, t, b, '#2a1d33');
+    }
+    const s = shop.sign, hx = sx + s.x + 14, hy = shop.y + s.y + s.h + 1, len = 6 + Math.round((Math.sin(t * 0.8) + 1) * 6);   // павук спускається на нитці
+    R(g, hx, hy, 1, len, '#e8e4f0');
+    TW.stamp(g, hx - 2, hy + len, ['L.B.L', '.BBB.', 'LBRBL', '.BBB.', 'L...L'], { B: '#2a1d33', L: '#2a1d33', R: '#d8203c' });
+    [sx + 4, sx + shop.w - 6].forEach((cx, i) => {                        // гарбузи-ліхтарі на кутах даху мерехтять
+      pumpkinG(g, cx, roofY + 1, 3);
+      g.globalAlpha = 0.55 + 0.45 * Math.sin(t * 11 + i * 2); R(g, cx - 2, roofY - 4, 2, 2, '#fff2a0'); R(g, cx + 1, roofY - 4, 2, 2, '#fff2a0'); R(g, cx - 1, roofY - 2, 3, 1, '#fff2a0'); g.globalAlpha = 1;
+    });
+  }
+};
+//#part 214_skin_town_b.js
+/* Скіни «Будівлі» (продовження): Діамант, Дерево, Сад, Різдво, Океан.
+   Спільні помічники для прикрас — TW2; формат записів SHOP_TOWN — як у 214_skin_town.js. Маркет «Океану» не чіпаємо (лише будинки). */
+const TW2 = {
+  snowCap(g, hs, c1, c2) {                                              // сніг лежить по силуету даху
+    for (let x = hs.x - 3; x < hs.x + hs.w + 3; x++) {
+      let y = TW.top(hs, x); if (y < hs.roofY - 16) continue;
+      const d = 1 + (hash2(x, hs.seed) % 3 === 0 ? 1 : 0);
+      R(g, x, y - d, 1, d + 1, c1); if (hash2(x + 1, hs.seed) % 4 === 0) R(g, x, y + 1, 1, 1, c2);
+    }
+  },
+  icicles(g, hs, y, c1, c2) {
+    for (let x = hs.x + 1; x < hs.x + hs.w - 1; x += 2) {
+      const d = 1 + hash2(x * 7, hs.seed) % 5; R(g, x, y, 1, d, c1); R(g, x, y, 1, 1, c2);
+    }
+  },
+  vine(g, x, y0, y1, seed) {                                            // плющ повзе вгору
+    for (let y = y1; y > y0; y--) {
+      const dx = Math.round(Math.sin(y * 0.35 + seed) * 1.2); R(g, x + dx, y, 1, 1, '#3f8a3a');
+      if ((y + seed) % 4 === 0) { R(g, x + dx - 1, y, 1, 1, '#7ed957'); R(g, x + dx + 1, y - 1, 1, 1, '#5cbf4a'); }
+      if ((y * 3 + seed) % 23 === 0) R(g, x + dx + 1, y, 1, 1, ['#ff5c8a', '#ffd23f', '#ffffff'][y % 3]);
+    }
+  },
+  flowerBox(g, r, cols, box) {
+    R(g, r[0] - 1, r[1] + r[3], r[2] + 2, 2, box || '#7a4a24'); R(g, r[0] - 1, r[1] + r[3], r[2] + 2, 1, '#a8743a');
+    for (let i = 0; i < r[2]; i++) { R(g, r[0] + i, r[1] + r[3] - 1, 1, 1, i % 2 ? '#4fa83a' : cols[(i >> 1) % cols.length]); if (i % 3 === 1) R(g, r[0] + i, r[1] + r[3] - 2, 1, 1, cols[(i + 1) % cols.length]); }
+  },
+  chimney(g, x, yb, c1, c2) { R(g, x - 2, yb - 7, 5, 7, c2); R(g, x - 1, yb - 7, 3, 7, c1); R(g, x - 3, yb - 8, 7, 2, c2); R(g, x - 2, yb - 8, 5, 1, c1); },
+  butterfly(g, x, y, t, ph, c1, c2) {
+    const up = Math.floor(t * 12 + ph) % 2 === 0; x = Math.round(x); y = Math.round(y);
+    R(g, x, y, 1, 2, '#2a1d1a');
+    if (up) { R(g, x - 2, y - 1, 2, 2, c1); R(g, x + 1, y - 1, 2, 2, c1); TW.px(g, x - 2, y - 1, c2); TW.px(g, x + 2, y - 1, c2); }
+    else { R(g, x - 1, y, 1, 2, c1); R(g, x + 1, y, 1, 2, c1); }
+  },
+  gull(g, x, y, t, ph) {
+    const up = Math.floor(t * 5 + ph) % 2 === 0; x = Math.round(x); y = Math.round(y);
+    TW.stamp(g, x - 4, y - 1, up ? ['WW.....WW', '..WW.WW..', '....O....'] : ['.........', 'WWWWOWWWW', '.W.....W.'], { W: '#ffffff', O: '#f2a63c' });
+    TW.px(g, x - 4, y + (up ? -1 : 0), '#8a96a8'); TW.px(g, x + 4, y + (up ? -1 : 0), '#8a96a8');
+  },
+  pinwheel(g, x, yb, t, cols) {                                         // вітрячок на паличці
+    R(g, x, yb - 8, 1, 8, '#7a4a24');
+    const a0 = t * 4, cy = yb - 9;
+    for (let k = 0; k < 4; k++) { const a = a0 + k * Math.PI / 2; for (let r = 1; r <= 3; r++) R(g, Math.round(x + Math.cos(a) * r + Math.cos(a + 1.2) * (r > 1 ? 1 : 0)), Math.round(cy + Math.sin(a) * r + Math.sin(a + 1.2) * (r > 1 ? 1 : 0)), 1, 1, cols[k]); }
+    TW.px(g, x, cy, '#ffffff');
+  },
+  fall(g, hs, t, n, cols, spd, sway) {                                  // щось падає з краю даху (пелюстки, листя, краплі)
+    for (let k = 0; k < n; k++) {
+      const u = ((t * spd + k / n + hs.i * 0.13) % 1), x0 = hs.x + 4 + ((hs.seed >>> (k * 3)) % Math.max(1, hs.w - 8));
+      const y = TW.top(hs, x0) + u * 40, x = x0 + Math.sin(u * 8 + k) * sway;
+      g.globalAlpha = u > 0.8 ? (1 - u) * 5 : 1; R(g, Math.round(x), Math.round(y), 1 + (k % 2), 1, cols[k % cols.length]);
+    }
+    g.globalAlpha = 1;
+  },
+  gem(g, x, y, t, r, c1, c2) {                                          // діамант, що обертається й підстрибує
+    const k = Math.abs(Math.cos(t * 1.8)), yy = Math.round(y + Math.sin(t * 2.2) * 1.5);
+    for (let dy = -r; dy <= r; dy++) { const h = Math.round((r - Math.abs(dy)) * k); R(g, x - h - 1, yy + dy, h * 2 + 3, 1, '#2a3a6a'); }
+    for (let dy = -r + 1; dy <= r - 1; dy++) { const h = Math.round((r - 1 - Math.abs(dy)) * k); if (h >= 0) R(g, x - h, yy + dy, h * 2 + 1, 1, dy < 0 ? c1 : c2); }
+    TW.px(g, x, yy - r + 1, '#ffffff'); if (Math.sin(t * 2.6) > 0.7) sparkPlus(x + 2, yy - 2, 1, '#ffffff');
+  },
+  snow(g, x0, y0, w, h, t, n) {
+    for (let k = 0; k < n; k++) { const u = ((t * 0.18 + k / n) % 1), x = x0 + ((k * 37) % w) + Math.sin(t * 1.4 + k) * 2, y = y0 + u * h; g.globalAlpha = 0.9 - u * 0.5; R(g, Math.round(x), Math.round(y), k % 3 ? 1 : 2, 1, '#ffffff'); }
+    g.globalAlpha = 1;
+  }
+};
+
+/* ======================= ДІАМАНТ ======================= */
+SHOP_TOWN.diamond = {
+  walls: ['#dff2ff', '#d2dcff', '#ecfaff', '#c8eef4', '#e4dcff'],
+  roofs: ['#4a6fd8', '#6a4fd8', '#2a9ac8', '#5a5ae8', '#3a7ab8'],
+  deco(g, hs) {
+    const { x, w, top } = hs, base = LAYOUT.horizonY;
+    R(g, x, top, w, 1, '#2a3a6a'); R(g, x, top + 1, w, 2, '#bfe8ff'); R(g, x, top + 1, w, 1, '#ffffff');      // кришталевий карниз
+    for (let xx = x + 3; xx < x + w - 3; xx += 6) { R(g, xx, top + 3, 3, 1, '#5fb8ff'); TW.px(g, xx + 1, top + 4, '#5fb8ff'); TW.px(g, xx + 1, top + 3, '#ffffff'); }   // грані-ромбики
+    [x + 1, x + w - 3].forEach(cx => { for (let y = top + 5; y < base - 1; y++) R(g, cx, y, 2, 1, (y % 4) < 2 ? '#a8d8ff' : '#e8f6ff'); });
+    if (hs.i % 2 === 0) {                                               // кристал на даху
+      const cx = hs.rx, yb = hs.ry;
+      for (let j = 0; j < 12; j++) { const hw = Math.max(0, Math.round((12 - j) * 0.35)); R(g, cx - hw - 1, yb - j, hw * 2 + 3, 1, '#2a3a6a'); R(g, cx - hw, yb - j, hw + 1, 1, '#bfe8ff'); if (hw) R(g, cx + 1, yb - j, hw, 1, '#5f8fe8'); }
+      R(g, cx - 5, yb - 5, 2, 5, '#2a3a6a'); R(g, cx - 5, yb - 4, 1, 4, '#bfe8ff'); R(g, cx + 4, yb - 6, 2, 6, '#2a3a6a'); R(g, cx + 4, yb - 5, 1, 5, '#8fb8ff');
+    }
+  },
+  anim(g, hs, t) {
+    for (let xx = hs.x + 4; xx < hs.x + hs.w - 3; xx += 6) { const v = Math.sin(t * 3 - xx * 0.13 + hs.i); if (v > 0.6) sparkPlus(xx, hs.top + 2, (v - 0.6) / 0.4, '#bfe8ff'); }
+    if (hs.i % 2 === 0) { const v = Math.sin(t * 1.9 + hs.i); if (v > 0.2) sparkPlus(hs.rx, hs.ry - 10, (v - 0.2) / 0.8, '#ffffff'); }
+    else TW2.gem(g, hs.rx, hs.ry - 9, t + hs.i, 4, '#bfe8ff', '#5f8fe8');
+  },
+  shop(g, t, sx, roofY) {
+    shopBulbs(g, t, ['#ffffff', '#8fd8ff', '#c8a8ff'], 4);
+    TW2.gem(g, sx + 8, roofY - 6, t, 5, '#e8f6ff', '#6aa8ff');
+    TW2.gem(g, sx + shop.w - 9, roofY - 6, t + 1.3, 5, '#f0e8ff', '#a07aff');
+  }
+};
+
+/* ======================= ДЕРЕВО ======================= */
+SHOP_TOWN.wood = {
+  walls: ['#c89a64', '#b07a48', '#d8b07a', '#a8744a', '#c0905a'],
+  roofs: ['#6a3a1e', '#7a4a24', '#5a3018', '#8a5a2a', '#4a2a14'],
+  deco(g, hs) {
+    const { x, w, top } = hs, base = LAYOUT.horizonY;
+    g.globalAlpha = 0.22; for (let y = top + 4; y < base - 2; y += 4) R(g, x + 2, y, w - 4, 1, '#4a2a14'); g.globalAlpha = 1;      // дошки
+    [x + 1, x + w - 4].forEach(cx => { for (let y = top + 3; y < base - 3; y += 5) { TW.disc(g, cx + 1, y + 1, 1, '#6a3a1e'); TW.px(g, cx + 1, y + 1, '#e8c08a'); } });   // торці колод
+    hs.glass.forEach((r, k) => { if (k % 2 === 0) TW2.flowerBox(g, r, ['#ff5c5c', '#ffd23f'], '#6a3a1e'); R(g, r[0] - 2, r[1], 1, r[3], '#6a3a1e'); R(g, r[0] + r[2] + 1, r[1], 1, r[3], '#6a3a1e'); });   // віконниці
+    if (hs.i % 3 === 0) {                                               // шпаківня на жердині
+      const cx = hs.rx, yb = hs.ry;
+      R(g, cx, yb - 8, 1, 8, '#4a2a14'); R(g, cx - 3, yb - 14, 7, 6, '#4a2a14'); R(g, cx - 2, yb - 13, 5, 5, '#c89a64'); TW.disc(g, cx, yb - 11, 1, '#2a1a0a');
+      for (let j = 0; j < 3; j++) R(g, cx - 4 + j, yb - 15 - j, 9 - j * 2, 1, '#8a3a1e');
+    }
+    if (hs.i % 3 === 1) TW2.chimney(g, hs.rx + 5, hs.ry, '#a85a3a', '#5a2a1a');
+  },
+  anim(g, hs, t) {
+    if (hs.i % 3 === 1) TW.puffs(g, hs.rx + 5, hs.ry - 10, t + hs.i * 0.4, ['#d8d0c8', '#eae4dc', '#c0b8b0'], 4, 22, 0.28);
+    else if (hs.i % 3 === 2) {                                          // флюгер-півник крутиться
+      const cx = hs.rx, yb = hs.ry, k = Math.cos(t * 0.7 + hs.i);
+      R(g, cx, yb - 12, 1, 12, '#4a3a2a'); R(g, cx - 3, yb - 6, 7, 1, '#4a3a2a'); TW.px(g, cx - 4, yb - 6, '#c8a050'); TW.px(g, cx + 4, yb - 6, '#c8a050');
+      const hw = Math.max(1, Math.round(Math.abs(k) * 4)), dir = k > 0 ? 1 : -1;
+      R(g, cx - hw, yb - 14, hw * 2 + 1, 2, '#2a2a2a'); R(g, cx + dir * hw, yb - 16, 1, 2, '#2a2a2a'); TW.px(g, cx + dir * hw, yb - 17, '#d8203c'); R(g, cx - dir * hw, yb - 16, 1, 2, '#2a2a2a');
+    } else {                                                            // пташка визирає зі шпаківні
+      const up = Math.sin(t * 1.3 + hs.i) > 0.2; if (up) { TW.px(g, hs.rx, hs.ry - 12, '#6a4a2a'); TW.px(g, hs.rx - 1, hs.ry - 12, '#f2a63c'); }
+    }
+  },
+  shop(g, t, sx, roofY) {
+    shopBulbs(g, t, ['#ffd27a', '#ffb347', '#fff0c0'], 5);
+    TW2.chimney(g, sx + 10, roofY + 1, '#a85a3a', '#5a2a1a');
+    TW.puffs(g, sx + 10, roofY - 9, t, ['#d8d0c8', '#eae4dc', '#c0b8b0'], 5, 26, 0.25);
+    const s = shop.sign, lx = sx + s.x + s.w - 6, ly = shop.y + s.y + s.h + 1, a = Math.sin(t * 2) * 0.35;   // ліхтар гойдається
+    const ex = Math.round(lx + Math.sin(a) * 6), ey = Math.round(ly + Math.cos(a) * 6);
+    lineG(g, lx, ly, ex, ey, '#4a2a14'); R(g, ex - 2, ey, 5, 6, '#4a2a14'); R(g, ex - 1, ey + 1, 3, 4, '#ffd27a'); g.globalAlpha = 0.3 + 0.3 * TW.night(); R(g, ex - 3, ey - 1, 7, 8, '#ffd27a'); g.globalAlpha = 1;
+  }
+};
+
+/* ======================= САД ======================= */
+SHOP_TOWN.garden = {
+  walls: ['#eaf4d4', '#d4ecc4', '#f6f2d4', '#cce6b4', '#e2f2cc'],
+  roofs: ['#4a9a3a', '#3a8a4a', '#5aaa3a', '#2a7a3a', '#6aaa4a'],
+  deco(g, hs) {
+    const { x, w, top } = hs, base = LAYOUT.horizonY;
+    TW2.vine(g, x + 2, top + 2, base - 1, hs.seed % 7); if (hs.i % 2) TW2.vine(g, x + w - 3, top + 10, base - 1, hs.seed % 5 + 2);
+    hs.glass.forEach(r => TW2.flowerBox(g, r, ['#ff5c8a', '#ffd23f', '#ffffff', '#c78bff'], '#8a5a2a'));
+    for (let xx = x + 2; xx < x + w - 2; xx += 3) { const y = TW.top(hs, xx); if (y < hs.roofY - 3) continue; TW.disc(g, xx, hs.roofY - 1, 1 + (hash2(xx, hs.seed) % 2), (xx >> 1) % 3 ? '#4fa83a' : '#6cbf3a'); }   // садок на даху
+    for (let xx = x + 4; xx < x + w - 4; xx += 7) TW.px(g, xx, hs.roofY - 3, ['#ff5c8a', '#ffd23f', '#ffffff'][(xx >> 2) % 3]);
+  },
+  anim(g, hs, t) {
+    if (hs.i % 2 === 0) for (let k = 0; k < 2; k++) {                   // соняшники гойдаються
+      const x = hs.x + 6 + k * Math.max(8, hs.w - 12) / 1, sw = Math.round(Math.sin(t * 1.6 + k + hs.i) * 1.2), yb = hs.roofY - 1;
+      if (x > hs.x + hs.w - 4) continue;
+      R(g, x, yb - 8, 1, 8, '#3f8a3a'); TW.px(g, x + 1, yb - 4, '#6cbf3a');
+      TW.disc(g, x + sw, yb - 10, 2, '#ffd23f'); R(g, x + sw, yb - 10, 1, 1, '#7a4a14');
+    }
+    if (!state.settings.noFly) {
+      const a = t * 0.9 + hs.i * 2.1; TW2.butterfly(g, hs.cx + Math.cos(a) * hs.w * 0.4, hs.roofY - 10 + Math.sin(a * 1.7) * 6, t, hs.i, ['#ff8fb8', '#ffd23f', '#8fd8ff'][hs.i % 3], '#ffffff');
+    }
+  },
+  shop(g, t, sx, roofY) {
+    shopBulbs(g, t, ['#7ed957', '#ffd23f', '#ff8fb8'], 4);
+    if (!state.settings.noFly) for (let b = 0; b < 3; b++) { const a = t * 0.8 + b * 2.1; TW2.butterfly(g, sx + shop.w / 2 + Math.cos(a) * shop.w * 0.45, roofY - 12 + Math.sin(a * 1.6) * 8, t, b, ['#ff8fb8', '#ffd23f', '#8fd8ff'][b], '#ffffff'); }
+    [sx + 7, sx + shop.w - 8].forEach((x, k) => { const sw = Math.round(Math.sin(t * 1.5 + k) * 1.2); R(g, x - 2, roofY - 2, 5, 3, '#8a5a2a'); R(g, x, roofY - 11, 1, 9, '#3f8a3a'); TW.disc(g, x + sw, roofY - 13, 3, '#ffd23f'); TW.disc(g, x + sw, roofY - 13, 1, '#7a4a14'); });
+  }
+};
+
+/* ======================= РІЗДВО ======================= */
+SHOP_TOWN.xmas = {
+  walls: ['#c8402e', '#3a8a4a', '#f4e8d8', '#a8362e', '#2e6e5a'],
+  roofs: ['#eef4fa', '#ffffff', '#dde8f4', '#f0f4fa', '#e4eef8'],
+  deco(g, hs) {
+    TW2.snowCap(g, hs, '#ffffff', '#d8ecf8');
+    TW2.icicles(g, hs, hs.top, '#e8f6ff', '#ffffff');
+    hs.glass.forEach((r, k) => { if ((k + hs.i) % 4) return; const cx = r[0] + (r[2] >> 1), cy = r[1] - 4;   // вінок над вікном
+      for (let a = 0; a < 12; a++) R(g, Math.round(cx + Math.cos(a * 0.52) * 3), Math.round(cy + Math.sin(a * 0.52) * 3), 1, 1, a % 3 ? '#2e7a3a' : '#5cbf4a'); TW.px(g, cx, cy + 3, '#d8203c'); });
+    if (hs.i % 3 === 1) TW2.chimney(g, hs.rx + 4, hs.ry, '#a8362e', '#5a1a1a');
+  },
+  anim(g, hs, t) {
+    const n = TW.night();
+    TW.roofLine(hs, 3, (x, y, k) => {
+      const on = (k + Math.floor(t * 3)) % 4 !== 0, c = ['#ff4040', '#ffd23f', '#5cbf4a', '#4fa8ff'][k % 4];
+      if (on && n > 0.15) { g.globalAlpha = 0.35 * n; R(g, x - 1, y, 3, 3, c); g.globalAlpha = 1; }
+      R(g, x, y + 1, 1, 1, on ? c : '#4a4a5a');
+    });
+    if (hs.i % 3 === 1) TW.puffs(g, hs.rx + 4, hs.ry - 10, t + hs.i * 0.3, ['#e8eef4', '#ffffff', '#d0d8e0'], 4, 22, 0.26);
+    if (hs.i % 3 === 0) { const v = 0.5 + 0.5 * Math.sin(t * 3 + hs.i); TW.stamp(g, hs.rx - 2, hs.ry - 7, ['..Y..', 'YYYYY', '.YYY.', 'Y...Y'], { Y: '#ffd23f' }); if (v > 0.6) sparkPlus(hs.rx, hs.ry - 8, v, '#fff6c0'); R(g, hs.rx, hs.ry - 3, 1, 3, '#7a4a14'); }
+    TW2.snow(g, hs.x, hs.roofY - 30, hs.w, 34, t + hs.i, 2);
+  },
+  shop(g, t, sx, roofY) {
+    shopBulbs(g, t, ['#ff4040', '#ffd23f', '#5cbf4a', '#4fa8ff'], 3);
+    TW2.snow(g, sx, roofY - 44, shop.w, 48, t, 16);
+    if (!state.settings.noFly) {                                       // сани з оленем пролітають над маркетом
+      const u = (t * 0.07) % 1; if (u < 0.45) {
+        const v = u / 0.45, x = Math.round(sx - 40 + v * (shop.w + 80)), y = Math.round(roofY - 34 - Math.sin(v * Math.PI) * 10);
+        TW.stamp(g, x, y, ['..B.B.........', '..BBB.....RRR.', '.BBBB....RRRRR', 'BB..B.YYYRRRRR', 'B...B.....Y..Y'], { B: '#8a5a2a', R: '#d8203c', Y: '#ffd23f' });
+        if (Math.floor(t * 8) % 2) TW.px(g, x + 1, y + 1, '#ff4040');
+        for (let k = 1; k < 6; k++) { g.globalAlpha = 1 - k / 6; TW.px(g, x + 14 + k * 2, y + 3 + (k % 2), '#fff6c0'); } g.globalAlpha = 1;
+      }
+    }
+  }
+};
+
+/* ======================= ОКЕАН (лише будинки: пляжні хатки) ======================= */
+SHOP_TOWN.ocean = {
+  walls: ['#eaf8ff', '#d4f2ee', '#fff6e2', '#cceaf8', '#e2f6ea'],
+  roofs: ['#2a7ab8', '#e8604a', '#3aa8a8', '#f0a040', '#4a5ad8'],
+  deco(g, hs) {
+    const { x, w, top } = hs, base = LAYOUT.horizonY;
+    g.globalAlpha = 0.18; for (let xx = x + 3; xx < x + w - 3; xx += 6) R(g, xx, top + 3, 3, base - top - 6, ['#2a7ab8', '#e8604a', '#3aa8a8'][hs.i % 3]); g.globalAlpha = 1;   // смуги пляжної хатки
+    for (let xx = x; xx < x + w; xx++) TW.px(g, xx, top + 2 + Math.round(Math.sin(xx * 0.7) * 0.6), '#c8a060');                 // мотузка під дахом
+    if (hs.i % 3 === 0) lifeRingG(g, x + w - 9, top + 12);
+    else if (hs.i % 3 === 1) sprG(g, x + 3, top + 8, SPR_STARFISH);
+    else sprG(g, x + w - 12, top + 9, SPR_SHELL);
+  },
+  anim(g, hs, t) {
+    if (hs.i % 2 === 0) TW.flag(g, hs.rx, hs.ry, 12, 8, 5, ['#2a7ab8', '#ffffff', '#e8604a'], t + hs.i, hs.i % 4 ? 1 : -1);
+    else if (!state.settings.noFly) { const a = t * 0.6 + hs.i * 1.9; TW2.gull(g, hs.cx + Math.cos(a) * hs.w * 0.6, hs.roofY - 20 + Math.sin(a * 2) * 5, t, hs.i); }
+  }
+};
 //#part 220_a_events_weather.js
 /* =====================================================================
    ПОДІЇ: СВЯТА, РОЗПРОДАЖІ, НЕПРИЄМНОСТІ, МІНІ-ІГРИ
@@ -17200,6 +17785,55 @@ function drawGhostHunt() {
 }
 
 
+//#part 221_sky_life.js
+/* =====================================================================
+   ЖИВИЙ ФОН: листя, пелюстки й пушинки летять за вітром перед будинками (позаду маркету),
+   у нічних епохах (аркада, космос, неон) — мерехтливі вогники-світлячки. Пориви вітру то сильніші, то слабші.
+   Малюється щокадру після шару землі; вимикається разом з анімаціями й економ-режимом.
+   ===================================================================== */
+const skyLife = { list: [], key: '' };
+const SKY_LIFE_COLS = {
+  spring: [['#ffc0d8', '#ff94b8'], ['#ffe2ee', '#ffc0d8'], ['#ffffff', '#ffd8e8']],
+  summer: [['#8ee05a', '#4fa83a'], ['#fff8d8', '#e8dca8'], ['#b8ec6a', '#6cbf3a']],
+  autumn: [['#f29a3a', '#c4553d'], ['#ffd23f', '#d89a2a'], ['#e8603a', '#a83a2a']],
+  halloween: [['#f29a3a', '#c4553d'], ['#9b5de5', '#5c2a8e'], ['#ffd23f', '#d89a2a']],
+  winter: [['#ffffff', '#cfe4f8'], ['#eaf4ff', '#b8d4f0']]
+};
+function skyLifeGlow() { const id = currentEpoch().id; return id === 'arcade' || id === 'space' || id === 'neon'; }
+function seedSkyLife() {
+  const L = -view.offX, W = view.w, n = Math.max(5, Math.round(W / 95));
+  skyLife.list.length = 0;
+  for (let i = 0; i < n; i++) skyLife.list.push({ x: L + Math.random() * W, y: 20 + Math.random() * (LAYOUT.horizonY - 10), ph: Math.random() * 6.3, sp: 0.7 + Math.random() * 0.6, c: i % 3, fl: 1.5 + Math.random() * 2 });
+}
+function drawSkyLife() {
+  if (!animOn() || ecoOn() || !state.settings.clouds) return;
+  const key = view.w + '|' + view.offX + '|' + viewEpoch();
+  if (key !== skyLife.key) { skyLife.key = key; seedSkyLife(); }
+  const glow = skyLifeGlow(), season = theme.season, cols = SKY_LIFE_COLS[season] || SKY_LIFE_COLS.summer;
+  const t = animClock, gust = 0.6 + 0.4 * Math.sin(t * 0.21) + 0.25 * Math.sin(t * 0.67), L = -view.offX - 10, Rr = -view.offX + view.w + 10;
+  const night = (typeof sky !== 'undefined' && sky.night) || 0, now = performance.now(), dt = Math.min(0.05, Math.max(0, (now - (skyLife.last || now)) / 1000));
+  skyLife.last = now;
+  skyLife.list.forEach(p => {
+    if (glow) {                                                         // вогники повільно плавають і мерехтять
+      p.x += Math.sin(t * 0.4 + p.ph) * 6 * dt; p.y += Math.cos(t * 0.33 + p.ph) * 4 * dt;
+      const a = 0.35 + 0.65 * Math.max(0, Math.sin(t * p.fl + p.ph)), c = ['#ff5fd2', '#5fe8ff', '#ffe066'][p.c];
+      const x = Math.round(p.x), y = Math.round(p.y);
+      ctx.globalAlpha = a * 0.3; R(ctx, x - 1, y - 1, 3, 3, c); ctx.globalAlpha = a; R(ctx, x, y, 1, 1, '#ffffff');
+    } else {                                                            // листок за вітром: пливе, гойдається, перевертається
+      p.x += (14 + 26 * gust) * p.sp * dt; p.y += (5 + Math.sin(t * 1.3 + p.ph) * 9) * p.sp * dt;
+      const x = Math.round(p.x + Math.sin(t * 2.1 + p.ph) * 3), y = Math.round(p.y), f = Math.floor(t * p.fl * 2 + p.ph) % 4, cc = cols[p.c % cols.length];
+      ctx.globalAlpha = 0.9 - night * 0.4;
+      if (f === 0) { R(ctx, x, y, 2, 1, cc[0]); R(ctx, x + 1, y + 1, 1, 1, cc[1]); }
+      else if (f === 1) { R(ctx, x, y, 1, 2, cc[0]); R(ctx, x + 1, y, 1, 1, cc[1]); }
+      else if (f === 2) { R(ctx, x, y, 2, 1, cc[1]); R(ctx, x, y + 1, 1, 1, cc[0]); }
+      else R(ctx, x, y, 1, 1, cc[0]);
+    }
+    if (p.x > Rr) { p.x = L; p.y = 10 + Math.random() * (LAYOUT.horizonY - 10); }
+    if (p.y > LAYOUT.curbY + 30 || p.y < -view.offY) p.y = 10 + Math.random() * 60;
+    if (p.x < L) p.x = Rr;
+  });
+  ctx.globalAlpha = 1;
+}
 //#part 230_a1_skins_circus_hag.js
 /* =====================================================================
    ЦИРК ФОРТУНИ: раз на ігрову добу в правому куті з’являється червоний «!», який мигає й грає марш.
@@ -17220,7 +17854,7 @@ const BONUS_GAME_SKINS = [['capy', 'c', 'hat'], ['shop', 'q', 'house'], ['weathe
 // Магазин часу «Цирк частіше» (id wheelFast): скільки від звичайної паузи між візитами цирку або бонус-гри
 function circusFreq() { return CIRCUS_FREQ_BY_LEVEL[wsLevel('wheelFast')] || 1; }
 const WEATHER_ORDER = ['rainbow', 'lightning', 'lightninggreen', 'lightningred', 'cottoncloud', 'goldcloud', 'starcloud', 'diamondcloud'];     // порядок у вкладці: хмари в кінці
-const SKIN_HIDDEN = ['street_diamond', 'street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_wood', 'shop_garden', 'shop_spring', 'shop_autumn'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
+const SKIN_HIDDEN = ['street_diamond', 'street_snow', 'street_leaves', 'capy_sailor', 'capy_detective', 'shop_ice', 'shop_spring', 'shop_autumn'];                // зимова й осіння бруківка вже є в порах року: зі списку прибрано (біти лишились, щоб не збити збереження)
 const SKIN_TYPES = ['capy', 'shop', 'weather', 'street', 'hero'];   // групи скінів: Капі, магазин, погода, герої
 const SKIN_POOL = ['capy_pirate', 'capy_astro', 'shop_candy', 'shop_gold', 'weather_rainbow', 'weather_lightning', 'hero_party', 'hero_ninja', 'capy_ep0', 'capy_ep1', 'capy_ep2', 'capy_ep3', 'capy_ep4', 'capy_ep5', 'capy_ep6', 'capy_ep7', 'capy_wizard', 'capy_chef', 'capy_explorer', 'capy_detective', 'capy_sailor', 'shop_ice', 'shop_wood', 'shop_garden', 'weather_cottoncloud', 'weather_goldcloud', 'weather_starcloud', 'hero_chef', 'hero_wizard', 'hero_royal', 'street_wood', 'street_brick', 'capy_santa', 'capy_witch', 'capy_flower', 'capy_beach', 'capy_autumn', 'hero_santa', 'hero_witch', 'shop_xmas', 'shop_halloween', 'shop_spring', 'shop_autumn', 'street_snow', 'street_leaves', 'capy_mel', 'capy_nika', 'capy_knight', 'capy_hero', 'capy_cowboy', 'capy_fairy', 'capy_viking', 'capy_pilot', 'weather_lightninggreen', 'weather_lightningred', 'street_moss', 'street_gold', 'capy_gold', 'capy_diamond', 'hero_gold', 'hero_diamond', 'shop_diamond', 'street_diamond', 'weather_diamondcloud', 'shop_ocean', 'street_candy', 'street_sand'];
 const SKIN_SEASON = { capy_santa: '🎄', capy_witch: '🎃', capy_flower: '🌸', capy_beach: '🏖️', capy_autumn: '🍂', hero_santa: '🎄', hero_witch: '🎃', shop_xmas: '🎄', shop_halloween: '🎃', shop_spring: '🌸', shop_autumn: '🍂', street_snow: '❄️', street_leaves: '🍂' };   // сезонні скіни
@@ -18159,7 +18793,7 @@ function openCircus() {
   ui.clownCanvas.width = hag ? 144 : 72; ui.clownCanvas.height = hag ? 80 : 40;       // портрет відьми в подвійній роздільності
   ui.circusModal.hidden = false;
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
-  ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = false;                 // у вкладці «Бонуси» завжди: «Тут лише скіни»
+  ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = hag || nd;             // напис «Тут лише скіни» — лише в цирку, у Рьо й відьми без нього
   ui.circusClose.textContent = t(state.circus.spun ? (nd ? 'noodleDone' : hag ? 'hagDone' : 'circusDone') : 'wheelClose');
   ui.circusResult.textContent = '';
   updateCircusButtons();
@@ -21336,6 +21970,8 @@ function render(time) {
   drawBirds();
   drawEpochSky(time);
   ctx.drawImage(groundLayer, -view.offX, -view.offY);
+  drawSkinTownAnim(time);
+  drawSkyLife();                                           // листя й вогники на вітрі перед будинками (221_sky_life.js)                                  // рухомі прикраси задніх будинків під скін (214_skin_town.js)
   drawStreetShine();
   drawDecorDusk();
   ctx.drawImage(propsLayer, -view.offX, -view.offY);
@@ -25706,9 +26342,9 @@ installLang("es", {
     "skin_capy_diamond": "Capy Diamante",
     "skin_hero_gold": "Héroes dorados",
     "skin_hero_diamond": "Héroes de diamante",
-    "skin_shop_diamond": "Tienda de diamante",
+    "skin_shop_diamond": "Calle de diamante",
     "skin_street_diamond": "Calle de diamante",
-    "skin_shop_ocean": "Tienda oceánica",
+    "skin_shop_ocean": "Calle oceánica",
     "skin_street_candy": "Calle de caramelo",
     "skin_street_sand": "Sendero de arena",
     "skin_weather_diamondcloud": "Nubes de diamante",
@@ -25722,8 +26358,8 @@ installLang("es", {
     "skinSay_weather_diamondcloud": "Nubes de diamante: aquí no llueve, saltan chispas.",
     "skin_capy_pirate": "Capy Pirata",
     "skin_capy_astro": "Capy Astronauta",
-    "skin_shop_candy": "Tienda de caramelos",
-    "skin_shop_gold": "Tienda dorada",
+    "skin_shop_candy": "Calle de caramelos",
+    "skin_shop_gold": "Calle dorada",
     "skin_weather_rainbow": "Arcoíris sobre el pueblo",
     "skin_weather_lightning": "Rayo morado",
     "skin_street_moss": "Adoquines con musgo",
@@ -25735,9 +26371,9 @@ installLang("es", {
     "skin_capy_explorer": "Capy Exploradora",
     "skin_capy_detective": "Capy Detective",
     "skin_capy_sailor": "Capy Marinera",
-    "skin_shop_ice": "Tienda de hielo",
-    "skin_shop_wood": "Cabaña de madera",
-    "skin_shop_garden": "Tienda jardín",
+    "skin_shop_ice": "Calle de hielo",
+    "skin_shop_wood": "Calle de madera",
+    "skin_shop_garden": "Calle jardín",
     "skin_weather_cottoncloud": "Nubes de algodón de azúcar",
     "skin_weather_goldcloud": "Nubes doradas",
     "skin_weather_starcloud": "Nubes estrelladas",
@@ -25751,10 +26387,10 @@ installLang("es", {
     "skin_capy_autumn": "Capy de Otoño",
     "skin_hero_santa": "Ayudantes de Papá Noel",
     "skin_hero_witch": "Brujitas",
-    "skin_shop_xmas": "Tienda navideña",
-    "skin_shop_halloween": "Tienda de Halloween",
-    "skin_shop_spring": "Tienda de primavera",
-    "skin_shop_autumn": "Tienda de otoño",
+    "skin_shop_xmas": "Calle navideña",
+    "skin_shop_halloween": "Calle de Halloween",
+    "skin_shop_spring": "Calle de primavera",
+    "skin_shop_autumn": "Calle de otoño",
     "skin_street_snow": "Adoquines con nieve",
     "skin_street_leaves": "Adoquines con hojas",
     "skin_capy_mel": "Capy el zorro Mel",
@@ -25816,7 +26452,7 @@ installLang("es", {
     "skinEpoch": "Capy: {0}",
     "skinOtherEpoch": "Otra época",
     "skinCat_capy": "Capy",
-    "skinCat_shop": "Tienda",
+    "skinCat_shop": "Edificios",
     "skinCat_weather": "Clima",
     "skinCat_hero": "Héroes y animales",
     "skinCat_street": "Acera",
@@ -27688,9 +28324,9 @@ installLang("it", {
     "skin_capy_diamond": "Capy Diamante",
     "skin_hero_gold": "Eroi dorati",
     "skin_hero_diamond": "Eroi di diamante",
-    "skin_shop_diamond": "Negozio di diamante",
+    "skin_shop_diamond": "Via di diamante",
     "skin_street_diamond": "Strada di diamante",
-    "skin_shop_ocean": "Negozio oceano",
+    "skin_shop_ocean": "Via oceano",
     "skin_street_candy": "Strada di caramelle",
     "skin_street_sand": "Sentiero di sabbia",
     "skin_weather_diamondcloud": "Nuvole di diamante",
@@ -27704,8 +28340,8 @@ installLang("it", {
     "skinSay_weather_diamondcloud": "Nuvole di diamante: qui non piove, volano scintille.",
     "skin_capy_pirate": "Capy Pirata",
     "skin_capy_astro": "Capy Astronauta",
-    "skin_shop_candy": "Negozio di caramelle",
-    "skin_shop_gold": "Negozio dorato",
+    "skin_shop_candy": "Via di caramelle",
+    "skin_shop_gold": "Via dorata",
     "skin_weather_rainbow": "Arcobaleno sulla città",
     "skin_weather_lightning": "Fulmine viola",
     "skin_street_moss": "Selciato muschioso",
@@ -27717,9 +28353,9 @@ installLang("it", {
     "skin_capy_explorer": "Capy Esploratrice",
     "skin_capy_detective": "Capy Detective",
     "skin_capy_sailor": "Capy Marinaia",
-    "skin_shop_ice": "Negozio di ghiaccio",
-    "skin_shop_wood": "Baita di legno",
-    "skin_shop_garden": "Negozio-giardino",
+    "skin_shop_ice": "Via di ghiaccio",
+    "skin_shop_wood": "Via di legno",
+    "skin_shop_garden": "Via-giardino",
     "skin_weather_cottoncloud": "Nuvole di zucchero filato",
     "skin_weather_goldcloud": "Nuvole dorate",
     "skin_weather_starcloud": "Nuvole stellate",
@@ -27733,10 +28369,10 @@ installLang("it", {
     "skin_capy_autumn": "Capy d'Autunno",
     "skin_hero_santa": "Aiutanti di Babbo Natale",
     "skin_hero_witch": "Streghette",
-    "skin_shop_xmas": "Negozio di Natale",
-    "skin_shop_halloween": "Negozio di Halloween",
-    "skin_shop_spring": "Negozio di primavera",
-    "skin_shop_autumn": "Negozio d'autunno",
+    "skin_shop_xmas": "Via di Natale",
+    "skin_shop_halloween": "Via di Halloween",
+    "skin_shop_spring": "Via di primavera",
+    "skin_shop_autumn": "Via d’autunno",
     "skin_street_snow": "Selciato innevato",
     "skin_street_leaves": "Selciato con foglie",
     "skin_capy_mel": "Capy la volpe Mel",
@@ -27798,7 +28434,7 @@ installLang("it", {
     "skinEpoch": "Capy: {0}",
     "skinOtherEpoch": "Altra epoca",
     "skinCat_capy": "Capy",
-    "skinCat_shop": "Negozio",
+    "skinCat_shop": "Edifici",
     "skinCat_weather": "Meteo",
     "skinCat_hero": "Eroi e animali",
     "skinCat_street": "Marciapiede",
@@ -29670,9 +30306,9 @@ installLang("pl", {
     "skin_capy_diamond": "Diamentowa Capy",
     "skin_hero_gold": "Złoci bohaterowie",
     "skin_hero_diamond": "Diamentowi bohaterowie",
-    "skin_shop_diamond": "Diamentowy sklep",
+    "skin_shop_diamond": "Diamentowa ulica",
     "skin_street_diamond": "Diamentowa droga",
-    "skin_shop_ocean": "Oceaniczny sklep",
+    "skin_shop_ocean": "Oceaniczna ulica",
     "skin_street_candy": "Cukierkowy bruk",
     "skin_street_sand": "Piaszczysta ścieżka",
     "skin_weather_diamondcloud": "Diamentowe chmury",
@@ -29686,8 +30322,8 @@ installLang("pl", {
     "skinSay_weather_diamondcloud": "Diamentowe chmury: tu nie pada deszcz, tylko iskry.",
     "skin_capy_pirate": "Capy Pirat",
     "skin_capy_astro": "Capy Astronautka",
-    "skin_shop_candy": "Sklep ze słodyczami",
-    "skin_shop_gold": "Złoty sklep",
+    "skin_shop_candy": "Ulica słodyczy",
+    "skin_shop_gold": "Złota ulica",
     "skin_weather_rainbow": "Tęcza nad miastem",
     "skin_weather_lightning": "Fioletowa błyskawica",
     "skin_street_moss": "Omszały bruk",
@@ -29699,9 +30335,9 @@ installLang("pl", {
     "skin_capy_explorer": "Capy Odkrywczyni",
     "skin_capy_detective": "Capy Detektyw",
     "skin_capy_sailor": "Capy Żeglarka",
-    "skin_shop_ice": "Lodowy sklep",
-    "skin_shop_wood": "Drewniana chatka",
-    "skin_shop_garden": "Sklep-ogród",
+    "skin_shop_ice": "Lodowa ulica",
+    "skin_shop_wood": "Drewniana ulica",
+    "skin_shop_garden": "Ulica-ogród",
     "skin_weather_cottoncloud": "Chmury z waty cukrowej",
     "skin_weather_goldcloud": "Złote chmury",
     "skin_weather_starcloud": "Gwiaździste chmury",
@@ -29715,10 +30351,10 @@ installLang("pl", {
     "skin_capy_autumn": "Jesienna Capy",
     "skin_hero_santa": "Pomocnicy Mikołaja",
     "skin_hero_witch": "Małe wiedźmy",
-    "skin_shop_xmas": "Świąteczny sklep",
-    "skin_shop_halloween": "Sklep na Halloween",
-    "skin_shop_spring": "Wiosenny sklep",
-    "skin_shop_autumn": "Jesienny sklep",
+    "skin_shop_xmas": "Świąteczna ulica",
+    "skin_shop_halloween": "Ulica Halloween",
+    "skin_shop_spring": "Wiosenna ulica",
+    "skin_shop_autumn": "Jesienna ulica",
     "skin_street_snow": "Zaśnieżony bruk",
     "skin_street_leaves": "Bruk z liśćmi",
     "skin_capy_mel": "Capy lis Mel",
@@ -29780,7 +30416,7 @@ installLang("pl", {
     "skinEpoch": "Capy: {0}",
     "skinOtherEpoch": "Inna epoka",
     "skinCat_capy": "Capy",
-    "skinCat_shop": "Sklep",
+    "skinCat_shop": "Budynki",
     "skinCat_weather": "Pogoda",
     "skinCat_hero": "Bohaterowie i zwierzaki",
     "skinCat_street": "Chodnik",
@@ -31652,9 +32288,9 @@ installLang("pt", {
     "skin_capy_diamond": "Capy Diamante",
     "skin_hero_gold": "Heróis dourados",
     "skin_hero_diamond": "Heróis de diamante",
-    "skin_shop_diamond": "Loja de diamante",
+    "skin_shop_diamond": "Rua de diamante",
     "skin_street_diamond": "Rua de diamante",
-    "skin_shop_ocean": "Loja oceânica",
+    "skin_shop_ocean": "Rua oceânica",
     "skin_street_candy": "Rua de doces",
     "skin_street_sand": "Trilha de areia",
     "skin_weather_diamondcloud": "Nuvens de diamante",
@@ -31668,8 +32304,8 @@ installLang("pt", {
     "skinSay_weather_diamondcloud": "Nuvens de diamante: aqui não chove, saem faíscas.",
     "skin_capy_pirate": "Capy Pirata",
     "skin_capy_astro": "Capy Astronauta",
-    "skin_shop_candy": "Loja de doces",
-    "skin_shop_gold": "Loja dourada",
+    "skin_shop_candy": "Rua de doces",
+    "skin_shop_gold": "Rua dourada",
     "skin_weather_rainbow": "Arco-íris sobre a cidade",
     "skin_weather_lightning": "Raio roxo",
     "skin_street_moss": "Paralelepípedos com musgo",
@@ -31681,9 +32317,9 @@ installLang("pt", {
     "skin_capy_explorer": "Capy Exploradora",
     "skin_capy_detective": "Capy Detetive",
     "skin_capy_sailor": "Capy Marinheira",
-    "skin_shop_ice": "Loja de gelo",
-    "skin_shop_wood": "Cabana de madeira",
-    "skin_shop_garden": "Loja-jardim",
+    "skin_shop_ice": "Rua de gelo",
+    "skin_shop_wood": "Rua de madeira",
+    "skin_shop_garden": "Rua-jardim",
     "skin_weather_cottoncloud": "Nuvens de algodão-doce",
     "skin_weather_goldcloud": "Nuvens douradas",
     "skin_weather_starcloud": "Nuvens estreladas",
@@ -31697,10 +32333,10 @@ installLang("pt", {
     "skin_capy_autumn": "Capy de Outono",
     "skin_hero_santa": "Ajudantes do Papai Noel",
     "skin_hero_witch": "Bruxinhas",
-    "skin_shop_xmas": "Loja de Natal",
-    "skin_shop_halloween": "Loja de Halloween",
-    "skin_shop_spring": "Loja de primavera",
-    "skin_shop_autumn": "Loja de outono",
+    "skin_shop_xmas": "Rua de Natal",
+    "skin_shop_halloween": "Rua de Halloween",
+    "skin_shop_spring": "Rua de primavera",
+    "skin_shop_autumn": "Rua de outono",
     "skin_street_snow": "Paralelepípedos com neve",
     "skin_street_leaves": "Paralelepípedos com folhas",
     "skin_capy_mel": "Capy a raposa Mel",
@@ -31762,7 +32398,7 @@ installLang("pt", {
     "skinEpoch": "Capy: {0}",
     "skinOtherEpoch": "Outra era",
     "skinCat_capy": "Capy",
-    "skinCat_shop": "Loja",
+    "skinCat_shop": "Edifícios",
     "skinCat_weather": "Clima",
     "skinCat_hero": "Heróis e bichinhos",
     "skinCat_street": "Calçada",

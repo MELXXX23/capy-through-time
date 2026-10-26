@@ -210,6 +210,7 @@ function hslHex(h, sat, l) {
 }
 // п'ять кольорів стін по колу (на кожну епоху свої відтінки), дахи — парні до стін
 function houseColors(i) {
+  const tw = skinTownOn(); if (tw) { const k = ((i % 5) + 5) % 5; return { wall: tw.walls[k], roof: tw.roofs[k] }; }      // скін «Будівлі» (214_skin_town.js) фарбує будинки у свої кольори
   const tone = HOUSE_TONE[viewEpoch() % EPOCHS.length] || HOUSE_TONE[0], k = ((i % 5) + 5) % 5, hue = tone[2] + k * 72;
   return { wall: hslHex(hue, tone[0], tone[1]), roof: hslHex(hue + 170 + (k % 2) * 25, tone[0] * 0.8, 0.38) };
 }

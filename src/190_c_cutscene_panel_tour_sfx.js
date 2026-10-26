@@ -239,13 +239,13 @@ function initCutscene() {
 
 /* ====================== ЕКСКУРСІЯ ПО МЕНЮ ======================
    Після заставки: стрілка веде до кожної вкладки меню по черзі, гравець натискає на неї, а в куті стоять Мел і Ніка й пояснюють. */
-const TOUR_IDS = ['shop', 'departments', 'team', 'story', 'skins', 'seasons', 'achievements', 'settings', 'news'];
+const TOUR_IDS = ['shop', 'departments', 'team', 'skins', 'story', 'seasons', 'achievements', 'settings', 'news'];
 const TOUR_TXT = {
   uk: { shop: ['m', 'Це «Магазин». Тут ти тапаєш, прокачуєш тап і розширюєш магазин. Натисни сюди!'], departments: ['n', '«Відділи» самі приносять монети, навіть коли ти не граєш. Тисни!'], team: ['m', 'У «Команді» наймаєш звірят-помічників. Кожен допомагає по-своєму.'],
-    story: ['n', '«Щоденник»: глави історії та історії епох. Їх можна перечитати.'], skins: ['m', '«Скіни»: змінюй вигляд Капі, магазину й героїв за кристали.'], seasons: ['n', '«Пори року» і час доби. Замок відкриється після 2-ї епохи.'],
+    story: ['n', '«Щоденник»: глави історії та історії епох. Їх можна перечитати.'], skins: ['m', '«Скіни»: змінюй вигляд Капі, будівель і героїв за кристали.'], seasons: ['n', '«Пори року» і час доби. Замок відкриється після 2-ї епохи.'],
     achievements: ['m', '«Нагороди»: тут чекають призи за досягнення.'], settings: ['n', '«Налаштування»: мова, звук, перегляд епох та анімації.'], news: ['m', 'А це скринька розробників! Там новини про оновлення, а ще можна написати нам. Відкрий її!'], end: ['m', 'От і все! Тапай по магазину й розвивай його. Ми завжди поруч!'], endBtn: 'ГРАТИ!', skip: 'Пропустити тур' },
   en: { shop: ['m', 'This is the Shop. Tap, boost your tap and expand the shop here. Press it!'], departments: ['n', 'Departments earn coins by themselves, even when you are away. Press!'], team: ['m', 'In Team you hire animal helpers. Each one helps in their own way.'],
-    story: ['n', 'Diary: story chapters and epoch stories. You can reread them.'], skins: ['m', 'Skins: change the look of Capy, the shop and heroes for crystals.'], seasons: ['n', 'Seasons and time of day. The lock opens after the 2nd epoch.'],
+    story: ['n', 'Diary: story chapters and epoch stories. You can reread them.'], skins: ['m', 'Skins: change the look of Capy, the buildings and heroes for crystals.'], seasons: ['n', 'Seasons and time of day. The lock opens after the 2nd epoch.'],
     achievements: ['m', 'Awards: prizes wait here for your achievements.'], settings: ['n', 'Settings: language, sound, epoch viewing and animations.'], news: ['m', 'And this is the developers mailbox! News about updates are there, and you can write to us. Open it!'], end: ['m', 'That is all! Tap the shop and grow it. We are always nearby!'], endBtn: 'PLAY!', skip: 'Skip tour' }
 };
 const tour = { on: false, i: 0, cb: null, timer: 0, btn: null, handler: null, talk: 0, news: false, wrapped: false };

@@ -107,5 +107,6 @@ function drawSkinShopExtras(sc) {
   withShopScale(sc, () => {
     if (SKIN_SIGN_ANIM[sk]) { ctx.save(); ctx.beginPath(); ctx.rect(shop.x + s.x, shop.y + s.y, s.w, s.h); ctx.clip(); SKIN_SIGN_ANIM[sk](shop.x + s.x, shop.y + s.y, s.w, s.h, t); ctx.restore(); }
     if (sk === 'ocean') drawRoofFountains(t);
+    drawSkinShopAnim(sk, t);                                  // рухомі деталі маркету під скін (214_skin_town.js)
   });
 }

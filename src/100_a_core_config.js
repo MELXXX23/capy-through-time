@@ -176,9 +176,9 @@ const TABS = [
   { id: 'departments', icon: '🛒', ready: true  },
   { id: 'team',        icon: '🐾', ready: true  },
   { id: 'epochs',      icon: '🌀', ready: true  },          // перегляд пройдених епох (раніше жив у налаштуваннях); «Крамничку» з меню прибрано
-  { id: 'story',       icon: '📖', ready: true  },
+  { id: 'skins',       icon: '👗', ready: true },          // скіни — серед головних вкладок, щоденник — у «Ще» (р. 70)
   { id: 'workshop',    icon: '⏳', ready: true, needs: 'finale' },   // з'являється після фіналу сюжету
-  { id: 'skins',       icon: '👗', ready: true },
+  { id: 'story',       icon: '📖', ready: true  },
   { id: 'seasons',    icon: '🍂', ready: true, lock: 'themes' },   // замок до проходження 2-ї епохи
   { id: 'achievements', icon: '🏆', ready: true },
   { id: 'settings',    icon: '⚙️', ready: true }

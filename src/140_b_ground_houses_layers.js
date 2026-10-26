@@ -110,11 +110,12 @@ function buildGroundLayer() {
   }
   farSkyline(g, x0, W);
   // будиночки
+  townHouses.length = 0; townHouses.glassReady = false;
   HOUSES.concat(extraHouses()).forEach((h0, i) => {
     const h = Object.assign({}, h0, { h: Math.round(h0.h * HOUSE_SCALE) });         // будинки вищі: верхівки сягають середини 4-го поверху торгового центру
     const spec = Object.assign({}, h, houseColors(i));                                // кожен будинок має свій колір стін і даху
 
-    drawHouse(g, spec, lamps);
+    if (!skinTownHouse(g, spec, i, lamps)) drawHouse(g, spec, lamps);      // скін «Будівлі» додає свої прикраси (214_skin_town.js)
     if (buildSeason === 'halloween') drawHalloweenHouse(g, spec);
   });
   drawBush(g, 40, 121);
