@@ -14,13 +14,16 @@ function render(time) {
   drawCloudsLayer();
   drawBirds();
   drawEpochSky(time);
+  fxBehind();
   ctx.drawImage(groundLayer, -view.offX, -view.offY);
   drawSkinTownAnim(time);
   drawSkyLife();                                           // листя й вогники на вітрі перед будинками (221_sky_life.js)                                  // рухомі прикраси задніх будинків під скін (214_skin_town.js)
+  fxDepth();
   drawStreetShine();
   drawDecorDusk();
   ctx.drawImage(propsLayer, -view.offX, -view.offY);
   drawEpochMid(time);
+  fxLight();
 
   if (shop && shop.level >= 6 && !build) withShopScale(getShopScale(), drawClockTower);      // вежа стискається разом з магазином
   // магазин: тінь + спрайт зі стисканням (або будівництво)
@@ -43,10 +46,10 @@ function render(time) {
 
   // Капі та покупці — від дальніх до ближніх (за положенням ніг)
   const cp = LAYOUT.capy;
-  const items = customers.filter(c => !c.inside).map(c => ({ y: c.y, draw: () => drawCustomer(c) }));       // ті, хто всередині, малюються разом з магазином
-  actors.forEach(a => items.push({ y: (Math.abs(a.x - (cp.x + 14)) < 24 && a.y > cp.footY - 10 && a.y < cp.footY + 26) ? cp.footY - 0.5 : a.y, draw: () => drawActor(a) }));       // поруч із Капі звірятко завжди позаду неї, не перекриває її
+  const items = customers.filter(c => !c.inside).map(c => ({ y: c.y, bob: 1, draw: () => drawCustomer(c) }));       // ті, хто всередині, малюються разом з магазином
+  actors.forEach(a => items.push({ y: (Math.abs(a.x - (cp.x + 14)) < 24 && a.y > cp.footY - 10 && a.y < cp.footY + 26) ? cp.footY - 0.5 : a.y, bob: 1, draw: () => drawActor(a) }));       // поруч із Капі звірятко завжди позаду неї, не перекриває її
   cameos.forEach(c => items.push({ y: c.y, draw: () => drawCameo(c) }));
-  guestWalkers.forEach(g => items.push({ y: g.y, draw: () => drawGuest(g) }));
+  guestWalkers.forEach(g => items.push({ y: g.y, bob: 1, draw: () => drawGuest(g) }));
   guestStands().forEach(st => items.push({ y: st.y, draw: () => drawGuestStand(st) }));
   if (trouble && trouble.type === 'thief') items.push({ y: trouble.y, draw: drawRaccoon });
   benches.forEach(b => { items.push({ y: b.y - 6, draw: () => drawBenchBack(b) }); items.push({ y: b.y - 1, draw: () => drawBenchFront(b) }); if (b.binX != null) items.push({ y: b.y, draw: () => drawBin(b) }); });
@@ -73,7 +76,7 @@ function render(time) {
         ctx.restore();
       });
   }
-  items.sort((a, b) => a.y - b.y).forEach(it => it.draw());
+  items.sort((a, b) => a.y - b.y).forEach(it => { const bb = it.bob ? fxBob(it.y) : 0; if (bb) { ctx.save(); ctx.translate(0, -bb); it.draw(); ctx.restore(); } else it.draw(); });
   drawSkinDust();
 
   // пил від будівництва
@@ -108,6 +111,7 @@ function render(time) {
   ctx.globalAlpha = 1;
   drawCloudSkinFx();
   drawSnow();
+  fxFront();
   drawLightningFront();
   drawEpochFront();
   ctx.restore();

@@ -21,7 +21,7 @@ function createDefaultState() {
     wheel: { lastSpin: 0, streak: 0, mg: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },                       // колесо фортуни
     stats: { ghostsCaught: 0, raccoonsCaught: 0, raccoonsLost: 0, wheelSpins: 0, timeTravels: 0, puddlesFixed: 0, deptsBought: 0, milestones: 0, teamMaxLevel: 0, maxLevel: 1, holidaysSeen: 0, jackpots: 0, teamUps: 0, vipTaps: 0 },
     // звук 0…1; анімації; формат чисел; стать гравця ('f' / 'm'); день і ніч; чи відкрите меню; чи бачив підказку про гортання
-    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, rain: false, birds: true, noFly: false, birdsLate: false, eco: false, ecoAsked: false, clouds: true, steam: true, vibrate: true, bigText: false, events: 0, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
+    settings: { musicVol: 0.6, sfxVol: 0.8, musicStyle: 0, muted: false, animations: true, rain: false, birds: true, noFly: false, birdsLate: false, eco: false, ecoAsked: false, fxPlus: true, clouds: true, steam: true, vibrate: true, bigText: false, events: 0, numFmt: 'short', gender: 'f', dayNight: true, panelOpen: true, panHintSeen: false, season: 'auto' },
     dayPhase: 0.3,                     // час доби 0…1: 0.25 — схід сонця, 0.5 — полудень, 0.75 — захід, 0 — північ
     epochIntroSeen: -1,                // для якої епохи вже показали заставку-анімацію
     ghosts: 0,                         // кристали привидів (їх дають за ловлю привидів на Хелловін; 12 штук = ще один оберт колеса)

@@ -13,6 +13,9 @@ const SAKURA_PAL = {                                                           /
   v2: ['#86305a', '#c2557f', '#e17aa0', '#f6a2bd', '#ffcad8', '#fff0f5'],
   autumn: ['#5e2014', '#9c3424', '#c8502a', '#e47c34', '#f2aa48', '#ffd878'],
 };
+SAKURA_PAL.v3 = SAKURA_PAL.v4 = SAKURA_PAL.v5 = ['#173f20', '#27632f', '#3a8a3b', '#5cb046', '#86d457', '#c4f27a'];                 // звичайні дерева: літня зелень
+SAKURA_PAL.halloween = ['#160c26', '#34195a', '#5a3190', '#8650c0', '#b278e4', '#dcaaff', '#ff9a2a'];     // Хелловін: фіолетова крона з помаранчевими вогниками
+SAKURA_PAL.spring = ['#1d4a2a', '#2f7236', '#4a9a40', '#7cc552', '#a8e06e', '#e0f6a0', '#ffd2e0'];     // навесні: свіжа зелень і рожеві квіточки (7-й колір)
 const SAKURA_WOOD = ['#1e1418', '#3a2626', '#563a32', '#74503f', '#9a7058'];   // контур, 4 тони кори
 const SAKURA_SHAPES = [
   {   // 0 сомеї-йосіно: стовбур, три гілки парасолькою, широка пласка крона
@@ -43,11 +46,11 @@ function drawSakura(g, x, v, season) {
   g.drawImage(c, Math.round(x) - SAKURA_OX, base - SAKURA_OY);
 }
 function sakuraBuild(v, season, seed) {
-  const W = SAKURA_W, H = SAKURA_H, OX = SAKURA_OX, OY = SAKURA_OY, N = W * H;
+  const big = v >= 3, W = big ? 108 : SAKURA_W, H = big ? 130 : SAKURA_H, OX = big ? 54 : SAKURA_OX, OY = big ? 116 : SAKURA_OY, N = W * H;
   let s = seed >>> 0; const rnd = () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
   const hh = (a, b) => { let h = (Math.imul(a + 999, 374761393) + Math.imul(b + 999, 668265263) + Math.imul(seed, 2246822519)) >>> 0; h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
   const winter = season === 'winter', autumn = season === 'autumn', SH = SAKURA_SHAPES[v];
-  const PAL = autumn ? SAKURA_PAL.autumn : SAKURA_PAL['v' + v], OUT = PAL[0], T = PAL.slice(1), WD = SAKURA_WOOD;
+  const PAL = autumn ? SAKURA_PAL.autumn : (big && season === 'spring') ? SAKURA_PAL.spring : (big && season === 'halloween') ? SAKURA_PAL.halloween : SAKURA_PAL['v' + v], OUT = PAL[0], T = PAL.slice(1), WD = SAKURA_WOOD, BL = T[5] || T[4];
   const kind = new Uint8Array(N), cid = new Int16Array(N).fill(-1), tone = new Int8Array(N), lit = new Float32Array(N), wasWood = new Uint8Array(N), isTwig = new Uint8Array(N), wdist = new Float32Array(N).fill(9);
   const col = new Array(N).fill(null), alpha = new Float32Array(N);
   const at = (x, y) => { const X = x + OX, Y = y + OY; return X < 0 || Y < 0 || X >= W || Y >= H ? -1 : Y * W + X; };
@@ -86,7 +89,7 @@ function sakuraBuild(v, season, seed) {
       const lim = 1 + (w < 0.25 ? 0.14 * Math.cos(ang * nb + ph) : 0.06 * Math.cos(ang * nb * 1.6 + ph));
       if (r > lim) continue;
       const k = at(px, py); if (k < 0) continue;
-      let L = 0.5 - (u * 0.5 + w0 * 0.8) * 0.5 + (dep - 1) * 0.08 + (r > lim - 0.18 && w0 > 0 ? -0.12 : 0);
+      let L = 0.5 - (u * 0.5 + w0 * 0.8) * 0.5 + (dep - 1) * 0.08 + (r > lim - 0.18 && w0 > 0 ? -0.12 : 0) + (big && w0 > 0.4 ? -0.22 * (w0 - 0.4) : 0);
       kind[k] = 2; cid[k] = i; lit[k] = L;
       tone[k] = L < 0.2 ? 0 : L < 0.42 ? 1 : L < 0.64 ? 2 : L < 0.86 ? 3 : 4;
     }
@@ -100,10 +103,19 @@ function sakuraBuild(v, season, seed) {
       else if (a2 >= 0 && kind[a2] === 2 && cid[a2] > cid[k]) tone[k] = Math.min(tone[k], 1);
       if (b1 >= 0 && kind[b1] === 2 && cid[b1] < cid[k]) tone[k] = Math.min(tone[k], 1);
     }
+    if (big) for (let i = 0; i < 90; i++) {                                              // дрібні купки листя: кожна має світлу шапку й темне дно, тож крона об'ємна
+      const cx = Math.round((rnd() - 0.5) * 70), cy = -30 - Math.round(rnd() * 52), kc = at(cx, cy); if (kc < 0 || kind[kc] !== 2) continue;
+      const t0 = tone[kc];
+      for (let py = cy - 2; py <= cy + 2; py++) for (let px = cx - 3; px <= cx + 3; px++) {
+        const dxx = (px + 0.5 - cx) / 3, dyy = (py + 0.5 - cy) / 2.2; if (dxx * dxx + dyy * dyy > 1) continue;
+        const k = at(px, py); if (k < 0 || kind[k] !== 2 || cid[k] !== cid[kc]) continue;
+        tone[k] = dyy < -0.35 ? Math.min(4, t0 + 1) : dyy > 0.45 ? Math.max(0, t0 - 1) : t0;
+      }
+    }
     for (let y = -OY; y < H - OY; y++) for (let x = -OX; x < W - OX; x++) {          // квіточки-плюсики на світлому, цятки в тіні
       const k = at(x, y); if (kind[k] !== 2) continue;
       const q = hh(x, y);
-      if (tone[k] >= 2 && q < 0.055) { col[k] = T[4]; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const n = at(x + dx, y + dy); if (n >= 0 && kind[n] === 2 && !col[n]) tone[n] = Math.min(4, Math.max(tone[n], tone[k] + 1)); }); }
+      if (tone[k] >= 2 && q < (big ? (season === 'spring' ? 0.06 : season === 'halloween' ? 0.05 : 0.03) : 0.055)) { col[k] = BL; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const n = at(x + dx, y + dy); if (n >= 0 && kind[n] === 2 && !col[n]) tone[n] = Math.min(4, Math.max(tone[n], tone[k] + 1)); }); }
       else if (tone[k] <= 1 && q < 0.045) col[k] = T[2];
     }
   }
@@ -134,11 +146,12 @@ function sakuraBuild(v, season, seed) {
 
   /* ---- земля: м'яка тінь, килим пелюсток, кілька пелюсток у повітрі ---- */
   const setA = (x, y, c, a) => { const k = at(x, y); if (k >= 0 && !kind[k]) { col[k] = c; alpha[k] = a; } };
-  for (let y = 0; y <= 3; y++) for (let x = -26; x <= 26; x++) if ((x / 26) ** 2 + ((y - 1.5) / 2.5) ** 2 < 1) setA(x, y, '#2a1420', 0.2);
+  const gw = big ? 36 : 26;
+  for (let y = 0; y <= 4; y++) for (let x = -gw; x <= gw; x++) if ((x / gw) ** 2 + ((y - 1.8) / (big ? 3 : 2.5)) ** 2 < 1) setA(x, y, '#2a1420', big ? 0.26 : 0.2);
   if (!winter) {
-    const pc = autumn ? [T[2], T[3], T[4]] : [T[2], T[3], T[4], T[3]];
-    for (let i = 0; i < 46; i++) { const a = rnd() * Math.PI * 2, rr = Math.sqrt(rnd()), px = Math.round(Math.cos(a) * rr * 32), py = Math.round(2.5 + Math.sin(a) * rr * 3.5); const k = at(px, py); if (k >= 0) { col[k] = pc[i % pc.length]; alpha[k] = 1; } }
-    for (let i = 0; i < 9; i++) { const px = Math.round((rnd() - 0.5) * 60), py = -4 - Math.round(rnd() * 22); if (kindAt(px, py) || kindAt(px + 1, py)) continue; setA(px, py, T[3], 1); if (i % 2) setA(px + 1, py, T[2], 1); }
+    const pc = autumn ? [T[2], T[3], T[4]] : big ? (season === 'spring' ? [BL, T[4], BL] : [T[1], T[2], T[1]]) : [T[2], T[3], T[4], T[3]];
+    for (let i = 0; i < (big ? (season === 'summer' || season === 'halloween' ? 14 : 36) : 46); i++) { const a = rnd() * Math.PI * 2, rr = Math.sqrt(rnd()), px = Math.round(Math.cos(a) * rr * (big ? 38 : 32)), py = Math.round(2.5 + Math.sin(a) * rr * 3.5); const k = at(px, py); if (k >= 0) { col[k] = pc[i % pc.length]; alpha[k] = 1; } }
+    for (let i = 0; i < (big && (season === 'summer' || season === 'halloween') ? 0 : 9); i++) { const px = Math.round((rnd() - 0.5) * 60), py = -4 - Math.round(rnd() * 22); if (kindAt(px, py) || kindAt(px + 1, py)) continue; setA(px, py, T[3], 1); if (i % 2) setA(px + 1, py, T[2], 1); }
   }
 
   const c = document.createElement('canvas'); c.width = W; c.height = H;
@@ -149,4 +162,44 @@ function sakuraBuild(v, season, seed) {
   }
   cg.putImageData(im, 0, 0);
   return c;
+}
+
+/* =====================================================================
+   ЗВИЧАЙНІ ДЕРЕВА v2 (улітку, навесні, восени): та сама майстерня, що й сакура, але об'ємніші — 4 шари «хмаринок» крони
+   (задні темніші, передні кидають тінь), темніший низ кожної, дрібні купки листя зі світлою шапкою, товстий стовбур із корінням.
+   Три види: 3 — розлогий дуб, 4 — висока липа, 5 — широка крона. Узимку лишається голе дерево, на Хелловін — старе з гарбузами.
+   ===================================================================== */
+SAKURA_SHAPES.push(
+  {   // 3 дуб: густа кругла крона
+    limbs: [[0, 0, 0, -18, 5.6, 4.6], [0, -18, -9, -30, 3.6, 2.6], [0, -18, 9, -30, 3.6, 2.6], [0, -18, 0, -36, 3.2, 2.2], [-9, -30, -20, -38, 2.2, 1.4], [9, -30, 20, -38, 2.2, 1.4],
+      [-1, -1, -9, 1, 2.8, 1], [1, -1, 9, 1, 2.8, 1], [-2, 0, -13, 1, 1.8, 1], [2, 0, 13, 1, 1.8, 1]],
+    tips: [[-20, -38, -2.8], [20, -38, -0.35]],
+    clusters: [[0, -58, 15, 10, 0], [-17, -50, 11, 8, 0], [17, -50, 11, 8, 0], [-9, -64, 10, 7, 0], [9, -64, 10, 7, 0], [0, -44, 14, 8, 0],
+      [-21, -42, 9, 7, 1], [21, -42, 9, 7, 1], [-8, -54, 11, 8, 1], [9, -55, 11, 8, 1], [0, -62, 10, 7, 1],
+      [-15, -40, 9, 6, 2], [15, -40, 9, 6, 2], [0, -48, 11, 7, 2], [-6, -36, 8, 5, 2], [7, -37, 8, 5, 2],
+      [-22, -33, 7, 5, 3], [22, -33, 7, 5, 3], [0, -34, 9, 5, 3]],
+  },
+  {   // 4 липа: висока, вузча
+    limbs: [[0, 0, 1, -22, 5, 4], [1, -22, 0, -38, 3.4, 2.4], [0, -38, -8, -48, 2.2, 1.4], [0, -38, 8, -49, 2.2, 1.4], [0, -38, 1, -56, 2, 1.2], [-1, -1, -9, 1, 2.6, 1], [1, -1, 9, 1, 2.6, 1]],
+    tips: [[-8, -48, -2.6], [8, -49, -0.5]],
+    clusters: [[0, -74, 11, 9, 0], [0, -60, 14, 10, 0], [-10, -52, 9, 7, 0], [10, -52, 9, 7, 0], [0, -45, 13, 8, 0],
+      [-6, -66, 9, 7, 1], [7, -64, 9, 7, 1], [-12, -48, 8, 6, 1], [12, -48, 8, 6, 1],
+      [0, -56, 11, 8, 2], [-8, -42, 8, 5, 2], [8, -42, 8, 5, 2], [0, -50, 9, 6, 3]],
+  },
+  {   // 5 розлога крона
+    limbs: [[0, 0, 0, -18, 5.4, 4.4], [0, -18, -12, -30, 3.4, 2.4], [0, -18, 12, -30, 3.4, 2.4], [0, -18, 1, -34, 3, 2], [-12, -30, -26, -36, 2, 1.2], [12, -30, 26, -36, 2, 1.2],
+      [-1, -1, -9, 1, 2.8, 1], [1, -1, 9, 1, 2.8, 1]],
+    tips: [[-26, -36, -2.8], [26, -36, -0.35]],
+    clusters: [[-20, -48, 13, 9, 0], [20, -48, 13, 9, 0], [0, -54, 16, 10, 0], [-30, -42, 9, 7, 0], [30, -42, 9, 7, 0],
+      [-10, -46, 12, 8, 1], [11, -46, 12, 8, 1], [-22, -38, 10, 7, 1], [22, -38, 10, 7, 1],
+      [0, -40, 13, 8, 2], [-12, -34, 9, 6, 2], [12, -34, 9, 6, 2],
+      [-30, -34, 7, 5, 3], [30, -34, 7, 5, 3], [0, -33, 9, 5, 3]],
+  }
+);
+const TREE2_CACHE = new Map();
+function drawTreeV2(g, x, v, season) {
+  const base = LAYOUT.horizonY + 8, sd = Math.round(x) & 3, vi = 3 + (v % 3), key = vi + '|' + season + '|' + sd;
+  let c = TREE2_CACHE.get(key);
+  if (!c) { if (TREE2_CACHE.size > 40) TREE2_CACHE.clear(); c = sakuraBuild(vi, season, sd * 977 + vi * 131 + 11); TREE2_CACHE.set(key, c); }
+  g.drawImage(c, Math.round(x) - 54, base - 116);
 }

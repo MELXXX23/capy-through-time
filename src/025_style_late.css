@@ -99,4 +99,18 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 #circusModal .modal-box, #circusModal.mg .modal-box { position: relative; padding-top: 34px; }
 #circusModal .modal-box > :not(.bonus-bg) { position: relative; z-index: 1; }
 #circusModal .bonus-bg { position: absolute; left: 8px; top: 8px; z-index: 0; pointer-events: none; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+/* ефекти плюс (262_fx_plus.js): читабельніший HUD, плавні вікна, підстрибування лічильника монет */
+@media (min-width: 900px) { #goalLine { font-size: 12px; padding: 4px 9px; } #cps { font-size: 14px; } }
+@media (max-width: 899px) { #goalLine { font-size: 9px; } }
+[id$="Modal"]:not([hidden]) { animation: fxFadeIn .16s ease-out both; }
+[id$="Modal"]:not([hidden]) .modal-box { animation: fxModalIn .26s cubic-bezier(.2,.9,.3,1.12) both; }
+.fxPop { animation: fxPop .26s ease-out; transform-origin: left center; }
+@keyframes fxFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fxModalIn { from { transform: translateY(12px) scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fxPop { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { [id$="Modal"]:not([hidden]), [id$="Modal"]:not([hidden]) .modal-box, .fxPop { animation: none; } }
+/* меню: плавний відгук вкладок */
+.tab { transition: transform .12s ease, filter .12s ease, background-color .18s ease; }
+.tab:active { transform: translateY(1px); }
+@media (hover: hover) { .tab:hover { filter: brightness(1.07); } }
 </style>

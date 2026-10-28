@@ -332,6 +332,7 @@ function setupProgression() {
   ui.setDayNight.addEventListener('click', () => { state.settings.dayNight = !dayNightOn(); updateUI(); saveGame(); });
   [['setBirds', 'noFly'], ['setBirdsLate', 'birdsLate'], ['setClouds', 'clouds'], ['setSteam', 'steam'], ['setVibrate', 'vibrate']].forEach(([id, key]) => ui[id].addEventListener('click', () => { state.settings[key] = !state.settings[key]; if (key === 'vibrate') buzz(30); updateUI(); saveGame(); }));
   ui.setRain.addEventListener('click', () => { state.settings.rain = !state.settings.rain; if (state.settings.rain) weather.rain = Math.max(weather.rain, 0.3); updateUI(); saveGame(); });
+  ui.setFx.addEventListener('click', () => { state.settings.fxPlus = state.settings.fxPlus === false; FXP.key = ''; try { groundLayer = buildGroundLayer(); } catch (e) {} updateUI(); saveGame(); });
   ui.setEco.addEventListener('click', () => { state.settings.eco = !state.settings.eco; state.settings.ecoAsked = true; perf.slow = 0; perf.auto = false; updateUI(); saveGame(); });
   ui.licenseBtn.addEventListener('click', () => { window.open('https://openfontlicense.org/', '_blank', 'noopener'); });
   ui.privacyBtn.addEventListener('click', () => { window.open('https://melxxx23.github.io/capy-through-time/privacy.html', '_blank', 'noopener'); });

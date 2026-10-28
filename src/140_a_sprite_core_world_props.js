@@ -425,26 +425,34 @@ const BENCH_PAL = { renaissance: ['E', 'w', 'e'], retro: ['p', 'q', 'f'], disco:
 function benchColors() { return BENCH_PAL[currentEpoch().id] || ['b', 'l', 'c']; }
 function drawBenchBack(b) {        // спинка й сидіння (малюється ПЕРЕД тим, хто сидить)
   const x = b.x, y = b.y, [bb, bl, bc] = benchColors();
-  R(ctx, x - 16, y - 18, 32, 2, bb); R(ctx, x - 16, y - 18, 32, 1, bl); R(ctx, x - 16, y - 14, 32, 2, bb);
-  R(ctx, x - 16, y - 19, 2, 12, 'd'); R(ctx, x + 14, y - 19, 2, 12, 'd');
-  R(ctx, x - 16, y - 9, 32, 2, bl); R(ctx, x - 16, y - 9, 32, 1, bc);
+  R(ctx, x - 14, y - 20, 28, 3, 'd'); R(ctx, x - 14, y - 19, 28, 2, bb); R(ctx, x - 14, y - 19, 28, 1, bl);                       // верхня дошка спинки: світлий верх, темний низ
+  R(ctx, x - 14, y - 16, 28, 3, 'd'); R(ctx, x - 14, y - 15, 28, 2, bb); R(ctx, x - 14, y - 15, 28, 1, bl);                       // нижня дошка
+  for (let k = 0; k < 6; k++) R(ctx, x - 12 + k * 5 + (k % 2), y - 18, 1, 1, 'd');                                                // сучки на дошці
+  R(ctx, x - 16, y - 21, 3, 14, 'd'); R(ctx, x - 15, y - 20, 1, 12, bl); R(ctx, x + 13, y - 21, 3, 14, 'd'); R(ctx, x + 14, y - 20, 1, 12, bb);       // чавунні стійки з відблиском
+  R(ctx, x - 17, y - 22, 5, 2, 'd'); R(ctx, x - 16, y - 22, 3, 1, bl); R(ctx, x + 12, y - 22, 5, 2, 'd'); R(ctx, x + 13, y - 22, 3, 1, bl);        // завитки зверху
+  R(ctx, x - 17, y - 12, 4, 2, 'd'); R(ctx, x - 16, y - 12, 2, 1, bl); R(ctx, x + 13, y - 12, 4, 2, 'd'); R(ctx, x + 14, y - 12, 2, 1, bb);      // підлокітники
+  R(ctx, x - 16, y - 9, 32, 3, 'd'); R(ctx, x - 15, y - 9, 30, 2, bl); R(ctx, x - 15, y - 9, 30, 1, bc);                          // сидіння з світлою кромкою
   if (currentEpoch().id === 'neon') { R(ctx, x - 14, y - 16, 28, 1, 'f'); R(ctx, x - 14, y - 8, 28, 1, 'T'); }
 }
 function drawBenchFront(b) {       // передня планка й ніжки (малюється ПІСЛЯ того, хто сидить — ніби він сидить на лавці)
   const x = b.x, y = b.y;
   ctx.globalAlpha = 0.22; R(ctx, x - 17, y, 34, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x - 14, y + 2, 28, 1, 'd'); ctx.globalAlpha = 1;
   const [fb, fl] = benchColors();
-  R(ctx, x - 16, y - 7, 32, 3, fb); R(ctx, x - 16, y - 7, 32, 1, fl); R(ctx, x - 16, y - 5, 32, 1, 'd');
-  R(ctx, x - 15, y - 4, 3, 4, 'd'); R(ctx, x + 12, y - 4, 3, 4, 'd');
+  R(ctx, x - 16, y - 7, 32, 4, 'd'); R(ctx, x - 15, y - 6, 30, 2, fb); R(ctx, x - 15, y - 6, 30, 1, fl); R(ctx, x - 15, y - 4, 30, 1, 'd');       // передня планка з контуром
+  for (let k = 0; k < 4; k++) R(ctx, x - 10 + k * 7, y - 5, 2, 1, 'd');                                                                          // риски деревини
+  R(ctx, x - 15, y - 3, 4, 4, 'd'); R(ctx, x - 14, y - 3, 1, 3, fl); R(ctx, x - 16, y, 6, 1, 'd'); R(ctx, x + 11, y - 3, 4, 4, 'd'); R(ctx, x + 12, y - 3, 1, 3, fb); R(ctx, x + 10, y, 6, 1, 'd');       // чавунні ніжки з лапами
 }
 
 function drawBin(b) {              // урна біля лавки: колір тримається епохи лавки
   if (b.binX === null || b.binX === undefined) return;
-  const x = Math.round(b.binX) - 4, y = b.y + 1, [bb, bl] = benchColors();
-  ctx.globalAlpha = 0.2; R(ctx, x - 1, y, 10, 2, 'd'); ctx.globalAlpha = 1;
-  R(ctx, x, y - 10, 8, 10, 'd'); R(ctx, x + 1, y - 9, 6, 8, bb); R(ctx, x + 1, y - 9, 1, 8, bl); R(ctx, x + 6, y - 9, 1, 8, 'd');
-  R(ctx, x - 1, y - 11, 10, 2, 'd'); R(ctx, x, y - 11, 8, 1, bl);                          // кришка
-  R(ctx, x + 2, y - 7, 4, 1, 'd'); R(ctx, x + 2, y - 5, 4, 1, 'd'); R(ctx, x + 2, y - 3, 4, 1, 'd');       // прорізи
+  const x = Math.round(b.binX) - 4, y = b.y + 1, [bb, bl, bc] = benchColors();
+  ctx.globalAlpha = 0.24; R(ctx, x - 1, y, 11, 2, 'd'); ctx.globalAlpha = 0.12; R(ctx, x + 1, y + 2, 8, 1, 'd'); ctx.globalAlpha = 1;
+  R(ctx, x, y - 10, 8, 11, 'd'); R(ctx, x + 1, y - 9, 6, 9, bb);
+  R(ctx, x + 1, y - 9, 2, 9, bl); R(ctx, x + 5, y - 9, 2, 9, 'd'); ctx.globalAlpha = 0.45; R(ctx, x + 5, y - 9, 2, 9, bb); ctx.globalAlpha = 1;           // світло зліва, тінь справа
+  R(ctx, x + 3, y - 9, 1, 9, 'd'); ctx.globalAlpha = 0.5; R(ctx, x + 3, y - 9, 1, 9, bb); ctx.globalAlpha = 1;                                    // ребро
+  R(ctx, x, y - 6, 8, 1, 'd'); R(ctx, x + 1, y - 5, 6, 1, bc); R(ctx, x, y - 4, 8, 1, 'd');                                             // пояс кольору епохи
+  R(ctx, x + 2, y - 2, 4, 1, 'd');                                                                                                    // прорізь
+  R(ctx, x - 1, y - 13, 10, 3, 'd'); R(ctx, x, y - 12, 8, 2, bb); R(ctx, x, y - 12, 8, 1, bl); R(ctx, x + 3, y - 15, 2, 2, 'd'); R(ctx, x + 3, y - 15, 2, 1, bl);   // кришка з ручкою
 }
 
 /* ---------- Лампа, ящики, кущ ---------- */

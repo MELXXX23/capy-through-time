@@ -122,6 +122,7 @@ function buildGroundLayer() {
   drawBush(g, 296, 121);
   for (let x = 40 - 92; x > x0 + 6; x -= 92) drawBush(g, x, 121);                  // кущі в розширеній частині вулиці
   for (let x = 296 + 92; x < x0 + W - 6; x += 92) drawBush(g, x, 121);
+  fxHousePass(c);                                                    // світло й тіні на будинках (262_fx_plus.js)
   // легка димка, щоб фон «відсунувся»
   g.globalAlpha = 0.16; R(g, x0, 60, W, LAYOUT.horizonY - 60, 'W'); g.globalAlpha = 1;
 
@@ -316,6 +317,11 @@ let TREE_CROWN_MASK = null;
 const TREE_CACHE = new Map();       // готові дерева (x, вид, сезон) → полотно: звичайне дерево не залежить від епохи, тож при подорожі береться з кешу, а не малюється заново (~40 мс)
 function drawStreetTree(g, x, v, season) {
   { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.tree) return A.tree(g, x, v, season); }
+  if (season !== 'winter') {                                                                  // об'ємні дерева (275_a_sakura.js)
+    drawTreeV2(g, x, v, season);
+    if (season === 'halloween') treeHalloweenDecor(g, x, LAYOUT.horizonY + 8 - 51);          // гарбузи, привиди й гірлянда висять на кроні
+    return;
+  }
   const base = LAYOUT.horizonY + 8, key = x + '|' + v + '|' + season + '|' + base, ox = x - 48, oy = base - 92;
   let c = TREE_CACHE.get(key);
   if (!c) {

@@ -45,6 +45,7 @@ function frame(now) {
   updateWarp(dt);
   updateSeasonFx(dt);
   updateSeasonsIntro();
+  updateFxPlus(dt);
   updateDailyReminder(dt);
   render(animClock);
 

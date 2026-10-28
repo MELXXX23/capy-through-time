@@ -322,6 +322,7 @@ function updateSettingsUI() {
   setSwitch(ui.setBigText, t('swBig'), S.bigText);
   setSwitch(ui.setVibrate, t('swVib'), S.vibrate);
   setSwitch(ui.setEco, t('swEco'), S.eco);
+  setSwitch(ui.setFx, t('swFx'), S.fxPlus !== false);
   ui.exportLast.textContent = exportLastText();
   ui.aboutInfo.textContent = t('aboutInfo', NEWS_VERSION);
   ui.setGender.querySelectorAll('button').forEach(b => { b.textContent = t('gender_' + b.dataset.gender); b.setAttribute('aria-pressed', String(b.dataset.gender === state.settings.gender)); });

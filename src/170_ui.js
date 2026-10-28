@@ -390,7 +390,7 @@ function updateUI() {
     setText(ui.coinCount, fmt(Math.floor(state.epochEarned[previewIdx()] || 0)), 'coins');
     setText(ui.cps, t('perSecondHud', fmt(state.cps, 1)), 'cps');
   } else {
-    setText(ui.coinCount, fmt(Math.floor(state.coins)), 'coins');
+    setText(ui.coinCount, fmt(Math.floor(fxCoinShown())), 'coins');
     setText(ui.cps, t('perSecondHud', fmt(state.cps, 1)), 'cps');
   }
 
