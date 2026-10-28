@@ -324,9 +324,11 @@ function startBuild(old) {
   if (!buildPreview) showToast(t('buildTapHint'), 'good');
   build = { t: 0, dur: CONFIG.BUILD_SECONDS, boost: 0, hitSfx: 0, old, dustTimer: 0, burst: false, style, r: 0, shake: 0, hitT: 0, lastSfx: 0, bx: old.x - 30, by: LAYOUT.curbY + 4, bdir: 1, fw: 0, fwT: 0, landed: -1, bands: 0, fin: false };
   ui.shopOverlay.style.visibility = 'hidden';
+  buildCinemaStart();
 }
 function finishBuild() {
   build = null;
+  buildCinemaEnd();
   ui.scene.style.transform = '';
   ui.shopOverlay.style.visibility = '';
   shopAnim.vel = 6;
@@ -417,6 +419,7 @@ function updateBuild(dt) {
   if (Math.abs(tx - b.bx) > 0.8) b.bdir = tx > b.bx ? 1 : -1;
   b.run = run || Math.abs(tx - b.bx) > 1.5;
   ui.scene.style.transform = b.shake > 0.03 ? 'translate(' + (rand(-1, 1) * b.shake * 3).toFixed(1) + 'px,' + (rand(-1, 1) * b.shake * 3).toFixed(1) + 'px)' : '';
+  buildCinemaTick(p);
   if (b.t >= b.dur) finishBuild();
 }
 // Риштування навколо прямокутника: стовпи й дошки

@@ -35,6 +35,7 @@ function render(time) {
     drawShopLayered(sc);
     drawShopShine(sc);
     drawShopSkinFx();
+    drawUpgradeArrow();                                      // стрілка «можна прокачати» (263_build_cinema.js)
     // вивіска слідує за стисканням
     ui.shopOverlay.style.transform = (sc.sx === 1 && sc.sy === 1) ? 'none' : 'scale(' + sc.sx + ',' + sc.sy + ')';
   }
@@ -335,5 +336,6 @@ function renderBuild() {
   if (p > 0 && tentLift < H + 4) { ctx.save(); ctx.translate(0, -Math.round(fall) + bounce); drawBuildTent(b, tx0, tx1, base - H, base, tentLift, b.t); ctx.restore(); }
   drawBuildExtras(b, p);
   drawBeaverBuilder(b, p);
+  if (p >= BUILD_C + 0.02) drawBuildSweep((p - BUILD_C - 0.02) / 0.12);                  // смуга світла по новому магазину
 }
 

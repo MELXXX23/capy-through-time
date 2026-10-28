@@ -288,7 +288,8 @@ function updateWarp(dt) {
     const viewOnly = warp.view !== undefined;
     if (!warp.demo) state.warpSeen = 1;
     warp = null;
-    ui.timeWarp.hidden = true;
+    ui.timeWarp.classList.add('out');                                  // розчиняється під заставкою епохи
+    setTimeout(() => { if (!warp) { ui.timeWarp.hidden = true; ui.timeWarp.classList.remove('out'); } }, 720);
     if (viewOnly) return;
     // новий сюжетний фрагмент епохи
     const storyNo = guestStoryNoOf(curEpoch()), label = curEpoch() + 1;

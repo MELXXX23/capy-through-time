@@ -12,7 +12,7 @@
 | `022_style_panels.css` | 11 | CSS: меню, вкладки, картки |  |
 | `023_style_boot.css` | 34 | CSS: екран завантаження, бульбашки, кат-сцена, газета |  |
 | `024_style_modal_phone.css` | 21 | CSS: модальні вікна, телефон |  |
-| `025_style_late.css` | 11 | CSS: пізні правки (поверх решти) |  |
+| `025_style_late.css` | 21 | CSS: пізні правки (поверх решти) |  |
 | `030_body_open.html` | 1 | HTML: початок body |  |
 | `040_boot_script.html` | 76 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
 | `050_body_markup.html` | 19 | HTML: розмітка гри (панель, меню, вікна) |  |
@@ -29,7 +29,7 @@
 | `120_state.js` | 16 | стан гри (state), множники, зірки, вимоги | createDefaultState, state, milestonesReached, nextMilestone, levelMult, teamLevelOf, STAR_MULT, STAR_HARD_CAP |
 | `125_save.js` | 16 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
 | `130_format.js` | 42 | t() — переклади, формат чисел | t, tierSuffix, formatNumber, fmt |
-| `140_a_sprite_core_world_props.js` | 44 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
+| `140_a_sprite_core_world_props.js` | 46 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
 | `140_b_ground_houses_layers.js` | 41 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGround, manholeSpots, buildGroundLayer, autumnGroundLeaves, drawRoadG, manholeG |
 | `150_a1_facade_items_decor.js` | 29 | магазин: предмети вітрин, прилавки | tierOf, drawItem, drawDisplay, drawShelf, posterG, DOOR_LEAF_STYLES, drawDoorLeaves, placeRow |
 | `150_a2_facade_items_decor.js` | 24 | магазин: епохальний декор фасаду, skinShopDeco | leafPileG, skinGlints, bigLollipopG, gumdropG, coinStackG, goldBarsG, gemG, snowmanG |
@@ -77,7 +77,7 @@
 | `230_b_circus_loot_letters.js` | 43 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawWheelIcon, drawCircusIcon, buildCircusWheelTexture, drawCircusWheel |
 | `230_c_news_wheel_events.js` | 28 | газета (сторінки), листи, updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
 | `230_d_circus_themes.js` | 30 | цирк по епохах: CIRCUS_THEMES (палітра, деталі, гірлянда), малює CIRCUS_ART з 230_a | CIRCUS_THEMES, circusGarland |
-| `240_story.js` | 42 | сюжет: діалоги, гості, камео | dialog, storyTimer, cameos, speakerSprite, speakerName, pageText, renderDialogText, buildChoiceButtons |
+| `240_story.js` | 43 | сюжет: діалоги, гості, камео | dialog, storyTimer, cameos, speakerSprite, speakerName, pageText, renderDialogText, buildChoiceButtons |
 | `241_a_epoch_story.js` | 30 | сюжет епох: початок EC_DATA (перші епохи) | EC_TRIGGERS, EC_DATA |
 | `241_b_epoch_story.js` | 19 | сюжет епох: середина EC_DATA |  |
 | `241_c_epoch_story.js` | 31 | сюжет епох: кінець EC_DATA, EC_TRIGGERS | EPOCH_CHAPTERS |
@@ -87,9 +87,10 @@
 | `246_b_help.js` | 19 | допомога гостям: тексти EN, підключення |  |
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
 | `260_render.js` | 30 | головний render, будівельна техніка | render, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum, drawTruckWheel |
-| `262_fx_plus.js` | 18 | — | FXP, fxLevel, EPFX, fxPx, fxFrac, fxSeed, updateFxPlus, fxCoin |
+| `262_fx_plus.js` | 20 | — | FXP, fxLevel, EPFX, fxPx, fxFrac, fxSeed, updateFxPlus, fxCoin |
+| `263_build_cinema.js` | 7 | — | bc, bcSweepCv, bcMake, bcPlace, buildCinemaStart, buildCinemaTick, buildCinemaEnd, drawBuildSweep |
 | `270_loop.js` | 2 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frame |
-| `275_a_sakura.js` | 12 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild |
+| `275_a_sakura.js` | 17 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild, TREE2_CACHE |
 | `275_ads.js` | 9 | реклама AdMob (лише Android-обгортка, прапорець window.__ADS з mobile/sync-web.js): Ads.init/available/showRewarded, кнопки «×2» у вікні офлайну й пропуск очікування бонус-гри; див. store/ADS_PLAN.md | Ads, adsAddPrivacyButton, adsLog, adOfflineDone, updateAdButtons, adsOfferOffline, adsBoostClick, adsOfferBonusSkip |
 | `275_japan.js` | 77 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `275_k_stand_sora.js` | 7 | — |  |

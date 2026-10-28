@@ -16,7 +16,7 @@ const EPFX = {
   arcade: { fall: { cols: ['#ff5a5a', '#5ac8ff', '#ffd24a', '#7dff7a', '#c47aff'], n: 20, v: 14, sq: 2 }, glint: '#ffffff' },
   internet: { rise: { cols: ['#46e6ff', '#7dff9a', '#ffffff'], n: 30, v: 12 }, pulse: { c: '#46e6ff', hz: 0.5, k: 0.5 }, glint: '#bff6ff' },
   eco: { fall: { cols: ['#7ed957', '#bfe86a', '#4fae3f'], n: 22, v: 9 }, fly: { cols: ['#ffb347', '#ff8fb4', '#7fd0ff', '#fff27a'], n: 10, bfly: true }, rays: '#e6ffc0', glint: '#f6ffe0' },
-  space: { aurora: ['#50ffd2', '#a078ff', '#50c8ff'], fly: { cols: ['#8ff5ea', '#b79cff', '#fff3a0'], n: 14 }, glint: '#c8fff7' },
+  space: { fly: { cols: ['#8ff5ea', '#b79cff', '#fff3a0'], n: 14 }, glint: '#c8fff7' },
   neon: { pulse: { c: '#ff3ca8', hz: 1.6 }, beams: ['#ff3ca8', '#3cf0ff'], rise: { cols: ['#ff3ca8', '#3cf0ff'], n: 22, v: 20 }, glint: '#ffd6f4' },
   japan: { fall: { cols: ['#ffc3d6', '#ff8fb4', '#ffe3ec'], n: 34, v: 11, big: true }, fly: { cols: ['#ffe9a0', '#ffc86a'], n: 12 }, rays: '#ffd0d8', glint: '#fff2e8' }
 };
@@ -134,6 +134,49 @@ function fxLight() {
   }
 }
 
+// Полярне сяйво v2: шторки з вертикальними променями, що мерехтять; гарячий нижній край, холодна верхівка, хвилі яскравості вздовж шторки
+const AURORA_COLS = ['#5dffb4', '#46d8d0', '#a078ff'];              // кольори шторок сяйва; ним користується скін погоди «Полярне сяйво» (поки не підключений: див. HANDOFF)
+let AUR_PAL = null, AUR_KEY = '';
+function aurPalette(cols, rows) {                          // [шторка][шар] → 'rgb(...)': знизу світліше (майже біле), посередині основний колір, угорі — фіолетово-рожевий
+  const key = cols.join() + rows;
+  if (AUR_PAL && AUR_KEY === key) return AUR_PAL;
+  const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+  const top = rgb('#b98cff'), hot = rgb('#9dffd6');
+  AUR_PAL = cols.map(c => {
+    const base = rgb(c), out = [];
+    for (let k = 0; k < rows; k++) { const u = k / (rows - 1), m = u < 0.25 ? mix(hot, base, u / 0.25) : mix(base, top, (u - 0.25) / 0.75 * 0.7); out.push('rgb(' + m.join(',') + ')'); }
+    return out;
+  });
+  AUR_KEY = key; return AUR_PAL;
+}
+function fxAurora(C, L, t, x0, W, top, nightK) {                  // C.aurora — кольори (AURORA_COLS)
+  const step = L === 1 ? 3 : 2, curtains = L === 1 ? 2 : 3, rows = L === 1 ? 7 : 11, pal = aurPalette(C.aurora, rows);
+  const maxH = Math.max(22, Math.min(62, (LAYOUT.horizonY - top) * 0.36)), sx = Math.round(x0);
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';                       // шторки світяться, а не просто фарбують небо
+  for (let c = 0; c < curtains; c++) {
+    const base = top + maxH * 0.55 + 8 + c * 10, cp = pal[c % pal.length];
+    ctx.globalAlpha = 0.07 * nightK; ctx.fillStyle = cp[3];                    // м'яка дифузна пелена за шторкою
+    ctx.fillRect(sx, Math.round(base - maxH * 0.9), W, Math.round(maxH * 0.9 + 6));
+    for (let x = 0; x < W; x += step) {
+      const u = x / W;
+      const yb = base + Math.sin(u * 4.2 + t * 0.22 + c * 2.1) * 9 + Math.sin(u * 9 - t * 0.35 + c) * 3;    // складки шторки
+      const wave = 0.5 + 0.5 * Math.sin(u * 10 - t * 0.85 + c * 1.7);                                                                        // хвиля яскравості біжить вздовж шторки
+      const flick = 0.72 + 0.28 * Math.sin(t * 2.1 + x * 0.41 + c * 3.1) * Math.sin(t * 0.8 + x * 0.13);                                    // мерехтіння окремих променів
+      const ray = 0.78 + 0.22 * Math.sin(x * 1.1 + Math.sin(x * 0.23 + t * 0.4) * 3 + c * 5);                                                  // окремі вертикальні промені
+      const h = maxH * (0.4 + 0.6 * wave) * (0.6 + 0.4 * ray) * (0.85 + 0.15 * Math.sin(t * 0.5 + x * 0.09 + c)), a0 = nightK * (0.07 + 0.16 * wave) * (0.9 + 0.1 * flick) * ray;
+      const rh = h / rows, px = sx + x, yy = Math.round(yb);
+      for (let k = 0; k < rows; k++) {
+        const f = 1 - k / rows;
+        ctx.globalAlpha = a0 * (0.15 + 0.85 * f * f * f);
+        ctx.fillStyle = cp[k];
+        ctx.fillRect(px, Math.round(yb - (k + 1) * rh), step, Math.max(1, Math.ceil(rh) + 1));
+      }
+      ctx.globalAlpha = a0 * 1.2; ctx.fillStyle = cp[2]; ctx.fillRect(px, yy, step, 2);                          // м'який нижній край (без білих смуг)
+    }
+  }
+  ctx.restore();
+}
 // реакції світу на епоху: промені, прожектори, полярне сяйво, листя й пелюстки, метелики, світлячки, пульс музики, блиски на фасаді
 function fxFront() {
   const L = FXP.lv; if (!L) return;
@@ -150,10 +193,7 @@ function fxFront() {
       for (let k = 0; k < len; k += 3) fxPx(bx + Math.cos(ang) * k, LAYOUT.streetTop - 4 + Math.sin(ang) * k, 3 + k * 0.16, 3, C.beams[i % C.beams.length]);
     }
   }
-  if (C.aurora && nightK > 0.05) {                            // полярне сяйво ступінчастими смугами
-    const step = L === 1 ? 5 : 3, bands = L === 1 ? 2 : 3;
-    for (let b = 0; b < bands; b++) for (let x = 0; x < W; x += step) { const y = top + 12 + b * 7 + Math.sin(x * 0.03 + t * 0.6 + b * 1.4) * 6 + Math.sin(x * 0.07 - t) * 2; ctx.globalAlpha = 0.17 * nightK; fxPx(x0 + x, y, step, 7, C.aurora[b % C.aurora.length]); ctx.globalAlpha = 0.08 * nightK; fxPx(x0 + x, y + 7, step, 5, C.aurora[b % C.aurora.length]); }
-  }
+  if (skinOn('weather') === 'aurora' && nightK > 0.05) fxAurora({ aurora: AURORA_COLS }, L, t, x0, W, top, nightK);        // скін погоди «Полярне сяйво» (ще не заведений у SKIN_POOL)
   if (C.pulse) {                                              // удар музики: коротке світіння всієї сцени
     const ph = (t * C.pulse.hz) % 1, a = Math.pow(1 - ph, 3) * 0.07 * (C.pulse.k || 1) * (0.5 + 0.5 * Math.max(nightK, 0.4));
     ctx.globalAlpha = a; ctx.fillStyle = C.pulse.c; ctx.fillRect(x0, top, W, LAYOUT.streetTop - top + 6);

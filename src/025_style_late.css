@@ -113,4 +113,82 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 .tab { transition: transform .12s ease, filter .12s ease, background-color .18s ease; }
 .tab:active { transform: translateY(1px); }
 @media (hover: hover) { .tab:hover { filter: brightness(1.07); } }
+/* ===== Анімації появи: діалоги, картки глав, заставки епох, подорож (р. 71) ===== */
+#dialog:not([hidden]) { animation: dlgBgIn .3s ease-out both; }
+#dialog:not([hidden]) #dialogWrap { animation: dlgWrapIn .46s cubic-bezier(.2,.9,.25,1.12) both; }
+#dialog.closing { animation: dlgBgOut .28s ease-in both; pointer-events: none; }
+#dialog.closing #dialogWrap { animation: dlgWrapOut .28s cubic-bezier(.5,0,.9,.5) both; }
+@keyframes dlgBgIn { from { background-color: rgba(42,29,26,0); } to { background-color: rgba(42,29,26,.45); } }
+@keyframes dlgBgOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes dlgWrapIn { 0% { transform: translateY(48px) scale(.94); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+@keyframes dlgWrapOut { from { transform: none; opacity: 1; } to { transform: translateY(30px) scale(.96); opacity: 0; } }
+#dialogBox.pageIn { animation: dlgPage .22s ease-out; }
+@keyframes dlgPage { 0% { transform: translateY(7px); } 100% { transform: none; } }
+#dlgPortraitWrap.portraitIn { animation: dlgPortrait .38s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes dlgPortrait { 0% { transform: scale(.4) rotate(-10deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+#dlgName.nameIn { animation: dlgNameIn .28s ease-out both; }
+@keyframes dlgNameIn { from { transform: translateX(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
+/* картка глави / епохи: по центру екрана, золота рамка, промінь світла */
+#dialog.isTitle { align-items: center; background-image: radial-gradient(ellipse at center, rgba(255,214,120,.16), rgba(14,8,10,.5) 75%); }
+#dialog.isTitle #dialogWrap { margin-top: 0; }
+#dialog.isTitle #dialogBox { justify-content: center; text-align: center; min-height: 190px; box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 7px #f4c15d, inset 0 0 0 9px var(--dark), inset 0 0 46px rgba(244,193,93,.5); }
+#dialog.isTitle #dialogWrap { filter: drop-shadow(0 0 22px rgba(244,193,93,.6)); }
+#dialog.isTitle #dlgText { font-size: clamp(16px, 3.4vmin, 24px); line-height: 2; padding-top: 22px; color: var(--red); text-shadow: 0 2px 0 rgba(255,255,255,.55); flex: none; min-height: calc(2em * 2); }
+#dialog.isTitle #dlgName { display: none; }
+#dialog.isTitle .dlg-main { align-self: center; }
+#dialog.isTitle #dlgNext { align-self: center; }
+#dialogBox.titleIn { animation: dlgTitle .7s cubic-bezier(.2,.9,.25,1.1) both; }
+@keyframes dlgTitle { 0% { transform: scale(.7) rotateX(50deg); opacity: 0; letter-spacing: .3em; } 60% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+#dialog.isTitle #dialogBox::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.55) 50%, transparent 62%) -160% 0 / 260% 100% no-repeat; animation: dlgShine 1.3s .55s ease-out both; }
+@keyframes dlgShine { to { background-position: 160% 0; } }
+/* заставка епохи: спалах, плавні вхід і вихід, текст наїжджає */
+#epochIntro:not([hidden])::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 50%, #fffbe8, rgba(255,240,200,.75) 55%, rgba(255,230,170,.4)); animation: eiFlash 1.1s ease-out both; }
+@keyframes eiFlash { 0% { opacity: .9; } 100% { opacity: 0; } }
+#epochIntro:not([data-ep="1"]) #eiStage { animation-timing-function: cubic-bezier(.6,0,.2,1); }
+#eiEmblem { animation-timing-function: cubic-bezier(.2,1.25,.35,1); }
+#eiNum { animation: eiNumIn .8s cubic-bezier(.2,.8,.2,1) 1.7s both; }
+@keyframes eiNumIn { from { opacity: 0; letter-spacing: .8em; transform: translateY(-8px); } to { opacity: 1; letter-spacing: .3em; transform: none; } }
+#eiSub { animation: eiSubIn .9s cubic-bezier(.2,.8,.2,1) 3.3s both; }
+@keyframes eiSubIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+#epochIntro.out #eiBox { animation: eiBoxOut .55s cubic-bezier(.5,0,.9,.5) forwards; }
+@keyframes eiBoxOut { to { opacity: 0; transform: scale(1.08); filter: blur(3px); } }
+#epochIntro.out #eiStage { animation-timing-function: cubic-bezier(.55,0,.8,.4); }
+/* подорож у часі: плавно з'являється і розчиняється під заставкою епохи */
+#timeWarp:not([hidden]) { animation: twIn .4s ease-out both; }
+#timeWarp.out { animation: twOut .7s ease-in both; }
+@keyframes twIn { from { opacity: 0; filter: brightness(2.2); } to { opacity: 1; filter: none; } }
+@keyframes twOut { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #dialog, #dialog *, #epochIntro::after, #timeWarp { animation: none !important; } }
+/* будування: плашка з прогресом, спалах, картка нового рівня (263_build_cinema.js); --bcs — масштаб під розмір видимої сцени */
+.bc-banner { position: fixed; left: 50%; top: 15%; z-index: 55; width: calc(var(--bcs, 1) * 340px); max-width: 92vw; padding: 10px 14px 12px; text-align: center; pointer-events: none; background: #fff3d6; color: #3a2a22; border: 4px solid #3a2a22; box-shadow: 0 4px 0 rgba(0,0,0,.3), inset 0 0 0 2px #c98a3c; font-family: var(--font); opacity: 0; transform: translateX(-50%) translateY(-40px); }
+.bc-banner.in { animation: bcIn .6s cubic-bezier(.2,1.3,.4,1) both; }
+.bc-banner.out { animation: bcOut .4s ease-in both; }
+@keyframes bcIn { from { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(.85); } to { opacity: 1; transform: translateX(-50%); } }
+@keyframes bcOut { from { opacity: 1; transform: translateX(-50%); } to { opacity: 0; transform: translateX(-50%) translateY(-40px); } }
+.bc-label { font-size: calc(var(--bcs, 1) * 9px); letter-spacing: .18em; color: #8a4a12; }
+.bc-name { font-size: calc(var(--bcs, 1) * 15px); margin: 6px 0 8px; line-height: 1.3; }
+.bc-track { height: calc(var(--bcs, 1) * 12px); background: #3a2a22; padding: 2px; }
+.bc-fill { height: 100%; width: 0; background: repeating-linear-gradient(-45deg, #ffcf3a 0 8px, #3a2a22 8px 16px); background-size: 22.6px 100%; animation: bcStripe .5s linear infinite; transition: width .2s linear; }
+.bc-banner.done .bc-fill { background: #5fd36a; animation: none; }
+.bc-banner.done .bc-label { color: #2a7a3a; }
+@keyframes bcStripe { to { background-position: 22.6px 0; } }
+.bc-flash { position: fixed; inset: 0; z-index: 56; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 62%, rgba(255,250,215,.95), rgba(255,226,150,.5) 55%, rgba(255,226,150,0) 80%); }
+.bc-flash.on { animation: bcFlash .9s ease-out both; }
+@keyframes bcFlash { 0% { opacity: 0; } 16% { opacity: 1; } 100% { opacity: 0; } }
+.bc-ring { position: fixed; z-index: 56; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 6px solid #fff2b0; box-shadow: 0 0 24px 6px rgba(255,214,110,.8); pointer-events: none; opacity: 0; }
+.bc-ring.on { animation: bcRing 1.1s cubic-bezier(.1,.7,.3,1) both; }
+@keyframes bcRing { 0% { opacity: .95; transform: scale(.4); } 100% { opacity: 0; transform: scale(calc(var(--bcs, 1) * 22)); border-width: 2px; } }
+.bc-card { position: fixed; left: 50%; top: 30%; z-index: 57; min-width: calc(var(--bcs, 1) * 300px); max-width: 92vw; padding: calc(var(--bcs, 1) * 16px) calc(var(--bcs, 1) * 34px) calc(var(--bcs, 1) * 18px); text-align: center; pointer-events: none; opacity: 0; transform: translateX(-50%) scale(.3); font-family: var(--font); color: #fff6c8; background: linear-gradient(#3b2a52, #231636); border: 4px solid #f6c744; box-shadow: 0 0 0 3px #3a2a22, 0 0 calc(var(--bcs, 1) * 50px) 10px rgba(246,199,68,.6); }
+.bc-card em { display: block; font-style: normal; font-size: calc(var(--bcs, 1) * 12px); letter-spacing: .5em; color: #ffe36a; animation: bcTwinkle .6s steps(2) infinite; }
+.bc-card b { display: block; margin-top: 6px; font-size: calc(var(--bcs, 1) * 13px); letter-spacing: .24em; color: #ffe36a; }
+.bc-card span { display: block; margin-top: calc(var(--bcs, 1) * 10px); font-size: calc(var(--bcs, 1) * 26px); line-height: 1.25; text-shadow: 0 3px 0 #1a0f2a, 0 0 18px rgba(255,227,106,.8); }
+.bc-card small { display: block; margin-top: 8px; font-size: calc(var(--bcs, 1) * 10px); color: #c9b8ff; letter-spacing: .2em; }
+.bc-card i { position: absolute; left: 50%; top: 50%; width: calc(var(--bcs, 1) * 700px); height: calc(var(--bcs, 1) * 700px); margin: calc(var(--bcs, 1) * -350px) 0 0 calc(var(--bcs, 1) * -350px); z-index: -1; background: repeating-conic-gradient(rgba(255,227,106,.26) 0 7deg, transparent 7deg 15deg); border-radius: 50%; -webkit-mask: radial-gradient(circle, #000 10%, transparent 66%); mask: radial-gradient(circle, #000 10%, transparent 66%); animation: eiSpin 8s linear infinite; }
+.bc-card u { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; background: #ffe36a; box-shadow: 0 0 6px 1px #fff2b0; opacity: 0; animation: bcSpark 1.5s ease-out var(--dl, 0s) both; }
+.bc-card u:nth-of-type(3n) { background: #fff; } .bc-card u:nth-of-type(3n+1) { background: #ff9ed6; }
+@keyframes bcSpark { 0% { opacity: 1; transform: translate(0, 0) scale(1.4); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.4); } }
+@keyframes bcTwinkle { 50% { opacity: .45; } }
+.bc-card.on { animation: bcCard 3.4s cubic-bezier(.2,1.3,.4,1) both; }
+@keyframes bcCard { 0% { opacity: 0; transform: translateX(-50%) scale(.2) rotate(-8deg); } 10% { opacity: 1; transform: translateX(-50%) scale(1.14) rotate(1.5deg); } 16% { transform: translateX(-50%) scale(.98) rotate(0); } 21% { transform: translateX(-50%) scale(1); } 84% { opacity: 1; transform: translateX(-50%) scale(1); } 100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(.92); } }
+@media (prefers-reduced-motion: reduce) { .bc-banner, .bc-flash, .bc-card, .bc-ring, .bc-card u { animation: none !important; } }
 </style>

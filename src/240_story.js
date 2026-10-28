@@ -66,6 +66,19 @@ function chooseOption(i) {
   dialog.page++;
   showDialogPage();
 }
+let dlgCloseT = 0;
+function restartAnim(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }     // перезапуск CSS-анімації
+function openDialogUI() {
+  if (dlgCloseT) { clearTimeout(dlgCloseT); dlgCloseT = 0; }
+  ui.dialog.classList.remove('closing');
+  ui.dialog.hidden = false;                                  // анімація появи крутиться сама: #dialog:not([hidden])
+}
+function closeDialogUI() {                                   // плавне зникання: спершу клас closing, потім ховаємо
+  if (ui.dialog.hidden || !animOn()) { ui.dialog.hidden = true; return; }
+  ui.dialog.classList.add('closing');
+  if (dlgCloseT) clearTimeout(dlgCloseT);
+  dlgCloseT = setTimeout(() => { dlgCloseT = 0; if (!dialog.active) { ui.dialog.hidden = true; ui.dialog.classList.remove('closing'); } }, 280);
+}
 function showDialogPage() {
   const p = dialog.pages[dialog.page];
   dialog.choosing = !!p.choice;
@@ -84,6 +97,16 @@ function showDialogPage() {
     g.imageSmoothingEnabled = false;
     g.drawImage(c, (side - c.width) >> 1, side - c.height);
   }
+  const isTitle = p.speaker === 'title';
+  ui.dialog.classList.toggle('isTitle', isTitle);
+  if (animOn()) {
+    if (isTitle) restartAnim(ui.dlgBox, 'titleIn');
+    else {
+      restartAnim(ui.dlgName, 'nameIn');
+      if (dialog.lastSpeaker !== p.speaker) { restartAnim(ui.dlgWrap, 'portraitIn'); restartAnim(ui.dlgBox, 'pageIn'); }
+    }
+  }
+  dialog.lastSpeaker = p.speaker;
   renderDialogText();
   if (p.choice) buildChoiceButtons();
 }
@@ -114,7 +137,8 @@ function startDialogue(n, replay = false, kind = 'ch', labelNo = n, epk = 0) {
     dialog.pages = def.thx.map((sp, k) => ({ speaker: sp, key: 'thx' + n + '_' + k }));          // подяка гостя за допомогу: окрема коротка сцена
   } else dialog.pages = [...(kind === 'tut' ? [] : [{ speaker: 'title' }]), ...def.lines.map((sp, k) => ({ speaker: sp, key: prefix + '_' + k }))];
   ui.dlgSkip.textContent = t('storySkip');
-  ui.dialog.hidden = false;
+  dialog.lastSpeaker = null;
+  openDialogUI();
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   showDialogPage();
 }
@@ -133,7 +157,7 @@ function endDialogue() {
   dialog.active = false;
   dialog.choosing = false;
   ui.dlgChoices.hidden = true;
-  ui.dialog.hidden = true;
+  closeDialogUI();
   const after = dialog.after; dialog.after = null;
   if (kind === 'thx') { if (!replay) { state.story.thx[n - 1] = 1; saveGame(); } if (after) after(); return; }
   if (replay) return;

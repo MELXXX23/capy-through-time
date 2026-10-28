@@ -359,7 +359,7 @@ function drawWitchSpriteOld(x, y, dir, t) {                                     
   }
 }
 const capyRimCache = {};
-const CAPY_K = 1.3;                                   // Капі збільшена на 30%
+const CAPY_K = 1.26;                                  // Капі збільшена на 26% (було 30%, зменшено на 3%)
 function capyHopY() { const k = (animClock - capyAnim.hopAt) / 0.5; return k >= 0 && k < 1 ? Math.round(Math.sin(k * Math.PI) * 10) : 0; }       // підскок Капі при тапі на неї (пікселі сцени)
 function capyScaled(fn) { const cp = LAYOUT.capy, px = cp.x + 14, py = cp.footY; ctx.save(); ctx.translate(px, py); ctx.scale(CAPY_K, CAPY_K); ctx.translate(-px, -py); fn(); ctx.restore(); }
 function drawCapyBody(breath) {
