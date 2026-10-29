@@ -258,7 +258,7 @@ function guestSpriteName(id) {
   const base = 'npc_' + id;
   if (viewEpoch() % EPOCHS.length !== 6 || id === 'orbit' || !NPC_PARTS[id]) return base;
   const n = base + '_sp';
-  if (!SPRITES[n]) SPRITES[n] = { rows: composeTeamCostume(id, 6) };
+  if (!SPRITES[n]) SPRITES[n] = GUEST_LOOK[id] ? { get canvas() { delete this.canvas; return (this.canvas = guestSprite(id, true)); } } : { rows: composeTeamCostume(id, 6) };
   return n;
 }
 // Капі: 28×24, дивиться вправо (у грі віддзеркалюється). Контур намальований прямо в спрайті.
