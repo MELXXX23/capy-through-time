@@ -1271,6 +1271,19 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 @keyframes skinPopTxt { 0% { opacity: 0; transform: translateY(3px); } 100% { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .skin-item.skin-pop .skin-prev, .skin-item.skin-pop::after, .skin-item.skin-pop .skin-state { animation: none; } }
 body.no-anim .skin-item.skin-pop .skin-prev, body.no-anim .skin-item.skin-pop::after, body.no-anim .skin-item.skin-pop .skin-state { animation: none; }
+/* плавне закриття вікон (264_smooth_ui.js), зміна вкладок і шторка меню на телефоні (р. 71) */
+.fxGhost, .fxGhost * { pointer-events: none !important; }
+.fxGhost { animation: fxGhostOut .22s ease-in both !important; }
+.fxGhost .modal-box { animation: fxGhostBox .22s cubic-bezier(.5, 0, .9, .5) both !important; }
+@keyframes fxGhostOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes fxGhostBox { from { transform: none; opacity: 1; } to { transform: translateY(14px) scale(.95); opacity: 0; } }
+.pane:not([hidden]) { animation: fxPaneIn .24s ease-out both; }
+@keyframes fxPaneIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+#app.sheet-open #tabContent { animation: fxSheetIn .26s cubic-bezier(.2, .9, .3, 1) both; }
+@keyframes fxSheetIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.btn, .tab, .buy-mode { transition: transform .12s ease, filter .12s ease, background-color .18s ease, box-shadow .18s ease; }
+@media (prefers-reduced-motion: reduce) { .fxGhost, .pane:not([hidden]), #app.sheet-open #tabContent { animation: none !important; } }
+body.no-anim .fxGhost, body.no-anim .pane:not([hidden]), body.no-anim #app.sheet-open #tabContent { animation: none !important; }
 </style>
 <!--#part 030_body_open.html-->
 </head>
@@ -8534,6 +8547,9 @@ const AR = (function () {
       // нижня стрічка-консолі під плитою
       for (let k = a + 1; k < b; k += 3) P(g, k, y0 + 14, 1, 1, ST[3]);
       A(g, 0.28, () => P(g, a + 1, y0 + 15, W - 2, 1, '#000000'));
+      // об'єм: ніша за поручнем темніша (балкон «виїмка» у стіні), збоку — тонка стінка
+      A(g, 0.42, () => P(g, a + 1, y0 + 5, W - 2, 6, '#1a1028')); A(g, 0.22, () => P(g, a + 1, y0 + 2, W - 2, 3, '#1a1028'));
+      A(g, 0.45, () => { P(g, a - 1, y0 + 4, 1, 8, '#1a1028'); P(g, b + 1, y0 + 4, 1, 8, '#1a1028'); });
       // плита балкона
       P(g, a - 1, y0 + 11, W + 2, 1, snow ? '#ffffff' : SL[0]); P(g, a - 1, y0 + 12, W + 2, 1, ST[2]); P(g, a - 1, y0 + 13, W + 2, 1, ST[3]);
       // балюстрада: поручень, бальки, нижня планка
@@ -8551,9 +8567,7 @@ const AR = (function () {
         else { P(g, p, y0 + 4, 2, 7, ST[1]); P(g, p, y0 + 4, 1, 7, SL[0]); P(g, p + 1, y0 + 4, 1, 7, ST[3]); P(g, p - 1, y0 + 3, 4, 1, ST[0]); P(g, p, y0 + 1, 2, 2, SL[1]); P(g, p, y0 + 1, 1, 1, SL[0]); }
         P(g, p - 1, y0 + 14, 4, 1, ST[2]); P(g, p, y0 + 15, 2, 1, ST[3]); P(g, p, y0 + 16, 2, 1, ST[4]);
       });
-      // об'єм: ніша за поручнем темніша (балкон «виїмка» у стіні), плита кидає падаючу тінь на фасад нижче, збоку — тонка стінка
-      A(g, 0.42, () => P(g, a + 1, y0 + 5, W - 2, 6, '#1a1028')); A(g, 0.22, () => P(g, a + 1, y0 + 2, W - 2, 3, '#1a1028'));
-      A(g, 0.45, () => { P(g, a - 1, y0 + 4, 1, 8, '#1a1028'); P(g, b + 1, y0 + 4, 1, 8, '#1a1028'); });
+      // падаюча тінь від плити на фасад нижче
       [0.46, 0.34, 0.23, 0.13, 0.06].forEach((al, r) => A(g, al, () => P(g, a - 1, y0 + 16 + r, W + 2, 1, '#1a1028')));
       // горщики з квітами (за ознакою від зерна) і одна тканина-стяг на поручні
       wxs.forEach((wx, i) => {
@@ -22961,6 +22975,31 @@ function drawUpgradeArrow() {
   ctx.fillStyle = '#c4ffa8'; UP_ARROW.forEach(r => ctx.fillRect(x + r[0] * S, y + r[1] * S, S, S));                               // світлий лівий край
   ctx.restore();
 }
+//#part 264_smooth_ui.js
+/* Плавне закриття вікон [id$="Modal"]: коли гра ховає вікно (hidden), поверх лишається його «привид»-копія,
+   що тане за 0,2 с. Справжнє вікно ховається одразу, стан гри не змінюється (р. 71). */
+(function smoothModals() {
+  if (typeof MutationObserver === 'undefined') return;
+  const reduce = () => (typeof animOn === 'function' && !animOn()) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function ghost(m) {
+    try {
+      if (reduce() || !m.isConnected) return;
+      const g = m.cloneNode(true); g.hidden = false; g.classList.add('fxGhost'); g.setAttribute('aria-hidden', 'true');
+      g.querySelectorAll('canvas').forEach((cv, i) => { const src = m.querySelectorAll('canvas')[i]; try { cv.getContext('2d').drawImage(src, 0, 0); } catch (e) { /* нічого */ } });
+      document.body.appendChild(g);
+      setTimeout(() => { if (g.parentNode) g.parentNode.removeChild(g); }, 260);
+    } catch (e) { /* нічого */ }
+  }
+  const mo = new MutationObserver(list => {
+    for (const r of list) {
+      const m = r.target;
+      if (!m || !m.id || !/Modal$/.test(m.id) || m.classList.contains('fxGhost')) continue;
+      if (m.hidden && r.oldValue === null) ghost(m);                       // було видно → сховали
+    }
+  });
+  function arm() { document.querySelectorAll('[id$="Modal"]').forEach(m => mo.observe(m, { attributes: true, attributeFilter: ['hidden'], attributeOldValue: true })); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arm); else arm();
+})();
 //#part 270_loop.js
 /* =====================================================================
    ІГРОВИЙ ЦИКЛ

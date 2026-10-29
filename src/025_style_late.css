@@ -200,4 +200,17 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 @keyframes skinPopTxt { 0% { opacity: 0; transform: translateY(3px); } 100% { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .skin-item.skin-pop .skin-prev, .skin-item.skin-pop::after, .skin-item.skin-pop .skin-state { animation: none; } }
 body.no-anim .skin-item.skin-pop .skin-prev, body.no-anim .skin-item.skin-pop::after, body.no-anim .skin-item.skin-pop .skin-state { animation: none; }
+/* плавне закриття вікон (264_smooth_ui.js), зміна вкладок і шторка меню на телефоні (р. 71) */
+.fxGhost, .fxGhost * { pointer-events: none !important; }
+.fxGhost { animation: fxGhostOut .22s ease-in both !important; }
+.fxGhost .modal-box { animation: fxGhostBox .22s cubic-bezier(.5, 0, .9, .5) both !important; }
+@keyframes fxGhostOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes fxGhostBox { from { transform: none; opacity: 1; } to { transform: translateY(14px) scale(.95); opacity: 0; } }
+.pane:not([hidden]) { animation: fxPaneIn .24s ease-out both; }
+@keyframes fxPaneIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+#app.sheet-open #tabContent { animation: fxSheetIn .26s cubic-bezier(.2, .9, .3, 1) both; }
+@keyframes fxSheetIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.btn, .tab, .buy-mode { transition: transform .12s ease, filter .12s ease, background-color .18s ease, box-shadow .18s ease; }
+@media (prefers-reduced-motion: reduce) { .fxGhost, .pane:not([hidden]), #app.sheet-open #tabContent { animation: none !important; } }
+body.no-anim .fxGhost, body.no-anim .pane:not([hidden]), body.no-anim #app.sheet-open #tabContent { animation: none !important; }
 </style>
