@@ -238,13 +238,24 @@ function drawCobbleLay() {                                        // true — м
 }
 
 /* ---------- 5. Скіни погоди: рухомі картки (р. 72) ---------- */
-function weatherHouse(g, lit) {
-  R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, lit ? '#ffe27a' : 's');
-  if (lit) { g.globalAlpha = 0.25; R(g, 33, 24, 5, 5, '#ffe27a'); g.globalAlpha = 1; }
+// Картка погоди: полотно 128×80, логіка малюнка — у координатах 64×40 (масштаб ×2); маркет 1-го рівня (×0,4) малюється вже в повних пікселях (р. 73)
+const weatherMarketCache = {};
+function weatherMarket(kind) {                                          // зменшений до 0,4 маркет; ніч і гроза трохи затемнюють його
+  const key = kind + '|' + state.lang;
+  if (weatherMarketCache[key]) return weatherMarketCache[key];
+  const geo = buildShopCanvas(1, state.depts.map(tierOf)), w = Math.round(geo.w * 0.4), h = Math.round(geo.h * 0.4);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(geo.canvas, 0, 0, w, h);
+  if (kind !== 'day') { g.globalCompositeOperation = 'source-atop'; g.globalAlpha = kind === 'night' ? 0.6 : 0.42; g.fillStyle = kind === 'night' ? '#0c1636' : '#1a1030'; g.fillRect(0, 0, w, h); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; }
+  return (weatherMarketCache[key] = c);
+}
+function weatherHouse(g, kind) {
+  const m = weatherMarket(kind); g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+  g.drawImage(m, Math.round((128 - m.width) / 2), 74 - m.height); g.restore();
 }
 function weatherSkinPreview(cv, name, T) {
-  const W = 64, H = 40; cv.width = W; cv.height = H;
-  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+  const W = 64, H = 40; cv.width = 128; cv.height = 80;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.setTransform(2, 0, 0, 2, 0, 0);
   const SPEED = 5, wrap = (x0, w) => ((x0 + T * SPEED) % (W + w + 12 + 0)) - w - 6 + 6;     // усі хмари пливуть вправо з однаковою швидкістю
   if (name === 'aurora') {                                       // ніч, зорі, три шторки сяйва з променями, гори, сніг і хатка зі світлим вікном
     const gr = g.createLinearGradient(0, 0, 0, 34); gr.addColorStop(0, '#060a20'); gr.addColorStop(0.6, '#10224a'); gr.addColorStop(1, '#1c3d5e'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
@@ -261,7 +272,7 @@ function weatherSkinPreview(cv, name, T) {
     g.fillStyle = '#dff1ff'; g.fillRect(0, 34, W, 6); g.fillStyle = '#a9c8e6'; g.fillRect(0, 34, W, 1);
     g.globalAlpha = 0.16 + 0.06 * Math.sin(T * 0.9); g.fillStyle = '#2cf09a'; g.fillRect(0, 34, W, 6); g.globalAlpha = 1;      // відблиск сяйва на снігу
     [[8, 36, 6], [14, 37, 5], [52, 36, 6], [58, 37, 5]].forEach(([x, y, h]) => { g.fillStyle = '#10361f'; g.fillRect(x, y - h, 1, h); g.fillRect(x - 1, y - h + 2, 3, 1); g.fillRect(x - 2, y - h + 4, 5, 1); });
-    weatherHouse(g, true);
+    weatherHouse(g, 'night');
     return;
   }
   if (BOLT_COLS[name]) {                                         // гроза: темне небо, хмари пливуть, раз на ~2,4 с — спалах і блискавка
@@ -269,7 +280,7 @@ function weatherSkinPreview(cv, name, T) {
     g.fillStyle = bc[0]; g.fillRect(0, 0, W, H); g.fillStyle = bc[1]; g.fillRect(0, 0, W, 18);
     [[0, 3, 24], [32, 9, 20]].forEach(([b, y, w]) => { const x = Math.round(wrap(b, w)); g.fillStyle = bc[2]; g.fillRect(x, y, w, 5); g.fillRect(x + 4, y - 2, w - 9, 3); g.fillStyle = bc[1]; g.fillRect(x, y + 4, w, 1); });
     g.fillStyle = bc[3]; for (let i = 0; i < 14; i++) { const hs = hash2(i * 5 + 2, 9), x = ((hs % 70) - Math.floor(T * 14) % 70 + 70) % 70 - 3, y = (Math.floor(T * 30) + hs % 40) % 34; if (y > 12) g.fillRect(x, y, 1, 2); }       // косий дощ
-    R(g, 0, 34, W, 6, 'G'); weatherHouse(g, false);
+    R(g, 0, 34, W, 6, 'G'); weatherHouse(g, 'storm');
     const C = 2.4, cyc = Math.floor(T / C), p = T % C;
     const on = p < 0.1 || (p > 0.17 && p < 0.34), fade = p > 0.34 ? Math.max(0, 1 - (p - 0.34) / 0.25) : 1;
     if (p < 0.06) { g.globalAlpha = 0.35; g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, 34); g.globalAlpha = 1; }
@@ -289,11 +300,11 @@ function weatherSkinPreview(cv, name, T) {
     const rb = buildRainbow(30, 3.4, 3, false);
     g.save(); g.beginPath(); g.rect(0, 0, Math.round(e * (W + 2)), H); g.clip(); g.globalAlpha = a; g.drawImage(rb, -1, 1); g.restore(); g.globalAlpha = 1;
     if (r < 1) { g.fillStyle = '#ffffff'; g.fillRect(Math.round(e * (W + 2)) - 1, 14 + Math.round(Math.abs(Math.sin(e * 3.14)) * -2), 1, 1); }
-    weatherHouse(g, false);
+    weatherHouse(g, 'day');
     [[3, 6], [34, 12]].forEach(([b, y]) => { const x = Math.round(wrap(b, 14)); R(g, x, y, 12, 4, 'w'); R(g, x + 3, y - 2, 8, 3, 'w'); });
     return;
   }
-  weatherHouse(g, false);
+  weatherHouse(g, 'day');
   if (CLOUD_SKIN_TINT[name]) {
     const c0 = cloudCanvas(0, CLOUD_SKIN_TINT[name]), c1 = cloudCanvas(1, CLOUD_SKIN_TINT[name]);
     g.drawImage(c0, Math.round(wrap(2, c0.width)), 0); g.drawImage(c1, Math.round(wrap(34, c1.width)), 6);
