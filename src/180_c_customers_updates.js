@@ -63,11 +63,12 @@ function hireOrUpgrade(i) {
 }
 
 /* ---------- Покупці ---------- */
+const CUSTOMERS_BY_LEVEL = [3, 4, 5, 7, 8, 10];                          // скільки покупців на вулиці за рівнем маркету (до розширення вулиці)
 function customerTarget() {
   if (state.cps <= 0) return 2;
-  const base = Math.min(CONFIG.MAX_CUSTOMERS + 4, 4 + Math.floor(Math.log10(state.cps + 1) * 2));      // трохи більше покупців, ніж раніше
-  const wide = (worldR() - worldL()) / Math.max(320, visR() - visL());                                  // вулиця широка: покупців більше, щоб їх було видно скрізь
-  return Math.round(base * Math.max(1, Math.min(2.2, wide)));
+  const base = CUSTOMERS_BY_LEVEL[Math.min(CUSTOMERS_BY_LEVEL.length - 1, state.shopLevel | 0)];
+  const wide = (worldR() - worldL()) / Math.max(320, visR() - visL());                                  // вулиця широка (камера вправо-вліво): трохи більше, щоб вони були по всій вулиці
+  return Math.round(base * Math.max(1, Math.min(1.5, wide)));
 }
 // Куди йде звіреня, що покидає сцену: трохи за краєм того, що видно (світ широкий, тож до його краю йти надто довго)
 function passEdge(dir) { return dir > 0 ? worldR() + 16 : worldL() - 16; }                       // ідуть до самого краю вулиці, а не зникають одразу за краєм екрана
@@ -81,7 +82,7 @@ function spawnX(fromLeft) {
 function spawnCustomer() {
   const fromLeft = Math.random() < 0.5;
   const lane = rand(LAYOUT.lane.min, Math.max(LAYOUT.lane.min + 4, roadFloor()));
-  const goesShopping = Math.random() < 0.55;
+  const goesShopping = Math.random() < 0.3;                                  // більшість просто йдуть вулицею: біля маркету не скупчуються
   const c = {
     type: CUSTOMER_TYPES[Math.floor(Math.random() * CUSTOMER_TYPES.length)],
     x: spawnX(fromLeft),
@@ -405,6 +406,9 @@ function drawSkinGear(sx, sy, kind, head) {
     if (head) { R(ctx, cx - 4, ht - 3, 9, 3, 'S'); R(ctx, cx - 4, ht - 3, 9, 1, 'w'); R(ctx, cx - 4, ht - 5, 2, 2, 's'); R(ctx, cx - 1, ht - 7, 3, 4, 'S'); R(ctx, cx + 3, ht - 5, 2, 2, 's'); R(ctx, cx, ht - 6, 1, 2, 'w'); R(ctx, cx - 3, ht - 2, 1, 1, 'n'); R(ctx, cx + 3, ht - 2, 1, 1, 'n'); }
     R(ctx, cx - 5, sy + 16, 11, 5, 's'); R(ctx, cx - 5, sy + 16, 11, 1, 'w'); R(ctx, cx - 4, sy + 17, 1, 3, 'S'); R(ctx, cx - 1, sy + 18, 1, 1, 'w'); R(ctx, cx + 2, sy + 19, 1, 1, 'w'); R(ctx, cx - 5, sy + 21, 11, 1, 'n');
     if (Math.floor(animClock * 4 + sx * 0.13) % 3 === 0) R(ctx, cx - 2 + Math.floor(animClock * 2) % 5, sy + 18, 1, 1, 'w');
+  } else if (TEAM_SKIN_BODY[kind]) {                                          // скіни під вулиці (р. 72): ті самі капелюх і светр, що в героїв
+    if (head) TEAM_SKIN_HATS[kind].forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] !== '.') R(ctx, cx - 8 + i, ht - 6 + j, 1, 1, row[i]); });
+    TEAM_SKIN_BODY[kind].forEach((row, j) => { for (let i = 0; i < 8; i++) R(ctx, cx - 4 + i, sy + 17 + j, 1, 1, row[i]); });
   }
 }
 // Двері будиночка: відчиненість 0…1 залежить від етапу (стук → відчиняються → зачиняються)
@@ -443,7 +447,7 @@ function spaceHelmet() {                                                       /
   g.fillStyle = PALETTE.e; for (let x = 4; x <= 14; x++) if (inE(x, H - 3, 0) && !inE(x, H - 3, 1)) g.fillRect(x, H - 3, 1, 1);      // нижній обідок шолома
   return (spaceHelmetCv = c);
 }
-const CUST_K = 1.05;                                                         // покупці на 5% більші (рівномірне збільшення пікселів, без розмиву)
+const CUST_K = 1.10;                                                         // покупці на 10% більші (р. 72: ще +5%) (рівномірне збільшення пікселів, без розмиву)
 const UMB_COLS = [['r', 'w'], ['n', 'S'], ['h', 'y'], ['f', 'q'], ['g', 'm'], ['v', 'u'], ['o', 'y']];
 const UMB_ART = ['....ddddddd....', '..ddabbbbbadd..', '.daabbbbbbbaad.', 'daaabbbbbbbaaad', 'd.dd.dd.dd.dd.d'];
 function drawUmbrella(hx, ty, seed, swing, pole) {                                // парасолька 15×5 над головою: смугастий купол із контуром, блік, ручка за головою

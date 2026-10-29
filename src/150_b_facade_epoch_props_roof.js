@@ -106,10 +106,10 @@ function epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB) {
     }
     case 'neon': {                                     // неонове місто: голографічна реклама, світні стовпи, дрон
       if (flat) { const ks = lastRoofSign, hl = ks ? Math.max(0, Math.min(10, ks.x - 41)) : 10, hr = ks ? Math.min(w - 34, Math.max(w - 46, ks.x + ks.w + 7)) : w - 46;
-        hologram(g, hl, 1, 34, 12, 'T'); R(g, hl + 4, 4, 14, 1, 'w'); R(g, hl + 4, 7, 20, 1, 'f'); hologram(g, hr, 0, 34, 14, 'f'); R(g, hr + 4, 4, 18, 1, 'w'); R(g, hr + 4, 8, 10, 1, 'T'); }
-      for (let i = 0; i < slotsL; i++) { const px = L0 + 3 + i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'f' : 'T'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'T' : 'f'); }
-      for (let i = 0; i < slotsR; i++) { const px = R1 - 6 - i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'T' : 'f'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'f' : 'T'); }
-      neonLine(g, door.x - 2, yG + 10, 1, 24, 'T'); neonLine(g, door.x + door.w + 1, yG + 10, 1, 24, 'f');
+        hologram(g, hl, 1, 34, 12, 'I'); R(g, hl + 4, 4, 14, 1, 'w'); R(g, hl + 4, 7, 20, 1, 'A'); hologram(g, hr, 0, 34, 14, 'A'); R(g, hr + 4, 4, 18, 1, 'w'); R(g, hr + 4, 8, 10, 1, 'I'); }
+      for (let i = 0; i < slotsL; i++) { const px = L0 + 3 + i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'A' : 'I'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'I' : 'A'); }
+      for (let i = 0; i < slotsR; i++) { const px = R1 - 6 - i * 13; R(g, px, yb - 18, 3, 18, 'k'); R(g, px + 1, yb - 18, 1, 18, i % 2 ? 'I' : 'A'); R(g, px - 2, yb - 22, 7, 4, 'k'); R(g, px - 1, yb - 21, 5, 2, i % 2 ? 'A' : 'I'); }
+      neonLine(g, door.x - 2, yG + 10, 1, 24, 'I'); neonLine(g, door.x + door.w + 1, yG + 10, 1, 24, 'A');
       break;
     }
   }
@@ -159,7 +159,7 @@ function epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB) {
         [[16, t0 + 13], [w - 17, t0 + 13]].forEach(([px, py]) => { disc(g, px, py, 5, 'd'); disc(g, px, py, 4, 'e'); disc(g, px, py, 3, n % 2 ? 'n' : 'z'); R(g, px - 2, py - 2, 2, 1, 'w'); });
         break;
       case 'neon':                                                                                                    // неонові смуги вздовж поверху й по краях
-        neonLine(g, 9, fy - 2, w - 18, 1, n % 2 ? 'T' : 'f'); neonLine(g, 11, t0 + 5, 1, hF - 9, n % 2 ? 'f' : 'T'); neonLine(g, w - 12, t0 + 5, 1, hF - 9, n % 2 ? 'T' : 'f');
+        neonLine(g, 9, fy - 2, w - 18, 1, n % 2 ? 'I' : 'A'); neonLine(g, 11, t0 + 5, 1, hF - 9, n % 2 ? 'A' : 'I'); neonLine(g, w - 12, t0 + 5, 1, hF - 9, n % 2 ? 'I' : 'A');
         break;
     }
   });
@@ -206,8 +206,8 @@ function signMotif(g, es, w, top) {
       for (let x = 24; x < w - 24; x += 10) { R(g, x, y0 + 1, 1, 1, 'E'); R(g, x, y1 - 1, 1, 1, 'E'); }
       break;
     case 'neon':                                                               // неонова трубка по контуру та стрілки
-      neonLine(g, 7, y0 + 1, w - 14, 1, 'f'); neonLine(g, 7, y1 - 1, w - 14, 1, 'T'); neonLine(g, 7, y0 + 1, 1, 15, 'T'); neonLine(g, w - 8, y0 + 1, 1, 15, 'f');
-      mx.forEach((x, i) => { for (let k = 0; k < 4; k++) { R(g, x - 3 + k, y0 + 4 + k, 1, 1, i ? 'T' : 'f'); R(g, x - 3 + k, y0 + 12 - k, 1, 1, i ? 'T' : 'f'); R(g, x + 1 + k, y0 + 4 + k, 1, 1, i ? 'f' : 'T'); R(g, x + 1 + k, y0 + 12 - k, 1, 1, i ? 'f' : 'T'); } });
+      neonLine(g, 7, y0 + 1, w - 14, 1, 'A'); neonLine(g, 7, y1 - 1, w - 14, 1, 'I'); neonLine(g, 7, y0 + 1, 1, 15, 'I'); neonLine(g, w - 8, y0 + 1, 1, 15, 'A');
+      mx.forEach((x, i) => { for (let k = 0; k < 4; k++) { R(g, x - 3 + k, y0 + 4 + k, 1, 1, i ? 'I' : 'A'); R(g, x - 3 + k, y0 + 12 - k, 1, 1, i ? 'I' : 'A'); R(g, x + 1 + k, y0 + 4 + k, 1, 1, i ? 'A' : 'I'); R(g, x + 1 + k, y0 + 12 - k, 1, 1, i ? 'A' : 'I'); } });
       break;
   }
 }
@@ -223,7 +223,7 @@ function roofProp(g, es, w, top, level, cx) {
     case 'internet': for (let a = 1; a <= 3; a++) for (let t2 = -a * 3; t2 <= a * 3; t2++) { const yy = Math.round(Math.sqrt(Math.max(0, a * a * 11 - t2 * t2)) * 0.7); if (yy > 0) R(g, cx + t2, y + 10 - yy, 1, 1, 'a'); } disc(g, cx, y + 10, 2, 'a'); R(g, cx - 1, y + 10, 3, 1, 'n'); break;
     case 'eco': R(g, cx - 1, y + 2, 2, 12, 'w'); for (let k = 0; k < 3; k++) { const a = k * 2.09 + 0.5; for (let i = 1; i < 8; i++) R(g, cx + Math.cos(a) * i, y + 2 + Math.sin(a) * i, 1, 1, 'w'); } R(g, cx - 1, y + 1, 3, 3, 'g'); break;                                       // вітряк
     case 'space': R(g, cx - 2, y + 2, 5, 11, 'w'); R(g, cx - 2, y + 2, 5, 1, 'd'); R(g, cx - 1, y - 2, 3, 4, 'r'); R(g, cx, y - 4, 1, 2, 'r'); R(g, cx - 5, y + 9, 3, 4, 'r'); R(g, cx + 3, y + 9, 3, 4, 'r'); R(g, cx - 1, y + 5, 3, 3, 's'); break;                     // ракета
-    case 'neon': hologram(g, cx - 18, y - 2, 36, 12, 'T'); R(g, cx - 14, y + 1, 18, 1, 'w'); R(g, cx - 14, y + 4, 28, 1, 'f'); R(g, cx - 14, y + 7, 12, 1, 'T'); break;
+    case 'neon': hologram(g, cx - 18, y - 2, 36, 12, 'I'); R(g, cx - 14, y + 1, 18, 1, 'w'); R(g, cx - 14, y + 4, 28, 1, 'A'); R(g, cx - 14, y + 7, 12, 1, 'I'); break;
   }
 }
 
@@ -256,10 +256,10 @@ function epochFacadeFx(g, es, w, h, look, level, floors, yG) {
       for (let x = 12; x < w - 12; x += 12) { R(g, x, top + 11, 1, 1, 'S'); R(g, x + 6, top + 21, 1, 1, 'S'); }
       break;
     case 'neon':
-      neonLine(g, 6, top + 9, w - 12, 1, 'f'); neonLine(g, 6, top + 23, w - 12, 1, 'T');
-      neonLine(g, 6, top + 9, 1, 15, 'f'); neonLine(g, w - 7, top + 9, 1, 15, 'T');
-      floors.forEach(fl => { neonLine(g, 8, fl.top, w - 16, 1, 'T'); });
-      if (flatTop) { for (let x = 4; x < w - 4; x += 6) neonLine(g, x, 3 + ((x / 6) & 1), 3, 1, (x / 6) & 1 ? 'f' : 'T'); }
+      neonLine(g, 6, top + 9, w - 12, 1, 'A'); neonLine(g, 6, top + 23, w - 12, 1, 'I');
+      neonLine(g, 6, top + 9, 1, 15, 'A'); neonLine(g, w - 7, top + 9, 1, 15, 'I');
+      floors.forEach(fl => { neonLine(g, 8, fl.top, w - 16, 1, 'I'); });
+      if (flatTop) { for (let x = 4; x < w - 4; x += 6) neonLine(g, x, 3 + ((x / 6) & 1), 3, 1, (x / 6) & 1 ? 'A' : 'I'); }
       break;
   }
 }

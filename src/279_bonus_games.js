@@ -9,7 +9,7 @@
    draw(g, G, T). Додати гру: mgMake(eid, {...}) + тексти mg<Ім'я>Title/Sub/Start/Done. Лапшична (Японія) і відьма — окремі, на візку.
    ===================================================================== */
 const BONUS_COOLDOWN_MIN = 720;                                      // 12 годин; один спільний таймер на всі епохи (найпізніший з state.wheel.mg)
-const BONUS_RETRY_ON_MISS = true;                                    // не вийшло — спробуй ще, перезарядка йде лише після виграного скіна
+const BONUS_LOSE_MIN = 60;                                          // не вийшло — спробувати ще можна лише через годину (state.wheel.mgLose; відлік іде за Date.now(), тож і офлайн)
 const MG_DEFS = {};
 const mgGame = { phase: 'idle', t: 0, left: 0, score: 0, rt: 0, res: '', prize: null, main: false, s: null };
 function mgForEpoch(eid) { return MG_DEFS[eid] || null; }
@@ -17,7 +17,8 @@ function mgActive() { return (theme.season === 'halloween' && MG_DEFS[9]) || mgF
 function mgCur() { return circus.bonusDef; }                         // гра, що зараз у вікні (circus.bonus)
 function bonusCooldownMs() { return BONUS_COOLDOWN_MIN * 60000; }
 function bonusLastWin() { return (state.wheel.mg || []).reduce((m, v) => Math.max(m, v || 0), 0); }   // один таймер на всі епохи: береться найпізніший виграш
-function bonusWaitMs(eid = viewEpoch(), now = Date.now()) { return Math.max(0, bonusLastWin() + bonusCooldownMs() - now); }
+function bonusLoseWaitMs(now = Date.now()) { const l = state.wheel.mgLose || 0; return l ? Math.max(0, Math.min(l + BONUS_LOSE_MIN * 60000 - now, BONUS_LOSE_MIN * 60000)) : 0; }   // min: годинник, відкручений назад, не дає зависнути
+function bonusWaitMs(eid = viewEpoch(), now = Date.now()) { return Math.max(0, bonusLastWin() + bonusCooldownMs() - now, bonusLoseWaitMs(now)); }
 function mgSkinSector() {                                            // приз бонус-гри — лише скін (як усі вільні скіни закінчились — 5 кристалів)
   const pool = BONUS_GAME_SKINS.filter(x => circusFreeSkins(x.skin).length);
   if (!pool.length) return { kind: 'crystal', amount: 5, icon: 'gem2', color: 'v', weight: 0 };
@@ -38,12 +39,13 @@ function openBonus(def) {                                            // def — 
   updateCircusButtons();
 }
 function updateBonusBtn(dt) {                                        // іконка: є лише в епохах із грою; світиться, коли готова
-  circus.bt = (circus.bt || 0) - dt; if (circus.bt > 0) return; circus.bt = 0.4;
+  circus.bt = (circus.bt || 0) - dt; if (circus.bt > 0) return; circus.bt = 0.25;
   const d = mgActive(), b = ui.bonusOpen;
   b.hidden = !d; if (!d) return;
   const w = bonusWaitMs(viewEpoch());
   b.classList.toggle('ready', w <= 0); b.classList.toggle('wait', w > 0);
-  ui.bonusOpenT.textContent = w > 0 ? fmtTime(w / 1000) : '';
+  const ic = 'mg_' + d.id, im = $('bonusOpenI'); if (im && im.dataset.ic !== ic) { im.dataset.ic = ic; im.src = pxArt(ic).toDataURL(); }
+  ui.bonusOpenT.textContent = w > 0 ? t('mgLeft', fmtTime(w / 1000)) : '';
   b.setAttribute('aria-label', t(d.k.title));
 }
 function updateBonusGame(dt) { if (circus.bonus) mgUpdate(mgCur().o, dt); }
@@ -51,7 +53,7 @@ function updateBonusGame(dt) { if (circus.bonus) mgUpdate(mgCur().o, dt); }
 /* ---- спільний мінірушій ---- */
 function mgReset(o) {
   const G = mgGame;
-  G.phase = 'idle'; G.t = 0; G.left = o.dur; G.score = 0; G.rt = 0; G.res = ''; G.prize = null; G.main = false; G.s = o.init();
+  G.phase = 'idle'; G.t = 0; G.left = o.dur; G.score = 0; G.missText = ''; G.rt = 0; G.res = ''; G.prize = null; G.main = false; G.s = o.init();
 }
 function mgStart(o) {
   const G = mgGame; if (G.phase !== 'idle') return;
@@ -63,8 +65,8 @@ function mgFinish(o) {                                               // час �
   const eid = mgCur().eid, win = G.score >= o.goalP;
   G.res = win ? 'perfect' : G.score >= o.goalN ? 'near' : 'miss';
   G.main = win; G.phase = 'reveal'; G.rt = 0; G.prize = null;
-  if (win || !BONUS_RETRY_ON_MISS) { if (!state.wheel.mg) state.wheel.mg = []; state.wheel.mg[eid] = Date.now(); }
-  let text = t(win ? 'mgPerfect' : G.res === 'near' ? 'mgNear' : 'mgMiss');
+  if (win) { if (!state.wheel.mg) state.wheel.mg = []; state.wheel.mg[eid] = Date.now(); state.wheel.mgLose = 0; } else state.wheel.mgLose = Date.now();
+  let text = t(win ? 'mgPerfect' : G.res === 'near' ? 'mgNear' : 'mgMiss'); G.missText = win ? '' : text;
   if (win) {
     const sec = mgSkinSector(), pr = applyCircusSector(sec, Date.now());
     G.prize = sec; text += ' ' + pr.text;
@@ -82,6 +84,10 @@ function mgUpdate(o, dt) {
   } else if (G.phase === 'reveal') {
     G.rt += dt;
     if (G.rt > 2.2) { G.phase = 'done'; updateCircusButtons(); ui.circusClose.textContent = t(mgCur().k.done); }
+  }
+  if (G.phase !== 'idle' && G.missText && (G.phase === 'done' || G.rt > 0.5)) {      // живий відлік у вікні після програшу
+    const w = bonusLoseWaitMs(), txt = G.missText + ' ' + (w > 0 ? t('mgRetryIn', fmtTime(w / 1000)) : t('mgRetryNow'));
+    if (ui.circusResult.textContent !== txt) ui.circusResult.textContent = txt;
   }
 }
 function mgPoint(e) {                                                // координати тапа в системі полотна 192×120
@@ -256,13 +262,13 @@ function mgPrize(g, G, T, cx, cy) {
 
 (function () {
   const UK = {
-    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише скіни', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
+    mgScore: 'Влучань: {0} з {1}', mgWait: 'Бонус-гра цієї епохи буде готова через {0}', mgRetryIn: '⏳ Ще спроба — через {0}', mgRetryNow: '⏳ Можна пробувати ще!', mgLeft: 'ще {0}', mgBonusTitle: 'Бонус-гра', mgSkinOnly: '🎁 Тут лише скіни', mgPerfect: 'Ідеально! Ось твій скін!', mgNear: 'Майже! Спробуй ще раз.', mgMiss: 'Не вийшло. Спробуй ще раз!',
     mgDanceTitle: 'Танцпол Диско-Капі',
     mgDanceSub: 'Плитки спалахують і гаснуть. Тапай світні вчасно, а на темні не наступай!', mgDanceStart: 'Танцювати!', mgDanceDone: 'Гарно потанцювали!',
     mgSpamTitle: 'Спам-бомба', mgSpamSub: 'Вікна-спам лізуть на екран. Закривай їх тапом, поки не завалило!', mgSpamStart: 'Закривати!', mgSpamDone: 'Екран чистий!'
   };
   const EN = {
-    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Only skins here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
+    mgScore: 'Hits: {0} of {1}', mgWait: 'The bonus game of this era will be ready in {0}', mgRetryIn: '⏳ Try again in {0}', mgRetryNow: '⏳ You can try again!', mgLeft: '{0} left', mgBonusTitle: 'Bonus game', mgSkinOnly: '🎁 Only skins here', mgPerfect: 'Perfect! Here is your skin!', mgNear: 'So close! Try again.', mgMiss: 'Not this time. Try again!',
     mgDanceTitle: 'Disco Capy Dance Floor',
     mgDanceSub: 'Tiles light up and fade. Tap the glowing ones in time and keep off the dark ones!', mgDanceStart: 'Dance!', mgDanceDone: 'What a dance!',
     mgSpamTitle: 'Spam Bomb', mgSpamSub: 'Spam windows pop up everywhere. Tap them shut before they pile up!', mgSpamStart: 'Close them!', mgSpamDone: 'Screen is clean!'

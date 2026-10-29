@@ -223,7 +223,7 @@ const HOUSE_EDGE = {
   internet:    { w: 3, hi: '#e3e9f2', body: '#a9b5c8', sh: '#6d7b92', out: '#2a3345', kind: 'rack' },         // сіра серверна стійка з діодами
   eco:         { w: 3, hi: '#c6e87a', body: '#74b04a', sh: '#437a30', out: '#244a1e', kind: 'bamboo' },       // бамбук із вузлами
   space:       { w: 3, hi: '#ffffff', body: '#d3dcea', sh: '#8c9ab4', out: '#2d3550', kind: 'hull' },         // біла обшивка з синьою смугою
-  neon:        { w: 3, hi: '#5a3b8a', body: '#2a1c4e', sh: '#160e30', out: '#08040f', kind: 'tube' },         // темна колона з неоновою трубкою
+  neon:        { w: 3, hi: '#3a6a68', body: '#1c3a3a', sh: '#0e2224', out: '#040a0c', kind: 'tube' },         // темна колона з неоновою трубкою
   japan:       { w: 4, hi: '#c58a54', body: '#8f5a32', sh: '#5b3519', out: '#2a1507', kind: 'wood' }          // дерев'яний стовп: контур, світла грань, тіло, тінь
 };
 function houseEdges(g, spec) {
@@ -263,8 +263,8 @@ function houseEdges(g, spec) {
     for (let y = top + 3; y < base - 3; y += 12) { g.fillStyle = '#3fa7ff'; g.fillRect(mid, y, 1, 8); }
     dots(12, st.sh, 8, cx);
   } else if (k === 'tube') {
-    g.fillStyle = '#ff4fd8'; g.fillRect(mid, top + 2, 1, hh - 4); px(mid, top + 1, st.hi); px(mid, base - 2, st.hi);
-    g.globalAlpha = 0.35; g.fillStyle = '#ff4fd8'; g.fillRect(mid - 1, top + 2, 1, hh - 4); g.fillRect(mid + 1, top + 2, 1, hh - 4); g.globalAlpha = 1;
+    g.fillStyle = '#ff8a1a'; g.fillRect(mid, top + 2, 1, hh - 4); px(mid, top + 1, st.hi); px(mid, base - 2, st.hi);
+    g.globalAlpha = 0.35; g.fillStyle = '#ff8a1a'; g.fillRect(mid - 1, top + 2, 1, hh - 4); g.fillRect(mid + 1, top + 2, 1, hh - 4); g.globalAlpha = 1;
   } else if (k === 'wood') {                                                             // тонкі пласти дерева, балочна головка й темна основа
     for (let y = top + 5; y < base - 6; y += 9) { px(x + 2, y, st.sh); px(x + 2, y + 1, st.sh); px(x + 1, y + 4, st.sh); }
     g.fillStyle = st.out; g.fillRect(x, top + 1, CW, 1); g.fillRect(x, base - 4, CW, 1);
@@ -387,7 +387,7 @@ function epochHouseDeco(g, spec, top, base, floors, hs, doorX) {
     case 'space':
       R(g, x + 2, top + 2, 1, h - 10, 'e'); R(g, x + w - 3, top + 2, 1, h - 10, 'e'); R(g, x + (w >> 1), top - 16, 1, 10, 'd'); R(g, x + (w >> 1), top - 17, 1, 1, 'r'); break;
     case 'neon':
-      R(g, x + w - 4, top + 3, 1, h - 10, hs % 2 ? 'f' : 'T'); R(g, x + 3, top + 3, 1, h - 10, hs % 2 ? 'T' : 'f'); R(g, x + 1, top + 1, w - 2, 1, 'f'); break;
+      R(g, x + w - 4, top + 3, 1, h - 10, hs % 2 ? 'A' : 'I'); R(g, x + 3, top + 3, 1, h - 10, hs % 2 ? 'I' : 'A'); R(g, x + 1, top + 1, w - 2, 1, 'A'); break;
   }
 }
 
@@ -432,7 +432,7 @@ function drawBenchBack(b) {        // спинка й сидіння (малює
   R(ctx, x - 17, y - 22, 5, 2, 'd'); R(ctx, x - 16, y - 22, 3, 1, bl); R(ctx, x + 12, y - 22, 5, 2, 'd'); R(ctx, x + 13, y - 22, 3, 1, bl);        // завитки зверху
   R(ctx, x - 17, y - 12, 4, 2, 'd'); R(ctx, x - 16, y - 12, 2, 1, bl); R(ctx, x + 13, y - 12, 4, 2, 'd'); R(ctx, x + 14, y - 12, 2, 1, bb);      // підлокітники
   R(ctx, x - 16, y - 9, 32, 3, 'd'); R(ctx, x - 15, y - 9, 30, 2, bl); R(ctx, x - 15, y - 9, 30, 1, bc);                          // сидіння з світлою кромкою
-  if (currentEpoch().id === 'neon') { R(ctx, x - 14, y - 16, 28, 1, 'f'); R(ctx, x - 14, y - 8, 28, 1, 'T'); }
+  if (currentEpoch().id === 'neon') { R(ctx, x - 14, y - 16, 28, 1, 'A'); R(ctx, x - 14, y - 8, 28, 1, 'I'); }
 }
 function drawBenchFront(b) {       // передня планка й ніжки (малюється ПІСЛЯ того, хто сидить — ніби він сидить на лавці)
   const x = b.x, y = b.y;
@@ -511,7 +511,7 @@ function farSkyline(g, x0, W) {
       case 'internet': R(g, x, base - bh - 10, bw - 3, bh + 10, col); R(g, x + (bw >> 2), base - bh - 16, 1, 6, col); for (let yy = base - bh - 6; yy < base - 3; yy += 6) R(g, x + 2, yy, bw - 7, 2, 'a'); break;
       case 'eco': disc(g, x + (bw >> 1), base - 6, 9 + hs % 5, col); R(g, x + (bw >> 1), base - 3, 1, 3, 'd'); break;
       case 'space': for (let a = -bw; a <= bw; a++) { const hh = Math.round(Math.sqrt(Math.max(0, bw * bw - a * a)) * 0.9); R(g, x + bw + a, base - hh, 1, hh, col); } if (hs % 3 === 0) R(g, x + bw, base - bh - 10, 1, 10, col); break;
-      case 'neon': R(g, x, base - bh - 14, bw - 4, bh + 14, col); for (let yy = base - bh - 10; yy < base - 3; yy += 5) R(g, x + 2, yy, bw - 8, 1, hash2(yy, x) % 2 ? 'f' : 'T'); break;
+      case 'neon': R(g, x, base - bh - 14, bw - 4, bh + 14, col); for (let yy = base - bh - 10; yy < base - 3; yy += 5) R(g, x + 2, yy, bw - 8, 1, hash2(yy, x) % 2 ? 'A' : 'I'); break;
     }
     x += (ep === 'space' ? bw * 2 : bw) + 2 + hs % 6;
   }

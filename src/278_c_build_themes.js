@@ -189,18 +189,18 @@
       // цифровий дощ по краях
       if (p > 0.02 && G.q < 0.6) for (let c = 0; c < 8; c++) {
         const cx = c < 4 ? x0 - 30 - c * 14 : x1 + 30 + (c - 4) * 14, sp = 0.5 + rnd(c) * 0.5, head = ((t * sp + rnd(c * 3.1)) % 1) * (G.base + view.offY + 20) - view.offY;
-        for (let k = 0; k < 8; k++) { ctx.globalAlpha = 0.9 * (1 - k / 8); const ch = (Math.floor(t * 8 + c * 5 + k * 3) % 2) + ''; B.text(cx, head - k * 7, ch, k === 0 ? 'w' : 'N'); }
+        for (let k = 0; k < 8; k++) { ctx.globalAlpha = 0.9 * (1 - k / 8); const ch = (Math.floor(t * 8 + c * 5 + k * 3) % 2) + ''; B.text(cx, head - k * 7, ch, k === 0 ? 'w' : 'I'); }
         ctx.globalAlpha = 1;
       }
       // голографічний каркас майбутнього будинку над лінією кладки
       if (p >= A * 0.8 && p < G.C + 0.03) {
         const top = G.top, roof = G.roof, ph = t * 20;
-        dashV(xa, roof, top, 'N', 0.85, ph); dashV(xb, roof, top, 'N', 0.85, ph);
-        dashH(xa, xb, roof, 'N', 0.85, -ph);
-        for (let y = roof + 38; y < top; y += 38) dashH(xa, xb, y, 'f', 0.5, ph);
-        for (let x = xa + 46; x < xb; x += 46) dashV(x, roof, top, 'u', 0.45, 0);
+        dashV(xa, roof, top, 'I', 0.85, ph); dashV(xb, roof, top, 'I', 0.85, ph);
+        dashH(xa, xb, roof, 'I', 0.85, -ph);
+        for (let y = roof + 38; y < top; y += 38) dashH(xa, xb, y, 'A', 0.5, ph);
+        for (let x = xa + 46; x < xb; x += 46) dashV(x, roof, top, 'F', 0.45, 0);
         [[xa, roof], [xb, roof]].forEach(([cx, cy]) => { R(ctx, cx - 3, cy - 3, 7, 1, 'w'); R(ctx, cx - 3, cy - 3, 1, 7, 'w'); });
-        ctx.globalAlpha = 0.9; B.text(G.cx - 18, roof + 6, 'SCANNING', 'N'); ctx.globalAlpha = 1;
+        ctx.globalAlpha = 0.9; B.text(G.cx - 18, roof + 6, 'SCANNING', 'I'); ctx.globalAlpha = 1;
       }
     },
     work(G) {
@@ -209,43 +209,43 @@
       const railY = G.top - 18 + (p < A ? 0 : 0), ph = Math.floor(t * 4);
       [x0 - 8, x1 + 8].forEach((px, k) => {
         const hh = Math.round((base - railY + 8) * smooth01(grow) * (1 - smooth01(c01((G.q - 0.35) / 0.4))));
-        R(ctx, px - 2, base - hh, 5, hh, 'd'); R(ctx, px - 1, base - hh, 3, hh, 'k'); R(ctx, px, base - hh, 1, hh, k ? 'f' : 'N');
-        for (let y = base - hh + 6; y < base; y += 12) R(ctx, px - 2, y, 5, 1, 'u');
-        if (hh > 4) { ctx.globalAlpha = 0.25; R(ctx, px - 4, base - hh, 9, hh, k ? 'f' : 'N'); ctx.globalAlpha = 1; }
+        R(ctx, px - 2, base - hh, 5, hh, 'd'); R(ctx, px - 1, base - hh, 3, hh, 'k'); R(ctx, px, base - hh, 1, hh, k ? 'A' : 'I');
+        for (let y = base - hh + 6; y < base; y += 12) R(ctx, px - 2, y, 5, 1, 'F');
+        if (hh > 4) { ctx.globalAlpha = 0.25; R(ctx, px - 4, base - hh, 9, hh, k ? 'A' : 'I'); ctx.globalAlpha = 1; }
       });
       if (grow > 0.6 && G.q < 0.75) {
-        const w = x1 - x0 + 24, rx = x0 - 12; R(ctx, rx, railY, w, 5, 'd'); R(ctx, rx, railY + 1, w, 3, 'k'); R(ctx, rx, railY + 2, w, 1, 'f'); ctx.globalAlpha = 0.25; R(ctx, rx, railY - 2, w, 9, 'f'); ctx.globalAlpha = 1;
+        const w = x1 - x0 + 24, rx = x0 - 12; R(ctx, rx, railY, w, 5, 'd'); R(ctx, rx, railY + 1, w, 3, 'k'); R(ctx, rx, railY + 2, w, 1, 'A'); ctx.globalAlpha = 0.25; R(ctx, rx, railY - 2, w, 9, 'A'); ctx.globalAlpha = 1;
         // головка друку
         const hx = Math.round(lerp(x0 + 6, x1 - 6, (Math.sin(t * 1.6) + 1) / 2));
-        R(ctx, hx - 8, railY - 4, 17, 11, 'd'); R(ctx, hx - 7, railY - 3, 15, 9, 'e'); R(ctx, hx - 7, railY - 3, 15, 2, 'Y'); R(ctx, hx - 2, railY + 3, 5, 4, 'k'); R(ctx, hx - 1, railY + 4, 3, 2, 'N'); R(ctx, hx, railY + 4, 1, 1, 'w');
+        R(ctx, hx - 8, railY - 4, 17, 11, 'd'); R(ctx, hx - 7, railY - 3, 15, 9, 'e'); R(ctx, hx - 7, railY - 3, 15, 2, 'Y'); R(ctx, hx - 2, railY + 3, 5, 4, 'k'); R(ctx, hx - 1, railY + 4, 3, 2, 'I'); R(ctx, hx, railY + 4, 1, 1, 'w');
         if (p >= A && G.q < 0.1) {                                                       // промінь друку: лазер вниз до лінії кладки
-          const yb = G.top; R(ctx, hx, railY + 7, 1, yb - railY - 7, 'w'); ctx.globalAlpha = 0.45; R(ctx, hx - 1, railY + 7, 3, yb - railY - 7, 'N'); ctx.globalAlpha = 1;
-          B.spark(hx, yb, 'N', 'w', true);
+          const yb = G.top; R(ctx, hx, railY + 7, 1, yb - railY - 7, 'w'); ctx.globalAlpha = 0.45; R(ctx, hx - 1, railY + 7, 3, yb - railY - 7, 'I'); ctx.globalAlpha = 1;
+          B.spark(hx, yb, 'I', 'w', true);
           // лінія сканування по всій ширині з глітчами
-          R(ctx, shop.x - 3, yb - 1, shop.w + 6, 1, 'N'); ctx.globalAlpha = 0.35; R(ctx, shop.x - 3, yb - 3, shop.w + 6, 2, 'N'); ctx.globalAlpha = 1;
-          for (let i = 0; i < 5; i++) { const k = Math.floor(t * 10 + i * 7); if (rnd(k) > 0.4) R(ctx, Math.round(shop.x + rnd(k * 2) * shop.w), yb - 2 - Math.floor(rnd(k * 3) * 3), 6 + Math.floor(rnd(k * 4) * 12), 1, i % 2 ? 'f' : 'w'); }
+          R(ctx, shop.x - 3, yb - 1, shop.w + 6, 1, 'I'); ctx.globalAlpha = 0.35; R(ctx, shop.x - 3, yb - 3, shop.w + 6, 2, 'I'); ctx.globalAlpha = 1;
+          for (let i = 0; i < 5; i++) { const k = Math.floor(t * 10 + i * 7); if (rnd(k) > 0.4) R(ctx, Math.round(shop.x + rnd(k * 2) * shop.w), yb - 2 - Math.floor(rnd(k * 3) * 3), 6 + Math.floor(rnd(k * 4) * 12), 1, i % 2 ? 'A' : 'w'); }
         }
       }
       // дрони летять по периметру каркаса
       if (p >= A * 0.8 && G.q < 0.2) {
         const xa = shop.x, xb = shop.x + shop.w, ya = G.roof, yb = G.top, per = (xb - xa) * 2 + (yb - ya) * 2;
-        ['N', 'f', 'g'].forEach((c, i) => {
+        ['I', 'A', 'g'].forEach((c, i) => {
           let s = (((t * 0.15 + i / 3) % 1) * per), x, y;
           if (s < xb - xa) { x = xa + s; y = ya; } else if ((s -= xb - xa) < yb - ya) { x = xb; y = ya + s; } else if ((s -= yb - ya) < xb - xa) { x = xb - s; y = yb; } else { s -= xb - xa; x = xa; y = yb - s; }
           neonDrone(x, y - 6, t, c, i * 5);
         });
       }
-      if (p < A) { const s = smooth01(grow); for (let i = 0; i < 3; i++) neonDrone(lerp(i % 2 ? visR() + 40 : visL() - 40, G.cx + (i - 1) * 60, s), lerp(top - 120, railY - 24, s) + i * 6, t, ['N', 'f', 'g'][i], i); }
+      if (p < A) { const s = smooth01(grow); for (let i = 0; i < 3; i++) neonDrone(lerp(i % 2 ? visR() + 40 : visL() - 40, G.cx + (i - 1) * 60, s), lerp(top - 120, railY - 24, s) + i * 6, t, ['I', 'A', 'g'][i], i); }
     },
     finale(G) {
       const { t, q } = G;
       if (q < 0.35) { const fl = Math.sin(q * 90) * 0.5 + 0.5; ctx.globalAlpha = 0.28 * fl * (1 - q / 0.35); R(ctx, G.x0 - 140, G.roof - 80, G.x1 - G.x0 + 280, 300, 'V'); ctx.globalAlpha = 1; }
       if (q > 0.12) {                                                                     // ударна хвиля від вивіски
-        for (let k = 0; k < 2; k++) { const u = c01((q - 0.12 - k * 0.1) / 0.5); if (u <= 0 || u >= 1) continue; ctx.globalAlpha = 1 - u; const rr = 10 + u * 190; for (let a = 0; a < 6.283; a += 0.07) R(ctx, Math.round(G.cx + Math.cos(a) * rr), Math.round(G.roof + 10 + Math.sin(a) * rr * 0.4), 2, 1, k ? 'f' : 'N'); ctx.globalAlpha = 1; }
-        const txt = 'ONLINE', s = 3, w = B.textW(txt) * s; ctx.save(); ctx.translate(Math.round(G.cx - w / 2), Math.round(G.roof - 46)); ctx.scale(s, s); ctx.globalAlpha = 0.5; B.text(0, 0, txt, 'f'); ctx.globalAlpha = 1; B.text(-0, 0, txt, Math.floor(t * 8) % 7 === 0 ? 'k' : 'N', 'V'); ctx.restore();
+        for (let k = 0; k < 2; k++) { const u = c01((q - 0.12 - k * 0.1) / 0.5); if (u <= 0 || u >= 1) continue; ctx.globalAlpha = 1 - u; const rr = 10 + u * 190; for (let a = 0; a < 6.283; a += 0.07) R(ctx, Math.round(G.cx + Math.cos(a) * rr), Math.round(G.roof + 10 + Math.sin(a) * rr * 0.4), 2, 1, k ? 'A' : 'I'); ctx.globalAlpha = 1; }
+        const txt = 'ONLINE', s = 3, w = B.textW(txt) * s; ctx.save(); ctx.translate(Math.round(G.cx - w / 2), Math.round(G.roof - 46)); ctx.scale(s, s); ctx.globalAlpha = 0.5; B.text(0, 0, txt, 'A'); ctx.globalAlpha = 1; B.text(-0, 0, txt, Math.floor(t * 8) % 7 === 0 ? 'k' : 'I', 'V'); ctx.restore();
       }
-      if (q > 0.2) for (let i = 0; i < 12; i++) { const u = ((q * 1.5 + i / 12) % 1); R(ctx, Math.round(G.x0 + rnd(i * 3) * (G.x1 - G.x0)), Math.round(G.roof - 30 + u * 60), 2, 2, ['N', 'f', 'g', 'w'][i % 4]); }
-      B.bunting(G, ['N', 'f', 'g', 'u', 'y', 'w']);
+      if (q > 0.2) for (let i = 0; i < 12; i++) { const u = ((q * 1.5 + i / 12) % 1); R(ctx, Math.round(G.x0 + rnd(i * 3) * (G.x1 - G.x0)), Math.round(G.roof - 30 + u * 60), 2, 2, ['I', 'A', 'g', 'w'][i % 4]); }
+      B.bunting(G, ['I', 'A', 'g', 'F', 'y', 'w']);
     }
   };
 })();

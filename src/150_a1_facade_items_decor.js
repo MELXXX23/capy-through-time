@@ -214,7 +214,7 @@ function wordG(g, x, y, word, c) {                  // крихітний нап
   for (let i = 0; i < word.length; i++) FONT5[word[i]].forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') R(g, x + i * 6 + rx, y + ry, 1, 1, c); });
 }
 // Вивіска «CAPYTAP» на даху: однакова назва на кожному рівні, але кольори свої в кожній епосі
-const EPOCH_ROOF_SIGN = [['d', 'y'], ['u', 'w'], ['P', 'y'], ['k', 'T'], ['n', 'w'], ['G', 'y'], ['z', 'a'], ['k', 'f']];   // [фон, літери]
+const EPOCH_ROOF_SIGN = [['d', 'y'], ['u', 'w'], ['P', 'y'], ['k', 'T'], ['n', 'w'], ['G', 'y'], ['z', 'a'], ['D', 'A']];   // [фон, літери]
 const ROOF_GLOW = ['T', 'T', 'y', 'f', 'f', 'p', 'f', 'y'];        // колір нічного сяйва «CAPYTAP» по епохах (не збігається з назвою магазину)
 let lastRoofSign = null, deferSign = false, pendingSign = null;
 function wordBig(g, x, y, word, c) {                // товстий напис: літери 6×7, крок 7 (кожна літера дрібного шрифта розтягнута по висоті й подвоєна по ширині штриха)
@@ -246,7 +246,7 @@ const EPOCH_SHOP = [
   { flat: true, roofPal: { r: 'n', n: 'e' }, trim: 'a', col: ['e', 'E'], frame: ['n', 'a'], glass: 'a', base: 'e', band: ['dots', 'n'], awning: 'flat', inner: ['a', 'w', 'S'], fx: 'internet' },
   { flat: true, roofPal: { r: 'g', n: 'G' }, trim: 'g', col: ['b', 'c'], frame: ['G', 'm'], glass: 'm', base: 'b', band: ['leaf', 'G'], awning: 'flat', inner: ['m', 'c', 'y'], fx: 'eco' },
   { flat: true, roofPal: { r: 'n', n: 'u' }, trim: 'z', col: ['n', 's'], frame: ['z', 'S'], glass: 'n', base: 'z', band: ['dots', 'S'], awning: 'flat', inner: ['z', 'n', 'V'], fx: 'space' },
-  { flat: true, roofPal: { r: 'f', n: 'T' }, trim: 'k', col: ['k', 'T'], frame: ['k', 'f'], glass: 'v', base: 'k', band: ['zig', 'T'], awning: 'flat', inner: ['k', 'V', 'z'], fx: 'neon' }
+  { flat: true, roofPal: { r: 'A', n: 'I' }, trim: 'k', col: ['k', 'I'], frame: ['k', 'A'], glass: 'F', base: 'k', band: ['zig', 'I'], awning: 'flat', inner: ['D', 'F', 'z'], fx: 'neon' }
 ];
 // Архітектура під епоху (ARCH[id епохи]): { front(g, C) — увесь фасад (дах, карниз, вивіска, поверхи, навіс, цоколь, двері), deco(g, C) — декор поверх, house(g, spec, lamps) — будинки на вулиці }.
 // Порожньо = звичайний вигляд. C = { es, w, h, look, level, floors, yG, yB, door, innerX, innerW }. Інтер'єр (звірята, покупці) не чіпається: фасад лише лишає в склі прорізи.
@@ -257,7 +257,7 @@ function epochShopStyle() { return EPOCH_SHOP[viewEpoch() % EPOCH_SHOP.length]; 
 function shopVariant(level) { return hash2(viewEpoch() * 17 + level * 5 + 3, 7) % 4; }
 const EPOCH_AWN = [
   [['r', 'w'], ['g', 'w'], ['n', 'y'], ['u', 'w']], [['r', 'w'], ['T', 'w'], ['y', 'w'], ['T', 'r']], [['f', 'y'], ['J', 'w'], ['u', 'y'], ['T', 'f']], [['T', 'f'], ['v', 'y'], ['r', 'k'], ['y', 'k']],
-  [['n', 'w'], ['a', 'w'], ['e', 'w'], ['S', 'n']], [['g', 'y'], ['m', 'w'], ['G', 'c'], ['o', 'w']], [['e', 'w'], ['n', 'S'], ['z', 'w'], ['S', 'e']], [['f', 'T'], ['T', 'k'], ['v', 'f'], ['f', 'k']]
+  [['n', 'w'], ['a', 'w'], ['e', 'w'], ['S', 'n']], [['g', 'y'], ['m', 'w'], ['G', 'c'], ['o', 'w']], [['e', 'w'], ['n', 'S'], ['z', 'w'], ['S', 'e']], [['A', 'I'], ['I', 'k'], ['F', 'A'], ['A', 'k']]
 ];
 const EPOCH_STREET = [['bench', 'planter', 'aboard'], ['aboard', 'bench', 'bike'], ['planter', 'parasol', 'aboard'], ['bike', 'aboard', 'bin'], ['bin', 'bench', 'bike'], ['planter', 'bin', 'bike'], ['bin', 'planter', 'aboard'], ['aboard', 'bench', 'parasol']];
 function benchG(g, x, yb, c) { R(g, x, yb - 7, 14, 2, 'd'); R(g, x + 1, yb - 7, 12, 1, c); R(g, x, yb - 4, 14, 2, 'd'); R(g, x + 1, yb - 4, 12, 1, 'l'); R(g, x + 1, yb - 2, 2, 2, 'd'); R(g, x + 11, yb - 2, 2, 2, 'd'); R(g, x, yb - 8, 1, 1, 'd'); R(g, x + 13, yb - 8, 1, 1, 'd'); }

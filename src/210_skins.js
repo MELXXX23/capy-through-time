@@ -2,7 +2,8 @@
 /* =====================================================================
    ВКЛАДКА «СКІНИ»: виграні в цирку наряди для Капі, магазину, погоди й героїв. Тап — вдягнути, ще раз — зняти.
    ===================================================================== */
-const SKIN_ICONS = { capy: '🎩', shop: '🏪', weather: '🌈', street: '🧱', hero: '🐾' };
+const SKIN_ICONS = { capy: 'hat', shop: 'shop', weather: 'weather', street: 'street', hero: 'hero', epoch: 'epoch' };   // назви піксельних іконок (265_b_icons_art.js)
+function skinCatIcon(type) { return '<img class="px-ico" alt="" aria-hidden="true" width="22" height="22" src="' + pxArt(SKIN_ICONS[type] || 'hat').toDataURL() + '"> '; }
 let skinsSig = '';
 /* ---- Літаючі прикраси навколо скінів магазину: цукерки / золоті монетки / кристали. Повільно спливають угору, гойдаються
         й м'яко підстрибують при тапі разом із магазином (пружина shopAnim) ---- */
@@ -29,9 +30,9 @@ function updateShopSkinFx(dt) {
 }
 /* ---- Золотий / діамантовий пил: дрібні пікселі й хрестики-блиски на магазині, Капі та героях ---- */
 const skinDust = [];
-const DUST_COLS = { candy: ['#ff8fc0', '#fff4dc', '#8ed4a6', '#ffd96a'], sand: ['#f2d9a0', '#dba46a', '#fff4dc', '#c9a066'], moss: ['#d8ff7a', '#a8f060', '#fff6b0', '#7fe08a'], brick: ['#c4553d', '#e8a080', '#cfc5b8', '#ffe08a'], gold: ['#fff6b0', '#ffd24a', '#ffffff', '#f2b84b'], diamond: ['#ffffff', '#d8f6ff', '#9be8ff', '#b4a8ff'] };
+const DUST_COLS = { candy: ['#ff8fc0', '#fff4dc', '#8ed4a6', '#ffd96a'], sand: ['#f2d9a0', '#dba46a', '#fff4dc', '#c9a066'], moss: ['#d8ff7a', '#a8f060', '#fff6b0', '#7fe08a'], brick: ['#c4553d', '#e8a080', '#cfc5b8', '#ffe08a'], wood: ['#e8c48a', '#c4955a', '#fff0d0', '#a8703f'], gold: ['#fff6b0', '#ffd24a', '#ffffff', '#f2b84b'], diamond: ['#ffffff', '#d8f6ff', '#9be8ff', '#b4a8ff'] };
 let dustAcc = { shop: 0, capy: 0, hero: 0 };
-const HERO_DUST = { candy: 1, sand: 1, moss: 1, brick: 1 };      // скіни звірят за вулицями: кожен має свій пил, що сиплеться без пауз
+const HERO_DUST = { candy: 1, sand: 1, moss: 1, brick: 1, wood: 1 };      // скіни звірят за вулицями: кожен має свій пил, що сиплеться без пауз
 function dustKind(type) { const s = skinOn(type); return (s === 'gold' || s === 'diamond' || (type === 'hero' && HERO_DUST[s])) ? s : null; }
 function skinBurst() { return (animClock % 10) < 1.5; }      // вікно спалаху блиску скінів (1,5 с із кожних 10)
 const POP_COLS = { capy: ['#fff6c8', '#ffd96a', '#ffffff'], hero: ['#ffe3f0', '#ffb8d6', '#ffffff'], shop: ['#fff0c0', '#ffc878', '#ffffff'], weather: ['#e4f6ff', '#a8dcff', '#ffffff'], street: ['#eaffd8', '#b8e890', '#ffffff'] };
@@ -59,13 +60,14 @@ function updateSkinDust(dt) {
   if (sk && shop) { dustAcc.shop += dt * 26; while (dustAcc.shop >= 1) { dustAcc.shop -= 1; const e = Math.random(); mk(sk, shop.x + rand(-10, shop.w + 10), shop.y + rand(-8, shop.h - 4), e < 0.18); } }
   const ck = dustKind('capy'), cp = LAYOUT.capy;
   if (ck && cp) { dustAcc.capy += dt * 12; while (dustAcc.capy >= 1) { dustAcc.capy -= 1; mk(ck, cp.x + 14 + rand(-21, 21), cp.footY - rand(2, 38), Math.random() < 0.3); } }
+  if (!ck) capyAmbientFx(rawDt);
   const hk = dustKind('hero');
   if (hk && HERO_DUST[hk]) {                                             // свій рух пилу в кожного скіна: цукрові блиски злітають, пісок зносить убік, світлячки блукають, цегляний пил здіймається
     dustAcc.hero += rawDt * 1.6 * actors.length;
     while (dustAcc.hero >= 1 && actors.length) {
       dustAcc.hero -= 1; if (skinDust.length >= cap) break;
       const a = actors[Math.floor(Math.random() * actors.length)], y = a.y - rand(2, 24), x = a.x + rand(-9, 9);
-      const m = { candy: [rand(-3, 3), rand(-8, -3), rand(1, 2), Math.random() < 0.35], sand: [rand(5, 10), rand(0.5, 3), rand(0.9, 1.7), false], moss: [rand(-2.5, 2.5), rand(-2.5, 1.5), rand(1.8, 3.2), false], brick: [rand(-2, 2), rand(-4, -1), rand(0.8, 1.5), false] }[hk];
+      const m = { candy: [rand(-3, 3), rand(-8, -3), rand(1, 2), Math.random() < 0.35], sand: [rand(5, 10), rand(0.5, 3), rand(0.9, 1.7), false], moss: [rand(-2.5, 2.5), rand(-2.5, 1.5), rand(1.8, 3.2), false], brick: [rand(-2, 2), rand(-4, -1), rand(0.8, 1.5), false], wood: [rand(-3, 3), rand(-5, -1), rand(0.9, 1.6), false] }[hk];
       skinDust.push({ kind: hk, x, y: hk === 'sand' ? y - 6 : y, vx: m[0], vy: m[1], age: 0, life: m[2], c: Math.floor(Math.random() * 4), big: m[3], ph: rand(0, 6.28) });
     }
   } else if (hk) { dustAcc.hero += dt * 2.2 * actors.length; while (dustAcc.hero >= 1 && actors.length) { dustAcc.hero -= 1; const a = actors[Math.floor(Math.random() * actors.length)]; mk(hk, a.x + rand(-9, 9), a.y - rand(2, 24), Math.random() < 0.3); } }
@@ -78,7 +80,8 @@ function drawSkinDust() {
     if (p.age < 0) return;
     const k = p.age / p.life, a = Math.sin(k * Math.PI), col = p.col || DUST_COLS[p.kind][p.c], x = Math.round(p.x), y = Math.round(p.y);
     ctx.globalAlpha = a;
-    if (p.big) { R(ctx, x, y, 1, 1, '#ffffff'); ctx.globalAlpha = a * 0.8; R(ctx, x - 1, y, 3, 1, col); R(ctx, x, y - 1, 1, 3, col); if (a > 0.7) { ctx.globalAlpha = (a - 0.7) / 0.3; R(ctx, x - 2, y, 5, 1, '#ffffff'); R(ctx, x, y - 2, 1, 5, '#ffffff'); } }
+    if (p.shape) CAPY_SHAPES[p.shape](ctx, x, y, col, p);
+    else if (p.big) { R(ctx, x, y, 1, 1, '#ffffff'); ctx.globalAlpha = a * 0.8; R(ctx, x - 1, y, 3, 1, col); R(ctx, x, y - 1, 1, 3, col); if (a > 0.7) { ctx.globalAlpha = (a - 0.7) / 0.3; R(ctx, x - 2, y, 5, 1, '#ffffff'); R(ctx, x, y - 2, 1, 5, '#ffffff'); } }
     else { R(ctx, x, y, 1, 1, col); if (Math.sin(p.age * 14 + p.ph) > 0.5) { ctx.globalAlpha = a * 0.6; R(ctx, x + 1, y, 1, 1, '#ffffff'); } }
   });
   ctx.globalAlpha = 1;
@@ -147,7 +150,7 @@ function drawShopSkinFx() {
 }
 const skinPage = {};                 // яку «сторінку» (по 3 скіни) показано в кожній групі
 function refreshTeamPortraits() {
-  document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => { const c2 = cv.getContext('2d'); c2.clearRect(0, 0, 16, 16); c2.drawImage(getSpriteCanvas(teamSprite(cv.dataset.tid)), 0, 0); });
+  document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => { const c2 = cv.getContext('2d'); c2.clearRect(0, 0, cv.width, cv.height); c2.drawImage(getSpriteCanvas(teamSprite(cv.dataset.tid)), 0, 0); });
 }
 function equipSkin(type, i) {
   if (i >= 0 && !skinOwned(i)) {
@@ -183,26 +186,23 @@ function setSkin(type, i) {
   if (type === 'capy') drawCapiPortrait();
   else if (type === 'hero') refreshTeamPortraits();
   else if (type === 'shop') { rebuildShop(true); groundLayer = buildGroundLayer(); }      // скін «Будівлі» міняє і задні будинки
-  else if (type === 'street') groundLayer = buildGroundLayer();
+  else if (type === 'street') { const oldG = groundLayer; groundLayer = buildGroundLayer(); startCobbleLay(oldG); }
   playSfx('wear');
   skinsSig = '';
   updateSkinsUI();
   saveGame();
 }
 // Малює зразок скіна (name — 'pirate' тощо; null — звичайний вигляд) на новому canvas; на час малювання скін «приміряється»
-function skinPreviewCanvas(type, name) {
-  const cv = document.createElement('canvas');
-  skinPreview[type] = name;
+function skinPreviewCanvas(type, name, cv0) {
+  const cv = cv0 || document.createElement('canvas'), PT = performance.now() / 1000;
+  skinPreview[type] = name; cv._sp = [type, name];
   const saveSign = lastRoofSign;
   try {
     let g;
     if (type === 'capy') {
-      const c = getSpriteCanvas(capySprite());
-      cv.width = Math.max(30, c.width + 2); cv.height = 24; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-      g.drawImage(c, (cv.width - c.width) >> 1, 0);
+      capySkinPreview(cv, name || '', performance.now() / 1000);
     } else if (type === 'hero') {
-      cv.width = 38; cv.height = 18; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-      [TEAM[0].id, TEAM[2].id].forEach((id, k) => g.drawImage(getOutlinedCanvas(teamSprite(id)), 1 + k * 19, 0));
+      heroSkinPreview(cv, performance.now() / 1000);
     } else if (type === 'street') {
       cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
       paintCobble(g, 0, 0, 64, 40, name || 'stone');
@@ -211,37 +211,8 @@ function skinPreviewCanvas(type, name) {
       cv.width = geo.w + 64; cv.height = geo.h + 6; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
       skinTownPreview(g, cv.width, cv.height);
       g.drawImage(geo.canvas, 32, 4);
-    } else {
-      cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-      for (let y = 0; y < 40; y++) { g.fillStyle = y < 14 ? '#8fd3ea' : y < 28 ? '#b8e3f5' : '#dff3fa'; g.fillRect(0, y, 64, 1); }
-      R(g, 0, 34, 64, 6, 'g'); R(g, 0, 34, 64, 1, 'm');
-      R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
-      if (name === 'rainbow') {
-        g.drawImage(buildRainbow(30, 3.4, 3, false), -1, 1);
-        R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
-      } else if (CLOUD_SKIN_TINT[name]) {
-        R(g, 0, 34, 64, 6, 'g'); R(g, 0, 34, 64, 1, 'm'); R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
-        g.drawImage(cloudCanvas(0, CLOUD_SKIN_TINT[name]), 2, 0); g.drawImage(cloudCanvas(1, CLOUD_SKIN_TINT[name]), 28, 6);
-      } else if (name === 'aurora') {                                // ніч, зорі й м'які зелено-блакитні шторки сяйва
-        const grad = g.createLinearGradient(0, 0, 0, 34); grad.addColorStop(0, '#0a1230'); grad.addColorStop(1, '#1b2f4a'); g.fillStyle = grad; g.fillRect(0, 0, 64, 40);
-        g.fillStyle = '#ffffff'; [[5, 4], [14, 9], [22, 3], [39, 6], [52, 3], [58, 11], [47, 12], [9, 15]].forEach(([x, y]) => g.fillRect(x, y, 1, 1));
-        g.globalCompositeOperation = 'lighter';
-        for (let c = 0; c < 2; c++) for (let x = 0; x < 64; x += 2) {
-          const yb = 20 + c * 4 + Math.sin(x * 0.17 + c * 2) * 3, h = 10 + 5 * Math.sin(x * 0.3 + c);
-          for (let k = 0; k < 6; k++) { g.globalAlpha = 0.22 * (1 - k / 6) * (1 - k / 6); g.fillStyle = AURORA_COLS[c === 0 ? (k < 3 ? 0 : 1) : (k < 3 ? 1 : 2)]; g.fillRect(x, Math.round(yb - (k + 1) * h / 6), 2, Math.ceil(h / 6) + 1); }
-        }
-        g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
-        R(g, 0, 34, 64, 6, 'G'); R(g, 26, 22, 12, 12, 'e'); R(g, 25, 20, 14, 3, 'd'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 'y');
-      } else if (BOLT_COLS[name]) {
-        const bc = { lightning: ['#2a1650', '#3d2275'], lightninggreen: ['#0f3a1e', '#1a5a30'], lightningred: ['#3a0f16', '#5a1a24'] }[name];
-        g.fillStyle = bc[0]; g.fillRect(0, 0, 64, 40); g.fillStyle = bc[1]; g.fillRect(0, 0, 64, 18);
-        R(g, 0, 34, 64, 6, 'G'); R(g, 26, 22, 12, 12, 'e'); R(g, 25, 20, 14, 3, 'd'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 'y');
-        const p1 = [[18, 0], [22, 6], [17, 11], [23, 17], [19, 22], [22, 27]], p2 = [[46, 0], [43, 5], [48, 10], [44, 16]];
-        const PV = [[5, BOLT_COLS[name].main[1][1], 0.28], [3, BOLT_COLS[name].main[3][1], 0.75], [1, '#ffffff', 1]], st = pts => { const d = boltDense(pts); strokeBolt(g, d, d.length, PV, 1); };
-        st(p1); st([[22, 6], [28, 10], [31, 15]]); st([[17, 11], [11, 15], [9, 19]]); st(p2); st([[48, 10], [54, 14]]);
-      } else {
-        R(g, 8, 8, 12, 4, 'w'); R(g, 11, 6, 8, 3, 'w'); R(g, 44, 14, 12, 4, 'w'); R(g, 47, 12, 8, 3, 'w');
-      }
+    } else {                                                         // скіни погоди: рухомі картки (265_icons_plus.js)
+      weatherSkinPreview(cv, name, PT);
     }
   } finally { delete skinPreview[type]; lastRoofSign = saveSign; }
   return cv;
@@ -266,7 +237,7 @@ function updateSkinsUI() {
     const card = document.createElement('div');
     card.className = 'card skin-cat';
     const gkey = type + (epochGroup ? 'E' : '');
-    card.innerHTML = '<h2><span class="skin-title">' + (epochGroup ? '⏳ ' + t('skinCat_capyEpoch') : SKIN_ICONS[type] + ' ' + t('skinCat_' + type)) + '</span></h2><div class="skin-grid"></div>';
+    card.innerHTML = '<h2><span class="skin-title">' + skinCatIcon(epochGroup ? 'epoch' : type) + (epochGroup ? t('skinCat_capyEpoch') : t('skinCat_' + type)) + '</span></h2><div class="skin-grid"></div>';
     const grid = card.querySelector('.skin-grid');
     const items = (type === 'capy' ? [{ i: -2, name: 'ep' + (viewEpoch() % EPOCHS.length) }] : []).concat(epochGroup || type === 'capy' ? [] : [{ i: -1, name: null }]).concat(SKIN_POOL.map((id, i) => ({ i, id })).filter(o => o.id.startsWith(type + '_') && !o.id.startsWith('capy_ep')).map(o => ({ i: o.i, name: o.id.slice(type.length + 1) }))).filter(o => !SKIN_HIDDEN.includes(SKIN_POOL[o.i])).sort((a, b) => (a.name === 'mel' || a.name === 'nika' ? 1 : 0) - (b.name === 'mel' || b.name === 'nika' ? 1 : 0) || (type === 'weather' ? WEATHER_ORDER.indexOf(a.name) - WEATHER_ORDER.indexOf(b.name) : 0));      // Мел і Ніка завжди останні, нові скіни стають перед ними
     const pages = Math.ceil(items.length / 3);
@@ -336,7 +307,6 @@ function setupProgression() {
     b.addEventListener('click', () => setLanguage(l.id));
     ui.setLangBtns.appendChild(b);
   });
-  ui.timeWarp.addEventListener('pointerdown', () => { if (warp && (state.warpSeen || warp.demo) && warp.t < warp.dur) warp.t = warp.dur; });          // дотик пропускає анімацію (після першого перегляду)
   ui.setNumFmt.innerHTML = '';
   ['short', 'sci', 'full'].forEach(f => {
     const b = document.createElement('button');

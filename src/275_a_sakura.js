@@ -80,7 +80,7 @@ function sakuraBuild(v, season, seed) {
   for (let k = 0; k < N; k++) if (kind[k] === 1) wasWood[k] = 1;
 
   /* ---- крона: хмаринки з гребінцем зверху й пласким низом ---- */
-  const cls = SH.clusters.map(c => [c[0] + Math.round((rnd() - 0.5) * 3), c[1] + Math.round((rnd() - 0.5) * 2) - 2, c[2] * 1.22, c[3] * 1.3, c[4]]);
+  const cls = SH.clusters.map(c => [c[0] + Math.round((rnd() - 0.5) * 3), c[1] + Math.round((rnd() - 0.5) * 2) - 2, c[2] * 1.0, c[3] * 1.06, c[4]]);
   if (!winter) cls.forEach((cl, i) => {
     const [cx, cy, rx, ry, dep] = cl, nb = 5 + (i % 3), ph = i * 1.7;
     for (let py = Math.floor(cy - ry * 1.3); py <= cy + ry * 1.3; py++) for (let px = Math.floor(cx - rx * 1.3); px <= cx + rx * 1.3; px++) {

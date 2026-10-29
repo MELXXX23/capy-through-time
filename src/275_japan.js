@@ -540,9 +540,13 @@
   }
   function neonNight() {                                  // уночі вивіски світяться яскравіше за затемнення, з ореолом і легким мерехтінням
     const Lm = sky.lamp; if (!neonSigns.length || Lm <= 0.02) return;
+    const skey = shop ? shop.x + '|' + shop.w + '|' + shop.y : '';
+    if (neonLayer && neonLayer._sk !== skey) neonLayer = null;                  // магазин виріс або змінився: світіння вивісок перераховуємо
     if (!neonLayer) {
-      const { c, g } = newLayer();
-      neonSigns.forEach(s => { A(g, 0.1, () => P(g, s.x - 7, s.y - 7, s.w + 14, s.h + 14, s.c)); A(g, 0.17, () => P(g, s.x - 4, s.y - 4, s.w + 8, s.h + 8, s.c)); s.draw(g); });
+      const { c, g } = newLayer(); c._sk = skey;
+      neonSigns.forEach(s => {
+        if (shop && s.x + s.w > shop.x - 6 && s.x < shop.x + shop.w + 6 && s.y + s.h > shop.y - 6) return;       // вивіски будинків позаду не залазять на ТЦ і маркет
+ A(g, 0.1, () => P(g, s.x - 7, s.y - 7, s.w + 14, s.h + 14, s.c)); A(g, 0.17, () => P(g, s.x - 4, s.y - 4, s.w + 8, s.h + 8, s.c)); s.draw(g); });
       neonLayer = c;
     }
     ctx.globalAlpha = Math.min(1, Lm) * (0.92 + 0.08 * Math.sin(animClock * 3.1)); ctx.drawImage(neonLayer, -view.offX, -view.offY); ctx.globalAlpha = 1;

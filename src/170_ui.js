@@ -166,11 +166,11 @@ function buildDeptCards() {
     const card = document.createElement('div');
     card.className = 'card dept';
     card.innerHTML =
-      '<div class="dept-head"><span class="dept-icon"></span><span class="dept-name"></span><span class="dept-count"></span></div>' +
+      '<div class="dept-head"><span class="dept-icon ico-box"></span><span class="dept-name"></span><span class="dept-count"></span></div>' +
       '<div class="dept-income"><div class="each"></div><div class="total"></div></div>' +
       '<div class="ms"><div class="ms-bar"><i></i></div><span class="ms-text"></span></div>' +
       '<button type="button" class="btn wide buy"></button>';
-    card.querySelector('.dept-icon').textContent = deptIcon(i);
+    setIconBox(card.querySelector('.dept-icon'), deptIcon(i));
     card.querySelector('.buy').addEventListener('click', () => buyDept(i));
     ui.deptList.appendChild(card);
     deptEls[i] = {
@@ -193,7 +193,7 @@ function buildTeamCards() {
     const card = document.createElement('div');
     card.className = 'card team-card';
     card.innerHTML =
-      '<canvas class="portrait" width="16" height="16" aria-hidden="true"></canvas>' +
+      '<canvas class="portrait" width="18" height="27" aria-hidden="true"></canvas>' +
       '<div class="info"><div class="t-name"></div><div class="t-role"></div><div class="t-trait"></div>' +
       '<div class="t-lvl"></div><div class="t-now"></div><div class="t-next"></div>' +
       '<button type="button" class="btn wide go"></button></div>';
@@ -244,7 +244,7 @@ function applyTranslations() {
   if (ui.tabMore) ui.tabMore.setAttribute('aria-label', t('tabMore'));
   const tab = TABS.find(x => x.id === state.tab);
   if (tab && !tab.ready) ui.soonTitle.textContent = tab.icon + ' ' + t('tab_' + tab.id);
-  DEPARTMENTS.forEach((d, i) => { deptEls[i].name.textContent = deptName(i); deptEls[i].icon.textContent = deptIcon(i); });
+  DEPARTMENTS.forEach((d, i) => { deptEls[i].name.textContent = deptName(i); setIconBox(deptEls[i].icon, deptIcon(i)); });
   ui.buyModes.querySelectorAll('.buy-mode').forEach(b => {
     b.textContent = b.dataset.mode === 'max' ? t('buyMax') : '×' + b.dataset.mode;
   });
@@ -491,7 +491,7 @@ function updateDepartmentsUI() {
         const have = state.depts[r.dept];
         row.className = 'req' + (have >= r.count ? ' ok' : '');
         const name = document.createElement('span');
-        name.textContent = deptIcon(r.dept) + ' ' + deptName(r.dept);
+        name.append(iconBox(deptIcon(r.dept), 'sm'), deptName(r.dept));
         const val = document.createElement('b');
         val.textContent = (have >= r.count ? '✓ ' : '') + Math.min(have, r.count) + ' / ' + r.count;
         row.append(name, val);
@@ -502,7 +502,7 @@ function updateDepartmentsUI() {
         const row = document.createElement('div');
         row.className = 'req' + (done ? ' ok' : '');
         const name = document.createElement('span');
-        name.textContent = '🐾 ' + t('reqHire', t('team_' + TEAM[i].id), hireLevel());
+        name.append(iconBox(getOutlinedCanvas(teamSprite(TEAM[i].id)), 'sm'), t('reqHire', t('team_' + TEAM[i].id), hireLevel()));
         const val = document.createElement('b');
         val.textContent = (done ? '✓ ' : '') + Math.min(state.team[i], hireLevel()) + ' / ' + hireLevel();
         row.append(name, val);
@@ -521,7 +521,7 @@ function updateDepartmentsUI() {
     if (!unlocked) return;
     const count = state.depts[i];
     const each = deptIncomeEach(i);
-    setText(el.name, deptName(i), 'dn' + i); setText(el.icon, deptIcon(i), 'di' + i);
+    setText(el.name, deptName(i), 'dn' + i); setIconBox(el.icon, deptIcon(i));
     setText(el.count, '×' + fmt(count), 'dc' + i);
     setText(el.each, t('deptEach', fmt(each, 1)), 'de' + i);
     setText(el.total, t('deptTotal', fmt(each * count, 1)), 'dt' + i);

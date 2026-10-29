@@ -122,24 +122,24 @@
 // ---- епоха 7: Неон (кіберпанк, голощити)
 (function () {
   const { P, A, D, ramp, mix, rnd, txt } = AR;
-  const BK = ramp('#1c2034'), MG = '#ff2fa0', CY = '#20f0ff', PU = '#8a3cff', LM = '#a8ff3a', YL = '#ffd84a', WH = '#ffffff';
+  const BK = ramp('#18262a'), MG = '#ff8a1a', CY = '#3af0d0', PU = '#ffc21a', LM = '#b6ff2a', YL = '#ffd84a', WH = '#ffffff';
   const NE = [MG, CY, PU, LM];
 
   function glow(g, x, y, w, h, c) { A(g, 0.22, () => P(g, x - 1, y - 1, w + 2, h + 2, c)); P(g, x, y, w, h, c); P(g, x + (w > 1 ? 0 : 0), y, 1, h, mix(c, '#ffffff', 0.5)); }
   function holo(g, x, y, w, h, seed) {                                          // голографічний щит: діагональні кольорові смуги й скан-лінії
-    P(g, x - 1, y - 1, w + 2, h + 2, '#06060e');
-    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) { const t = ((i + j * 2 + seed) % 12) / 12; P(g, x + i, y + j, 1, 1, t < 0.33 ? '#7a1a6a' : t < 0.66 ? '#1a4a88' : '#1a8a8a'); }
+    P(g, x - 1, y - 1, w + 2, h + 2, '#05090b');
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) { const t = ((i + j * 2 + seed) % 12) / 12; P(g, x + i, y + j, 1, 1, t < 0.33 ? '#7a3a0a' : t < 0.66 ? '#0a4a4a' : '#1a6a3a'); }
     for (let j = 1; j < h; j += 2) A(g, 0.35, () => P(g, x, y + j, w, 1, '#000000'));
     A(g, 0.5, () => { P(g, x, y, w, 1, CY); P(g, x, y + h - 1, w, 1, MG); P(g, x, y, 1, h, CY); P(g, x + w - 1, y, 1, h, MG); });
   }
   function vsign(g, x, y, hgt, c, seed) {                                       // вертикальна неонова вивіска з «ієрогліфами»
-    P(g, x, y, 7, hgt, '#06060e'); A(g, 0.3, () => P(g, x - 1, y - 1, 9, hgt + 2, c)); P(g, x, y, 7, 1, c); P(g, x, y + hgt - 1, 7, 1, c); P(g, x, y, 1, hgt, c); P(g, x + 6, y, 1, hgt, c);
+    P(g, x, y, 7, hgt, '#05090b'); A(g, 0.3, () => P(g, x - 1, y - 1, 9, hgt + 2, c)); P(g, x, y, 7, 1, c); P(g, x, y + hgt - 1, 7, 1, c); P(g, x, y, 1, hgt, c); P(g, x + 6, y, 1, hgt, c);
     for (let j = 3; j < hgt - 3; j += 4) { const r = rnd(seed, j); P(g, x + 2, y + j, 3, 1, c); if (r % 2) P(g, x + 2, y + j + 1, 1, 2, c); if (r % 3) P(g, x + 4, y + j + 1, 1, 2, c); }
   }
   const V2 = () => window.ARCH_V2 !== false;                                     // деталі v2 (р. 68)
-  function waterTower(g, x, y) { P(g, x - 6, y - 16, 13, 10, '#2a2e40'); P(g, x - 6, y - 16, 13, 1, '#4a4e62'); for (let k = -5; k < 7; k += 3) P(g, x + k, y - 15, 1, 9, '#1a1e2c'); P(g, x - 7, y - 18, 15, 2, '#3a3e50'); P(g, x - 5, y - 6, 1, 6, '#444'); P(g, x + 5, y - 6, 1, 6, '#444'); P(g, x - 5, y - 3, 11, 1, '#444'); glow(g, x - 6, y - 11, 13, 1, CY); }
-  function steam(g, x, y) { A(g, 0.28, () => { P(g, x, y - 3, 3, 2, '#d8d8e8'); P(g, x + 2, y - 7, 4, 3, '#d8d8e8'); P(g, x, y - 12, 3, 3, '#d8d8e8'); }); P(g, x - 1, y - 1, 5, 2, '#3a3e50'); }
-  function acUnit(g, x, y) { P(g, x, y, 7, 5, '#5a5e72'); P(g, x, y, 7, 1, '#8a8ea2'); D(g, x + 3, y + 3, 1, '#2a2e40'); P(g, x + 3, y + 5, 1, 3, '#2a2e40'); }
+  function waterTower(g, x, y) { P(g, x - 6, y - 16, 13, 10, '#26343a'); P(g, x - 6, y - 16, 13, 1, '#46585e'); for (let k = -5; k < 7; k += 3) P(g, x + k, y - 15, 1, 9, '#142022'); P(g, x - 7, y - 18, 15, 2, '#34464c'); P(g, x - 5, y - 6, 1, 6, '#444'); P(g, x + 5, y - 6, 1, 6, '#444'); P(g, x - 5, y - 3, 11, 1, '#444'); glow(g, x - 6, y - 11, 13, 1, CY); }
+  function steam(g, x, y) { A(g, 0.28, () => { P(g, x, y - 3, 3, 2, '#d8d8e8'); P(g, x + 2, y - 7, 4, 3, '#d8d8e8'); P(g, x, y - 12, 3, 3, '#d8d8e8'); }); P(g, x - 1, y - 1, 5, 2, '#34464c'); }
+  function acUnit(g, x, y) { P(g, x, y, 7, 5, '#566a70'); P(g, x, y, 7, 1, '#7e9298'); D(g, x + 3, y + 3, 1, '#26343a'); P(g, x + 3, y + 5, 1, 3, '#26343a'); }
   function hazard(g, x, y, w, h) { for (let i = 0; i < w; i++) P(g, x + i, y, 1, h, ((i + 4000) >> 2) % 2 ? YL : '#1a1a22'); }
 
   function front(g, C) {
@@ -152,8 +152,8 @@
     if (V2() && level >= 2 && top >= 18) { const tx = Math.min(70, cx - 50); if (tx >= 34) waterTower(g, tx, top - 1); if (w - 70 > cx + 44) steam(g, w - 70, top - 2); if (level >= 4 && cx - 96 > 40) steam(g, 96, top - 2); }      // v2: бак для води з неоновою смугою, пара з вентиляції
     roofSignG(g, cx, ys, false);
     // вивіска: чорна з двома неоновими рамками
-    P(g, 0, top + 6, w, 20, '#05050c'); glow(g, 4, top + 7, w - 8, 1, MG); glow(g, 4, top + 24, w - 8, 1, MG); glow(g, 4, top + 7, 1, 18, MG); glow(g, w - 5, top + 7, 1, 18, MG);
-    P(g, 6, top + 9, w - 12, 15, '#0a0a1a'); P(g, 7, top + 10, w - 14, 13, fill); A(g, 0.6, () => { P(g, 6, top + 9, w - 12, 1, CY); P(g, 6, top + 23, w - 12, 1, CY); });
+    P(g, 0, top + 6, w, 20, '#04090b'); glow(g, 4, top + 7, w - 8, 1, MG); glow(g, 4, top + 24, w - 8, 1, MG); glow(g, 4, top + 7, 1, 18, MG); glow(g, w - 5, top + 7, 1, 18, MG);
+    P(g, 6, top + 9, w - 12, 15, '#071014'); P(g, 7, top + 10, w - 14, 13, fill); A(g, 0.6, () => { P(g, 6, top + 9, w - 12, 1, CY); P(g, 6, top + 23, w - 12, 1, CY); });
     // кутові пілони: бетон з неоновим стрижнем і попереджувальними лампами
     const cH = h - 6 - (top + 26);
     [0, w - 8].forEach((x, s) => { P(g, x, top + 26, 8, cH, BK[2]); P(g, x + (s ? 7 : 0), top + 26, 1, cH, BK[4]); P(g, x + (s ? 0 : 7), top + 26, 1, cH, BK[1]); glow(g, x + 3, top + 28, 2, cH - 4, NE[(s + level) % 4]); for (let y = top + 32; y < h - 10; y += 14) P(g, x + 1, y, 2, 2, '#ff3a3a'); });
@@ -170,26 +170,26 @@
         A(g, 0.2, () => { for (let k = 0; k < 8; k++) P(g, bx + 4 + k, fl.top + 6 + (7 - k), 1, 2, CY); });
         A(g, 0.12, () => P(g, bx, fl.top, bwi, hF - 1, MG));
         if (i < n - 1) { const px = bx + bwi + 2; glow(g, px + 1, fl.top - 1, 2, hF, NE[(i + fl.f) % 4]); }
-        if (V2() && i < n - 1) { const px = bx + bwi + 3, nx = Math.round(innerX + (i + 1) * (bw + pier) + bw + 3); for (let k = 0; k <= bwi + pier; k++) { const t = k / (bwi + pier), yy = fl.top + 2 + Math.round(Math.sin(t * Math.PI) * 3); if (px + k < innerX + innerW) P(g, px + k, yy, 1, 1, '#0a0a14'); if (k % 9 === 4 && px + k < innerX + innerW) { P(g, px + k - 1, yy + 1, 3, 3, NE[(k + i) % 4]); A(g, 0.3, () => P(g, px + k - 2, yy, 5, 5, NE[(k + i) % 4])); } } }      // v2: провиси кабелів із ліхтариками між колонами
+        if (V2() && i < n - 1) { const px = bx + bwi + 3, nx = Math.round(innerX + (i + 1) * (bw + pier) + bw + 3); for (let k = 0; k <= bwi + pier; k++) { const t = k / (bwi + pier), yy = fl.top + 2 + Math.round(Math.sin(t * Math.PI) * 3); if (px + k < innerX + innerW) P(g, px + k, yy, 1, 1, '#070f12'); if (k % 9 === 4 && px + k < innerX + innerW) { P(g, px + k - 1, yy + 1, 3, 3, NE[(k + i) % 4]); A(g, 0.3, () => P(g, px + k - 2, yy, 5, 5, NE[(k + i) % 4])); } } }      // v2: провиси кабелів із ліхтариками між колонами
       }
     });
-    if (V2() && level >= 3 && cH > 40) { const vx = w - 7, vy = top + 34, wd = '24/7'; P(g, vx - 1, vy - 1, 9, 30, '#06060e'); glow(g, vx - 1, vy - 1, 9, 1, LM); glow(g, vx - 1, vy + 28, 9, 1, LM); [...wd].forEach((ch, i) => AR.txt && AR.txt(g, vx + 2, vy + 2 + i * 7, ch, LM)); }      // v2: вертикальна вивіска «24/7» на пілоні
+    if (V2() && level >= 3 && cH > 40) { const vx = w - 7, vy = top + 34, wd = '24/7'; P(g, vx - 1, vy - 1, 9, 30, '#05090b'); glow(g, vx - 1, vy - 1, 9, 1, LM); glow(g, vx - 1, vy + 28, 9, 1, LM); [...wd].forEach((ch, i) => AR.txt && AR.txt(g, vx + 2, vy + 2 + i * 7, ch, LM)); }      // v2: вертикальна вивіска «24/7» на пілоні
     // навіс: темна плита з небезпечною смугою
     P(g, 0, yG, w, 10, BK[2]); P(g, 0, yG, w, 1, BK[0]); hazard(g, 0, yG + 6, w, 3); P(g, 0, yG + 9, w, 1, '#000000'); glow(g, 0, yG + 10, w, 1, MG);
     txt(g, 6, yG + 1, 'OPEN 24H', CY); if (w > 160) txt(g, w - 6 - 8 * 4, yG + 1, 'NO.9', LM);
     // портал: червоні лампи й неонові стійки
     P(g, door.x - 4, yG + 10, door.w + 8, 3, BK[4]); glow(g, door.x - 4, yG + 11, 1, h - 6 - yG - 11, MG); glow(g, door.x + door.w + 3, yG + 11, 1, h - 6 - yG - 11, MG);
     // цоколь: решітка з рожевим світінням
-    P(g, 0, h - 6, w, 6, '#0a0a14'); for (let x = 0; x < w; x += 3) P(g, x, h - 5, 1, 4, BK[3]); glow(g, 0, h - 6, w, 1, MG); P(g, 0, h - 1, w, 1, '#000000');
+    P(g, 0, h - 6, w, 6, '#070f12'); for (let x = 0; x < w; x += 3) P(g, x, h - 5, 1, 4, BK[3]); glow(g, 0, h - 6, w, 1, MG); P(g, 0, h - 1, w, 1, '#000000');
     P(g, door.x - 6, h - 3, door.w + 12, 3, BK[3]); P(g, door.x - 6, h - 3, door.w + 12, 1, CY);
   }
   function deco(g, C) {
     const { w, h, level, door } = C;
-    if (level >= 2) { const x = door.x - 22, y = h - 6; P(g, x, y - 14, 9, 14, '#0a0a18'); P(g, x + 1, y - 13, 7, 8, '#1a3a5a'); P(g, x + 2, y - 12, 5, 6, CY); A(g, 0.4, () => P(g, x + 2, y - 12, 5, 3, WH)); P(g, x + 1, y - 4, 7, 2, MG); A(g, 0.3, () => P(g, x - 1, y - 15, 11, 16, CY)); }
+    if (level >= 2) { const x = door.x - 22, y = h - 6; P(g, x, y - 14, 9, 14, '#070f12'); P(g, x + 1, y - 13, 7, 8, '#1a4a48'); P(g, x + 2, y - 12, 5, 6, CY); A(g, 0.4, () => P(g, x + 2, y - 12, 5, 3, WH)); P(g, x + 1, y - 4, 7, 2, MG); A(g, 0.3, () => P(g, x - 1, y - 15, 11, 16, CY)); }
   }
 
   /* ---------- будинки: мегаблоки ---------- */
-  const WALLS = ['#161a2c', '#1c1630', '#10202a', '#201830', '#141c24', '#241626'];
+  const WALLS = ['#142226', '#182a26', '#10222a', '#1c2a22', '#142024', '#22261e'];
   const WORDS = ['BAR', 'HOTEL', 'NOODLE', 'CLUB', 'TECH', 'HACK', 'RAMEN'];
   /* дахова неонова вивіска-слово (р. 68): жирні літери 4×5 з темною тінню й ореолом, подвійна трубка рамки з лампами в кутах, ферма-опора */
   const F45 = { A: ['.##.', '#..#', '####', '#..#', '#..#'], B: ['###.', '#..#', '###.', '#..#', '###.'], C: ['.###', '#...', '#...', '#...', '.###'], D: ['###.', '#..#', '#..#', '#..#', '###.'],
@@ -201,10 +201,10 @@
   function wordSign(g, hx, hw, top, wd, ne, ne2, hs) {
     let sw = wd.length * 5 + 7; if (sw > hw - 2) { wd = wd.slice(0, Math.max(3, Math.floor((hw - 9) / 5))); sw = wd.length * 5 + 7; }
     const sx = hx + 1 + (hs >>> 6) % Math.max(1, hw - sw - 1), sh = 11, sy = top - 4 - sh - 4;
-    [sx + 3, sx + sw - 4].forEach(px => { P(g, px, sy + sh, 1, top - sy - sh, '#3a3e50'); P(g, px + 1, sy + sh, 1, top - sy - sh, '#22263a'); });      // опори
-    for (let y = sy + sh + 1; y < top - 1; y += 2) P(g, sx + 4, y, sw - 8, 1, '#2a2e40');                                                           // ферма між опорами
+    [sx + 3, sx + sw - 4].forEach(px => { P(g, px, sy + sh, 1, top - sy - sh, '#34464c'); P(g, px + 1, sy + sh, 1, top - sy - sh, '#22263a'); });      // опори
+    for (let y = sy + sh + 1; y < top - 1; y += 2) P(g, sx + 4, y, sw - 8, 1, '#26343a');                                                           // ферма між опорами
     A(g, 0.16, () => P(g, sx - 3, sy - 3, sw + 6, sh + 6, ne)); A(g, 0.26, () => P(g, sx - 1, sy - 1, sw + 2, sh + 2, ne));                        // ореол
-    P(g, sx, sy, sw, sh, '#05050c'); P(g, sx + 1, sy + 1, sw - 2, sh - 2, mix(ne, '#05050c', 0.88));
+    P(g, sx, sy, sw, sh, '#04090b'); P(g, sx + 1, sy + 1, sw - 2, sh - 2, mix(ne, '#04090b', 0.88));
     P(g, sx, sy, sw, 1, ne); P(g, sx, sy + sh - 1, sw, 1, ne); P(g, sx, sy, 1, sh, ne); P(g, sx + sw - 1, sy, 1, sh, ne);                             // зовнішня трубка
     A(g, 0.55, () => { P(g, sx + 2, sy + 2, sw - 4, 1, ne2); P(g, sx + 2, sy + sh - 3, sw - 4, 1, ne2); });                                      // внутрішня трубка іншого кольору
     [[sx, sy], [sx + sw - 1, sy], [sx, sy + sh - 1], [sx + sw - 1, sy + sh - 1]].forEach(([px, py]) => P(g, px, py, 1, 1, '#ffffff'));                // лампи-кутики
@@ -227,28 +227,28 @@
     const k = hs % 5;
     if (k === 0 && w >= 30) wordSign(g, x, w, top, WORDS[(hs >>> 5) % WORDS.length], ne, ne2, hs);
     else if (k === 1) holo(g, x + 4 + (hs >>> 5) % Math.max(1, w - 24), top - 14, 18, 10, hs);
-    else if (k === 2) { const ax = x + 8 + (hs >>> 5) % Math.max(1, w - 16); P(g, ax, top - 18, 1, 15, '#4a4e60'); P(g, ax - 2, top - 14, 5, 1, '#4a4e60'); P(g, ax - 3, top - 10, 7, 1, '#4a4e60'); P(g, ax - 1, top - 19, 3, 1, '#ff3a3a'); }
-    else if (k === 3) { P(g, x + 4, top - 8, 8, 5, '#2a2e40'); D(g, x + 8, top - 6, 2, '#0a0a14'); P(g, x + 14, top - 6, 6, 3, '#2a2e40'); }
+    else if (k === 2) { const ax = x + 8 + (hs >>> 5) % Math.max(1, w - 16); P(g, ax, top - 18, 1, 15, '#46585e'); P(g, ax - 2, top - 14, 5, 1, '#46585e'); P(g, ax - 3, top - 10, 7, 1, '#46585e'); P(g, ax - 1, top - 19, 3, 1, '#ff3a3a'); }
+    else if (k === 3) { P(g, x + 4, top - 8, 8, 5, '#26343a'); D(g, x + 8, top - 6, 2, '#070f12'); P(g, x + 14, top - 6, 6, 3, '#26343a'); }
     if (V2()) for (let y = top + 18; y < base - 24; y += 38) { const ax = x + 3 + (hash2(x, y) % Math.max(1, w - 12)); acUnit(g, ax, y); }      // v2: кондиціонери на фасаді
     // труби по стіні
-    if ((hs >>> 9) % 2) { P(g, x + w - 5, top + 6, 2, h - 14, '#3a3e50'); P(g, x + w - 5, top + 6, 1, h - 14, '#5a5e72'); for (let y = top + 14; y < base - 8; y += 18) P(g, x + w - 6, y, 4, 1, '#1a1e2c'); }
+    if ((hs >>> 9) % 2) { P(g, x + w - 5, top + 6, 2, h - 14, '#34464c'); P(g, x + w - 5, top + 6, 1, h - 14, '#566a70'); for (let y = top + 14; y < base - 8; y += 18) P(g, x + w - 6, y, 4, 1, '#142022'); }
     // вікна
     const floors = Math.max(1, Math.floor((h - 6) / 19)), doorW = 10, DG = AR.doorGrid(x, w, hs, 14, 6, 3), doorX = Math.round(DG.cx - 5), doorOk = !nearLamp(doorX - 2, doorX + doorW + 2, lamps);
     for (let f = 0; f < floors; f++) {
       const y0 = base - 6 - (floors - f) * 19 + 3, cols = Math.max(1, Math.floor((w - 6) / 14)), sp = (w - 6) / cols;
       for (let c = 0; c < cols; c++) {
-        const wx = Math.round(x + 3 + c * sp + (sp - 7) / 2), r = hash2(wx, y0), lit = r % 3 !== 0, col = NE[(r >>> 4) % 4];
-        if (f === floors - 1 && doorOk && Math.abs((wx + 3.5) - DG.cx) < 15) continue;
-        P(g, wx - 1, y0 - 1, 9, 12, '#05050c'); P(g, wx, y0, 7, 10, lit ? mix(col, '#000000', 0.45) : '#0a1a2a');
-        if (lit) { P(g, wx, y0, 7, 3, mix(col, '#000000', 0.15)); A(g, 0.5, () => P(g, wx + 1, y0 + 1, 2, 1, WH)); } else { P(g, wx + 1, y0 + 1, 2, 1, '#2a5a8a'); }
-        P(g, wx - 1, y0 + 10, 9, 1, ne);
-        houseGlass.push([wx, y0, 7, 10]);
+        const ww = Math.max(7, Math.floor(sp) - 1), wx = Math.round(x + 3 + c * sp), r = hash2(wx, y0), lit = r % 3 !== 0, col = [MG, MG, MG, CY, LM, MG][(r >>> 4) % 6];
+        if (f === floors - 1 && doorOk && Math.abs((wx + ww / 2) - DG.cx) < 15) continue;
+        P(g, wx - 1, y0 - 1, ww + 2, 12, '#04090b'); P(g, wx, y0, ww, 10, lit ? mix(col, '#000000', 0.45) : '#08181c');
+        if (lit) { P(g, wx, y0, ww, 3, mix(col, '#000000', 0.15)); A(g, 0.5, () => P(g, wx + 1, y0 + 1, 2, 1, WH)); } else { P(g, wx + 1, y0 + 1, 2, 1, '#2a6a6a'); }
+        P(g, wx - 1, y0 + 10, ww + 2, 1, ne);
+        houseGlass.push([wx, y0, ww, 10]);
       }
     }
     if (doorOk) {
       houseDoors.push({ x: doorX + 5, y: base });
-      P(g, doorX - 1, base - 14, doorW + 2, 14, '#05050c'); P(g, doorX, base - 13, doorW, 13, '#10162a'); glow(g, doorX - 1, base - 15, doorW + 2, 1, ne2); P(g, doorX + 4, base - 13, 2, 13, '#05050c');
-      A(g, 0.5, () => P(g, doorX + 1, base - 12, 3, 5, '#2a6a9a')); P(g, doorX + 7, base - 7, 1, 1, LM);
+      P(g, doorX - 1, base - 14, doorW + 2, 14, '#04090b'); P(g, doorX, base - 13, doorW, 13, '#0c1c20'); glow(g, doorX - 1, base - 15, doorW + 2, 1, ne2); P(g, doorX + 4, base - 13, 2, 13, '#04090b');
+      A(g, 0.5, () => P(g, doorX + 1, base - 12, 3, 5, '#2a8a7a')); P(g, doorX + 7, base - 7, 1, 1, LM);
     }
   }
   ARCH['neon'] = { front, deco, house };

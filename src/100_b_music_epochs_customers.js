@@ -218,8 +218,8 @@ const EPOCHS = [
     houses: { walls: ['m', 'w', 'S', 'c'], roofs: ['g', 'G', 'm'] } },
   { id: 'space', sky: ['z', 'n', 's'], tint: { color: 'n', alpha: 0.12 }, decor: ['stars'], signFill: 'z', awning: ['u', 'S'], roofStyle: 'flat', features: ['rockets'],
     houses: { walls: ['e', 'E', 'S', 'w'], roofs: ['n', 'u', 'z'] } },
-  { id: 'neon', sky: ['n', 'u', 'p'], tint: { color: 'n', alpha: 0.22 }, decor: ['stars'], signFill: 'k', awning: ['f', 'T'], roofStyle: 'flat', features: ['drones'],
-    houses: { walls: ['n', 'u', 'e', 'd'], roofs: ['p', 'y'] } },
+  { id: 'neon', sky: ['D', 'F', 'Q'], tint: { color: 'D', alpha: 0.22 }, decor: ['stars'], signFill: 'k', awning: ['A', 'I'], roofStyle: 'flat', features: ['drones'],
+    houses: { walls: ['D', 'F', 'e', 'k'], roofs: ['A', 'H'] } },
   { id: 'japan', sky: ['s', 'S', 'p'], tint: null, decor: [], signFill: 'n', awning: ['r', 'w'], roofStyle: 'tile', features: [],
     houses: { walls: ['b', 'c', 'l', 'y'], roofs: ['n', 'G'] } }
 ];
@@ -472,7 +472,7 @@ const CHIBI = (function () {
     else if (ep === 4) { rect(S, 1, 5, 8, 8, '#d9a066'); rect(S, 1, 5, 8, 1, '#e8b87a'); rect(S, 4, 5, 2, 8, '#fff4dc'); rect(S, 1, 10, 3, 2, '#ffffff'); px(S, 2, 11, '#4a3228'); px(S, 7, 8, '#3d5a8c'); rect(S, 2, 3, 1, 2, '#4a3228'); rect(S, 7, 3, 1, 2, '#4a3228'); }
     else if (ep === 5) { rect(S, 1, 5, 8, 8, '#4f9a63'); for (let y = 5; y < 13; y++) for (let x = 1; x < 9; x++) if ((x + y) % 2) px(S, x, y, '#2f6b48'); rect(S, 2, 7, 2, 2, '#e8863c'); rect(S, 5, 8, 3, 3, '#c4553d'); rect(S, 3, 10, 2, 2, '#ffe08a'); rect(S, 6, 5, 1, 3, '#8ed4a6'); rect(S, 2, 3, 1, 2, '#8ed4a6'); rect(S, 7, 3, 1, 2, '#8ed4a6'); }
     else if (ep === 6) { rect(S, 2, 5, 6, 8, '#9c9087'); rect(S, 1, 6, 8, 6, '#cfc5b8'); rect(S, 3, 7, 4, 2, '#86cfe8'); rect(S, 2, 10, 6, 1, '#4a3228'); rect(S, 4, 12, 2, 1, '#ffe08a'); rect(S, 4, 2, 2, 3, '#9c9087'); px(S, 4, 1, '#c4553d'); }
-    else if (ep === 7) { rect(S, 1, 5, 8, 8, '#1b1230'); for (let x = 1; x < 9; x++) { px(S, x, 5, '#ff5fa2'); px(S, x, 12, '#3fa7a0'); } for (let y = 5; y < 13; y++) { px(S, 1, y, '#ff5fa2'); px(S, 8, y, '#3fa7a0'); } rect(S, 3, 8, 4, 1, '#3fa7a0'); px(S, 4, 7, '#ff5fa2'); px(S, 5, 9, '#ffffff'); }
+    else if (ep === 7) { rect(S, 1, 5, 8, 8, '#0c1c22'); for (let x = 1; x < 9; x++) { px(S, x, 5, '#ff8a1a'); px(S, x, 12, '#3af0d0'); } for (let y = 5; y < 13; y++) { px(S, 1, y, '#ff8a1a'); px(S, 8, y, '#3af0d0'); } rect(S, 3, 8, 4, 1, '#3af0d0'); px(S, 4, 7, '#ff8a1a'); px(S, 5, 9, '#ffffff'); }
     else if (ep === 8) { rect(S, 1, 5, 8, 8, '#d3342c'); rect(S, 1, 5, 8, 1, '#ffffff'); rect(S, 3, 7, 4, 3, '#fff4dc'); px(S, 4, 8, '#d3342c'); px(S, 5, 8, '#d3342c'); px(S, 4, 9, '#d3342c'); px(S, 5, 9, '#d3342c'); px(S, 2, 11, '#7a0f1c'); px(S, 7, 11, '#7a0f1c'); }
     return (BAGS[key] = outline(S, '#4a3228'));
   }

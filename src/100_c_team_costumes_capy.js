@@ -26,7 +26,7 @@
   // 6 Космос
   f(6, 'A', S => { rc(S, 1, 4, 10, 11, '#9c9087'); rc(S, 1, 4, 10, 1, '#cfc5b8'); rc(S, 2, 6, 8, 7, '#cfc5b8'); el(S, 6, 8, 2.2, 2.2, '#86cfe8'); pxl(S, 5, 7, '#ffffff'); rc(S, 2, 12, 8, 1, '#4a3228'); rc(S, 5, 1, 2, 3, '#9c9087'); pxl(S, 5, 0, '#c4553d'); });
   // 7 Неон
-  f(7, 'A', S => { rc(S, 1, 5, 10, 10, '#1b1230'); for (let x = 1; x < 11; x++) { pxl(S, x, 5, '#ff5fa2'); pxl(S, x, 14, '#3fa7a0'); } for (let y = 5; y < 15; y++) { pxl(S, 1, y, '#ff5fa2'); pxl(S, 10, y, '#3fa7a0'); } rc(S, 3, 9, 6, 1, '#3fa7a0'); pxl(S, 4, 8, '#ff5fa2'); pxl(S, 6, 11, '#ffffff'); rc(S, 2, 2, 1, 3, '#ff5fa2'); rc(S, 9, 2, 1, 3, '#3fa7a0'); rc(S, 2, 2, 8, 1, '#ffe08a'); });
+  f(7, 'A', S => { rc(S, 1, 5, 10, 10, '#0c1c22'); for (let x = 1; x < 11; x++) { pxl(S, x, 5, '#ff8a1a'); pxl(S, x, 14, '#3af0d0'); } for (let y = 5; y < 15; y++) { pxl(S, 1, y, '#ff8a1a'); pxl(S, 10, y, '#3af0d0'); } rc(S, 3, 9, 6, 1, '#3af0d0'); pxl(S, 4, 8, '#ff8a1a'); pxl(S, 6, 11, '#ffffff'); rc(S, 2, 2, 1, 3, '#ff8a1a'); rc(S, 9, 2, 1, 3, '#3af0d0'); rc(S, 2, 2, 8, 1, '#ffe08a'); });
   window.SHOPBAG_OPT = E;
 })();
 // Додаємо покупців як спрайти «тип_кадр» (готові малюнки-canvas)
@@ -179,6 +179,15 @@ function composeTeamCostume(id, epoch) {
 // Спрайти героїв для кожної епохи: team_<id>_e<номер>
 TEAM.forEach(m => { for (let e = 0; e < TEAM_COSTUMES.length; e++) SPRITES['team_' + m.id + '_e' + e] = { rows: composeTeamCostume(m.id, e) }; });
 // Скіни героїв (виграш у цирку): святкові костюми й ніндзя — однакові в усіх епохах
+// Тулуби скінів «під вулицю» (р. 72): повний малюнок 8×5 клітинок замість шаблону, щоб кожен скін впізнавався одразу
+const TEAM_SKIN_BODY = {
+  wood:  ['rRrRRrRr', 'rRybbyRr', 'rRbbbbRr', 'rRbbbbRr', 'bbbbbbbb'],         // фланелева сорочка в клітинку й комбінезон із кнопками
+  brick: ['eooooooe', 'eoYooYoe', 'eoYooYoe', 'eooooooe', 'kkkykkkk'],           // помаранчевий жилет зі світловідбивними смугами, пояс
+  moss:  ['GmGmmGmG', 'gmggggmg', 'gGgmmgGg', 'GGGyyGGG', 'gGgGGgGg'],           // туніка з листя, ліана-пояс
+  candy: ['fwfwfwfw', 'wfwfwfwf', 'fwfwfwfw', 'wfwfwfwf', 'fwfwfwfw'],          // цукерково-смугастий светр
+  sand:  ['hcccccch', 'ccwccwcc', 'rrrrrrrr', 'cwccccwc', 'cccccccc'],           // роба з червоним поясом і золотою облямівкою
+  gold:  ['hyyyyyyh', 'hyywwyyh', 'hyyyyyyh', 'hhhwwhhh', 'yhyhhyhy']            // золоті лати з бліком
+};
 function composeTeamSkin(id, kind) {
   const p = TEAM_PARTS[id], k = Object.keys(TEAM_PARTS).indexOf(id);
   let body, legs, deco, decoC;
@@ -194,6 +203,7 @@ function composeTeamSkin(id, kind) {
   else if (kind === 'sand') { body = 'c'; legs = 'h'; deco = 'belt'; decoC = 'b'; }
   else if (kind === 'moss') { body = 'g'; legs = 'G'; deco = 'dots'; decoC = 'm'; }
   else if (kind === 'brick') { body = 'r'; legs = 'e'; deco = 'belt'; decoC = 'y'; }
+  else if (kind === 'wood') { body = 'r'; legs = 'b'; deco = 'belt'; decoC = 'd'; }
   else { body = 'z'; legs = 'n'; deco = 'belt'; decoC = 'r'; }
   const lower = CHIBI_LOWER.map(row => row.replace(/1/g, body).replace(/2/g, legs).replace(/3/g, p.feet));
   const g = [...p.top, ...lower].map(row => (row + row.split('').reverse().join('')).split(''));
@@ -201,7 +211,8 @@ function composeTeamSkin(id, kind) {
   const put = (x, y, c) => { if (y >= 0 && y < 16 && x >= 0 && x < 16) g[y][x] = c; };
   const row = (y, x0, x1, c) => { for (let x = x0; x <= x1; x++) put(x, y, c); };
   const hat = rows => rows.forEach((r, y) => r.split('').forEach((c, x) => { if (c !== '.') put(x, y, c); }));
-  teamDeco(deco, decoC, put);
+  if (TEAM_SKIN_BODY[kind]) TEAM_SKIN_BODY[kind].forEach((r, j) => r.split('').forEach((c, i) => put(4 + i, 10 + j, c)));
+  else teamDeco(deco, decoC, put);
   if (kind === 'party') {                                         // ковпак-конус із помпоном, конфеті на одязі
     hat(['.......yy.......', '......dffd......', '.....dfTfTd.....', '....dfTfTfTd....']);
     [[3, 11, 'y'], [11, 12, 'T'], [5, 13, 'w'], [9, 14, 'y'], [12, 13, 'f'], [4, 14, 'T']].forEach(q => put(q[0], q[1], q[2]));
@@ -214,15 +225,17 @@ function composeTeamSkin(id, kind) {
   } else if (kind === 'witch') {                                  // капелюх відьми з помаранчевою стрічкою
     hat(['.......VV.......', '......VVVV......', '....oooooooo....', '...VVVVVVVVVV...']);
   } else if (kind === 'candy') {                                  // цукерковий ковпачок-льодяник
-    hat(['.......mm.......', '.....qqffqq.....', '....qfwqqwfq....', '...ffffffffff...']);
+    hat(['.......rr.......', '......wwww......', '.....qwqqwq.....', '...pppppppppp...']);
   } else if (kind === 'sand') {                                   // солом'яний капелюх із широкими крисами
-    hat(['......hhhh......', '.....hhyyhh.....', '....hhbbbbhh....', '..yyyyyyyyyyyy..']);
+    hat(['.....wwwwww.....', '....wwEwwEww....', '....wwwrrwww....', '....nnnnnnnn....']);
+  } else if (kind === 'wood') {                                    // в'язана шапка з відворотом
+    hat(['......oooo......', '.....ooyyoo.....', '....oooooooo....', '....bbbbbbbb....']);
   } else if (kind === 'moss') {                                   // віночок із моху й листя
-    hat(['......g..g......', '.....gmggmg.....', '....GgmggmgG....', '....GGGGGGGG....']);
+    hat(['.....g.ff.g.....', '....gGgyyGgG....', '...GgmgGGgmgG...', '...GGGGGGGGGG...']);
   } else if (kind === 'brick') {                                  // жовта будівельна каска
-    hat(['.....yyyyyy.....', '....yhhhhhhy....', '...yyyyyyyyyy...', '..eeeeeeeeeeee..']);
+    hat(['.....yyyyyy.....', '....yywwwwyy....', '...yyyyyyyyyy...', '..hhhhhhhhhhhh..']);
   } else if (kind === 'gold') {                                   // світла золота корона з самоцвітами
-    hat(['...y..y..y..y...', '...yyyyyyyyyy...', '...yNyyyyyyNy...']);
+    hat(['...y..y..y..y...', '...yyyyyyyyyy...', '...yryyyyyyry...', '...hhhhhhhhhh...']);
   } else if (kind === 'diamond') {                                // кришталева корона-«кластер»
     hat(['...N..N..N..N...', '...NaaNaaNaaN...', '...aw1aaaa1wa...']);
   } else if (kind === 'royal') {                                  // золота корона з рубінами
@@ -236,7 +249,7 @@ function composeTeamSkin(id, kind) {
   teamEyes(g, base0);
   return g.map(r => r.join(''));
 }
-['party', 'ninja', 'chef', 'wizard', 'royal', 'santa', 'witch', 'gold', 'diamond', 'candy', 'sand', 'moss', 'brick'].forEach(kind => TEAM.forEach(m => { SPRITES['team_' + m.id + '_sk_' + kind] = { rows: composeTeamSkin(m.id, kind) }; }));
+['party', 'ninja', 'chef', 'wizard', 'royal', 'santa', 'witch', 'gold', 'diamond', 'candy', 'sand', 'moss', 'brick', 'wood'].forEach(kind => TEAM.forEach(m => { SPRITES['team_' + m.id + '_sk_' + kind] = { rows: composeTeamSkin(m.id, kind) }; }));
 function teamSprite(id) { const s = skinOn('hero'); return s ? 'team_' + id + '_sk_' + s : 'team_' + id + '_e' + (viewEpoch() % EPOCHS.length); }
 Object.keys(NPC_PARTS).forEach(id => { SPRITES['npc_' + id] = { rows: composeChibi(NPC_PARTS[id]) }; });
 SPRITES.npc_clock = { rows: CLOCK_ROWS };

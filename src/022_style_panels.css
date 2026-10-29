@@ -26,7 +26,7 @@
 .team-note { font-size: 11px; line-height: 1.6; color: var(--brown); margin: 10px 2px 0; text-align: center; }
 #teamList .dept.locked { white-space: pre-line; line-height: 1.6; }
 .team-card { display: flex; gap: 10px; align-items: flex-start; }
-.team-card .portrait { width: 64px; height: 64px; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; background: var(--mint); box-shadow: 0 0 0 3px var(--brown); }
+.team-card .portrait { width: 56px; height: 84px; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; background: var(--mint); box-shadow: 0 0 0 3px var(--brown); }
 .team-card .info { flex: 1; min-width: 0; }
 .team-card .t-name { font-size: 13px; line-height: 1.4; color: var(--dark); }
 .team-card .t-role { font-size: 11px; line-height: 1.5; color: var(--red); margin-top: 2px; }
@@ -55,7 +55,7 @@ body[data-epoch="3"] { --tc-portrait: #7a5cc9; --tc-card: #36285f; --tc-btn: #7a
 body[data-epoch="4"] { --tc-portrait: #b8e3ff; --tc-card: #e8f6ff; --tc-btn: #8ccaf5; --tc-btn-text: var(--dark); }
 body[data-epoch="5"] { --tc-portrait: #8ed4a6; --tc-card: #e4f6ea; --tc-btn: #6fc08c; --tc-btn-text: var(--dark); }
 body[data-epoch="6"] { --tc-portrait: #1b2a4a; --tc-card: #111a30; --tc-btn: #2d4c8a; --tc-btn-text: #fff4dc; }
-body[data-epoch="7"] { --tc-portrait: #3d5a8c; --tc-card: #1e2f4d; --tc-btn: #3d5a8c; --tc-btn-text: #fff4dc; }
+body[data-epoch="7"] { --tc-portrait: #1f6a68; --tc-card: #12302f; --tc-btn: #1f6a68; --tc-btn-text: #fff4dc; }
 body[data-epoch="2"] :is(.team-card, .dept, .expand-card), body[data-epoch="3"] :is(.team-card, .dept, .expand-card), body[data-epoch="6"] :is(.team-card, .dept, .expand-card), body[data-epoch="7"] :is(.team-card, .dept, .expand-card) { --tc-name: #fff4dc; --tc-role: #ffc9d4; --tc-trait: #e6d6c0; --tc-now: #8ed4a6; }
 .team-card .t-name, .team-card .t-lvl { color: var(--tc-name, var(--dark)); }
 .team-card .t-role { color: var(--tc-role, var(--red)); }

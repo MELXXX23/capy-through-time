@@ -531,7 +531,7 @@ function updateActors(dt) {
       a.x = a.tx; a.y = a.ty; a.moving = false;
       if (a.mode === 'toBench' && a.bench) {
         a.mode = 'sit'; a.sitT = rand(9, 16); a.y = a.bench.y - 3; a.dir = a.x < LAYOUT.centerX ? 1 : -1;
-        if (Object.keys(bubbleEls).length < 1) showBubble('t' + a.i, t('team_' + TEAM[a.i].id + '_sit_' + Math.floor(Math.random() * 2)), a.x, a.y - 19, () => ({ x: a.x, y: a.y - 19 }));
+        if (Object.keys(bubbleEls).length < 1) showBubble('t' + a.i, t('team_' + TEAM[a.i].id + '_sit_' + Math.floor(Math.random() * 2)), a.x, a.y - 23, () => ({ x: a.x, y: a.y - 19 }));
       } else { a.mode = 'idle'; a.wait = rand(0.6, 3); }
     } else {
       a.x += dx / d * step; a.y += dy / d * step; a.moving = true;

@@ -51,7 +51,7 @@ body[data-epoch="3"] { --panel: #cdc3f2; --panel-dark: #a493e2; --card: #ece8fb;
 body[data-epoch="4"] { --panel: #d3ecfb; --panel-dark: #a5d2f2; --card: #eef8ff; --honey: #3d8fd6; --mint: #8ccaf5; --brown: #2f5f8f; }
 body[data-epoch="5"] { --panel: #cfeed6; --panel-dark: #9fd4ae; --card: #eaf8ee; --honey: #4f9a63; --mint: #6fc08c; --brown: #3f6f4a; }
 body[data-epoch="6"] { --panel: #c3cde6; --panel-dark: #93a5cf; --card: #e4e9f5; --honey: #4d6fb8; --mint: #7f99d6; --brown: #2b3f6a; }
-body[data-epoch="7"] { --panel: #bdd3f4; --panel-dark: #8caee3; --card: #e3edfb; --honey: #ff5fa2; --mint: #6fe3e8; --brown: #243a66; }
+body[data-epoch="7"] { --panel: #bfe0da; --panel-dark: #86bdb5; --card: #e2f4f0; --honey: #ff8a1a; --mint: #5fe0c8; --brown: #12302f; }
 
 /* Піксельна рамка зі «сходинками» по кутах */
 .frame, .card, .btn {

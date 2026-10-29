@@ -340,13 +340,13 @@ function warpReveal(g, cx, cy, r, sc, k3) {                     // «дірка�
   g.save(); g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fill(); g.restore();
   g.strokeStyle = '#ffe08a'; g.lineWidth = 3 * sc * (1 - k3); g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke();
 }
-const NEON_RINGS = ['#ff2fb0', '#2ff5ff', '#b36bff', '#fff23a'];
+const NEON_RINGS = ['#ff8a1a', '#3af0d0', '#b6ff2a', '#ff3a2a'];
 // Неон: тунель із неонових кілець (у цій епохи кольори сяють)
 // Варіант 2 «Тунель»: знімок сцени засмоктує у тунель з кілець кольорів усіх епох, Капі летить крізь нього, наприкінці спалах світла
 function drawWarpTunnel(k) {
   const { g, W, H, sc, diag, seg, ez } = warpSetup(), cx = W / 2, cy = H / 2;
   const ks = seg(k, 0, 0.4), kt = seg(k, 0.08, 0.7), kl = seg(k, 0.6, 0.8), kr = seg(k, 0.76, 1);
-  const neon = (warp.toEpoch | 0) === 7; g.fillStyle = neon ? '#070016' : '#0d0720'; g.fillRect(0, 0, W, H);
+  const neon = (warp.toEpoch | 0) === 7; g.fillStyle = neon ? '#03141a' : '#0d0720'; g.fillRect(0, 0, W, H);
   const N = 20, spd = k * 11, big = Math.max(W, H) * 1.7;
   for (let j = 0; j < N; j++) {                                                    // кільця тунелю в перспективі: далекі малі, близькі великі
     const z = ((j + spd) % N) / N, size = Math.pow(z, 2.4) * big + 3, ei = (j + Math.floor((j + spd) / N) * 3) % EPOCHS.length, sky = EPOCHS[ei].sky;

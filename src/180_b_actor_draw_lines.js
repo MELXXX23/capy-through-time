@@ -144,10 +144,12 @@ function evenScaled(src, k) {
   return (memo[k] = out);
 }
 const crispFigCache = new Map();
+const HERO_K = 1.25;                                    // герої 18×23 (стиль покупців): 23 × 1,12 ≈ 26 px заввишки
+function figK(name) { return getSpriteCanvas(name).height > 16 ? HERO_K : ACTOR_K; }
 function crispFigure(name, flip) {
-  const key = name + '|' + (flip ? 1 : 0) + '|' + ACTOR_K;
+  const K = figK(name), key = name + '|' + (flip ? 1 : 0) + '|' + K;
   let c = crispFigCache.get(key); if (c) return c;
-  const src = evenScaled(getSpriteCanvas(name), ACTOR_K), w = src.width, h = src.height;
+  const src = evenScaled(getSpriteCanvas(name), K), w = src.width, h = src.height;
   const body = document.createElement('canvas'); body.width = w; body.height = h;
   const bg = body.getContext('2d'); bg.imageSmoothingEnabled = false;
   if (flip) { bg.translate(w, 0); bg.scale(-1, 1); }
@@ -160,7 +162,8 @@ function crispFigure(name, flip) {
   return c;
 }
 function drawCrispFigure(name, x0, y0, bob, flip) {      // x0, y0 — ноги по центру; bob — підстрибування в «малих» пікселях
-  ctx.drawImage(crispFigure(name, flip), Math.round(x0 - 8 * ACTOR_K) - 1, Math.round(y0 - (16 + bob) * ACTOR_K) - 1);
+  const sp = getSpriteCanvas(name), K = figK(name);
+  ctx.drawImage(crispFigure(name, flip), Math.round(x0 - (sp.width / 2) * K) - 1, Math.round(y0 - (sp.height + bob * (ACTOR_K / K)) * K) - 1);
 }
 function actorPose(a) {
   const m = TEAM[a.i];
@@ -289,7 +292,7 @@ function pickLine(id, own, cold, nCold) {
   }
 }
 function actorSay(a) {
-  const m = TEAM[a.i], up = () => ({ x: a.x, y: a.y - 19 * actorK(a) - 1 });
+  const m = TEAM[a.i], up = () => ({ x: a.x, y: a.y - 23 * actorK(a) - 1 });
   const p = up();
   showBubble('t' + a.i, pickLine(m.id, () => 'team_' + m.id + '_say_' + Math.floor(Math.random() * TEAM_PHRASES), 'team_' + m.id + '_cold_', 3), p.x, p.y, up);
 }

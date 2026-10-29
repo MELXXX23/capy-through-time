@@ -141,7 +141,7 @@ function buildGroundLayer() {
   paintCobble(g, x0, LAYOUT.streetTop + 1, W, H - LAYOUT.streetTop - 1, skinOn('street') || 'stone');
   manholeSpots.length = 0;
   const my = Math.min(H - 48, 188);                                   // люки: один ряд уздовж дороги, не часто
-  for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
+  if (!skinOn('street') || skinOn('street') === 'moss') for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
   if (view.extraB >= 30) drawRoadG(g, x0, W, H);
   if (buildSeason === 'winter') winterGround(g, x0, W, H);
   if (buildSeason === 'autumn' || buildSeason === 'spring') autumnGroundLeaves(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');

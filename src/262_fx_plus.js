@@ -17,7 +17,7 @@ const EPFX = {
   internet: { rise: { cols: ['#46e6ff', '#7dff9a', '#ffffff'], n: 30, v: 12 }, pulse: { c: '#46e6ff', hz: 0.5, k: 0.5 }, glint: '#bff6ff' },
   eco: { fall: { cols: ['#7ed957', '#bfe86a', '#4fae3f'], n: 22, v: 9 }, fly: { cols: ['#ffb347', '#ff8fb4', '#7fd0ff', '#fff27a'], n: 10, bfly: true }, rays: '#e6ffc0', glint: '#f6ffe0' },
   space: { fly: { cols: ['#8ff5ea', '#b79cff', '#fff3a0'], n: 14 }, glint: '#c8fff7' },
-  neon: { pulse: { c: '#ff3ca8', hz: 1.6 }, beams: ['#ff3ca8', '#3cf0ff'], rise: { cols: ['#ff3ca8', '#3cf0ff'], n: 22, v: 20 }, glint: '#ffd6f4' },
+  neon: { pulse: { c: '#ff8a1a', hz: 1.6 }, beams: ['#ff8a1a', '#3af0d0'], rise: { cols: ['#ff8a1a', '#3af0d0'], n: 22, v: 20 }, glint: '#ffe9c4' },
   japan: { fall: { cols: ['#ffc3d6', '#ff8fb4', '#ffe3ec'], n: 34, v: 11, big: true }, fly: { cols: ['#ffe9a0', '#ffc86a'], n: 12 }, rays: '#ffd0d8', glint: '#fff2e8' }
 };
 const fxPx = (x, y, w, h, c) => R(ctx, Math.round(x), Math.round(y), w, h, c);

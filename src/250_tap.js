@@ -107,7 +107,6 @@ function setupInput() {
   // діалог: клік/тап — далі; Enter, пробіл, → теж; кнопка «Пропустити главу»
   ui.dialog.addEventListener('click', advanceDialog);
   ui.dlgSkip.addEventListener('click', e => { e.stopPropagation(); endDialogue(); });
-  ui.epochIntro.addEventListener('click', () => { if (epochIntro.active && performance.now() - epochIntro.startedAt > 1500) { epochIntro.timers.forEach(clearTimeout); epochIntro.timers = []; ui.epochIntro.classList.add('out'); epochIntro.timers.push(setTimeout(finishEpochIntro, 600)); } });
   document.addEventListener('keydown', e => {
     if (!dialog.active || e.target === ui.dlgSkip) return;
     if (dialog.choosing && (e.key === '1' || e.key === '2')) { chooseOption(+e.key); return; }

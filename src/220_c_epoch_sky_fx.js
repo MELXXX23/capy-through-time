@@ -169,9 +169,9 @@ function seedEpochFx() {
   epochFx.fly = [];
   const sgn = () => (Math.random() < 0.5 ? -1 : 1), top = 8 - view.offY, wide = Math.max(1, view.w / 320);
   if (epochHas('drones')) {
-    for (let i = 0; i < Math.round(11 * wide); i++) epochFx.drones.push({ x: rand(worldL(), worldR()), y: rand(top + 2, 84), vx: rand(8, 22) * sgn(), ph: rand(0, 6.3), c: ['f', 'T', 'y', 'p'][i % 4] });
-    for (let i = 0; i < Math.round(4 * wide); i++) epochFx.fly.push({ k: 'car', x: rand(worldL(), worldR()), y: rand(Math.max(top + 20, 36), 96), vx: rand(24, 42) * sgn(), c: ['f', 'T', 'y', 'p'][i % 4], ph: rand(0, 6) });         // летючі авто з неоновими слідами
-    for (let i = 0; i < Math.round(6 * wide); i++) epochFx.fly.push({ k: 'balloon', x: rand(worldL(), worldR()), y: rand(top + 10, 100), vx: rand(-3, 3), vy: -rand(3, 6), c: ['f', 'T', 'y', 'p', 'a', 'v'][i % 6], ph: rand(0, 6) });   // неонові кульки
+    for (let i = 0; i < Math.round(11 * wide); i++) epochFx.drones.push({ x: rand(worldL(), worldR()), y: rand(top + 2, 84), vx: rand(8, 22) * sgn(), ph: rand(0, 6.3), c: ['A', 'I', 'y', 'C'][i % 4] });
+    for (let i = 0; i < Math.round(4 * wide); i++) epochFx.fly.push({ k: 'car', x: rand(worldL(), worldR()), y: rand(Math.max(top + 20, 36), 96), vx: rand(24, 42) * sgn(), c: ['A', 'I', 'y', 'C'][i % 4], ph: rand(0, 6) });         // летючі авто з неоновими слідами
+    for (let i = 0; i < Math.round(6 * wide); i++) epochFx.fly.push({ k: 'balloon', x: rand(worldL(), worldR()), y: rand(top + 10, 100), vx: rand(-3, 3), vy: -rand(3, 6), c: ['A', 'I', 'y', 'C', 'a', 'H'][i % 6], ph: rand(0, 6) });   // неонові кульки
   }
   if (epochHas('rockets')) {
     for (let i = 0; i < Math.round(3 * wide); i++) epochFx.fly.push({ k: 'sat', x: rand(worldL(), worldR()), y: rand(top + 4, 64), vx: rand(5, 11) * sgn(), ph: rand(0, 6) });                   // супутники

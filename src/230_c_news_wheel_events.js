@@ -55,7 +55,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Нові скіни «Будівлі»! 8 стилів міняють твій маркет і будинки позаду: Цукеркові, Золоті, Дерев’яні, Сад, Різдвяні, Хелловін, Діамант і Океан. Небо стало живішим: листя, вогники й більші хмари. Екран завантаження показує всі сцени по черзі й краще влазить у невисокі вікна. А ще вкладки «Скіни» та «Щоденник» помінялися місцями.',
+    newH: 'Що нового', new: 'Нові герої команди: Голка, Зоя та всі інші в красивому новому вигляді, з костюмами епох і скінами під вулиці. Бруківка плавно змінюється, коли обираєш скін, а звірят-покупців більше по всій вулиці. Усі переходи плавніші, скіни погоди ожили.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -63,7 +63,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'New "Buildings" skins! 8 styles change your market and the houses behind it: Candy, Golden, Wooden, Garden, Christmas, Halloween, Diamond and Ocean. The sky is livelier too: falling leaves, glowing lights and bigger clouds. The loading screen now cycles through all scenes and fits short windows better. Also, the Skins and Diary tabs swapped places.',
+    newH: 'What is new', new: 'New team heroes: Spike, Zoya and everyone else in a beautiful new look, with era costumes and street-matching skins. The pavement now changes smoothly when you pick a skin, and more customers walk the whole street. All transitions are smoother and the weather skins came alive.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',

@@ -147,7 +147,7 @@ function adsOfferBonusSkip(def, waitMs) {                                      /
       Ads.showRewarded().then(ok => {
         if (!ok) return;
         const past = Date.now() - bonusCooldownMs() - 1000;           // «виграш був давно» → очікування 0
-        state.wheel.mg = (state.wheel.mg || []).map(v => (v ? Math.min(v, past) : v));
+        state.wheel.mg = (state.wheel.mg || []).map(v => (v ? Math.min(v, past) : v)); state.wheel.mgLose = 0;
         saveGame(); openBonus(def);
       }).catch(adsLog);
     });
