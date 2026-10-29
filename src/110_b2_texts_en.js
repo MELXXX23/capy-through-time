@@ -133,7 +133,7 @@
     clockWait: 'The clock is ticking... Build the mall and wait three nights. Then it will take you to a new era.', clockNoGain: "Too early: keep earning and the clock will pay shards for the trip.", clockWarn: 'Night three. The clock strikes three times: time to go! Tap it or open the Clock in the menu.',
     npMast: 'THE CAPY STREET NEWS', npCoverHead: 'Fresh edition!', npIn: 'In this issue:', npCap1: 'The mall clock tower at midnight.', npCap2: 'The night city on the loading screen.', npCap3: 'The new witch circles the town.',
     seasonFx_winter: 'Fluffy snow settles on the roofs', seasonFx_spring: 'Flowers and petals wake up', seasonFx_summer: 'The sun shines at full power', seasonFx_autumn: 'The wind carries golden leaves', seasonFx_halloween: 'Shh… something rustles in town',
-    circusFlag: 'LUCKY CIRCUS', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Crystals and bonuses, only here!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
+    circusFlag: 'LUCKY CIRCUS', circusBonusOnly: '🎁 Only bonuses here', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Crystals and bonuses, only here!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
     circusBang: 'Something showed up by the shop... Tap the red "!"', circusArrived: 'The Fortune Circus is open! Tap it',
     circusAgain: 'One more try! Spin again', prize_skin: 'New skin: {0}! It waits in the skins tab',
     skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',

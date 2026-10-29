@@ -4,7 +4,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#2a1d1a">
+<meta name="theme-color" content="#150b2e">
+<style>html:has(#boot:not(.done)), html:has(#boot:not(.done)) body { background: linear-gradient(#150b2e 0%, #2f1860 38%, #6b2f90 68%, #c25fb5 92%, #ffb0c8 100%) fixed; }</style>
 <meta name="color-scheme" content="dark">
 <script>
 (function () {                                         /* програма з головного екрана: клас standalone + «поштовх» viewport-fit на холодному старті (iOS інакше рахує відступи криво) */
@@ -1884,14 +1885,14 @@ body.no-anim .fxGhost, body.no-anim .pane:not([hidden]), body.no-anim #app.sheet
   function restart() { clearInterval(auto); auto = setInterval(function () { if (!document.getElementById('boot')) clearInterval(auto); else showTip(); }, 6000); }
   showTip(true); restart();
   bootEl.addEventListener('pointerdown', function () { showTip(); restart(); });
-  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); } }, 18000);   // страховка
+  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { try { document.querySelector('meta[name="theme-color"]').setAttribute('content', document.documentElement.classList.contains('ios26bar') ? '#2E4580' : '#2a1d1a'); } catch (e) {} el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); } }, 18000);   // страховка
 })();
 function bootDone() {
   var el = document.getElementById('boot'); if (!el) return;
   el.classList.add('ready');
   if (/[?&]hold=1/.test(location.search)) return;
   var wait = Math.max(0, 6600 - performance.now());                    // показуємо кілька секунд, щоб устигнути прочитати підказку
-  setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); }, wait + 250);
+  setTimeout(function () { try { document.querySelector('meta[name="theme-color"]').setAttribute('content', document.documentElement.classList.contains('ios26bar') ? '#2E4580' : '#2a1d1a'); } catch (e) {} el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); }, wait + 250);
 }
 </script>
 <!--#part 050_body_markup.html-->
@@ -4651,7 +4652,7 @@ const translations = {
     clockWait: 'Годинник цокає… Збудуй торговий центр і дочекайся трьох ночей. Тоді він відвезе вас у нову епоху.', clockNoGain: "Ще зарано: заробляй далі, і годинник заплатить осколками за подорож.", clockWarn: 'Ніч третя. Годинник б’є тричі: час вирушати! Тапни по ньому або відкрий Годинник у меню.',
     npMast: 'ВІСТІ З ВУЛИЦІ КАПІ', npCoverHead: 'Свіжий випуск!', npIn: 'У номері:', npCap1: 'Годинникова вежа торгового центру опівночі.', npCap2: 'Нічне місто на екрані завантаження.', npCap3: 'Нова відьма облітає місто.',
     seasonFx_winter: 'Пухнастий сніг лягає на дахи', seasonFx_spring: 'Прокидаються квіти й пелюстки', seasonFx_summer: 'Сонце гріє на повну', seasonFx_autumn: 'Вітер несе золоте листя', seasonFx_halloween: 'Тссс… у місті щось шарудить',
-    circusFlag: 'ЦИРК ФОРТУНИ', circusTitle: 'Цирк Фортуни', circusSub: 'Клоун Бубон: «Кристали й бонуси — тільки в мене!»', circusSpin: 'Крутити!', circusDone: 'Дякую, цирку!',
+    circusFlag: 'ЦИРК ФОРТУНИ', circusBonusOnly: '🎁 Тут лише бонуси', circusTitle: 'Цирк Фортуни', circusSub: 'Клоун Бубон: «Кристали й бонуси — тільки в мене!»', circusSpin: 'Крутити!', circusDone: 'Дякую, цирку!',
     circusBang: 'Біля магазину щось з’явилось… Тапни на червоний «!»', circusArrived: 'Цирк Фортуни розкрився! Тапни на нього',
     circusAgain: 'Ще одна спроба! Крути знову', prize_skin: 'Новий скін: {0}! Він чекає у вкладці скінів',
     skin_hero_party: 'Герої у святкових костюмах', skin_hero_ninja: 'Герої-ніндзя',
@@ -5114,7 +5115,7 @@ const translations = {
     clockWait: 'The clock is ticking... Build the mall and wait three nights. Then it will take you to a new era.', clockNoGain: "Too early: keep earning and the clock will pay shards for the trip.", clockWarn: 'Night three. The clock strikes three times: time to go! Tap it or open the Clock in the menu.',
     npMast: 'THE CAPY STREET NEWS', npCoverHead: 'Fresh edition!', npIn: 'In this issue:', npCap1: 'The mall clock tower at midnight.', npCap2: 'The night city on the loading screen.', npCap3: 'The new witch circles the town.',
     seasonFx_winter: 'Fluffy snow settles on the roofs', seasonFx_spring: 'Flowers and petals wake up', seasonFx_summer: 'The sun shines at full power', seasonFx_autumn: 'The wind carries golden leaves', seasonFx_halloween: 'Shh… something rustles in town',
-    circusFlag: 'LUCKY CIRCUS', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Crystals and bonuses, only here!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
+    circusFlag: 'LUCKY CIRCUS', circusBonusOnly: '🎁 Only bonuses here', circusTitle: 'Fortune Circus', circusSub: 'Clown Bubon: "Crystals and bonuses, only here!"', circusSpin: 'Spin!', circusDone: 'Thanks, circus!',
     circusBang: 'Something showed up by the shop... Tap the red "!"', circusArrived: 'The Fortune Circus is open! Tap it',
     circusAgain: 'One more try! Spin again', prize_skin: 'New skin: {0}! It waits in the skins tab',
     skin_hero_party: 'Party heroes', skin_hero_ninja: 'Ninja heroes',
@@ -18245,8 +18246,8 @@ const CIRCUS_SECTORS = (function () {
   const cr = (n, w, color) => ({ kind: 'crystal', amount: n, weight: w, color, icon: n > 1 ? 'gem' + n : 'gem' });
   const co = (seconds, flat, w, color, icon) => ({ kind: 'coins', seconds, flat, weight: w, color, icon });
   const bo = (kind, mult, minutes, w, color, icon) => ({ kind, mult, minutes, weight: w, color, icon });
-  return [cr(1, 14, 'u'), co(60, 50, 12, 'r', 'coin1'), cr(2, 9, 'v'), bo('income', 2, 5, 9, 'h', 'up'), cr(1, 14, 'u'), bo('tap', 3, 3, 8, 'p', 'tap'),
-    cr(3, 5, 'P'), co(180, 200, 8, 'm', 'coin2'), cr(1, 14, 'u'), bo('income', 3, 3, 5, 'o', 'up'), cr(2, 9, 'v'), { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3, color: 'y', icon: 'star' }];
+  return [cr(1, 14, 'u'), co(60, 50, 12, 'r', 'coin1'), cr(2, 9, 'v'), bo('income', 2, 5, 9, 'h', 'up2'), cr(1, 14, 'u'), bo('tap', 3, 3, 8, 'p', 'tap3'),
+    cr(3, 5, 'P'), co(180, 200, 8, 'm', 'coin2'), cr(1, 14, 'u'), bo('income', 3, 3, 5, 'o', 'up3'), cr(2, 9, 'v'), { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3, color: 'y', icon: 'star' }];
 })();
 // Скіни-призи (Капі двічі за вагою): додаються до пулу лише в бонус-іграх, коли вони дають головний приз
 const BONUS_GAME_SKINS = [['capy', 'c', 'hat'], ['shop', 'q', 'house'], ['weather', 'S', 'cloud'], ['street', 'E', 'brick'], ['hero', 'w', 'paw'], ['capy', 'c', 'hat']]
@@ -18285,12 +18286,18 @@ const CIRCUS_ART = (function () {
     'Т': ['#####', '..#..', '..#..', '..#..', '..#..'], 'У': ['#...#', '#...#', '.####', '....#', '.###.'], 'Н': ['#...#', '#...#', '#####', '#...#', '#...#'],
     'L': ['#....', '#....', '#....', '#....', '#####'], 'U': ['#...#', '#...#', '#...#', '#...#', '.###.'], 'C': ['.####', '#....', '#....', '#....', '.####'],
     'K': ['#...#', '#..#.', '###..', '#..#.', '#...#'], 'Y': ['#...#', '.#.#.', '..#..', '..#..', '..#..'], 'I': ['#####', '..#..', '..#..', '..#..', '#####'],
-    'R': ['####.', '#...#', '####.', '#..#.', '#...#'], 'S': ['.####', '#....', '.###.', '....#', '####.']
+    'R': ['####.', '#...#', '####.', '#..#.', '#...#'], 'S': ['.####', '#....', '.###.', '....#', '####.'],
+    'A': ['.###.', '#...#', '#####', '#...#', '#...#'], 'B': ['####.', '#...#', '####.', '#...#', '####.'], 'D': ['####.', '#...#', '#...#', '#...#', '####.'],
+    'E': ['#####', '#....', '####.', '#....', '#####'], 'F': ['#####', '#....', '####.', '#....', '#....'], 'G': ['.####', '#....', '#.###', '#...#', '.####'],
+    'H': ['#...#', '#...#', '#####', '#...#', '#...#'], 'J': ['..###', '...#.', '...#.', '#..#.', '.##..'], 'M': ['#...#', '##.##', '#.#.#', '#...#', '#...#'],
+    'N': ['#...#', '##..#', '#.#.#', '#..##', '#...#'], 'O': ['.###.', '#...#', '#...#', '#...#', '.###.'], 'P': ['####.', '#...#', '####.', '#....', '#....'],
+    'T': ['#####', '..#..', '..#..', '..#..', '..#..'], 'V': ['#...#', '#...#', '#...#', '.#.#.', '..#..'], 'W': ['#...#', '#...#', '#.#.#', '##.##', '#...#'],
+    'X': ['#...#', '.#.#.', '..#..', '.#.#.', '#...#'], 'Z': ['#####', '...#.', '..#..', '.#...', '#####']
   };
   // довгий прапор-стрічка з назвою; кожен стовпчик іде хвилею
   function flag(g, x0, y0, len, t, fill, ink, text, edge) {
     const pix = {}; let cx = 3;
-    for (const ch of text) { if (ch === ' ') { cx += 3; continue; } const gl = GL[ch]; if (!gl) continue; gl.forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') (pix[cx + rx] = pix[cx + rx] || []).push(ry); }); cx += 6; }
+    for (const ch of text.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/Ł/g, 'L')) { if (ch === ' ') { cx += 3; continue; } const gl = GL[ch]; if (!gl) continue; gl.forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') (pix[cx + rx] = pix[cx + rx] || []).push(ry); }); cx += 6; }
     for (let i = 0; i < len; i++) {
       const amp = 0.4 + 1.8 * (i / len), off = Math.round(Math.sin(i * 0.32 - t * 5) * amp), top = y0 + off, h = 9;
       const notch = i > len - 6 ? i - (len - 6) : 0;
@@ -18415,7 +18422,7 @@ const CIRCUS_ART = (function () {
     g.drawImage(ts.main, 0, 0);
     if (th.post) { th.post(g, t, 64); th.post(g, t, 91); }
     if (th.top) th.top(g, t, s, u);
-    rr(g, 80, 3, 1, 12, th.out); flag(g, 81, 3, 70, t, th.flag[0], th.flag[1], circusFlagText(), th.flag[2]);
+    rr(g, 80, 3, 1, 12, th.out); flag(g, 81, 3, 76, t, th.flag[0], th.flag[1], circusFlagText(), th.flag[2]);
     g.restore();
     circusGarland(g, th, t, u);
     // платформа й колеса візка (у космосі — двигуни) зникають
@@ -19123,7 +19130,7 @@ function hitCircus(p) {
 /* ---- вікно колеса ---- */
 // Маленькі піксельні значки на секторах
 function drawWheelIcon(g, kind, cx, cy) {
-  const cc = EPOCH_COIN_COLORS[viewEpoch() % EPOCH_COIN_COLORS.length];
+  const cc = EPOCH_COIN_COLORS[0];                                    // на колесі монети золоті в кожній епосі, щоб читались як монети
   const coin = (x, y) => { disc(g, x, y, 4, 'd'); disc(g, x, y, 3, cc[0]); R(g, x - 1, y - 2, 2, 1, cc[1]); };
   switch (kind) {
     case 'gem': { const rows = SPRITES[gemSprite()].rows; rows.forEach((row, ry) => { for (let rx = 0; rx < 8; rx++) if (row[rx] !== '.') R(g, cx - 4 + rx, cy - 4 + ry, 1, 1, row[rx]); }); break; }
@@ -19145,8 +19152,16 @@ function drawWheelIcon(g, kind, cx, cy) {
     }
   }
 }
+const MUL_DIG = { '2': ['###', '..#', '###', '#..', '###'], '3': ['###', '..#', '###', '..#', '###'], 'x': ['...', '#.#', '.#.', '#.#', '...'] };
+function mulLabel(g, n, cx, cy) {                                      // «×2» / «×3» під іконкою бонусу: біла цифра з темним обрисом
+  const rows = [MUL_DIG.x, MUL_DIG[n]], x0 = cx - 4;
+  const put = (ox, oy, col) => rows.forEach((d, k) => d.forEach((row, ry) => { for (let rx = 0; rx < 3; rx++) if (row[rx] === '#') R(g, x0 + k * 4 + rx + ox, cy + ry + oy, 1, 1, col); }));
+  [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, 1], [-1, 1], [1, -1]].forEach(([ox, oy]) => put(ox, oy, 'd'));
+  put(0, 0, 'w');
+}
 function drawCircusIcon(g, icon, cx, cy) {
   switch (icon) {
+    case 'up2': case 'up3': case 'tap3': drawWheelIcon(g, icon.slice(0, -1), cx, cy - 4); mulLabel(g, icon.slice(-1), cx, cy + 5); break;
     case 'gem2': drawWheelIcon(g, 'gem', cx - 4, cy + 2); drawWheelIcon(g, 'gem', cx + 4, cy - 2); break;
     case 'gem3': drawWheelIcon(g, 'gem', cx - 5, cy + 3); drawWheelIcon(g, 'gem', cx + 5, cy + 3); drawWheelIcon(g, 'gem', cx, cy - 3); break;
     case 'brick': R(g, cx - 6, cy - 4, 13, 9, 'd'); R(g, cx - 5, cy - 3, 5, 3, 'E'); R(g, cx + 1, cy - 3, 5, 3, 'E'); R(g, cx - 5, cy + 1, 2, 3, 'E'); R(g, cx - 2, cy + 1, 5, 3, 'E'); R(g, cx + 4, cy + 1, 2, 3, 'E'); break;
@@ -19193,7 +19208,7 @@ function openCircus() {
   ui.clownCanvas.width = hag ? 144 : 72; ui.clownCanvas.height = hag ? 80 : 40;       // портрет відьми в подвійній роздільності
   ui.circusModal.hidden = false;
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
-  ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = hag || nd;             // напис «Тут лише скіни» — лише в цирку, у Рьо й відьми без нього
+  ui.circusSkinNote.textContent = t('circusBonusOnly'); ui.circusSkinNote.hidden = hag || nd;             // напис «Тут лише бонуси» (колесо дає бонуси й кристали, не скіни) — лише в цирку, у Рьо й відьми без нього
   ui.circusClose.textContent = t(state.circus.spun ? (nd ? 'noodleDone' : hag ? 'hagDone' : 'circusDone') : 'wheelClose');
   ui.circusResult.textContent = '';
   updateCircusButtons();
@@ -23816,8 +23831,8 @@ function frame(now) {
   updateSeasonsIntro();
   updateFxPlus(dt);
   updateDailyReminder(dt);
-  const hidden = (warp && warp.t > 0.15) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 6100);
-  if (!hidden) render(animClock);                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші
+  const hidden = (warp && warp.t > 0.15 && warp.t < warp.dur * 0.7) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 6100);
+  if (!hidden) render(animClock);                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
 
   uiTimer += dt;
   if (uiTimer >= CONFIG.UI_REFRESH_SECONDS) { uiTimer = 0; updateUI(); }
@@ -27859,7 +27874,8 @@ installLang("es", {
     "seasonFx_summer": "El sol brilla a pleno rendimiento",
     "seasonFx_autumn": "El viento arrastra hojas doradas",
     "seasonFx_halloween": "Shh… algo cruje en el pueblo",
-    "circusFlag": "CIRCO DE LA SUERTE",
+    "circusFlag": "GRAN CIRCO",
+    "circusBonusOnly": "🎁 Aquí solo bonos",
     "circusTitle": "Circo de la Fortuna",
     "circusSub": "Payaso Bubon: «¡Cristales y bonos, solo aquí!»",
     "circusSpin": "¡Girar!",
@@ -29845,7 +29861,8 @@ installLang("it", {
     "seasonFx_summer": "Il sole splende a pieno ritmo",
     "seasonFx_autumn": "Il vento porta foglie dorate",
     "seasonFx_halloween": "Shh… qualcosa fruscia in città",
-    "circusFlag": "CIRCO FORTUNATO",
+    "circusFlag": "GRAN CIRCO",
+    "circusBonusOnly": "🎁 Qui solo bonus",
     "circusTitle": "Circo della Fortuna",
     "circusSub": "Clown Bubon: «Cristalli e bonus, solo qui!»",
     "circusSpin": "Gira!",
@@ -31831,7 +31848,8 @@ installLang("pl", {
     "seasonFx_summer": "Słońce świeci pełną mocą",
     "seasonFx_autumn": "Wiatr niesie złote liście",
     "seasonFx_halloween": "Cii… coś szeleści w mieście",
-    "circusFlag": "CYRK SZCZĘŚCIA",
+    "circusFlag": "CYRK FORTUNY",
+    "circusBonusOnly": "🎁 Tu tylko bonusy",
     "circusTitle": "Cyrk Fortuny",
     "circusSub": "Klaun Bubon: „Kryształy i bonusy, tylko tutaj!”",
     "circusSpin": "Zakręć!",
@@ -33453,7 +33471,7 @@ installLang("pl", {
     "mgRetryNow": "⏳ Możesz spróbować jeszcze raz!",
     "mgLeft": "jeszcze {0}",
     "mgBonusTitle": "Minigra bonusowa",
-    "mgPerfect": "Idealnie! Oto twoja skórka!",
+    "mgPerfect": "Idealnie! Oto twój skin!",
     "mgNear": "Prawie! Spróbuj jeszcze raz.",
     "mgMiss": "Tym razem nie. Spróbuj jeszcze raz!",
     "mgDanceTitle": "Parkiet Capy Disco",
@@ -33817,7 +33835,8 @@ installLang("pt", {
     "seasonFx_summer": "O sol brilha com toda a força",
     "seasonFx_autumn": "O vento leva folhas douradas",
     "seasonFx_halloween": "Psiu… algo farfalha na cidade",
-    "circusFlag": "CIRCO DA SORTE",
+    "circusFlag": "SUPER CIRCO",
+    "circusBonusOnly": "🎁 Aqui só bônus",
     "circusTitle": "Circo da Fortuna",
     "circusSub": "Palhaço Bubon: \"Cristais e bônus, só aqui!\"",
     "circusSpin": "Girar!",

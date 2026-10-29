@@ -38,7 +38,7 @@ function hitCircus(p) {
 /* ---- вікно колеса ---- */
 // Маленькі піксельні значки на секторах
 function drawWheelIcon(g, kind, cx, cy) {
-  const cc = EPOCH_COIN_COLORS[viewEpoch() % EPOCH_COIN_COLORS.length];
+  const cc = EPOCH_COIN_COLORS[0];                                    // на колесі монети золоті в кожній епосі, щоб читались як монети
   const coin = (x, y) => { disc(g, x, y, 4, 'd'); disc(g, x, y, 3, cc[0]); R(g, x - 1, y - 2, 2, 1, cc[1]); };
   switch (kind) {
     case 'gem': { const rows = SPRITES[gemSprite()].rows; rows.forEach((row, ry) => { for (let rx = 0; rx < 8; rx++) if (row[rx] !== '.') R(g, cx - 4 + rx, cy - 4 + ry, 1, 1, row[rx]); }); break; }
@@ -60,8 +60,16 @@ function drawWheelIcon(g, kind, cx, cy) {
     }
   }
 }
+const MUL_DIG = { '2': ['###', '..#', '###', '#..', '###'], '3': ['###', '..#', '###', '..#', '###'], 'x': ['...', '#.#', '.#.', '#.#', '...'] };
+function mulLabel(g, n, cx, cy) {                                      // «×2» / «×3» під іконкою бонусу: біла цифра з темним обрисом
+  const rows = [MUL_DIG.x, MUL_DIG[n]], x0 = cx - 4;
+  const put = (ox, oy, col) => rows.forEach((d, k) => d.forEach((row, ry) => { for (let rx = 0; rx < 3; rx++) if (row[rx] === '#') R(g, x0 + k * 4 + rx + ox, cy + ry + oy, 1, 1, col); }));
+  [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, 1], [-1, 1], [1, -1]].forEach(([ox, oy]) => put(ox, oy, 'd'));
+  put(0, 0, 'w');
+}
 function drawCircusIcon(g, icon, cx, cy) {
   switch (icon) {
+    case 'up2': case 'up3': case 'tap3': drawWheelIcon(g, icon.slice(0, -1), cx, cy - 4); mulLabel(g, icon.slice(-1), cx, cy + 5); break;
     case 'gem2': drawWheelIcon(g, 'gem', cx - 4, cy + 2); drawWheelIcon(g, 'gem', cx + 4, cy - 2); break;
     case 'gem3': drawWheelIcon(g, 'gem', cx - 5, cy + 3); drawWheelIcon(g, 'gem', cx + 5, cy + 3); drawWheelIcon(g, 'gem', cx, cy - 3); break;
     case 'brick': R(g, cx - 6, cy - 4, 13, 9, 'd'); R(g, cx - 5, cy - 3, 5, 3, 'E'); R(g, cx + 1, cy - 3, 5, 3, 'E'); R(g, cx - 5, cy + 1, 2, 3, 'E'); R(g, cx - 2, cy + 1, 5, 3, 'E'); R(g, cx + 4, cy + 1, 2, 3, 'E'); break;
@@ -108,7 +116,7 @@ function openCircus() {
   ui.clownCanvas.width = hag ? 144 : 72; ui.clownCanvas.height = hag ? 80 : 40;       // портрет відьми в подвійній роздільності
   ui.circusModal.hidden = false;
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
-  ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = hag || nd;             // напис «Тут лише скіни» — лише в цирку, у Рьо й відьми без нього
+  ui.circusSkinNote.textContent = t('circusBonusOnly'); ui.circusSkinNote.hidden = hag || nd;             // напис «Тут лише бонуси» (колесо дає бонуси й кристали, не скіни) — лише в цирку, у Рьо й відьми без нього
   ui.circusClose.textContent = t(state.circus.spun ? (nd ? 'noodleDone' : hag ? 'hagDone' : 'circusDone') : 'wheelClose');
   ui.circusResult.textContent = '';
   updateCircusButtons();

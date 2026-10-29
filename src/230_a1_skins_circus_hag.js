@@ -9,8 +9,8 @@ const CIRCUS_SECTORS = (function () {
   const cr = (n, w, color) => ({ kind: 'crystal', amount: n, weight: w, color, icon: n > 1 ? 'gem' + n : 'gem' });
   const co = (seconds, flat, w, color, icon) => ({ kind: 'coins', seconds, flat, weight: w, color, icon });
   const bo = (kind, mult, minutes, w, color, icon) => ({ kind, mult, minutes, weight: w, color, icon });
-  return [cr(1, 14, 'u'), co(60, 50, 12, 'r', 'coin1'), cr(2, 9, 'v'), bo('income', 2, 5, 9, 'h', 'up'), cr(1, 14, 'u'), bo('tap', 3, 3, 8, 'p', 'tap'),
-    cr(3, 5, 'P'), co(180, 200, 8, 'm', 'coin2'), cr(1, 14, 'u'), bo('income', 3, 3, 5, 'o', 'up'), cr(2, 9, 'v'), { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3, color: 'y', icon: 'star' }];
+  return [cr(1, 14, 'u'), co(60, 50, 12, 'r', 'coin1'), cr(2, 9, 'v'), bo('income', 2, 5, 9, 'h', 'up2'), cr(1, 14, 'u'), bo('tap', 3, 3, 8, 'p', 'tap3'),
+    cr(3, 5, 'P'), co(180, 200, 8, 'm', 'coin2'), cr(1, 14, 'u'), bo('income', 3, 3, 5, 'o', 'up3'), cr(2, 9, 'v'), { kind: 'jackpot', seconds: 3600, flat: 10000, weight: 3, color: 'y', icon: 'star' }];
 })();
 // Скіни-призи (Капі двічі за вагою): додаються до пулу лише в бонус-іграх, коли вони дають головний приз
 const BONUS_GAME_SKINS = [['capy', 'c', 'hat'], ['shop', 'q', 'house'], ['weather', 'S', 'cloud'], ['street', 'E', 'brick'], ['hero', 'w', 'paw'], ['capy', 'c', 'hat']]
@@ -49,12 +49,18 @@ const CIRCUS_ART = (function () {
     'Т': ['#####', '..#..', '..#..', '..#..', '..#..'], 'У': ['#...#', '#...#', '.####', '....#', '.###.'], 'Н': ['#...#', '#...#', '#####', '#...#', '#...#'],
     'L': ['#....', '#....', '#....', '#....', '#####'], 'U': ['#...#', '#...#', '#...#', '#...#', '.###.'], 'C': ['.####', '#....', '#....', '#....', '.####'],
     'K': ['#...#', '#..#.', '###..', '#..#.', '#...#'], 'Y': ['#...#', '.#.#.', '..#..', '..#..', '..#..'], 'I': ['#####', '..#..', '..#..', '..#..', '#####'],
-    'R': ['####.', '#...#', '####.', '#..#.', '#...#'], 'S': ['.####', '#....', '.###.', '....#', '####.']
+    'R': ['####.', '#...#', '####.', '#..#.', '#...#'], 'S': ['.####', '#....', '.###.', '....#', '####.'],
+    'A': ['.###.', '#...#', '#####', '#...#', '#...#'], 'B': ['####.', '#...#', '####.', '#...#', '####.'], 'D': ['####.', '#...#', '#...#', '#...#', '####.'],
+    'E': ['#####', '#....', '####.', '#....', '#####'], 'F': ['#####', '#....', '####.', '#....', '#....'], 'G': ['.####', '#....', '#.###', '#...#', '.####'],
+    'H': ['#...#', '#...#', '#####', '#...#', '#...#'], 'J': ['..###', '...#.', '...#.', '#..#.', '.##..'], 'M': ['#...#', '##.##', '#.#.#', '#...#', '#...#'],
+    'N': ['#...#', '##..#', '#.#.#', '#..##', '#...#'], 'O': ['.###.', '#...#', '#...#', '#...#', '.###.'], 'P': ['####.', '#...#', '####.', '#....', '#....'],
+    'T': ['#####', '..#..', '..#..', '..#..', '..#..'], 'V': ['#...#', '#...#', '#...#', '.#.#.', '..#..'], 'W': ['#...#', '#...#', '#.#.#', '##.##', '#...#'],
+    'X': ['#...#', '.#.#.', '..#..', '.#.#.', '#...#'], 'Z': ['#####', '...#.', '..#..', '.#...', '#####']
   };
   // довгий прапор-стрічка з назвою; кожен стовпчик іде хвилею
   function flag(g, x0, y0, len, t, fill, ink, text, edge) {
     const pix = {}; let cx = 3;
-    for (const ch of text) { if (ch === ' ') { cx += 3; continue; } const gl = GL[ch]; if (!gl) continue; gl.forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') (pix[cx + rx] = pix[cx + rx] || []).push(ry); }); cx += 6; }
+    for (const ch of text.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/Ł/g, 'L')) { if (ch === ' ') { cx += 3; continue; } const gl = GL[ch]; if (!gl) continue; gl.forEach((row, ry) => { for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') (pix[cx + rx] = pix[cx + rx] || []).push(ry); }); cx += 6; }
     for (let i = 0; i < len; i++) {
       const amp = 0.4 + 1.8 * (i / len), off = Math.round(Math.sin(i * 0.32 - t * 5) * amp), top = y0 + off, h = 9;
       const notch = i > len - 6 ? i - (len - 6) : 0;
@@ -179,7 +185,7 @@ const CIRCUS_ART = (function () {
     g.drawImage(ts.main, 0, 0);
     if (th.post) { th.post(g, t, 64); th.post(g, t, 91); }
     if (th.top) th.top(g, t, s, u);
-    rr(g, 80, 3, 1, 12, th.out); flag(g, 81, 3, 70, t, th.flag[0], th.flag[1], circusFlagText(), th.flag[2]);
+    rr(g, 80, 3, 1, 12, th.out); flag(g, 81, 3, 76, t, th.flag[0], th.flag[1], circusFlagText(), th.flag[2]);
     g.restore();
     circusGarland(g, th, t, u);
     // платформа й колеса візка (у космосі — двигуни) зникають

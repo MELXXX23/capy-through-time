@@ -565,13 +565,13 @@
   function restart() { clearInterval(auto); auto = setInterval(function () { if (!document.getElementById('boot')) clearInterval(auto); else showTip(); }, 6000); }
   showTip(true); restart();
   bootEl.addEventListener('pointerdown', function () { showTip(); restart(); });
-  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); } }, 18000);   // страховка
+  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { try { document.querySelector('meta[name="theme-color"]').setAttribute('content', document.documentElement.classList.contains('ios26bar') ? '#2E4580' : '#2a1d1a'); } catch (e) {} el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); } }, 18000);   // страховка
 })();
 function bootDone() {
   var el = document.getElementById('boot'); if (!el) return;
   el.classList.add('ready');
   if (/[?&]hold=1/.test(location.search)) return;
   var wait = Math.max(0, 6600 - performance.now());                    // показуємо кілька секунд, щоб устигнути прочитати підказку
-  setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); }, wait + 250);
+  setTimeout(function () { try { document.querySelector('meta[name="theme-color"]').setAttribute('content', document.documentElement.classList.contains('ios26bar') ? '#2E4580' : '#2a1d1a'); } catch (e) {} el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); }, wait + 250);
 }
 </script>

@@ -47,8 +47,8 @@ function frame(now) {
   updateSeasonsIntro();
   updateFxPlus(dt);
   updateDailyReminder(dt);
-  const hidden = (warp && warp.t > 0.15) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 6100);
-  if (!hidden) render(animClock);                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші
+  const hidden = (warp && warp.t > 0.15 && warp.t < warp.dur * 0.7) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 6100);
+  if (!hidden) render(animClock);                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
 
   uiTimer += dt;
   if (uiTimer >= CONFIG.UI_REFRESH_SECONDS) { uiTimer = 0; updateUI(); }
