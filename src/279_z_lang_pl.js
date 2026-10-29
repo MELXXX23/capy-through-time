@@ -369,6 +369,7 @@ installLang("pl", {
     "skin_street_gold": "Złota droga",
     "skin_weather_lightninggreen": "Zielona błyskawica",
     "skin_weather_lightningred": "Czerwona błyskawica",
+    "skin_weather_aurora": "Zorza polarna",
     "skin_capy_wizard": "Capy Czarodziejka",
     "skin_capy_chef": "Capy Szef Kuchni",
     "skin_capy_explorer": "Capy Odkrywczyni",

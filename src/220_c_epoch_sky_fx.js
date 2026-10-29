@@ -409,16 +409,27 @@ function buildSkyStars() {
     skyDust.push({ x: Math.floor(u * view.w), y: Math.floor(view.offY + 92 - u * (view.offY + 62) + rand(-9, 9) + rand(-9, 9)), a: rand(0.12, 0.4), c: ['S', 'u', 'w', 'S'][i % 4] });
   }
 }
+let auroraK = 0, auroraT = 0;      // «Полярне сяйво»: скільки ночі додано (0 — звичайний день, 1 — повна ніч); плавно росте й спадає
 function updateSkyState() {
-  const hal = theme.season === 'halloween';
-  if (!dayNightOn()) { sky.night = hal ? 0.6 : 0; sky.dusk = 0; sky.lamp = hal ? 0.85 : 0; sky.h = hal ? -0.4 : 0.9; return; }
-  const h = Math.sin((state.dayPhase - 0.25) * Math.PI * 2);      // висота сонця: 1 — полудень, −1 — північ
-  const n = Math.max(0, Math.min(1, 0.3 - h * 1.5));
-  sky.night = n * n * (3 - 2 * n);
-  sky.dusk = Math.max(0, 1 - Math.abs(h - 0.05) / 0.3);          // сутінки: схід і захід
-  sky.lamp = Math.max(0, Math.min(1, (sky.night - 0.25) / 0.4));  // ліхтарі вмикаються, коли вже темно
-  sky.h = h;
-  if (hal) { sky.night = Math.max(sky.night, 0.6); sky.lamp = Math.max(sky.lamp, 0.85); sky.dusk = 0; }
+  const hal = theme.season === 'halloween', now = performance.now(), adt = Math.min(0.1, Math.max(0, (now - auroraT) / 1000));
+  auroraT = now;
+  const au = skinOn('weather') === 'aurora';
+  auroraK = au ? Math.min(1, auroraK + adt / 2.5) : Math.max(0, auroraK - adt / 2.5);
+  if (!dayNightOn()) { sky.night = hal ? 0.6 : 0; sky.dusk = 0; sky.lamp = hal ? 0.85 : 0; sky.h = hal ? -0.4 : 0.9; }
+  else {
+    const h = Math.sin((state.dayPhase - 0.25) * Math.PI * 2);      // висота сонця: 1 — полудень, −1 — північ
+    const n = Math.max(0, Math.min(1, 0.3 - h * 1.5));
+    sky.night = n * n * (3 - 2 * n);
+    sky.dusk = Math.max(0, 1 - Math.abs(h - 0.05) / 0.3);          // сутінки: схід і захід
+    sky.lamp = Math.max(0, Math.min(1, (sky.night - 0.25) / 0.4));  // ліхтарі вмикаються, коли вже темно
+    sky.h = h;
+    if (hal) { sky.night = Math.max(sky.night, 0.6); sky.lamp = Math.max(sky.lamp, 0.85); sky.dusk = 0; }
+  }
+  if (auroraK > 0) {                                                // скін «Полярне сяйво»: ніч стоїть сама, ліхтарі горять, сутінків нема
+    const k = auroraK * auroraK * (3 - 2 * auroraK);
+    sky.night += (Math.max(sky.night, 0.93) - sky.night) * k; sky.lamp += (Math.max(sky.lamp, 0.85) - sky.lamp) * k;
+    sky.dusk *= 1 - k; sky.h += (Math.min(sky.h, -0.5) - sky.h) * k;
+  }
 }
 function updateShootingStar(dt) {
   if (!animOn() || sky.night < 0.6) { shootingStar = null; return; }

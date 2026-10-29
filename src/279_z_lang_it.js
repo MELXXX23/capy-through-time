@@ -369,6 +369,7 @@ installLang("it", {
     "skin_street_gold": "Strada dorata",
     "skin_weather_lightninggreen": "Fulmine verde",
     "skin_weather_lightningred": "Fulmine rosso",
+    "skin_weather_aurora": "Aurora boreale",
     "skin_capy_wizard": "Capy Maga",
     "skin_capy_chef": "Capy Chef",
     "skin_capy_explorer": "Capy Esploratrice",

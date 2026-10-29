@@ -88,7 +88,7 @@
       if (o.snow) b += '<rect x="' + (x - 1) + '" y="' + (top - 2) + '" width="' + (ww + 2) + '" height="4" fill="#f4f8ff"/><rect x="' + x + '" y="' + (top + 2) + '" width="3" height="3" fill="#f4f8ff"/><rect x="' + (x + ww - 5) + '" y="' + (top + 2) + '" width="4" height="2" fill="#f4f8ff"/>';
       for (var wy = top + 5; wy < 94; wy += 9) for (var wx = x + 4; wx < x + ww - 5; wx += 7) {
         var hsh = (wx * 7 + wy * 3);
-        if ((hsh % 5) < (o.lit || 3)) b += '<rect class="' + (!far && hsh % 3 === 0 ? 'bw' : '') + '" style="--bd:' + (3 + (hsh % 5)) + 's;animation-delay:-' + (hsh % 7) + 's" x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + (far ? o.winFar : (((wx * 3 + wy) % 4 === 0) ? o.win[1] : o.win[0])) + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
+        if (!far && ((wx * 5 + wy * 3) % 7) < (o.lit || 3)) b += '<rect class="' + (!far && hsh % 3 === 0 ? 'bw' : '') + '" style="--bd:' + (3 + (hsh % 5)) + 's;animation-delay:-' + (hsh % 7) + 's" x="' + wx + '" y="' + wy + '" width="3" height="4" fill="' + (far ? o.winFar : (((wx * 3 + wy) % 4 === 0) ? o.win[1] : o.win[0])) + '" opacity="' + (((wx + wy) % 3) ? '.9' : '.5') + '"/>';
       }
       if (!far && o.neon && i % 4 === 2) { var nc = o.neon[(i >> 1) % o.neon.length]; b += '<rect class="nf" style="animation-delay:-' + (i % 5) + 's" x="' + (x + 2) + '" y="' + (top + 3) + '" width="' + (ww - 4) + '" height="3" fill="' + nc + '"/><rect class="nf" style="animation-delay:-' + (i % 5) + 's" x="' + (x + 2) + '" y="' + (top + 3) + '" width="' + (ww - 4) + '" height="3" fill="' + nc + '" opacity=".35" transform="translate(0 4)"/>'; }
       x += ww; i++;
@@ -130,6 +130,29 @@
   document.getElementById('bootCityFar').innerHTML = CITY[0] + CITY[0];
   document.getElementById('bootCity').innerHTML = CITY[1] + CITY[1];
 
+  // ---- глибина: дальні гряди, серпанок між шарами, світіння, темні стовпи на передньому плані
+  var HZ = { night: ['#c25fb5', '#3a1f6a', '#0c0618'], dawn: ['#ffb872', '#c79aa8', '#3a2230'], rain: ['#3c6a88', '#18293f', '#060a14'], snow: ['#b4cff0', '#7d9fd2', '#1c2c58'], time: ['#e29a62', '#4d2680', '#0a0418'], halloween: ['#e0703a', '#1d0c2c', '#04020a'], fest: ['#8a4a86', '#1c2160', '#05061a'] }[scene];
+  function hx(c) { return [parseInt(c.substr(1, 2), 16), parseInt(c.substr(3, 2), 16), parseInt(c.substr(5, 2), 16)]; }
+  function mixc(a, b, t) { var A = hx(a), B = hx(b); return 'rgb(' + A.map(function (v, i) { return Math.round(v + (B[i] - v) * t); }).join(',') + ')'; }
+  function ridge(seed, base, amp, col) {                                            // гряда пагорбів/дахів: стовпчики, шов збігається (періодична)
+    var r = '', ph = [rnd(seed, 1) * 6.28, rnd(seed, 2) * 6.28, rnd(seed, 3) * 6.28];
+    for (var rx = 0; rx < 330; rx += 2) { var a = 2 * Math.PI * rx / 330, h = Math.round(base + amp * (0.5 + 0.28 * Math.sin(a * 2 + ph[0]) + 0.17 * Math.sin(a * 5 + ph[1]) + 0.08 * Math.sin(a * 11 + ph[2]))); r += '<rect x="' + rx + '" y="' + (100 - h) + '" width="2" height="' + h + '" fill="' + col + '"/>'; }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">' + r + '</svg>';
+  }
+  (function () {
+    var hz = hx(HZ[0]).join(', ');
+    bootEl.style.setProperty('--hz', hz);
+    bootEl.style.setProperty('--vg', (scene === 'dawn' || scene === 'snow') ? '.2' : '.42');
+    function layer(cls, id, html) { var d = document.createElement('div'); d.className = cls; if (html) d.innerHTML = html; return d; }
+    var far = document.getElementById('bootCityFar');
+    var r1 = layer('b-city b-ridge r1', 0, ridge(5, 16, 22, mixc(HZ[1], HZ[0], 0.5)) + ridge(5, 16, 22, mixc(HZ[1], HZ[0], 0.5)));
+    var r2 = layer('b-city b-ridge r2', 0, ridge(9, 9, 16, mixc(HZ[1], HZ[0], 0.28)) + ridge(9, 9, 16, mixc(HZ[1], HZ[0], 0.28)));
+    bootEl.insertBefore(r1, far); bootEl.insertBefore(r2, far);
+    bootEl.insertBefore(layer('b-haze a', 0, ''), far);
+    bootEl.insertBefore(layer('b-haze b', 0, ''), document.getElementById('bootCity'));
+    var gl = layer('b-glow', 0, ''); bootEl.insertBefore(gl, document.getElementById('bootOrb'));
+  })();
+
   // ---- небесне тіло та зорі
   var orb = document.getElementById('bootOrb'), stars = bootEl.querySelector('.b-stars');
   stars.style.display = 'none';                                                     // зорі-цятки прибрано (просила користувачка)
@@ -148,6 +171,7 @@
     orb.style.left = '50%'; orb.style.bottom = '54%';
   }
   if (scene === 'rain' || scene === 'fest') orb.style.display = 'none';
+  (function () { var g = bootEl.querySelector('.b-glow'); if (orb.style.display === 'none') { g.style.left = '50%'; g.style.bottom = '30%'; g.classList.add('low'); } else { g.style.left = orb.style.left; g.style.bottom = orb.style.bottom; } })();
   if (scene === 'halloween') {                                                     // великий помаранчевий місяць із кратерами
     var CR = [[9, 9, 2], [20, 12, 3], [12, 21, 2], [22, 23, 1], [7, 16, 1], [17, 27, 1]];
     var hm = disc(16, function (x, y, dx, dy) { for (var ci = 0; ci < CR.length; ci++) { var ex = x - CR[ci][0], ey = y - CR[ci][1]; if (ex * ex + ey * ey <= CR[ci][2] * CR[ci][2]) return 'e'; } return (dx + dy * 0.5) < -6 ? 'w' : (dx + dy * 0.7) < 7 ? 'Y' : 'e'; });
@@ -177,13 +201,13 @@
   var PA = { O: '#302418', y: '#ffe08a', g: '#4f9a63', G: '#2f6b48', n: '#3d5a8c', w: '#fff4dc', b: '#7a4f35', r: '#d9473d', o: '#8a5a30', f: '#e8863c', j: '#ffd36a', K: '#1b1224', W: '#f4f8ff', s: '#7fb6e0', S: '#3d6a96', u: '#8b6bb0', U: '#c7a6f0', v: '#ffd36a' };
   var per = Math.max(VW, 520), st = document.getElementById('bootStreet'), html = '', LAMPY = { y: '#ffe08a' };
   var LIST = {
-    night: [[0.08, LAMP], [0.27, TREE], [0.5, LAMP], [0.68, BOX], [0.84, TREE]],
-    dawn: [[0.02, STALL], [0.3, LAMP], [0.43, TREE], [0.6, STALL2], [0.84, BOX], [0.93, BENCH]],
-    rain: [[0.06, LAMP], [0.2, PUDDLE], [0.36, HYD], [0.5, LAMP], [0.66, PUDDLE], [0.8, BOX], [0.9, PUDDLE]],
-    snow: [[0.05, PINE], [0.2, LAMP], [0.4, SNOWMAN], [0.6, PINE], [0.78, LAMP], [0.9, PINE]],
-    time: [[0.08, CLOCKPOST], [0.3, LAMP], [0.5, GEMTREE], [0.7, CLOCKPOST], [0.88, LAMP]],
-    halloween: [[0.03, DEADTREE], [0.18, PUMPKIN, PK], [0.25, GRAVE, GP], [0.36, LAMP], [0.46, FENCE], [0.6, PUMPKIN, PK], [0.67, GRAVE, GP], [0.76, DEADTREE], [0.9, LAMP], [0.95, PUMPKIN, PK]],
-    fest: [[0.02, STALL], [0.24, LAMP], [0.33, BALLOONS, BP], [0.45, STALL2], [0.72, LAMP], [0.83, BALLOONS, BP], [0.9, BENCH]]
+    night: [[0.08, LAMP], [0.27, TREE], [0.5, LAMP], [0.68, BOX]],
+    dawn: [[0.02, STALL], [0.3, LAMP], [0.43, TREE], [0.6, STALL2]],
+    rain: [[0.06, LAMP], [0.2, PUDDLE], [0.36, HYD], [0.5, LAMP], [0.66, PUDDLE]],
+    snow: [[0.05, PINE], [0.2, LAMP], [0.4, SNOWMAN], [0.6, PINE], [0.78, LAMP]],
+    time: [[0.08, CLOCKPOST], [0.3, LAMP], [0.5, GEMTREE], [0.7, CLOCKPOST]],
+    halloween: [[0.03, DEADTREE], [0.18, PUMPKIN, PK],  [0.36, LAMP], [0.46, FENCE], [0.6, PUMPKIN, PK],  [0.76, DEADTREE], [0.9, LAMP]],
+    fest: [[0.02, STALL], [0.24, LAMP], [0.33, BALLOONS, BP], [0.45, STALL2], [0.72, LAMP], [0.83, BALLOONS, BP]]
   }[scene];
   var PAL2 = JSON.parse(JSON.stringify(PA));
   if (scene === 'snow') { PAL2.y = '#fff2b0'; PAL2.g = '#2f6b48'; PAL2.G = '#1f4f38'; }
@@ -219,16 +243,16 @@
   function cl(top, delay, dur, op, rows, pal, k) { return '<div class="b-fly" style="top:' + top + '%;--an:bFlyL;--d:' + dur + 's;--w:-' + delay + 's;opacity:' + op + '">' + sp(rows, pal, k) + '</div>'; }
   if (scene === 'night') {
     sky += '<div class="b-fly" style="top:19%;--an:bFlyL;--d:' + ((VW + 300) / 17) + 's;--w:-3s">' + sp(BLIMP, P, sc + 1) + '</div>';
-    [[27, 0, 70], [33, 1, 52], [14, 2, 62]].forEach(function (c, i) { sky += cl(c[0], i * 6, (VW + 300) / (9 + i * 3), 0.55, CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, sc + 1); });
-    for (var bi = 0; bi < 4; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs + 1) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs + 1) + '</span></div>';
+    [[27, 0, 70], [14, 2, 62]].forEach(function (c, i) { sky += cl(c[0], i * 6, (VW + 300) / (9 + i * 3), 0.55, CLOUD, { O: '#7a58b0', w: '#c9b0ee' }, sc + 1); });
+    for (var bi = 0; bi < 2; bi++) sky += '<div class="b-fly b-bird" style="top:' + (24 + bi * 4 + (bi % 2) * 5) + '%;--an:bFlyR;--d:' + ((VW + 300) / (38 + bi * 6)) + 's;--w:-' + (bi * 2.6) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#1b1224' }, cs + 1) + '</span><span class="f2">' + sp(B2, { O: '#1b1224' }, cs + 1) + '</span></div>';
     sky += '<i class="b-shoot" style="top:8%"></i><i class="b-shoot s2" style="top:16%"></i>';
   } else if (scene === 'dawn') {
-    [[16, 0, 60], [30, 5, 48], [8, 11, 74]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (7 + i * 2), 0.9, BIGCLOUD, { O: '#e9a98f', w: '#fff6ea' }, sc + 1); });
+    [[16, 0, 60], [8, 11, 74]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (7 + i * 2), 0.9, BIGCLOUD, { O: '#e9a98f', w: '#fff6ea' }, sc + 1); });
     sky += '<div class="b-fly" style="top:22%;--an:bFlyL;--d:' + ((VW + 300) / 6) + 's;--w:-9s"><span class="bob">' + sp(BALLOON, { O: '#302418', r: '#d9473d', w: '#fff4dc', n: '#3d7ac9', y: '#ffd36a' }, sc + 1) + '</span></div>';
     sky += '<div class="b-fly" style="top:36%;--an:bFlyL;--d:' + ((VW + 300) / 5) + 's;--w:-3s"><span class="bob b2">' + sp(BALLOON, { O: '#302418', r: '#f0a030', w: '#fff4dc', n: '#4f9a63', y: '#ffd36a' }, cs + 2) + '</span></div>';
-    for (var di = 0; di < 5; di++) sky += '<div class="b-fly b-bird" style="top:' + (12 + (di % 3) * 4 + (di > 2 ? 6 : 0)) + '%;--an:bFlyR;--d:' + ((VW + 300) / (30 + di * 2)) + 's;--w:-' + (di * 1.3) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#6a3a2a' }, cs + 1) + '</span><span class="f2">' + sp(B2, { O: '#6a3a2a' }, cs + 1) + '</span></div>';
+    for (var di = 0; di < 2; di++) sky += '<div class="b-fly b-bird" style="top:' + (12 + (di % 3) * 4 + (di > 2 ? 6 : 0)) + '%;--an:bFlyR;--d:' + ((VW + 300) / (30 + di * 2)) + 's;--w:-' + (di * 1.3) + 's;position:absolute"><span class="f1" style="display:block">' + sp(B1, { O: '#6a3a2a' }, cs + 1) + '</span><span class="f2">' + sp(B2, { O: '#6a3a2a' }, cs + 1) + '</span></div>';
   } else if (scene === 'rain') {
-    [[6, 0], [17, 5], [28, 9], [11, 13]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 1.5), 0.95, BIGCLOUD, { O: '#0a1220', w: '#2a3c58' }, sc + 2); });
+    [[6, 0], [17, 5], [28, 9]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 1.5), 0.95, BIGCLOUD, { O: '#0a1220', w: '#2a3c58' }, sc + 2); });
     sky += '<div class="b-fly" style="top:30%;--an:bFlyL;--d:' + ((VW + 300) / 14) + 's;--w:-4s;opacity:.8">' + sp(BLIMP, { O: '#0a1220', w: '#3a4f70', r: '#ff5fa2', y: '#ffd36a' }, sc + 1) + '</div>';
   } else if (scene === 'snow') {
     [[18, 0, 60], [32, 4, 50]].forEach(function (c, i) { sky += cl(c[0], c[1], (VW + 300) / (6 + i * 2), 0.6, BIGCLOUD, { O: '#5a78b0', w: '#c6d8f4' }, sc + 1); });
@@ -541,13 +565,13 @@
   function restart() { clearInterval(auto); auto = setInterval(function () { if (!document.getElementById('boot')) clearInterval(auto); else showTip(); }, 6000); }
   showTip(true); restart();
   bootEl.addEventListener('pointerdown', function () { showTip(); restart(); });
-  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); } }, 18000);   // страховка
+  if (!/[?&]hold=1/.test(q)) setTimeout(function () { var el = document.getElementById('boot'); if (el) { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); } }, 18000);   // страховка
 })();
 function bootDone() {
   var el = document.getElementById('boot'); if (!el) return;
   el.classList.add('ready');
   if (/[?&]hold=1/.test(location.search)) return;
   var wait = Math.max(0, 6600 - performance.now());                    // показуємо кілька секунд, щоб устигнути прочитати підказку
-  setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 700); }, wait + 250);
+  setTimeout(function () { el.classList.add('done'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); }, wait + 250);
 }
 </script>

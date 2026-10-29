@@ -124,7 +124,7 @@ function buildGroundLayer() {
   for (let x = 296 + 92; x < x0 + W - 6; x += 92) drawBush(g, x, 121);
   fxHousePass(c);                                                    // світло й тіні на будинках (262_fx_plus.js)
   // легка димка, щоб фон «відсунувся»
-  g.globalAlpha = 0.16; R(g, x0, 60, W, LAYOUT.horizonY - 60, 'W'); g.globalAlpha = 1;
+  g.globalAlpha = 0.07; R(g, x0, 60, W, LAYOUT.horizonY - 60, 'W'); g.globalAlpha = 1;
 
   // тротуар
   R(g, x0, LAYOUT.horizonY, W, LAYOUT.curbY - LAYOUT.horizonY, 'E');

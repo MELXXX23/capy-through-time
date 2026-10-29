@@ -305,3 +305,38 @@ body[data-epoch="7"] #sign { color: #aaffff; text-shadow: 0 0 calc(var(--u) * 2)
 /* низьке вікно ПК (панель задач, не на весь екран): підказка компактна, щоб смужка й підказка вміщались у землю під Капі */
 @media (max-height: 640px) { #boot .b-tip { min-height: 0; padding: 6px 10px; gap: 3px; bottom: 2%; } #boot .b-tip small { display: none; } #boot .b-load { bottom: calc(2% + 70px); } #boot .b-bar { margin-top: 6px; } }
 @media (max-height: 420px) { #boot .b-tip { display: none; } #boot .b-load { bottom: 6%; } }
+
+/* ===== Екран завантаження v2: глибина (гряди, серпанок, світіння, темний передній план), кіно-вступ і плавний вихід ===== */
+#boot { transition: opacity .9s ease, transform .9s cubic-bezier(.45, 0, .2, 1); transform-origin: 50% 62%; }
+#boot.done { opacity: 0; transform: scale(1.06); pointer-events: none; }
+#boot.done .b-title { transform: translateY(-22px); opacity: 0; transition: transform .6s ease-in, opacity .5s ease-in; }
+#boot.done .b-load, #boot.done .b-tip { opacity: 0; transition: opacity .35s ease-in; }
+#boot .b-ridge { z-index: 0; }
+#boot .b-ridge.r1 { bottom: 27%; height: 34%; animation-duration: 140s; }
+#boot .b-ridge.r2 { bottom: 25.5%; height: 28%; animation-duration: 90s; }
+#boot .b-haze { position: absolute; left: 0; width: 100%; pointer-events: none; background: linear-gradient(to top, rgba(var(--hz), .62), rgba(var(--hz), 0)); }
+#boot .b-haze.a { bottom: 24%; height: 38%; }
+#boot .b-haze.b { bottom: 24%; height: 22%; opacity: .75; }
+#boot .b-city.far { opacity: .62; }
+#boot .b-glow { position: absolute; z-index: 0; width: min(120vw, 1100px); height: min(120vw, 1100px); transform: translate(-50%, 50%); border-radius: 50%; background: radial-gradient(rgba(var(--hz), .55) 0, rgba(var(--hz), .22) 32%, rgba(var(--hz), 0) 66%); pointer-events: none; animation: bGlow 6s ease-in-out infinite; }
+#boot .b-glow.low { width: min(150vw, 1500px); height: min(60vw, 600px); border-radius: 50%; }
+@keyframes bGlow { 50% { opacity: .78; transform: translate(-50%, 50%) scale(1.06); } }
+#boot .b-capy { filter: drop-shadow(0 0 9px rgba(var(--hz), .6)); }
+#boot .b-ground::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, var(--gd, .38))); pointer-events: none; }
+#boot.s-snow, #boot.s-dawn { --gd: .16; }
+#boot .b-vig { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse at 50% 58%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, var(--vg, .4)) 100%); }
+#boot .b-curtain { position: absolute; inset: 0; z-index: 9; background: #000; pointer-events: none; animation: bCurtain 1.2s ease-out both; }
+@keyframes bCurtain { 0% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+#boot::before, #boot::after { content: ''; position: absolute; left: 0; width: 100%; height: 0; background: #000; z-index: 8; pointer-events: none; animation: bBars 1.5s cubic-bezier(.3, .1, .2, 1) .1s both; }
+#boot::before { top: 0; }
+#boot::after { bottom: 0; }
+@keyframes bBars { from { height: 14%; } to { height: 0; } }
+#boot .b-title { font-size: clamp(20px, 6vw, 50px); letter-spacing: 5px; animation: bTitleIn 1.7s cubic-bezier(.2, .7, .2, 1) .35s backwards; }
+#boot .b-title small { letter-spacing: 8px; }
+#boot .b-title::after { content: ''; display: block; width: 36%; height: 3px; margin: 10px auto 0; background: linear-gradient(90deg, rgba(255, 224, 138, 0), #ffe08a, rgba(255, 224, 138, 0)); opacity: .9; animation: bLine 1.5s ease-out 1s backwards; }
+@keyframes bTitleIn { from { opacity: 0; transform: translateY(-14px) scale(1.12); letter-spacing: 16px; filter: brightness(2.4); } to { opacity: 1; transform: none; letter-spacing: 5px; filter: none; } }
+@keyframes bLine { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: .9; } }
+#boot .b-tip.pop b { animation: bPopS .55s ease-out; }
+@keyframes bPopS { from { transform: translateY(5px); opacity: 0; } to { transform: none; opacity: 1; } }
+#boot .b-bar i { transition: transform .25s ease-out; }
+@media (prefers-reduced-motion: reduce) { #boot .b-glow, 

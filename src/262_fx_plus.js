@@ -135,14 +135,14 @@ function fxLight() {
 }
 
 // Полярне сяйво v2: шторки з вертикальними променями, що мерехтять; гарячий нижній край, холодна верхівка, хвилі яскравості вздовж шторки
-const AURORA_COLS = ['#5dffb4', '#46d8d0', '#a078ff'];              // кольори шторок сяйва; ним користується скін погоди «Полярне сяйво» (поки не підключений: див. HANDOFF)
+const AURORA_COLS = ['#2cf09a', '#1fc4b8', '#8a58ff'];              // кольори шторок сяйва; ним користується скін погоди «Полярне сяйво» 
 let AUR_PAL = null, AUR_KEY = '';
 function aurPalette(cols, rows) {                          // [шторка][шар] → 'rgb(...)': знизу світліше (майже біле), посередині основний колір, угорі — фіолетово-рожевий
   const key = cols.join() + rows;
   if (AUR_PAL && AUR_KEY === key) return AUR_PAL;
   const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
   const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
-  const top = rgb('#b98cff'), hot = rgb('#9dffd6');
+  const top = rgb('#9a5cff'), hot = rgb('#4dffb0');
   AUR_PAL = cols.map(c => {
     const base = rgb(c), out = [];
     for (let k = 0; k < rows; k++) { const u = k / (rows - 1), m = u < 0.25 ? mix(hot, base, u / 0.25) : mix(base, top, (u - 0.25) / 0.75 * 0.7); out.push('rgb(' + m.join(',') + ')'); }
@@ -152,19 +152,20 @@ function aurPalette(cols, rows) {                          // [шторка][ш�
 }
 function fxAurora(C, L, t, x0, W, top, nightK) {                  // C.aurora — кольори (AURORA_COLS)
   const step = L === 1 ? 3 : 2, curtains = L === 1 ? 2 : 3, rows = L === 1 ? 7 : 11, pal = aurPalette(C.aurora, rows);
-  const maxH = Math.max(22, Math.min(62, (LAYOUT.horizonY - top) * 0.36)), sx = Math.round(x0);
+  const maxH = Math.max(22, Math.min(74, (LAYOUT.horizonY - top) * 0.36)), sx = Math.round(x0);
   ctx.save(); ctx.globalCompositeOperation = 'lighter';                       // шторки світяться, а не просто фарбують небо
   for (let c = 0; c < curtains; c++) {
-    const base = top + maxH * 0.55 + 8 + c * 10, cp = pal[c % pal.length];
-    ctx.globalAlpha = 0.07 * nightK; ctx.fillStyle = cp[3];                    // м'яка дифузна пелена за шторкою
-    ctx.fillRect(sx, Math.round(base - maxH * 0.9), W, Math.round(maxH * 0.9 + 6));
+    const base = top + maxH * 0.55 + 36 + c * 12, cp = pal[c % pal.length];
+    const hz0 = Math.round(base - maxH * 1.1), gr = ctx.createLinearGradient(0, hz0, 0, base + 6);       // м'яка дифузна пелена за шторкою: без жорстких країв
+    gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(0.7, cp[3]); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = 0.06 * nightK; ctx.fillStyle = gr; ctx.fillRect(sx, hz0, W, base + 6 - hz0);
     for (let x = 0; x < W; x += step) {
       const u = x / W;
       const yb = base + Math.sin(u * 4.2 + t * 0.22 + c * 2.1) * 9 + Math.sin(u * 9 - t * 0.35 + c) * 3;    // складки шторки
       const wave = 0.5 + 0.5 * Math.sin(u * 10 - t * 0.85 + c * 1.7);                                                                        // хвиля яскравості біжить вздовж шторки
       const flick = 0.72 + 0.28 * Math.sin(t * 2.1 + x * 0.41 + c * 3.1) * Math.sin(t * 0.8 + x * 0.13);                                    // мерехтіння окремих променів
-      const ray = 0.78 + 0.22 * Math.sin(x * 1.1 + Math.sin(x * 0.23 + t * 0.4) * 3 + c * 5);                                                  // окремі вертикальні промені
-      const h = maxH * (0.4 + 0.6 * wave) * (0.6 + 0.4 * ray) * (0.85 + 0.15 * Math.sin(t * 0.5 + x * 0.09 + c)), a0 = nightK * (0.07 + 0.16 * wave) * (0.9 + 0.1 * flick) * ray;
+      const ray = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(x * 0.7 + Math.sin(x * 0.19 + t * 0.4) * 3 + c * 5));                                                  // окремі вертикальні промені
+      const h = maxH * (0.4 + 0.6 * wave) * (0.6 + 0.4 * ray) * (0.85 + 0.15 * Math.sin(t * 0.5 + x * 0.09 + c)), a0 = nightK * (0.09 + 0.2 * wave) * (0.9 + 0.1 * flick) * ray;
       const rh = h / rows, px = sx + x, yy = Math.round(yb);
       for (let k = 0; k < rows; k++) {
         const f = 1 - k / rows;
@@ -193,7 +194,7 @@ function fxFront() {
       for (let k = 0; k < len; k += 3) fxPx(bx + Math.cos(ang) * k, LAYOUT.streetTop - 4 + Math.sin(ang) * k, 3 + k * 0.16, 3, C.beams[i % C.beams.length]);
     }
   }
-  if (skinOn('weather') === 'aurora' && nightK > 0.05) fxAurora({ aurora: AURORA_COLS }, L, t, x0, W, top, nightK);        // скін погоди «Полярне сяйво» (ще не заведений у SKIN_POOL)
+  if (skinOn('weather') === 'aurora' && nightK > 0.05) fxAurora({ aurora: AURORA_COLS }, L, t, x0, W, top, nightK);        // скін погоди «Полярне сяйво» 
   if (C.pulse) {                                              // удар музики: коротке світіння всієї сцени
     const ph = (t * C.pulse.hz) % 1, a = Math.pow(1 - ph, 3) * 0.07 * (C.pulse.k || 1) * (0.5 + 0.5 * Math.max(nightK, 0.4));
     ctx.globalAlpha = a; ctx.fillStyle = C.pulse.c; ctx.fillRect(x0, top, W, LAYOUT.streetTop - top + 6);
@@ -255,6 +256,23 @@ function fxHousePass(c) {
     if (Lu - L > 16) mix(i, -0.12);                                                // тінь під карнизом, підвіконням і балконом
     else if (L - Lu > 16 && src[up + 3] > 200) mix(i, 0.07);                       // верхня грань виступу
     if (Ll - L > 20) mix(i, -0.07);                                                // тінь праворуч від світлого елемента
+  }
+  // відкоси вікон: скло «в’їхало» у стіну — тінь зверху й зліва, світла нижня кромка
+  const gl = (typeof houseGlass !== 'undefined' && houseGlass) ? houseGlass : [];
+  for (const r of gl) {
+    const gx = Math.round(r[0] + view.offX), gy = Math.round(r[1] + view.offY - y0), gw = r[2], gh = r[3];
+    if (gw > 24 || gh > 16 || gy < 0 || gy + gh >= h || gx < 0 || gx + gw >= w) continue;
+    for (let xx = 0; xx < gw; xx++) { mix((gy * w + gx + xx) * 4, -0.34); mix(((gy + 1) * w + gx + xx) * 4, -0.18); if (gh > 6) mix(((gy + gh - 1) * w + gx + xx) * 4, 0.1); }
+    for (let yy = 1; yy < gh; yy++) { mix(((gy + yy) * w + gx) * 4, -0.2); }
+  }
+  // м’яке освітлення згори донизу + ледь більше контрасту: фасади чіткіші
+  for (let y = 0; y < h; y++) {
+    const k = 0.06 - 0.14 * (y / h), row = y * w * 4;
+    for (let x = 0; x < w; x++) {
+      const i = row + x * 4; if (d[i + 3] < 200) continue;
+      mix(i, k);
+      d[i] = (d[i] - 128) * 1.06 + 128; d[i + 1] = (d[i + 1] - 128) * 1.06 + 128; d[i + 2] = (d[i + 2] - 128) * 1.06 + 128;
+    }
   }
   g2.putImageData(im, 0, y0);
 }

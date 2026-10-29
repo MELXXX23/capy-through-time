@@ -29,27 +29,54 @@ function updateShopSkinFx(dt) {
 }
 /* ---- Золотий / діамантовий пил: дрібні пікселі й хрестики-блиски на магазині, Капі та героях ---- */
 const skinDust = [];
-const DUST_COLS = { gold: ['#fff6b0', '#ffd24a', '#ffffff', '#f2b84b'], diamond: ['#ffffff', '#d8f6ff', '#9be8ff', '#b4a8ff'] };
+const DUST_COLS = { candy: ['#ff8fc0', '#fff4dc', '#8ed4a6', '#ffd96a'], sand: ['#f2d9a0', '#dba46a', '#fff4dc', '#c9a066'], moss: ['#d8ff7a', '#a8f060', '#fff6b0', '#7fe08a'], brick: ['#c4553d', '#e8a080', '#cfc5b8', '#ffe08a'], gold: ['#fff6b0', '#ffd24a', '#ffffff', '#f2b84b'], diamond: ['#ffffff', '#d8f6ff', '#9be8ff', '#b4a8ff'] };
 let dustAcc = { shop: 0, capy: 0, hero: 0 };
-function dustKind(type) { const s = skinOn(type); return (s === 'gold' || s === 'diamond') ? s : null; }
+const HERO_DUST = { candy: 1, sand: 1, moss: 1, brick: 1 };      // скіни звірят за вулицями: кожен має свій пил, що сиплеться без пауз
+function dustKind(type) { const s = skinOn(type); return (s === 'gold' || s === 'diamond' || (type === 'hero' && HERO_DUST[s])) ? s : null; }
 function skinBurst() { return (animClock % 10) < 1.5; }      // вікно спалаху блиску скінів (1,5 с із кожних 10)
+const POP_COLS = { capy: ['#fff6c8', '#ffd96a', '#ffffff'], hero: ['#ffe3f0', '#ffb8d6', '#ffffff'], shop: ['#fff0c0', '#ffc878', '#ffffff'], weather: ['#e4f6ff', '#a8dcff', '#ffffff'], street: ['#eaffd8', '#b8e890', '#ffffff'] };
+let skinJustWorn = null;
+function skinPopBurst(type) {          // м'який сплеск іскор там, де змінився вигляд: Капі, герої, магазин, небо чи бруківка (Капі не рухається)
+  if (!animOn() || build || !layoutReady) return;
+  const cols = POP_COLS[type] || POP_COLS.capy, n = ecoOn() ? 12 : 26, cp = LAYOUT.capy;
+  const spots = {
+    capy: () => ({ x: cp.x + 14 + rand(-22, 22), y: cp.footY - rand(2, 40) }),
+    hero: () => { const a = actors[Math.floor(Math.random() * actors.length)]; return a ? { x: a.x + rand(-10, 10), y: a.y - rand(2, 26) } : null; },
+    shop: () => shop ? { x: shop.x + rand(-10, shop.w + 10), y: shop.y + rand(-8, shop.h - 4) } : null,
+    weather: () => shop ? { x: shop.x + shop.w / 2 + rand(-230, 230), y: -view.offY + rand(8, 100) } : null,
+    street: () => shop ? { x: shop.x + shop.w / 2 + rand(-230, 230), y: LAYOUT.streetTop + rand(4, 40) } : null,
+  }[type] || (() => null);
+  for (let i = 0; i < n && skinDust.length < 160; i++) {
+    const p = spots(); if (!p) continue;
+    skinDust.push({ kind: 'pop', col: cols[Math.floor(Math.random() * cols.length)], x: p.x, y: p.y, vx: rand(-2, 2), vy: rand(-9, -3), age: -rand(0, 0.5), life: rand(1.1, 2), c: 0, big: Math.random() < 0.3, ph: rand(0, 6.28) });
+  }
+}
 function updateSkinDust(dt) {
   if (!animOn() || build || !layoutReady) { skinDust.length = 0; return; }
   const cap = ecoOn() ? 50 : 110, mk = (kind, x, y, big) => { if (skinDust.length < cap) skinDust.push({ kind, x, y, vx: rand(-3, 3), vy: rand(-7, -1.5), age: 0, life: rand(0.9, 2.2), c: Math.floor(Math.random() * 4), big, ph: rand(0, 6.28) }); };
-  const bw = skinBurst() ? 2.2 : 0; dt *= bw;      // золото й діамант блищать спалахом раз на ~10 с, а не весь час
+  const rawDt = dt, bw = skinBurst() ? 2.2 : 0; dt *= bw;      // золото й діамант блищать спалахом раз на ~10 с, а не весь час
   const sk = dustKind('shop');
   if (sk && shop) { dustAcc.shop += dt * 26; while (dustAcc.shop >= 1) { dustAcc.shop -= 1; const e = Math.random(); mk(sk, shop.x + rand(-10, shop.w + 10), shop.y + rand(-8, shop.h - 4), e < 0.18); } }
   const ck = dustKind('capy'), cp = LAYOUT.capy;
   if (ck && cp) { dustAcc.capy += dt * 12; while (dustAcc.capy >= 1) { dustAcc.capy -= 1; mk(ck, cp.x + 14 + rand(-21, 21), cp.footY - rand(2, 38), Math.random() < 0.3); } }
   const hk = dustKind('hero');
-  if (hk) { dustAcc.hero += dt * 2.2 * actors.length; while (dustAcc.hero >= 1 && actors.length) { dustAcc.hero -= 1; const a = actors[Math.floor(Math.random() * actors.length)]; mk(hk, a.x + rand(-9, 9), a.y - rand(2, 24), Math.random() < 0.3); } }
+  if (hk && HERO_DUST[hk]) {                                             // свій рух пилу в кожного скіна: цукрові блиски злітають, пісок зносить убік, світлячки блукають, цегляний пил здіймається
+    dustAcc.hero += rawDt * 1.6 * actors.length;
+    while (dustAcc.hero >= 1 && actors.length) {
+      dustAcc.hero -= 1; if (skinDust.length >= cap) break;
+      const a = actors[Math.floor(Math.random() * actors.length)], y = a.y - rand(2, 24), x = a.x + rand(-9, 9);
+      const m = { candy: [rand(-3, 3), rand(-8, -3), rand(1, 2), Math.random() < 0.35], sand: [rand(5, 10), rand(0.5, 3), rand(0.9, 1.7), false], moss: [rand(-2.5, 2.5), rand(-2.5, 1.5), rand(1.8, 3.2), false], brick: [rand(-2, 2), rand(-4, -1), rand(0.8, 1.5), false] }[hk];
+      skinDust.push({ kind: hk, x, y: hk === 'sand' ? y - 6 : y, vx: m[0], vy: m[1], age: 0, life: m[2], c: Math.floor(Math.random() * 4), big: m[3], ph: rand(0, 6.28) });
+    }
+  } else if (hk) { dustAcc.hero += dt * 2.2 * actors.length; while (dustAcc.hero >= 1 && actors.length) { dustAcc.hero -= 1; const a = actors[Math.floor(Math.random() * actors.length)]; mk(hk, a.x + rand(-9, 9), a.y - rand(2, 24), Math.random() < 0.3); } }
   if (bw) dt /= bw;
   for (let i = skinDust.length - 1; i >= 0; i--) { const p = skinDust[i]; p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.age >= p.life) skinDust.splice(i, 1); }
 }
 function drawSkinDust() {
   if (!skinDust.length || !animOn() || build) return;
   skinDust.forEach(p => {
-    const k = p.age / p.life, a = Math.sin(k * Math.PI), col = DUST_COLS[p.kind][p.c], x = Math.round(p.x), y = Math.round(p.y);
+    if (p.age < 0) return;
+    const k = p.age / p.life, a = Math.sin(k * Math.PI), col = p.col || DUST_COLS[p.kind][p.c], x = Math.round(p.x), y = Math.round(p.y);
     ctx.globalAlpha = a;
     if (p.big) { R(ctx, x, y, 1, 1, '#ffffff'); ctx.globalAlpha = a * 0.8; R(ctx, x - 1, y, 3, 1, col); R(ctx, x, y - 1, 1, 3, col); if (a > 0.7) { ctx.globalAlpha = (a - 0.7) / 0.3; R(ctx, x - 2, y, 5, 1, '#ffffff'); R(ctx, x, y - 2, 1, 5, '#ffffff'); } }
     else { R(ctx, x, y, 1, 1, col); if (Math.sin(p.age * 14 + p.ph) > 0.5) { ctx.globalAlpha = a * 0.6; R(ctx, x + 1, y, 1, 1, '#ffffff'); } }
@@ -70,7 +97,7 @@ function drawShopSkinFx() {
   if (!SHOP_FX[sk] || !shop || !animOn() || build) return;
   const hop = shopAnim.squash * 12;                                                     // тап: спершу присідають разом із магазином, потім пружно злітають
   shopFx.list.forEach(p => {
-    const k = p.age / p.life, a = Math.min(1, k * 5, (1 - k) * 3.5);
+    const k = p.age / p.life, a0 = Math.min(1, k * 5, (1 - k) * 3.5), a = a0 * a0 * (3 - 2 * a0);      // м'яке з'явлення й згасання (плавна крива)
     const x = Math.round(shop.x + p.x + Math.sin(p.age * p.f + p.ph) * p.amp), y = Math.round(shop.y + p.y + (p.fall ? 1 : -1) * p.age * p.vy + hop * p.j);
     ctx.globalAlpha = a;
     if (SHOP_FX_DRAW[sk]) { SHOP_FX_DRAW[sk](p, x, y); }                              // нові скіни: 211_skins_new_fx.js
@@ -150,6 +177,8 @@ function resetAllSkins() {
 }
 function setSkin(type, i) {
   state.skins[type] = i;
+  skinJustWorn = i === -1 || i === -2 ? null : { type, i }; setTimeout(() => { skinJustWorn = null; }, 1200);
+  if (i >= 0 || (i === -2 && type === 'capy')) setTimeout(() => skinPopBurst(type), 120);
   if (i !== -1) { const nm = skinOn(type); if (nm) setTimeout(() => capySay(type + '_' + nm), 350); }       // Капі коментує новий скін
   if (type === 'capy') drawCapiPortrait();
   else if (type === 'hero') refreshTeamPortraits();
@@ -193,6 +222,16 @@ function skinPreviewCanvas(type, name) {
       } else if (CLOUD_SKIN_TINT[name]) {
         R(g, 0, 34, 64, 6, 'g'); R(g, 0, 34, 64, 1, 'm'); R(g, 26, 22, 12, 12, 'w'); R(g, 25, 20, 14, 3, 'r'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 's');
         g.drawImage(cloudCanvas(0, CLOUD_SKIN_TINT[name]), 2, 0); g.drawImage(cloudCanvas(1, CLOUD_SKIN_TINT[name]), 28, 6);
+      } else if (name === 'aurora') {                                // ніч, зорі й м'які зелено-блакитні шторки сяйва
+        const grad = g.createLinearGradient(0, 0, 0, 34); grad.addColorStop(0, '#0a1230'); grad.addColorStop(1, '#1b2f4a'); g.fillStyle = grad; g.fillRect(0, 0, 64, 40);
+        g.fillStyle = '#ffffff'; [[5, 4], [14, 9], [22, 3], [39, 6], [52, 3], [58, 11], [47, 12], [9, 15]].forEach(([x, y]) => g.fillRect(x, y, 1, 1));
+        g.globalCompositeOperation = 'lighter';
+        for (let c = 0; c < 2; c++) for (let x = 0; x < 64; x += 2) {
+          const yb = 20 + c * 4 + Math.sin(x * 0.17 + c * 2) * 3, h = 10 + 5 * Math.sin(x * 0.3 + c);
+          for (let k = 0; k < 6; k++) { g.globalAlpha = 0.22 * (1 - k / 6) * (1 - k / 6); g.fillStyle = AURORA_COLS[c === 0 ? (k < 3 ? 0 : 1) : (k < 3 ? 1 : 2)]; g.fillRect(x, Math.round(yb - (k + 1) * h / 6), 2, Math.ceil(h / 6) + 1); }
+        }
+        g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+        R(g, 0, 34, 64, 6, 'G'); R(g, 26, 22, 12, 12, 'e'); R(g, 25, 20, 14, 3, 'd'); R(g, 29, 27, 4, 7, 'b'); R(g, 34, 25, 3, 3, 'y');
       } else if (BOLT_COLS[name]) {
         const bc = { lightning: ['#2a1650', '#3d2275'], lightninggreen: ['#0f3a1e', '#1a5a30'], lightningred: ['#3a0f16', '#5a1a24'] }[name];
         g.fillStyle = bc[0]; g.fillRect(0, 0, 64, 40); g.fillStyle = bc[1]; g.fillRect(0, 0, 64, 18);
@@ -247,6 +286,7 @@ function updateSkinsUI() {
       b.type = 'button';
       b.className = 'btn skin-item' + (owned ? '' : ' locked');
       b.setAttribute('aria-pressed', String(worn));
+      if (worn && skinJustWorn && skinJustWorn.type === type && skinJustWorn.i === o.i) b.classList.add('skin-pop');
       const cv = skinPreviewCanvas(type, o.name);
       cv.className = 'skin-prev ' + type;
       b.appendChild(cv);
