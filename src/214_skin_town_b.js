@@ -145,13 +145,13 @@ SHOP_TOWN.garden = {
       R(g, x, yb - 8, 1, 8, '#3f8a3a'); TW.px(g, x + 1, yb - 4, '#6cbf3a');
       TW.disc(g, x + sw, yb - 10, 2, '#ffd23f'); R(g, x + sw, yb - 10, 1, 1, '#7a4a14');
     }
-    if (!state.settings.noFly) {
+    if (!noFlyOn()) {
       const a = t * 0.9 + hs.i * 2.1; TW2.butterfly(g, hs.cx + Math.cos(a) * hs.w * 0.4, hs.roofY - 10 + Math.sin(a * 1.7) * 6, t, hs.i, ['#ff8fb8', '#ffd23f', '#8fd8ff'][hs.i % 3], '#ffffff');
     }
   },
   shop(g, t, sx, roofY) {
     shopBulbs(g, t, ['#7ed957', '#ffd23f', '#ff8fb8'], 4);
-    if (!state.settings.noFly) for (let b = 0; b < 3; b++) { const a = t * 0.8 + b * 2.1; TW2.butterfly(g, sx + shop.w / 2 + Math.cos(a) * shop.w * 0.45, roofY - 12 + Math.sin(a * 1.6) * 8, t, b, ['#ff8fb8', '#ffd23f', '#8fd8ff'][b], '#ffffff'); }
+    if (!noFlyOn()) for (let b = 0; b < 3; b++) { const a = t * 0.8 + b * 2.1; TW2.butterfly(g, sx + shop.w / 2 + Math.cos(a) * shop.w * 0.45, roofY - 12 + Math.sin(a * 1.6) * 8, t, b, ['#ff8fb8', '#ffd23f', '#8fd8ff'][b], '#ffffff'); }
     [sx + 7, sx + shop.w - 8].forEach((x, k) => { const sw = Math.round(Math.sin(t * 1.5 + k) * 1.2); R(g, x - 2, roofY - 2, 5, 3, '#8a5a2a'); R(g, x, roofY - 11, 1, 9, '#3f8a3a'); TW.disc(g, x + sw, roofY - 13, 3, '#ffd23f'); TW.disc(g, x + sw, roofY - 13, 1, '#7a4a14'); });
   }
 };
@@ -181,7 +181,7 @@ SHOP_TOWN.xmas = {
   shop(g, t, sx, roofY) {
     shopBulbs(g, t, ['#ff4040', '#ffd23f', '#5cbf4a', '#4fa8ff'], 3);
     TW2.snow(g, sx, roofY - 44, shop.w, 48, t, 16);
-    if (!state.settings.noFly) {                                       // сани з оленем пролітають над маркетом
+    if (!noFlyOn()) {                                       // сани з оленем пролітають над маркетом
       const u = (t * 0.07) % 1; if (u < 0.45) {
         const v = u / 0.45, x = Math.round(sx - 40 + v * (shop.w + 80)), y = Math.round(roofY - 34 - Math.sin(v * Math.PI) * 10);
         TW.stamp(g, x, y, ['..B.B.........', '..BBB.....RRR.', '.BBBB....RRRRR', 'BB..B.YYYRRRRR', 'B...B.....Y..Y'], { B: '#8a5a2a', R: '#d8203c', Y: '#ffd23f' });
@@ -206,6 +206,6 @@ SHOP_TOWN.ocean = {
   },
   anim(g, hs, t) {
     if (hs.i % 2 === 0) TW.flag(g, hs.rx, hs.ry, 12, 8, 5, ['#2a7ab8', '#ffffff', '#e8604a'], t + hs.i, hs.i % 4 ? 1 : -1);
-    else if (!state.settings.noFly) { const a = t * 0.6 + hs.i * 1.9; TW2.gull(g, hs.cx + Math.cos(a) * hs.w * 0.6, hs.roofY - 20 + Math.sin(a * 2) * 5, t, hs.i); }
+    else if (!noFlyOn()) { const a = t * 0.6 + hs.i * 1.9; TW2.gull(g, hs.cx + Math.cos(a) * hs.w * 0.6, hs.roofY - 20 + Math.sin(a * 2) * 5, t, hs.i); }
   }
 };

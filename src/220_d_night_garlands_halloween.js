@@ -383,7 +383,7 @@ function drawHalloweenFog() {
   ctx.globalAlpha = 1;
 }
 function drawHalloweenAir() {
-  if (theme.season !== 'halloween') return;
+  if (theme.season !== 'halloween' || auroraCalm()) return;
   if (hwitch.on) witchV2(ctx, Math.round(hwitch.x), Math.round(hwitch.y + Math.sin(hwitch.t * 1.8) * 6), hwitch.dir, hwitch.t, { pitch: Math.atan2(-Math.cos(hwitch.t * 1.8) * 10.8, 40) });       // та сама відьма v2, що й у хатці
 }
 function updateGhostHunt(dt) {
@@ -443,6 +443,7 @@ function hitGhost(p) {
   return false;
 }
 function drawGhostHunt() {
+  if (auroraCalm()) return;
   if (ghostHunt) {
     const h = ghostHunt, fade = Math.min(1, (h.dur - h.t) / 2);     // в кінці полювання вони тануть
     h.ghosts.forEach(g => {

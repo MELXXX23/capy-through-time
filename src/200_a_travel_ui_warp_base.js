@@ -16,6 +16,8 @@ const statRows = {};             // рядки статистики
 
 function animOn() { return state.settings.animations; }
 function dayNightOn() { return state.settings.dayNight; }
+function auroraCalm() { return skinOn('weather') === 'aurora'; }        // скін «Полярне сяйво»: тихе нічне небо — без хмар і всього, що літає
+function noFlyOn() { return !!state.settings.noFly || auroraCalm(); }
 // Скін Капі залежить від статі гравця: дівчина — квіточка, хлопець — листочки
 function capySprite() { const s = skinOn('capy'); return s ? 'capy_' + s : (state.settings.gender === 'm' ? 'capy_m' : 'capy'); }
 // Скіни: яку назву скіна вдягнено в групі type ('capy' | 'shop' | 'weather' | 'hero') — 'pirate', 'candy' тощо, або null

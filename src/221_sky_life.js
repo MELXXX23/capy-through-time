@@ -19,7 +19,7 @@ function seedSkyLife() {
   for (let i = 0; i < n; i++) skyLife.list.push({ x: L + Math.random() * W, y: 20 + Math.random() * (LAYOUT.horizonY - 10), ph: Math.random() * 6.3, sp: 0.7 + Math.random() * 0.6, c: i % 3, fl: 1.5 + Math.random() * 2 });
 }
 function drawSkyLife() {
-  if (!animOn() || ecoOn() || !state.settings.clouds) return;
+  if (!animOn() || ecoOn() || !state.settings.clouds || auroraCalm()) return;
   const key = view.w + '|' + view.offX + '|' + viewEpoch();
   if (key !== skyLife.key) { skyLife.key = key; seedSkyLife(); }
   const glow = skyLifeGlow(), season = theme.season, cols = SKY_LIFE_COLS[season] || SKY_LIFE_COLS.summer;

@@ -108,7 +108,8 @@ function updateHagFly(dt) {
   if (F.mode === 'cruise' && F.x < visL() - 100) { F.on = false; F.wait = rand(2.5, 5); }
 }
 function hagTail(F) { const th = F.pitch, a = Math.cos(th), s = Math.sin(th); return { x: Math.round(F.x - F.dir * (17 + 11) * a), y: Math.round(F.y + 2 + (17 + 11) * s) }; }
-function drawHagFlyer() {                                           // єдина відьма: летить на мітлі замість цирку (лише на Хелловін)
+function drawHagFlyer() {
+  if (auroraCalm()) return;                                           // єдина відьма: летить на мітлі замість цирку (лише на Хелловін)
   const F = hagFly;
   F.parts.forEach(p => { const a = p.life / p.max, col = a > 0.7 ? 'w' : a > 0.45 ? 'y' : a > 0.25 ? 'o' : 'f'; ctx.globalAlpha = Math.min(1, a * 1.6); const px = Math.round(p.x), py = Math.round(p.y); R(ctx, px, py, 1, 1, col); if (p.big && a > 0.3) { R(ctx, px - 1, py, 3, 1, col); R(ctx, px, py - 1, 1, 3, col); } });
   ctx.globalAlpha = 1;

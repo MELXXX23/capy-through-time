@@ -147,7 +147,7 @@ function updateBirds(dt) {
   });
 }
 function drawBirds() {
-  if (!state.settings.birds || state.settings.noFly || ecoOn()) return;
+  if (!state.settings.birds || noFlyOn() || ecoOn()) return;
   if (viewEpoch() % EPOCHS.length >= 1 && !state.settings.birdsLate) return;                     // з 2-ї епохи птахів не видно, доки гравець не ввімкне їх у налаштуваннях
   const vis = 1 - Math.min(1, sky.night * 1.5);
   if (vis <= 0.05 || !birds.length) return;
@@ -224,7 +224,7 @@ function cloudBox(c) {
 }
 function sparkPlus(x, y, a, col) { ctx.globalAlpha = a; R(ctx, x, y, 1, 1, '#ffffff'); ctx.globalAlpha = a * 0.7; R(ctx, x - 1, y, 3, 1, col); R(ctx, x, y - 1, 1, 3, col); ctx.globalAlpha = 1; }
 function drawCloudsLayer() {
-  if (!state.settings.clouds) return;
+  if (!state.settings.clouds || auroraCalm()) return;
   const sk = skinOn('weather'), tint0 = CLOUD_SKIN_TINT[sk];
   clouds.forEach(c => {
     const tint = tint0 || c.v || '', sc = c.big ? 1.5 : 1, o = { sx: sc, sy: sc }, cv = cloudCanvas(c.kind || 0, tint);

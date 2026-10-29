@@ -124,7 +124,7 @@ function discoLamps(time) {
   }
 }
 function drawSkyExtra(time) {
-  const ep = SKYX.ep, top = 8 - view.offY, noFly = !!state.settings.noFly;
+  const ep = SKYX.ep, top = 8 - view.offY, noFly = noFlyOn();
   { const A = ARCH[currentEpoch().id]; if (A && A.skyExtra) A.skyExtra(time, noFly); }
   if (ep === 2) {                                                         // Диско: лазерний віяр над дахами
     discoLamps(time);
@@ -279,7 +279,7 @@ function drawBlimp(b, time) {
 }
 // Небо епохи (у координатах «ядра», після хмар і до землі)
 function drawEpochSky(time) {
-  const fx = currentEpoch().features, noFly = !!state.settings.noFly;           // «Прибрати літаючі об'єкти»: усе, що літає в небі (крім хмар)
+  const fx = currentEpoch().features, noFly = noFlyOn();           // «Прибрати літаючі об'єкти»: усе, що літає в небі (крім хмар)
   drawSkyExtra(time);
   if (fx.includes('retrosun')) {                      // смугасте сонце з синтвейву
     const sx = worldL() + 84;

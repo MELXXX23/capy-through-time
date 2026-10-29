@@ -92,7 +92,7 @@ function render(time) {
   drawNightShade();
   if (sky.night > 0.2 && !build) { ctx.globalAlpha = Math.min(0.4, sky.night * 0.45); capyScaled(() => drawCapyBody((Math.sin(time * 2.2) + 1) / 2)); ctx.globalAlpha = 1; }       // вночі Капі не тьмяніє разом із вулицею
   drawNightLights();
-  { const A = ARCH[currentEpoch().id]; if (A && A.nightExtra) A.nightExtra(time, !!state.settings.noFly); }       // епохи, що світяться поверх нічного затемнення (дракон Японії)
+  { const A = ARCH[currentEpoch().id]; if (A && A.nightExtra) A.nightExtra(time, noFlyOn()); }       // епохи, що світяться поверх нічного затемнення (дракон Японії)
   if (sky.lamp > 0.05 && !build) { ctx.globalAlpha = Math.min(0.92, 0.5 + sky.lamp * 0.45); drawCapyFull(time, false); ctx.globalAlpha = 1; }          // Капі поверх сяйва магазину
   drawHalloweenAir();
   drawHagFlyer();

@@ -236,7 +236,7 @@ SHOP_TOWN.candy = {
       R(g, x - 2, y - 6, 5, 6, '#7a2a4a'); R(g, x - 1, y - 6, 3, 6, '#ff8fb8'); R(g, x - 2, y - 7, 5, 1, '#e8467c'); R(g, x - 1, y - 5, 1, 4, '#ffd3e4');
       TW.puffs(g, x, y - 9, t + hs.i * 0.37, ['#ffc4dc', '#fff0f6', '#ffb0d0'], 4, 20, 0.32);
     }
-    if (hs.i % 4 === 0 && !state.settings.noFly) {                       // повітряна кулька злітає з даху й повертається
+    if (hs.i % 4 === 0 && !noFlyOn()) {                       // повітряна кулька злітає з даху й повертається
       const u = ((t * 0.09 + hs.i * 0.21) % 1), y = hs.ry - 10 - u * 70, x = hs.x + 5 + Math.sin(u * 9 + hs.i) * 3;
       g.globalAlpha = u > 0.85 ? (1 - u) / 0.15 : 1;
       const c = ['#ff5c8a', '#4fc3f7', '#ffd23f'][hs.i % 3];
@@ -249,7 +249,7 @@ SHOP_TOWN.candy = {
     shopBulbs(g, t, ['#ff5c8a', '#ffd23f', '#7ed957', '#4fc3f7'], 4);
     TW.lolly(g, sx + 9, roofY + 1, t, '#ff5c8a', '#ffffff', 5);
     TW.lolly(g, sx + shop.w - 10, roofY + 1, -t * 1.1, '#4fc3f7', '#ffffff', 5);
-    if (shop.roofSign && !state.settings.noFly) {                        // посипка злітає над вивіскою
+    if (shop.roofSign && !noFlyOn()) {                        // посипка злітає над вивіскою
       const rs = shop.roofSign, cx = sx + rs.x + (rs.w >> 1);
       for (let k = 0; k < 8; k++) {
         const u = ((t * 0.45 + k / 8) % 1), x = cx + Math.round(Math.sin(k * 2.3) * (rs.w / 2 + 4) * u), y = shop.y + rs.y - 2 - Math.round(Math.sin(u * Math.PI) * 14);
@@ -331,7 +331,7 @@ SHOP_TOWN.halloween = {
       g.globalAlpha = Math.max(0, Math.min(1, (0.2 + 0.4 * n) * f)); R(g, r[0] + 1, r[1] + 1, r[2] - 2, r[3] - 2, '#ffe07a');
     });
     g.globalAlpha = 1;
-    if (!state.settings.noFly) {
+    if (!noFlyOn()) {
       if (hs.i % 2 === 0) {                                              // кажани кружляють над дахом вісімкою
         for (let b = 0; b < 2; b++) { const a = t * 1.3 + hs.i * 1.7 + b * Math.PI; TW.bat(g, hs.cx + Math.cos(a) * (hs.w * 0.45), hs.ry - 16 + Math.sin(a * 2) * 6 - b * 5, t, b + hs.i, '#2a1d33'); }
       }
@@ -347,7 +347,7 @@ SHOP_TOWN.halloween = {
   },
   shop(g, t, sx, roofY) {
     shopBulbs(g, t, ['#ff8c2a', '#9b5de5', '#7ed957'], 5);
-    if (!state.settings.noFly) for (let b = 0; b < 4; b++) {               // зграйка кажанів над маркетом
+    if (!noFlyOn()) for (let b = 0; b < 4; b++) {               // зграйка кажанів над маркетом
       const a = t * 1.1 + b * 1.6; TW.bat(g, sx + shop.w / 2 + Math.cos(a) * shop.w * 0.42, roofY - 20 + Math.sin(a * 2) * 7 - (b % 2) * 6, t, b, '#2a1d33');
     }
     const s = shop.sign, hx = sx + s.x + 14, hy = shop.y + s.y + s.h + 1, len = 6 + Math.round((Math.sin(t * 0.8) + 1) * 6);   // павук спускається на нитці
