@@ -94,6 +94,7 @@
 | `264_smooth_ui.js` | 2 | — |  |
 | `265_b_icons_art.js` | 9 | — | PX_PAL, PX_ART, pxArtCache, pxArt, pxArtImg |
 | `265_d_card_scenes.js` | 20 | — | cardRect, cardMod, cardSparkle, cardBall, cardTri, cardSky, cardStars, CARD_GY |
+| `265_e_capy_scenes.js` | 6 | — | CAPY_SCENES |
 | `265_icons_plus.js` | 26 | — | pxIconCache, pxEmojiIcon, iconBox, setIconBox, iconBackdrop, iconAvgColor, mixCol, skinTwinkles |
 | `270_loop.js` | 2 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frame |
 | `275_a_sakura.js` | 17 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild, TREE2_CACHE |

@@ -175,6 +175,7 @@ function capySkinPreview(cv, name, t) {                           // Капі в
   const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
   const bg = CAPY_BG[name] || [['#8fd3ea', '#b8e3f5', '#dff3fa'], ['#8fcf7a', '#5aa85a']];
   iconBackdrop(g, W, H, bg[0], bg[1]);
+  const scn = CAPY_SCENES[name]; if (scn) scn(g, W, H, t);                 // сценка скіна (265_e_capy_scenes.js)
   const breath = Math.sin(t * 2.2) > 0.4 ? 1 : 0, fy = H - 6;
   g.globalAlpha = 0.25; g.fillStyle = '#1a1208'; g.fillRect((W - c.width) / 2 + 3, fy + 1, c.width - 6, 2); g.globalAlpha = 1;
   g.drawImage(c, Math.round((W - c.width) / 2), fy - c.height + 2 - breath);
