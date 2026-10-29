@@ -69,20 +69,7 @@ function skinTwinkles(g, w, h, t, n) {
   }
   g.globalAlpha = 1;
 }
-function heroSkinPreview(cv, t) {                                 // троє героїв у вбранні скіна на кольоровому тлі, підстрибують по черзі
-  const W = 46, H = 36;
-  if (cv.width !== W) { cv.width = W; cv.height = H; }
-  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
-  const ids = [TEAM[0].id, TEAM[2].id], spr = ids.map(id => getOutlinedCanvas(teamSprite(id)));
-  const avg = iconAvgColor(spr[0]);
-  iconBackdrop(g, W, H, [mixCol(avg, 0.62, 255), mixCol(avg, 0.74, 255), mixCol(avg, 0.84, 255)], [mixCol(avg, 0.3, 255), mixCol(avg, 0.45, 0)]);
-  skinTwinkles(g, W, H, t, 5);
-  spr.forEach((c, k) => {
-    const x = 2 + k * 22, ph = (t * 1.6 + k * 0.33) % 1, hop = ph < 0.3 ? Math.round(Math.sin(ph / 0.3 * Math.PI) * 3) : 0, fy = H - 7;
-    g.globalAlpha = 0.28; g.fillStyle = '#2a1a14'; g.fillRect(x + 3, fy + 2, 12 - hop, 2); g.globalAlpha = 1;
-    g.drawImage(c, x, fy - c.height + 3 - hop);
-  });
-}
+// heroSkinPreview — у 265_d_card_scenes.js (сцени скінів)
 
 /* ---------- 3. Скіни Капі: частинки (у грі й у картці) ---------- */
 // l — шари частинок: [форма, кольори, рух, вага]; rate — частинок за секунду
@@ -199,7 +186,7 @@ setInterval(() => {
   const t = performance.now() / 1000;
   ui.skinsList.querySelectorAll('canvas.skin-prev').forEach(cv => {
     const sp = cv._sp; if (!sp) return;
-    if (sp[0] === 'weather') { skinPreviewCanvas('weather', sp[1], cv); return; }
+    if (sp[0] === 'weather' || sp[0] === 'street') { skinPreviewCanvas(sp[0], sp[1], cv); return; }
     if (sp[0] !== 'capy' && sp[0] !== 'hero') return;
     const save = skinPreview[sp[0]]; skinPreview[sp[0]] = sp[1];
     try { if (sp[0] === 'capy') capySkinPreview(cv, sp[1] || '', t); else heroSkinPreview(cv, t); } finally { if (save === undefined) delete skinPreview[sp[0]]; else skinPreview[sp[0]] = save; }

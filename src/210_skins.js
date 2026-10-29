@@ -204,8 +204,7 @@ function skinPreviewCanvas(type, name, cv0) {
     } else if (type === 'hero') {
       heroSkinPreview(cv, performance.now() / 1000);
     } else if (type === 'street') {
-      cv.width = 64; cv.height = 40; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-      paintCobble(g, 0, 0, 64, 40, name || 'stone');
+      streetSkinPreview(cv, name || 'stone', PT);
     } else if (type === 'shop') {                                   // «Будівлі»: маркет на тлі задніх будинків у стилі скіна
       const geo = buildShopCanvas(state.shopLevel, state.depts.map(tierOf));
       cv.width = geo.w + 64; cv.height = geo.h + 6; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
