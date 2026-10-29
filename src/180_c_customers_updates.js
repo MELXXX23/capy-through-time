@@ -474,7 +474,11 @@ function drawCustomer(c) {
     if (!c.vipDone) { const by = sy - 13 + (animOn() ? Math.round(Math.sin(animClock * 4)) : 0); R(ctx, sx + 7, by + 2, 5, 3, 'd'); R(ctx, sx + 8, by + 1, 3, 1, 'd'); R(ctx, sx + 8, by + 2, 3, 2, 'h'); R(ctx, sx + 9, by, 1, 1, 'y'); }
   } else {
     const sc = c.scale || 1;
-    if (sc === 1) drawCanvasSprite(ctx, evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K), sx, sy - ext, { flip: c.dir < 0, alpha: c.alpha });
+    const hs0 = skinOn('hero');
+    if (sc === 1 && hs0 && TEAM_OUTFITS[hs0]) {                                // скін героїв: одягнений спрайт замість голого (одяг по силуету, капелюх над головою)
+      const dc = evenScaled(customerSkinCanvas(c.type, frame, hs0), CUST_K), h0 = evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K).height;
+      drawCanvasSprite(ctx, dc, sx, sy - ext - (dc.height - h0), { flip: c.dir < 0, alpha: c.alpha });
+    } else if (sc === 1) drawCanvasSprite(ctx, evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K), sx, sy - ext, { flip: c.dir < 0, alpha: c.alpha });
     else drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc, sy: sc });
   }
   if (c.fear) {                                                               // жартівливий переляк
@@ -495,7 +499,7 @@ function drawCustomer(c) {
   const gx = sx + (c.dir < 0 ? -1 : 0);                                       // у дзеркальному вигляді тіло зсунуте на піксель, одяг іде слідом
   const hs = skinOn('hero');
   if (c.vip) return;                                                           // золотий покупець: без скінів, капелюхів і шарфів
-  if (hs && c.alpha > 0.9) drawSkinGear(gx, sy - ext, hs, true);
+  if (hs && c.alpha > 0.9 && !((c.scale || 1) === 1 && TEAM_OUTFITS[hs])) drawSkinGear(gx, sy - ext, hs, true);
   const suited = viewEpoch() % EPOCHS.length === 6;                            // Космос: усі покупці в скляних шоломах (шапочки свят під ними не потрібні)
   if (suited && c.alpha > 0.9) drawCanvasSprite(ctx, spaceHelmet(), gx, sy + 4 - ext, {});
   if (hasHats() && !hs && !suited && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(gx + 9, sy + 8 - ext, c.hat); }

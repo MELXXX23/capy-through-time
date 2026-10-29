@@ -63,7 +63,7 @@ function paintHat(g, rows, x0, y0) {
 }
 // o: { hat: [4 рядки 16 символів] | 'headphones' | 'bubble' | 'hood' | null, b, l, c, d (тулуб: колір, обшивка, акцент, прикраса), pat: [5 рядків по 8], outfit: опис одягу на все тіло }
 function dressHero(id, o) {
-  const base = teamBaseCanvas(id), W = base.width, H = base.height;
+  const base = o.base || teamBaseCanvas(id), W = base.width, H = base.height;
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(base, 0, 0);
   const px = g.getImageData(0, 0, W, H).data, solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && px[(y * W + x) * 4 + 3] > 128;
@@ -128,6 +128,7 @@ function teamEpochSprite(id, epoch) {
 }
 // Скіни героїв (під вулиці): капелюх + тулуб
 const TEAM_SKIN_HATS = {
+  ninja: ['......zzzz......', '....zzzzzzzz....', '...zzzzzzzzzz...', '...rrrrrrrrrrrr.'],
   party: ['.......yy.......', '......dffd......', '.....dfTfTd.....', '....dfTfTfTd....'],
   chef: ['.....wwwwww.....', '....wwwwwwww....', '....wwwwwwww....', '....EEEEEEEE....'],
   wizard: ['.......yy.......', '......uuuu......', '.....uuyuuu.....', '...hhhhhhhhhh...'],
@@ -229,6 +230,15 @@ const TEAM_OUTFITS = {
     a.row(25, '#a87414', 0);
   } }
 };
+const custSkinCache = {};
+// Звірятко-покупець у скіні героїв (р. 73): той самий одяг, що на героях, малюється на спрайті покупця (з запасом TEAM_PAD над головою)
+function customerSkinCanvas(type, frame, kind) {
+  const key = type + '_' + frame + '_' + kind;
+  if (custSkinCache[key]) return custSkinCache[key];
+  const src = getSpriteCanvas(type + '_' + frame), base = document.createElement('canvas');
+  base.width = src.width; base.height = src.height + TEAM_PAD; base.getContext('2d').drawImage(src, 0, TEAM_PAD);
+  return (custSkinCache[key] = dressHero(null, { base, hat: TEAM_SKIN_HATS[kind], outfit: TEAM_OUTFITS[kind] }));
+}
 function teamSkinSprite(id, kind) {
   if (TEAM_OUTFITS[kind]) return dressHero(id, { hat: TEAM_SKIN_HATS[kind], outfit: TEAM_OUTFITS[kind] });
   if (TEAM_SKIN_BODY[kind]) return dressHero(id, { hat: TEAM_SKIN_HATS[kind], pat: TEAM_SKIN_BODY[kind] });
