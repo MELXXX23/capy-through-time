@@ -12,10 +12,10 @@ const clouds = CLOUDS.map(c => ({ ...c }));
 const weather = { rain: 0, target: 0, timer: 30 };
 const raindrops = [];
 function updateWeather(dt) {
-  weather.target = (animOn() && state.settings.rain && !ecoOn()) ? 0.85 : 0;       // дощ іде лише коли гравець увімкнув його крапелькою біля магазину
-  weather.rain += (weather.target - weather.rain) * Math.min(1, dt * 0.6);
+  weather.target = (animOn() && state.settings.rain) ? 0.85 : 0;       // дощ іде лише коли гравець увімкнув його крапелькою біля магазину (і в «Економії» — там крапель удвічі менше)
+  weather.rain += (weather.target - weather.rain) * Math.min(1, dt * (weather.target < weather.rain ? 2.4 : 0.6));   // вимкнули — стихає за ~1,5 с (повільне згасання здавалось, що кнопка не спрацювала)
   if (weather.rain < 0.02) { raindrops.length = 0; return; }
-  const want = Math.min(200, Math.round(weather.rain * 120 * (view.w * view.h) / (320 * 180)));         // не більше 200 крапель, щоб не гальмувало
+  const want = Math.min(ecoOn() ? 100 : 200, Math.round(weather.rain * (ecoOn() ? 60 : 120) * (view.w * view.h) / (320 * 180)));         // не більше 200 крапель (в «Економії» 100), щоб не гальмувало
   while (raindrops.length < want) raindrops.push({ x: rand(worldL(), worldR() + 30), y: rand(-view.offY, worldB()), vy: rand(130, 175) });
   while (raindrops.length > want) raindrops.pop();
   raindrops.forEach(d => {
@@ -70,7 +70,7 @@ function hitRainToggle(p) {
   if (Math.abs(p.x - s.x) <= 14 && Math.abs(p.y - s.cy) <= 14) {
     state.settings.rain = !state.settings.rain;
     if (state.settings.rain) { weather.rain = Math.max(weather.rain, 0.3); }
-    showToast(t(state.settings.rain ? (ecoOn() ? 'rainEco' : 'rainOn') : 'rainOff'), 'good'); playSfx('pip'); saveGame();
+    showToast(t(state.settings.rain ? 'rainOn' : 'rainOff'), 'good'); playSfx('pip'); saveGame();
     return true;
   }
   return false;
