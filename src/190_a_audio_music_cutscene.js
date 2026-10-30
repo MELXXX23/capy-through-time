@@ -517,6 +517,22 @@ function cutKf(T, keys) {
 }
 const cutRc = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
 const cutTf = (g, tx, ty) => g.setTransform(CUT_Q, 0, 0, CUT_Q, Math.round(tx * CUT_Q), Math.round(ty * CUT_Q));
+// Вид кадру: кожне setTransform полотна кат-сцени множиться на [масштаб, зсув x, зсув y]. Полотна — у роздільності екрана (cut.K),
+// а наїзд камери входить у масштаб світу, тож збільшене малюється одразу чітко, а не розтягуванням готової дрібної картинки. c._st — «сирий» setTransform.
+function cutVm(c, s, ox, oy) {
+  if (!c._st) {
+    c._st = c.setTransform; c._fr = c.fillRect;
+    c.setTransform = function (a, b, cc, d, e, f) { const v = this._vm; return this._st(a * v[0], b * v[0], cc * v[0], d * v[0], e * v[0] + v[1], f * v[0] + v[2]); };
+    c.fillRect = function (x, y, w, h) {                                // дробовий наїзд: прямокутники прилипають до пікселів екрана — без світлих швів між сусідніми
+      if (!this._snap) return this._fr(x, y, w, h);
+      const m = this.getTransform(); if (m.b || m.c) return this._fr(x, y, w, h);
+      const x0 = Math.round(m.a * x + m.e), x1 = Math.round(m.a * (x + w) + m.e), y0 = Math.round(m.d * y + m.f), y1 = Math.round(m.d * (y + h) + m.f);
+      this._st(1, 0, 0, 1, 0, 0); this._fr(Math.min(x0, x1), Math.min(y0, y1), Math.abs(x1 - x0), Math.abs(y1 - y0)); this._st(m);
+    };
+  }
+  c._vm = [s, ox || 0, oy || 0]; c._snap = Math.abs(s - Math.round(s)) > 1e-6; return c;
+}
+const CUT_PXMAX = 2.2e6;                                                // межа пікселів одного полотна (1920×1080 вміщується)
 // Підготовка гри до малювання її ж будинків: перша епоха й потрібна пора року; після — усе повертається
 function cutWithGame(fn) {
   const oe = state.epoch, ob = buildSeason, oh = LAYOUT.horizonY, od = houseDoors, og = houseGlass;

@@ -3,24 +3,27 @@ function cutCache(k, fn) { return cut.cache[k] || (cut.cache[k] = fn()); }
 function cutW2S(wx, wy, z, f) { const sx = wx - cut.camX, sy = wy + cut.shift; return [(sx - f[0]) * z + f[0], (sy - f[1]) * z + f[1]]; }
 function cutDrawFrame(T) {
   const Tn = T; T = Math.max(0, T);
-  const g = cut.g, W = cut.W, H = cut.H, Q = CUT_Q, txt = CUT_TXT[state.lang] || CUT_TXT.uk, amb = cut.amb;
-  cutRenderWorld(Tn < 0 ? Math.max(-CUT_PRE, Tn) : T); const L = cut.L;
+  const g = cut.g, W = cut.W, H = cut.H, Q = CUT_Q, K = cut.K || 1, txt = CUT_TXT[state.lang] || CUT_TXT.uk, amb = cut.amb;
+  const Tw = Tn < 0 ? Math.max(-CUT_PRE, Tn) : T, L0 = cutLay(), sh = cut.shift = Math.round((H - 216) * 0.9), cx0 = Math.round(cutCamCx(Tw, L0) * Q - W * Q / 2) / Q;   // камера — до малювання світу
   let z = cutZoom(T), f = [W / 2, H / 2];
   if (z > 1.001) {
-    const sh = cut.shift; let target;
-    if (T < 7.2 && cut.coinPos) target = [cut.coinPos[0] - cut.camX, cut.coinPos[1] + sh];
-    else if (T < 15) target = [L.shopCX - cut.camX, 96 + sh];
-    else if (T < CT.sign0) target = [L.shopCX - cut.camX, 170 - cut.shopH * 0.5 + sh];
-    else target = [L.shopCX - cut.camX, 170 - cut.shopH + 22 + sh];
+    let target;
+    if (T < 7.2 && cut.coinPos) target = [cut.coinPos[0] - cx0, cut.coinPos[1] + sh];          // монета — з минулого кадру
+    else if (T < 15) target = [L0.shopCX - cx0, 96 + sh];
+    else if (T < CT.sign0) target = [L0.shopCX - cx0, 170 - cut.shopH * 0.5 + sh];
+    else target = [L0.shopCX - cx0, 170 - cut.shopH + 22 + sh];
     f = [Math.max(10, Math.min(W - 10, target[0])), Math.max(10, Math.min(H - 10, target[1]))];
   }
   if (Tn < 0) { const ic = cutIntroCam(Tn, W, H); z = ic[0]; f = ic[1]; }
+  const vx = Math.round(K * Q * f[0] * (1 - z)), vy = Math.round(K * Q * f[1] * (1 - z));
+  cutVm(cut.wg, K * z, vx, vy); cutVm(cut.ag, K * z, vx, vy);                   // світ малюється вже з наїздом
+  cutRenderWorld(Tw); const L = cut.L;
   let shk = 0; [[CT.flash, 4], [CT.asm0 + 0.02, 2.5], [CT.asm0 + CB.roof1, 4.5], [CT.asm0 + CB.scDown + 0.1, 1.2]].forEach(([te, a]) => { const d = T - te; if (d >= 0 && d < 0.3) shk = Math.max(shk, a * (1 - d / 0.3)); });
   if (cut.tapAmb >= 0) { const d = amb - cut.tapAmb; if (d >= 0 && d < 0.25) shk = Math.max(shk, 1.5 * (1 - d / 0.25)); }
   if (cut.chgAmb >= 0) { const d = amb - cut.chgAmb; if (d >= 0 && d < 0.15) shk = Math.max(shk, (0.6 + cut.chg * 0.25) * (1 - d / 0.15)); }
   const ox = shk ? Math.round(Math.sin(T * 91) * shk * Q) : 0, oy = shk ? Math.round(Math.cos(T * 77) * shk * Q) : 0;
   g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.fillStyle = '#000'; g.fillRect(0, 0, W * Q, H * Q);
-  g.drawImage(cut.wc, f[0] * (1 - 1 / z) * Q, f[1] * (1 - 1 / z) * Q, W * Q / z, H * Q / z, ox, oy, W * Q, H * Q);
+  g._st(1, 0, 0, 1, 0, 0); g.drawImage(cut.wc, ox * K, oy * K);
   cutTf(g, 0, 0); g.imageSmoothingEnabled = false;
   const w2s = (wx, wy) => cutW2S(wx, wy, z, f);
   const u7 = cut.tapAmb >= 0 ? T - CT.u0 : -99;
@@ -155,10 +158,11 @@ function cutLayout() {
   let m = Math.min(vwD / (192 * Q), vhD / (216 * Q)); m = m >= 1 ? Math.floor(m) : m;      // низький екран (телефон горизонтально): дробовий масштаб, щоб усе влізло          // фізичних пікселів на піксель полотна: ціле число, тож картинка й текст чіткі
   let W = Math.ceil(vwD / (m * Q)), H = Math.ceil(vhD / (m * Q));      // з запасом, щоб картинка заповнювала весь екран (зайве обрізається по краях)
   W = Math.max(192, Math.min(W, 760)); H = Math.max(216, Math.min(H, 480));
-  cut.W = W; cut.H = H; cut.S = m * Q / dpr;
-  const cv = cut.cv; cv.width = W * Q; cv.height = H * Q; cv.style.width = (W * m * Q / dpr) + 'px'; cv.style.height = (H * m * Q / dpr) + 'px';
-  ['wc', 'al'].forEach(k => { const c = cut[k] || (cut[k] = document.createElement('canvas')); c.width = W * Q; c.height = H * Q; });
-  cut.wg = cut.wc.getContext('2d'); cut.ag = cut.al.getContext('2d'); cut.g = cv.getContext('2d');
+  const K = Math.max(1, Math.min(m >= 1 ? m : 1, Math.floor(Math.sqrt(CUT_PXMAX / (W * Q * H * Q)))));      // полотно в K разів щільніше: 1 піксель полотна ≈ 1 піксель екрана
+  cut.W = W; cut.H = H; cut.S = m * Q / dpr; cut.K = K;
+  const cv = cut.cv; cv.width = W * Q * K; cv.height = H * Q * K; cv.style.width = (W * m * Q / dpr) + 'px'; cv.style.height = (H * m * Q / dpr) + 'px';
+  ['wc', 'al'].forEach(k => { const c = cut[k] || (cut[k] = document.createElement('canvas')); c.width = W * Q * K; c.height = H * Q * K; });
+  cut.wg = cutVm(cut.wc.getContext('2d'), K); cut.ag = cutVm(cut.al.getContext('2d'), K); cut.g = cutVm(cv.getContext('2d'), K);
   const hud = document.getElementById('hud'), cr = cv.getBoundingClientRect();
   cut.hudBu = hud && hud.getBoundingClientRect().height > 0 ? (hud.getBoundingClientRect().bottom - cr.top) / cut.S : 0;
 }
@@ -214,6 +218,15 @@ function cutPicker() {
 }
 function cutAfter(ok) { if (ok) startMenuTour(() => cutPicker()); else cutPicker(); }
 function cutSeenDevice(set) { try { if (set) localStorage.setItem('capyCutSeen', '1'); return localStorage.getItem('capyCutSeen') === '1'; } catch (e) { return false; } }
+// Нова гра: поки видно екран завантаження, по шматочку готуємо небо, будинки, дерева й героїв заставки — інакше її перший кадр «висить» ~0,3 с
+function cutWarm(style) {
+  if (cut.on || cut.warm) return; cut.warm = 1; cut.style = style;
+  const steps = [() => { cut.cv = document.getElementById('cutCv'); cutLayout(); }, cutPrep, () => cutSky(cut.W, cut.H, Math.round((cut.H - 216) * 0.9)), cutCapyHi,
+    () => cutHi('team_bodya_e0'), () => cutHi('foxcub_0', SPRITES.capy_mel.canvas), () => cutHi('bunny_0', SPRITES.capy_nika.canvas), () => [0, 1, 2].forEach(cutTreeCv), () => { cutLampCv(); cutCobbleCv(); }];
+  for (let i = 0; i < 30; i += 6) steps.push(() => { for (let j = i; j < i + 6; j++) cutHouseCv(j); });
+  const run = () => { const f = steps.shift(); if (!f || cut.on || cut.style !== style) return; try { f(); } catch (e) { /* не страшно: доробиться в першому кадрі */ } setTimeout(run, 40); };
+  run();
+}
 function startIntroCutscene(replay) {                             // нова гра: заставка, потім екскурсія по меню; з «Щоденника» — лише заставка (її можна пропустити)
   state.cutSeen = true; saveGame(); if (!replay) cutSeenDevice(true);
   playCutscene('B', { done: ok => { if (ok && !replay) startMenuTour(null); } });

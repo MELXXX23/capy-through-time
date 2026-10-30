@@ -689,6 +689,8 @@ html.satfix #cutSkip { top: calc(var(--sat, 0px) + 10px); }
 #tourSkip { position: fixed; pointer-events: auto; font-size: 8px; padding: 6px 8px; color: #fff6c8; background: rgba(0, 0, 0, .55); border: 2px solid #f6c744; }
 #cutscene { position: fixed; inset: 0; overflow: hidden; z-index: 100001; background: #05060f; display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none; -webkit-user-select: none; }
 #cutscene[hidden] { display: none; }
+#cutscene:not([hidden]) { animation: cutIn .6s ease both; }          /* проявляється поверх екрана завантаження, без різкого стрибка */
+@keyframes cutIn { from { opacity: 0; } }
 #cutCv { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
 #cutSkip { position: absolute; top: max(10px, env(safe-area-inset-top)); right: 10px; z-index: 2; font-size: 10px; padding: 8px 10px; color: #fff6c8; background: rgba(0, 0, 0, .55); border: 2px solid #f6c744; }
 #cutPick { display: none; flex-direction: column; gap: 12px; width: min(90vw, 360px); padding: 20px; background: #2a1a3a; border: 4px solid #f6c744; text-align: center; }
@@ -10255,12 +10257,24 @@ function panBy(dx) {
   const base = view.offX + (CONFIG.SCENE_W - viewCrop.w) / 2, lo = -base, hi = view.w - viewCrop.w - base;
   cam.goal = Math.max(lo, Math.min(hi, cam.goal + dx));
 }
-let edgeT = 0;
+let edgeT = 0, edgeSky = null, edgeBase = null, edgeBg = '';
+const EDGE_NIGHT = [0x14, 0x1a, 0x40];                                  // той самий нічний серпанок, що в drawSkyScreen
 function updateStageEdges(dt) {
   edgeT -= dt; if (edgeT > 0 || !layoutReady) return; edgeT = 0.7;
   try {
-    const g = ui.view.getContext('2d'), a = g.getImageData(Math.max(0, Math.floor(view.w / 2)), 0, 1, 1).data, b = g.getImageData(Math.max(0, Math.floor(view.w / 2)), Math.max(0, view.h - 1), 1, 1).data;
-    const bg = 'linear-gradient(rgb(' + a[0] + ',' + a[1] + ',' + a[2] + ') 0 50%, rgb(' + b[0] + ',' + b[1] + ',' + b[2] + ') 50% 100%)';
+    // Пікселі сцени читаємо лише раз після зміни неба (епоха, розмір вікна): читання з відеокарти кожні 0,7 с давало ривок кадру 30–90 мс.
+    // Зміну дня й ночі далі домішуємо розрахунком.
+    if (edgeSky !== skyLayer && skyLayer && skyLayer._drawn) {
+      const g = ui.view.getContext('2d'), x = Math.max(0, Math.floor(view.w / 2)), a = g.getImageData(x, 0, 1, 1).data, b = g.getImageData(x, Math.max(0, view.h - 1), 1, 1).data;
+      if (a[3] && b[3]) {
+        const k = Math.min(0.9, sky.night * 0.72), un = d => [0, 1, 2].map(i => Math.max(0, Math.min(255, (d[i] - EDGE_NIGHT[i] * k) / (1 - k))));
+        edgeSky = skyLayer; edgeBase = [un(a), un(b)];
+      }
+    }
+    if (!edgeBase) return;
+    const k = sky.night * 0.72, mix = c => c.map((v, i) => Math.round(v + (EDGE_NIGHT[i] - v) * k)).join(',');
+    const bg = 'linear-gradient(rgb(' + mix(edgeBase[0]) + ') 0 50%, rgb(' + mix(edgeBase[1]) + ') 50% 100%)';
+    if (bg === edgeBg) return; edgeBg = bg;
     ui.stage.style.background = bg; document.documentElement.style.background = bg; document.body.style.background = bg;       // навіть під рядком стану й жестовою смужкою колір сцени
   } catch (e) { /* без цього теж працює */ }
 }
@@ -11809,7 +11823,9 @@ function hitCapy(p) {
 function bubbleBounds() {
   const sceneH = parseFloat(ui.scene.style.height) || (view.h * sceneUnit);
   const top = -view.offY + (view.h * sceneUnit - sceneH) / sceneUnit;
-  const tb = document.getElementById("topbar"), tbh = tb ? tb.getBoundingClientRect().bottom : 0;                        // верхню панель з рахунком бульбашки не перекривають
+  const now = performance.now();
+  if (!(now - bubbleBounds.t < 400)) { const tb = document.getElementById("topbar"); bubbleBounds.t = now; bubbleBounds.tbh = tb ? tb.getBoundingClientRect().bottom : 0; }   // вимір панелі — раз на 0,4 с, не щокадру (вимір змушував перераховувати сторінку)
+  const tbh = bubbleBounds.tbh;                                                                                            // верхню панель з рахунком бульбашки не перекривають
   return { l: visL(), r: visR(), t: top + 2, b: top + sceneH / sceneUnit, il: visL() + 38 / sceneUnit, ir: visR() - 40 / sceneUnit, it: top + (tbh + 6) / sceneUnit };
 }
 // Ставить бульбашку так, щоб вона повністю лишалась у кадрі
@@ -13031,6 +13047,22 @@ function cutKf(T, keys) {
 }
 const cutRc = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
 const cutTf = (g, tx, ty) => g.setTransform(CUT_Q, 0, 0, CUT_Q, Math.round(tx * CUT_Q), Math.round(ty * CUT_Q));
+// Вид кадру: кожне setTransform полотна кат-сцени множиться на [масштаб, зсув x, зсув y]. Полотна — у роздільності екрана (cut.K),
+// а наїзд камери входить у масштаб світу, тож збільшене малюється одразу чітко, а не розтягуванням готової дрібної картинки. c._st — «сирий» setTransform.
+function cutVm(c, s, ox, oy) {
+  if (!c._st) {
+    c._st = c.setTransform; c._fr = c.fillRect;
+    c.setTransform = function (a, b, cc, d, e, f) { const v = this._vm; return this._st(a * v[0], b * v[0], cc * v[0], d * v[0], e * v[0] + v[1], f * v[0] + v[2]); };
+    c.fillRect = function (x, y, w, h) {                                // дробовий наїзд: прямокутники прилипають до пікселів екрана — без світлих швів між сусідніми
+      if (!this._snap) return this._fr(x, y, w, h);
+      const m = this.getTransform(); if (m.b || m.c) return this._fr(x, y, w, h);
+      const x0 = Math.round(m.a * x + m.e), x1 = Math.round(m.a * (x + w) + m.e), y0 = Math.round(m.d * y + m.f), y1 = Math.round(m.d * (y + h) + m.f);
+      this._st(1, 0, 0, 1, 0, 0); this._fr(Math.min(x0, x1), Math.min(y0, y1), Math.abs(x1 - x0), Math.abs(y1 - y0)); this._st(m);
+    };
+  }
+  c._vm = [s, ox || 0, oy || 0]; c._snap = Math.abs(s - Math.round(s)) > 1e-6; return c;
+}
+const CUT_PXMAX = 2.2e6;                                                // межа пікселів одного полотна (1920×1080 вміщується)
 // Підготовка гри до малювання її ж будинків: перша епоха й потрібна пора року; після — усе повертається
 function cutWithGame(fn) {
   const oe = state.epoch, ob = buildSeason, oh = LAYOUT.horizonY, od = houseDoors, og = houseGlass;
@@ -13424,7 +13456,7 @@ function cutRenderWorld(T) {
   }
   if (coinPos && T < CT.flash && st.glow) { g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(coinPos[0], coinPos[1], 2, coinPos[0], coinPos[1], 46); gr.addColorStop(0, 'rgba(255,220,110,.45)'); gr.addColorStop(1, 'rgba(255,220,110,0)'); g.fillStyle = gr; g.fillRect(coinPos[0] - 50, coinPos[1] - 50, 100, 100); g.globalCompositeOperation = 'source-over'; }
   if (lotBuilt && st.glow) { g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(L.shopCX, 150, 4, L.shopCX, 150, 96); gr.addColorStop(0, 'rgba(255,214,120,' + 0.30 * st.glow + ')'); gr.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = gr; g.fillRect(L.shopCX - 100, 80, 200, 110); g.globalCompositeOperation = 'source-over'; }
-  g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(cut.al, 0, 0); cutTf(g, -camX, shift);
+  g._st(1, 0, 0, 1, 0, 0); g.drawImage(cut.al, 0, 0); cutTf(g, -camX, shift);       // шари однакового розміру й виду — 1:1
   if ((T > CT.pick + 0.6 && T < CT.pick + 1.2) || (T > CT.fly0 - 0.15 && T < CT.fly0 + 0.4)) for (let k = 0; k < 3; k++) { const ph = (T * 3 + k * 0.33) % 1; cutSpark(g, bagX + (k - 1) * 6, bagY - 4 - ph * 9, ph < 0.4 ? 1 : 2, '#fff7c0'); }
   // листя, пелюстки або сніг, що падають
   { cutTf(g, 0, 0); const n = st.fall === 'snow' ? 90 : 36; for (let i = 0; i < n; i++) { const sp = 12 + cutHash(i + 3) * 24, x = (((cutHash(i) * (W + 80) + Math.sin(amb * 0.9 + i) * 8 - amb * 4 * (st.fall === 'snow' ? 0.3 : 1)) % (W + 80)) + W + 80) % (W + 80) - 40, y = ((cutHash(i + 50) * (H + 40) + amb * sp) % (H + 40)) - 20;
@@ -13438,24 +13470,27 @@ function cutCache(k, fn) { return cut.cache[k] || (cut.cache[k] = fn()); }
 function cutW2S(wx, wy, z, f) { const sx = wx - cut.camX, sy = wy + cut.shift; return [(sx - f[0]) * z + f[0], (sy - f[1]) * z + f[1]]; }
 function cutDrawFrame(T) {
   const Tn = T; T = Math.max(0, T);
-  const g = cut.g, W = cut.W, H = cut.H, Q = CUT_Q, txt = CUT_TXT[state.lang] || CUT_TXT.uk, amb = cut.amb;
-  cutRenderWorld(Tn < 0 ? Math.max(-CUT_PRE, Tn) : T); const L = cut.L;
+  const g = cut.g, W = cut.W, H = cut.H, Q = CUT_Q, K = cut.K || 1, txt = CUT_TXT[state.lang] || CUT_TXT.uk, amb = cut.amb;
+  const Tw = Tn < 0 ? Math.max(-CUT_PRE, Tn) : T, L0 = cutLay(), sh = cut.shift = Math.round((H - 216) * 0.9), cx0 = Math.round(cutCamCx(Tw, L0) * Q - W * Q / 2) / Q;   // камера — до малювання світу
   let z = cutZoom(T), f = [W / 2, H / 2];
   if (z > 1.001) {
-    const sh = cut.shift; let target;
-    if (T < 7.2 && cut.coinPos) target = [cut.coinPos[0] - cut.camX, cut.coinPos[1] + sh];
-    else if (T < 15) target = [L.shopCX - cut.camX, 96 + sh];
-    else if (T < CT.sign0) target = [L.shopCX - cut.camX, 170 - cut.shopH * 0.5 + sh];
-    else target = [L.shopCX - cut.camX, 170 - cut.shopH + 22 + sh];
+    let target;
+    if (T < 7.2 && cut.coinPos) target = [cut.coinPos[0] - cx0, cut.coinPos[1] + sh];          // монета — з минулого кадру
+    else if (T < 15) target = [L0.shopCX - cx0, 96 + sh];
+    else if (T < CT.sign0) target = [L0.shopCX - cx0, 170 - cut.shopH * 0.5 + sh];
+    else target = [L0.shopCX - cx0, 170 - cut.shopH + 22 + sh];
     f = [Math.max(10, Math.min(W - 10, target[0])), Math.max(10, Math.min(H - 10, target[1]))];
   }
   if (Tn < 0) { const ic = cutIntroCam(Tn, W, H); z = ic[0]; f = ic[1]; }
+  const vx = Math.round(K * Q * f[0] * (1 - z)), vy = Math.round(K * Q * f[1] * (1 - z));
+  cutVm(cut.wg, K * z, vx, vy); cutVm(cut.ag, K * z, vx, vy);                   // світ малюється вже з наїздом
+  cutRenderWorld(Tw); const L = cut.L;
   let shk = 0; [[CT.flash, 4], [CT.asm0 + 0.02, 2.5], [CT.asm0 + CB.roof1, 4.5], [CT.asm0 + CB.scDown + 0.1, 1.2]].forEach(([te, a]) => { const d = T - te; if (d >= 0 && d < 0.3) shk = Math.max(shk, a * (1 - d / 0.3)); });
   if (cut.tapAmb >= 0) { const d = amb - cut.tapAmb; if (d >= 0 && d < 0.25) shk = Math.max(shk, 1.5 * (1 - d / 0.25)); }
   if (cut.chgAmb >= 0) { const d = amb - cut.chgAmb; if (d >= 0 && d < 0.15) shk = Math.max(shk, (0.6 + cut.chg * 0.25) * (1 - d / 0.15)); }
   const ox = shk ? Math.round(Math.sin(T * 91) * shk * Q) : 0, oy = shk ? Math.round(Math.cos(T * 77) * shk * Q) : 0;
   g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.fillStyle = '#000'; g.fillRect(0, 0, W * Q, H * Q);
-  g.drawImage(cut.wc, f[0] * (1 - 1 / z) * Q, f[1] * (1 - 1 / z) * Q, W * Q / z, H * Q / z, ox, oy, W * Q, H * Q);
+  g._st(1, 0, 0, 1, 0, 0); g.drawImage(cut.wc, ox * K, oy * K);
   cutTf(g, 0, 0); g.imageSmoothingEnabled = false;
   const w2s = (wx, wy) => cutW2S(wx, wy, z, f);
   const u7 = cut.tapAmb >= 0 ? T - CT.u0 : -99;
@@ -13590,10 +13625,11 @@ function cutLayout() {
   let m = Math.min(vwD / (192 * Q), vhD / (216 * Q)); m = m >= 1 ? Math.floor(m) : m;      // низький екран (телефон горизонтально): дробовий масштаб, щоб усе влізло          // фізичних пікселів на піксель полотна: ціле число, тож картинка й текст чіткі
   let W = Math.ceil(vwD / (m * Q)), H = Math.ceil(vhD / (m * Q));      // з запасом, щоб картинка заповнювала весь екран (зайве обрізається по краях)
   W = Math.max(192, Math.min(W, 760)); H = Math.max(216, Math.min(H, 480));
-  cut.W = W; cut.H = H; cut.S = m * Q / dpr;
-  const cv = cut.cv; cv.width = W * Q; cv.height = H * Q; cv.style.width = (W * m * Q / dpr) + 'px'; cv.style.height = (H * m * Q / dpr) + 'px';
-  ['wc', 'al'].forEach(k => { const c = cut[k] || (cut[k] = document.createElement('canvas')); c.width = W * Q; c.height = H * Q; });
-  cut.wg = cut.wc.getContext('2d'); cut.ag = cut.al.getContext('2d'); cut.g = cv.getContext('2d');
+  const K = Math.max(1, Math.min(m >= 1 ? m : 1, Math.floor(Math.sqrt(CUT_PXMAX / (W * Q * H * Q)))));      // полотно в K разів щільніше: 1 піксель полотна ≈ 1 піксель екрана
+  cut.W = W; cut.H = H; cut.S = m * Q / dpr; cut.K = K;
+  const cv = cut.cv; cv.width = W * Q * K; cv.height = H * Q * K; cv.style.width = (W * m * Q / dpr) + 'px'; cv.style.height = (H * m * Q / dpr) + 'px';
+  ['wc', 'al'].forEach(k => { const c = cut[k] || (cut[k] = document.createElement('canvas')); c.width = W * Q * K; c.height = H * Q * K; });
+  cut.wg = cutVm(cut.wc.getContext('2d'), K); cut.ag = cutVm(cut.al.getContext('2d'), K); cut.g = cutVm(cv.getContext('2d'), K);
   const hud = document.getElementById('hud'), cr = cv.getBoundingClientRect();
   cut.hudBu = hud && hud.getBoundingClientRect().height > 0 ? (hud.getBoundingClientRect().bottom - cr.top) / cut.S : 0;
 }
@@ -13649,6 +13685,15 @@ function cutPicker() {
 }
 function cutAfter(ok) { if (ok) startMenuTour(() => cutPicker()); else cutPicker(); }
 function cutSeenDevice(set) { try { if (set) localStorage.setItem('capyCutSeen', '1'); return localStorage.getItem('capyCutSeen') === '1'; } catch (e) { return false; } }
+// Нова гра: поки видно екран завантаження, по шматочку готуємо небо, будинки, дерева й героїв заставки — інакше її перший кадр «висить» ~0,3 с
+function cutWarm(style) {
+  if (cut.on || cut.warm) return; cut.warm = 1; cut.style = style;
+  const steps = [() => { cut.cv = document.getElementById('cutCv'); cutLayout(); }, cutPrep, () => cutSky(cut.W, cut.H, Math.round((cut.H - 216) * 0.9)), cutCapyHi,
+    () => cutHi('team_bodya_e0'), () => cutHi('foxcub_0', SPRITES.capy_mel.canvas), () => cutHi('bunny_0', SPRITES.capy_nika.canvas), () => [0, 1, 2].forEach(cutTreeCv), () => { cutLampCv(); cutCobbleCv(); }];
+  for (let i = 0; i < 30; i += 6) steps.push(() => { for (let j = i; j < i + 6; j++) cutHouseCv(j); });
+  const run = () => { const f = steps.shift(); if (!f || cut.on || cut.style !== style) return; try { f(); } catch (e) { /* не страшно: доробиться в першому кадрі */ } setTimeout(run, 40); };
+  run();
+}
 function startIntroCutscene(replay) {                             // нова гра: заставка, потім екскурсія по меню; з «Щоденника» — лише заставка (її можна пропустити)
   state.cutSeen = true; saveGame(); if (!replay) cutSeenDevice(true);
   playCutscene('B', { done: ok => { if (ok && !replay) startMenuTour(null); } });
@@ -14307,6 +14352,8 @@ function epochLayerSteps() {
   return [
     () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); skyLayer = buildSkyLayer(); },
     () => { groundLayer = buildGroundLayer(); },
+    // спрайти героїв нової епохи — по одному на кадр, ще до портретів (інакше портрети будували їх усі разом — ривок ~0,1 с)
+    ...(typeof TEAM !== 'undefined' ? TEAM : []).map(m => () => { try { getSpriteCanvas(teamSprite(m.id)); } catch (e) { /* домалюється в кадрі */ } }),
     () => {
       theme.key = null;              // змусити updateTheme перерахувати прикраси
       seedEpochFx();
@@ -14314,7 +14361,9 @@ function epochLayerSteps() {
       refreshTeamPortraits();
       drawCapiPortrait();             // скін Капі залежить від епохи
     },
-    () => { if (shop) rebuildShop(true); }
+    () => { if (shop) rebuildShop(true); },
+    // спрайти покупців нової епохи — заздалегідь, по одному на кадр: інакше вони будувались у першому кадрі нової епохи (ривок до 0,3 с)
+    ...CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => () => { try { evenScaled(getSpriteCanvas(tp + '_' + f), CUST_K); } catch (e) { /* домалюється */ } }))
   ];
 }
 function rebuildEpochLayers() { epochLayerSteps().forEach(fn => fn()); }
@@ -18149,7 +18198,7 @@ function drawSkyBody(kind, x, y) {
 //#part 220_d_night_garlands_halloween.js
 // Небо цілком (координати полотна, до зсуву сцени): шар неба, сутінки, зорі, сонце й місяць
 function drawSkyScreen(time) {
-  ctx.drawImage(skyLayer, 0, 0);
+  ctx.drawImage(skyLayer, 0, 0); skyLayer._drawn = 1;                 // для updateStageEdges: нове небо вже на сцені
   const W = view.w, hor = view.offY + 118;
   if (sky.night > 0.01) { ctx.globalAlpha = sky.night * 0.72; ctx.fillStyle = '#141a40'; ctx.fillRect(0, 0, W, view.h); }
   if (sky.dusk > 0.01) {
@@ -21062,7 +21111,11 @@ function checkStory(dt) {
   if (dialog.active || build || !ui.modal.hidden || warp || epochIntro.active || cut.on || tour.on) return;
   if (!state.cutSeen) {                                                                          // нова гра: спершу заставка й екскурсія; хто вже грає — не чіпаємо
     if (state.story.done >= 1 || state.epoch > 0 || state.stats.timeTravels > 0 || cutSeenDevice()) { state.cutSeen = true; saveGame(); }       // також якщо заставку вже бачили на цьому пристрої (скидання прогресу її не повертає)
-    else { startIntroCutscene(); return; }
+    else {
+      const b = document.getElementById('boot');                                                   // екран завантаження ще читають: заставка чекає, поки він почне зникати (а тим часом готує кадри)
+      if (b && !b.classList.contains('done')) { storyTimer = 0.1; cutWarm('B'); return; }
+      startIntroCutscene(); return;
+    }
   }
   if (state.epochIntroSeen < state.epoch) { playEpochIntro(state.epoch); return; }               // нова епоха: спершу заставка
   if (!ghostHunt) { const late = helpThanksLate(); if (late.length) { playThanksChain(late); return; } }       // гостям минулих епох, яким уже допомогли, подяка одразу
@@ -23520,7 +23573,7 @@ function buildCinemaStart() {
 
 function buildCinemaTick(p) {
   if (!bc.root || bc.root.classList.contains('out')) return;
-  bcPlace();
+  const now = performance.now(); if (!(now - bc.placeT < 500)) { bc.placeT = now; bcPlace(); }      // розміри сцени міряємо двічі на секунду, а не щокадру (вимір змушував перераховувати сторінку)
   bc.bar.style.width = Math.min(100, p * 100).toFixed(1) + '%';
   if (!bc.flashed && p >= BUILD_C + 0.02) {                       // шатро знімається: теплий спалах і ударна хвиля
     bc.flashed = true; bc.root.classList.add('done'); restartAnim(bc.flash, 'on'); restartAnim(bc.ring, 'on');
@@ -24704,7 +24757,7 @@ function frame(now) {
   updateSeasonsIntro();
   updateFxPlus(dt);
   updateDailyReminder(dt);
-  const hidden = (warp && warp.t > 0.15 && (!warp.applied || (warp.steps && warp.steps.length))) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 5600);     // сцену не малюємо, поки її закриває вир (до застосування нової епохи) або заставка; далі вир прозорішає, і під ним уже НОВА епоха
+  const hidden = (warp && warp.t > 0.15 && (!warp.applied || (warp.steps && warp.steps.length))) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 5600) || cut.on;     // сцену не малюємо, поки її закриває вир (до застосування нової епохи) або заставка; далі вир прозорішає, і під ним уже НОВА епоха
   if (!hidden) render(animClock);                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
 
   uiTimer += dt;

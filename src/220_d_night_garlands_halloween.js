@@ -1,7 +1,7 @@
 //#part 220_d_night_garlands_halloween.js
 // Небо цілком (координати полотна, до зсуву сцени): шар неба, сутінки, зорі, сонце й місяць
 function drawSkyScreen(time) {
-  ctx.drawImage(skyLayer, 0, 0);
+  ctx.drawImage(skyLayer, 0, 0); skyLayer._drawn = 1;                 // для updateStageEdges: нове небо вже на сцені
   const W = view.w, hor = view.offY + 118;
   if (sky.night > 0.01) { ctx.globalAlpha = sky.night * 0.72; ctx.fillStyle = '#141a40'; ctx.fillRect(0, 0, W, view.h); }
   if (sky.dusk > 0.01) {

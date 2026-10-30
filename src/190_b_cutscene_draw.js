@@ -330,7 +330,7 @@ function cutRenderWorld(T) {
   }
   if (coinPos && T < CT.flash && st.glow) { g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(coinPos[0], coinPos[1], 2, coinPos[0], coinPos[1], 46); gr.addColorStop(0, 'rgba(255,220,110,.45)'); gr.addColorStop(1, 'rgba(255,220,110,0)'); g.fillStyle = gr; g.fillRect(coinPos[0] - 50, coinPos[1] - 50, 100, 100); g.globalCompositeOperation = 'source-over'; }
   if (lotBuilt && st.glow) { g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(L.shopCX, 150, 4, L.shopCX, 150, 96); gr.addColorStop(0, 'rgba(255,214,120,' + 0.30 * st.glow + ')'); gr.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = gr; g.fillRect(L.shopCX - 100, 80, 200, 110); g.globalCompositeOperation = 'source-over'; }
-  g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(cut.al, 0, 0); cutTf(g, -camX, shift);
+  g._st(1, 0, 0, 1, 0, 0); g.drawImage(cut.al, 0, 0); cutTf(g, -camX, shift);       // шари однакового розміру й виду — 1:1
   if ((T > CT.pick + 0.6 && T < CT.pick + 1.2) || (T > CT.fly0 - 0.15 && T < CT.fly0 + 0.4)) for (let k = 0; k < 3; k++) { const ph = (T * 3 + k * 0.33) % 1; cutSpark(g, bagX + (k - 1) * 6, bagY - 4 - ph * 9, ph < 0.4 ? 1 : 2, '#fff7c0'); }
   // листя, пелюстки або сніг, що падають
   { cutTf(g, 0, 0); const n = st.fall === 'snow' ? 90 : 36; for (let i = 0; i < n; i++) { const sp = 12 + cutHash(i + 3) * 24, x = (((cutHash(i) * (W + 80) + Math.sin(amb * 0.9 + i) * 8 - amb * 4 * (st.fall === 'snow' ? 0.3 : 1)) % (W + 80)) + W + 80) % (W + 80) - 40, y = ((cutHash(i + 50) * (H + 40) + amb * sp) % (H + 40)) - 20;

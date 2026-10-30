@@ -46,7 +46,7 @@ function buildCinemaStart() {
 
 function buildCinemaTick(p) {
   if (!bc.root || bc.root.classList.contains('out')) return;
-  bcPlace();
+  const now = performance.now(); if (!(now - bc.placeT < 500)) { bc.placeT = now; bcPlace(); }      // розміри сцени міряємо двічі на секунду, а не щокадру (вимір змушував перераховувати сторінку)
   bc.bar.style.width = Math.min(100, p * 100).toFixed(1) + '%';
   if (!bc.flashed && p >= BUILD_C + 0.02) {                       // шатро знімається: теплий спалах і ударна хвиля
     bc.flashed = true; bc.root.classList.add('done'); restartAnim(bc.flash, 'on'); restartAnim(bc.ring, 'on');

@@ -354,7 +354,11 @@ function checkStory(dt) {
   if (dialog.active || build || !ui.modal.hidden || warp || epochIntro.active || cut.on || tour.on) return;
   if (!state.cutSeen) {                                                                          // нова гра: спершу заставка й екскурсія; хто вже грає — не чіпаємо
     if (state.story.done >= 1 || state.epoch > 0 || state.stats.timeTravels > 0 || cutSeenDevice()) { state.cutSeen = true; saveGame(); }       // також якщо заставку вже бачили на цьому пристрої (скидання прогресу її не повертає)
-    else { startIntroCutscene(); return; }
+    else {
+      const b = document.getElementById('boot');                                                   // екран завантаження ще читають: заставка чекає, поки він почне зникати (а тим часом готує кадри)
+      if (b && !b.classList.contains('done')) { storyTimer = 0.1; cutWarm('B'); return; }
+      startIntroCutscene(); return;
+    }
   }
   if (state.epochIntroSeen < state.epoch) { playEpochIntro(state.epoch); return; }               // нова епоха: спершу заставка
   if (!ghostHunt) { const late = helpThanksLate(); if (late.length) { playThanksChain(late); return; } }       // гостям минулих епох, яким уже допомогли, подяка одразу

@@ -66,6 +66,8 @@ function epochLayerSteps() {
   return [
     () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); skyLayer = buildSkyLayer(); },
     () => { groundLayer = buildGroundLayer(); },
+    // спрайти героїв нової епохи — по одному на кадр, ще до портретів (інакше портрети будували їх усі разом — ривок ~0,1 с)
+    ...(typeof TEAM !== 'undefined' ? TEAM : []).map(m => () => { try { getSpriteCanvas(teamSprite(m.id)); } catch (e) { /* домалюється в кадрі */ } }),
     () => {
       theme.key = null;              // змусити updateTheme перерахувати прикраси
       seedEpochFx();
@@ -73,7 +75,9 @@ function epochLayerSteps() {
       refreshTeamPortraits();
       drawCapiPortrait();             // скін Капі залежить від епохи
     },
-    () => { if (shop) rebuildShop(true); }
+    () => { if (shop) rebuildShop(true); },
+    // спрайти покупців нової епохи — заздалегідь, по одному на кадр: інакше вони будувались у першому кадрі нової епохи (ривок до 0,3 с)
+    ...CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => () => { try { evenScaled(getSpriteCanvas(tp + '_' + f), CUST_K); } catch (e) { /* домалюється */ } }))
   ];
 }
 function rebuildEpochLayers() { epochLayerSteps().forEach(fn => fn()); }

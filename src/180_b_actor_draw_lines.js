@@ -180,7 +180,9 @@ function hitCapy(p) {
 function bubbleBounds() {
   const sceneH = parseFloat(ui.scene.style.height) || (view.h * sceneUnit);
   const top = -view.offY + (view.h * sceneUnit - sceneH) / sceneUnit;
-  const tb = document.getElementById("topbar"), tbh = tb ? tb.getBoundingClientRect().bottom : 0;                        // верхню панель з рахунком бульбашки не перекривають
+  const now = performance.now();
+  if (!(now - bubbleBounds.t < 400)) { const tb = document.getElementById("topbar"); bubbleBounds.t = now; bubbleBounds.tbh = tb ? tb.getBoundingClientRect().bottom : 0; }   // вимір панелі — раз на 0,4 с, не щокадру (вимір змушував перераховувати сторінку)
+  const tbh = bubbleBounds.tbh;                                                                                            // верхню панель з рахунком бульбашки не перекривають
   return { l: visL(), r: visR(), t: top + 2, b: top + sceneH / sceneUnit, il: visL() + 38 / sceneUnit, ir: visR() - 40 / sceneUnit, it: top + (tbh + 6) / sceneUnit };
 }
 // Ставить бульбашку так, щоб вона повністю лишалась у кадрі

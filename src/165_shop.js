@@ -141,12 +141,24 @@ function panBy(dx) {
   const base = view.offX + (CONFIG.SCENE_W - viewCrop.w) / 2, lo = -base, hi = view.w - viewCrop.w - base;
   cam.goal = Math.max(lo, Math.min(hi, cam.goal + dx));
 }
-let edgeT = 0;
+let edgeT = 0, edgeSky = null, edgeBase = null, edgeBg = '';
+const EDGE_NIGHT = [0x14, 0x1a, 0x40];                                  // той самий нічний серпанок, що в drawSkyScreen
 function updateStageEdges(dt) {
   edgeT -= dt; if (edgeT > 0 || !layoutReady) return; edgeT = 0.7;
   try {
-    const g = ui.view.getContext('2d'), a = g.getImageData(Math.max(0, Math.floor(view.w / 2)), 0, 1, 1).data, b = g.getImageData(Math.max(0, Math.floor(view.w / 2)), Math.max(0, view.h - 1), 1, 1).data;
-    const bg = 'linear-gradient(rgb(' + a[0] + ',' + a[1] + ',' + a[2] + ') 0 50%, rgb(' + b[0] + ',' + b[1] + ',' + b[2] + ') 50% 100%)';
+    // Пікселі сцени читаємо лише раз після зміни неба (епоха, розмір вікна): читання з відеокарти кожні 0,7 с давало ривок кадру 30–90 мс.
+    // Зміну дня й ночі далі домішуємо розрахунком.
+    if (edgeSky !== skyLayer && skyLayer && skyLayer._drawn) {
+      const g = ui.view.getContext('2d'), x = Math.max(0, Math.floor(view.w / 2)), a = g.getImageData(x, 0, 1, 1).data, b = g.getImageData(x, Math.max(0, view.h - 1), 1, 1).data;
+      if (a[3] && b[3]) {
+        const k = Math.min(0.9, sky.night * 0.72), un = d => [0, 1, 2].map(i => Math.max(0, Math.min(255, (d[i] - EDGE_NIGHT[i] * k) / (1 - k))));
+        edgeSky = skyLayer; edgeBase = [un(a), un(b)];
+      }
+    }
+    if (!edgeBase) return;
+    const k = sky.night * 0.72, mix = c => c.map((v, i) => Math.round(v + (EDGE_NIGHT[i] - v) * k)).join(',');
+    const bg = 'linear-gradient(rgb(' + mix(edgeBase[0]) + ') 0 50%, rgb(' + mix(edgeBase[1]) + ') 50% 100%)';
+    if (bg === edgeBg) return; edgeBg = bg;
     ui.stage.style.background = bg; document.documentElement.style.background = bg; document.body.style.background = bg;       // навіть під рядком стану й жестовою смужкою колір сцени
   } catch (e) { /* без цього теж працює */ }
 }
