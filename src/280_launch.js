@@ -110,6 +110,8 @@ function init() {
   showOfflineModal();     // якщо з минулого разу лишилися незабрані монетки
   lastBakAt = hadBak ? Date.now() : 0;                                  // існуючу копію не перезаписуємо одразу після запуску
   if (restoredFromBak) setTimeout(() => showToast(t('restoredBak'), 'bad'), 1200);
+  if (saveNewer) { updateSaveWarning(); setTimeout(() => showToast(t('saveNewer'), 'bad'), 1400); }
+  setTimeout(askPersistStorage, 600000);
   setTimeout(checkExportNag, 40000);
   if (!hadSave) saveGame();
   requestAnimationFrame(t0 => { lastFrame = t0; requestAnimationFrame(frame); });

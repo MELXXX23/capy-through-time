@@ -203,14 +203,44 @@ function nativeMirror(json) {
   lastNativeAt = Date.now();
   try { P.set({ key: CONFIG.SAVE_KEY, value: json }).catch(() => {}); } catch (e) { /* нічого */ }
 }
+// Просимо браузер не стирати сховище сайту (Safari чистить дані сайтів, які довго не відкривали). Firefox може спитати
+// дозволу, тому просимо лише через 10 хв гри (280_launch); застосунок для телефона й exe (file:) мають надійне сховище й так.
+function askPersistStorage() {
+  try {
+    if (nativeApp() || location.protocol !== 'https:' || !navigator.storage || !navigator.storage.persist) return;
+    navigator.storage.persisted().then(p => { if (!p) return navigator.storage.persist(); }).catch(() => {});
+  } catch (e) { /* нічого */ }
+}
 const SAVE_BAK_KEY = CONFIG.SAVE_KEY + '_bak';      // друга копія збереження
 let lastBakAt = 0, forceBakNext = false, restoredFromBak = false, hadBak = false;
+// Збереження з новішої версії гри (напр., старий exe відкрив прогрес нового): поля, яких ця версія не знає, не губимо —
+// тримаємо в saveExtra і дописуємо назад у кожне збереження. Тому стару назву поля state не бери знову під інше значення.
+// Якщо новіший сам формат (v > SAVE_VERSION) — не зберігаємо зовсім (saveNewer) і просимо оновити гру.
+let saveExtra = null, saveNewer = false;
+function unknownFields(target, src) {
+  if (!src || typeof src !== 'object' || Array.isArray(src)) return null;
+  let out = null;
+  for (const key of Object.keys(src)) {
+    const a = target[key];
+    if (!(key in target)) (out = out || {})[key] = src[key];
+    else if (a && typeof a === 'object' && !Array.isArray(a)) { const sub = unknownFields(a, src[key]); if (sub) (out = out || {})[key] = sub; }
+  }
+  return out;
+}
+function withExtra(st, ex) {
+  const o = Object.assign({}, st);
+  for (const key of Object.keys(ex)) {
+    if (!(key in o)) o[key] = ex[key];
+    else if (o[key] && typeof o[key] === 'object' && !Array.isArray(o[key])) o[key] = withExtra(o[key], ex[key]);
+  }
+  return o;
+}
 function saveGame() {
-  if (savingDisabled || buildPreview) return;                  // під час показу будівництва в режимі бога рівень тимчасовий — не зберігаємо
+  if (savingDisabled || buildPreview || saveNewer) return;      // під час показу будівництва в режимі бога рівень тимчасовий — не зберігаємо
   try {
     syncEpochEarned();
     state.savedAt = Date.now();
-    const json = JSON.stringify({ v: CONFIG.SAVE_VERSION, state });
+    const json = JSON.stringify({ v: CONFIG.SAVE_VERSION, state: saveExtra ? withExtra(state, saveExtra) : state });
     localStorage.setItem(CONFIG.SAVE_KEY, json);
     nativeMirror(json);
     if (forceBakNext || Date.now() - lastBakAt > 120000) {                  // друга копія: не частіше раз на 2 хвилини
@@ -238,11 +268,13 @@ function loadGame() {
   return false;
 }
 function applySave(raw) {
-  let data;
-  try { data = migrateSave(JSON.parse(raw)); } catch (e) { return false; }
+  let data, fromV = 0;
+  try { data = JSON.parse(raw); fromV = Number(data && data.v) || 1; data = migrateSave(data); } catch (e) { return false; }
   if (!data || !data.state || typeof data.state !== 'object') return false;
   try {
+    const extra = unknownFields(state, data.state);
     mergeInto(state, data.state);
+    saveExtra = extra; saveNewer = fromV > CONFIG.SAVE_VERSION;
     state.shopLevel = Math.max(1, Math.min(LEVELS.length, Math.floor(state.shopLevel)));
     if (state.settings.gender !== 'm') state.settings.gender = 'f';
     if (!SEASONS.includes(state.settings.season)) state.settings.season = 'auto';

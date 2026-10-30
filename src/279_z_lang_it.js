@@ -45,6 +45,8 @@ installLang("it", {
     "statEarned": "Guadagnato in totale",
     "tapHint": "Tocca il negozio. Più alto è il tuo reddito, più rende ogni tocco. Proprio come i grandi affari, ma più onesto.",
     "soonText": "Questa scheda si apre un po' più tardi. Capy ci sta già lavorando!",
+    "swUpdate": "È uscita una nuova versione del gioco. Riavvia il gioco per aggiornarlo.",
+    "saveNewer": "Questo salvataggio è di una versione più nuova del gioco. Aggiornalo: per ora i progressi non vengono salvati, così non si rovinano.",
     "saveError": "Impossibile salvare il gioco: l'archiviazione del browser non è disponibile.",
     "levelName_1": "Negozietto",
     "levelName_2": "Bottega all'Angolo",

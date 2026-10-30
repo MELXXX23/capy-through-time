@@ -16,6 +16,8 @@
     statEarned: 'Earned all time',
     tapHint: "Tap the shop. The higher your income, the more each tap pays. Just like big business, only more honest.",
     soonText: 'This tab opens a bit later. Capy is already working on it!',
+    swUpdate: 'A new version of the game is out. Restart the game to update.',
+    saveNewer: 'This save is from a newer version of the game. Please update it: progress is not saved for now, so nothing gets broken.',
     saveError: "Couldn't save the game: browser storage is unavailable.",
 
     levelName_1: 'Little Shop',

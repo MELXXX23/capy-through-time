@@ -393,9 +393,10 @@ function importSave() {
   let data;
   try { data = parseImportCode(ui.importBox.value); } catch (e) { showToast(t('importFail'), 'bad'); return; }
   askConfirm(t('importTitle'), t('importText') + '\n\n' + saveSummary(data.state), t('importYes'), () => {
-    const fresh = createDefaultState();
+    const fresh = createDefaultState(), extra = unknownFields(fresh, data.state);
     mergeInto(fresh, data.state);
     Object.assign(state, fresh);
+    saveExtra = extra; saveNewer = false;                 // свідомий вибір гравця: код записуємо, навіть якщо до того було збереження новішої версії
     forceBakNext = true;
     saveGame();
     if (!storageOk) { showToast(t('importNoStorage'), 'bad'); return; }

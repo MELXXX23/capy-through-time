@@ -45,6 +45,8 @@ installLang("pt", {
     "statEarned": "Ganho no total",
     "tapHint": "Toque na loja. Quanto maior a sua renda, mais cada toque rende. Igualzinho aos grandes negócios, só que mais honesto.",
     "soonText": "Esta aba abre um pouco mais tarde. A Capy já está trabalhando nela!",
+    "swUpdate": "Saiu uma nova versão do jogo. Reinicie o jogo para atualizar.",
+    "saveNewer": "Este jogo salvo é de uma versão mais nova. Atualize o jogo: por enquanto o progresso não é salvo, para não estragá-lo.",
     "saveError": "Não foi possível salvar o jogo: o armazenamento do navegador não está disponível.",
     "levelName_1": "Lojinha",
     "levelName_2": "Venda da Esquina",

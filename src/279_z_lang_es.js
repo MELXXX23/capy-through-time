@@ -45,6 +45,8 @@ installLang("es", {
     "statEarned": "Ganado en total",
     "tapHint": "Toca la tienda. Cuanto mayores sean tus ingresos, más rinde cada toque. Igual que los grandes negocios, pero más honesto.",
     "soonText": "Esta pestaña se abre un poco más tarde. ¡Capy ya está trabajando en ella!",
+    "swUpdate": "Hay una nueva versión del juego. Reinicia el juego para actualizar.",
+    "saveNewer": "Esta partida es de una versión más nueva del juego. Actualízalo: por ahora el progreso no se guarda para no estropearlo.",
     "saveError": "No se pudo guardar la partida: el almacenamiento del navegador no está disponible.",
     "levelName_1": "Tiendita",
     "levelName_2": "Tienda de la Esquina",

@@ -269,7 +269,9 @@ function setLanguage(id) {
 }
 
 function updateSaveWarning() {
-  ui.saveWarn.hidden = storageOk;
+  ui.saveWarn.hidden = storageOk && !saveNewer;
+  const k = saveNewer ? 'saveNewer' : 'saveError';
+  if (ui.saveWarn.dataset.i18n !== k) { ui.saveWarn.dataset.i18n = k; ui.saveWarn.textContent = t(k); }
 }
 
 // Оновлює лічильник і панель (тільки якщо текст змінився)

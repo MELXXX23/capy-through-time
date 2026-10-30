@@ -44,6 +44,8 @@ installLang("pl", {
     "statEarned": "Zarobiono w sumie",
     "tapHint": "Stukaj sklep. Im większy dochód, tym więcej daje każde stuknięcie. Jak w wielkim biznesie, tylko uczciwiej.",
     "soonText": "Ta karta otworzy się trochę później. Capy już nad nią pracuje!",
+    "swUpdate": "Wyszła nowa wersja gry. Uruchom grę ponownie, żeby ją zaktualizować.",
+    "saveNewer": "Ten zapis pochodzi z nowszej wersji gry. Zaktualizuj grę: na razie postęp nie jest zapisywany, żeby go nie zepsuć.",
     "saveError": "Nie udało się zapisać gry: pamięć przeglądarki jest niedostępna.",
     "levelName_1": "Mały Sklepik",
     "levelName_2": "Sklep na Rogu",

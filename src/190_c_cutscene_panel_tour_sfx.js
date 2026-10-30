@@ -343,6 +343,8 @@ function capyDiag() {
   d.querySelector('pre').textContent = txt; d.querySelector('pre').addEventListener('click', () => d.remove()); document.body.appendChild(d);
 }
 if ('serviceWorker' in navigator && location.protocol === 'https:') window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+// sw.js докачав нову версію у фоні (інтернет був повільний, гра відкрилась зі старої копії) — кажемо перезапустити. Слухаємо одразу, не на load, щоб не пропустити повідомлення.
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.type === 'capy-update') showToast(t('swUpdate'), 'good'); });
 window.addEventListener('load', initCutscene); window.addEventListener('load', initTour);
 function playSfx(name, ...args) {
   const ac = audio.ctx;
