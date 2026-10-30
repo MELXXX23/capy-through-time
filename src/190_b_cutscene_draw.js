@@ -93,10 +93,11 @@ function cutSayState(T, txt) {
 }
 // розкладка залежить від ширини екрана: на вузькому телефоні актори стоять ближче
 function cutFinale(T, L, w2s) {
-  const fT = T - CT.fin; if (fT <= 0) return null; const W = cut.W, H = cut.H, melC = cutHi('foxcub_0', SPRITES.capy_mel.canvas), nikC = cutHi('bunny_0', SPRITES.capy_nika.canvas), h0 = melC.height / CUT_Q, w0 = melC.width / CUT_Q;
-  const wk = cutSm((fT - 0.5) / 2.2), ph = mobileMQ.matches || landscapePhoneMQ.matches, scF = Math.min(ph ? 2.0 : 2.6, H * (ph ? 0.3 : 0.4) / h0, W * (ph ? 0.33 : 0.42) / w0), sc = cutLerp(0.5, scF, wk), door = w2s(L.shopCX, 158);
-  const fx = cutLerp(door[0], W / 2, wk), foot = cutLerp(door[1], H - (W < 300 ? 76 : 66), wk), gx = w0 * sc * 0.52;
-  return { fT, wk, sc, melC, nikC, mx: fx - gx, nx: fx + gx, foot, h: h0 * sc, fx };
+  const fT = T - CT.fin; if (fT <= 0) return null; const W = cut.W, H = cut.H, melC = cutPx('foxcub_0', SPRITES.capy_mel.canvas), nikC = cutPx('bunny_0', SPRITES.capy_nika.canvas), h0 = melC.height / CUT_Q, w0 = melC.width / CUT_Q;
+  const wk = cutSm((fT - 0.5) / 2.2), ph = mobileMQ.matches || landscapePhoneMQ.matches, scF = Math.min(ph ? 2.0 : 2.6, H * (ph ? 0.3 : 0.4) / h0, W * (ph ? 0.33 : 0.42) / w0), pk = 4 * (cut.K || 1), scI = Math.max(1, Math.floor(scF * pk)) / pk, sc = wk >= 1 ? scI : cutLerp(0.5, scI, wk), door = w2s(L.shopCX, 158);
+  const fx = cutLerp(door[0], W / 2, wk), foot = cutLerp(door[1], H - (W < 300 ? 76 : 66), wk), gx = w0 * sc * 0.52;      // у кінці кроку пікселі героїв — ціла кількість пікселів полотна (scI), тож усі однакові
+  const q = CUT_Q * (cut.K || 1), rq = v => Math.round(v * q) / q;
+  return { fT, wk, sc, melC, nikC, mx: rq(fx - gx), nx: rq(fx + gx), foot: rq(foot), h: h0 * sc, fx };
 }
 function cutLay() {
   const nar = cut.W < 300, L = { nar, shopCX: 385, lotL: 305, lotR: 465 };

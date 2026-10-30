@@ -726,7 +726,7 @@ html.satfix #cutSkip { top: calc(var(--sat, 0px) + 10px); }
 #eiRays { position: absolute; left: 50%; top: 50%; width: 220vmax; height: 220vmax; margin: -110vmax 0 0 -110vmax; opacity: 0; background: repeating-conic-gradient(rgba(255,255,255,.13) 0 7deg, transparent 7deg 14deg); animation: eiSpin 24s steps(120) infinite, eiFade .8s steps(8, end) .8s forwards; }
 @keyframes eiSpin { to { transform: rotate(360deg); } }
 #eiBox { position: relative; text-align: center; padding: 0 5vw; color: #fff4dc; text-shadow: 0 3px 0 rgba(20,12,28,.85), 0 0 14px rgba(20,12,28,.7); }
-#eiEmblem { width: clamp(128px, 26vmin, 256px); height: clamp(128px, 26vmin, 256px); image-rendering: pixelated; image-rendering: crisp-edges; opacity: 0; animation: eiPop .9s steps(9, end) .9s forwards; filter: drop-shadow(0 0 14px rgba(255,255,255,.6)); }
+#eiEmblem { width: clamp(144px, 29.25vmin, 288px); height: clamp(144px, 29.25vmin, 288px); image-rendering: pixelated; image-rendering: crisp-edges; opacity: 0; animation: eiPop .9s steps(9, end) .9s forwards; filter: drop-shadow(0 0 14px rgba(255,255,255,.6)); }
 @keyframes eiPop { 0% { opacity: 0; transform: scale(.2) rotate(-25deg); } 70% { opacity: 1; transform: scale(1.25) rotate(6deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
 #eiNum { font-size: clamp(12px, 2.2vmin, 20px); letter-spacing: .3em; margin-top: 18px; opacity: 0; color: #ffe08a; animation: eiFade .5s steps(5, end) 1.7s forwards; }
 #eiTitle { font-size: clamp(20px, 5.2vmin, 54px); line-height: 1.3; margin-top: 12px; min-height: 1.3em; }
@@ -7165,7 +7165,11 @@ function lineG(g, x0, y0, x1, y1, c) {      // лінія з пікселів (�
 }
 let TREE_CROWN_MASK = null;
 const TREE_CACHE = new Map();       // готові дерева (x, вид, сезон) → полотно: звичайне дерево не залежить від епохи, тож при подорожі береться з кешу, а не малюється заново (~40 мс)
-function drawStreetTree(g, x, v, season) {
+function drawStreetTree(g, x, v, season) {      // дерево стоїть у своїй міні-клумбі (р. 73е): задній бортик і земля — під стовбуром, передній бортик — поверх
+  drawTreeBed(g, x, season, 0); drawStreetTreeCore(g, x, v, season); drawTreeBed(g, x, season, 1);
+  if (season === 'halloween') treeHalloweenPumpkins(g, x, LAYOUT.horizonY + 8);       // гарбузи — обабіч паркану й поверх клумби, а не під нею
+}
+function drawStreetTreeCore(g, x, v, season) {
   { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.tree) return A.tree(g, x, v, season); }
   if (season !== 'winter') {                                                                  // об'ємні дерева (275_a_sakura.js)
     drawTreeV2(g, x, v, season);
@@ -7283,8 +7287,9 @@ function treeHalloweenDecor(g, x, cy) {
     R(g, gx, cy + 9 + sag, 1, 1, 'd');
     if ((gx - x) % 4 === 0) R(g, gx, cy + 10 + sag, 2, 2, ['o', 'y', 'p'][(gx - x + 12) / 4 % 3 | 0]);
   }
-  // гарбузи на землі під деревом (замість гарбузів на бруківці: не заважають звірятам); [зсув по x, зсув по землі, розмір 0–2, різьблене обличчя]
-  const base = cy + 51;
+}
+// гарбузи на землі обабіч клумби (замість гарбузів на бруківці: не заважають звірятам); [зсув по x, зсув по землі, розмір 0–2, різьблене обличчя]
+function treeHalloweenPumpkins(g, x, base) {
   const gpump = (px, py, size, face) => {
     const w = [7, 9, 12][size], h = [5, 7, 9][size], x0 = px - (w >> 1);
     R(g, x0 + 1, py - h, w - 2, h + 1, 'd'); R(g, x0, py - h + 1, w, h - 1, 'd');                                  // контур
@@ -7294,7 +7299,7 @@ function treeHalloweenDecor(g, x, cy) {
     R(g, px, py - h - 1, 2, 2, 'g'); R(g, px + 1, py - h - 2, 1, 1, 'g');                                            // хвостик
     if (face) { const e = size > 0 ? 2 : 1; R(g, px - 2, py - h + 2, e, e, 'y'); R(g, px + 1, py - h + 2, e, e, 'y'); R(g, px - 2, py - 3, 5, 1, 'y'); if (size > 0) R(g, px - 1, py - 2, 3, 1, 'y'); }
   };
-  [[-30, 8, 2, 1], [-22, 11, 1, 0], [-15, 7, 2, 0], [-9, 12, 0, 1], [10, 12, 1, 1], [16, 8, 2, 1], [23, 11, 0, 0], [30, 7, 2, 0], [-36, 11, 0, 0], [36, 12, 1, 1]]
+  [[-29, 8, 2, 1], [-24, 12, 0, 0], [24, 11, 1, 1], [29, 7, 2, 0]]
     .forEach(p => gpump(x + p[0], base + p[1], p[2], p[3]));
 }
 // Зимове дерево: пишні гілки з багатьма відгалуженнями, на яких лежить сніг
@@ -11042,94 +11047,118 @@ let TPG = null, TPC = PAW_COL.hedgehog, TPNOPAW = false;     // полотно, 
 const TP = (x, y, w, h, ch) => R(TPG, x, y, w, h, ch);
 const TPBX = (x, y, w, h, f, l, s) => { TP(x, y, w, h, 'd'); TP(x + 1, y + 1, w - 2, h - 2, f); TP(x + 1, y + 1, w - 2, 1, l); TP(x + 1, y + 1, 1, h - 2, l); TP(x + 1, y + h - 2, w - 2, 1, s); TP(x + w - 2, y + 1, 1, h - 2, s); };
 const TPART = (x, y, rows) => rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] !== '.') TP(x + i, y + j, 1, 1, r[i]); });
-const TPAW = (x, y) => { if (TPNOPAW) return; TP(x, y, 3, 3, TPC[0]); TP(x + 1, y + 1, 1, 1, TPC[1]); TP(x + 1, y, 1, 1, TPC[2]); };
+let TPX = 0, TPY = 0;                                        // центр і ноги героя — звідси росте рука до лапки
+const TPAW = (x, y) => {                                     // лапка 3×3 і рука від плеча до неї (р. 73е: предмет тримається за тіло, а не висить поруч)
+  if (TPNOPAW) return;
+  const sx = TPX + 4, sy = TPY - 11, ex = x, ey = y + 1, n = Math.max(Math.abs(ex - sx), Math.abs(ey - sy));
+  for (let k = 0; k <= n; k++) { const ax = Math.round(sx + (ex - sx) * k / Math.max(1, n)), ay = Math.round(sy + (ey - sy) * k / Math.max(1, n)); TP(ax, ay - 1, 1, 1, TPC[0]); TP(ax, ay, 1, 1, TPC[1]); TP(ax, ay + 1, 1, 1, TPC[0]); }
+  TP(x, y, 3, 3, TPC[0]); TP(x + 1, y + 1, 1, 1, TPC[1]); TP(x + 1, y, 1, 1, TPC[2]); TP(x, y + 1, 1, 1, TPC[1]);
+};
+const TP_PH = [0, 1, 2, 1];                                  // 4 кадри «туди-назад»: 0 → середина → 2 → середина (плавніше за колишні 2 кадри)
 const TEAM_PROP_ART = {
-  register(x, y, ph) {                          // прилавок із касою праворуч від їжака; лапка лежить на касі, монета підстрибує
-    const rx = x + 9;
-    TPBX(rx, y - 9, 25, 9, 'b', 'l', 'd'); TP(rx + 8, y - 7, 1, 6, 'd'); TP(rx + 17, y - 7, 1, 6, 'd'); TP(rx + 3, y - 4, 3, 1, 'h'); TP(rx + 11, y - 4, 4, 1, 'h');
-    TPBX(rx + 12, y - 16, 10, 7, 'e', 'E', 'k'); TP(rx + 14, y - 15, 6, 3, 'g'); TP(rx + 14, y - 15, 6, 1, 'm'); TP(rx + 14, y - 11, 1, 1, 'y'); TP(rx + 16, y - 11, 1, 1, 'y'); TP(rx + 18, y - 11, 1, 1, 'r');
+  register(x, y, f) {                          // прилавок із касою праворуч від їжака; лапка лежить на касі, монета злітає й падає
+    const rx = x + 9, s = TP_PH[f & 3];
+    TPBX(rx, y - 9, 25, 9, 'b', 'l', 'd'); TP(rx + 8, y - 7, 1, 6, 'd'); TP(rx + 17, y - 7, 1, 6, 'd'); TP(rx + 3, y - 4, 3, 1, 'h'); TP(rx + 11, y - 4, 4, 1, 'h'); TP(rx + 1, y - 8, 23, 1, 'h');
+    TPBX(rx + 12, y - 16, 10, 7, 'e', 'E', 'k'); TP(rx + 14, y - 15, 6, 3, 'g'); TP(rx + 14, y - 15, 6, 1, 'm'); TP(rx + 15 + s, y - 14, 1, 1, 'w'); TP(rx + 14, y - 11, 1, 1, 'y'); TP(rx + 16, y - 11, 1, 1, 'y'); TP(rx + 18, y - 11, 1, 1, 'r');
     TPBX(rx + 1, y - 12, 9, 3, 'w', 'W', 'e'); TP(rx + 3, y - 11, 5, 1, 'e');
-    if (!TPNOPAW) { TP(rx - 1, y - 12, 3, 3, TPC[0]); TP(rx, y - 11, 1, 1, TPC[1]); }
-    if (ph) { TP(rx + 15, y - 21, 3, 3, 'd'); TP(rx + 16, y - 20, 1, 1, 'y'); TP(rx + 15, y - 20, 1, 1, 'h'); } else { TP(rx + 16, y - 19, 2, 2, 'd'); TP(rx + 16, y - 19, 1, 1, 'h'); }
+    TPAW(rx - 1, y - 12);
+    const cy = y - 19 - s * 2; TP(rx + 15, cy, 3, 3, 'd'); TP(rx + 16, cy + 1, 1, 1, s === 2 ? 'w' : 'y'); TP(rx + 15, cy + 1, 1, 1, 'h');
+    if (s === 2) { TP(rx + 19, cy - 1, 1, 1, 'w'); TP(rx + 13, cy, 1, 1, 'y'); }
   },
-  hammer(x, y, ph) {                            // молоток б'є по цвяху в дошці
+  hammer(x, y, f) {                            // молоток замахується (угорі → навскоси → удар) і б'є по цвяху
+    const s = TP_PH[f & 3];
     TPBX(x + 10, y - 4, 20, 4, 'c', 'y', 'b'); TP(x + 18, y - 3, 1, 1, 'b'); TP(x + 25, y - 3, 1, 1, 'b');
-    TP(x + 19, y - 6, 1, 2, 'Y'); TP(x + 19, y - 7, 1, 1, 'E');
-    if (!ph) {
-      TP(x + 12, y - 22, 3, 13, 'd'); TP(x + 13, y - 21, 1, 11, 'l'); TPAW(x + 11, y - 12);
+    TP(x + 19, y - 6 + (s === 2 ? 1 : 0), 1, 2, 'Y'); TP(x + 19, y - 7 + (s === 2 ? 1 : 0), 1, 1, 'E');
+    if (s === 0) {
+      TP(x + 12, y - 22, 3, 11, 'd'); TP(x + 13, y - 21, 1, 9, 'l'); TPAW(x + 11, y - 12);
       TPBX(x + 10, y - 28, 9, 6, 'Y', 'w', 'e'); TP(x + 10, y - 28, 1, 6, 'd'); TP(x + 18, y - 27, 1, 4, 'e');
+    } else if (s === 1) {                       // рукоять навскоси, головка на півдорозі
+      for (let k = 0; k < 8; k++) { TP(x + 12 + Math.round(k * 0.7), y - 13 - k, 2, 1, 'd'); TP(x + 13 + Math.round(k * 0.7), y - 13 - k, 1, 1, 'l'); }
+      TPAW(x + 11, y - 13);
+      TPBX(x + 16, y - 25, 8, 6, 'Y', 'w', 'e'); TP(x + 23, y - 24, 1, 4, 'd');
     } else {
       TP(x + 12, y - 14, 3, 9, 'd'); TP(x + 13, y - 13, 1, 7, 'l'); TPAW(x + 11, y - 13);
       TPBX(x + 15, y - 10, 9, 5, 'Y', 'w', 'e');
       TP(x + 25, y - 9, 1, 1, 'y'); TP(x + 26, y - 11, 1, 1, 'w'); TP(x + 24, y - 12, 1, 1, 'h'); TP(x + 27, y - 8, 1, 1, 'y');
     }
   },
-  tray(x, y, ph) {                              // таця з цукерками в лапці збоку
-    const b = ph ? 1 : 0;
+  tray(x, y, f) {                               // таця з цукерками в лапці збоку, м'яко погойдується
+    const b = TP_PH[f & 3];
     TP(x + 9, y - 12 - b, 24, 4, 'd'); TP(x + 10, y - 11 - b, 22, 2, 'Y'); TP(x + 10, y - 11 - b, 22, 1, 'w'); TP(x + 10, y - 10 - b, 22, 1, 'e'); TP(x + 12, y - 8 - b, 18, 1, 'd'); TPAW(x + 7, y - 11 - b);
     TPART(x + 11, y - 18 - b, ['..dd...', '.dpqd..', 'dpqppd.', 'drrrrd.', '.dddd..']);
     TPART(x + 18, y - 17 - b, ['.d.dd.d', 'dhhhhhd', 'dhyhhhd', 'd.hhh.d', '..d.d..']);
     TPART(x + 26, y - 16 - b, ['.ddd..', 'dfffd.', 'dqffdd', 'dfffd.', '.ddd..']);
+    if (b === 2) TP(x + 14, y - 20 - b, 1, 1, 'w');
   },
-  baton(x, y, ph) {                             // кийок охоронниці з відблиском
+  baton(x, y, f) {                             // кийок охоронниці, відблиск пробігає згори донизу
+    const s = TP_PH[f & 3];
     TP(x + 10, y - 17, 4, 16, 'd'); TP(x + 11, y - 16, 2, 14, 'k'); TP(x + 11, y - 16, 1, 14, 'e');
     TP(x + 11, y - 16, 2, 2, 'h'); TP(x + 11, y - 9, 2, 1, 'w'); TP(x + 11, y - 12, 2, 1, 'w'); TPAW(x + 9, y - 9);
     TP(x + 14, y - 11, 1, 3, 'd'); TP(x + 15, y - 12, 1, 1, 'd');
-    if (ph) { TP(x + 11, y - 15, 1, 1, 'w'); TP(x + 15, y - 16, 1, 3, 'w'); TP(x + 14, y - 15, 3, 1, 'w'); }
+    TP(x + 12, y - 15 + s * 2, 1, 2, 'w');
+    if (s === 1) TP(x + 15, y - 15, 1, 1, 'w');
+    if (s === 2) { TP(x + 15, y - 16, 1, 3, 'w'); TP(x + 14, y - 15, 3, 1, 'w'); }
   },
-  box(x, y, ph) {                               // ящик у лапці збоку
-    const b = ph ? 1 : 0;
+  box(x, y, f) {                               // ящик у лапці збоку, підстрибує в такт
+    const b = TP_PH[f & 3];
     TPBX(x + 10, y - 12 - b, 16, 10, 'c', 'y', 'b'); TP(x + 16, y - 11 - b, 4, 8, 'w'); TP(x + 16, y - 11 - b, 4, 1, 'W'); TP(x + 15, y - 11 - b, 1, 8, 'b'); TP(x + 20, y - 11 - b, 1, 8, 'b');
     TPBX(x + 21, y - 9 - b, 4, 4, 'w', 'W', 'e'); TP(x + 22, y - 8 - b, 2, 1, 'r'); TP(x + 12, y - 8 - b, 3, 1, 'b'); TPAW(x + 8, y - 8 - b);
   },
-  ledger(x, y, ph) {                            // розкрита книга обліку й перо
+  ledger(x, y, f) {                            // розкрита книга обліку; перо пише рядок туди-назад
+    const s = TP_PH[f & 3];
     TPBX(x + 10, y - 20, 16, 12, 'r', 'J', 'R'); TP(x + 11, y - 19, 14, 10, 'd'); TP(x + 12, y - 18, 6, 8, 'w'); TP(x + 19, y - 18, 5, 8, 'w'); TP(x + 18, y - 19, 1, 10, 'd');
-    TP(x + 13, y - 16, 4, 1, 'e'); TP(x + 13, y - 14, 3, 1, 'e'); TP(x + 20, y - 16, 3, 1, 'e'); TP(x + 20, y - 14 + ph, 3, 1, 'n'); TP(x + 13, y - 12, 4, 1, 'e');
-    TPAW(x + 8, y - 12); TP(x + 24 + ph, y - 25, 1, 6, 'd'); TP(x + 25 + ph, y - 26, 1, 2, 'w'); TP(x + 23 + ph, y - 27, 3, 1, 'w');
+    TP(x + 13, y - 16, 4, 1, 'e'); TP(x + 13, y - 14, 3, 1, 'e'); TP(x + 20, y - 16, 3, 1, 'e'); TP(x + 20, y - 14, 1 + s, 1, 'n'); TP(x + 13, y - 12, 4, 1, 'e');
+    TPAW(x + 8, y - 12); TP(x + 22 + s, y - 20, 1, 6, 'd'); TP(x + 23 + s, y - 21, 1, 2, 'w'); TP(x + 21 + s, y - 22, 3, 1, 'w'); TP(x + 22 + s, y - 14, 1, 1, 'k');
   },
-  broom(x, y, ph) {                             // віник змітає пил
-    const bx = x + 11, s = ph ? 1 : -1;
+  broom(x, y, f) {                             // віник змітає пил: ліворуч → посередині → праворуч
+    const bx = x + 11, s = TP_PH[f & 3] - 1;
     TP(bx, y - 22, 3, 18, 'd'); TP(bx + 1, y - 21, 1, 16, 'l'); TPAW(bx - 1, y - 14);
     TP(bx - 4 + s, y - 6, 11, 6, 'd'); TP(bx - 3 + s, y - 5, 9, 4, 'h'); TP(bx - 3 + s, y - 5, 9, 1, 'y'); TP(bx - 3 + s, y - 2, 9, 1, 'o'); TP(bx - 1 + s, y - 5, 1, 4, 'o'); TP(bx + 2 + s, y - 5, 1, 4, 'o');
-    TP(bx - 5 + s, y - 7, 1, 1, 'c'); TP(bx + 8 + s, y - 4 - ph, 1, 1, 'c');
+    if (s < 0) TP(bx - 6, y - 7, 1, 1, 'c');
+    if (s > 0) { TP(bx + 9, y - 5, 1, 1, 'c'); TP(bx + 10, y - 7, 1, 1, 'c'); }
     TP(bx - 1, y - 8, 5, 2, 'r'); TP(bx - 1, y - 8, 5, 1, 'J');
   },
-  dress(x, y, ph) {                             // сукня на вішаку міняє колір і блищить
-    const c = ph ? 'p' : 'u', l = ph ? 'q' : 'v', s = ph ? 'J' : 'P', X = x + 11;
+  dress(x, y, f) {                             // сукня на вішаку повільно міняє колір, блиск пробігає по ній
+    const alt = f >= 6, c = alt ? 'p' : 'u', l = alt ? 'q' : 'v', s = alt ? 'J' : 'P', X = x + 11, sw = TP_PH[f & 3] - 1;
     TP(X + 5, y - 28, 1, 2, 'd'); TP(X + 4, y - 29, 3, 1, 'Y'); TP(X + 3, y - 26, 5, 1, 'd'); TP(X + 2, y - 25, 1, 1, 'd'); TP(X + 8, y - 25, 1, 1, 'd');
     TPART(X, y - 24, ['..dd...dd..', '..d' + c + 'd.d' + c + 'd..', '..d' + l + c + c + c + c + 'd..', '...d' + c + c + c + 'd...', '..drrrrrd..', '..d' + l + c + c + c + s + 'd..', '.d' + l + c + c + c + c + s + 'd.', 'd' + l + c + c + c + c + c + s + 'd', 'd' + l + c + c + c + c + c + s + 'd', 'd' + c + l + c + c + c + c + s + 'd', 'dwdwdwdwdwd']);
-    const gx = ph ? X + 8 : X + 1; TP(gx, y - 17, 1, 1, 'w'); TP(gx - 1, y - 16, 3, 1, 'w'); TP(gx, y - 15, 1, 1, 'w');
+    const gx = X + 5 + sw * 2; TP(gx, y - 17, 1, 1, 'w'); TP(gx - 1, y - 16, 3, 1, 'w'); TP(gx, y - 15, 1, 1, 'w');
+    TPAW(X - 2, y - 14);
   },
-  clipboard(x, y, ph) {                         // планшет із папером і олівцем
+  clipboard(x, y, f) {                         // планшет із папером, олівець виводить рядок
+    const s = TP_PH[f & 3];
     TPBX(x + 10, y - 20, 12, 15, 'l', 'c', 'b'); TP(x + 13, y - 21, 6, 3, 'd'); TP(x + 14, y - 20, 4, 1, 'Y'); TP(x + 14, y - 21, 4, 1, 'w');
     TP(x + 12, y - 17, 8, 10, 'w'); TP(x + 12, y - 17, 8, 1, 'W'); TP(x + 19, y - 16, 1, 9, 'E');
-    TP(x + 13, y - 15, 6, 1, 'e'); TP(x + 13, y - 13 + ph, 6, 1, 'n'); TP(x + 13, y - 11, 5, 1, 'e'); TP(x + 13, y - 9, 3, 1, 'e'); TPAW(x + 8, y - 13);
-    TP(x + 23, y - 11 - ph, 1, 7, 'o'); TP(x + 23, y - 12 - ph, 1, 1, 'd'); TP(x + 23, y - 4 - ph, 1, 1, 'k');
+    TP(x + 13, y - 15, 6, 1, 'e'); TP(x + 13, y - 13, 2 + s * 2, 1, 'n'); TP(x + 13, y - 11, 5, 1, 'e'); TP(x + 13, y - 9, 3, 1, 'e'); TPAW(x + 8, y - 13);
+    TP(x + 23, y - 11 - s, 1, 7, 'o'); TP(x + 23, y - 12 - s, 1, 1, 'd'); TP(x + 23, y - 4 - s, 1, 1, 'k');
   },
-  megaphone(x, y, ph) {                         // гучномовець
+  megaphone(x, y, f) {                         // гучномовець; хвилі звуку розходяться одна за одною
     TPART(x + 10, y - 22, ['.dd.....', 'dppd....', 'dqppdd..', 'dqpppdd.', 'dwwwppdd', 'dqpppdd.', 'dqppdd..', 'dppd....', '.dd.....']);
     TP(x + 15, y - 22, 3, 1, 'd'); TP(x + 16, y - 14, 2, 1, 'd');
     TP(x + 17, y - 21, 1, 9, 'd'); TP(x + 18, y - 20, 1, 7, 'r'); TP(x + 18, y - 20, 1, 2, 'p');
     TP(x + 11, y - 14, 2, 6, 'd'); TP(x + 12, y - 13, 1, 4, 'k'); TPAW(x + 9, y - 11);
-    if (ph) { TP(x + 21, y - 20, 1, 3, 'w'); TP(x + 23, y - 18, 1, 5, 'w'); TP(x + 25, y - 16, 1, 1, 'w'); } else { TP(x + 20, y - 18, 1, 1, 'w'); TP(x + 22, y - 17, 1, 3, 'w'); TP(x + 24, y - 16, 1, 5, 'w'); }
+    const w = f % 3;                            // три хвилі по черзі: ближня, середня, дальня
+    TP(x + 20, y - 18, 1, 3, w === 0 ? 'w' : 'e'); TP(x + 22, y - 19, 1, 5, w === 1 ? 'w' : 'e'); TP(x + 24, y - 20, 1, 7, w === 2 ? 'w' : 'e');
   },
-  tablet(x, y, ph) {                            // планшет із графіком
-    TPBX(x + 10, y - 19, 16, 12, 'k', 'e', 'k'); TP(x + 11, y - 18, 14, 10, 'z'); TP(x + 12, y - 17, 12, 8, ph ? 's' : 'S');
-    TP(x + 13, y - 11, 2, 2, 'g'); TP(x + 16, y - 13, 2, 4, 'g'); TP(x + 19, y - 15 + ph, 2, 6 - ph, 'r'); TP(x + 12, y - 17, 12, 1, 'w'); TPAW(x + 8, y - 11);
+  tablet(x, y, f) {                            // планшет із графіком, стовпчик росте
+    const s = TP_PH[f & 3];
+    TPBX(x + 10, y - 19, 16, 12, 'k', 'e', 'k'); TP(x + 11, y - 18, 14, 10, 'z'); TP(x + 12, y - 17, 12, 8, f >= 6 ? 's' : 'S');
+    TP(x + 13, y - 11, 2, 2, 'g'); TP(x + 16, y - 13, 2, 4, 'g'); TP(x + 19, y - 13 - s, 2, 4 + s, 'r'); TP(x + 12, y - 17, 12, 1, 'w'); TPAW(x + 8, y - 11);
     TP(x + 13, y - 16, 1, 1, 'w'); TP(x + 14, y - 15, 1, 1, 'w');
   },
-  cart(x, y, ph) {                              // візок із товаром
-    const cx = x + 20;
+  cart(x, y, f) {                              // візок із товаром, колеса крутяться
+    const cx = x + 20, s = TP_PH[f & 3], sp = f & 1;
     TPBX(cx - 7, y - 11, 15, 7, 'e', 'E', 'k'); TP(cx - 7, y - 12, 15, 1, 'd'); TP(cx + 8, y - 18, 2, 14, 'd'); TP(cx + 8, y - 18, 1, 13, 'b'); TP(cx + 5, y - 18, 5, 1, 'd');
-    TPBX(cx - 6, y - 16, 5, 5, 'r', 'J', 'R'); TPBX(cx - 1, y - 15 - ph, 5, 4, 'g', 'm', 'G'); TP(cx - 5, y - 14, 3, 1, 'w');
-    TP(cx - 6, y - 4, 4, 4, 'd'); TP(cx - 5, y - 3, 2, 2, 'e'); TP(cx + 2, y - 4, 4, 4, 'd'); TP(cx + 3, y - 3, 2, 2, 'e'); TPAW(x + 9, y - 10);
+    TPBX(cx - 6, y - 16, 5, 5, 'r', 'J', 'R'); TPBX(cx - 1, y - 15 - (s >> 1), 5, 4, 'g', 'm', 'G'); TP(cx - 5, y - 14, 3, 1, 'w');
+    [cx - 6, cx + 2].forEach(wx => { TP(wx, y - 4, 4, 4, 'd'); TP(wx + 1, y - 3, 2, 2, 'e'); TP(wx + 1 + sp, y - 3 + sp, 1, 1, 'k'); });
+    TPAW(x + 8, y - 12);
   }
 };
-function teamPropArt(g, prop, x, y, ph, id, dir, noPaw) {   // x — центр звіра, y — ноги; ph — кадр 0/1
+function teamPropArt(g, prop, x, y, f, id, dir, noPaw) {   // x — центр звіра, y — ноги; f — кадр 0..11 (4 кадри руху × 3)
   const fn = TEAM_PROP_ART[prop]; if (!fn) return;
-  TPG = g; TPNOPAW = !!noPaw; TPC = PAW_TINT[id] || PAW_COL[TEAM_SPECIES[id]] || PAW_COL.hedgehog;
+  TPG = g; TPNOPAW = !!noPaw; TPC = PAW_TINT[id] || PAW_COL[TEAM_SPECIES[id]] || PAW_COL.hedgehog; TPX = x; TPY = y;
   if (dir < 0) { g.save(); g.translate(2 * x, 0); g.scale(-1, 1); }
-  fn(x, y, ph);
+  fn(noPaw ? x : x - 2, y, f | 0);                          // у грі предмет на 2 px ближче: лапка торкається тіла
   if (dir < 0) g.restore();
 }
 // Портрет героя на картці команди (34×27): справа від нього — його предмет у руках; колір фону портрета й сам звір — як і раніше
@@ -11705,7 +11734,17 @@ function pickWanderTarget(a) {
 }
 
 // Предмет у лапках звірятка (малюється поверх спрайта). t — час, dir — куди йде
-function drawTeamProp(prop, x, y, t, dir, id) { teamPropArt(ctx, prop, x, y, Math.floor(t * 3) % 2, id, dir); }      // малюнки предметів — у 180_a9_team_props.js
+function drawTeamProp(prop, x, y, t, dir, id) { teamPropArt(ctx, prop, x, y, Math.floor(t * 6) % 12, id, dir); }
+// Предмет у руках (р. 73е): малюється в полотно 1:1 і збільшується тим самим evenScaled, що й фігура, з тим самим округленням позиції —
+// пікселі предмета й тіла збігаються, предмет рухається разом із тілом у тому ж кадрі (без відставання й розмиття дробового масштабу).
+const PROP_CV = new Map();
+function drawCrispProp(prop, id, x0, y0, bob, flip, t) {
+  if (!TEAM_PROP_ART[prop]) return;
+  const f = Math.floor(t * 6) % 12, cx = flip ? 39 : 14, key = prop + '|' + id + '|' + f + '|' + (flip ? 1 : 0);
+  let c = PROP_CV.get(key);
+  if (!c) { if (PROP_CV.size > 300) PROP_CV.clear(); c = document.createElement('canvas'); c.width = 54; c.height = 45; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; teamPropArt(g, prop, cx, 42, f, id, flip ? -1 : 1); PROP_CV.set(key, c); }
+  const K = HERO_K; ctx.drawImage(evenScaled(c, K), Math.round(x0 - cx * K), Math.round(y0 - (42 + bob) * K));
+}      // малюнки предметів — у 180_a9_team_props.js
 
 const ACTOR_K = 1.4;                                   // звірята-працівники й гості: 16 px × 1,4 ≈ 22 px (було 1,56; −10%), Капі 24 px × 1,3 ≈ 31 px
 function actorK(a) { return HERO_K; }                  // увесь «виступ» героя (предмет, тінь, репліки, влучання) — у масштабі самого героя
@@ -11823,10 +11862,10 @@ function drawActor(a) {
   scaled(() => {
     const { m, x, y, sitting, waddle, idleBob, hopY } = p;
     if (hasHats() && !skinOn('hero')) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);   // маски й шапки свят — лише на звичайних звірятах, зі скіном героя їх немає
-    if (!sitting && !behindProp) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, p.flip ? -1 : 1, m.id);
     if (a.rest > 0) drawDrink(x, y - hopY, a.t);
     if (hasScarves()) drawScarf(x, y - 16 - waddle - idleBob - hopY, a.i);
   });
+  if (!p.sitting && !behindProp) drawCrispProp(p.m.spot.prop, p.m.id, p.x, p.y, p.bob, p.flip, a.t);
   if (hasHats() && !skinOn('hero')) drawCrispEars(teamSprite(p.m.id), p.x, p.y, p.bob, p.flip);
 }
 // Склянка води в лапках і краплі поту (літній перепочинок)
@@ -13153,6 +13192,8 @@ function cutEpx(src) {
   og.putImageData(od, 0, 0); return out;
 }
 function cutHi(name, canvas) { const key = 'hi' + name; if (cut.cache[key]) return cut.cache[key]; const src = canvas || getSpriteCanvas(name); return (cut.cache[key] = cutEpx(cutEpx(src))); }
+// MEL і NIKA (р. 73е): збільшення ×4 «квадратиками», без EPX-згладжування — кожен піксель лисиці й зайчиці чіткий, а не «мильний»
+function cutPx(name, canvas) { const key = 'px' + name; if (cut.cache[key]) return cut.cache[key]; const src = canvas || getSpriteCanvas(name), o = document.createElement('canvas'); o.width = src.width * 4; o.height = src.height * 4; const og = o.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(src, 0, 0, o.width, o.height); return (cut.cache[key] = o); }
 // Капі без сукні/футболки: шерсть, голова з квіточкою (дівчинка) або листочком (хлопчик), очей немає — їх малюють емоції
 function cutCapyHi() {
   const boy = state.settings.gender === 'm', key = 'capy' + (boy ? 'm' : 'f'); if (cut.cache[key]) return cut.cache[key];
@@ -13259,10 +13300,11 @@ function cutSayState(T, txt) {
 }
 // розкладка залежить від ширини екрана: на вузькому телефоні актори стоять ближче
 function cutFinale(T, L, w2s) {
-  const fT = T - CT.fin; if (fT <= 0) return null; const W = cut.W, H = cut.H, melC = cutHi('foxcub_0', SPRITES.capy_mel.canvas), nikC = cutHi('bunny_0', SPRITES.capy_nika.canvas), h0 = melC.height / CUT_Q, w0 = melC.width / CUT_Q;
-  const wk = cutSm((fT - 0.5) / 2.2), ph = mobileMQ.matches || landscapePhoneMQ.matches, scF = Math.min(ph ? 2.0 : 2.6, H * (ph ? 0.3 : 0.4) / h0, W * (ph ? 0.33 : 0.42) / w0), sc = cutLerp(0.5, scF, wk), door = w2s(L.shopCX, 158);
-  const fx = cutLerp(door[0], W / 2, wk), foot = cutLerp(door[1], H - (W < 300 ? 76 : 66), wk), gx = w0 * sc * 0.52;
-  return { fT, wk, sc, melC, nikC, mx: fx - gx, nx: fx + gx, foot, h: h0 * sc, fx };
+  const fT = T - CT.fin; if (fT <= 0) return null; const W = cut.W, H = cut.H, melC = cutPx('foxcub_0', SPRITES.capy_mel.canvas), nikC = cutPx('bunny_0', SPRITES.capy_nika.canvas), h0 = melC.height / CUT_Q, w0 = melC.width / CUT_Q;
+  const wk = cutSm((fT - 0.5) / 2.2), ph = mobileMQ.matches || landscapePhoneMQ.matches, scF = Math.min(ph ? 2.0 : 2.6, H * (ph ? 0.3 : 0.4) / h0, W * (ph ? 0.33 : 0.42) / w0), pk = 4 * (cut.K || 1), scI = Math.max(1, Math.floor(scF * pk)) / pk, sc = wk >= 1 ? scI : cutLerp(0.5, scI, wk), door = w2s(L.shopCX, 158);
+  const fx = cutLerp(door[0], W / 2, wk), foot = cutLerp(door[1], H - (W < 300 ? 76 : 66), wk), gx = w0 * sc * 0.52;      // у кінці кроку пікселі героїв — ціла кількість пікселів полотна (scI), тож усі однакові
+  const q = CUT_Q * (cut.K || 1), rq = v => Math.round(v * q) / q;
+  return { fT, wk, sc, melC, nikC, mx: rq(fx - gx), nx: rq(fx + gx), foot: rq(foot), h: h0 * sc, fx };
 }
 function cutLay() {
   const nar = cut.W < 300, L = { nar, shopCX: 385, lotL: 305, lotR: 465 };
@@ -13729,7 +13771,7 @@ function cutSeenDevice(set) { try { if (set) localStorage.setItem('capyCutSeen',
 function cutWarm(style) {
   if (cut.on || cut.warm) return; cut.warm = 1; cut.style = style;
   const steps = [() => { cut.cv = document.getElementById('cutCv'); cutLayout(); }, cutPrep, () => cutSky(cut.W, cut.H, Math.round((cut.H - 216) * 0.9)), cutCapyHi,
-    () => cutHi('team_bodya_e0'), () => cutHi('foxcub_0', SPRITES.capy_mel.canvas), () => cutHi('bunny_0', SPRITES.capy_nika.canvas), () => [0, 1, 2].forEach(cutTreeCv), () => { cutLampCv(); cutCobbleCv(); }];
+    () => cutHi('team_bodya_e0'), () => cutPx('foxcub_0', SPRITES.capy_mel.canvas), () => cutPx('bunny_0', SPRITES.capy_nika.canvas), () => [0, 1, 2].forEach(cutTreeCv), () => { cutLampCv(); cutCobbleCv(); }];
   for (let i = 0; i < 30; i += 6) steps.push(() => { for (let j = i; j < i + 6; j++) cutHouseCv(j); });
   const run = () => { const f = steps.shift(); if (!f || cut.on || cut.style !== style) return; try { f(); } catch (e) { /* не страшно: доробиться в першому кадрі */ } setTimeout(run, 40); };
   run();
@@ -13782,7 +13824,7 @@ function startMenuTour(cb) {
   const box = document.getElementById('tour'); if (!box) { if (cb) cb(); return; }
   tourStop(false); tour.on = true; tour.i = 0; tour.cb = cb || null; tour.news = false;
   if (!tour.wrapped && typeof openNews === 'function') { tour.wrapped = true; const orig = openNews; openNews = function () { const r = orig.apply(this, arguments); if (tour.on && tour.news) { tour.news = false; setTimeout(() => { if (tour.on) { tour.i++; tourStep(); } }, 400); } return r; }; }
-  ['tourMel', 'tourNika'].forEach((id, k) => { const cv = document.getElementById(id), hi = k ? cutHi('bunny_0', SPRITES.capy_nika.canvas) : cutHi('foxcub_0', SPRITES.capy_mel.canvas); cv.width = hi.width; cv.height = hi.height; cv.getContext('2d').drawImage(hi, 0, 0); });
+  ['tourMel', 'tourNika'].forEach((id, k) => { const cv = document.getElementById(id), hi = k ? cutPx('bunny_0', SPRITES.capy_nika.canvas) : cutPx('foxcub_0', SPRITES.capy_mel.canvas); cv.width = hi.width; cv.height = hi.height; cv.getContext('2d').drawImage(hi, 0, 0); });
   if (!(typeof mobileMQ !== 'undefined' && mobileMQ.matches) && !state.settings.panelOpen) { state.settings.panelOpen = true; try { applyPanel(); } catch (e) { /* не страшно */ } }
   box.hidden = false; document.getElementById('tourSkip').textContent = (TOUR_TXT[state.lang] || TOUR_TXT.uk).skip;
   tourStep(); tour.timer = setInterval(tourPlace, 120);
@@ -14441,8 +14483,20 @@ function updateEpochFx(dt) {
 /* ---------- Заставка нової епохи (на весь екран) ---------- */
 const epochIntro = { active: false, timers: [], startedAt: 0, done: null };
 const EPOCH_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
-// Емблема епохи 32×32 пікселі
+// Емблема епохи: малюнок 32×32 на полотні 36×36, довкола — темний контур, по краях — світло зліва згори й тінь справа знизу (р. 73е)
 function drawEpochEmblem(g, i) {
+  const c = g.canvas; if (c.width !== 36) { c.width = 36; c.height = 36; }
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, 36, 36); g.save(); g.translate(2, 2); eiEmblemArt(g, i); g.restore();
+  const d = g.getImageData(0, 0, 36, 36), p = d.data, o = new Uint8ClampedArray(p), A = k => p[k * 4 + 3] > 100;
+  for (let y = 0; y < 36; y++) for (let x = 0; x < 36; x++) {
+    const k = y * 36 + x, j = k * 4;
+    if (!A(k)) { if ((x > 0 && A(k - 1)) || (x < 35 && A(k + 1)) || (y > 0 && A(k - 36)) || (y < 35 && A(k + 36))) { o[j] = 26; o[j + 1] = 16; o[j + 2] = 36; o[j + 3] = 255; } continue; }
+    const ul = (x > 0 && !A(k - 1)) || (y > 0 && !A(k - 36)), dr = (x < 35 && !A(k + 1)) || (y < 35 && !A(k + 36));
+    if (ul && !dr) for (let q = 0; q < 3; q++) o[j + q] = p[j + q] + (255 - p[j + q]) * 0.35; else if (dr && !ul) for (let q = 0; q < 3; q++) o[j + q] = p[j + q] * 0.72;
+  }
+  d.data.set(o); g.putImageData(d, 0, 0);
+}
+function eiEmblemArt(g, i) {
   g.clearRect(0, 0, 32, 32);
   if (i === 8) { drawJapanEmblem(g); return; }
   switch (i) {
@@ -14484,22 +14538,110 @@ function drawEpochEmblem(g, i) {
 }
 /* ---------- Заставка епохи: у кожної епохи свій фон-анімація й свій вихід на сцену ---------- */
 let eiRaf = 0, eiT0 = 0;
-function eiFont(g, px) { g.font = Math.max(5, Math.round(px)) + 'px "Press Start 2P", monospace'; }
+function eiFont(g, px) { g.font = (px >= 12 ? 16 : 8) + 'px "Press Start 2P", monospace'; }      // піксельний шрифт лише в рідному розмірі 8/16 — літери чіткі
 function eiRand(i, k) { return warpSeed(i * 7 + (k || 0)); }
+/* ---------- Заставка епохи: чисті пікселі (р. 73е) ----------
+   Полотно заставки 240 px завширшки розтягується на весь екран «квадратиками», тож кожна фігура тут малюється цілими пікселями:
+   прямокутники й текст прилипають до сітки (eiCrisp), овали, лінії й багатокутники — по пікселях (eiEll, eiLine, eiPoly), без розмитих країв. */
+function eiCrisp(g) {
+  if (g._crisp) return g; g._crisp = 1;
+  const fr = g.fillRect, ft = g.fillText;
+  g.fillRect = function (x, y, w, h) { const x0 = Math.round(x), y0 = Math.round(y), x1 = Math.round(x + w), y1 = Math.round(y + h); if (x1 > x0 && y1 > y0) fr.call(this, x0, y0, x1 - x0, y1 - y0); };
+  g.fillText = function (s, x, y) { ft.call(this, s, Math.round(x), Math.round(y)); };
+  return g;
+}
+const eiR = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+function eiEll(g, cx, cy, rx, ry, rot, c) {                    // заповнений (повернутий) овал по пікселях
+  const co = Math.cos(rot || 0), si = Math.sin(rot || 0), m = Math.ceil(Math.max(rx, ry)) + 1, X0 = Math.round(cx), Y0 = Math.round(cy); g.fillStyle = c;
+  for (let y = Y0 - m; y <= Y0 + m; y++) {
+    let a = null, b = null;
+    for (let x = X0 - m; x <= X0 + m; x++) { const dx = x + 0.5 - cx, dy = y + 0.5 - cy, u = (dx * co + dy * si) / rx, v = (-dx * si + dy * co) / ry; if (u * u + v * v <= 1) { if (a === null) a = x; b = x; } }
+    if (a !== null) g.fillRect(a, y, b - a + 1, 1);
+  }
+}
+const eiDisc = (g, cx, cy, r, c) => eiEll(g, cx, cy, r, r, 0, c);
+function eiLine(g, x0, y0, x1, y1, c, w) {                      // лінія з квадратиків w×w
+  w = w || 1; const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)))); g.fillStyle = c;
+  for (let k = 0; k <= n; k++) g.fillRect(Math.round(x0 + (x1 - x0) * k / n - w / 2 + 0.5), Math.round(y0 + (y1 - y0) * k / n - w / 2 + 0.5), w, w);
+}
+function eiPoly(g, pts, c) {                                    // багатокутник рядками пікселів
+  const Hc = g.canvas.height; let y0 = Infinity, y1 = -Infinity; pts.forEach(p => { y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }); g.fillStyle = c;
+  for (let y = Math.max(0, Math.floor(y0)); y <= Math.min(Hc, Math.ceil(y1)); y++) {
+    const yc = y + 0.5, xs = [];
+    for (let i = 0; i < pts.length; i++) { const [ax, ay] = pts[i], [bx, by] = pts[(i + 1) % pts.length]; if ((ay <= yc && by > yc) || (by <= yc && ay > yc)) xs.push(ax + (yc - ay) / (by - ay) * (bx - ax)); }
+    xs.sort((a, b) => a - b);
+    for (let i = 0; i + 1 < xs.length; i += 2) { const a = Math.round(xs[i]), b = Math.round(xs[i + 1]); if (b > a) g.fillRect(a, y, b - a, 1); }
+  }
+}
+function eiBall(g, cx, cy, r, cols, tile) {                      // куля зі світлом зліва згори: cols — від темного до світлого; tile — квадратики дзеркальної кулі
+  cx = Math.round(cx); cy = Math.round(cy);
+  for (let y = -r; y < r; y++) for (let x = -r; x < r; x++) {
+    const nx = (x + 0.5) / r, ny = (y + 0.5) / r, q = nx * nx + ny * ny; if (q > 1) continue;
+    let l = -nx * 0.55 - ny * 0.65 + Math.sqrt(1 - q) * 0.55; if (tile && ((Math.floor((x + 40) / tile) + Math.floor((y + 40) / tile)) & 1)) l -= 0.22;
+    eiR(g, cx + x, cy + y, 1, 1, cols[Math.max(0, Math.min(cols.length - 1, Math.floor((l + 0.35) * cols.length / 1.25)))]);
+  }
+}
+function eiSprite(g, rows, x, y, map, k) {                      // піксельний малюнок рядками; k — розмір пікселя
+  k = k || 1; x = Math.round(x); y = Math.round(y);
+  rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) { const c = map[r[i]]; if (c) eiR(g, x + i * k, y + j * k, k, k, c); } });
+}
+const EI_KEY = ['#####.', '#...#.', '#.#.#.', '#.###.', '#.....', '######'];
+const eiKeyCache = {};
+function eiKey(g, y, W, off, col, hi) {                         // грецький меандр, що біжить уздовж краю (готова смуга, зсув — цілими пікселями)
+  const key = W + col; let c = eiKeyCache[key];
+  if (!c) { c = eiKeyCache[key] = document.createElement('canvas'); c.width = W + 12; c.height = 8; const kg = c.getContext('2d'); eiR(kg, 0, 0, W + 12, 1, col); eiR(kg, 0, 7, W + 12, 1, col); for (let x = 0; x < W + 12; x += 6) EI_KEY.forEach((r, j) => { for (let i = 0; i < 6; i++) if (r[i] === '#') eiR(kg, x + i, j + 1, 1, 1, j > 0 && EI_KEY[j - 1][i] === '#' ? col : hi); }); }
+  g.drawImage(c, -6 + (((Math.round(off) % 6) + 6) % 6), Math.round(y));
+}
+function eiColumn(g, cx, w, top, bot, back) {                   // іонічна колона: капітель із волютами, канелюри, база
+  const C = back ? ['#a39a8a', '#bdb4a2', '#cfc6b4', '#ddd5c4', '#b3aa98'] : ['#b8ab8c', '#d6ccb4', '#f4efe4', '#fffaf0', '#cfc4a8'];   // контур, тінь, тіло, відблиск, канелюра
+  const x0 = Math.round(cx - w / 2); top = Math.round(top); bot = Math.round(bot);
+  eiR(g, x0, top + 5, w, bot - top - 9, C[2]); eiR(g, x0 + w - Math.ceil(w / 3), top + 5, Math.ceil(w / 3), bot - top - 9, C[1]);
+  for (let fx = x0 + 2; fx < x0 + w - 2; fx += 3) { eiR(g, fx, top + 6, 1, bot - top - 11, C[4]); if (fx + 1 < x0 + w - Math.ceil(w / 3)) eiR(g, fx + 1, top + 6, 1, bot - top - 11, C[3]); }
+  eiR(g, x0, top + 5, 1, bot - top - 9, C[0]); eiR(g, x0 + w - 1, top + 5, 1, bot - top - 9, C[0]);
+  eiR(g, x0 - 3, top, w + 6, 3, C[2]); eiR(g, x0 - 3, top, w + 6, 1, C[3]); eiR(g, x0 - 3, top + 2, w + 6, 1, C[0]);            // абака
+  eiR(g, x0 - 1, top + 3, w + 2, 2, C[1]); eiR(g, x0 - 1, top + 4, w + 2, 1, C[0]);                                                // ехін
+  [x0 - 4, x0 + w + 1].forEach(vx => { eiR(g, vx, top + 2, 3, 3, C[0]); eiR(g, vx + 1, top + 3, 1, 1, C[3]); });                    // волюти
+  eiR(g, x0 - 2, bot - 4, w + 4, 2, C[2]); eiR(g, x0 - 2, bot - 4, w + 4, 1, C[3]); eiR(g, x0 - 2, bot - 3, w + 4, 1, C[0]);      // база
+  eiR(g, x0 - 3, bot - 2, w + 6, 3, C[1]); eiR(g, x0 - 3, bot - 2, w + 6, 1, C[2]); eiR(g, x0 - 3, bot, w + 6, 1, C[0]);
+}
+function eiOlive(g, x0, y0, dx, len, sw) {                      // оливкова гілка з кута: листки з контуром і прожилкою, темні оливки з відблиском
+  const N = 22, last = Math.floor(N * len), pt = i => { const t = i / N; return [x0 + dx * (t * 93 + Math.sin(t * 5 + sw) * 4.5), y0 + t * 105 + Math.sin(t * 3 + sw) * 3]; };
+  for (let i = 1; i <= last; i++) { const [ax, ay] = pt(i - 1), [bx, by] = pt(i); eiLine(g, ax, ay, bx, by, '#3e2f1e', 2); eiLine(g, ax, ay - 1, bx, by - 1, '#7a6040', 1); }
+  for (let i = 2; i <= last; i += 2) {
+    const [x, y] = pt(i);
+    [-1, 1].forEach(side => {
+      const an = side * 0.9 + dx * 0.3 + Math.sin(sw * 1.7 + i) * 0.12, lx = x + Math.cos(an) * side * 6, ly = y + Math.sin(an) * side * 6;
+      eiEll(g, lx, ly, 6.2, 2.7, an, '#4f6a30'); eiEll(g, lx, ly, 5.2, 1.8, an, i % 4 ? '#8fa85a' : '#a9c06c'); eiEll(g, lx - 1, ly - 1, 3, 0.8, an, '#c4d88a');
+    });
+    if (i % 6 === 0) { const ox = x - dx * 3, oy = y + 4.5; eiEll(g, ox, oy, 2.8, 3.6, 0, '#160f20'); eiEll(g, ox, oy, 2.1, 2.9, 0, '#2c2038'); eiR(g, ox - 1, oy - 2, 1, 1, '#7a6aa0'); }
+  }
+}
+const EI_DOVE = [['w.....w', 'ww...ww', '.wwgww.', '..www..'], ['.......', '..wgw..', 'wwwwwww', 'w.....w']];
+const EI_AMPHORA = ['.ddddd.', '..ooo..', '.ohooo.', 'ohoooOd', 'okkkkkd', 'ohoyooO', 'ohooooO', '.ohoOd.', '..oOd..', '.ddddd.'];
+const eiDigit = {};
+function eiGlyph(d, col) {                                      // цифри 0/1 «цифрового дощу» 3×5
+  const k = d + col; if (eiDigit[k]) return eiDigit[k];
+  const c = document.createElement('canvas'); c.width = 3; c.height = 5; eiSprite(c.getContext('2d'), d === '1' ? ['.1.', '11.', '.1.', '.1.', '111'] : ['111', '1.1', '1.1', '1.1', '111'], 0, 0, { 1: col });
+  return (eiDigit[k] = c);
+}
 const EI_DRAW = [
-  // 0 Відродження — давня Греція: колони підіймаються, оливкові гілки гойдаються, золотий пил і промені світла
+  // 0 Відродження — давня Греція: іонічні колони підіймаються, фриз із меандром і зубчиками, оливкові гілки гойдаються, амфори, голуби, золотий пил і промені
   (g, W, H, t) => {
-    const e = Math.min(1, t / 1.8), ez = e * e * (3 - 2 * e), sc = W / 160;
+    const e = Math.min(1, t / 1.8), ez = e * e * (3 - 2 * e), lift = Math.round((1 - ez) * H), top = Math.round(H * 0.1), bot = Math.round(H * 0.9);
     g.globalCompositeOperation = 'lighter';
-    for (let i = 0; i < 9; i++) { const an = Math.PI / 2 + (i - 4) * 0.22 + Math.sin(t * 0.4 + i) * 0.03; g.globalAlpha = 0.10; g.fillStyle = '#ffe9a0'; g.beginPath(); g.moveTo(W / 2, -H * 0.1); g.lineTo(W / 2 + Math.cos(an - 0.05) * W * 1.4, -H * 0.1 + Math.sin(an - 0.05) * W * 1.4); g.lineTo(W / 2 + Math.cos(an + 0.05) * W * 1.4, -H * 0.1 + Math.sin(an + 0.05) * W * 1.4); g.closePath(); g.fill(); }
+    for (let i = 0; i < 9; i++) { const an = Math.PI / 2 + (i - 4) * 0.22 + Math.sin(t * 0.4 + i) * 0.03, L = W * 1.4, ox = W / 2, oy = -H * 0.1; g.globalAlpha = i % 2 ? 0.08 : 0.12; eiPoly(g, [[ox, oy], [ox + Math.cos(an - 0.05) * L, oy + Math.sin(an - 0.05) * L], [ox + Math.cos(an + 0.05) * L, oy + Math.sin(an + 0.05) * L]], '#ffe9a0'); }
     g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
-    const col = (x, w2, a) => { const top = H * 0.1 + (1 - ez) * H, bot = H * 0.9 + (1 - ez) * H; g.globalAlpha = a; g.fillStyle = '#f4efe4'; g.fillRect(x - w2 / 2, top, w2, bot - top); g.fillStyle = '#d6ccb4'; g.fillRect(x + w2 * 0.2, top, w2 * 0.3, bot - top); g.strokeStyle = '#cfc4a8'; for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(x + i * w2 * 0.2, top + 4); g.lineTo(x + i * w2 * 0.2, bot - 3); g.stroke(); } g.fillStyle = '#e9e1d0'; g.fillRect(x - w2 * 0.7, top - 3, w2 * 1.4, 4); g.fillRect(x - w2 * 0.7, bot - 1, w2 * 1.4, 4); g.globalAlpha = 1; };
-    col(W * 0.07, W * 0.075, 1); col(W * 0.93, W * 0.075, 1); col(W * 0.2, W * 0.045, 0.6); col(W * 0.8, W * 0.045, 0.6);
-    g.fillStyle = '#f2ead6'; g.fillRect(0, H * 0.1 - 7 + (1 - ez) * -H * 0.3, W, 7); warpMeander(g, H * 0.1 - 6 - (1 - ez) * H * 0.3, 5, W, sc, t * 30, '#c19a2e', 1);
-    g.fillStyle = '#d9c9a0'; g.fillRect(0, H * 0.9 + 1 + (1 - ez) * H, W, H); warpMeander(g, H * 0.9 + 2 + (1 - ez) * H, 5, W, sc, -t * 30, '#c19a2e', 1);
-    warpOliveBranch(g, W * 0.12, H * 0.1, 1, Math.min(0.6, t / 2.2), sc, 1, t * 1.3); warpOliveBranch(g, W * 0.88, H * 0.1, -1, Math.min(0.6, t / 2.2), sc, 1, t * 1.3 + 2);
-    for (let i = 0; i < 26; i++) { const x = ((eiRand(i) + t * 0.02 * (1 + eiRand(i, 3))) % 1) * W, y = ((eiRand(i, 5) + t * 0.05) % 1) * H; g.globalAlpha = 0.7 * Math.sin(t * 2 + i); g.fillStyle = '#ffe9a0'; if (g.globalAlpha > 0) g.fillRect(x, y, 2, 2); }
-    g.globalAlpha = 1;
+    eiColumn(g, W * 0.2, 11, top + lift, bot + lift, 1); eiColumn(g, W * 0.8, 11, top + lift, bot + lift, 1);
+    eiColumn(g, W * 0.07, 18, top + lift, bot + lift, 0); eiColumn(g, W * 0.93, 18, top + lift, bot + lift, 0);
+    const fy = bot + lift;                                                                                   // сходинки знизу
+    eiR(g, 0, fy, W, H - fy, '#d9c9a0'); eiR(g, 0, fy, W, 1, '#fffaf0'); eiKey(g, fy + 2, W, -t * 12, '#c19a2e', '#ecd078'); eiR(g, 0, fy + 10, W, 1, '#b8ab8c'); eiR(g, 0, fy + 11, W, H, '#c9b78c'); eiR(g, 0, fy + 11, W, 1, '#e9dcb8');
+    if (ez > 0.9) [0.3, 0.7].forEach((ax, k) => eiSprite(g, EI_AMPHORA, W * ax - (k ? 0 : 7), fy - 10, { d: '#6e2a1c', o: '#c4553d', O: '#8a3a2a', h: '#e8a07a', k: '#2a1d1a', y: '#c19a2e' }));
+    const ty = top - Math.round((1 - ez) * H * 0.3);                                                          // фриз згори: меандр і зубчики
+    eiR(g, 0, ty - 10, W, 10, '#f2ead6'); eiR(g, 0, ty - 10, W, 1, '#fffaf0'); eiKey(g, ty - 9, W, t * 12, '#c19a2e', '#ecd078'); eiR(g, 0, ty - 1, W, 1, '#b8ab8c');
+    for (let x = 0; x < W; x += 4) { eiR(g, x, ty, 2, 2, '#e9e1d0'); eiR(g, x + 1, ty + 1, 1, 1, '#b8ab8c'); }
+    eiOlive(g, W * 0.12, ty, 1, Math.min(0.6, t / 2.2), t * 1.3); eiOlive(g, W * 0.88, ty, -1, Math.min(0.6, t / 2.2), t * 1.3 + 2);
+    for (let k = 0; k < 2; k++) { const f = ((t * 0.09 + k * 0.5) % 1.2) - 0.1, x = f * W * (k ? -1 : 1) + (k ? W : 0), y = H * (0.3 + k * 0.08) + Math.sin(t * 2 + k) * 4; eiSprite(g, EI_DOVE[Math.floor(t * 5 + k) % 2], x, y, { w: '#fffaf0', g: '#cfc8d8' }); }
+    for (let i = 0; i < 26; i++) { const x = ((eiRand(i) + t * 0.02 * (1 + eiRand(i, 3))) % 1) * W, y = ((eiRand(i, 5) + t * 0.05) % 1) * H, s = Math.sin(t * 2 + i); if (s < 0.1) continue; eiR(g, x, y, 1, 1, '#ffe9a0'); if (s > 0.8) { eiR(g, x - 1, y, 3, 1, '#ffe9a0'); eiR(g, x, y - 1, 1, 3, '#ffe9a0'); eiR(g, x, y, 1, 1, '#fff'); } }
   },
   // 1 Ретро — відеокасета: смуги відстеження, шум, ▶ PLAY і лічильник
   (g, W, H, t) => {
@@ -14516,16 +14658,21 @@ const EI_DRAW = [
     g.textAlign = 'right'; const sec = Math.floor(t); g.fillStyle = '#000'; g.fillText('SP 0:00:0' + Math.min(9, sec), W - 9 * sc * 0.6 + 1, 9 * sc * 0.6 + 1); g.fillStyle = Math.floor(t * 2) % 2 ? '#ff5fa2' : '#fff'; g.fillText('SP 0:00:0' + Math.min(9, sec), W - 9 * sc * 0.6, 9 * sc * 0.6);
     g.textAlign = 'left'; g.textBaseline = 'bottom'; g.fillStyle = '#ffe08a'; g.fillText('1957', 9 * sc * 0.6, H - 8 * sc * 0.6);
   },
-  // 2 Диско — промені прожекторів, танцпол із плитками під ритм, дзеркальні кулі
+  // 2 Диско — промені прожекторів, танцпол із плитками під ритм, дзеркальні кулі з квадратиками
   (g, W, H, t) => {
-    const cols = ['#ff4fa8', '#4fd8ff', '#ffd84f', '#8f5fff'], beat = Math.floor(t * 6), sc = W / 160;
-    const fy = H * 0.7, T = Math.max(10, 14 * sc * 0.6);
-    for (let r = 0; r < Math.ceil((H - fy) / T); r++) for (let c = 0; c < Math.ceil(W / T); c++) { g.globalAlpha = 0.45 + 0.3 * ((r + c + beat) % 2); g.fillStyle = cols[(r * 3 + c * 2 + beat) % 4]; g.fillRect(c * T, fy + r * T, T - 1, T - 1); }
+    const cols = ['#ff4fa8', '#4fd8ff', '#ffd84f', '#8f5fff'], beat = Math.floor(t * 6), fy = Math.round(H * 0.7), T = 12;
+    for (let r = 0; r < Math.ceil((H - fy) / T); r++) for (let c = 0; c < Math.ceil(W / T); c++) { const cc = cols[(r * 3 + c * 2 + beat) % 4], on = (r + c + beat) % 2; g.globalAlpha = on ? 0.8 : 0.5; eiR(g, c * T, fy + r * T, T - 1, T - 1, cc); g.globalAlpha = on ? 0.6 : 0.25; eiR(g, c * T + 1, fy + r * T + 1, T - 3, 1, '#fff'); }
+    g.globalAlpha = 1; eiR(g, 0, fy - 1, W, 1, '#1a1024');
     g.globalCompositeOperation = 'lighter';
-    [[0.1, 0], [0.5, 0], [0.9, 0]].forEach(([px, py], j) => { for (let i = 0; i < 3; i++) { const an = Math.PI / 2 + Math.sin(t * 1.3 + j * 2 + i) * 0.8 + (i - 1) * 0.35; g.globalAlpha = 0.17; g.fillStyle = cols[(i + j) % 4]; g.beginPath(); g.moveTo(W * px, 0); g.lineTo(W * px + Math.cos(an - 0.09) * W, Math.sin(an - 0.09) * W); g.lineTo(W * px + Math.cos(an + 0.09) * W, Math.sin(an + 0.09) * W); g.closePath(); g.fill(); } });
+    [0.1, 0.5, 0.9].forEach((px, j) => { for (let i = 0; i < 3; i++) { const an = Math.PI / 2 + Math.sin(t * 1.3 + j * 2 + i) * 0.8 + (i - 1) * 0.35, ox = W * px; g.globalAlpha = 0.17; eiPoly(g, [[ox, 0], [ox + Math.cos(an - 0.09) * W, Math.sin(an - 0.09) * W], [ox + Math.cos(an + 0.09) * W, Math.sin(an + 0.09) * W]], cols[(i + j) % 4]); } });
     g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
-    [[0.1, 0.16], [0.9, 0.2]].forEach(([bx, by]) => { const R0 = Math.min(W, H) * 0.09 * (1 + 0.04 * Math.sin(t * 6)); g.strokeStyle = '#d8d8f0'; g.beginPath(); g.moveTo(W * bx, 0); g.lineTo(W * bx, H * by - R0); g.stroke(); const gr = g.createRadialGradient(W * bx - R0 * 0.3, H * by - R0 * 0.3, R0 * 0.1, W * bx, H * by, R0); gr.addColorStop(0, '#fff'); gr.addColorStop(0.5, '#b8b8d8'); gr.addColorStop(1, '#5a5a86'); g.fillStyle = gr; g.beginPath(); g.arc(W * bx, H * by, R0, 0, 7); g.fill(); for (let i = 0; i < 22; i++) { const a = eiRand(i) * 6.28, rr = Math.sqrt(eiRand(i + 5)) * R0 * 0.9; g.fillStyle = eiRand(i + beat) > 0.5 ? cols[i % 4] : '#fff'; g.fillRect(W * bx + Math.cos(a) * rr - 1, H * by + Math.sin(a) * rr - 1, 2, 2); } });
-    for (let i = 0; i < 24; i++) { if ((Math.floor(t * 5) + i) % 5 > 1) continue; const x = eiRand(i + 40) * W, y = eiRand(i + 70) * H * 0.7, s = (1.5 + eiRand(i) * 2.5) * sc * 0.6; g.fillStyle = '#fff'; g.fillRect(x - s, y - 0.5, s * 2, 1); g.fillRect(x - 0.5, y - s, 1, s * 2); }
+    [[0.1, 0.16], [0.9, 0.2]].forEach(([bx, by], j) => {
+      const r = Math.round(Math.min(W, H) * 0.09), cx = Math.round(W * bx), cy = Math.round(H * by);
+      eiR(g, cx, 0, 1, cy - r, '#d8d8f0'); eiR(g, cx - 1, cy - r - 1, 3, 2, '#8a8ab0');
+      eiBall(g, cx, cy, r, ['#3a3a66', '#5a5a86', '#8a8ab0', '#b8b8d8', '#e8e8ff', '#fff'], 3);
+      for (let i = 0; i < 9; i++) { const a = eiRand(i + j * 20) * 6.28, rr = Math.sqrt(eiRand(i + 5)) * r * 0.8; if ((i + beat) % 3) eiR(g, Math.floor((cx + Math.cos(a) * rr) / 3) * 3, Math.floor((cy + Math.sin(a) * rr) / 3) * 3, 2, 2, cols[(i + beat) % 4]); }
+    });
+    for (let i = 0; i < 24; i++) { if ((Math.floor(t * 5) + i) % 5 > 1) continue; const x = Math.round(eiRand(i + 40) * W), y = Math.round(eiRand(i + 70) * H * 0.7), s = 1 + Math.round(eiRand(i) * 2); eiR(g, x - s, y, s * 2 + 1, 1, '#fff'); eiR(g, x, y - s, 1, s * 2 + 1, '#fff'); }
   },
   // 3 Аркади — зорі, марш прибульців, INSERT COIN і рахунок
   (g, W, H, t) => {
@@ -14540,57 +14687,68 @@ const EI_DRAW = [
     g.textAlign = 'right'; g.fillStyle = '#ffd84f'; g.fillText('HI 099990', W - 7 * sc * 0.6, 6 * sc * 0.6);
     g.textAlign = 'center'; g.textBaseline = 'bottom'; if (Math.floor(t * 2.5) % 2) { g.fillStyle = '#ffe08a'; g.fillText('INSERT COIN', W / 2, H - 4 * sc * 0.6); }
   },
-  // 4 Інтернет — цифровий дощ у вікні браузера, смуга завантаження
+  // 4 Інтернет — цифровий дощ (піксельні 0 і 1) у вікні браузера, смуга завантаження
   (g, W, H, t) => {
-    const sc = W / 160, cw = Math.max(5, 6 * sc * 0.7);
-    eiFont(g, cw * 1.1); g.textAlign = 'center'; g.textBaseline = 'top';
-    for (let c = 0; c < Math.ceil(W / cw); c++) { const sp = 0.4 + eiRand(c) * 0.9, head = ((eiRand(c + 7) + t * sp * 0.4) % 1.4) * H * 1.3 - H * 0.1; for (let j = 0; j < 9; j++) { const y = head - j * cw * 1.2; if (y < -cw || y > H) continue; g.globalAlpha = (1 - j / 9) * 0.55; g.fillStyle = j === 0 ? '#e6fff4' : '#2ee69a'; g.fillText(eiRand(c * 13 + j + Math.floor(t * 8)) > 0.5 ? '1' : '0', c * cw + cw / 2, y); } }
+    const cw = 6;
+    for (let c = 0; c < Math.ceil(W / cw); c++) { const sp = 0.4 + eiRand(c) * 0.9, head = ((eiRand(c + 7) + t * sp * 0.4) % 1.4) * H * 1.3 - H * 0.1; for (let j = 0; j < 9; j++) { const y = Math.round(head - j * 7); if (y < -6 || y > H) continue; g.globalAlpha = j === 0 ? 0.9 : (1 - j / 9) * 0.55; g.drawImage(eiGlyph(eiRand(c * 13 + j + Math.floor(t * 8)) > 0.5 ? '1' : '0', j === 0 ? '#e6fff4' : '#2ee69a'), c * cw + 1, y); } }
     g.globalAlpha = 1;
-    const m = 5 * sc * 0.6, tb = 10 * sc * 0.7;
-    g.fillStyle = '#1b2a44'; g.fillRect(m - 1, m - 1, W - 2 * m + 2, H - 2 * m + 2); g.fillStyle = 'rgba(4,20,26,.55)'; g.fillRect(m, m + tb, W - 2 * m, H - 2 * m - tb);
-    g.fillStyle = '#2a55d8'; g.fillRect(m, m, W - 2 * m, tb); [0, 1, 2].forEach(i => { g.fillStyle = ['#ef8fa3', '#ffe08a', '#8ed4a6'][i]; g.fillRect(W - m - (3 - i) * (tb * 0.8), m + tb * 0.25, tb * 0.5, tb * 0.5); });
-    eiFont(g, 5 * sc * 0.8); g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.fillText('www.capytap.net', m + 4, m + tb / 2);
-    const pr = Math.min(1, t / 3.4), bw = W * 0.6, bx = W / 2 - bw / 2, by = H - m - tb * 1.6; g.fillStyle = '#04141a'; g.fillRect(bx - 1, by - 1, bw + 2, tb * 0.7 + 2); g.fillStyle = '#2ee69a'; const sg = Math.max(3, tb * 0.35); for (let x = 0; x < bw * pr - sg; x += sg * 1.3) g.fillRect(bx + x, by + 1, sg, tb * 0.7 - 2);
+    const m = 3, tb = 11;
+    eiR(g, m - 1, m - 1, W - 2 * m + 2, H - 2 * m + 2, '#1b2a44'); eiR(g, m, m + tb, W - 2 * m, H - 2 * m - tb, 'rgba(4,20,26,.55)');
+    eiR(g, m, m, W - 2 * m, tb, '#2a55d8'); eiR(g, m, m, W - 2 * m, 1, '#6a8cff'); [0, 1, 2].forEach(i => { eiR(g, W - m - (3 - i) * 9 - 1, m + 3, 6, 5, '#0e1a3a'); eiR(g, W - m - (3 - i) * 9, m + 3, 5, 4, ['#ef8fa3', '#ffe08a', '#8ed4a6'][i]); });
+    eiFont(g, 8); g.textAlign = 'left'; g.textBaseline = 'top'; g.fillStyle = '#fff'; g.fillText('www.capytap.net', m + 4, m + 2);
+    const pr = Math.min(1, t / 3.4), bw = Math.round(W * 0.6), bx = Math.round(W / 2 - bw / 2), by = H - m - 18; eiR(g, bx - 1, by - 1, bw + 2, 9, '#04141a'); eiR(g, bx - 1, by - 1, bw + 2, 1, '#2a55d8');
+    for (let x = 0; x < bw * pr - 4; x += 5) { eiR(g, bx + x + 1, by + 1, 4, 5, '#2ee69a'); eiR(g, bx + x + 1, by + 1, 4, 1, '#b8ffe0'); }
     g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillStyle = '#e6fff4'; g.fillText(pr < 1 ? 'LOADING ' + Math.floor(pr * 100) + '%' : 'DONE', W / 2, by - 3);
   },
-  // 5 Еко — листя в повітрі, ліани з квітами, сонячні промені й метелики
+  // 5 Еко — ліани з листям і квітами ростуть із кутів, листя кружляє, сонячні промені, метелики
   (g, W, H, t) => {
-    const sc = W / 160, leaf = ['#2f8f4a', '#5fbf5a', '#9fd45a', '#e8b44a', '#e87a4a', '#ff9fc0'];
-    g.globalCompositeOperation = 'lighter'; for (let i = 0; i < 7; i++) { g.globalAlpha = 0.11; g.fillStyle = '#fff6c8'; g.beginPath(); g.moveTo(W * (0.7 + i * 0.04), -4); g.lineTo(W * (0.7 + i * 0.04) - W * 0.5 - i * 6, H); g.lineTo(W * (0.7 + i * 0.04) - W * 0.5 + 10, H); g.closePath(); g.fill(); } g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    const leaf = ['#2f8f4a', '#5fbf5a', '#9fd45a', '#e8b44a', '#e87a4a', '#ff9fc0'];
+    g.globalCompositeOperation = 'lighter'; for (let i = 0; i < 7; i++) { g.globalAlpha = 0.11; const x = W * (0.7 + i * 0.04); eiPoly(g, [[x, -4], [x - W * 0.5 - i * 6, H], [x - W * 0.5 + 10, H]], '#fff6c8'); } g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
     const kv = Math.min(1, t / 2.6);
-    [[0, H, 1], [W, H, -1]].forEach(([x0, y0, d], vi) => { const N = 40, last = Math.floor(N * kv); g.strokeStyle = '#2f7a42'; g.lineWidth = Math.max(1.5, sc); g.beginPath(); for (let i = 0; i <= last; i++) { const t2 = i / N, x = x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y = y0 - t2 * H * 0.92; if (i === 0) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke(); for (let i = 3; i <= last; i += 3) { const t2 = i / N, x = x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y = y0 - t2 * H * 0.92; g.fillStyle = leaf[i % 3]; g.beginPath(); g.ellipse(x + d * 3 * sc, y, 3.2 * sc, 1.7 * sc, d * 0.5, 0, 7); g.fill(); } if (kv > 0.85) { const t2 = last / N, x = x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y = y0 - t2 * H * 0.92; for (let p = 0; p < 6; p++) { g.fillStyle = '#ff9fc0'; g.beginPath(); g.arc(x + Math.cos(p * 1.047) * 3 * sc, y + Math.sin(p * 1.047) * 3 * sc, 2 * sc, 0, 7); g.fill(); } g.fillStyle = '#ffe08a'; g.beginPath(); g.arc(x, y, 1.8 * sc, 0, 7); g.fill(); } });
-    for (let i = 0; i < 40; i++) { const x = ((eiRand(i) + Math.sin(t * 0.7 + i) * 0.04) % 1) * W, y = ((eiRand(i + 9) + t * (0.04 + eiRand(i + 3) * 0.05)) % 1.1) * H - 8, s = (2 + eiRand(i + 5) * 3) * sc * 0.7; g.save(); g.translate(x, y); g.rotate(t * 1.2 + i); g.fillStyle = leaf[i % 6]; g.beginPath(); g.ellipse(0, 0, s, s * 0.5, 0, 0, 7); g.fill(); g.restore(); }
-    for (let i = 0; i < 3; i++) { const bx = (0.2 + 0.3 * i + Math.sin(t * 0.6 + i) * 0.08) * W, by = (0.3 + 0.1 * i + Math.cos(t * 0.8 + i) * 0.06) * H, fl = Math.abs(Math.sin(t * 9 + i)); g.fillStyle = ['#ffd84f', '#ff9fc0', '#9fd4ff'][i]; g.fillRect(bx - 3 * sc * fl, by - 2, 3 * sc * fl, 4); g.fillRect(bx, by - 2, 3 * sc * fl, 4); g.fillStyle = '#4a3228'; g.fillRect(bx - 0.5, by - 2, 1, 4); }
+    [[0, H, 1], [W, H, -1]].forEach(([x0, y0, d], vi) => {
+      const N = 40, last = Math.floor(N * kv), P = i => { const t2 = i / N; return [x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y0 - t2 * H * 0.92]; };
+      for (let i = 1; i <= last; i++) { const [ax, ay] = P(i - 1), [bx, by] = P(i); eiLine(g, ax, ay, bx, by, '#1f5a30', 3); eiLine(g, ax, ay, bx, by, '#2f7a42', 2); }
+      for (let i = 3; i <= last; i += 3) { const [x, y] = P(i), sw = Math.sin(t * 1.6 + i) * 0.15; eiEll(g, x + d * 4, y, 5.2, 2.8, d * 0.5 + sw, '#1f5a30'); eiEll(g, x + d * 4, y, 4.3, 2, d * 0.5 + sw, leaf[i % 3]); eiR(g, x + d * 4 - 1, y - 1, 2, 1, '#c8f08a'); }
+      if (kv > 0.85) { const [x, y] = P(last); for (let p = 0; p < 6; p++) eiDisc(g, x + Math.cos(p * 1.047 + t * 0.5) * 4.5, y + Math.sin(p * 1.047 + t * 0.5) * 4.5, 2.8, p % 2 ? '#ff9fc0' : '#ffb8d0'); eiDisc(g, x, y, 2.6, '#ffe08a'); eiR(g, x - 1, y - 1, 1, 1, '#fff'); }
+    });
+    for (let i = 0; i < 40; i++) { const x = ((eiRand(i) + Math.sin(t * 0.7 + i) * 0.04) % 1) * W, y = ((eiRand(i + 9) + t * (0.04 + eiRand(i + 3) * 0.05)) % 1.1) * H - 8, s = 2 + eiRand(i + 5) * 2.5; eiEll(g, x, y, s, s * 0.5, t * 1.2 + i, leaf[i % 6]); }
+    for (let i = 0; i < 3; i++) { const bx = Math.round((0.2 + 0.3 * i + Math.sin(t * 0.6 + i) * 0.08) * W), by = Math.round((0.3 + 0.1 * i + Math.cos(t * 0.8 + i) * 0.06) * H), up = Math.floor(t * 8 + i) % 2, c = ['#ffd84f', '#ff9fc0', '#9fd4ff'][i];
+      eiSprite(g, up ? ['cc.cc', 'cckcc', '.ckc.', '..k..'] : ['.....', 'cckcc', 'cckcc', '..k..'], bx - 2, by - 2, { c, k: '#4a3228' }); }
   },
-  // 6 Космос — зорі летять із центру, планети з кільцями, ракета, зорепад
+  // 6 Космос — зорі летять із центру, планети з кільцем, ракета, зорепад
   (g, W, H, t) => {
-    const sc = W / 160, cx = W / 2, cy = H / 2, diag = Math.hypot(W, H);
+    const cx = W / 2, cy = H / 2, diag = Math.hypot(W, H);
     g.globalAlpha = 0.5; const nb = g.createRadialGradient(W * 0.3, H * 0.4, 0, W * 0.3, H * 0.4, W * 0.5); nb.addColorStop(0, 'rgba(154,85,232,.45)'); nb.addColorStop(1, 'rgba(154,85,232,0)'); g.fillStyle = nb; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
-    g.lineCap = 'round'; for (let i = 0; i < 110; i++) { const an = eiRand(i) * 6.28, f = (eiRand(i + 9) + t * 0.18) % 1, r0 = f * f * diag * 0.6 + 2, len = 1 + f * f * diag * 0.12; g.globalAlpha = Math.min(1, f * 2.5); g.strokeStyle = i % 5 === 0 ? '#9fc8ff' : '#fff'; g.lineWidth = Math.max(1, sc * (0.3 + f * 0.7)); g.beginPath(); g.moveTo(cx + Math.cos(an) * r0, cy + Math.sin(an) * r0); g.lineTo(cx + Math.cos(an) * (r0 + len), cy + Math.sin(an) * (r0 + len)); g.stroke(); }
+    for (let i = 0; i < 110; i++) { const an = eiRand(i) * 6.28, f = (eiRand(i + 9) + t * 0.18) % 1, r0 = f * f * diag * 0.6 + 2, len = f * f * diag * 0.12; g.globalAlpha = Math.min(1, f * 2.5); eiLine(g, cx + Math.cos(an) * r0, cy + Math.sin(an) * r0, cx + Math.cos(an) * (r0 + len), cy + Math.sin(an) * (r0 + len), i % 5 === 0 ? '#9fc8ff' : '#fff', f > 0.7 ? 2 : 1); }
     g.globalAlpha = 1;
-    [[0.12, 0.2, 0.09, '#e8794a', '#f2b48a', 0], [0.9, 0.78, 0.13, '#5fa8e8', '#bfe0ff', 1], [0.82, 0.14, 0.05, '#b46ae8', '#e6c4ff', 0]].forEach(([px, py, pr, c1, c2, ring], i) => { const rad = Math.min(W, H) * pr, x = W * px + Math.sin(t * 0.3 + i) * 3, y = H * py; const gr = g.createRadialGradient(x - rad * 0.35, y - rad * 0.35, rad * 0.1, x, y, rad); gr.addColorStop(0, c2); gr.addColorStop(1, c1); g.fillStyle = gr; g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill(); if (ring) { g.strokeStyle = c2; g.lineWidth = Math.max(1, rad * 0.14); g.beginPath(); g.ellipse(x, y, rad * 1.7, rad * 0.45, -0.4, 0, 7); g.stroke(); } });
-    const rx = ((t * 0.12) % 1.4 - 0.2) * W, ry = H * 0.45 - ((t * 0.12) % 1.4) * H * 0.4; g.save(); g.translate(rx, ry); g.rotate(-0.5); g.fillStyle = '#fff'; g.fillRect(-2 * sc, -5 * sc, 4 * sc, 10 * sc); g.fillStyle = '#e04a4a'; g.fillRect(-1 * sc, -7 * sc, 2 * sc, 2 * sc); g.fillRect(-4 * sc, 2 * sc, 2 * sc, 4 * sc); g.fillRect(2 * sc, 2 * sc, 2 * sc, 4 * sc); g.fillStyle = Math.floor(t * 18) % 2 ? '#ffb43a' : '#fff6b0'; g.fillRect(-1.5 * sc, 5 * sc, 3 * sc, 5 * sc + Math.sin(t * 40) * sc); g.restore();
-    const sh = (t * 0.5) % 1; if (sh < 0.3) { const k = sh / 0.3; g.strokeStyle = '#fff'; g.lineWidth = Math.max(1, sc * 0.6); g.globalAlpha = 1 - k; g.beginPath(); g.moveTo(W * (0.8 - k * 0.5), H * (0.05 + k * 0.4)); g.lineTo(W * (0.8 - k * 0.5 + 0.12), H * (0.05 + k * 0.4 - 0.08)); g.stroke(); g.globalAlpha = 1; }
+    [[0.12, 0.2, 0.09, ['#5a2418', '#a84a2a', '#e8794a', '#f2b48a', '#ffe0c8'], 0], [0.9, 0.78, 0.13, ['#1a3a70', '#2f6ab0', '#5fa8e8', '#bfe0ff', '#f0f8ff'], 1], [0.82, 0.14, 0.05, ['#4a2070', '#7a3ab0', '#b46ae8', '#e6c4ff'], 0]].forEach(([px, py, pr, cs, ring], i) => {
+      const r = Math.round(Math.min(W, H) * pr), x = Math.round(W * px + Math.sin(t * 0.3 + i) * 3), y = Math.round(H * py);
+      const ringPx = front => { if (!ring) return; const co = Math.cos(-0.4), si = Math.sin(-0.4); for (let yy = -r * 2; yy <= r * 2; yy++) for (let xx = -r * 2; xx <= r * 2; xx++) { const u = ((xx + 0.5) * co + (yy + 0.5) * si) / (r * 1.7), v = (-(xx + 0.5) * si + (yy + 0.5) * co) / (r * 0.45), q = u * u + v * v; if (q < 0.78 || q > 1.08 || (v > 0) !== front) continue; eiR(g, x + xx, y + yy, 1, 1, q > 0.95 ? cs[2] : cs[3]); } };
+      ringPx(false); eiBall(g, x, y, r, cs); ringPx(true);
+    });
+    const f = (t * 0.12) % 1.4, rx = (f - 0.2) * W, ry = H * 0.45 - f * H * 0.4, fl = Math.floor(t * 18) % 2;
+    eiSprite(g, ['..r..', '.rrr.', '.www.', '.wsw.', '.www.', 'rwwwr', 'r.o.r', '..' + (fl ? 'y' : 'o') + '..', fl ? '..y..' : '.....'], rx - 5, ry - 9, { r: '#e04a4a', w: '#fff', s: '#5fa8e8', o: '#ffb43a', y: '#fff6b0' }, 2);
+    const sh = (t * 0.5) % 1; if (sh < 0.3) { const k = sh / 0.3; g.globalAlpha = 1 - k; eiLine(g, W * (0.8 - k * 0.5), H * (0.05 + k * 0.4), W * (0.8 - k * 0.5 + 0.12), H * (0.05 + k * 0.4 - 0.08), '#fff', 1); g.globalAlpha = 1; }
   },
   // 7 Неон — сітка синтвейву, смугасте сонце, лазери й неонова рамка
   (g, W, H, t) => {
-    const sc = W / 160, hy = H * 0.6, cx = W / 2;
-    const sun = g.createLinearGradient(0, hy - H * 0.35, 0, hy); sun.addColorStop(0, '#ffe36a'); sun.addColorStop(1, '#ff2fb0'); g.fillStyle = sun; g.beginPath(); g.arc(cx, hy, H * 0.33, Math.PI, 0); g.fill();
-    for (let i = 0; i < 6; i++) { g.fillStyle = '#12002a'; g.fillRect(cx - H * 0.34, hy - H * 0.3 * (i / 6) - 2 - i * 0.6 + 2, H * 0.68, 1 + i * 0.7); }
-    g.fillStyle = '#12002a'; g.fillRect(0, hy, W, H - hy);
-    g.strokeStyle = '#ff2fb0'; g.lineWidth = Math.max(1, sc * 0.5); g.shadowColor = '#ff2fb0'; g.shadowBlur = 5 * sc;
-    for (let i = -14; i <= 14; i++) { g.beginPath(); g.moveTo(cx + i * 2, hy); g.lineTo(cx + i * W * 0.14, H); g.stroke(); }
-    for (let i = 0; i < 9; i++) { const f = ((i + t * 1.2) % 9) / 9, y = hy + f * f * (H - hy); g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
-    g.shadowBlur = 0;
-    g.globalCompositeOperation = 'lighter'; [['#2ff5ff', 0], ['#ff2fb0', W]].forEach(([c, x0], j) => { for (let i = 0; i < 3; i++) { const an = (j ? Math.PI : 0) + (j ? -1 : 1) * (0.2 + 0.2 * i + Math.sin(t * 1.5 + i + j) * 0.12); g.globalAlpha = 0.45; g.strokeStyle = c; g.lineWidth = Math.max(1, sc * 0.6); g.beginPath(); g.moveTo(x0, H * 0.05); g.lineTo(x0 + Math.cos(an) * W, H * 0.05 + Math.sin(an) * W); g.stroke(); } });
-    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 0.6 + 0.3 * Math.sin(t * 9) * (Math.floor(t * 3) % 5 === 0 ? 1 : 0.2); g.strokeStyle = '#2ff5ff'; g.shadowColor = '#2ff5ff'; g.shadowBlur = 6 * sc; g.lineWidth = Math.max(1.5, sc * 0.8); g.strokeRect(4 * sc * 0.6, 4 * sc * 0.6, W - 8 * sc * 0.6, H - 8 * sc * 0.6); g.shadowBlur = 0; g.globalAlpha = 1;
+    const hy = Math.round(H * 0.6), cx = W / 2, R0 = Math.round(H * 0.33), SUN = ['#ffe36a', '#ffc04a', '#ff9a5a', '#ff6a7a', '#ff2fb0'];
+    for (let y = hy - R0; y < hy; y++) { const k = (y - (hy - R0)) / R0, gap = k > 0.45 && ((hy - y) % 6) < 1 + Math.floor((k - 0.45) * 6); if (gap) continue; const hw = Math.round(Math.sqrt(Math.max(0, R0 * R0 - (hy - y) * (hy - y)))); eiR(g, cx - hw, y, hw * 2, 1, SUN[Math.min(4, Math.floor(k * 5))]); }
+    eiR(g, 0, hy, W, H - hy, '#12002a');
+    const glowLine = (x0, y0, x1, y1, c) => { g.globalAlpha = 0.3; eiLine(g, x0, y0, x1, y1, c, 3); g.globalAlpha = 1; eiLine(g, x0, y0, x1, y1, c, 1); };
+    for (let i = -14; i <= 14; i++) glowLine(cx + i * 2, hy, cx + i * W * 0.14, H, '#ff2fb0');
+    for (let i = 0; i < 9; i++) { const f = ((i + t * 1.2) % 9) / 9, y = Math.round(hy + f * f * (H - hy)); g.globalAlpha = 0.3; eiR(g, 0, y - 1, W, 3, '#ff2fb0'); g.globalAlpha = 1; eiR(g, 0, y, W, 1, '#ff2fb0'); }
+    eiR(g, 0, hy, W, 1, '#ff8ad8');
+    [['#2ff5ff', 0], ['#ff2fb0', W]].forEach(([c, x0], j) => { for (let i = 0; i < 3; i++) { const an = (j ? Math.PI : 0) + (j ? -1 : 1) * (0.2 + 0.2 * i + Math.sin(t * 1.5 + i + j) * 0.12); g.globalAlpha = 0.45; eiLine(g, x0, H * 0.05, x0 + Math.cos(an) * W, H * 0.05 + Math.sin(an) * W, c, 1); } });
+    const fa = 0.6 + 0.3 * Math.sin(t * 9) * (Math.floor(t * 3) % 5 === 0 ? 1 : 0.2), fr = (x, y, w, h) => { g.globalAlpha = fa * 0.35; eiR(g, x - 1, y - 1, w + 2, h + 2, '#2ff5ff'); g.globalAlpha = fa; eiR(g, x, y, w, h, '#2ff5ff'); };
+    fr(2, 2, W - 4, 1); fr(2, H - 3, W - 4, 1); fr(2, 2, 1, H - 4); fr(W - 3, 2, 1, H - 4); g.globalAlpha = 1;
   }
 ];
 function eiLoop() {
   if (!epochIntro.active) { eiRaf = 0; return; }
   const cv = ui.eiFx, g = cv.getContext('2d'), t = (performance.now() - eiT0) / 1000, i = epochIntro.idx || 0;
   if (cv._ep !== i || cv._w !== window.innerWidth || cv._h !== window.innerHeight) { cv._ep = i; cv._w = window.innerWidth; cv._h = window.innerHeight; cv.width = 240; cv.height = Math.max(120, Math.round(240 * window.innerHeight / Math.max(1, window.innerWidth))); }
-  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, cv.width, cv.height); g.imageSmoothingEnabled = false; g.lineWidth = 1; g.shadowBlur = 0;
+  eiCrisp(g); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, cv.width, cv.height); g.imageSmoothingEnabled = false; g.lineWidth = 1; g.shadowBlur = 0;
   try { (EI_DRAW[i] || EI_DRAW[0])(g, cv.width, cv.height, t); } catch (e) { /* заставка не має ламати гру */ }
   eiRaf = requestAnimationFrame(eiLoop);
 }
@@ -25024,6 +25182,58 @@ function drawTreeV2(g, x, v, season) {
   if (!c) { if (TREE2_CACHE.size > 40) TREE2_CACHE.clear(); c = sakuraBuild(vi, season, sd * 977 + vi * 131 + 11); TREE2_CACHE.set(key, c); }
   g.drawImage(c, Math.round(x) - 54, base - 116);
 }
+/* Міні-клумба під вуличним деревом (р. 73е): цегляний бортик-овал у перспективі, низький дерев'яний паркан довкола, земля з грудочками, трава й квіти за порою року.
+   part 0 — тінь, задній бортик і земля (малюються ДО дерева, стовбур «виходить» із землі); part 1 — передній бортик і квіти (ПІСЛЯ дерева). */
+const TREE_BED_CACHE = new Map();
+function drawTreeBed(g, x, season, part) {
+  const key = season + '|' + part; let c = TREE_BED_CACHE.get(key);
+  if (!c) { c = treeBedBuild(season, part); TREE_BED_CACHE.set(key, c); }
+  g.drawImage(c, Math.round(x) - 21, LAYOUT.horizonY + 8 - 11);
+}
+function treeBedBuild(season, part) {
+  const W = 42, H = 22, OX = 21, OY = 11, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), px = (x, y, col) => { g.fillStyle = col; g.fillRect(x + OX, y + OY, 1, 1); };
+  const snow = season === 'winter', RX = 16, RY = 4.2, IX = 13.6, IY = 2.8, CY = -1, FH = 4;
+  const inE = (x, y, rx, ry) => ((x + 0.5) / rx) ** 2 + ((y - CY + 0.5) / ry) ** 2 <= 1;
+  const S = { out: '#3a2418', top: '#e3cfa6', lit: '#f4e6c4', mid: '#c9ad80', side: '#c07a4c', dark: '#a3613c', joint: '#6e3f26', soil: '#5c3d26', soilD: '#43291a', soilL: '#7a5236' };
+  const bot = x => { for (let y = 6; y >= -6; y--) if (inE(x, y, RX, RY)) return y; return null; };   // нижній край овалу в стовпчику x
+  if (part === 0) {                                                                  // тінь на бруківці праворуч-знизу
+    g.globalAlpha = 0.22; for (let x = -RX + 1; x <= RX + 2; x++) { const b = bot(Math.min(RX - 1, x)); if (b !== null) px(x, b + FH + 1, '#000'); } g.globalAlpha = 1;
+  }
+  const FX = 18.5, FY = 5.2, FC = CY + FH;                                          // паркан стоїть на землі довкола клумби (овал, зсунутий на висоту бортика)
+  const fence = front => {                                                           // штахети 2 px через 4 px, дві поперечки; задня половина ховається за клумбою
+    for (let x = -19; x <= 18; x++) {
+      const q = 1 - ((x + 0.5) / FX) ** 2; if (q < 0) continue; const y = Math.round(FC + (front ? 1 : -1) * FY * Math.sqrt(q)), m = (x + 20) & 3;
+      if (m < 2) { const c = m ? '#c9ae84' : '#f4e6c4'; if (!m) px(x, y - 5, snow ? '#f4f8ff' : '#fffaf0'); for (let k = 4; k >= 1; k--) px(x, y - k, c); px(x, y, '#5a3a24'); if (snow) px(x, y - 4, '#f4f8ff'); }
+      else { px(x, y - 4, '#a77c50'); px(x, y - 3, '#d8c09a'); px(x, y - 2, '#a77c50'); }
+    }
+  };
+  if (part === 0) fence(false);
+  for (let y = -6; y <= 6; y++) for (let x = -RX; x < RX; x++) {
+    if (!inE(x, y, RX, RY)) continue;
+    const inner = inE(x, y, IX, IY), back = y <= CY;
+    if (inner) { if (part !== 0) continue; const h = ((x * 7 + y * 13) & 7); px(x, y, snow ? (h < 2 ? '#d6e4f2' : '#f4f8ff') : h === 0 ? S.soilL : h < 3 ? S.soilD : S.soil); continue; }
+    if ((part === 0) !== back) continue;                                             // задня половина бортика — до дерева, передня — після
+    const edge = !inE(x - 1, y, RX, RY) || !inE(x + 1, y, RX, RY) || !inE(x, y - 1, RX, RY);
+    px(x, y, edge ? S.out : snow ? '#f4f8ff' : y < CY - 1 ? S.mid : x < -4 ? S.lit : S.top);
+  }
+  if (part === 1) {
+    for (let x = -RX; x < RX; x++) {                                                 // передня стінка бортика: камінці з швами, світло зліва
+      const b = bot(x); if (b === null) continue;
+      for (let k = 1; k <= FH; k++) { const y = b + k, edge = k === FH || bot(x - 1) === null || bot(x + 1) === null; px(x, y, edge ? S.out : ((x + 13 + (k > 1 ? 2 : 0)) % 5 === 0) ? S.joint : x < -5 ? S.side : S.dark); }
+      if (snow && (x & 3)) px(x, b + 1, '#f4f8ff');
+    }
+    if (!snow) for (let x = -IX + 1; x < IX - 1; x++) { const b = bot(x); if (b === null || (x * 5 & 3) === 0) continue; px(x, b - 1, (x & 1) ? '#5cb046' : '#3a8a3b'); if ((x & 3) === 1) px(x, b, '#3a8a3b'); }
+    const fl = { spring: ['#ff9fc0', '#fff4dc', '#ffe08a'], summer: ['#e04a4a', '#ffd84f', '#fff4dc'], autumn: ['#e8863c', '#ffd84f', '#c4553d'], halloween: ['#e8742c', '#b278e4', '#ffd84f'] }[season];
+    if (fl) [[-12, 0], [-10, -2], [-7, 1], [-4, 2], [5, 2], [8, 1], [11, -1], [12, 1]].forEach(([fx, fy], i) => {     // трава й квіти по краях землі, посередині — стовбур
+      px(fx, fy, '#3a8a3b'); px(fx, fy - 1, i % 2 ? '#5cb046' : '#3a8a3b'); if (i % 3 !== 1) px(fx + 1, fy, '#86d457');
+      if (season === 'autumn' && i % 2) { px(fx - 1, fy, fl[0]); return; }          // восени — опале листя замість частини квітів
+      const col = fl[i % 3]; px(fx, fy - 2, col); px(fx - 1, fy - 2, col); px(fx + 1, fy - 2, col); px(fx, fy - 3, col); px(fx, fy - 2, i % 2 ? '#ffd84f' : '#fff4dc');
+    });
+  }
+  if (part === 1) fence(true);
+  return c;
+}
 //#part 275_ads.js
 /* =====================================================================
    РЕКЛАМА (AdMob) — лише в Android-обгортці й лише нагороджений ролик за бажанням гравця.
@@ -25893,9 +26103,9 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     const e = Math.min(1, t / 1.8), ez = e * e * (3 - 2 * e), cx = W / 2, hy = H * 0.64, sc = W / 160;
     const sun = g.createRadialGradient(cx, hy - H * 0.2, 2, cx, hy - H * 0.2, H * 0.4); sun.addColorStop(0, 'rgba(255,246,216,0.95)'); sun.addColorStop(0.4, 'rgba(255,208,112,0.5)'); sun.addColorStop(1, 'rgba(255,120,140,0)');
     g.fillStyle = sun; g.fillRect(0, 0, W, H);
-    g.fillStyle = '#d3342c'; g.beginPath(); g.arc(cx, hy - H * 0.2 * ez, H * 0.15, 0, 7); g.fill();
-    g.fillStyle = '#5a4f98'; g.beginPath(); g.moveTo(cx - W * 0.42, hy); g.lineTo(cx - W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx, hy - H * 0.36 * ez); g.lineTo(cx + W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx + W * 0.42, hy); g.fill();
-    g.fillStyle = '#f6f3ff'; g.beginPath(); g.moveTo(cx - W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx, hy - H * 0.36 * ez); g.lineTo(cx + W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx + W * 0.04, hy - H * 0.26 * ez); g.lineTo(cx, hy - H * 0.29 * ez); g.lineTo(cx - W * 0.04, hy - H * 0.26 * ez); g.fill();
+    eiDisc(g, cx, hy - H * 0.2 * ez, H * 0.15 + 1, '#a8241e'); eiDisc(g, cx, hy - H * 0.2 * ez, H * 0.15, '#d3342c'); eiDisc(g, cx - H * 0.04, hy - H * 0.2 * ez - H * 0.05, H * 0.05, '#e8584a');
+    eiPoly(g, [[cx - W * 0.42, hy], [cx - W * 0.1, hy - H * 0.3 * ez], [cx, hy - H * 0.36 * ez], [cx + W * 0.1, hy - H * 0.3 * ez], [cx + W * 0.42, hy]], '#5a4f98'); eiPoly(g, [[cx, hy - H * 0.36 * ez], [cx + W * 0.1, hy - H * 0.3 * ez], [cx + W * 0.42, hy], [cx + W * 0.12, hy]], '#463c80');
+    eiPoly(g, [[cx - W * 0.1, hy - H * 0.3 * ez], [cx, hy - H * 0.36 * ez], [cx + W * 0.1, hy - H * 0.3 * ez], [cx + W * 0.04, hy - H * 0.26 * ez], [cx, hy - H * 0.29 * ez], [cx - W * 0.04, hy - H * 0.26 * ez]], '#f6f3ff');
     g.fillStyle = '#2a2040'; g.fillRect(0, hy, W, H - hy);
     const tw = W * 0.3, th = H * 0.32, tx = cx - tw / 2, ty = hy - th * ez - 2;
     g.fillStyle = '#2a1a10'; g.fillRect(tx - tw * 0.12, ty, tw * 1.24, th * 0.1); g.fillRect(tx + tw * 0.04, ty + th * 0.28, tw * 0.92, th * 0.07);

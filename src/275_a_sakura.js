@@ -194,3 +194,55 @@ function drawTreeV2(g, x, v, season) {
   if (!c) { if (TREE2_CACHE.size > 40) TREE2_CACHE.clear(); c = sakuraBuild(vi, season, sd * 977 + vi * 131 + 11); TREE2_CACHE.set(key, c); }
   g.drawImage(c, Math.round(x) - 54, base - 116);
 }
+/* Міні-клумба під вуличним деревом (р. 73е): цегляний бортик-овал у перспективі, низький дерев'яний паркан довкола, земля з грудочками, трава й квіти за порою року.
+   part 0 — тінь, задній бортик і земля (малюються ДО дерева, стовбур «виходить» із землі); part 1 — передній бортик і квіти (ПІСЛЯ дерева). */
+const TREE_BED_CACHE = new Map();
+function drawTreeBed(g, x, season, part) {
+  const key = season + '|' + part; let c = TREE_BED_CACHE.get(key);
+  if (!c) { c = treeBedBuild(season, part); TREE_BED_CACHE.set(key, c); }
+  g.drawImage(c, Math.round(x) - 21, LAYOUT.horizonY + 8 - 11);
+}
+function treeBedBuild(season, part) {
+  const W = 42, H = 22, OX = 21, OY = 11, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), px = (x, y, col) => { g.fillStyle = col; g.fillRect(x + OX, y + OY, 1, 1); };
+  const snow = season === 'winter', RX = 16, RY = 4.2, IX = 13.6, IY = 2.8, CY = -1, FH = 4;
+  const inE = (x, y, rx, ry) => ((x + 0.5) / rx) ** 2 + ((y - CY + 0.5) / ry) ** 2 <= 1;
+  const S = { out: '#3a2418', top: '#e3cfa6', lit: '#f4e6c4', mid: '#c9ad80', side: '#c07a4c', dark: '#a3613c', joint: '#6e3f26', soil: '#5c3d26', soilD: '#43291a', soilL: '#7a5236' };
+  const bot = x => { for (let y = 6; y >= -6; y--) if (inE(x, y, RX, RY)) return y; return null; };   // нижній край овалу в стовпчику x
+  if (part === 0) {                                                                  // тінь на бруківці праворуч-знизу
+    g.globalAlpha = 0.22; for (let x = -RX + 1; x <= RX + 2; x++) { const b = bot(Math.min(RX - 1, x)); if (b !== null) px(x, b + FH + 1, '#000'); } g.globalAlpha = 1;
+  }
+  const FX = 18.5, FY = 5.2, FC = CY + FH;                                          // паркан стоїть на землі довкола клумби (овал, зсунутий на висоту бортика)
+  const fence = front => {                                                           // штахети 2 px через 4 px, дві поперечки; задня половина ховається за клумбою
+    for (let x = -19; x <= 18; x++) {
+      const q = 1 - ((x + 0.5) / FX) ** 2; if (q < 0) continue; const y = Math.round(FC + (front ? 1 : -1) * FY * Math.sqrt(q)), m = (x + 20) & 3;
+      if (m < 2) { const c = m ? '#c9ae84' : '#f4e6c4'; if (!m) px(x, y - 5, snow ? '#f4f8ff' : '#fffaf0'); for (let k = 4; k >= 1; k--) px(x, y - k, c); px(x, y, '#5a3a24'); if (snow) px(x, y - 4, '#f4f8ff'); }
+      else { px(x, y - 4, '#a77c50'); px(x, y - 3, '#d8c09a'); px(x, y - 2, '#a77c50'); }
+    }
+  };
+  if (part === 0) fence(false);
+  for (let y = -6; y <= 6; y++) for (let x = -RX; x < RX; x++) {
+    if (!inE(x, y, RX, RY)) continue;
+    const inner = inE(x, y, IX, IY), back = y <= CY;
+    if (inner) { if (part !== 0) continue; const h = ((x * 7 + y * 13) & 7); px(x, y, snow ? (h < 2 ? '#d6e4f2' : '#f4f8ff') : h === 0 ? S.soilL : h < 3 ? S.soilD : S.soil); continue; }
+    if ((part === 0) !== back) continue;                                             // задня половина бортика — до дерева, передня — після
+    const edge = !inE(x - 1, y, RX, RY) || !inE(x + 1, y, RX, RY) || !inE(x, y - 1, RX, RY);
+    px(x, y, edge ? S.out : snow ? '#f4f8ff' : y < CY - 1 ? S.mid : x < -4 ? S.lit : S.top);
+  }
+  if (part === 1) {
+    for (let x = -RX; x < RX; x++) {                                                 // передня стінка бортика: камінці з швами, світло зліва
+      const b = bot(x); if (b === null) continue;
+      for (let k = 1; k <= FH; k++) { const y = b + k, edge = k === FH || bot(x - 1) === null || bot(x + 1) === null; px(x, y, edge ? S.out : ((x + 13 + (k > 1 ? 2 : 0)) % 5 === 0) ? S.joint : x < -5 ? S.side : S.dark); }
+      if (snow && (x & 3)) px(x, b + 1, '#f4f8ff');
+    }
+    if (!snow) for (let x = -IX + 1; x < IX - 1; x++) { const b = bot(x); if (b === null || (x * 5 & 3) === 0) continue; px(x, b - 1, (x & 1) ? '#5cb046' : '#3a8a3b'); if ((x & 3) === 1) px(x, b, '#3a8a3b'); }
+    const fl = { spring: ['#ff9fc0', '#fff4dc', '#ffe08a'], summer: ['#e04a4a', '#ffd84f', '#fff4dc'], autumn: ['#e8863c', '#ffd84f', '#c4553d'], halloween: ['#e8742c', '#b278e4', '#ffd84f'] }[season];
+    if (fl) [[-12, 0], [-10, -2], [-7, 1], [-4, 2], [5, 2], [8, 1], [11, -1], [12, 1]].forEach(([fx, fy], i) => {     // трава й квіти по краях землі, посередині — стовбур
+      px(fx, fy, '#3a8a3b'); px(fx, fy - 1, i % 2 ? '#5cb046' : '#3a8a3b'); if (i % 3 !== 1) px(fx + 1, fy, '#86d457');
+      if (season === 'autumn' && i % 2) { px(fx - 1, fy, fl[0]); return; }          // восени — опале листя замість частини квітів
+      const col = fl[i % 3]; px(fx, fy - 2, col); px(fx - 1, fy - 2, col); px(fx + 1, fy - 2, col); px(fx, fy - 3, col); px(fx, fy - 2, i % 2 ? '#ffd84f' : '#fff4dc');
+    });
+  }
+  if (part === 1) fence(true);
+  return c;
+}

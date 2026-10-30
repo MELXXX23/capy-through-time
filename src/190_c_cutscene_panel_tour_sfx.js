@@ -222,7 +222,7 @@ function cutSeenDevice(set) { try { if (set) localStorage.setItem('capyCutSeen',
 function cutWarm(style) {
   if (cut.on || cut.warm) return; cut.warm = 1; cut.style = style;
   const steps = [() => { cut.cv = document.getElementById('cutCv'); cutLayout(); }, cutPrep, () => cutSky(cut.W, cut.H, Math.round((cut.H - 216) * 0.9)), cutCapyHi,
-    () => cutHi('team_bodya_e0'), () => cutHi('foxcub_0', SPRITES.capy_mel.canvas), () => cutHi('bunny_0', SPRITES.capy_nika.canvas), () => [0, 1, 2].forEach(cutTreeCv), () => { cutLampCv(); cutCobbleCv(); }];
+    () => cutHi('team_bodya_e0'), () => cutPx('foxcub_0', SPRITES.capy_mel.canvas), () => cutPx('bunny_0', SPRITES.capy_nika.canvas), () => [0, 1, 2].forEach(cutTreeCv), () => { cutLampCv(); cutCobbleCv(); }];
   for (let i = 0; i < 30; i += 6) steps.push(() => { for (let j = i; j < i + 6; j++) cutHouseCv(j); });
   const run = () => { const f = steps.shift(); if (!f || cut.on || cut.style !== style) return; try { f(); } catch (e) { /* не страшно: доробиться в першому кадрі */ } setTimeout(run, 40); };
   run();
@@ -275,7 +275,7 @@ function startMenuTour(cb) {
   const box = document.getElementById('tour'); if (!box) { if (cb) cb(); return; }
   tourStop(false); tour.on = true; tour.i = 0; tour.cb = cb || null; tour.news = false;
   if (!tour.wrapped && typeof openNews === 'function') { tour.wrapped = true; const orig = openNews; openNews = function () { const r = orig.apply(this, arguments); if (tour.on && tour.news) { tour.news = false; setTimeout(() => { if (tour.on) { tour.i++; tourStep(); } }, 400); } return r; }; }
-  ['tourMel', 'tourNika'].forEach((id, k) => { const cv = document.getElementById(id), hi = k ? cutHi('bunny_0', SPRITES.capy_nika.canvas) : cutHi('foxcub_0', SPRITES.capy_mel.canvas); cv.width = hi.width; cv.height = hi.height; cv.getContext('2d').drawImage(hi, 0, 0); });
+  ['tourMel', 'tourNika'].forEach((id, k) => { const cv = document.getElementById(id), hi = k ? cutPx('bunny_0', SPRITES.capy_nika.canvas) : cutPx('foxcub_0', SPRITES.capy_mel.canvas); cv.width = hi.width; cv.height = hi.height; cv.getContext('2d').drawImage(hi, 0, 0); });
   if (!(typeof mobileMQ !== 'undefined' && mobileMQ.matches) && !state.settings.panelOpen) { state.settings.panelOpen = true; try { applyPanel(); } catch (e) { /* не страшно */ } }
   box.hidden = false; document.getElementById('tourSkip').textContent = (TOUR_TXT[state.lang] || TOUR_TXT.uk).skip;
   tourStep(); tour.timer = setInterval(tourPlace, 120);

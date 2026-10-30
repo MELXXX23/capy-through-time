@@ -583,6 +583,8 @@ function cutEpx(src) {
   og.putImageData(od, 0, 0); return out;
 }
 function cutHi(name, canvas) { const key = 'hi' + name; if (cut.cache[key]) return cut.cache[key]; const src = canvas || getSpriteCanvas(name); return (cut.cache[key] = cutEpx(cutEpx(src))); }
+// MEL і NIKA (р. 73е): збільшення ×4 «квадратиками», без EPX-згладжування — кожен піксель лисиці й зайчиці чіткий, а не «мильний»
+function cutPx(name, canvas) { const key = 'px' + name; if (cut.cache[key]) return cut.cache[key]; const src = canvas || getSpriteCanvas(name), o = document.createElement('canvas'); o.width = src.width * 4; o.height = src.height * 4; const og = o.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(src, 0, 0, o.width, o.height); return (cut.cache[key] = o); }
 // Капі без сукні/футболки: шерсть, голова з квіточкою (дівчинка) або листочком (хлопчик), очей немає — їх малюють емоції
 function cutCapyHi() {
   const boy = state.settings.gender === 'm', key = 'capy' + (boy ? 'm' : 'f'); if (cut.cache[key]) return cut.cache[key];

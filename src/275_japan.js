@@ -709,9 +709,9 @@
     const e = Math.min(1, t / 1.8), ez = e * e * (3 - 2 * e), cx = W / 2, hy = H * 0.64, sc = W / 160;
     const sun = g.createRadialGradient(cx, hy - H * 0.2, 2, cx, hy - H * 0.2, H * 0.4); sun.addColorStop(0, 'rgba(255,246,216,0.95)'); sun.addColorStop(0.4, 'rgba(255,208,112,0.5)'); sun.addColorStop(1, 'rgba(255,120,140,0)');
     g.fillStyle = sun; g.fillRect(0, 0, W, H);
-    g.fillStyle = '#d3342c'; g.beginPath(); g.arc(cx, hy - H * 0.2 * ez, H * 0.15, 0, 7); g.fill();
-    g.fillStyle = '#5a4f98'; g.beginPath(); g.moveTo(cx - W * 0.42, hy); g.lineTo(cx - W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx, hy - H * 0.36 * ez); g.lineTo(cx + W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx + W * 0.42, hy); g.fill();
-    g.fillStyle = '#f6f3ff'; g.beginPath(); g.moveTo(cx - W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx, hy - H * 0.36 * ez); g.lineTo(cx + W * 0.1, hy - H * 0.3 * ez); g.lineTo(cx + W * 0.04, hy - H * 0.26 * ez); g.lineTo(cx, hy - H * 0.29 * ez); g.lineTo(cx - W * 0.04, hy - H * 0.26 * ez); g.fill();
+    eiDisc(g, cx, hy - H * 0.2 * ez, H * 0.15 + 1, '#a8241e'); eiDisc(g, cx, hy - H * 0.2 * ez, H * 0.15, '#d3342c'); eiDisc(g, cx - H * 0.04, hy - H * 0.2 * ez - H * 0.05, H * 0.05, '#e8584a');
+    eiPoly(g, [[cx - W * 0.42, hy], [cx - W * 0.1, hy - H * 0.3 * ez], [cx, hy - H * 0.36 * ez], [cx + W * 0.1, hy - H * 0.3 * ez], [cx + W * 0.42, hy]], '#5a4f98'); eiPoly(g, [[cx, hy - H * 0.36 * ez], [cx + W * 0.1, hy - H * 0.3 * ez], [cx + W * 0.42, hy], [cx + W * 0.12, hy]], '#463c80');
+    eiPoly(g, [[cx - W * 0.1, hy - H * 0.3 * ez], [cx, hy - H * 0.36 * ez], [cx + W * 0.1, hy - H * 0.3 * ez], [cx + W * 0.04, hy - H * 0.26 * ez], [cx, hy - H * 0.29 * ez], [cx - W * 0.04, hy - H * 0.26 * ez]], '#f6f3ff');
     g.fillStyle = '#2a2040'; g.fillRect(0, hy, W, H - hy);
     const tw = W * 0.3, th = H * 0.32, tx = cx - tw / 2, ty = hy - th * ez - 2;
     g.fillStyle = '#2a1a10'; g.fillRect(tx - tw * 0.12, ty, tw * 1.24, th * 0.1); g.fillRect(tx + tw * 0.04, ty + th * 0.28, tw * 0.92, th * 0.07);

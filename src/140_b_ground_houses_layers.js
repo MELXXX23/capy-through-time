@@ -315,7 +315,11 @@ function lineG(g, x0, y0, x1, y1, c) {      // лінія з пікселів (�
 }
 let TREE_CROWN_MASK = null;
 const TREE_CACHE = new Map();       // готові дерева (x, вид, сезон) → полотно: звичайне дерево не залежить від епохи, тож при подорожі береться з кешу, а не малюється заново (~40 мс)
-function drawStreetTree(g, x, v, season) {
+function drawStreetTree(g, x, v, season) {      // дерево стоїть у своїй міні-клумбі (р. 73е): задній бортик і земля — під стовбуром, передній бортик — поверх
+  drawTreeBed(g, x, season, 0); drawStreetTreeCore(g, x, v, season); drawTreeBed(g, x, season, 1);
+  if (season === 'halloween') treeHalloweenPumpkins(g, x, LAYOUT.horizonY + 8);       // гарбузи — обабіч паркану й поверх клумби, а не під нею
+}
+function drawStreetTreeCore(g, x, v, season) {
   { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.tree) return A.tree(g, x, v, season); }
   if (season !== 'winter') {                                                                  // об'ємні дерева (275_a_sakura.js)
     drawTreeV2(g, x, v, season);
@@ -433,8 +437,9 @@ function treeHalloweenDecor(g, x, cy) {
     R(g, gx, cy + 9 + sag, 1, 1, 'd');
     if ((gx - x) % 4 === 0) R(g, gx, cy + 10 + sag, 2, 2, ['o', 'y', 'p'][(gx - x + 12) / 4 % 3 | 0]);
   }
-  // гарбузи на землі під деревом (замість гарбузів на бруківці: не заважають звірятам); [зсув по x, зсув по землі, розмір 0–2, різьблене обличчя]
-  const base = cy + 51;
+}
+// гарбузи на землі обабіч клумби (замість гарбузів на бруківці: не заважають звірятам); [зсув по x, зсув по землі, розмір 0–2, різьблене обличчя]
+function treeHalloweenPumpkins(g, x, base) {
   const gpump = (px, py, size, face) => {
     const w = [7, 9, 12][size], h = [5, 7, 9][size], x0 = px - (w >> 1);
     R(g, x0 + 1, py - h, w - 2, h + 1, 'd'); R(g, x0, py - h + 1, w, h - 1, 'd');                                  // контур
@@ -444,7 +449,7 @@ function treeHalloweenDecor(g, x, cy) {
     R(g, px, py - h - 1, 2, 2, 'g'); R(g, px + 1, py - h - 2, 1, 1, 'g');                                            // хвостик
     if (face) { const e = size > 0 ? 2 : 1; R(g, px - 2, py - h + 2, e, e, 'y'); R(g, px + 1, py - h + 2, e, e, 'y'); R(g, px - 2, py - 3, 5, 1, 'y'); if (size > 0) R(g, px - 1, py - 2, 3, 1, 'y'); }
   };
-  [[-30, 8, 2, 1], [-22, 11, 1, 0], [-15, 7, 2, 0], [-9, 12, 0, 1], [10, 12, 1, 1], [16, 8, 2, 1], [23, 11, 0, 0], [30, 7, 2, 0], [-36, 11, 0, 0], [36, 12, 1, 1]]
+  [[-29, 8, 2, 1], [-24, 12, 0, 0], [24, 11, 1, 1], [29, 7, 2, 0]]
     .forEach(p => gpump(x + p[0], base + p[1], p[2], p[3]));
 }
 // Зимове дерево: пишні гілки з багатьма відгалуженнями, на яких лежить сніг

@@ -22,7 +22,17 @@ function pickWanderTarget(a) {
 }
 
 // Предмет у лапках звірятка (малюється поверх спрайта). t — час, dir — куди йде
-function drawTeamProp(prop, x, y, t, dir, id) { teamPropArt(ctx, prop, x, y, Math.floor(t * 3) % 2, id, dir); }      // малюнки предметів — у 180_a9_team_props.js
+function drawTeamProp(prop, x, y, t, dir, id) { teamPropArt(ctx, prop, x, y, Math.floor(t * 6) % 12, id, dir); }
+// Предмет у руках (р. 73е): малюється в полотно 1:1 і збільшується тим самим evenScaled, що й фігура, з тим самим округленням позиції —
+// пікселі предмета й тіла збігаються, предмет рухається разом із тілом у тому ж кадрі (без відставання й розмиття дробового масштабу).
+const PROP_CV = new Map();
+function drawCrispProp(prop, id, x0, y0, bob, flip, t) {
+  if (!TEAM_PROP_ART[prop]) return;
+  const f = Math.floor(t * 6) % 12, cx = flip ? 39 : 14, key = prop + '|' + id + '|' + f + '|' + (flip ? 1 : 0);
+  let c = PROP_CV.get(key);
+  if (!c) { if (PROP_CV.size > 300) PROP_CV.clear(); c = document.createElement('canvas'); c.width = 54; c.height = 45; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; teamPropArt(g, prop, cx, 42, f, id, flip ? -1 : 1); PROP_CV.set(key, c); }
+  const K = HERO_K; ctx.drawImage(evenScaled(c, K), Math.round(x0 - cx * K), Math.round(y0 - (42 + bob) * K));
+}      // малюнки предметів — у 180_a9_team_props.js
 
 const ACTOR_K = 1.4;                                   // звірята-працівники й гості: 16 px × 1,4 ≈ 22 px (було 1,56; −10%), Капі 24 px × 1,3 ≈ 31 px
 function actorK(a) { return HERO_K; }                  // увесь «виступ» героя (предмет, тінь, репліки, влучання) — у масштабі самого героя
@@ -140,10 +150,10 @@ function drawActor(a) {
   scaled(() => {
     const { m, x, y, sitting, waddle, idleBob, hopY } = p;
     if (hasHats() && !skinOn('hero')) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);   // маски й шапки свят — лише на звичайних звірятах, зі скіном героя їх немає
-    if (!sitting && !behindProp) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, p.flip ? -1 : 1, m.id);
     if (a.rest > 0) drawDrink(x, y - hopY, a.t);
     if (hasScarves()) drawScarf(x, y - 16 - waddle - idleBob - hopY, a.i);
   });
+  if (!p.sitting && !behindProp) drawCrispProp(p.m.spot.prop, p.m.id, p.x, p.y, p.bob, p.flip, a.t);
   if (hasHats() && !skinOn('hero')) drawCrispEars(teamSprite(p.m.id), p.x, p.y, p.bob, p.flip);
 }
 // Склянка води в лапках і краплі поту (літній перепочинок)
