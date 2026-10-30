@@ -3,7 +3,7 @@
   6: [
     { t: ["Сигнал із космосу", "A Signal From Space"], L: [
       ["narr", "Над дахами замість зірок майорять станції, а десь повільно пропливають рожеві планети. Гравітацію ввімкнули.", "Above the roofs stations replace the stars and pink planets drift by slowly. Gravity has been switched on."],
-      ["G", "Я Орбіт, старший оператор зв'язку. Перехопив сигнал: «біп-біп-біп-біп-біп-біп».", "I'm Orbit, senior comms operator. I picked up a signal: “beep-beep-beep-beep-beep-beep”."],
+      ["G", "Я Орбіт, старший оператор зв’язку. Перехопив сигнал: «біп-біп-біп-біп-біп-біп».", "I'm Orbit, senior comms operator. I picked up a signal: “beep-beep-beep-beep-beep-beep”."],
       ["capy", "Це схоже на той, що ми чули в епоху Ретро.", "That sounds like the one we heard in the Retro era."],
       ["G", "Саме він. Той самий супутник. Усі ці роки кружляв і чекав, коли ми відповімо.", "The very same. The same satellite. All these years it kept circling, waiting for our reply."],
       ["capy", "Тоді відповімо: «біп».", "Then we'll reply: “beep”."] ] },
@@ -38,13 +38,13 @@
       ["narr", "Істота показала на пакет цукерок, видихнула сяйливу хмаринку й розрахувалась камінцем, що світиться.", "The creature pointed at a bag of candy, exhaled a glowing puff and paid with a shining pebble."],
       ["spike", "Найцінніша валюта, яку я бачив. Прошу не повертати решту відрами.", "The most valuable currency I've ever seen. Please don't give change by the bucket."] ] },
     { t: ["Зворотний відлік", "The Countdown"], L: [
-      ["narr", "На найвищому даху ожила ракета. Навколо збирались усі: мешканці, гості, навіть кіт-зірка.", "On the highest roof a rocket came to life. Everyone gathered around: residents, guests, even the cat star."],
-      ["G", "Усе готово! Лишився відлік: десять, дев'ять, вісім...", "Everything's ready! Only the countdown left: ten, nine, eight..."],
+      ["narr", "На найвищому даху ожила ракета. Навколо збирались усі: мешканці, гості, навіть кіт-зірка.", "On the highest roof a rocket came to life. Everyone gathered around: residents, guests, even the star cat."],
+      ["G", "Усе готово! Лишився відлік: десять, дев’ять, вісім...", "Everything's ready! Only the countdown left: ten, nine, eight..."],
       ["capy", "Орбіте, а ти полетиш?", "Orbit, will you fly?"],
       ["G", "Лишаюсь тут, доки ви не повернетесь. Хтось же має вмикати світло.", "I'm staying here until you come back. Someone has to turn the lights on."],
       ["narr", "Ракета здійнялась у небо й розсипалась мільйоном іскор. Насправді то був святковий феєрверк.", "The rocket soared and burst into a million sparks. In fact it was festival fireworks."] ] },
     { t: ["Остання зірка", "The Last Star"], L: [
-      ["narr", "Вночі Капі довго дивилась на небо. Між зірками висіла одна, що блимала в такт цокання.", "At night Capy gazed at the sky for a long time. Among the stars hung one that blinked in time with ticking."],
+      ["narr", "Вночі Капі довго дивилась на небо. Між зірками висіла одна, що блимала в такт цокання.", "At night Capy gazed at the sky for a long time. Among the stars hung one that blinked in time with the ticking."],
       ["clock", "Це я. Точніше, мій колега з майбутнього. Передає привіт.", "That's me. Or rather, my colleague from the future. Sends his regards."],
       ["capy", "Тобі там не самотньо?", "Aren't you lonely up there?"],
       ["clock", "Я Годинник. Для мене самотність — коли ніхто не питає, котра година.", "I'm a Watch. For me loneliness is when nobody asks what time it is."],
@@ -56,7 +56,7 @@
       ["narr", "Вулиці засяяли рожевим і бірюзовим, а над дахами попливли голограми, що розповідають про вигідні знижки.", "The streets glowed pink and turquoise, and holograms drifted over the roofs announcing great discounts."],
       ["G", "Я Лумі, світлячок на вічній нічній зміні. Допомагаю неоновим вивіскам не втомлюватись.", "I'm Lumi, a firefly on a permanent night shift. I help the neon signs not get tired."],
       ["capy", "У вас тут ніколи не буває темно?", "Is it never dark here?"],
-      ["G", "Лише коли вмикаємо «режим затишку». Тоді всі просто світяться тихіше.", "Only when we turn on “cozy mode”. Then everyone just glows more quietly."],
+      ["G", "Лише коли вмикаємо «режим затишку». Тоді всі просто світяться тихіше.", "Only when we turn on “cosy mode”. Then everyone just glows more quietly."],
       ["narr", "Над головою мигнуло літаюче авто, а вітер пахнув озоном і жуйкою.", "A flying car flickered overhead, and the wind smelled of ozone and bubblegum."] ] },
     { t: ["Голограма Капі", "Capy's Hologram"], L: [
       ["narr", "Над магазином спалахнула гігантська голограма Капі з усмішкою й написом «ВАШ ЩАСЛИВИЙ ПРОДАВЕЦЬ».", "Above the shop a giant hologram of Capy flared up with a smile and the words “YOUR LUCKY SELLER”."],
@@ -81,7 +81,7 @@
       ["S", "Я вже знайшов кіоск зі «справжніми підробками». Чесний бізнес: чесно підробляють.", "I already found a stall of “genuine fakes”. Honest business: honestly forged."],
       ["spike", "Прошу всіх зберігати чеки. На ринку їх не дають, тож записуємо вручну.", "Everyone, please keep receipts. The market doesn't give any, so we note them by hand."],
       ["capy", "Дивіться, яка лампа! Вона світиться різним кольором залежно від настрою.", "Look at that lamp! It glows a different colour depending on your mood."],
-      ["narr", "У руках Капі лампа стала м'яко-золотою. «Спокій», — прочитав продавець.", "In Capy's hands the lamp turned soft gold. “Calm,” the seller read."] ] },
+      ["narr", "У руках Капі лампа стала м’яко-золотою. «Спокій», — прочитав продавець.", "In Capy's hands the lamp turned soft gold. “Calm,” the seller read."] ] },
     { t: ["Хакер у масці", "The Masked Hacker"], L: [
       ["narr", "Раптом усі вивіски міста показали те саме: усміхнену єнотову мордочку й слово «ПРИВІТ».", "Suddenly every sign in the city showed the same thing: a smiling raccoon face and the word “HELLO”."],
       ["G", "Нас зламали! Хтось розсилає на вивіски власні жарти!", "We've been hacked! Someone is sending their own jokes to the signs!"],
@@ -112,8 +112,8 @@
       ["S", "Я бачив. Котився за ліхтарем до мосту. Я лише йшов тим самим шляхом. Випадково. З мішком.", "I saw. It rolled after a lantern toward the bridge. I was only walking the same way. By chance. With a sack."] ] },
     { t: ["Дракон просить чаю", "The Dragon Wants Tea"], L: [
       ["narr", "Над дахами завис довгий зелений дракон і з цікавістю зазирнув у вікно чайного будиночка.", "A long green dragon hung above the roofs and peered curiously into the tea house window."],
-      ["G", "Він приходить щоранку. Я наливаю йому чай у блюдце. Він п'є, а потім дарує всій вулиці вітерець.", "He comes every morning. I pour his tea into a saucer. He drinks, then gives the whole street a breeze."],
-      ["zoya", "Дракон п'є з блюдця? Найелегантніший гість, якого я бачила.", "A dragon drinking from a saucer? The most elegant guest I've ever seen."],
+      ["G", "Він приходить щоранку. Я наливаю йому чай у блюдце. Він п’є, а потім дарує всій вулиці вітерець.", "He comes every morning. I pour his tea into a saucer. He drinks, then gives the whole street a breeze."],
+      ["zoya", "Дракон п’є з блюдця? Найелегантніший гість, якого я бачила.", "A dragon drinking from a saucer? The most elegant guest I've ever seen."],
       ["capy", "А як він дякує?", "And how does he say thanks?"],
       ["narr", "Дракон зробив повільне коло над вулицею, і з його вусів посипались дрібні блискітки. Усі завмерли від захвату.", "The dragon made a slow loop above the street and tiny sparkles fell from his whiskers. Everyone froze in delight."] ] },
     { t: ["Свято ліхтарів", "The Lantern Festival"], L: [
@@ -138,10 +138,10 @@
       ["narr", "Біля мосту стояла стара сакура з голими гілками. Усі інші дерева давно цвіли, а вона мовчала.", "By the bridge stood an old sakura with bare branches. All the other trees had bloomed long ago, but she stayed silent."],
       ["G", "Їй сумно. Колись із нею щодня сиділи, а тепер усі поспішають повз.", "She's sad. People used to sit with her every day, and now everyone hurries past."],
       ["kria", "Тоді принесу лавку й чай, посидимо.", "Then I'll bring a bench and tea, and we'll sit."],
-      ["capy", "Посидьмо всі разом. Хоч п'ять хвилин. Без каси.", "Let's all sit together. Even five minutes. No till."],
-      ["narr", "Вони посиділи. Потім на гілці з'явився перший рожевий бутон, і другий, і десятий. До вечора дерево стояло в рожевій хмарі.", "They sat. Then a first pink bud appeared on a branch, and a second, and a tenth. By evening the tree stood in a pink cloud."] ] },
+      ["capy", "Посидьмо всі разом. Хоч п’ять хвилин. Без каси.", "Let's all sit together. Even five minutes. No till."],
+      ["narr", "Вони посиділи. Потім на гілці з’явився перший рожевий бутон, і другий, і десятий. До вечора дерево стояло в рожевій хмарі.", "They sat. Then a first pink bud appeared on a branch, and a second, and a tenth. By evening the tree stood in a pink cloud."] ] },
     { t: ["Нічний ринок", "The Night Market"], L: [
-      ["narr", "На вулицю вийшов нічний ринок: ятки з їжею, ліхтарі, стукіт дерев'яних сандалій. Пахло смаженими кульками й карамеллю.", "The night market came out: food stalls, lanterns, the clatter of wooden sandals. It smelled of fried dumplings and caramel."],
+      ["narr", "На вулицю вийшов нічний ринок: ятки з їжею, ліхтарі, стукіт дерев’яних сандалій. Пахло смаженими кульками й карамеллю.", "The night market came out: food stalls, lanterns, the clatter of wooden sandals. It smelled of fried dumplings and caramel."],
       ["zoya", "Тут стільки смачного, що я забула про дієту. І про те, що вона в мене була.", "There's so much tasty food that I forgot about my diet. And that I had one."],
       ["S", "Я лише перевіряв, чи не отруєні кульки. Три штуки. Для безпеки.", "I was only checking whether the dumplings were poisoned. Three of them. For safety."],
       ["G", "Увага! Скоро феєрверк. Дивіться на небо й загадуйте бажання.", "Attention! Fireworks soon. Look at the sky and make a wish."],

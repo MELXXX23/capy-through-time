@@ -390,7 +390,7 @@
     mgClawTitle: 'Клешня-автомат', mgClawSub: 'Клешня їздить туди-сюди. Тапни, щоб опустити її точно над іграшкою!', mgClawStart: 'Хапати!', mgClawDone: 'Повні кишені іграшок!',
     mgSortTitle: 'Сортування сміття', mgSortSub: 'Сміття їде стрічкою. Тап ліворуч — у зелений бак (органіка), праворуч — у синій (пластик)!', mgSortStart: 'Сортувати!', mgSortDone: 'Планета чистіша!',
     mgCrysTitle: 'Кристали в космосі', mgCrysSub: 'Лови кристали й обминай астероїди. Тапни туди, куди має летіти ракета!', mgCrysStart: 'Летіти!', mgCrysDone: 'Повний трюм!',
-    mgRoadTitle: 'Нічна траса', mgRoadSub: 'Збирай неонові монети й об\'їжджай машини. Тапни на смугу, де хочеш їхати!', mgRoadStart: 'Поїхали!', mgRoadDone: 'Гарна поїздка!'
+    mgRoadTitle: 'Нічна траса', mgRoadSub: 'Збирай неонові монети й об’їжджай машини. Тапни на смугу, де хочеш їхати!', mgRoadStart: 'Поїхали!', mgRoadDone: 'Гарна поїздка!'
   };
   const EN = {
     mgFrescoTitle: 'Master Capy\'s Fresco', mgFrescoSub: 'The paint pots light up one by one. Repeat the order to bring the fresco to life!', mgFrescoStart: 'Paint!', mgFrescoDone: 'How beautiful!',

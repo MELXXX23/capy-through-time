@@ -26,7 +26,7 @@ function cutIntroCam(Tn, W, H) {                                      // вст�
   return [cutLerp(2.3, 1, e), [cutLerp(sky[0], W / 2, e), cutLerp(sky[1], H / 2, e)]];
 }
 function cutIntroText(g, Tn, W, H, txt) {
-  const s = Tn + CUT_PRE, nar = W < 300, lines = nar ? txt.introN : txt.intro, k = nar ? 2 : 3, cw = 8 * k / CUT_Q, a = 1 - cutSm((s - (CUT_PRE - 1.5)) / 0.8);
+  const s = Tn + CUT_PRE, nar = W < 300, boy = state.settings.gender === 'm', lines = nar ? ((boy && txt.introNm) || txt.introN) : ((boy && txt.introm) || txt.intro), k = nar ? 2 : 3, cw = 8 * k / CUT_Q, a = 1 - cutSm((s - (CUT_PRE - 1.5)) / 0.8);
   if (a <= 0) return;
   const lh = nar ? 16 : 20, y0 = Math.round(H * 0.3 - (lines.length - 1) * lh / 2), gr = g.createLinearGradient(0, y0 - 40, 0, y0 + lines.length * lh + 30);
   gr.addColorStop(0, 'rgba(5,6,15,0)'); gr.addColorStop(0.5, 'rgba(5,6,15,' + 0.5 * a + ')'); gr.addColorStop(1, 'rgba(5,6,15,0)'); g.fillStyle = gr; g.fillRect(0, y0 - 40, W, lines.length * lh + 70);

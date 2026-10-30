@@ -76,8 +76,8 @@
     guestAsk_sora_0: 'Catch the cranes: they flew out of my tea. Tap!', guestAsk_sora_1: 'A few more cranes and the teapot will sing again.',
     guestDone_sora: 'All the cranes are home. The tea is hot and the dragon is happy. Thank you!',
     ep10_title: 'Land of the Rising Sun',
-    ep10_0: 'The clock ticked and the street filled with pink light. Paper lanterns drift above the roofs, and by the tea house a fox helplessly stares at a tipped-over teapot.',
-    ep10_1: 'Good morning! I’m Sora. This is my tea house. All the tea leaves ran away when I looked aside for a second.',
+    ep10_0: 'The watch ticked and the street filled with pink light. Paper lanterns drift above the roofs, and by the tea house a fox helplessly stares at a tipped-over teapot.',
+    ep10_1: 'Good morning! I’m Sora. This is my tea house. All the tea leaves ran away when I looked away for a second.',
     ep10_2: 'The tea leaves ran away? Leaves don’t run.',
     ep10_3: 'They do, and how. I saw them: green, with little wings. I didn’t touch anyone, of course. Didn’t sell anything to anybody.',
     ep10_4: 'They’re origami cranes! Folded from my tea bags, and they flew all over town. Help me catch {0}: tap each one before they land on a roof.',
@@ -98,6 +98,6 @@
   // Репліки Капі у скіні епохи (по одній на кожен тап)
   if (typeof SKIN_LINES !== 'undefined') {
     SKIN_LINES.uk.capy_ep8 = ['Кімоно дуже гарне, а сандалі муляють. Краса вимагає жертв.', 'Капелюх як ліхтар: нічого не видно, зате затишно.', 'Дракон мені підморгнув. Або це був вітер.', 'Чай, рис і сакура: життя вдалося.'];
-    SKIN_LINES.en.capy_ep8 = ['The kimono is lovely, the sandals pinch. Beauty demands sacrifice.', 'The hat is like a lantern: I can’t see, but it’s cozy.', 'The dragon winked at me. Or maybe it was the wind.', 'Tea, rice and sakura: life is good.'];
+    SKIN_LINES.en.capy_ep8 = ['The kimono is lovely, the sandals pinch. Beauty demands sacrifice.', 'The hat is like a lantern: I can’t see, but it’s cosy.', 'The dragon winked at me. Or maybe it was the wind.', 'Tea, rice and sakura: life is good.'];
   }
 })();

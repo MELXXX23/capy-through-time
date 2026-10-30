@@ -26,7 +26,7 @@ const EC_DATA = {
       ["capy", "Шнирю, давай так: платівка повертається, збитки не рахуємо.", "Shnyr, here's the deal: the record goes back, we skip the damages."],
       ["S", "Домовились. Але діджеїв не звільняють, ви ж знаєте.", "Deal. But DJs don't get fired, you know that."] ] },
     { t: ["Коктейль №13", "Milkshake Number 13"], L: [
-      ["G", "Біда: я загубив рецепт фірмового коктейлю. Лишилось тринадцять інгредієнтів, а чотирнадцятий був секретом. Тепер навіть я не знаю який.", "Disaster: I lost the recipe of my signature milkshake. Thirteen ingredients remain, and the fourteenth was a secret. Now even I don't know it."],
+      ["G", "Біда: я загубив рецепт фірмового коктейлю. Лишилось тринадцять інгредієнтів, а чотирнадцятий був секретом. Тепер навіть я не знаю який.", "Disaster: I lost the recipe for my signature milkshake. Thirteen ingredients remain, and the fourteenth was a secret. Now even I don't know it."],
       ["spike", "Я перерахував ціни. Чотирнадцятий інгредієнт, схоже, нічого не коштує. Це мене непокоїть.", "I ran the prices. The fourteenth ingredient seems to cost nothing. That worries me."],
       ["capy", "Нічого не коштує... Може, це не продукт, а те, як ти його подаєш?", "Costs nothing... Maybe it's not an ingredient but how you serve it?"],
       ["G", "Усмішка! Я завжди ставив склянку з усмішкою. А загубив її разом із рецептом!", "A smile! I always put the glass down with a smile. And I lost it along with the recipe!"],
@@ -40,7 +40,7 @@ const EC_DATA = {
     { t: ["Біп-біп із неба", "Beep-Beep From the Sky"], L: [
       ["narr", "Увечері над дахами прокотилась крихітна блискуча зірочка. Пискнула «біп-біп» і сховалась за хмару.", "That evening a tiny shiny star rolled over the rooftops. It went “beep-beep” and hid behind a cloud."],
       ["G", "Це новий дзвінок? Я не замовляв.", "Is that a new doorbell? I didn't order one."],
-      ["tonya", "Невідомий об'єкт у небі. Охорона зауважила: він блимає в ритм. Це підозріло. Але гарно.", "Unknown object in the sky. Security notes: it blinks in rhythm. Suspicious. But pretty."],
+      ["tonya", "Невідомий об’єкт у небі. Охорона зауважила: він блимає в ритм. Це підозріло. Але гарно.", "Unknown object in the sky. Security notes: it blinks in rhythm. Suspicious. But pretty."],
       ["capy", "Схоже, хтось далеко звідси першим привітався з нами.", "Looks like someone far away said hello to us first."],
       ["clock", "(цок... цок...) Я чув цей сигнал у майбутньому. Там він гучніший.", "(tick... tick...) I've heard that signal in the future. It's louder there."] ] },
     { t: ["Танцювальний марафон", "The Dance Marathon"], L: [
@@ -57,7 +57,7 @@ const EC_DATA = {
       ["clock", "Зверніть увагу: у темряві мене чути краще. Цок. Цок. Цок.", "Notice: in the dark you can hear me better. Tick. Tock. Tick."] ] },
     { t: ["Годинник у джубоксі", "The Watch in the Jukebox"], L: [
       ["narr", "Коли світло повернулось, на екрані джубокса замість назви пісні було написано «ЦОК».", "When the lights came back, the jukebox screen showed not a song title but “TICK”."],
-      ["clock", "Це була гарна епоха, Капі. Мені сподобались шейки, коктейлі й ті біплани.", "That was a lovely era, Capy. I liked the shakes, the milkshakes and those biplanes."],
+      ["clock", "Це була гарна епоха, Капі. Мені сподобались шейки, коктейлі й ті біплани.", "That was a lovely era, Capy. I liked the dances, the milkshakes and those biplanes."],
       ["capy", "Ми ще не закінчили. Піпові треба допомогти зі столиками.", "We're not done. Pip still needs help with the tables."],
       ["clock", "Допоможи. Я зачекаю. Хвилина більше, хвилина менше. Я ж Годинник.", "Help him. I'll wait. A minute more or less. I'm the Watch, after all."],
       ["narr", "Піп поставив нову платівку. Вона була про дорогу, яка веде далі, ніж можна уявити.", "Pip put on a new record. It was about a road that goes further than you can imagine."] ] }
@@ -87,9 +87,9 @@ const EC_DATA = {
       ["G", "Це мій танцпол. У нього своє життя, і він любить, коли на ньому танцюють.", "That's my dance floor. It has a life of its own and it loves being danced on."],
       ["tonya", "Попереджаю: порушників ритму штрафуватимемо. Музикою. Повільною.", "Warning: offenders of rhythm will be fined. In music. Slow music."],
       ["S", "Я винайшов техніку «тихенько по краю». Без штрафів, без пригод.", "I invented the “quietly along the edge” technique. No fines, no adventures."],
-      ["capy", "Усі на танцпол! Хто не вміє, навчиться за три такти.", "Everyone to the floor! Who can't dance will learn in three beats."] ] },
+      ["capy", "Усі на танцпол! Хто не вміє, навчиться за три такти.", "Everyone to the floor! Whoever can't dance will learn in three beats."] ] },
     { t: ["Конкурс кльошів", "The Flares Contest"], L: [
-      ["G", "Сьогодні конкурс: чиї штани ширші. Журі: я, Тоня й бухгалтер. Серйозно.", "Today's contest: whose trousers are wider. The jury: me, Tonya and the accountant. Seriously."],
+      ["G", "Сьогодні конкурс: чиї штани ширші. Журі: я, Тоня й бухгалтерка. Серйозно.", "Today's contest: whose trousers are wider. The jury: me, Tonya and the accountant. Seriously."],
       ["spike", "У мене штанів немає. Це дискваліфікація чи привілей?", "I have no trousers. Is that a disqualification or a privilege?"],
       ["tonya", "Це спостереження. До речі, штани в єнота на розмір більші, ніж треба.", "That's an observation. By the way, the raccoon's trousers are a size bigger than needed."],
       ["S", "Там дві запасні кишені. Це не штани, це склад. Тома б заздрив.", "Two spare pockets. They're not trousers, they're a warehouse. Toma would be jealous."],
@@ -122,19 +122,19 @@ const EC_DATA = {
       ["G", "Ого, спрацювало з першого разу! Це талант чи просто пощастило?", "Wow, it worked the first time! Is that talent or just luck?"],
       ["narr", "Екран спалахнув: «PLAYER 1: CAPY». Пішов відлік першого рівня.", "The screen flashed: “PLAYER 1: CAPY”. The first level began counting down."] ] },
     { t: ["Рекорд, якого не було", "A Record That Never Happened"], L: [
-      ["narr", "У таблиці рекордів сяє нове ім'я: «ЄНТ — 999999». Усі повільно повернули голови.", "On the high-score board a new name shines: “RAC — 999999”. Everyone slowly turned their heads."],
+      ["narr", "У таблиці рекордів сяє нове ім’я: «ЄНТ — 999999». Усі повільно повернули голови.", "On the high-score board a new name shines: “RAC — 999999”. Everyone slowly turned their heads."],
       ["G", "Я цю гру проходив сто разів і ніколи не бачив стільки очок. Звідки?", "I've beaten this game a hundred times and never saw that many points. Where from?"],
       ["S", "Просто я дуже старанний. І трохи вмію поводитися з викрутками.", "I'm just very diligent. And a bit handy with screwdrivers."],
       ["spike", "Цей рахунок більший за всі монети в місті. Математично нечесно.", "That score is larger than all the coins in town. Mathematically unfair."],
       ["capy", "Шнирю, закрути назад, і ми забудемо про цей рекорд. Згода?", "Shnyr, screw it back and we'll forget about the record. Deal?"] ] },
     { t: ["Рівень із привидами", "The Level With Ghosts"], L: [
-      ["narr", "На екрані з'явився лабіринт, а в залі між автоматами попливли кульки з очима. Вони хихотіли.", "A maze appeared on the screen, and balloon-like blobs with eyes floated between the machines. They giggled."],
+      ["narr", "На екрані з’явився лабіринт, а в залі між автоматами попливли кульки з очима. Вони хихотіли.", "A maze appeared on the screen, and balloon-like blobs with eyes floated between the machines. They giggled."],
       ["G", "Це привиди з першого рівня! Вилізли з гри, а я їх не кликав.", "Those are the ghosts from level one! They climbed out of the game and I never called them."],
       ["tonya", "Їх зручніше ловити, коли вони стають синіми. Це я з досвіду. Давно.", "They're easier to catch when they turn blue. I know from experience. A long time ago."],
-      ["capy", "До автоматів! Хто з'їсть більше крапок, той визволяє зал!", "To the machines! Whoever eats the most dots frees the hall!"],
-      ["S", "А я з'їм усе, що не прибито. Крапки смачні?", "I'll eat anything that isn't nailed down. Are dots tasty?"] ] },
+      ["capy", "До автоматів! Хто з’їсть більше крапок, той визволяє зал!", "To the machines! Whoever eats the most dots frees the hall!"],
+      ["S", "А я з’їм усе, що не прибито. Крапки смачні?", "I'll eat anything that isn't nailed down. Are dots tasty?"] ] },
     { t: ["Падаючі блоки", "Falling Blocks"], L: [
-      ["narr", "З неба повільно спускаються різнокольорові фігурки, а лінії з'їдають їх рядок за рядком.", "Colourful shapes slowly descend from the sky while lines swallow them row by row."],
+      ["narr", "З неба повільно спускаються різнокольорові фігурки, а лінії з’їдають їх рядок за рядком.", "Colourful shapes slowly descend from the sky while lines swallow them row by row."],
       ["G", "Це ж тетріс! Складаємо їх у рівні ряди, інакше завалять усю вулицю.", "That's Tetris! We fit them into neat rows or they'll bury the whole street."],
       ["spike", "Прямі ліворуч, криві праворуч. Я розмітив усе кольорами. Мені навіть подобається.", "Straight ones left, crooked ones right. I've colour-coded it all. I actually like it."],
       ["capy", "Команда, крутіть блоки! Хто стоїть без діла, стає паличкою!", "Team, rotate the blocks! Whoever stands idle becomes a stick!"],
@@ -158,7 +158,7 @@ const EC_DATA = {
       ["G", "Тиснемо «Так»! Усі разом! Три, два, один!", "We press Yes! All together! Three, two, one!"],
       ["narr", "Екрани засвітились знову, яскравіше, ніж раніше. Макс обійняв Капі так, що аж затріщав ґудзик.", "The screens lit up again, brighter than before. Max hugged Capy so hard a button creaked."] ] },
     { t: ["Продовжити?", "Continue?"], L: [
-      ["narr", "Коли гості розійшлись, на головному автоматі лишилось одне повідомлення. Воно блимало в ритм цокання.", "When the guests left, one message remained on the main machine. It blinked to the rhythm of ticking."],
+      ["narr", "Коли гості розійшлись, на головному автоматі лишилось одне повідомлення. Воно блимало в ритм цокання.", "When the guests left, one message remained on the main machine. It blinked to the rhythm of the ticking."],
       ["clock", "«CONTINUE?» — це питаю я, Капі. Попереду ще багато рівнів.", "“CONTINUE?” That's me asking, Capy. There are plenty of levels ahead."],
       ["capy", "А ти точно не бос рівня?", "Are you sure you're not a level boss?"],
       ["clock", "Я радше фінальний екран. Тільки з бонусами.", "I'm more of a final screen. Only with bonuses."],

@@ -8,7 +8,16 @@ let saveTimer = 0;
 let uiTimer = 0;
 let animClock = 0;
 
+// Помилка в кадрі не зупиняє гру: її записуємо в журнал (Налаштування → Звіт), а наступний кадр усе одно просимо.
+let frameErrN = 0;
+function frameErr(e) {
+  if (frameErrN++ < 3) { logErr('frame', e && e.message, '', 0, 0, e && e.stack); console.error('frame: ' + (e && e.message)); }
+}
 function frame(now) {
+  try { frameStep(now); } catch (e) { frameErr(e); }
+  requestAnimationFrame(frame);
+}
+function frameStep(now) {
   const raw = Math.max(0, (now - lastFrame) / 1000), dt = Math.min(CONFIG.MAX_DT, raw);
   lastFrame = now;
   perfSample(raw);
@@ -48,14 +57,12 @@ function frame(now) {
   updateFxPlus(dt);
   updateDailyReminder(dt);
   const hidden = (warp && warp.t > 0.15 && (!warp.applied || (warp.steps && warp.steps.length))) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 5600) || cut.on;     // сцену не малюємо, поки її закриває вир (до застосування нової епохи) або заставка; далі вир прозорішає, і під ним уже НОВА епоха
-  if (!hidden) render(animClock);                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
+  if (!hidden) { try { render(animClock); } catch (e) { frameErr(e); } }                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
 
   uiTimer += dt;
   if (uiTimer >= CONFIG.UI_REFRESH_SECONDS) { uiTimer = 0; updateUI(); }
 
   saveTimer += dt;
   if (saveTimer >= CONFIG.AUTOSAVE_SECONDS) { saveTimer = 0; saveGame(); }
-
-  requestAnimationFrame(frame);
 }
 

@@ -139,7 +139,7 @@ const dsc = (g, cx, cy, r, c) => {                                    // дис�
 (function () {
   const UK = {
     mgTaikoTitle: 'Тайко діда Рьо', mgTaikoSub: 'Кільця стискаються до барабана. Бий, коли кільце збігається з ободом! Скін — за ритм.', mgTaikoStart: 'Бити!', mgTaikoDone: 'Гарний ритм!',
-    mgGhostTitle: 'Привиди з могил', mgGhostSub: 'Привиди визирають із ям. Тапай їх, а на кажанів не чіпай!', mgGhostStart: 'Ловити!', mgGhostDone: 'Могили спокійні!'
+    mgGhostTitle: 'Привиди з могил', mgGhostSub: 'Привиди визирають із ям. Тапай їх, а кажанів не чіпай!', mgGhostStart: 'Ловити!', mgGhostDone: 'Могили спокійні!'
   };
   const EN = {
     mgTaikoTitle: 'Grandpa Ryo’s Taiko', mgTaikoSub: 'Rings shrink onto the drum. Strike when the ring meets the rim! The skin is for the rhythm.', mgTaikoStart: 'Strike!', mgTaikoDone: 'Great rhythm!',
