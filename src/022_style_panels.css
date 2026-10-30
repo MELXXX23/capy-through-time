@@ -26,7 +26,7 @@
 .team-note { font-size: 11px; line-height: 1.6; color: var(--brown); margin: 10px 2px 0; text-align: center; }
 #teamList .dept.locked { white-space: pre-line; line-height: 1.6; }
 .team-card { display: flex; gap: 10px; align-items: flex-start; }
-.team-card .portrait { width: 56px; height: 84px; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; background: var(--mint); box-shadow: 0 0 0 3px var(--brown); }
+.team-card .portrait { width: 106px; height: 84px; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; background: var(--mint); box-shadow: 0 0 0 3px var(--brown); }
 .team-card .info { flex: 1; min-width: 0; }
 .team-card .t-name { font-size: 13px; line-height: 1.4; color: var(--dark); }
 .team-card .t-role { font-size: 11px; line-height: 1.5; color: var(--red); margin-top: 2px; }

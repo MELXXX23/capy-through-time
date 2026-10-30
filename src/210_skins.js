@@ -150,7 +150,7 @@ function drawShopSkinFx() {
 }
 const skinPage = {};                 // яку «сторінку» (по 3 скіни) показано в кожній групі
 function refreshTeamPortraits() {
-  document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => { const c2 = cv.getContext('2d'); c2.clearRect(0, 0, cv.width, cv.height); c2.drawImage(getSpriteCanvas(teamSprite(cv.dataset.tid)), 0, 0); });
+  document.querySelectorAll('canvas.portrait[data-tid]').forEach(cv => drawTeamPortrait(cv, cv.dataset.tid));
 }
 function equipSkin(type, i) {
   if (i >= 0 && !skinOwned(i)) {
@@ -232,6 +232,7 @@ function updateSkinsUI() {
   if (keepH) ui.skinsList.style.minHeight = keepH + 'px';
   Promise.resolve().then(() => { ui.skinsList.style.minHeight = ''; if (sc) sc.scrollTop = keepTop; });
   ui.skinsList.innerHTML = '';
+  let fillOrder = 0;                                                    // перша група малюється одразу, решта — по кадрах: відкриття вкладки не гальмує (раніше ~180 мс)
   [['capy', false], ['weather', false], ['street', false], ['hero', false], ['shop', false]].forEach(([type, epochGroup]) => {
     const card = document.createElement('div');
     card.className = 'card skin-cat';
@@ -249,7 +250,7 @@ function updateSkinsUI() {
       nav.append(mk('◀', -1), cnt, mk('▶', 1));
       card.querySelector('h2').appendChild(nav);
     }
-    items.slice(skinPage[gkey] * 3, skinPage[gkey] * 3 + 3).forEach(o => {
+    const fill = () => items.slice(skinPage[gkey] * 3, skinPage[gkey] * 3 + 3).forEach((o, j) => setTimeout(() => {
       const owned = o.i < 0 || skinOwned(o.i);
       const worn = state.skins[type] === o.i;
       const b = document.createElement('button');
@@ -268,8 +269,9 @@ function updateSkinsUI() {
       b.append(nm, st);
       b.addEventListener('click', () => equipSkin(type, o.i));
       grid.appendChild(b);
-    });
+    }, j * 45));                                                         // кожну картку — окремим кадром: найважчі (магазини) не збираються разом
     ui.skinsList.appendChild(card);
+    if (fillOrder++ === 0) fill(); else setTimeout(fill, fillOrder * 50);
   });
 }
 

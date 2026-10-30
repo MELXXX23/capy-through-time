@@ -193,14 +193,14 @@ function buildTeamCards() {
     const card = document.createElement('div');
     card.className = 'card team-card';
     card.innerHTML =
-      '<canvas class="portrait" width="18" height="27" aria-hidden="true"></canvas>' +
+      '<canvas class="portrait" width="34" height="27" aria-hidden="true"></canvas>' +
       '<div class="info"><div class="t-name"></div><div class="t-role"></div><div class="t-trait"></div>' +
       '<div class="t-lvl"></div><div class="t-now"></div><div class="t-next"></div>' +
       '<button type="button" class="btn wide go"></button></div>';
     const cv = card.querySelector('.portrait');
     const pc = cv.getContext('2d');
     pc.imageSmoothingEnabled = false;
-    pc.drawImage(getSpriteCanvas(teamSprite(m.id)), 0, 0);
+    drawTeamPortrait(cv, m.id);
     cv.dataset.tid = m.id;
     card.querySelector('button').addEventListener('click', () => hireOrUpgrade(i));
     ui.teamList.appendChild(card);

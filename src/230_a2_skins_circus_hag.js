@@ -1,6 +1,6 @@
 //#part 230_a2_skins_circus_hag.js
-function hagReset() {
-  const main = mgSkinSector(), dec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u' }, top = Math.floor(Math.random() * 3);
+function hagReset() {      // головний приз відьми — лише бонус (дохід ×2/×3 або тап ×3 на кілька хвилин), скінів тут нема
+  const hagPool = CIRCUS_SECTORS.filter(x => x.kind === 'income' || x.kind === 'tap'), main = hagPool[Math.floor(Math.random() * hagPool.length)], dec = { kind: 'crystal', amount: 1, icon: 'gem', color: 'u' }, top = Math.floor(Math.random() * 3);
   hagGame.c = [0, 1, 2].map(i => ({ slot: i, lid: 1, prize: i === top ? main : dec, main: i === top, dim: false }));
   hagGame.phase = 'idle'; hagGame.t = 0; hagGame.pick = -1; hagGame.top = top; hagGame.si = 0; hagGame.st = 0; hagGame.rt = 0;
   hagGame.swaps = [0.36, 0.32, 0.29, 0.26, 0.24, 0.22, 0.2, 0.19, 0.18, 0.17];

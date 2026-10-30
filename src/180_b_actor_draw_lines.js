@@ -22,70 +22,10 @@ function pickWanderTarget(a) {
 }
 
 // Предмет у лапках звірятка (малюється поверх спрайта). t — час, dir — куди йде
-function drawTeamProp(prop, x, y, t, dir) {
-  const ph = Math.floor(t * 3) % 2;
-  switch (prop) {
-    case 'register': {   // прилавок з касою стоїть збоку (ліворуч від їжака), щоб Голка було повністю видно, а не лише голову
-      const rx = x - 11;                                  // прилавок по центру, перед їжаком: закриває лише живіт, не лице
-      R(ctx, rx, y - 6, 22, 6, 'b'); R(ctx, rx, y - 6, 22, 1, 'l'); R(ctx, rx, y - 1, 22, 1, 'd'); R(ctx, rx + 7, y - 5, 1, 4, 'd'); R(ctx, rx + 14, y - 5, 1, 4, 'd');
-      R(ctx, rx + 15, y - 9, 6, 3, 'e'); R(ctx, rx + 16, y - 8, 4, 1, 'g'); R(ctx, rx + 1, y - 8, 4, 2, 'h');                       // каса справа, зошит зліва
-      if (Math.floor(t * 1.2) % 3 === 0) R(ctx, rx + 18, y - 11 - ph, 2, 2, 'y');
-      break;
-    }
-    case 'hammer': {     // молоток і дошка
-      const up = Math.floor(t * 3) % 2 === 0;
-      R(ctx, x + 7, y - 2, 13, 2, 'l'); R(ctx, x + 7, y - 1, 13, 1, 'd');
-      if (up) { R(ctx, x + 11, y - 15, 1, 8, 'd'); R(ctx, x + 9, y - 17, 5, 3, 'e'); }
-      else { R(ctx, x + 11, y - 9, 1, 7, 'd'); R(ctx, x + 9, y - 4, 5, 3, 'e'); R(ctx, x + 15, y - 4, 1, 1, 'y'); }
-      break;
-    }
-    case 'tray':         // таця з цукерками
-      R(ctx, x - 9, y - 8, 18, 2, 'b'); R(ctx, x - 9, y - 8, 18, 1, 'l');
-      ['p', 'h', 'm', 'q'].forEach((c, k) => R(ctx, x - 7 + k * 4, y - 11 - ((k + ph) % 2), 3, 3, c));
-      break;
-    case 'baton':        // кийок охоронниці
-      R(ctx, x + 9, y - 10, 2, 10, 'd'); R(ctx, x + 9, y - 10, 2, 2, 'h');
-      break;
-    case 'box':          // ящик
-      R(ctx, x - 7, y - 6, 14, 6, 'c'); R(ctx, x - 7, y - 6, 14, 1, 'l'); R(ctx, x - 7, y - 1, 14, 1, 'd');
-      R(ctx, x - 7, y - 6, 1, 6, 'd'); R(ctx, x + 6, y - 6, 1, 6, 'd'); R(ctx, x - 1, y - 6, 2, 6, 'b');
-      break;
-    case 'ledger':       // бухгалтерська книга
-      R(ctx, x - 6, y - 8, 12, 6, 'w'); R(ctx, x - 6, y - 8, 12, 1, 'd'); R(ctx, x - 6, y - 3, 12, 1, 'd'); R(ctx, x, y - 8, 1, 6, 'd');
-      R(ctx, x - 5, y - 6, 4, 1, 'e'); R(ctx, x + 2, y - 6 + ph, 3, 1, 'e');
-      break;
-    case 'broom': {      // віник
-      const bx = x + 9 * dir;
-      R(ctx, bx, y - 13, 1, 12, 'b'); R(ctx, bx - 2 + ph, y - 3, 5, 3, 'h'); R(ctx, bx - 2 + ph, y - 1, 5, 1, 'o');
-      break;
-    }
-    case 'dress':        // сукня на вішаку
-      R(ctx, x + 8, y - 14, 1, 3, 'd'); R(ctx, x + 6, y - 11, 5, 6, ph ? 'p' : 'u'); R(ctx, x + 5, y - 5, 7, 2, ph ? 'p' : 'u');
-      break;
-    case 'clipboard':    // планшет з папером
-      R(ctx, x + 6, y - 12, 7, 9, 'l'); R(ctx, x + 7, y - 11, 5, 7, 'w');
-      R(ctx, x + 8, y - 10 + ph, 3, 1, 'e'); R(ctx, x + 8, y - 8, 3, 1, 'e'); R(ctx, x + 8, y - 6, 2, 1, 'e');
-      break;
-    case 'megaphone':    // гучномовець
-      R(ctx, x + 7, y - 12, 3, 4, 'p'); R(ctx, x + 10, y - 14, 3, 8, 'p'); R(ctx, x + 10, y - 14, 1, 8, 'q');
-      if (ph) { R(ctx, x + 14, y - 12, 1, 1, 'w'); R(ctx, x + 16, y - 10, 1, 1, 'w'); R(ctx, x + 14, y - 8, 1, 1, 'w'); }
-      else { R(ctx, x + 15, y - 11, 1, 1, 'w'); R(ctx, x + 17, y - 9, 1, 1, 'w'); }
-      break;
-    case 'tablet':       // планшет
-      R(ctx, x - 5, y - 9, 10, 7, 'd'); R(ctx, x - 4, y - 8, 8, 5, ph ? 's' : 'S'); R(ctx, x - 2, y - 6, 1, 1, 'n');
-      break;
-    case 'cart': {       // візок
-      const cx = x + 11 * dir;
-      R(ctx, cx - 5, y - 8, 10, 5, 'e'); R(ctx, cx - 5, y - 8, 10, 1, 'E');
-      R(ctx, cx - 4, y - 11, 3, 3, 'r'); R(ctx, cx, y - 11, 3, 3, 'g');
-      R(ctx, cx - 4, y - 2, 2, 2, 'd'); R(ctx, cx + 2, y - 2, 2, 2, 'd');
-      break;
-    }
-  }
-}
+function drawTeamProp(prop, x, y, t, dir, id) { teamPropArt(ctx, prop, x, y, Math.floor(t * 3) % 2, id, dir); }      // малюнки предметів — у 180_a9_team_props.js
 
 const ACTOR_K = 1.4;                                   // звірята-працівники й гості: 16 px × 1,4 ≈ 22 px (було 1,56; −10%), Капі 24 px × 1,3 ≈ 31 px
-function actorK(a) { return ACTOR_K; }
+function actorK(a) { return HERO_K; }                  // увесь «виступ» героя (предмет, тінь, репліки, влучання) — у масштабі самого героя
 // Чітка «фігурка»: спрайт спершу масштабується (nearest) і лише потім обводиться — контур завжди рівно 1 px,
 // без світного німба й без розмитих країв, які давав масштаб 1,56 прямо на сцені.
 // Рівне масштабування спрайта в k разів (k ≥ 1). Звичайне «nearest» дає то 1, то 2 пікселі на кожен піксель оригіналу,
@@ -144,7 +84,7 @@ function evenScaled(src, k) {
   return (memo[k] = out);
 }
 const crispFigCache = new Map();
-const HERO_K = 1.25;                                    // герої 18×23 (стиль покупців): 23 × 1,12 ≈ 26 px заввишки
+const HERO_K = 1.4;                                     // герої команди 18×27 (стиль покупців): +12% до 1,25 (р. 73: було +20%, потім −7%) ≈ 38 px заввишки; предмет, тінь, репліки масштабуються цим же коефіцієнтом
 function figK(name) { return getSpriteCanvas(name).height > 16 ? HERO_K : ACTOR_K; }
 function crispFigure(name, flip) {
   const K = figK(name), key = name + '|' + (flip ? 1 : 0) + '|' + K;
@@ -160,6 +100,21 @@ function crispFigure(name, flip) {
   const g = c.getContext('2d'); [[0, 1], [2, 1], [1, 0], [1, 2]].forEach(o => g.drawImage(sil, o[0], o[1])); g.drawImage(body, 1, 1);
   crispFigCache.set(key, c);
   return c;
+}
+// Вуха крізь новорічну шапку: верх фігури (усе вище верху голови) малюється ще раз поверх шапки — шапка «надіта» на вуха
+const earCropCache = new WeakMap();
+function earsOverlay(c) {
+  let e = earCropCache.get(c); if (e !== undefined) return e;
+  const w = c.width, h = c.height, d = c.getContext('2d').getImageData(0, 0, w, h).data, need = Math.round(w * 0.42);
+  let y0 = 0; for (; y0 < h; y0++) { let run = 0, best = 0; for (let x = 0; x < w; x++) { run = d[(y0 * w + x) * 4 + 3] > 128 ? run + 1 : 0; if (run > best) best = run; } if (best >= need) break; }
+  e = null;
+  if (y0 >= 3 && y0 < h) { e = document.createElement('canvas'); e.width = w; e.height = y0; e.getContext('2d').drawImage(c, 0, 0, w, y0, 0, 0, w, y0); }
+  earCropCache.set(c, e); return e;
+}
+function drawCrispEars(name, x0, y0, bob, flip) {
+  if (!theme.decor.has('hats')) return;
+  const sp = getSpriteCanvas(name), K = figK(name), e = earsOverlay(crispFigure(name, flip)); if (!e) return;
+  ctx.drawImage(e, Math.round(x0 - (sp.width / 2) * K) - 1, Math.round(y0 - (sp.height + bob * (ACTOR_K / K)) * K) - 1);
 }
 function drawCrispFigure(name, x0, y0, bob, flip) {      // x0, y0 — ноги по центру; bob — підстрибування в «малих» пікселях
   const sp = getSpriteCanvas(name), K = figK(name);
@@ -180,15 +135,16 @@ function drawActor(a) {
   const scaled = fn => { ctx.save(); ctx.translate(x0, y0); ctx.scale(k, k); ctx.translate(-x0, -y0); fn(); ctx.restore(); };
   scaled(() => { ctx.globalAlpha = 0.3; R(ctx, p.x - 8, p.y, 16, 2, 'd'); ctx.globalAlpha = 0.18; R(ctx, p.x - 5, p.y + 2, 10, 1, 'd'); ctx.globalAlpha = 1; });
   const behindProp = false;          // каса малюється ПІСЛЯ фігури: їжак стоїть за нею, але вона низька й лице не закриває
-  if (behindProp && !p.sitting) scaled(() => drawTeamProp('register', p.x, p.y - p.waddle - p.idleBob - p.hopY, a.t, a.dir));
+  if (behindProp && !p.sitting) scaled(() => drawTeamProp('register', p.x, p.y - p.waddle - p.idleBob - p.hopY, a.t, p.flip ? -1 : 1, p.m.id));
   drawCrispFigure(teamSprite(p.m.id), p.x, p.y, p.bob, p.flip);
   scaled(() => {
     const { m, x, y, sitting, waddle, idleBob, hopY } = p;
     if (hasHats() && !skinOn('hero')) drawHat(x, y - 13 - waddle - idleBob - hopY, a.i);   // маски й шапки свят — лише на звичайних звірятах, зі скіном героя їх немає
-    if (!sitting && !behindProp) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, a.dir);
+    if (!sitting && !behindProp) drawTeamProp(m.spot.prop, x, y - waddle - idleBob - hopY, a.t, p.flip ? -1 : 1, m.id);
     if (a.rest > 0) drawDrink(x, y - hopY, a.t);
     if (hasScarves()) drawScarf(x, y - 16 - waddle - idleBob - hopY, a.i);
   });
+  if (hasHats() && !skinOn('hero')) drawCrispEars(teamSprite(p.m.id), p.x, p.y, p.bob, p.flip);
 }
 // Склянка води в лапках і краплі поту (літній перепочинок)
 function drawDrink(x, y, t) {

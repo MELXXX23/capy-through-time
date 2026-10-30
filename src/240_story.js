@@ -528,6 +528,7 @@ function drawGuest(g) {                                   // гість тако
   if (hasHats()) drawHat(x, y - 13 - step, 20 + g.k);
   if (hasScarves()) drawScarf(x, y - 16 - step, g.k);
   ctx.restore();
+  drawCrispEars(guestSpriteName(g.id), x, y, step, step === 1);
 }
 
 /* ---------- Камео: гість пробігає вулицею ---------- */

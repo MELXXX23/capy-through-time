@@ -61,6 +61,25 @@ function paintHat(g, rows, x0, y0) {
     g.fillStyle = outTone(c, t); g.fillRect(x, y, 1, 1);
   });
 }
+// Вуха звірят (усе вище верху голови: зайчик, лис, кіт, олень…) стирчать крізь шапку: у шапці дві дірки, вухо малюється поверх тулії,
+// а нижній ряд шапки (облямівка, пов'язка, поля) лишається спереду й охоплює корінь вуха. Навколо вуха — темний край дірки.
+function earsThroughHat(g, px, W, y0, rows, x0, hy) {
+  const ear = (x, y) => x >= 0 && x < W && y >= 0 && y < y0 && px[(y * W + x) * 4 + 3] > 128;
+  let jb = rows.length - 1; while (jb > 0 && /^[.]*$/.test(rows[jb])) jb--;
+  jb = Math.max(1, jb - 1);                                                                    // два нижні непорожні ряди шапки лишаються спереду
+  const rgb = (x, y) => px[(y * W + x) * 4] + ',' + px[(y * W + x) * 4 + 1] + ',' + px[(y * W + x) * 4 + 2];
+  for (let j = 0; j < jb; j++) for (let i = 0; i < rows[j].length; i++) {
+    const x = x0 + i, y = hy + j;
+    if (rows[j][i] === '.' || ear(x, y)) continue;
+    if (ear(x - 1, y) || ear(x + 1, y) || ear(x, y - 1)) { g.globalAlpha = 0.5; g.fillStyle = '#24151c'; g.fillRect(x, y, 1, 1); g.globalAlpha = 1; }       // край дірки
+  }
+  for (let y = 0; y < y0; y++) for (let x = 0; x < W; x++) {
+    if (!ear(x, y)) continue;
+    const j = y - hy, i = x - x0;
+    if (j >= jb && rows[j] && rows[j][i] && rows[j][i] !== '.') continue;                        // облямівка перекриває корінь вуха
+    g.fillStyle = 'rgb(' + rgb(x, y) + ')'; g.fillRect(x, y, 1, 1);
+  }
+}
 // o: { hat: [4 рядки 16 символів] | 'headphones' | 'bubble' | 'hood' | null, b, l, c, d (тулуб: колір, обшивка, акцент, прикраса), pat: [5 рядків по 8], outfit: опис одягу на все тіло }
 function dressHero(id, o) {
   const base = o.base || teamBaseCanvas(id), W = base.width, H = base.height;
@@ -100,6 +119,7 @@ function dressHero(id, o) {
   const hy = y0 - 4;
   if (Array.isArray(o.hat) && o.outfit) paintHat(g, o.hat, 1, hy);
   else if (Array.isArray(o.hat)) o.hat.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] !== '.') put(1 + i, hy + j, r[i]); });
+  if (Array.isArray(o.hat)) earsThroughHat(g, px, W, y0, o.hat, 1, hy);
   else if (o.hat === 'headphones') {
     for (let x = 4; x <= 13; x++) put(x, y0 - 1, 'k');
     [[3, y0], [14, y0], [2, y0 + 1], [15, y0 + 1]].forEach(([x, y]) => put(x, y, 'k'));
@@ -232,15 +252,15 @@ const TEAM_OUTFITS = {
 };
 const custSkinCache = {};
 // Звірятко-покупець у скіні героїв (р. 73): той самий одяг, що на героях, малюється на спрайті покупця (з запасом TEAM_PAD над головою)
-function customerSkinCanvas(type, frame, kind) {
-  const key = type + '_' + frame + '_' + kind;
+function customerSkinCanvas(type, frame, kind, af) {       // af — кадр оживлення скіна (100_e2), 0 — спокій
+  const key = type + '_' + frame + '_' + kind + (af ? '~' + af : '');
   if (custSkinCache[key]) return custSkinCache[key];
   const src = getSpriteCanvas(type + '_' + frame), base = document.createElement('canvas');
   base.width = src.width; base.height = src.height + TEAM_PAD; base.getContext('2d').drawImage(src, 0, TEAM_PAD);
-  return (custSkinCache[key] = dressHero(null, { base, hat: TEAM_SKIN_HATS[kind], outfit: TEAM_OUTFITS[kind] }));
+  return (custSkinCache[key] = skinAnimDress(null, kind, af | 0, base));
 }
 function teamSkinSprite(id, kind) {
-  if (TEAM_OUTFITS[kind]) return dressHero(id, { hat: TEAM_SKIN_HATS[kind], outfit: TEAM_OUTFITS[kind] });
+  if (TEAM_OUTFITS[kind]) return skinAnimDress(id, kind, 0);
   if (TEAM_SKIN_BODY[kind]) return dressHero(id, { hat: TEAM_SKIN_HATS[kind], pat: TEAM_SKIN_BODY[kind] });
   const ob = TEAM_SKIN_BODY_OLD[kind] || { b: 'z', l: 'n', d: 'belt', c: 'r' };
   return dressHero(id, { hat: kind === 'ninja' ? 'hood' : TEAM_SKIN_HATS[kind], b: ob.b, l: ob.l, d: ob.d, c: ob.c });

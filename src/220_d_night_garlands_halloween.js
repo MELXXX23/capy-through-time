@@ -365,6 +365,7 @@ function capyScaled(fn) { const cp = LAYOUT.capy, px = cp.x + 14, py = cp.footY;
 function drawCapyBody(breath) {
   const cp = LAYOUT.capy;
   drawSprite(ctx, capySprite(), cp.x, cp.footY - 24, { flip: cp.flip, sx: 1.2, sy: 1.2 * (1 + 0.045 * breath), variant: capyAnim.blinkLeft > 0 ? 'blink' : '' });
+  const ov = capyOverlay(); if (ov) drawCanvasSprite(ctx, ov, cp.x, cp.footY - 24, { flip: cp.flip, sx: 1.2, sy: 1.2 * (1 + 0.045 * breath) });      // блиски скіна (100_e3)
 }
 function drawCapyRim(x, y, flip) {                                              // тонкий теплий контур: Капі вночі не зливається з темною вулицею
   const name = capySprite(), src = getSpriteCanvas(name);

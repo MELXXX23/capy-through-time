@@ -70,7 +70,7 @@ function hitRainToggle(p) {
   if (Math.abs(p.x - s.x) <= 14 && Math.abs(p.y - s.cy) <= 14) {
     state.settings.rain = !state.settings.rain;
     if (state.settings.rain) { weather.rain = Math.max(weather.rain, 0.3); }
-    showToast(t(state.settings.rain ? 'rainOn' : 'rainOff'), 'good'); playSfx('pip'); saveGame();
+    showToast(t(state.settings.rain ? (ecoOn() ? 'rainEco' : 'rainOn') : 'rainOff'), 'good'); playSfx('pip'); saveGame();
     return true;
   }
   return false;

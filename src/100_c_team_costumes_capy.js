@@ -250,7 +250,7 @@ function composeTeamSkin(id, kind) {
   return g.map(r => r.join(''));
 }
 ['party', 'ninja', 'chef', 'wizard', 'royal', 'santa', 'witch', 'gold', 'diamond', 'candy', 'sand', 'moss', 'brick', 'wood'].forEach(kind => TEAM.forEach(m => { SPRITES['team_' + m.id + '_sk_' + kind] = { rows: composeTeamSkin(m.id, kind) }; }));
-function teamSprite(id) { const s = skinOn('hero'); return s ? 'team_' + id + '_sk_' + s : 'team_' + id + '_e' + (viewEpoch() % EPOCHS.length); }
+function teamSprite(id) { const s = skinOn('hero'); if (s && SKIN_ANIM[s]) { const f = skinAF(); return 'team_' + id + '_sk_' + s + (f ? '~' + f : ''); } return s ? 'team_' + id + '_sk_' + s :'team_' + id + '_e' + (viewEpoch() % EPOCHS.length); }
 Object.keys(NPC_PARTS).forEach(id => { SPRITES['npc_' + id] = { rows: composeChibi(NPC_PARTS[id]) }; });
 SPRITES.npc_clock = { rows: CLOCK_ROWS };
 // Космос: гості епох теж у скафандрі й шоломі (Орбіт уже в космічному вбранні; спрайт створюється, коли потрібен)
@@ -405,11 +405,10 @@ function makeCapySkinRows(kind) {
     cellsOf(0, 5, ['nnnnnnn']);
     around(cellsOf(10, 6, ['kk', 'kN', 'kk']));
     around(cellsOf(18, 5, ['zzzzzz', 'zzzzzz', 'zNNzzz', 'zzzzzz', 'zzzzzz', 'zzzzzz']));
-  } else if (kind === 'ep5') {                               // Еко: солом'яний капелюх із листочками, зелена куртка, рюкзак з листком
+  } else if (kind === 'ep5') {                               // Еко: солом'яний капелюх із листочками, зелена куртка
     dye(12, 25, 9, 17, 'g');
     for (let x = 12; x <= 25; x++) { if (at(x, 17) === 'g') put(x, 17, 'G'); if (at(x, 16) === 'g') put(x, 16, 'G'); }
     cellsOf(15, 12, ['.m.', 'mmm', 'mGm', '.G.']);
-    around(cellsOf(18, 5, ['GGGGGG', 'GmmmGG', 'GGmGGG', 'GGGGGG', 'GGGGGG', 'GGGGGG']));
     around(cellsOf(2, 2, ['....cccccc....', '...cccccccc...', '...gggggggg...', '.cccccccccccc.', 'cccccccccccccc']));
     cellsOf(1, 4, ['gg']); cellsOf(14, 4, ['gg']); put(2, 5, 'G'); put(15, 5, 'G'); put(8, 1, 'g'); put(8, 0, 'm'); put(9, 0, 'g');
   } else if (kind === 'ep6') {                               // Космос: скляний шолом, білий скафандр з помаранчевими латками, синій ранець
@@ -476,7 +475,7 @@ function makeCapySkinRows(kind) {
     [11, 13, 15].forEach(y => put(16, y, 'k'));
     cellsOf(6, 14, ['rrrrr', '.rrr.', '..r..']);
     around(cellsOf(5, 0, ['..wwwwww..', '.wwwwwwww.', 'wwwwwwwwww', 'wwwwwwwwww', 'EEEEEEEEEE']));
-  } else if (kind === 'explorer') {                          // дослідник: сафарі-капелюх, жилетка з кишенями, зелений рюкзак
+  } else if (kind === 'explorer') {                          // дослідник: сафарі-капелюх, жилетка з кишенями (без рюкзака, р. 73)
     dye(12, 25, 9, 17, 'c');
     cellsOf(14, 12, ['bbbb', 'bccb', 'bbbb']); cellsOf(20, 12, ['bbbb', 'bccb', 'bbbb']);
     for (let x = 12; x <= 25; x++) if (at(x, 13) === 'c') put(x, 13, 'b');

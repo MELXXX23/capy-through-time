@@ -209,6 +209,7 @@ body.no-anim .skin-item.skin-pop .skin-prev, body.no-anim .skin-item.skin-pop::a
 .dept-icon.ico-box { font-size: 0; }
 .req > span { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .req { align-items: center; padding: 3px 0; }
+.skin-grid:empty { min-height: 128px; }
 .skin-prev.hero, .skin-prev.capy { height: auto; background: transparent; }
 /* плавне закриття вікон (264_smooth_ui.js), зміна вкладок і шторка меню на телефоні (р. 71) */
 .fxGhost, .fxGhost * { pointer-events: none !important; }

@@ -397,7 +397,8 @@ function seedBenches() {
   benches.length = 0;
   const lamps = lampPositions();
   const x0 = -view.offX, x1 = CONFIG.SCENE_W + view.offX;
-  const free = x => x > x0 + 22 && x < x1 - 22 && !lamps.some(lx => Math.abs(x - lx) < 20) &&
+  let sx = null; try { sx = actorHome(TEAM[0]); } catch (e) { /* ще нема розкладки */ }      // їжак із касою (р. 73: більший): лавка не стоїть там, де він і прилавок
+  const free = x => x > x0 + 22 && x < x1 - 22 && !lamps.some(lx => Math.abs(x - lx) < 20) && !(sx !== null && x > sx - 32 && x < sx + 70) &&
     !(shop && x > shop.x - 14 && x < shop.x + shop.w + 14) && benches.every(b => Math.abs(b.x - x) > 46);
   const add = (x, y) => benches.push({ x, y: y || LAYOUT.streetTop, slots: [{ dx: -10, who: null }, { dx: 10, who: null }] });
   // одна лавка на пару дерев: стоїть між двома деревами поряд; біля одинокого дерева — збоку від нього

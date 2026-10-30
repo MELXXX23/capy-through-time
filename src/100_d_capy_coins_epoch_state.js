@@ -194,8 +194,6 @@ function makeCapyOldDetail(kind) {
     art(14, 11, ['bbbb', 'bccb', 'bbbb']); art(20, 11, ['bbbb', 'bccb', 'bbbb']); put(15, 11, 'h'); put(21, 11, 'h');
     for (let x = 12; x <= 25; x++) put(x, 14, 'b');
     art(7, 14, ['rrrrrr', '.rwrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));                       // хустка на шиї (з темним контуром)
-    rect(19, 24, 2, 9, 'g'); rect(19, 24, 2, 2, 'm'); rect(24, 24, 3, 9, 'G'); rect(19, 24, 9, 9, 'G'); rect(19, 24, 5, 5, 'G'); put(21, 6, 'y'); put(22, 6, 'y');   // рюкзак із клапаном
-    rect(18, 25, -1 + 1, 1, 'c'); put(18, 0, '.'); rect(18, 25, 0, 0, '%'); rect(18, 25, 1, 1, 'l'); put(19, 1, 'b'); put(23, 1, 'b');                              // згорнутий килимок
     ell(8.2, 5.2, 7.2, 3.6, ['%', 'c', 'l'], true, 1, 7);
     rect(0, 16, 7, 7, 'l'); rect(1, 15, 6, 6, 'b'); put(8, 1, '%'); [4, 12].forEach(x => put(x, 3, 'l')); put(8, 2, 'c');
     outlineAll('%clbgGhykad', 'O');
@@ -311,6 +309,7 @@ function makeCapyOldDetail(kind) {
     ell(8.2, 5.3, 7, 3.6, ['%', 'c', 'l'], true, 2, 6);
     rect(0, 16, 7, 7, 'l'); rect(1, 15, 6, 6, 'c'); rect(2, 14, 5, 5, 'g'); rect(3, 13, 6, 6, 'G'); [4, 7, 10].forEach(x => { put(x, 4, 'm'); put(x + 1, 4, 'g'); });
     plus(13, 3, 'f', 'y'); art(2, 4, ['mg']);
+    rect(17, 26, 0, 10, '.'); rect(18, 24, 10, 10, 'g'); rect(18, 22, 9, 9, 'g'); rect(16, 19, 8, 8, 'g'); put(16, 7, 'g');      // р. 73: рюкзак прибрано, спина плавно йде вниз (х дзеркальні)
     outlineAll('mgGbl%cfyN', 'O');
   } else if (kind === 'ep6') {
     suit(['*', '&', '&', 'n', 'n', 'n', 'n', 'z', 'z'], null, 'z');

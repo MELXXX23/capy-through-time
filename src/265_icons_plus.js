@@ -179,6 +179,7 @@ function capySkinPreview(cv, name, t) {                           // Капі в
   const breath = Math.sin(t * 2.2) > 0.4 ? 1 : 0, fy = H - 6;
   g.globalAlpha = 0.25; g.fillStyle = '#1a1208'; g.fillRect((W - c.width) / 2 + 3, fy + 1, c.width - 6, 2); g.globalAlpha = 1;
   g.drawImage(c, Math.round((W - c.width) / 2), fy - c.height + 2 - breath);
+  if (name && !/^ep\d$/.test(name)) g.drawImage(capyOverlayCanvas('capy_' + name, Math.floor(t * 4.5) % SKIN_NF), Math.round((W - c.width) / 2), fy - c.height + 2 - breath);
   capyFxPreview(g, name, W, H, t);
 }
 // Усі живі картки-зразки скінів (Капі й герої) оновлюються кілька разів за секунду
