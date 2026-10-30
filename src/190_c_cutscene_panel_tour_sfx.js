@@ -176,7 +176,7 @@ function cutTick(now) {
     if (cut.g1 < 0) lim = Math.min(lim, CT.g1);
     if (cut.g2 < 0) lim = Math.min(lim, CT.g2);
     if (cut.goAmb < 0) lim = Math.min(lim, CT.finBtn);
-    cut.T = Math.min(lim, cut.T + dt / CUT_SLOW * cutRate(cut.T));
+    cut.T = Math.min(lim, cut.T + dt / CUT_SLOW * cutRate(cut.T) * (cut.T < cut.ff ? CUT_FF : 1));
   }
   cutFire(cut.T);
   try { cutDrawFrame(cut.T); } catch (e) { console.error('cutscene', e); }
@@ -188,7 +188,7 @@ function playCutscene(style, opts) {
   const box = document.getElementById('cutscene'); box.hidden = false; box.classList.remove('picking');
   cut.cv = document.getElementById('cutCv'); cut.style = CUT_STYLES[style] ? style : 'A'; cut.cb = opts.done || null;
   cut.fired = {}; cut.tapAmb = -1; cut.goAmb = -1; cut.T = (opts.seek !== undefined) ? 0 : -CUT_PRE; cut.amb = 0; cut.hit = null; cut.seek = opts.seek !== undefined ? opts.seek : -1;
-  cut.g1 = cut.g2 = cut.chgAmb = -1; cut.chg = 0; cut.taps = []; cut.coinScr = null;
+  cut.g1 = cut.g2 = cut.chgAmb = -1; cut.chg = 0; cut.taps = []; cut.coinScr = null; cut.ff = -1;
   if (opts.seek !== undefined || opts.tapped) { cut.g1 = cut.g2 = 0; cut.chg = CUT_CHG; }
   if (opts.tapped) cut.tapAmb = 0;
   if (opts.go) cut.goAmb = 0;
@@ -227,6 +227,12 @@ function cutWarm(style) {
   const run = () => { const f = steps.shift(); if (!f || cut.on || cut.style !== style) return; try { f(); } catch (e) { /* не страшно: доробиться в першому кадрі */ } setTimeout(run, 40); };
   run();
 }
+// Тап по екрану під час репліки: решта репліки (і сцена разом з нею) іде в CUT_FF разів швидше, до кінця цієї репліки
+const CUT_FF = 3.5;
+function cutSayFast() {
+  if (!cut.on || cut.seek >= 0) return;
+  const s = cutSayState(cut.T, CUT_TXT[state.lang] || CUT_TXT.uk); if (s && s.end > cut.T) cut.ff = s.end;
+}
 function startIntroCutscene(replay) {                             // нова гра: заставка, потім екскурсія по меню; з «Щоденника» — лише заставка (її можна пропустити)
   state.cutSeen = true; saveGame(); if (!replay) cutSeenDevice(true);
   playCutscene('B', { done: ok => { if (ok && !replay) startMenuTour(null); } });
@@ -240,6 +246,8 @@ function initCutscene() {
     if (!cut.on) return;
     const r = cut.cv.getBoundingClientRect(), x = (e.clientX - r.left) / cut.S, y = (e.clientY - r.top) / cut.S;
     if (cutGateTap(x, y)) return;
+    const was = cut.tapAmb + cut.goAmb;
+    setTimeout(() => { if (cut.tapAmb + cut.goAmb === was) cutSayFast(); });             // тап не по маркету й не по кнопці — пришвидшити репліку
     if (cut.tapAmb < 0 && cut.T >= CT.TW - 0.01 && cut.rect) { const q = cut.rect, pad = 14; if (x >= q[0] - pad && x <= q[0] + q[2] + pad && y >= q[1] - pad && y <= q[1] + q[3] + pad) { cut.tapAmb = cut.amb; cut.hit = [x, y]; } }
     else if (cut.goAmb < 0 && cut.btn) { const q = cut.btn; if (x >= q[0] - 6 && x <= q[0] + q[2] + 6 && y >= q[1] - 6 && y <= q[1] + q[3] + 6) cut.goAmb = cut.amb; }
   });

@@ -223,6 +223,7 @@ function cutKeyTap() {                                                 // про
   if (cutGateTap(c[0], c[1])) return;
   if (cut.tapAmb < 0 && cut.T >= CT.TW - 0.01 && cut.rect) { const q = cut.rect; cut.tapAmb = cut.amb; cut.hit = [q[0] + q[2] / 2, q[1] + q[3] / 2]; }
   else if (cut.goAmb < 0 && cut.btn) cut.goAmb = cut.amb;
+  else cutSayFast();
 }
 function cutFireBuild(T) {                                             // звуки будівництва
   const b = T - CT.asm0, f = (k, te, n, a) => { if (!cut.fired[k] && b >= te) { cut.fired[k] = 1; playSfx(n, a); } };

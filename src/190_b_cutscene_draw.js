@@ -84,10 +84,10 @@ function cutBubble(g, text, sx, sy, who, prog, W) {
   lines.forEach((l, i) => { if (left > 0) { cutTextPx(g, l.slice(0, left), bx + 4.5, by + 2.5 + lh * (i + 0.5), k, '#3a2a22', null, 'left'); left -= l.length + 1; } });
 }
 function cutSayState(T, txt) {
-  for (const s of CUT_SAY) if (T >= s[0] && T < s[1]) return { who: s[2], text: txt[s[3]], prog: (T - s[0]) * 26 };
+  for (const s of CUT_SAY) if (T >= s[0] && T < s[1]) return { who: s[2], text: txt[s[3]], prog: (T - s[0]) * 26, end: s[1] };
   if (cut.tapAmb >= 0) {
-    const u = T - CT.u0; if (u >= 0 && u < 3) return { who: 'b', text: txt.b6, prog: u * 26 }; if (u >= 3 && u < 5.4) return { who: 'b', text: txt.b7, prog: (u - 3) * 26 };
-    const f = T - CT.fin; if (f >= 2.2 && f < 3.4) return { who: 'm', text: txt.m1, prog: (f - 2.2) * 26 }; if (f >= 3.4 && f < 5.3) return { who: 'n', text: txt.n1, prog: (f - 3.4) * 26 }; if (f >= 5.3) return { who: 'm', text: txt.m2, prog: (f - 5.3) * 26 };
+    const u = T - CT.u0; if (u >= 0 && u < 3) return { who: 'b', text: txt.b6, prog: u * 26, end: CT.u0 + 3 }; if (u >= 3 && u < 5.4) return { who: 'b', text: txt.b7, prog: (u - 3) * 26, end: CT.u0 + 5.4 };
+    const f = T - CT.fin; if (f >= 2.2 && f < 3.4) return { who: 'm', text: txt.m1, prog: (f - 2.2) * 26, end: CT.fin + 3.4 }; if (f >= 3.4 && f < 5.3) return { who: 'n', text: txt.n1, prog: (f - 3.4) * 26, end: CT.fin + 5.3 }; if (f >= 5.3) return { who: 'm', text: txt.m2, prog: (f - 5.3) * 26, end: CT.fin + 7.2 };
   }
   return null;
 }
