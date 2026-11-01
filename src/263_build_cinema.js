@@ -30,7 +30,8 @@ function bcPlace() {
   bc.card.style.left = cx; bc.card.style.top = Math.round(r.top + r.height * 0.3) + 'px';
   bc.ring.style.left = cx; bc.ring.style.top = Math.round(r.top + r.height * 0.4) + 'px';
   Object.assign(bc.flash.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', inset: 'auto' });
-  [bc.root, bc.card, bc.ring].forEach(e => e.style.setProperty('--bcs', s.toFixed(2)));
+  [bc.root, bc.ring].forEach(e => e.style.setProperty('--bcs', s.toFixed(2)));
+  bc.card.style.setProperty('--bcs', Math.max(0.65, s * 0.7).toFixed(2));   // картка «новий рівень» менша за смугу будування, щоб не закривала пів сцени
 }
 function buildCinemaStart() {
   if (!animOn()) return;
