@@ -2,7 +2,9 @@
 
 Читай: `CLAUDE.md`, цей файл. `PROGRESS.md` — лише якщо потрібна подробиця останніх раундів. Старе — `archive/` (лише Grep). Користувач — чоловік (пам'ять `user-is-male`; у CLAUDE.md застаріло).
 
-## Де ми (2026-11-02)
+## Де ми (2026-11-03)
+- Медіа р. 74 (№178) готові, нікуди не викладені: скріни `previews/itch/r74/screens_*`, гіфки `previews/itch/r74/gifs/`, ролики `previews/shorts/out_r74/`, тексти й порядок на itch `store/SHORTS_R74.md`. На itch заливати лише після «онови на itch»; для TikTok і YouTube посилання LINK IN BIO має стояти в профілі.
+- Нові звуки переходу між епохами робить окрема сесія (зразки → «окей» → у гру).
 - НЕ ВИПУЩЕНО (коміт 0dacd2c, не запушено): менша картка «Новий рівень» (`bcPlace`, 263_build_cinema; відкат `before-newlevel-card`). Випуск — лише на «публікуй».
 - ВИПУЩЕНО р. 73в–73е (коміт ccc35d2, push, 31.10; скрипт `previews/itch/release73e.sh`): сайт і exe на столі `D:\DESKTOP\CapyTapMarket-Portable-NEW.exe`. Для itch зібрано `previews/itch/r73e_upload/` (zip + Windows exe без бога). Заливала окрема сесія; чи натиснуто Save на itch, не підтверджено — спитати.
 - Що ввійшло в р. 73в–73е:
