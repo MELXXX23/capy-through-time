@@ -125,7 +125,9 @@ function setupNativeApp() {
     A.addListener('backButton', () => {
       const open = [...document.querySelectorAll("[id$=Modal], #modal")].find(m => !m.hidden);
       const close = open && open.querySelector('[id$=Close], [id$=close], .modal-close');
-      if (close) close.click(); else if (open) open.hidden = true; else A.minimizeApp();
+      if (close) close.click(); else if (open) open.hidden = true;
+      else if (ui.app.classList.contains('sheet-open')) setSheet(false);                     // меню знизу на телефоні закриваємо, гру не згортаємо
+      else A.minimizeApp();
     });
   } catch (e) { /* нічого */ }
 }

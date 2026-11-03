@@ -1,34 +1,36 @@
 # Телефони: Google Play і App Store
 
-Це обгортка [Capacitor](https://capacitorjs.com): та сама гра (`game.html`) у «рамці» застосунку. Код гри не копіюється вручну: `npm run web` бере актуальний `game.html`.
+Це обгортка [Capacitor](https://capacitorjs.com): та сама гра (`game.html`) у «рамці» застосунку. Код гри не копіюється вручну: `sync-web.js` бере актуальну версію й правки для телефона робить лише у своїй копії.
 
-## Що вже готово
-- `package.json`, `capacitor.config.json` (ідентифікатор `com.capy.capytapmarket`, змінити можна ДО першого випуску; потім змінювати не можна).
-- `sync-web.js` — готує `mobile/www` (гра + локальний шрифт).
-- Іконки всіх розмірів: `store/icons/android` і `store/icons/ios` (генерує `tools/mkstoreicons.js`).
-- Політика конфіденційності: `docs/privacy.html` (адреса після публікації: https://melxxx23.github.io/capy-through-time/privacy.html). У ній треба вписати пошту розробника замість позначки.
+## Чим телефонна збірка відрізняється від сайту
+- Уся гра всередині застосунку, працює без інтернету з першого запуску.
+- Шрифт локальний, Google Fonts нема.
+- Режиму бога нема: прапорці вимкнені, а код власника не спрацьовує.
+- «Написати розробникам» відкриває поштову програму гравця, форма Web3Forms вимкнена.
+- Реклама лише за наявності `mobile/ads.json` (не в git). Нема файлу = реклами нема.
+- **Збереження окремі від сайту:** той самий ключ `capyThroughTime_save`, але інша адреса (`https://localhost`), тому прогрес із сайту сам не переїде. Гравець переносить його кодом збереження з налаштувань.
 
-## Що потрібно від тебе (я цього зробити не можу)
-1. Android: акаунт Google Play Console (одноразово $25), встановлений Android Studio. iOS: акаунт Apple Developer ($99/рік) і Mac із Xcode (на Windows збирати iOS неможливо).
-2. Підпис застосунку (ключ Android keystore; сертифікати Apple) — створюється на твоєму боці, ключі нікому не передавай.
-3. Рейтинг віку, опис, скріншоти, країни — заповнюються в консолях магазинів.
-
-## Як зібрати Android (на ПК з Android Studio)
-Capacitor 8 (targetSdk 36: Google Play з 31.08.2026 вимагає API 36 для нових застосунків). Потрібні Android Studio Otter (2025.2.1+) і JDK 21 (іде в комплекті зі Studio), Node 22+.
-Проєкт `mobile/android/` уже створений, іконки (`store/icons/android`) і колір фону вже в ньому.
-```
+## Як зібрати Android
+Інструменти лежать окремо в `D:\AndroidTools` (JDK 21, Android SDK), у систему нічого не ставиться. Видалити їх = видалити папку.
+```bash
 cd mobile
-npm install
-npm run android         # оновить гру й відкриє Android Studio → Build → Generate Signed Bundle (AAB)
+node setup-tools.js            # один раз; --emulator додає емулятор
+node make-key.js               # один раз: створює ключ, пароль вводить власник гри
+node build-aab.js              # AAB у previews/play/aab/, пароль спитає в терміналі
 ```
-Перед кожним новим AAB у `android/app/build.gradle` підніми `versionCode` (1, 2, 3 …).
+Перед кожним новим AAB підніми `versionCode` в `android/app/build.gradle` (1, 2, 3 …). Цільова версія Android: `android/variables.gradle`.
+
+- `node build-aab.js --test`: одноразовий ключ для перевірки на своєму пристрої; такий файл у Play Console не завантажувати.
+- `node build-aab.js --head`: гра з останнього коміту, коли в `src/` зараз хтось працює.
+
+## Ключ підпису
+`C:\GAMES\_capy_keys\capytap-upload.jks`, поза git. Правила збереження: `store/PLAY_CHECKLIST.md`.
+
+## Магазин
+Тексти й анкети: `store/PLAY.md`. Покроковий список: `store/PLAY_CHECKLIST.md`. Скріни й графіка: `store/play/`. Реклама на майбутнє: `store/ADS_PLAN.md`.
 
 ## iOS (на Mac)
-```
+```bash
 cd mobile && npm install && npm run ios:add && npm run ios
 ```
 Іконки з `store/icons/ios` додаються в Xcode → Assets → AppIcon.
-
-## Перевірити перед відправкою
-- Вертикаль і горизонталь, виріз камери (iPhone), кнопка «Назад» на Android. Плагіни App (Назад/пауза), Haptics (вібрація) і Preferences (копія збереження в застосунку) уже вказані в package.json, а гра сама користується ними лише всередині обгортки (код: nativeMirror, setupNativeApp, buzz).
-- Звук після першого дотику (правила браузерних рушіїв).

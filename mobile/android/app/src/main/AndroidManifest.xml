@@ -25,11 +25,6 @@
 
         </activity>
 
-        <!-- AdMob: App ID береться з res/values/admob.xml (зараз тестовий Google; живий вписати перед випуском) -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -41,9 +36,7 @@
         </provider>
     </application>
 
-    <!-- Permissions -->
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Уся гра в застосунку, реклами нема, тож дозвіл на інтернет не потрібен. Посилання й пошта відкриваються в програмах телефона. -->
     <!-- Дитяча/сімейна аудиторія (Families Policy): рекламний ідентифікатор не використовуємо -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
 </manifest>

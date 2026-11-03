@@ -5,5 +5,10 @@ backups/
 desktop/dist-*/
 mobile/node_modules/
 mobile/www/
+mobile/ads.json
+*.jks
+*.keystore
+*.aab
+*.apks
 previews/
 store/lang/dump.json

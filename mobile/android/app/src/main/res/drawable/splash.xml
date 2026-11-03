@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Заставка до старту гри: той самий колір, що й екран завантаження, і Капі з іконки -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item>
+        <bitmap android:gravity="center" android:filter="false" android:src="@mipmap/ic_launcher_foreground" />
+    </item>
+</layer-list>
