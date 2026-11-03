@@ -4,12 +4,12 @@
 
 ## Де лежить
 - Скріни ПК, 1920×1080, пікселі рівні: `previews/itch/r74/screens_pc/` (16 шт., номер = порядок на сторінці).
-- Скріни телефона, 1170×2532: `previews/itch/r74/screens_phone/` (5 шт.).
+- Скріни телефона, 975×2110 (itch приймає зображення до 3840×2160): `previews/itch/r74/screens_phone/` (5 шт.).
 - Гіфки, кожна до 3 МБ (ліміт itch): `previews/itch/r74/gifs/` (7 шт.).
 - Ролики 1080×1920, 60 к/с, −14 LUFS: `previews/shorts/out_r74/*.mp4`, поруч обкладинки `*_cover.png`.
 
 ## Порядок на itch
-Перші 5 скрінів видно одразу, тому: `01_japan_dragon`, `capytap_build.gif`, `02_capy_closeup`, `capytap_eras.gif`, `05_time_travel`; далі решта за номерами й гіфки.
+Залито 2026-11-03, 28 нових стоять першими, у такому порядку: `01_japan_dragon`, `capytap_build.gif`, `02_capy_closeup`, `capytap_eras.gif`, `05_time_travel`, `capytap_skins.gif`, `06_disco`, `capytap_dragon.gif`, `08_neon_mall`, `capytap_seasons.gif`, `11_skins`, `capytap_tap.gif`, `03_renaissance_mall`, `04_building`, `capytap_time_travel.gif`, `07_arcade`, `09_space`, `10_japan_shop`, `12_autumn`, `13_winter`, `14_spring_trees`, `15_retro`, `16_eco`, далі 5 телефонних. Нижче лишаються 11 старих: їх видаляє сам користувач (Edit game → Screenshots → Delete), копії старих скрінів у `previews/itch/r69_en/`, стара гіфка в `previews/itch/ready/`.
 
 ## Як зібрати заново
 1. Скріни: `node previews/itch/r74/run_shots.js` (сценарії `shots_pc.js`, `shots_phone.js`).
