@@ -6,7 +6,7 @@
 - Скріни ПК, 1920×1080, пікселі рівні: `previews/itch/r74/screens_pc/` (16 шт., номер = порядок на сторінці).
 - Скріни телефона, 975×2110 (itch приймає зображення до 3840×2160): `previews/itch/r74/screens_phone/` (5 шт.).
 - Гіфки, кожна до 3 МБ (ліміт itch): `previews/itch/r74/gifs/` (7 шт.).
-- Ролики 1080×1920, 60 к/с, −14 LUFS: `previews/shorts/out_r74/*.mp4`, поруч обкладинки `*_cover.png`.
+- Ролики 1080×1920, 60 к/с, −14 LUFS: `previews/shorts/out_r74/*.mp4`, поруч обкладинки `*_cover.png`. На YouTube 5 чернеток (канал CapyTap Games, вкладка Shorts) з назвами й описами, 3.11; «Аудиторію» й публікацію робить сам користувач. У TikTok не викладено.
 
 ## Порядок на itch
 Залито 2026-11-03, 28 нових стоять першими, у такому порядку: `01_japan_dragon`, `capytap_build.gif`, `02_capy_closeup`, `capytap_eras.gif`, `05_time_travel`, `capytap_skins.gif`, `06_disco`, `capytap_dragon.gif`, `08_neon_mall`, `capytap_seasons.gif`, `11_skins`, `capytap_tap.gif`, `03_renaissance_mall`, `04_building`, `capytap_time_travel.gif`, `07_arcade`, `09_space`, `10_japan_shop`, `12_autumn`, `13_winter`, `14_spring_trees`, `15_retro`, `16_eco`, далі 5 телефонних. Нижче лишаються 11 старих: їх видаляє сам користувач (Edit game → Screenshots → Delete), копії старих скрінів у `previews/itch/r69_en/`, стара гіфка в `previews/itch/ready/`.
@@ -33,7 +33,7 @@
 ### A. CapyTap_Short_TinyShop_to_Mall (20,5 с, музика «Nowhere Land»)
 - YouTube: This tiny shop becomes a MALL 🏬 Satisfying pixel build #shorts
 - TikTok: This tiny shop becomes a mall 🏬 Free cozy pixel game, link in bio #idlegame #pixelart #cozygames #capybara #indiegame
-- Опис YouTube: Tap, build, grow! From a tiny corner shop to a mighty mall in CapyTap: Market, a cozy pixel-art idle tycoon with a capybara in charge. Play free in your browser (link above).
+- Опис YouTube: Tap, build, grow! From a tiny corner shop to a mighty mall in CapyTap: Market, a cozy pixel-art idle tycoon with a capybara in charge. Play free in your browser (link below).
 
 ### B. CapyTap_Short_One_Shop_Nine_Eras (19 с, музика «Nowhere Land»)
 - YouTube: One shop. Nine eras. ⏳ Time travel in a cozy pixel game #shorts
