@@ -248,14 +248,16 @@ function fxBob(seed) {
 }
 
 // будинки: світлі краї зверху й зліва, тінь під виступами, темніший правий бік (піксель-арт «об'єм» без перемальовування кожної епохи)
-function fxHousePass(c) {
+function* fxHousePassGen(c) {
   if (state.settings.fxPlus === false) return;
   const y0 = Math.max(0, view.offY + 30), y1 = Math.min(c.height, view.offY + LAYOUT.horizonY), h = y1 - y0, w = c.width;
   if (h < 8) return;
   const g2 = c.getContext('2d'), im = g2.getImageData(0, y0, w, h), d = im.data, src = new Uint8ClampedArray(d);
   const lum = i => 0.3 * src[i] + 0.59 * src[i + 1] + 0.11 * src[i + 2];
   const mix = (i, k) => { if (k > 0) { d[i] += (255 - d[i]) * k; d[i + 1] += (255 - d[i + 1]) * k; d[i + 2] += (255 - d[i + 2]) * k; } else { d[i] *= 1 + k; d[i + 1] *= 1 + k; d[i + 2] *= 1 + k; } };
-  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+  for (let y = 1; y < h - 1; y++) {
+    if (!(y & 7)) yield;                                                           // по кілька рядків за раз
+    for (let x = 1; x < w - 1; x++) {
     const i = (y * w + x) * 4; if (src[i + 3] < 200) continue;
     const up = i - w * 4, lf = i - 4, rt = i + 4, dn = i + w * 4, L = lum(i);
     if (src[up + 3] < 40) { mix(i, 0.24); continue; }                              // верхній силует
@@ -265,7 +267,9 @@ function fxHousePass(c) {
     if (Lu - L > 16) mix(i, -0.12);                                                // тінь під карнизом, підвіконням і балконом
     else if (L - Lu > 16 && src[up + 3] > 200) mix(i, 0.07);                       // верхня грань виступу
     if (Ll - L > 20) mix(i, -0.07);                                                // тінь праворуч від світлого елемента
+    }
   }
+  yield;
   // відкоси вікон: скло «в’їхало» у стіну — тінь зверху й зліва, світла нижня кромка
   const gl = (typeof houseGlass !== 'undefined' && houseGlass) ? houseGlass : [];
   for (const r of gl) {
@@ -275,7 +279,9 @@ function fxHousePass(c) {
     for (let yy = 1; yy < gh; yy++) { mix(((gy + yy) * w + gx) * 4, -0.2); }
   }
   // м’яке освітлення згори донизу + ледь більше контрасту: фасади чіткіші
+  yield;
   for (let y = 0; y < h; y++) {
+    if (!(y & 7)) yield;
     const k = 0.06 - 0.14 * (y / h), row = y * w * 4;
     for (let x = 0; x < w; x++) {
       const i = row + x * 4; if (d[i + 3] < 200) continue;
@@ -283,5 +289,6 @@ function fxHousePass(c) {
       d[i] = (d[i] - 128) * 1.06 + 128; d[i + 1] = (d[i + 1] - 128) * 1.06 + 128; d[i + 2] = (d[i + 2] - 128) * 1.06 + 128;
     }
   }
+  yield;
   g2.putImageData(im, 0, y0);
 }

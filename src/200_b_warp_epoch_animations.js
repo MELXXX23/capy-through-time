@@ -272,16 +272,33 @@ function drawWarpGreece(k) {
   }
 }
 const WARP_BY_EPOCH = [drawWarpGreece, drawWarpRewind, drawWarpDisco, drawWarpArcade, drawWarpNet, drawWarpEco, drawWarpSpace, drawWarpTunnel];
+const WARP_COVER = 0.42;                                              // с: вир проявляється 0,4 с (CSS twIn), далі він закриває всю сторінку, і під ним можна міняти що завгодно
+// Перебудова епохи під виром: щойно він закрив сторінку, робимо її порціями за часом, кадр ніколи не затримується.
+// Нова епоха готова задовго до відкриття; якщо пристрій дуже повільний, бюджет росте, а перед самим відкриттям решта добудовується разом.
+function warpPump(k, hitK, dt) {
+  const W = warp;
+  if (!W.applied) { if (W.t < WARP_COVER) return; W.applied = true; W.steps = W.view !== undefined ? setEpochPreviewSteps(W.view) : applyTimeTravelSteps(); return; }
+  if (W.warm > 0) W.warm--;
+  if (!W.steps) return;
+  const all = k >= hitK - 0.02, end = performance.now() + Math.max(k < hitK * 0.5 ? 3 : k < hitK * 0.8 ? 7 : 12, dt * 150);
+  while (W.iter || W.steps.length) {
+    if (W.iter) { if (W.iter.next().done) W.iter = null; }
+    else {
+      if (W.steps[0].late && k < 0.5 && !all) break;
+      const r = W.steps.shift()(); if (r && r.next) W.iter = r;
+    }
+    if (!all && performance.now() >= end) break;
+  }
+  if (!W.ready && !W.iter && (!W.steps.length || W.steps[0].late)) { W.ready = true; W.warm = 2; stageEdgesFromLayers(); }   // сцена готова: два кадри під виром прогрівають її малювання
+}
 function updateWarp(dt) {
   if (!warp) return;
   warp.t += Math.min(dt, 1 / 30);                                      // довгий кадр перебудови сцени не стрибає вперед: рух вира лишається рівним
   const k = Math.min(1, warp.t / warp.dur);
   if (k >= WARP_HIT[(warp.toEpoch | 0) % WARP_HIT.length]) warpSoundHit();     // удар звуку в мить, коли відкривається нова епоха
   (WARP_BY_EPOCH[(warp.toEpoch | 0) % EPOCHS.length] || drawWarpGreece)(k);               // у кожної епохи своя анімація подорожі
-  if (!warp.applied && k >= 0.5) { warp.applied = true; warp.steps = warp.view !== undefined ? setEpochPreviewSteps(warp.view) : applyTimeTravelSteps(); }
-  if (warp.steps && warp.steps.length) warp.steps.shift()();          // по одному етапу на кадр: вир закриває сцену, тож перебудова епохи не дає провалу
+  warpPump(k, WARP_HIT[(warp.toEpoch | 0) % WARP_HIT.length], dt);
   if (k >= 1) {
-    while (warp.steps && warp.steps.length) warp.steps.shift()();
     warp.steps = null;
     const viewOnly = warp.view !== undefined;
     if (!warp.demo) state.warpSeen = 1;

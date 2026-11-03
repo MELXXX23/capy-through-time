@@ -39,8 +39,9 @@
   function roofTopY() { return (typeof shop !== 'undefined' && shop) ? shop.y + (shop.level >= 6 ? Math.max(0, (shop.roofTop | 0) - 2) - CLOCK_H : 0) : LAYOUT.horizonY - MAX_HOUSE_H; }      // найвища точка ТЦ (з годинниковою вежею)
   function skySpan(top) { return Math.max(60, Math.min(LAYOUT.horizonY - MAX_HOUSE_H - 6, roofTopY() - 24) - top - 24); }      // дракон літає лише в небі над ТЦ
   const fujiOcCache = {};
-  function buildSky() {
-    const { c, g } = newLayer();
+  function buildSky() { const it = buildSkyGen(); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+  function* buildSkyGen() {
+    const { c, g } = newLayer(true);
     const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
     const stops = [[0, '#18356e'], [0.16, '#2a5aa8'], [0.34, '#4f8fd8'], [0.5, '#8fc4ec'], [0.64, '#cfe2f4'], [0.76, '#ffd9e2'], [0.88, '#ffc0c8'], [1, '#ffd8a0']];
     const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
@@ -48,6 +49,7 @@
     const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], rows = hor - top;
     const img = g.createImageData(W, Math.max(1, rows)), px = img.data;                    // пікселі напряму (fillRect на піксель — сотні мілісекунд при подорожі)
     for (let y = top; y < hor; y++) {
+      if (!(y & 15)) yield;
       const f = (y - top) / rows, col = at(f), lv = 8;
       let o = (y - top) * W * 4;
       for (let xi = 0; xi < W; xi++, o += 4) {
@@ -56,7 +58,9 @@
         px[o + 3] = 255;
       }
     }
+    yield;
     g.putImageData(img, x0 + view.offX, top + view.offY);
+    yield;
     { const L2 = newLayer(); const FD = fujiDims(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, FD.H, FD.hw); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
@@ -612,7 +616,7 @@
 
   /* ---------- реєстрація ---------- */
   ARCH.japan = {
-    buildSky, farSkyline, bush, tree, house, skyExtra,
+    buildSky, skyGen: buildSkyGen, farSkyline, bush, tree, house, skyExtra,
     sunRx: W => Math.round(W * 0.26),                              // вужча дуга сонця й місяця: виходять з-за схилу Фудзі, ховаються за нею близько полудня й виходять знову
     skyFront(c) {                                                   // Фудзі поверх сонця/місяця/зір, із нічним і вечірнім затемненням як у шару неба
       if (!fujiC) return;

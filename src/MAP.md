@@ -16,7 +16,7 @@
 | `030_body_open.html` | 1 | HTML: початок body |  |
 | `040_boot_script.html` | 79 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
 | `050_body_markup.html` | 18 | HTML: розмітка гри (панель, меню, вікна) |  |
-| `100_a_core_config.js` | 39 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
+| `100_a_core_config.js` | 40 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
 | `100_b_music_epochs_customers.js` | 44 | музика (MUSIC, EPOCH_MUSIC), майстерня часу, EPOCHS, досягнення, SPRITES, PALETTE, покупці CHIBI | arpBar, DRUMS_CALM, DRUMS_BOUNCE, MUSIC, DRUMS_CHIP, DRUMS_CHILL, MUSIC_STYLES, EPOCH_MUSIC |
 | `100_c_team_costumes_capy.js` | 45 | костюми героїв по епохах (TEAM_COSTUMES, composeTeamCostume, скіни героїв), спрайти Капі | CHIBI_LOWER, composeChibi, TEAM_GLASSES, teamDeco, TEAM_COSTUMES, teamEyes, composeTeamCostume, TEAM_SKIN_BODY |
 | `100_d_capy_coins_epoch_state.js` | 44 | Капі (нові/старі рядки), монети й кристали епох, curEpoch/nextEpochId/viewEpoch | makeCapyNewRows, makeCapyOldDetail, EPOCH_COIN_ROWS, EPOCH_COIN_COLORS, SHARD_CH, GEM_CH, GEM_ROWS, gemUrls |
@@ -33,8 +33,8 @@
 | `120_state.js` | 16 | стан гри (state), множники, зірки, вимоги | createDefaultState, state, milestonesReached, nextMilestone, levelMult, teamLevelOf, STAR_MULT, STAR_HARD_CAP |
 | `125_save.js` | 18 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
 | `130_format.js` | 42 | t() — переклади, формат чисел | t, tierSuffix, formatNumber, fmt |
-| `140_a_sprite_core_world_props.js` | 46 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
-| `140_b_ground_houses_layers.js` | 42 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGround, manholeSpots, buildGroundLayer, autumnGroundLeaves, drawRoadG, manholeG |
+| `140_a_sprite_core_world_props.js` | 47 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
+| `140_b_ground_houses_layers.js` | 43 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGroundGen, manholeSpots, buildGroundLayer, cobbleStrips, groundLayerGen, autumnGroundLeavesGen |
 | `150_a1_facade_items_decor.js` | 29 | магазин: предмети вітрин, прилавки | tierOf, drawItem, drawDisplay, drawShelf, posterG, DOOR_LEAF_STYLES, drawDoorLeaves, placeRow |
 | `150_a2_facade_items_decor.js` | 24 | магазин: епохальний декор фасаду, skinShopDeco | leafPileG, skinGlints, bigLollipopG, gumdropG, coinStackG, goldBarsG, gemG, snowmanG |
 | `150_a3_skins_new_decor.js` | 11 | — | SHOP_DECO_EXTRA, STREET_EXTRA, sprG, thickG, roofRecolor, SPR_STAR7, SPR_CHEST, wheelG |
@@ -45,7 +45,7 @@
 | `151_c_arch_arcade_internet_eco.js` | 39 | ARCH: епохи 3–5 (Аркади, Інтернет, Еко) |  |
 | `151_d_arch_space_neon.js` | 26 | ARCH: епохи 6–7 (Космос, Неон) |  |
 | `160_refs.js` | 7 | посилання на елементи DOM (ui) | $, ui, ctx, skyLayer, shop, uiCache, sceneUnit, viewCrop |
-| `165_shop.js` | 17 | rebuildShop, layoutScene, камера, панель на телефоні | rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK, layoutScene |
+| `165_shop.js` | 18 | rebuildShop, layoutScene, камера, панель на телефоні | deferLayers, rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK |
 | `165_tab_icons_hd.js` | 14 | — | TAB_ICONS_HD, tabImgHD, tabGlyphHD |
 | `170_ui.js` | 32 | інтерфейс: вкладки, картки відділів і команди | detectLanguage, setText, outlineCanvas, tabGlyph, tabIconCanvas, buildTabs, TABS_PRIMARY, setSheet |
 | `175_buy.js` | 1 | купівля | buyDept, expandShop |
@@ -59,9 +59,9 @@
 | `190_c_cutscene_panel_tour_sfx.js` | 42 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |
 | `190_cz_cutscene_epic.js` | 21 | кат-сцена v3: кіно-вступ, кінорамки, тапи (монетка, заряд), будівництво маркету з блоків | CUT_CHG, CB, CUT_TXT2, cutT2, cutRate, cutBars, cutIntroCam, cutIntroText |
 | `190_d_epoch_tunes.js` | 17 | музика епох 1–8: EPOCH_TUNES (дві мелодії на епоху, акорди), epochTrackDef/epochTrackKey | TUNE_Q, ARP_FAST, ARP_SOFT, LEAD_VOL, BASS_VOL, ARP_VOL, EPOCH_TUNES, chordInfo |
-| `190_e_warp_sound.js` | 72 | звук подорожі: 9 переходів епох (власний синтез у Worker), удар за виром, притишення музики | WARP_HIT, WARP_PIX, WARP_KEY, wsSynthCode, wsCache, wsSynth, wsSynthHere, wsBuffer |
-| `200_a_travel_ui_warp_base.js` | 54 | налаштування, вікна-підтвердження, основа анімації подорожі | warp, confirmCb, savingDisabled, achTimer, autoTapAcc, stars, leaves, wsEls |
-| `200_b_warp_epoch_animations.js` | 34 | анімації подорожі для кожної епохи (WARP_BY_EPOCH) | warpPix, warpCapy, warpFont, warpText, drawWarpDisco, WARP_INV, drawWarpArcade, drawWarpNet |
+| `190_e_warp_sound.js` | 72 | звук подорожі: 9 переходів епох (власний синтез у Worker), удар за виром, притишення музики | WARP_HIT, WARP_PIX, WARP_CHIME, WARP_KEY, wsSynthCode, wsCache, wsSynth, wsSynthHere |
+| `200_a_travel_ui_warp_base.js` | 56 | налаштування, вікна-підтвердження, основа анімації подорожі | warp, confirmCb, savingDisabled, achTimer, autoTapAcc, stars, leaves, wsEls |
+| `200_b_warp_epoch_animations.js` | 35 | анімації подорожі для кожної епохи (WARP_BY_EPOCH) | warpPix, warpCapy, warpFont, warpText, drawWarpDisco, WARP_INV, drawWarpArcade, drawWarpNet |
 | `200_c_time_travel_workshop_stats.js` | 27 | подорож (applyTimeTravel), майстерня часу, досягнення, статистика, налаштування | applyTimeTravelSteps, applyTimeTravel, wsEffectText, buildWorkshop, wsNeedTrips, buyWorkshop, routeSig, updateRouteCard |
 | `210_skins.js` | 34 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinCatIcon, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust |
 | `211_skins_new_fx.js` | 3 | — | SHOP_FX_DRAW, FX_SEA_COLS |

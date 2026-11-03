@@ -62,10 +62,18 @@ function currentEpoch() { return EPOCHS[viewEpoch() % EPOCHS.length]; }
 
 /* ---------- Епохи: зовнішній вигляд міста ---------- */
 // Етапи перебудови шарів епохи: під час подорожі їх виконуємо по одному на кадр (вир закриває сцену), щоб не було одного довгого провалу
-function epochLayerSteps() {
+// Крок перебудови — функція; якщо вона повертає генератор, той виконується порціями (updateWarp), а без вира — одразу цілком
+function runStepsNow(list) { list.forEach(fn => { const r = fn(); if (r && r.next) while (!r.next().done); }); }
+const warpLate = fn => { fn.late = true; return fn; };            // цей крок — не раніше середини вира (музика нової епохи, збереження)
+function* layerSteps(gen, rebuild, set) {                          // шар порціями; якщо за цей час змінився розмір вікна, будуємо заново
+  const c = yield* gen;
+  set(c.width === view.w && c.height === view.h ? c : rebuild());
+}
+function epochLayerSteps(noShop, panels) {
   return [
-    () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); skyLayer = buildSkyLayer(); },
-    () => { groundLayer = buildGroundLayer(); },
+    () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); if (panels) panels(); },   // панелі — на перших кадрах: вир уже закрив їх і ще майже не рухається, тож перекомпонування сторінки непомітне
+    () => layerSteps(skyLayerGen(), buildSkyLayer, c => { skyLayer = c; }),
+    () => layerSteps(groundLayerGen(), buildGroundLayer, c => { groundLayer = c; }),
     // спрайти героїв нової епохи — по одному на кадр, ще до портретів (інакше портрети будували їх усі разом — ривок ~0,1 с)
     ...(typeof TEAM !== 'undefined' ? TEAM : []).map(m => () => { try { getSpriteCanvas(teamSprite(m.id)); } catch (e) { /* домалюється в кадрі */ } }),
     () => {
@@ -75,12 +83,23 @@ function epochLayerSteps() {
       refreshTeamPortraits();
       drawCapiPortrait();             // скін Капі залежить від епохи
     },
-    () => { if (shop) rebuildShop(true); },
+    ...(noShop ? [] : [() => { if (shop) rebuildShop(true); }]),
     // спрайти покупців нової епохи — заздалегідь, по одному на кадр: інакше вони будувались у першому кадрі нової епохи (ривок до 0,3 с)
     ...CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => () => { try { evenScaled(getSpriteCanvas(tp + '_' + f), CUST_K); } catch (e) { /* домалюється */ } }))
   ];
 }
-function rebuildEpochLayers() { epochLayerSteps().forEach(fn => fn()); }
+function rebuildEpochLayers() { runStepsNow(epochLayerSteps()); }
+// Спрайти покупців не залежать від епохи: будуємо їх заздалегідь у вільний час, щоб ні подорож, ні перший покупець цього типу не давали ривка
+function warpWarmIdle() {
+  const list = CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => tp + '_' + f));
+  const later = fn => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 400));
+  const next = d => {
+    do { const n = list.shift(); try { evenScaled(getSpriteCanvas(n), CUST_K); } catch (e) { /* домалюється в кадрі */ } } while (list.length && d && d.timeRemaining && d.timeRemaining() > 8);
+    if (list.length) later(next);
+  };
+  later(next);
+}
+window.addEventListener('load', () => setTimeout(warpWarmIdle, 8000));
 function resetEpochFx() {
   stars.length = 0; leaves.length = 0;
   const e = currentEpoch();
@@ -388,7 +407,7 @@ function playEpochIntro(epochNo, done) {
   epochIntro.active = true; epochIntro.done = done || null; epochIntro.startedAt = performance.now();
   state.epochIntroSeen = epochNo; saveGame();
   const i = curEpoch(), ep = EPOCHS[i], box = ui.epochIntro;
-  box.dataset.ep = i; epochIntro.idx = i; eiT0 = performance.now(); if (eiRaf) cancelAnimationFrame(eiRaf); eiRaf = requestAnimationFrame(eiLoop);
+  box.dataset.ep = i; epochIntro.idx = i; eiT0 = performance.now(); if (eiRaf) cancelAnimationFrame(eiRaf); eiLoop();      // перший кадр одразу: інакше на мить видно полотно попередньої заставки
   box.style.setProperty('--ei1', PALETTE[ep.sky[0]]); box.style.setProperty('--ei2', PALETTE[ep.sky[1]]); box.style.setProperty('--ei3', PALETTE[ep.sky[2]]);
   drawEpochEmblem(ui.eiEmblem.getContext('2d'), i);
   ui.eiNum.textContent = t('epochLabel', EPOCH_ROMAN[i]);
@@ -443,6 +462,7 @@ function startWarp(view, demo) {
   const [fx, fy] = clockFaceFrac();
   clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('warpChime', target);
   warp = { demo: !!demo, fromEpoch: viewEpoch() % EPOCHS.length, toEpoch: target, t: 0, applied: false, fx, fy, W, H, snap, view, dur: (view === undefined || demo) ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
+  warp.showK = WARP_HIT[target % WARP_HIT.length] - 0.012; warp.warm = 0; warp.iter = null;   // showK — коли знову малювати сцену: перед самим відкриттям нової епохи
   ui.timeWarp.classList.remove('out'); ui.timeWarp.hidden = false;
   playSfx('warp', warp.dur, target);
 }
@@ -507,6 +527,7 @@ function drawWarpRewind(k) {
   const kg = seg(k, 0, 0.45), kn = seg(k, 0.4, 0.5), kbar = seg(k, 0.5, 0.74), kr = seg(k, 0.74, 1), from = EPOCH_YEARS[(warp.fromEpoch || 0) % EPOCHS.length], to = EPOCH_YEARS[(warp.toEpoch || 0) % EPOCHS.length];
   const bh = Math.max(3, Math.round(5 * sc * 0.6));
   if (k < 0.5) {
+    g.drawImage(warp.snap, 0, 0);                                                   // під смугами той самий знімок: вир непрозорий з першого кадру
     for (let y = 0; y < H; y += bh) {                                               // горизонтальні смуги зсуваються, як на зіпсованій плівці
       const off = Math.round(Math.sin(y * 0.37 + k * 70) * kg * 14 * (warpSeed(Math.floor(y / bh) + Math.floor(k * 14)) > 0.55 ? 1.4 : 0.15));
       g.drawImage(warp.snap, 0, y, W, bh, off, y, W, bh);

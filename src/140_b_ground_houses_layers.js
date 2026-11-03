@@ -74,28 +74,45 @@ function snowBlob(g, cx, cy, rx, ry) {
   for (let dy = -ry; dy <= ry; dy++) { const hw = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry + 0.5)))); R(g, cx - hw, cy + dy, hw * 2 + 1, 1, dy > ry * 0.35 ? '#d3e1f4' : dy < -ry * 0.3 ? '#ffffff' : '#f1f7ff'); }
   R(g, cx - rx, cy + ry + 1, rx * 2, 1, '#a9bddb');
 }
-function winterGround(g, x0, W, H) {
+function* winterGroundGen(g, x0, W, H) {
   const roadTop = view.extraB >= 30 ? H - 36 : H;
   for (let x = x0; x < x0 + W; x++) {                                                          // кучугура під стінами будинків
     const hh = 2 + hash2(x >> 2, 71) % 3; R(g, x, LAYOUT.horizonY, 1, hh, '#ffffff'); R(g, x, LAYOUT.horizonY + hh, 1, 1, '#c3d6ee');
   }
+  yield;
   for (let gx = Math.floor(x0 / 4) * 4; gx < x0 + W; gx += 4) for (let gy = LAYOUT.horizonY + 5; gy < LAYOUT.curbY - 1; gy += 3) {          // тротуар
     const hs = hash2(gx + 5, gy + 9); if (hs % 100 < 55) { const ww = 2 + hs % 5; R(g, gx + (hs >>> 8) % 3, gy, ww, 1, '#f6f9ff'); if (hs % 3 === 0) R(g, gx + 1 + (hs >>> 8) % 3, gy + 1, ww - 1, 1, '#d3e1f4'); }
   }
+  yield;
   for (let x = x0; x < x0 + W; x++) { const hh = 1 + hash2(x >> 1, 73) % 3; R(g, x, LAYOUT.curbY - hh + 1, 1, hh, '#ffffff'); R(g, x, LAYOUT.curbY + 2, 1, 1, '#c3d6ee'); }       // вал снігу вздовж бордюру
+  yield;
   for (let gx = Math.floor(x0 / 5) * 5; gx < x0 + W; gx += 5) for (let gy = LAYOUT.streetTop + 2; gy < roadTop - 2; gy += 4) {              // бруківка: сніг на каменях і в швах
     const hs = hash2(gx + 13, gy + 17);
     if (hs % 100 < 58) { const ww = 2 + hs % 6; R(g, gx + (hs >>> 9) % 4, gy, ww, 1, '#f6f9ff'); R(g, gx + (hs >>> 9) % 4, gy + 1, Math.max(1, ww - 2), 1, '#d3e1f4'); }
   }
+  yield;
   for (let gx = x0 + 10; gx < x0 + W - 10; gx += 38 + hash2(gx, 4) % 40) snowBlob(g, gx, LAYOUT.streetTop + 6 + hash2(gx, 9) % Math.max(10, roadTop - LAYOUT.streetTop - 14), 6 + hash2(gx, 1) % 7, 2 + hash2(gx, 2) % 2);    // кучугури на вулиці
+  yield;
   if (view.extraB >= 30) {                                                                      // узбіччя дороги: вал снігу й плями
     for (let x = x0; x < x0 + W; x++) { const hh = 2 + hash2(x >> 1, 79) % 3; R(g, x, roadTop, 1, hh, '#f1f7ff'); R(g, x, roadTop + hh, 1, 1, '#a9bddb'); }
     for (let gx = x0; gx < x0 + W; gx += 11) { const hs = hash2(gx, 83); if (hs % 100 < 40) R(g, gx, roadTop + 6 + (hs >>> 6) % Math.max(6, H - roadTop - 12), 3 + hs % 5, 1, '#e4edf8'); }
   }
 }
 const manholeSpots = [];                                           // де стоять люки (над ними піднімається пара)
-function buildGroundLayer() {
-  const { c, g } = newLayer();
+function buildGroundLayer() { const it = groundLayerGen(); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+// Бруківка смугами з обрізанням: кожен камінь намальований за абсолютним місцем, тож результат той самий, а один шматок малюється менше ніж за кадр
+function* cobbleStrips(g, X0, Y0, W, H, style) {
+  for (let x = X0; x < X0 + W; x += 128) {
+    const w = Math.min(128, X0 + W - x);
+    g.save(); g.beginPath(); g.rect(x, Y0 - 64, w, H + 128); g.clip();
+    paintCobble(g, x - 32, Y0, w + 64, H, style);
+    g.restore();
+    yield;
+  }
+}
+// Той самий шар порціями: подорож у часі будує його по кілька мілісекунд за кадр, вир не зупиняється
+function* groundLayerGen() {
+  const { c, g } = newLayer(true);
   const H = worldB();
   const x0 = -view.offX, W = view.w;      // ліва межа й повна ширина полотна (у координатах «ядра»)
   houseGlass = []; houseDoors = [];
@@ -108,21 +125,27 @@ function buildGroundLayer() {
     R(g, x, top, 1, LAYOUT.horizonY - top, 'm');
     if (top + 1 < LAYOUT.horizonY) R(g, x, top, 1, 1, 'g');
   }
+  yield;
   farSkyline(g, x0, W);
+  yield;
   // будиночки
   townHouses.length = 0; townHouses.glassReady = false;
-  HOUSES.concat(extraHouses()).forEach((h0, i) => {
+  const houses = HOUSES.concat(extraHouses());
+  for (let i = 0; i < houses.length; i++) {
+    const h0 = houses[i];
     const h = Object.assign({}, h0, { h: Math.round(h0.h * HOUSE_SCALE) });         // будинки вищі: верхівки сягають середини 4-го поверху торгового центру
     const spec = Object.assign({}, h, houseColors(i));                                // кожен будинок має свій колір стін і даху
 
     if (!skinTownHouse(g, spec, i, lamps)) drawHouse(g, spec, lamps);      // скін «Будівлі» додає свої прикраси (214_skin_town.js)
     if (buildSeason === 'halloween') drawHalloweenHouse(g, spec);
-  });
+    yield;
+  }
   drawBush(g, 40, 121);
   drawBush(g, 296, 121);
-  for (let x = 40 - 92; x > x0 + 6; x -= 92) drawBush(g, x, 121);                  // кущі в розширеній частині вулиці
-  for (let x = 296 + 92; x < x0 + W - 6; x += 92) drawBush(g, x, 121);
-  fxHousePass(c);                                                    // світло й тіні на будинках (262_fx_plus.js)
+  yield;
+  for (let x = 40 - 92; x > x0 + 6; x -= 92) { drawBush(g, x, 121); yield; }                  // кущі в розширеній частині вулиці
+  for (let x = 296 + 92; x < x0 + W - 6; x += 92) { drawBush(g, x, 121); yield; }
+  yield* fxHousePassGen(c);                                                  // світло й тіні на будинках (262_fx_plus.js)
   // легка димка, щоб фон «відсунувся»
   g.globalAlpha = 0.07; R(g, x0, 60, W, LAYOUT.horizonY - 60, 'W'); g.globalAlpha = 1;
 
@@ -133,18 +156,21 @@ function buildGroundLayer() {
   R(g, x0, LAYOUT.curbY, W, 2, 'e');
   R(g, x0, LAYOUT.curbY, W, 1, 'w');
   R(g, x0, LAYOUT.streetTop, W, 1, 'd');
+  yield;
 
   // дерева вздовж тротуару
-  treeSpots(x0, W).forEach(tr => drawStreetTree(g, tr.x, tr.v, buildSeason));
+  for (const tr of treeSpots(x0, W)) { drawStreetTree(g, tr.x, tr.v, buildSeason); yield; }
 
   // бруківка
-  paintCobble(g, x0, LAYOUT.streetTop + 1, W, H - LAYOUT.streetTop - 1, skinOn('street') || 'stone');
+  yield* cobbleStrips(g, x0, LAYOUT.streetTop + 1, W, H - LAYOUT.streetTop - 1, skinOn('street') || 'stone');
   manholeSpots.length = 0;
   const my = Math.min(H - 48, 188);                                   // люки: один ряд уздовж дороги, не часто
   if (!skinOn('street') || skinOn('street') === 'moss') for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
   if (view.extraB >= 30) drawRoadG(g, x0, W, H);
-  if (buildSeason === 'winter') winterGround(g, x0, W, H);
-  if (buildSeason === 'autumn' || buildSeason === 'spring') autumnGroundLeaves(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
+  yield;
+  if (buildSeason === 'winter') yield* winterGroundGen(g, x0, W, H);
+  if (buildSeason === 'autumn' || buildSeason === 'spring') yield* autumnGroundLeavesGen(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
+  yield;
   g.globalAlpha = 0.1; R(g, x0, H - 20, W, 20, 'd'); g.globalAlpha = 1;
   const trees = treeSpots(x0, W);
   houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 28));      // двері, закриті деревом, не використовуються: звірята туди не заходять
@@ -154,7 +180,7 @@ function buildGroundLayer() {
   return c;
 }
 // Осіннє листя: купи під деревами, розсип по тротуару, бруківці й дорозі
-function autumnGroundLeaves(g, x0, W, H, trees, spring) {
+function* autumnGroundLeavesGen(g, x0, W, H, trees, spring) {
   const cols = spring ? ['#ef8fa3', '#ffc9d4', '#f7b6c8', '#ffd9e2', '#e9738f', '#ffb3c6', '#fff0f4'] : ['#c4553d', '#e8863c', '#f2b84b', '#a8703f', '#d9a679', '#b5471f', '#e3a02e'], k = spring ? 0.8 : 1;
   const leaf = (x, y, h) => {
     const c = cols[h % cols.length], f = (h >>> 4) % 3;
@@ -163,7 +189,8 @@ function autumnGroundLeaves(g, x0, W, H, trees, spring) {
     g.fillStyle = spring ? '#fff6f8' : '#ffd98a'; g.fillRect(x, y, 1, 1); g.fillStyle = spring ? '#c8587a' : '#7a4f35'; g.fillRect(x + (f === 1 ? 1 : 2), y + (f === 1 ? 2 : 1), 1, 1);
   };
   const base = LAYOUT.horizonY + 8, roadTop = view.extraB >= 30 ? H - 36 : H;
-  trees.forEach(tr => {                                                         // купа під кожним деревом
+  for (const tr of trees) {                                                     // купа під кожним деревом
+    yield;
     for (let i = 0; i < Math.round(90 * k); i++) {
       const hs = hash2(tr.x * 7 + i, 41 + i), r1 = ((hs >>> 3) % 1000) / 1000, r2 = ((hs >>> 13) % 1000) / 1000;
       const dx = (r1 + r2 - 1) * 30, dy = (((hs >>> 21) % 100) / 100) * 22 - 4;
@@ -171,13 +198,16 @@ function autumnGroundLeaves(g, x0, W, H, trees, spring) {
     }
     g.globalAlpha = 0.28; R(g, tr.x - 12, base + 1, 24, 4, 'd'); g.globalAlpha = 1;
     for (let i = 0; i < 14; i++) { const hs = hash2(tr.x + i * 5, 77); leaf(tr.x - 9 + (hs % 18), base + 1 + (hs >>> 5) % 4, hs); }      // щільний горбок
-  });
+  }
+  yield;
   for (let gy = LAYOUT.horizonY + 2; gy < LAYOUT.curbY - 1; gy += 5) for (let gx = Math.floor(x0 / 9) * 9; gx < x0 + W; gx += 9) {      // тротуар
     const hs = hash2(gx + 3, gy + 7); if (hs % 100 < 22 * k) leaf(gx + (hs >>> 8) % 8, gy + (hs >>> 12) % 4, hs);
   }
+  yield;
   for (let gy = LAYOUT.streetTop + 2; gy < roadTop - 3; gy += 6) for (let gx = Math.floor(x0 / 7) * 7; gx < x0 + W; gx += 7) {              // бруківка
     const hs = hash2(gx + 11, gy + 13); if (hs % 100 < 30 * k) leaf(gx + (hs >>> 8) % 6, gy + (hs >>> 12) % 5, hs);
   }
+  yield;
   if (view.extraB >= 30) for (let gy = roadTop + 8; gy < H - 4; gy += 8) for (let gx = Math.floor(x0 / 13) * 13; gx < x0 + W; gx += 13) {      // дорога
     const hs = hash2(gx + 19, gy + 23); if (hs % 100 < 8 * k) leaf(gx + (hs >>> 8) % 11, gy + (hs >>> 12) % 6, hs);
   }

@@ -114,18 +114,20 @@ function visR() { return viewCrop.x + viewCrop.w - view.offX; }
 function pctX(x) { return (x + view.offX) / view.w * 100; } // координата сцени → відсотки ширини полотна
 function pctY(y) { return (y + view.offY) / view.h * 100; }
 
-function newLayer() {
+function newLayer(reads) {                       // reads — шар будується попіксельно: тримаємо його в звичайній пам'яті, читання з відеокарти дало б ривок
   const c = document.createElement('canvas');
   c.width = view.w; c.height = view.h;
-  const g = c.getContext('2d');
+  const g = c.getContext('2d', reads ? { willReadFrequently: true } : undefined);
   g.translate(view.offX, view.offY);
   return { c, g };
 }
 
 /* ---------- Небо (статичний шар; сонце, місяць і зорі малюються окремо, див. «День і ніч») ---------- */
-function buildSkyLayer() {
-  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.buildSky) return A.buildSky(); }
-  const { c, g } = newLayer();
+function buildSkyLayer() { const it = skyLayerGen(); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+// Те саме порціями: подорож у часі будує шар по кілька мілісекунд за кадр, вир не зупиняється
+function* skyLayerGen() {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.skyGen) return yield* A.skyGen(); if (A && A.buildSky) return A.buildSky(); }
+  const { c, g } = newLayer(true);
   const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
   const [c1, c2, c3] = currentEpoch().sky;      // три кольори неба залежать від епохи
   const hx = k => { const h = PALETTE[k]; return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; };
@@ -134,6 +136,7 @@ function buildSkyLayer() {
   const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
   const rows = hor - top, wpx = view.w, img = g.createImageData(wpx, Math.max(1, rows)), px = img.data;       // пікселі пишемо напряму (fillRect на піксель займав ~300 мс при подорожі)
   for (let y = top; y < hor; y++) {
+    if (!(y & 15)) yield;
     const f = (y - top) / rows, u = f < 0.45 ? f / 0.45 : 1 + Math.pow((f - 0.45) / 0.55, 0.9), step = 1 / 5, fr = ((u < 1 ? u : u - 1) / step) % 1;
     const c0 = col(u), c1b = col(Math.min(2, u + step * (u < 1 ? 1 : 1)));
     let o = (y - top) * wpx * 4;
@@ -142,6 +145,7 @@ function buildSkyLayer() {
       px[o] = cc[0]; px[o + 1] = cc[1]; px[o + 2] = cc[2]; px[o + 3] = 255;
     }
   }
+  yield;
   g.putImageData(img, x0 + view.offX, top + view.offY);
   // тепле сяйво біля обрію
   for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }

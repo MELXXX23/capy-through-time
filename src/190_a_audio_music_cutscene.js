@@ -98,10 +98,10 @@ function applyVolumes(instant) {
   const s = state.settings;
   const m = s.muted ? 0 : s.musicVol * 0.55, f = s.muted ? 0 : s.sfxVol * 0.9;
   const now = audio.ctx.currentTime;
-  if (instant) { audio.musicGain.gain.value = m; audio.sfxGain.gain.value = f; audio.warpOut.gain.value = Math.min(1.03, f * 1.25); return; }
+  if (instant) { audio.musicGain.gain.value = m; audio.sfxGain.gain.value = f; audio.warpOut.gain.value = f * 1.1; return; }
   audio.musicGain.gain.setTargetAtTime(m, now, 0.05);
   audio.sfxGain.gain.setTargetAtTime(f, now, 0.05);
-  audio.warpOut.gain.setTargetAtTime(Math.min(1.03, f * 1.25), now, 0.05);
+  audio.warpOut.gain.setTargetAtTime(f * 1.1, now, 0.05);
 }
 
 /* ---------- Інструменти ---------- */

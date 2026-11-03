@@ -4,6 +4,7 @@
    ===================================================================== */
 
 // Перебудовує спрайт магазину, якщо змінився рівень або наповненість вітрин
+let deferLayers = null;                          // подорож у часі: шари перебудовуються порціями окремими кроками, тут їх не чіпаємо (див. applyTimeTravelSteps)
 function rebuildShop(force) {
   const tiers = state.depts.map(tierOf);
   const sig = state.shopLevel + '|' + tiers.slice(0, state.shopLevel * 2).join('') + '|' + seasonNow() + '|' + (viewEpoch() % EPOCH_SHOP.length) + '|' + (skinOn('shop') || '');
@@ -17,8 +18,10 @@ function rebuildShop(force) {
     y: LAYOUT.curbY - geo.h
   });
   if (levelChanged) {
-    if (layoutReady) { groundLayer = buildGroundLayer(); seedBenches(); }       // ліхтарі зсунулись — вікна будинків, дерева й лавки теж
-    propsLayer = buildPropsLayer();
+    if (!deferLayers) {
+      if (layoutReady) { groundLayer = buildGroundLayer(); seedBenches(); }     // ліхтарі зсунулись — вікна будинків, дерева й лавки теж
+      propsLayer = buildPropsLayer();
+    }
     placeShopOverlay();
     updateSignText();
   }
@@ -110,7 +113,7 @@ function layoutScene() {
     layoutReady = true;
     ui.view.width = view.w; ui.view.height = view.h;
     ctx.imageSmoothingEnabled = false;
-    rebuildAllLayers();
+    if (deferLayers) deferLayers.changed = true; else rebuildAllLayers();
   }
   cropW = Math.min(view.w, availW / unit);
   viewCrop = { x: 0, w: cropW };
@@ -143,12 +146,23 @@ function panBy(dx) {
 }
 let edgeT = 0, edgeKey = '', edgeNeed = -1, edgeBase = null, edgeBg = '', edgeIds = 0, skyDrawnN = 0;
 const EDGE_NIGHT = [0x14, 0x1a, 0x40];                                  // той самий нічний серпанок, що в drawSkyScreen
+function edgeKeyNow() { const st = theme.skyTint; return (skyLayer && (skyLayer._id || (skyLayer._id = ++edgeIds))) + '|' + theme.season + '|' + (st ? st.color + st.alpha : '') + '|' + skinOn('weather') + '|' + (weather.rain > 0.4 ? 1 : 0); }
+// Колір країв сторінки для нової епохи: з готових шарів (вони в звичайній пам'яті). Читання самої сцени зупиняє кадр на десятки мілісекунд, а під час подорожі кадр не має зупинятись
+function stageEdgesFromLayers() {
+  try {
+    const x = Math.max(0, view.w >> 1), a = skyLayer.getContext('2d').getImageData(x, 0, 1, 1).data, b = groundLayer.getContext('2d').getImageData(x, Math.max(0, view.h - 1), 1, 1).data;
+    if (!a[3] || !b[3]) return;
+    const st = theme.skyTint, tc = st && st.alpha > 0.3 ? PALETTE[st.color] : null, tint = i => (tc ? Math.round(a[i] + (parseInt(tc.slice(1 + i * 2, 3 + i * 2), 16) - a[i]) * st.alpha) : a[i]);
+    edgeKey = edgeKeyNow(); edgeNeed = -1; edgeBase = [[tint(0), tint(1), tint(2)], [b[0], b[1], b[2]]];
+    edgeT = 0; updateStageEdges(0);
+  } catch (e) { /* без цього теж працює */ }
+}
 function updateStageEdges(dt) {
   edgeT -= dt; if (edgeT > 0 || !layoutReady) return; edgeT = 0.7;
   try {
     // Пікселі сцени читаємо лише раз після зміни неба (епоха, розмір вікна): читання з відеокарти кожні 0,7 с давало ривок кадру 30–90 мс.
     // Зміну дня й ночі далі домішуємо розрахунком.
-    const st = theme.skyTint, key = (skyLayer && (skyLayer._id || (skyLayer._id = ++edgeIds))) + '|' + theme.season + '|' + (st ? st.color + st.alpha : '') + '|' + skinOn('weather') + '|' + (weather.rain > 0.4 ? 1 : 0);
+    const key = edgeKeyNow();
     if (key !== edgeKey && edgeNeed < 0) edgeNeed = skyDrawnN + 2;          // небо, пора року, свято, скін погоди чи дощ змінились — перечитати після двох нових кадрів
     if (edgeNeed >= 0 && skyDrawnN >= edgeNeed) {
       const g = ui.view.getContext('2d'), x = Math.max(0, Math.floor(view.w / 2)), a = g.getImageData(x, 0, 1, 1).data, b = g.getImageData(x, Math.max(0, view.h - 1), 1, 1).data;

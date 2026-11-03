@@ -2241,6 +2241,8 @@ function bootDone() {
 <!--#part 100_a_core_config.js-->
 <script>
 'use strict';
+// Малі полотна (спрайти, значки, іконки) — у звичайній пам'яті: читання їхніх пікселів ~0,3 мс замість ~5 мс, а гра читає їх сотнями (без цього перша подорож і нові покупці давали ривки)
+(() => { const gc = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (type, attrs) { return gc.call(this, type, type === '2d' && !attrs && this.width * this.height <= 16384 ? { willReadFrequently: true } : attrs); }; })();
 
 // ---- Прихований «режим бога» власника ----
 // Вмикається вставленням коду GOD:<пароль> у поле імпорту прогресу (Налаштування). У грі лишається лише SHA-256 пароля;
@@ -6393,18 +6395,20 @@ function visR() { return viewCrop.x + viewCrop.w - view.offX; }
 function pctX(x) { return (x + view.offX) / view.w * 100; } // координата сцени → відсотки ширини полотна
 function pctY(y) { return (y + view.offY) / view.h * 100; }
 
-function newLayer() {
+function newLayer(reads) {                       // reads — шар будується попіксельно: тримаємо його в звичайній пам'яті, читання з відеокарти дало б ривок
   const c = document.createElement('canvas');
   c.width = view.w; c.height = view.h;
-  const g = c.getContext('2d');
+  const g = c.getContext('2d', reads ? { willReadFrequently: true } : undefined);
   g.translate(view.offX, view.offY);
   return { c, g };
 }
 
 /* ---------- Небо (статичний шар; сонце, місяць і зорі малюються окремо, див. «День і ніч») ---------- */
-function buildSkyLayer() {
-  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.buildSky) return A.buildSky(); }
-  const { c, g } = newLayer();
+function buildSkyLayer() { const it = skyLayerGen(); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+// Те саме порціями: подорож у часі будує шар по кілька мілісекунд за кадр, вир не зупиняється
+function* skyLayerGen() {
+  { const A = (typeof ARCH !== 'undefined') ? ARCH[currentEpoch().id] : null; if (A && A.skyGen) return yield* A.skyGen(); if (A && A.buildSky) return A.buildSky(); }
+  const { c, g } = newLayer(true);
   const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
   const [c1, c2, c3] = currentEpoch().sky;      // три кольори неба залежать від епохи
   const hx = k => { const h = PALETTE[k]; return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; };
@@ -6413,6 +6417,7 @@ function buildSkyLayer() {
   const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
   const rows = hor - top, wpx = view.w, img = g.createImageData(wpx, Math.max(1, rows)), px = img.data;       // пікселі пишемо напряму (fillRect на піксель займав ~300 мс при подорожі)
   for (let y = top; y < hor; y++) {
+    if (!(y & 15)) yield;
     const f = (y - top) / rows, u = f < 0.45 ? f / 0.45 : 1 + Math.pow((f - 0.45) / 0.55, 0.9), step = 1 / 5, fr = ((u < 1 ? u : u - 1) / step) % 1;
     const c0 = col(u), c1b = col(Math.min(2, u + step * (u < 1 ? 1 : 1)));
     let o = (y - top) * wpx * 4;
@@ -6421,6 +6426,7 @@ function buildSkyLayer() {
       px[o] = cc[0]; px[o + 1] = cc[1]; px[o + 2] = cc[2]; px[o + 3] = 255;
     }
   }
+  yield;
   g.putImageData(img, x0 + view.offX, top + view.offY);
   // тепле сяйво біля обрію
   for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
@@ -6924,28 +6930,45 @@ function snowBlob(g, cx, cy, rx, ry) {
   for (let dy = -ry; dy <= ry; dy++) { const hw = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry + 0.5)))); R(g, cx - hw, cy + dy, hw * 2 + 1, 1, dy > ry * 0.35 ? '#d3e1f4' : dy < -ry * 0.3 ? '#ffffff' : '#f1f7ff'); }
   R(g, cx - rx, cy + ry + 1, rx * 2, 1, '#a9bddb');
 }
-function winterGround(g, x0, W, H) {
+function* winterGroundGen(g, x0, W, H) {
   const roadTop = view.extraB >= 30 ? H - 36 : H;
   for (let x = x0; x < x0 + W; x++) {                                                          // кучугура під стінами будинків
     const hh = 2 + hash2(x >> 2, 71) % 3; R(g, x, LAYOUT.horizonY, 1, hh, '#ffffff'); R(g, x, LAYOUT.horizonY + hh, 1, 1, '#c3d6ee');
   }
+  yield;
   for (let gx = Math.floor(x0 / 4) * 4; gx < x0 + W; gx += 4) for (let gy = LAYOUT.horizonY + 5; gy < LAYOUT.curbY - 1; gy += 3) {          // тротуар
     const hs = hash2(gx + 5, gy + 9); if (hs % 100 < 55) { const ww = 2 + hs % 5; R(g, gx + (hs >>> 8) % 3, gy, ww, 1, '#f6f9ff'); if (hs % 3 === 0) R(g, gx + 1 + (hs >>> 8) % 3, gy + 1, ww - 1, 1, '#d3e1f4'); }
   }
+  yield;
   for (let x = x0; x < x0 + W; x++) { const hh = 1 + hash2(x >> 1, 73) % 3; R(g, x, LAYOUT.curbY - hh + 1, 1, hh, '#ffffff'); R(g, x, LAYOUT.curbY + 2, 1, 1, '#c3d6ee'); }       // вал снігу вздовж бордюру
+  yield;
   for (let gx = Math.floor(x0 / 5) * 5; gx < x0 + W; gx += 5) for (let gy = LAYOUT.streetTop + 2; gy < roadTop - 2; gy += 4) {              // бруківка: сніг на каменях і в швах
     const hs = hash2(gx + 13, gy + 17);
     if (hs % 100 < 58) { const ww = 2 + hs % 6; R(g, gx + (hs >>> 9) % 4, gy, ww, 1, '#f6f9ff'); R(g, gx + (hs >>> 9) % 4, gy + 1, Math.max(1, ww - 2), 1, '#d3e1f4'); }
   }
+  yield;
   for (let gx = x0 + 10; gx < x0 + W - 10; gx += 38 + hash2(gx, 4) % 40) snowBlob(g, gx, LAYOUT.streetTop + 6 + hash2(gx, 9) % Math.max(10, roadTop - LAYOUT.streetTop - 14), 6 + hash2(gx, 1) % 7, 2 + hash2(gx, 2) % 2);    // кучугури на вулиці
+  yield;
   if (view.extraB >= 30) {                                                                      // узбіччя дороги: вал снігу й плями
     for (let x = x0; x < x0 + W; x++) { const hh = 2 + hash2(x >> 1, 79) % 3; R(g, x, roadTop, 1, hh, '#f1f7ff'); R(g, x, roadTop + hh, 1, 1, '#a9bddb'); }
     for (let gx = x0; gx < x0 + W; gx += 11) { const hs = hash2(gx, 83); if (hs % 100 < 40) R(g, gx, roadTop + 6 + (hs >>> 6) % Math.max(6, H - roadTop - 12), 3 + hs % 5, 1, '#e4edf8'); }
   }
 }
 const manholeSpots = [];                                           // де стоять люки (над ними піднімається пара)
-function buildGroundLayer() {
-  const { c, g } = newLayer();
+function buildGroundLayer() { const it = groundLayerGen(); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+// Бруківка смугами з обрізанням: кожен камінь намальований за абсолютним місцем, тож результат той самий, а один шматок малюється менше ніж за кадр
+function* cobbleStrips(g, X0, Y0, W, H, style) {
+  for (let x = X0; x < X0 + W; x += 128) {
+    const w = Math.min(128, X0 + W - x);
+    g.save(); g.beginPath(); g.rect(x, Y0 - 64, w, H + 128); g.clip();
+    paintCobble(g, x - 32, Y0, w + 64, H, style);
+    g.restore();
+    yield;
+  }
+}
+// Той самий шар порціями: подорож у часі будує його по кілька мілісекунд за кадр, вир не зупиняється
+function* groundLayerGen() {
+  const { c, g } = newLayer(true);
   const H = worldB();
   const x0 = -view.offX, W = view.w;      // ліва межа й повна ширина полотна (у координатах «ядра»)
   houseGlass = []; houseDoors = [];
@@ -6958,21 +6981,27 @@ function buildGroundLayer() {
     R(g, x, top, 1, LAYOUT.horizonY - top, 'm');
     if (top + 1 < LAYOUT.horizonY) R(g, x, top, 1, 1, 'g');
   }
+  yield;
   farSkyline(g, x0, W);
+  yield;
   // будиночки
   townHouses.length = 0; townHouses.glassReady = false;
-  HOUSES.concat(extraHouses()).forEach((h0, i) => {
+  const houses = HOUSES.concat(extraHouses());
+  for (let i = 0; i < houses.length; i++) {
+    const h0 = houses[i];
     const h = Object.assign({}, h0, { h: Math.round(h0.h * HOUSE_SCALE) });         // будинки вищі: верхівки сягають середини 4-го поверху торгового центру
     const spec = Object.assign({}, h, houseColors(i));                                // кожен будинок має свій колір стін і даху
 
     if (!skinTownHouse(g, spec, i, lamps)) drawHouse(g, spec, lamps);      // скін «Будівлі» додає свої прикраси (214_skin_town.js)
     if (buildSeason === 'halloween') drawHalloweenHouse(g, spec);
-  });
+    yield;
+  }
   drawBush(g, 40, 121);
   drawBush(g, 296, 121);
-  for (let x = 40 - 92; x > x0 + 6; x -= 92) drawBush(g, x, 121);                  // кущі в розширеній частині вулиці
-  for (let x = 296 + 92; x < x0 + W - 6; x += 92) drawBush(g, x, 121);
-  fxHousePass(c);                                                    // світло й тіні на будинках (262_fx_plus.js)
+  yield;
+  for (let x = 40 - 92; x > x0 + 6; x -= 92) { drawBush(g, x, 121); yield; }                  // кущі в розширеній частині вулиці
+  for (let x = 296 + 92; x < x0 + W - 6; x += 92) { drawBush(g, x, 121); yield; }
+  yield* fxHousePassGen(c);                                                  // світло й тіні на будинках (262_fx_plus.js)
   // легка димка, щоб фон «відсунувся»
   g.globalAlpha = 0.07; R(g, x0, 60, W, LAYOUT.horizonY - 60, 'W'); g.globalAlpha = 1;
 
@@ -6983,18 +7012,21 @@ function buildGroundLayer() {
   R(g, x0, LAYOUT.curbY, W, 2, 'e');
   R(g, x0, LAYOUT.curbY, W, 1, 'w');
   R(g, x0, LAYOUT.streetTop, W, 1, 'd');
+  yield;
 
   // дерева вздовж тротуару
-  treeSpots(x0, W).forEach(tr => drawStreetTree(g, tr.x, tr.v, buildSeason));
+  for (const tr of treeSpots(x0, W)) { drawStreetTree(g, tr.x, tr.v, buildSeason); yield; }
 
   // бруківка
-  paintCobble(g, x0, LAYOUT.streetTop + 1, W, H - LAYOUT.streetTop - 1, skinOn('street') || 'stone');
+  yield* cobbleStrips(g, x0, LAYOUT.streetTop + 1, W, H - LAYOUT.streetTop - 1, skinOn('street') || 'stone');
   manholeSpots.length = 0;
   const my = Math.min(H - 48, 188);                                   // люки: один ряд уздовж дороги, не часто
   if (!skinOn('street') || skinOn('street') === 'moss') for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
   if (view.extraB >= 30) drawRoadG(g, x0, W, H);
-  if (buildSeason === 'winter') winterGround(g, x0, W, H);
-  if (buildSeason === 'autumn' || buildSeason === 'spring') autumnGroundLeaves(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
+  yield;
+  if (buildSeason === 'winter') yield* winterGroundGen(g, x0, W, H);
+  if (buildSeason === 'autumn' || buildSeason === 'spring') yield* autumnGroundLeavesGen(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
+  yield;
   g.globalAlpha = 0.1; R(g, x0, H - 20, W, 20, 'd'); g.globalAlpha = 1;
   const trees = treeSpots(x0, W);
   houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 28));      // двері, закриті деревом, не використовуються: звірята туди не заходять
@@ -7004,7 +7036,7 @@ function buildGroundLayer() {
   return c;
 }
 // Осіннє листя: купи під деревами, розсип по тротуару, бруківці й дорозі
-function autumnGroundLeaves(g, x0, W, H, trees, spring) {
+function* autumnGroundLeavesGen(g, x0, W, H, trees, spring) {
   const cols = spring ? ['#ef8fa3', '#ffc9d4', '#f7b6c8', '#ffd9e2', '#e9738f', '#ffb3c6', '#fff0f4'] : ['#c4553d', '#e8863c', '#f2b84b', '#a8703f', '#d9a679', '#b5471f', '#e3a02e'], k = spring ? 0.8 : 1;
   const leaf = (x, y, h) => {
     const c = cols[h % cols.length], f = (h >>> 4) % 3;
@@ -7013,7 +7045,8 @@ function autumnGroundLeaves(g, x0, W, H, trees, spring) {
     g.fillStyle = spring ? '#fff6f8' : '#ffd98a'; g.fillRect(x, y, 1, 1); g.fillStyle = spring ? '#c8587a' : '#7a4f35'; g.fillRect(x + (f === 1 ? 1 : 2), y + (f === 1 ? 2 : 1), 1, 1);
   };
   const base = LAYOUT.horizonY + 8, roadTop = view.extraB >= 30 ? H - 36 : H;
-  trees.forEach(tr => {                                                         // купа під кожним деревом
+  for (const tr of trees) {                                                     // купа під кожним деревом
+    yield;
     for (let i = 0; i < Math.round(90 * k); i++) {
       const hs = hash2(tr.x * 7 + i, 41 + i), r1 = ((hs >>> 3) % 1000) / 1000, r2 = ((hs >>> 13) % 1000) / 1000;
       const dx = (r1 + r2 - 1) * 30, dy = (((hs >>> 21) % 100) / 100) * 22 - 4;
@@ -7021,13 +7054,16 @@ function autumnGroundLeaves(g, x0, W, H, trees, spring) {
     }
     g.globalAlpha = 0.28; R(g, tr.x - 12, base + 1, 24, 4, 'd'); g.globalAlpha = 1;
     for (let i = 0; i < 14; i++) { const hs = hash2(tr.x + i * 5, 77); leaf(tr.x - 9 + (hs % 18), base + 1 + (hs >>> 5) % 4, hs); }      // щільний горбок
-  });
+  }
+  yield;
   for (let gy = LAYOUT.horizonY + 2; gy < LAYOUT.curbY - 1; gy += 5) for (let gx = Math.floor(x0 / 9) * 9; gx < x0 + W; gx += 9) {      // тротуар
     const hs = hash2(gx + 3, gy + 7); if (hs % 100 < 22 * k) leaf(gx + (hs >>> 8) % 8, gy + (hs >>> 12) % 4, hs);
   }
+  yield;
   for (let gy = LAYOUT.streetTop + 2; gy < roadTop - 3; gy += 6) for (let gx = Math.floor(x0 / 7) * 7; gx < x0 + W; gx += 7) {              // бруківка
     const hs = hash2(gx + 11, gy + 13); if (hs % 100 < 30 * k) leaf(gx + (hs >>> 8) % 6, gy + (hs >>> 12) % 5, hs);
   }
+  yield;
   if (view.extraB >= 30) for (let gy = roadTop + 8; gy < H - 4; gy += 8) for (let gx = Math.floor(x0 / 13) * 13; gx < x0 + W; gx += 13) {      // дорога
     const hs = hash2(gx + 19, gy + 23); if (hs % 100 < 8 * k) leaf(gx + (hs >>> 8) % 11, gy + (hs >>> 12) % 6, hs);
   }
@@ -10161,6 +10197,7 @@ let deptLockedEl = null;       // картка «нові відділи від�
    ===================================================================== */
 
 // Перебудовує спрайт магазину, якщо змінився рівень або наповненість вітрин
+let deferLayers = null;                          // подорож у часі: шари перебудовуються порціями окремими кроками, тут їх не чіпаємо (див. applyTimeTravelSteps)
 function rebuildShop(force) {
   const tiers = state.depts.map(tierOf);
   const sig = state.shopLevel + '|' + tiers.slice(0, state.shopLevel * 2).join('') + '|' + seasonNow() + '|' + (viewEpoch() % EPOCH_SHOP.length) + '|' + (skinOn('shop') || '');
@@ -10174,8 +10211,10 @@ function rebuildShop(force) {
     y: LAYOUT.curbY - geo.h
   });
   if (levelChanged) {
-    if (layoutReady) { groundLayer = buildGroundLayer(); seedBenches(); }       // ліхтарі зсунулись — вікна будинків, дерева й лавки теж
-    propsLayer = buildPropsLayer();
+    if (!deferLayers) {
+      if (layoutReady) { groundLayer = buildGroundLayer(); seedBenches(); }     // ліхтарі зсунулись — вікна будинків, дерева й лавки теж
+      propsLayer = buildPropsLayer();
+    }
     placeShopOverlay();
     updateSignText();
   }
@@ -10267,7 +10306,7 @@ function layoutScene() {
     layoutReady = true;
     ui.view.width = view.w; ui.view.height = view.h;
     ctx.imageSmoothingEnabled = false;
-    rebuildAllLayers();
+    if (deferLayers) deferLayers.changed = true; else rebuildAllLayers();
   }
   cropW = Math.min(view.w, availW / unit);
   viewCrop = { x: 0, w: cropW };
@@ -10300,12 +10339,23 @@ function panBy(dx) {
 }
 let edgeT = 0, edgeKey = '', edgeNeed = -1, edgeBase = null, edgeBg = '', edgeIds = 0, skyDrawnN = 0;
 const EDGE_NIGHT = [0x14, 0x1a, 0x40];                                  // той самий нічний серпанок, що в drawSkyScreen
+function edgeKeyNow() { const st = theme.skyTint; return (skyLayer && (skyLayer._id || (skyLayer._id = ++edgeIds))) + '|' + theme.season + '|' + (st ? st.color + st.alpha : '') + '|' + skinOn('weather') + '|' + (weather.rain > 0.4 ? 1 : 0); }
+// Колір країв сторінки для нової епохи: з готових шарів (вони в звичайній пам'яті). Читання самої сцени зупиняє кадр на десятки мілісекунд, а під час подорожі кадр не має зупинятись
+function stageEdgesFromLayers() {
+  try {
+    const x = Math.max(0, view.w >> 1), a = skyLayer.getContext('2d').getImageData(x, 0, 1, 1).data, b = groundLayer.getContext('2d').getImageData(x, Math.max(0, view.h - 1), 1, 1).data;
+    if (!a[3] || !b[3]) return;
+    const st = theme.skyTint, tc = st && st.alpha > 0.3 ? PALETTE[st.color] : null, tint = i => (tc ? Math.round(a[i] + (parseInt(tc.slice(1 + i * 2, 3 + i * 2), 16) - a[i]) * st.alpha) : a[i]);
+    edgeKey = edgeKeyNow(); edgeNeed = -1; edgeBase = [[tint(0), tint(1), tint(2)], [b[0], b[1], b[2]]];
+    edgeT = 0; updateStageEdges(0);
+  } catch (e) { /* без цього теж працює */ }
+}
 function updateStageEdges(dt) {
   edgeT -= dt; if (edgeT > 0 || !layoutReady) return; edgeT = 0.7;
   try {
     // Пікселі сцени читаємо лише раз після зміни неба (епоха, розмір вікна): читання з відеокарти кожні 0,7 с давало ривок кадру 30–90 мс.
     // Зміну дня й ночі далі домішуємо розрахунком.
-    const st = theme.skyTint, key = (skyLayer && (skyLayer._id || (skyLayer._id = ++edgeIds))) + '|' + theme.season + '|' + (st ? st.color + st.alpha : '') + '|' + skinOn('weather') + '|' + (weather.rain > 0.4 ? 1 : 0);
+    const key = edgeKeyNow();
     if (key !== edgeKey && edgeNeed < 0) edgeNeed = skyDrawnN + 2;          // небо, пора року, свято, скін погоди чи дощ змінились — перечитати після двох нових кадрів
     if (edgeNeed >= 0 && skyDrawnN >= edgeNeed) {
       const g = ui.view.getContext('2d'), x = Math.max(0, Math.floor(view.w / 2)), a = g.getImageData(x, 0, 1, 1).data, b = g.getImageData(x, Math.max(0, view.h - 1), 1, 1).data;
@@ -12707,10 +12757,10 @@ function applyVolumes(instant) {
   const s = state.settings;
   const m = s.muted ? 0 : s.musicVol * 0.55, f = s.muted ? 0 : s.sfxVol * 0.9;
   const now = audio.ctx.currentTime;
-  if (instant) { audio.musicGain.gain.value = m; audio.sfxGain.gain.value = f; audio.warpOut.gain.value = Math.min(1.03, f * 1.25); return; }
+  if (instant) { audio.musicGain.gain.value = m; audio.sfxGain.gain.value = f; audio.warpOut.gain.value = f * 1.1; return; }
   audio.musicGain.gain.setTargetAtTime(m, now, 0.05);
   audio.sfxGain.gain.setTargetAtTime(f, now, 0.05);
-  audio.warpOut.gain.setTargetAtTime(Math.min(1.03, f * 1.25), now, 0.05);
+  audio.warpOut.gain.setTargetAtTime(f * 1.1, now, 0.05);
 }
 
 /* ---------- Інструменти ---------- */
@@ -14334,13 +14384,14 @@ function epochTrackDef(key) {
    ===================================================================== */
 const WARP_HIT = [0.74, 0.74, 0.74, 0.74, 0.74, 0.74, 0.74, 0.76, 0.74];      // коли відкривається нова епоха (частка warp.dur)
 const WARP_PIX = [0, 0, 0, 0, 0, 0, 0, 0, 0];                                 // 1 — «піксельний» варіант епохи: прості хвилі й коротка луна, як у музиці гри
+const WARP_CHIME = [[0.5, 0.03, 1.7], [1, 0.075, 1.2], [1.2, 0.02, 0.8], [1.5, 0.015, 0.6], [2, 0.02, 0.45], [3.01, 0.004, 0.2]];   // удар годинника: частота, гучність, згасання
 const WARP_KEY = ['D4', 'A3', 'C4', 'A3', 'A3', 'G3', 'D4', 'C4', 'D4'];      // основний тон епохи: удар годинника вже в її тональності
 // Увесь синтез. Текст цієї функції стає кодом Worker-а, тому вона самодостатня: не бере нічого ззовні
 function wsSynthCode() {
   const TAU = Math.PI * 2, CTRL = 32;                                         // CTRL — раз на стільки семплів міняються висота й фільтри
   let WARP_HOLD = 2;                                                          // запас розгону після розрахункової миті удару, с: поки вир запізнюється, розгін тримає напругу
   const WS_TAIL = [3.6, 3.2, 3, 2.4, 3, 3.2, 3.8, 3.4, 3.8];                  // довжина «прибуття» по епохах, с
-  const WARP_LEVEL = [[1, 1.25], [1, 1.3], [1, 1], [1, 0.6], [1, 1], [1, 1], [1, 1.05], [1, 1], [1, 1]];   // вирівнювання гучності: [звичайний, піксельний]
+  const WARP_LEVEL = [[0.8, 1.25], [1.05, 1.3], [1.06, 1], [1, 0.6], [1.1, 1], [0.92, 1], [0.8, 1.05], [1, 1], [0.64, 1]];   // вирівнювання гучності: [звичайний, піксельний]
   let wsSeed = 1;
   const wsRnd = () => { wsSeed = (wsSeed * 1664525 + 1013904223) >>> 0; return wsSeed / 4294967296; };   // свій генератор: той самий звук щоразу
   const NI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
@@ -14389,7 +14440,7 @@ function wsSynthCode() {
     fft(re, im, true);
     for (let i = 0; i < n; i++) { const p = Math.floor(i / D), f = (i - p * D) / D, nx = p + 1 < N ? p + 1 : p; outL[i] += re[p] + (re[nx] - re[p]) * f; outR[i] += im[p] + (im[nx] - im[p]) * f; }
   };
-  const WS_STR = { nylon: [0.5, 0.2, 0.997], harp: [0.32, 0.42, 0.999], koto: [0.85, 0.11, 0.995], uke: [0.55, 0.23, 0.992], steel: [0.8, 0.13, 0.998] };   // струни: яскравість, точка щипка, втрати
+  const WS_STR = { nylon: [0.38, 0.2, 0.997], harp: [0.24, 0.42, 0.999], koto: [0.55, 0.13, 0.995], uke: [0.4, 0.23, 0.992], steel: [0.5, 0.15, 0.998] };   // струни: яскравість, точка щипка, втрати
   // Набір інструментів. Кожен виклик одразу дописує звук у буфер свого інструмента (групи); k.finish зводить групи, луну й простір. pix — «піксельна» заміна: ті самі ноти простими хвилями
   function wsKit(sr, len, pix) {
     const n = Math.ceil(len * sr), k = { sr, pix: !!pix }, groups = [], echoes = [], sumL = new Float32Array(n), sumR = new Float32Array(n);
@@ -14480,7 +14531,7 @@ function wsSynthCode() {
     k.pluck = (f, t, vol, o = {}) => {
       if (pix) { k.osc(o.wave || k.pulse(0.25), f, t, 0, vol * 0.5, { dec: o.pdec || 0.17, lp: [Math.min(sr * 0.4, f * 7), f * 2.2, 0.07], to: o.to, pan: o.pan }); return; }
       const g = o.to || bus, i0 = Math.round(t * sr); if (i0 >= n) return;
-      const b = stringBuf(o.kind || 'nylon', Math.round(Math.log2(f / 110))), rate = f / b.f0, len = o.len || 1.8, full = Math.round(len * sr), i1 = Math.min(n, i0 + full), rS = i0 + Math.round(full * 0.72), rN = Math.max(1, i0 + full - rS), aN = Math.max(1, Math.round(0.0015 * sr)), bd = o.bend, d = b.d;
+      const b = stringBuf(o.kind || 'nylon', Math.round(Math.log2(f / 110))), rate = f / b.f0, len = o.len || 1.8, full = Math.round(len * sr), i1 = Math.min(n, i0 + full), rS = i0 + Math.round(full * 0.72), rN = Math.max(1, i0 + full - rS), aN = Math.max(1, Math.round(0.003 * sr)), bd = o.bend, d = b.d;
       take(g, i0, i1); const L = g.L, R = g.R, [gl, gr] = pans(o.pan); let pos = 0;
       for (let i = i0; i < i1;) {
         const tt = (i - i0) / sr, e = Math.min(i1, i + CTRL); let rt = rate;
@@ -14496,7 +14547,7 @@ function wsSynthCode() {
     };
     k.fm = (f, t, vol, o = {}) => {                                           // фазова модуляція: скляні дзвіночки, калімба, бас і мідь 16-бітних приставок
       const g = o.to || bus, i0 = Math.round(t * sr); if (i0 >= n) return;
-      const r = o.ratio || 2, idx = o.index == null ? 2 : o.index, keep = o.keep || 0, sus = o.dur || 0, dec = sus ? 0 : (o.dec || 0.3), md = o.mdec || (dec || 0.3) * 0.4, aN = Math.max(1, Math.round((o.a == null ? 0.002 : o.a) * sr)), rN = sus ? Math.max(1, Math.round((o.r == null ? 0.03 : o.r) * sr)) : 0, full = sus ? Math.round(sus * sr) : aN + Math.round(dec * 7 * sr), i1 = Math.min(n, i0 + full), rS = i0 + full - rN, aE = i0 + aN, dk = dec ? Math.exp(-1 / (dec * sr)) : 1, seg = o.glide;
+      const r = o.ratio || 2, idx = (o.index == null ? 2 : o.index) * 0.7, keep = o.keep || 0, sus = o.dur || 0, dec = sus ? 0 : (o.dec || 0.3), md = o.mdec || (dec || 0.3) * 0.4, aN = Math.max(1, Math.round((o.a == null ? 0.006 : o.a) * sr)), rN = sus ? Math.max(1, Math.round((o.r == null ? 0.03 : o.r) * sr)) : 0, full = sus ? Math.round(sus * sr) : aN + Math.round(dec * 7 * sr), i1 = Math.min(n, i0 + full), rS = i0 + full - rN, aE = i0 + aN, dk = dec ? Math.exp(-1 / (dec * sr)) : 1, seg = o.glide;
       if (i1 <= i0) return; take(g, i0, i1);
       const L = g.L, R = g.R, [gl, gr] = pans(o.pan); let pc = 0, pm = 0, env = vol, sI = 0, sF = f, sT = 0;
       for (let i = i0; i < i1;) {
@@ -14512,7 +14563,7 @@ function wsSynthCode() {
       }
     };
     k.bell = (f, t, vol, o = {}) => {                                         // дзвін: окремі часткові, верхні згасають швидше
-      const dec = o.dec || 1.6, ps = pix ? [[1, 1, 1], [2, 0.3, 0.45], [3.01, 0.1, 0.25]] : (o.parts || [[0.5, 0.3, 1.3], [1, 1, 1], [1.25, 0.3, 0.75], [1.5, 0.28, 0.6], [2, 0.5, 0.5], [2.52, 0.16, 0.32], [3.01, 0.14, 0.24], [4.2, 0.06, 0.14]]);
+      const dec = o.dec || 1.6, ps = pix ? [[1, 1, 1], [2, 0.3, 0.45], [3.01, 0.1, 0.25]] : (o.parts || [[0.5, 0.3, 1.3], [1, 1, 1], [1.25, 0.2, 0.75], [1.5, 0.18, 0.6], [2, 0.25, 0.5], [3.01, 0.05, 0.24]]);
       ps.forEach(([r, g, d]) => k.osc('sine', f * r, t, 0, vol * g, { a: 0.003, dec: dec * d, to: o.to, pan: o.pan, det: o.det }));
     };
     k.choir = (notes, t, dur, vol, o = {}) => {                               // хор «а-а»: пилки крізь три форманти голосу
@@ -14524,7 +14575,7 @@ function wsSynthCode() {
         for (let i = 0; i < m;) { const e = Math.min(m, i + CTRL), inc = base * Math.pow(2, vibD * sinT(4.9 * i / sr) / 1200); for (let j = i; j < e; j++) { let x; if (kind === 1) x = 2 * ph - 1 - blep(ph, inc); else if (kind === 4) { const sh = ph + 1 - duty; x = ((ph < duty ? 1 : -1) + blep(ph, inc) - blep(sh >= 1 ? sh - 1 : sh, inc) + dcp) * nrm; } else x = (Math.abs(ph * 2 - 1) * 16 | 0) / 8 - 1; v[j] += x * amp; ph += inc; if (ph >= 1) ph -= 1; } i = e; }
       }));
       const out = pix ? v : new Float32Array(m);
-      if (!pix) [[750, 8, 2.4], [1180, 10, 1.3], [2700, 11, 0.55], [420, 4, 0.5]].forEach(([fq, q, gn]) => { const c = coef('bandpass', fq, q, 0, sr); let z1 = 0, z2 = 0; for (let j = 0; j < m; j++) { const x = v[j], y = c[0] * x + z1; z1 = c[1] * x - c[3] * y + z2; z2 = c[2] * x - c[4] * y; out[j] += y * gn; } });
+      if (!pix) [[750, 6, 2.4], [1180, 8, 1.2], [2700, 8, 0.25], [420, 3, 0.7]].forEach(([fq, q, gn]) => { const c = coef('bandpass', fq, q, 0, sr); let z1 = 0, z2 = 0; for (let j = 0; j < m; j++) { const x = v[j], y = c[0] * x + z1; z1 = c[1] * x - c[3] * y + z2; z2 = c[2] * x - c[4] * y; out[j] += y * gn; } });
       const aN = Math.max(1, Math.round(a * sr)), rN = Math.max(1, Math.round(r * sr)), rS = Math.round(dur * sr) - rN, L = g.L, R = g.R, last = Math.round(dur * sr);
       for (let j = 0; j < m; j++) { const x = out[j] * (j < aN ? j / aN : 1) * (j >= rS ? (last - j) / rN : 1); L[i0 + j] += x; R[i0 + j] += x; }
     };
@@ -14553,13 +14604,13 @@ function wsSynthCode() {
       const g = o.to || bus, i0 = Math.round(t * sr); if (i0 >= n) return;
       const dec = o.dec || 0.05, full = Math.round(dec * 7 * sr), i1 = Math.min(n, i0 + full), dk = Math.exp(-1 / (dec * sr)); take(g, i0, i1);
       const L = g.L, R = g.R, [gl, gr] = pans(o.pan); let pos = wsRnd() * 32768, env = vol;
-      for (let j = i0; j < i1; j++) { const x = lf[(pos | 0) & 32767] * env * (j - i0 < 32 ? (j - i0) / 32 : 1); pos += rate; env *= dk; L[j] += x * gl; R[j] += x * gr; }
+      for (let j = i0; j < i1; j++) { const x = lf[(pos | 0) & 32767] * env * 0.55 * (j - i0 < 64 ? (j - i0) / 64 : 1); pos += rate; env *= dk; L[j] += x * gl; R[j] += x * gr; }
     };
-    k.kick = (t, v, o = {}) => { k.osc('sine', o.f || 135, t, 0, v, { a: 0.002, dec: o.dec || 0.1, glide: [[o.f1 || 47, 0.07]], to: o.to }); k.hiss(t, 0, v * 0.2, { type: 'lowpass', f: 1500, dec: 0.01, to: o.to }); };
-    k.hat = (t, v, o = {}) => k.hiss(t, 0, v, { type: 'highpass', f: o.f || 8000, q: 0.7, dec: o.open ? 0.07 : 0.016, to: o.to, pan: o.pan });
-    k.clap = (t, v, o = {}) => { [0, 0.011, 0.023].forEach(d => k.hiss(t + d, 0, v * 0.65, { type: 'bandpass', f: 1500, q: 1.1, dec: 0.007, to: o.to })); k.hiss(t + 0.03, 0, v, { type: 'bandpass', f: 1300, q: 0.9, dec: o.dec || 0.055, to: o.to }); };
-    k.snare = (t, v, o = {}) => { k.osc('triangle', 215, t, 0, v * 0.55, { dec: 0.04, glide: [[150, 0.05]], to: o.to }); k.hiss(t, 0, v, { type: 'bandpass', f: o.f || 2600, q: 0.6, dec: o.dec || 0.07, to: o.to }); };
-    k.taiko = (t, v, o = {}) => { const f = o.f || 78; k.osc('sine', f * 1.7, t, 0, v, { a: 0.003, dec: o.dec || 0.27, glide: [[f, 0.05]], to: o.to }); k.osc('sine', f * 2.6, t, 0, v * 0.3, { dec: 0.07, to: o.to }); k.hiss(t, 0, v * 0.35, { type: 'lowpass', f: 950, dec: 0.022, to: o.to }); };
+    k.kick = (t, v, o = {}) => { k.osc('sine', o.f || 115, t, 0, v, { a: 0.004, dec: o.dec || 0.1, glide: [[o.f1 || 47, 0.07]], to: o.to }); k.hiss(t, 0, v * 0.07, { type: 'lowpass', f: 1000, dec: 0.01, to: o.to }); };
+    k.hat = (t, v, o = {}) => k.hiss(t, 0, v * 0.5, { type: 'highpass', f: o.f || 6000, q: 0.7, a: 0.004, dec: o.open ? 0.07 : 0.016, to: o.to, pan: o.pan });
+    k.clap = (t, v, o = {}) => { [0, 0.011, 0.023].forEach(d => k.hiss(t + d, 0, v * 0.35, { type: 'bandpass', f: 1200, q: 1, a: 0.003, dec: 0.008, to: o.to })); k.hiss(t + 0.03, 0, v * 0.7, { type: 'bandpass', f: 1100, q: 0.9, dec: o.dec || 0.055, to: o.to }); };
+    k.snare = (t, v, o = {}) => { k.osc('triangle', 215, t, 0, v * 0.55, { dec: 0.04, glide: [[150, 0.05]], to: o.to }); k.hiss(t, 0, v * 0.7, { type: 'bandpass', f: o.f || 1800, q: 0.6, a: 0.003, dec: o.dec || 0.07, to: o.to }); };
+    k.taiko = (t, v, o = {}) => { const f = o.f || 78; k.osc('sine', f * 1.7, t, 0, v, { a: 0.003, dec: o.dec || 0.27, glide: [[f, 0.05]], to: o.to }); k.osc('sine', f * 2.6, t, 0, v * 0.3, { dec: 0.07, to: o.to }); k.hiss(t, 0, v * 0.2, { type: 'lowpass', f: 800, dec: 0.022, to: o.to }); };
     const runF = (x, a, b, type, f, q, gn, sweep) => {                        // фільтр по шматку буфера; sweep — точки [час, частота] для руху
       let c = coef(type, f, q, gn, sr), z1 = 0, z2 = 0, sI = 0;
       for (let i = a; i < b;) {
@@ -14597,9 +14648,9 @@ function wsSynthCode() {
         }
       });
       if (room && rev) convolve(rev, n, sr, room.sec, room.bright, room.pre, room.level, sumL, sumR);
-      const fN = Math.max(1, Math.round(fadeIn * sr)), tN = Math.round(0.5 * sr), L = sumL, R = sumR, dr = 0.85 * 1.6 * drive;
+      const fN = Math.max(1, Math.round(fadeIn * sr)), tN = Math.round(0.5 * sr), L = sumL, R = sumR, dr = 0.6 * 1.6 * drive;
       [L, R].forEach(x => {
-        runF(x, 0, n, 'highpass', 42, 0.7, 0); runF(x, 0, n, 'lowshelf', 130, 0, -5); runF(x, 0, n, 'peaking', 1900, 0.8, 2);
+        runF(x, 0, n, 'highpass', 42, 0.7, 0); runF(x, 0, n, 'lowshelf', 130, 0, -3); runF(x, 0, n, 'peaking', 3000, 0.7, -5); runF(x, 0, n, 'lowpass', 7000, -3, 0);
         for (let i = 0; i < n; i++) { let v = x[i] * dr; v = v > 3 ? 3 : v < -3 ? -3 : v; x[i] = v * (27 + v * v) / (27 + 9 * v * v) * level * (i < fN ? i / fN : 1) * (i > n - tN ? (n - i) / tN : 1); }   // м'яке вкорочення піків додає обертони, тож бас читається і на телефоні
       });
       return { L, R };
@@ -14611,36 +14662,36 @@ function wsSynthCode() {
       room: [3.2, 0.42, 0.03, 0.62], trim: [0.82, 1.4],
       build(k, tb) {
         const s = tb / 20, end = tb + WARP_HOLD;
-        const lute = k.group({ wet: 0.3, hp: 90, peak: [[1400, 3, 1]] }), harp = k.group({ wet: 0.75, hp: 160 }), fl = k.group({ wet: 0.6, pan: -0.12 }), ch = k.group({ wet: 0.9, auto: [[0, 0.5], [tb, 1.2]] }), sky = k.group({ wet: 1.2, hp: 1200 });
+        const lute = k.group({ wet: 0.3, hp: 90, peak: [[1400, 1, 1]] }), harp = k.group({ wet: 0.75, hp: 160 }), fl = k.group({ wet: 0.6, pan: -0.12 }), ch = k.group({ wet: 0.9, auto: [[0, 0.5], [tb, 1.2]] }), sky = k.group({ wet: 1.2, hp: 600 });
         'D3 A3 D4 F4 D4 A3 A2 E3 A3 C#4'.split(' ').forEach((n, i) => k.pluck(noteFreq(n), 0.04 + i * 2 * s, 0.24, { kind: 'nylon', to: lute, pan: i % 2 ? 0.2 : -0.2, len: 1.4 }));
         for (let t = tb + 0.05, i = 0; t < end - 0.4; t += 2 * s, i++) k.pluck(noteFreq(['A3', 'C#4', 'E4', 'C#4'][i % 4]), t, 0.22, { kind: 'nylon', to: lute, pan: i % 2 ? 0.2 : -0.2, len: 1.2 });
         k.choir(wsChord('D3 A3 D4 F4'), 0.1, 12 * s + 0.5, 0.03, { a: 0.9, r: 0.6, to: ch });
         k.choir(wsChord('A2 E3 A3 C#4 E4'), 12 * s, end - 12 * s, 0.03, { a: 0.5, r: 0.4, to: ch });
-        k.flute(wsLine(0.04, s, 'D5:4 E5:2 F5:4 G5:2 A5:8', WARP_HOLD), 0.075, { a: 0.07, r: 0.3, to: fl, harm: [1, 0.2, 0.07], breath: 0.35, swell: 1.5 });
+        k.flute(wsLine(0.04, s, 'D5:4 E5:2 F5:4 G5:2 A5:8', WARP_HOLD), 0.062, { a: 0.07, r: 0.3, to: fl, harm: [1, 0.2, 0.07], breath: 0.35, swell: 1.5 });
         const up = 'A3 C#4 E4 G4 A4 C#5 E5 G5 A5 C#6 E6 G6'.split(' ');
         up.forEach((n, i) => k.pluck(noteFreq(n), 12 * s + 8 * s * Math.pow(i / up.length, 0.8), 0.13 + i * 0.006, { kind: 'harp', to: harp, pan: -0.6 + i * 0.1, len: 1.8 }));
-        [[0.22, 'A6'], [0.36, 'D7'], [0.48, 'F6'], [0.6, 'A6'], [0.7, 'E7']].forEach(([p, n], i) => k.fm(noteFreq(n), tb * p, 0.03, { ratio: 3.01, index: 0.5, dec: 0.4, to: sky, pan: i % 2 ? 0.5 : -0.5 }));
+        [[0.22, 'A5'], [0.36, 'D6'], [0.48, 'F5'], [0.6, 'A5'], [0.7, 'E6']].forEach(([p, n], i) => k.fm(noteFreq(n), tb * p, 0.018, { ratio: 2, index: 0.3, dec: 0.4, a: 0.02, to: sky, pan: i % 2 ? 0.5 : -0.5 }));
         k.hiss(0, end, 0.012, { f: 900, q: 0.5, a: 1.2, r: 0.4, sweep: [[2200, tb]], to: sky });
       },
       arrive(k) {
         const harp = k.group({ wet: 0.75, hp: 130 }), ch = k.group({ wet: 0.95, gain: 1.15 }), bell = k.group({ wet: 0.8, hp: 200 });
         k.choir(wsChord('D3 A3 D4 F#4 A4 D5'), 0, 3.3, 0.03, { a: 0.09, r: 2.1, to: ch });
-        wsChord('D4 F#4 A4 D5 F#5 A5 D6 F#6').forEach((f, i) => k.pluck(f, i * 0.05, 0.17, { kind: 'harp', to: harp, pan: -0.55 + i * 0.16, len: 2 }));
-        k.bell(noteFreq('D5'), 0.015, 0.1, { dec: 2.2, to: bell, parts: [[1, 1, 1], [1.25, 0.3, 0.7], [1.5, 0.3, 0.6], [2, 0.42, 0.45], [3, 0.14, 0.25], [4.2, 0.05, 0.14]] });
-        k.bell(noteFreq('A5'), 0.32, 0.045, { dec: 1.5, to: bell, pan: 0.3, parts: [[1, 1, 1], [2, 0.4, 0.45], [3, 0.12, 0.25]] });
+        wsChord('D4 F#4 A4 D5 F#5 A5 D6').forEach((f, i) => k.pluck(f, i * 0.06, 0.14, { kind: 'harp', to: harp, pan: -0.55 + i * 0.16, len: 2 }));
+        k.bell(noteFreq('D4'), 0.015, 0.09, { dec: 2.2, to: bell, parts: [[1, 1, 1], [1.25, 0.22, 0.7], [1.5, 0.2, 0.6], [2, 0.22, 0.45], [3, 0.05, 0.25]] });
+        k.bell(noteFreq('A4'), 0.32, 0.035, { dec: 1.5, to: bell, pan: 0.3, parts: [[1, 1, 1], [2, 0.2, 0.45]] });
         k.taiko(0, 0.32, { f: 73, dec: 0.32, to: k.group({ wet: 0.5 }) });
       }
     },
     { /* 1. РЕТРО, ля: стрічка мотається назад і зупиняється, радіо ловить хвилю, крізь шум проступає бугі; прибуття — клац механізму й кінцівка рок-н-ролу зі «шльопаючою» луною тих студій */
       room: [1.1, 0.6, 0.012, 0.3], trim: [0.8, 1.1],
       build(k, tb) {
-        const T1 = tb * 0.6, T2 = tb * 0.68, end = tb + WARP_HOLD, lofi = k.group({ hp: 280, lp: 2700, wet: 0.08 }), radio = k.group({ hp: 420, lp: 2900, wet: 0.12, peak: [[1300, 5, 1]] }), bass = k.group({ wet: 0.08, hp: 50 });
+        const T1 = tb * 0.6, T2 = tb * 0.68, end = tb + WARP_HOLD, lofi = k.group({ hp: 280, lp: 2000, wet: 0.08 }), radio = k.group({ hp: 420, lp: 2300, wet: 0.12, peak: [[1200, 3, 1]] }), bass = k.group({ wet: 0.08, hp: 50 });
         [[1, 0.065], [2.01, 0.036], [3.03, 0.02]].forEach(([h, v]) => k.osc('sawtooth', 120 * h, 0.05, T1 + 0.3, v, { a: 0.5, r: 0.14, glide: [[900 * h, T1], [130 * h, T1 + 0.26]], lp: [2000], vib: [7, 22], to: lofi }));
         const riff = 'E5 C#5 A4 E5 G5 A5 E5 C#5'.split(' ');
-        for (let t = 0.12, st = 0.17, i = 0; t < T1; i++) { const sp = 1 + 1.7 * Math.pow(t / T1, 1.6); k.osc('sawtooth', noteFreq(riff[i % 8]) * sp, t, st * 0.9, 0.085, { a: st * 0.72, r: 0.012, lp: [2100], to: lofi, pan: i % 2 ? 0.14 : -0.14 }); st = Math.max(0.05, st * 0.94); t += st; }   // мелодія задом наперед: повільний наступ і різкий кінець
-        for (let t = 0.2, st = 0.09; t < T1; t += st, st = Math.max(0.03, st * 0.975)) k.hiss(t, 0, 0.06, { f: 2100, q: 2, dec: 0.006, to: lofi });
-        k.hiss(T1 - 0.12, 0.42, 0.075, { type: 'highpass', f: 1700, a: 0.09, r: 0.16, to: lofi });
-        k.osc('sine', 2900, T2, end - T2, 0.014, { a: 0.05, r: 0.2, glide: [[620, (tb - T2) * 0.9]], vib: [6, 30], to: radio });
+        for (let t = 0.12, st = 0.17, i = 0; t < T1; i++) { const sp = 1 + 1.7 * Math.pow(t / T1, 1.6); k.osc('sawtooth', noteFreq(riff[i % 8]) * sp, t, st * 0.9, 0.06, { a: st * 0.72, r: 0.02, lp: [1700], to: lofi, pan: i % 2 ? 0.14 : -0.14 }); st = Math.max(0.05, st * 0.94); t += st; }   // мелодія задом наперед: повільний наступ і різкий кінець
+        for (let t = 0.2, st = 0.09; t < T1; t += st, st = Math.max(0.03, st * 0.975)) k.hiss(t, 0, 0.032, { f: 1700, q: 1.5, a: 0.002, dec: 0.006, to: lofi });
+        k.hiss(T1 - 0.12, 0.42, 0.05, { f: 1300, q: 0.6, a: 0.12, r: 0.18, to: lofi });
+        k.osc('sine', 1700, T2, end - T2, 0.008, { a: 0.08, r: 0.2, glide: [[560, (tb - T2) * 0.9]], vib: [6, 30], to: radio });
         k.hiss(T2, end - T2, 0.05, { f: 1900, q: 0.7, a: 0.03, r: 0.3, sweep: [[1100, tb - T2]], to: radio });
         const e = (tb - T2) / 5;
         'A3 C#4 E4 F#4 A4'.split(' ').forEach((n, i) => { k.pluck(noteFreq(n), T2 + i * e, 0.14 + i * 0.05, { kind: 'steel', to: radio, len: 0.5, pdec: 0.09 }); k.pluck(noteFreq(n) / 2, T2 + i * e, 0.09 + i * 0.03, { kind: 'steel', to: radio, len: 0.5, pdec: 0.09 }); k.hiss(T2 + i * e, 0, 0.02 + i * 0.012, { type: 'highpass', f: 5000, dec: 0.012, to: radio }); });
@@ -14648,14 +14699,14 @@ function wsSynthCode() {
         let i = 0; for (let t = tb + 0.05; t < end - 0.4; t += e, i++) { const n = 'E3 G#3 B3 C#4 D4 C#4 B3 G#3'.split(' ')[i % 8]; k.pluck(noteFreq(n) * 2, t, 0.2, { kind: 'steel', to: radio, len: 0.5, pdec: 0.09 }); k.pluck(noteFreq(n), t, 0.2, { kind: 'nylon', to: bass, len: 0.5, pdec: 0.1 }); if (i % 2) k.snare(t, 0.09, { to: radio }); else k.hat(t, 0.03, { to: radio, f: 5000 }); }
       },
       arrive(k) {
-        const slap = k.echo(0.125, 0.2, 2500, 0.55), gtr = k.group({ wet: 0.28, echo: slap, send: 0.65, hp: 90, peak: [[2400, 3, 1]] }), horn = k.group({ wet: 0.45, echo: slap, send: 0.4, lp: 2500 }), vib = k.group({ wet: 0.5, pan: 0.2 }), kit = k.group({ wet: 0.3 });
-        k.hiss(0, 0, 0.3, { type: 'lowpass', f: 1000, dec: 0.014, to: kit }); k.hiss(0.05, 0, 0.1, { type: 'bandpass', f: 1600, dec: 0.01, to: kit });
-        k.kick(0, 0.42, { to: kit }); k.snare(0.012, 0.26, { to: kit, dec: 0.1 }); k.hiss(0.015, 0, 0.1, { type: 'highpass', f: 5200, dec: 0.33, to: kit });
+        const slap = k.echo(0.125, 0.2, 2500, 0.55), gtr = k.group({ wet: 0.28, echo: slap, send: 0.65, hp: 90, peak: [[1500, 1, 1]] }), horn = k.group({ wet: 0.45, echo: slap, send: 0.4, lp: 1900 }), vib = k.group({ wet: 0.5, pan: 0.2 }), kit = k.group({ wet: 0.3 });
+        k.hiss(0, 0, 0.16, { type: 'lowpass', f: 800, dec: 0.016, to: kit }); k.hiss(0.05, 0, 0.05, { f: 1200, dec: 0.012, to: kit });
+        k.kick(0, 0.42, { to: kit }); k.snare(0.012, 0.26, { to: kit, dec: 0.1 }); k.hiss(0.015, 0, 0.035, { type: 'highpass', f: 4000, a: 0.008, dec: 0.3, to: kit });
         wsChord('A2 E3 A3 C#4 F#4 A4').forEach((f, i) => k.pluck(f, 0.012 + i * 0.011, 0.25, { kind: 'steel', to: gtr, len: 1.9, pdec: 0.45 }));
         k.pluck(noteFreq('A1'), 0.012, 0.42, { kind: 'nylon', to: k.group({ hp: 40, wet: 0.08 }), len: 1.2, pdec: 0.4 });
         wsChord('A3 C#4 E4 F#4').forEach((f, i) => { k.saws(f, 0.015, 0.13, 0.03, { n: 2, spread: 7, a: 0.008, r: 0.04, to: horn, pan: -0.25 + i * 0.16 }); k.saws(f, 0.22, 0.95, 0.034, { n: 2, spread: 7, a: 0.012, r: 0.5, vib: [5.6, 14, 0.25], to: horn, pan: -0.25 + i * 0.16 }); });
-        wsChord('A5 C#6 E6').forEach((f, i) => k.osc('sine', f, 0.22 + i * 0.05, 0, 0.055, { dec: 0.48, trem: [5.5, 0.35], to: vib }));
-        for (let i = 0; i < 26; i++) k.hiss(0.1 + wsRnd() * 2.4, 0, 0.006 + wsRnd() * 0.022, { type: 'highpass', f: 2800, dec: 0.0018, pan: wsRnd() - 0.5 });   // тріск платівки
+        wsChord('A5 C#6 E6').forEach((f, i) => k.osc('sine', f, 0.22 + i * 0.05, 0, 0.032, { a: 0.012, dec: 0.48, trem: [5.5, 0.35], to: vib }));
+        for (let i = 0; i < 26; i++) k.hiss(0.1 + wsRnd() * 2.4, 0, 0.003 + wsRnd() * 0.01, { type: 'highpass', f: 2200, a: 0.001, dec: 0.002, pan: wsRnd() - 0.5 });   // тріск платівки
       }
     },
     { /* 2. ДИСКО, до мінор: «чотири чверті» в такт миготінню вира, секвенсорний бас із фільтром, що розкривається, струнні, синдруми; прибуття — удар струнних і дзеркальні іскри */
@@ -14663,91 +14714,91 @@ function wsSynthCode() {
       build(k, tb) {
         const n = tb > 2.6 ? 6 : 4, bt = tb / n, end = tb + WARP_HOLD, beats = Math.floor(end / bt), echo = k.echo(bt * 0.75, 0.3, 2200, 0.32, true);
         const bass = k.group({ hp: 40, echo, send: 0.12 }), kit = k.group({ wet: 0.08 }), hh = k.group({ pan: 0.1 }), syn = k.group({ wet: 0.5, echo, send: 0.5 });
-        const sL = k.group({ lp: 3600, wet: 0.5, pan: -0.55, auto: [[0, 0.35], [tb, 1.1]] }), sR = k.group({ lp: 3600, wet: 0.5, pan: 0.55, auto: [[0, 0.35], [tb, 1.1]] });
+        const sL = k.group({ lp: 2500, wet: 0.5, pan: -0.55, auto: [[0, 0.35], [tb, 1]] }), sR = k.group({ lp: 2500, wet: 0.5, pan: 0.55, auto: [[0, 0.35], [tb, 1]] });
         const PAT = [[36, 48, 43, 46], [32, 44, 39, 42], [31, 43, 38, 41]], CH = ['C4 Eb4 G4 C5', 'C4 Eb4 Ab4 C5', 'B3 D4 G4 B4'], chordAt = b => (b >= n - 2 ? 2 : b >= n - 4 ? 1 : 0);
         for (let b = 0; b < beats; b++) {
           const t = b * bt + (b >= n ? 0.05 : 0), c = chordAt(b), up = Math.min(1, t / tb);
-          k.kick(t, 0.3 + up * 0.1, { to: kit }); k.hat(t + bt / 2, 0.07 + up * 0.04, { open: 1, to: hh });
+          k.kick(t, 0.24 + up * 0.08, { to: kit }); k.hat(t + bt / 2, 0.07 + up * 0.04, { open: 1, to: hh });
           if (b % 2) k.clap(t, 0.16 + up * 0.07, { to: kit });
           if (b >= 2) [0.25, 0.75].forEach(p => k.hat(t + bt * p, 0.034, { to: hh }));
           for (let j = 0; j < 4; j++) { const cut = 320 + 2100 * Math.pow(Math.min(1, (t + j * bt / 4) / tb), 1.6); k.osc('sawtooth', wsMidi(PAT[c][j]), t + j * bt / 4, 0, 0.15, { a: 0.003, dec: 0.08, lp: [cut * 1.8, cut * 0.6, 0.05], q: 4, to: bass, pan: j % 2 ? 0.12 : -0.12 }); }
         }
         [0, n >= 6 ? 2 : 1, n - 2].forEach((b, i, arr) => { const t = b * bt, e = i < 2 ? arr[i + 1] * bt : end; wsChord(CH[i]).forEach(f => { k.saws(f, t, e - t + 0.05, 0.03, { n: 2, spread: 9, a: 0.16, r: 0.14, vib: [5.2, 7, 0.4], to: sL }); k.saws(f, t, e - t + 0.05, 0.03, { n: 2, spread: 13, a: 0.16, r: 0.14, vib: [4.7, 7, 0.4], to: sR }); }); });
-        for (let i = 0; i < 4; i++) k.osc('sine', 1150 - i * 170, tb - bt + i * bt / 4, 0, 0.1, { a: 0.002, dec: 0.06, glide: [[170, 0.17]], to: syn, pan: i % 2 ? 0.45 : -0.45 });
-        'C5 D5 Eb5 F5 G5 Ab5 B5 C6'.split(' ').forEach((nn, i) => k.saws(noteFreq(nn), tb - bt * 1.5 + i * bt * 1.5 / 8, bt * 0.2, 0.03, { n: 2, spread: 8, a: 0.012, r: 0.04, to: sR }));
+        for (let i = 0; i < 4; i++) k.osc('sine', 800 - i * 110, tb - bt + i * bt / 4, 0, 0.07, { a: 0.006, dec: 0.06, glide: [[170, 0.17]], to: syn, pan: i % 2 ? 0.45 : -0.45 });
+        'C5 D5 Eb5 F5 G5 Ab5 B5 C6'.split(' ').forEach((nn, i) => k.saws(noteFreq(nn), tb - bt * 1.5 + i * bt * 1.5 / 8, bt * 0.2, 0.016, { n: 2, spread: 8, a: 0.012, r: 0.04, to: sR }));
       },
       arrive(k) {
-        const str = k.group({ lp: 1200, wet: 0.7, sweep: [[0, 1200], [0.16, 5200], [1.9, 1900]] }), kit = k.group({ wet: 0.28 }), brass = k.group({ lp: 3000, wet: 0.45 }), glit = k.group({ wet: 0.8, hp: 900 });
-        k.kick(0, 0.42, { to: kit, dec: 0.14 }); k.clap(0, 0.3, { to: kit, dec: 0.1 }); k.hiss(0, 0, 0.12, { type: 'highpass', f: 5000, dec: 0.5, to: kit });
+        const str = k.group({ lp: 1000, wet: 0.7, sweep: [[0, 1000], [0.2, 3000], [1.9, 1400]] }), kit = k.group({ wet: 0.28 }), brass = k.group({ lp: 2100, wet: 0.45 }), glit = k.group({ wet: 0.8, hp: 500 });
+        k.kick(0, 0.34, { to: kit, dec: 0.14 }); k.clap(0, 0.3, { to: kit, dec: 0.1 }); k.hiss(0, 0, 0.04, { type: 'highpass', f: 4000, a: 0.01, dec: 0.45, to: kit });
         wsChord('C3 G3 Bb3 Eb4 G4 D5').forEach((f, i) => k.saws(f, 0, 0, 0.042, { n: 3, spread: 12, a: 0.008, dec: 0.75, to: str, pan: -0.5 + i * 0.2 }));
         wsChord('C4 Eb4 G4 Bb4').forEach(f => k.saws(f, 0, 0.26, 0.036, { n: 2, spread: 6, a: 0.006, r: 0.09, to: brass }));
         k.osc('sawtooth', noteFreq('C3'), 0, 0, 0.15, { dec: 0.3, glide: [[noteFreq('C2'), 0.22]], lp: [1700, 280, 0.2], q: 3, to: k.group({ hp: 40 }) });
-        'C6 Eb6 G6 Bb6 C7 Eb7 G7'.split(' ').forEach((n, i) => k.fm(noteFreq(n), 0.06 + i * 0.07, 0.065, { ratio: 3.5, index: 0.9, dec: 0.32, mdec: 0.08, to: glit, pan: i % 2 ? 0.6 : -0.6 }));
+        'C5 Eb5 G5 Bb5 C6 Eb6 G6'.split(' ').forEach((n, i) => k.fm(noteFreq(n), 0.06 + i * 0.07, 0.03, { ratio: 2, index: 0.5, dec: 0.32, mdec: 0.08, a: 0.012, to: glit, pan: i % 2 ? 0.6 : -0.6 }));
       }
     },
     { /* 3. АРКАДИ, ля мінор: чесні голоси приставки. Марш прибульців прискорюється, постріли, вибухи, монетка падає в приймач, далі LEVEL UP; прибуття — злет акорду й дощик пікселів */
-      room: null, trim: [0.85, 1.25],
+      room: null, trim: [1, 1.6],
       build(k, tb) {
-        const s = tb / 32, end = tb + WARP_HOLD, chipBus = k.group({ lp: k.pix ? 6000 : 7500, hp: 60 }), echo = k.echo(s * 1.5, 0.22, 3200, 0.22), lead = k.group({ to: chipBus, echo, send: 0.5, pan: -0.1 }), side = k.group({ to: chipBus, pan: 0.14 }), low = k.group({ to: chipBus }), fx = k.group({ to: chipBus });
+        const s = tb / 32, end = tb + WARP_HOLD, chipBus = k.group({ lp: k.pix ? 3800 : 4200, hp: 60 }), echo = k.echo(s * 1.5, 0.22, 2400, 0.22), lead = k.group({ to: chipBus, echo, send: 0.5, pan: -0.1, gain: 0.75 }), side = k.group({ to: chipBus, pan: 0.14, gain: 0.7 }), low = k.group({ to: chipBus }), fx = k.group({ to: chipBus, gain: 0.7 });
         const chip = (d, f, t, dur, v, o = {}) => (k.pix ? k.fm(f, t, v * 1.5, { ratio: d > 0.3 ? 1 : 2, index: d * 5, dur: Math.max(dur, 0.02), mdec: 0.09, keep: 0.25, r: 0.02, a: 0.003, to: o.to, pan: o.pan }) : k.osc(k.pulse(d), f, t, dur, v, Object.assign({ a: 0.002, r: 0.012 }, o)));
         const tri = (f, t, dur, v) => (k.pix ? k.fm(f, t, v * 1.1, { ratio: 1, index: 1.1, dur, mdec: 0.05, keep: 0.1, r: 0.02, to: low }) : k.osc(k.tri8(), f, t, dur, v, { a: 0.002, r: 0.012, to: low }));
-        [[0, 'A2'], [4, 'G2'], [8, 'F2'], [12, 'E2'], [15, 'A2'], [18, 'G2'], [20, 'F2']].forEach(([st, n]) => { tri(noteFreq(n), st * s, s * 1.5, 0.13); chip(0.5, noteFreq(n), st * s, s * 1.2, 0.055, { to: low }); });   // четвірка нот маршу, щоразу швидше
-        for (let st = 2; st < 21; st += 3) k.osc(k.pix ? k.pulse(0.25) : k.pulse(0.125), 1760, st * s, 0.13, 0.065, { a: 0.001, r: 0.02, glide: [[230, 0.12]], to: fx, pan: st % 2 ? 0.2 : -0.2 });
+        [[0, 'A2'], [4, 'G2'], [8, 'F2'], [12, 'E2'], [15, 'A2'], [18, 'G2'], [20, 'F2']].forEach(([st, n]) => { tri(noteFreq(n), st * s, s * 1.5, 0.09); chip(0.5, noteFreq(n), st * s, s * 1.2, 0.055, { to: low }); });   // четвірка нот маршу, щоразу швидше
+        for (let st = 2; st < 21; st += 3) k.osc(k.pulse(0.25), 1100, st * s, 0.13, 0.055, { a: 0.003, r: 0.03, glide: [[200, 0.12]], to: fx, pan: st % 2 ? 0.2 : -0.2 });
         [12.6, 14.7, 16.8, 18.9].forEach((st, i) => k.crunch(st * s, 0.05, 0.35 - i * 0.05, { dec: 0.055, to: fx, pan: i % 2 ? -0.25 : 0.25 }));
         chip(0.25, noteFreq('B5'), 20 * s, 0.075, 0.12, { to: lead }); chip(0.25, noteFreq('E6'), 20 * s + 0.075, 0.33, 0.12, { to: lead });
         const up = [['A4', 'C5', 'E5', 'A5'], ['F4', 'A4', 'C5', 'F5'], ['G4', 'B4', 'D5', 'G5']], lens = [[22, 26], [26, 29], [29, 32]];
-        lens.forEach(([a, b], c) => { tri(noteFreq(['A2', 'F2', 'G2'][c]), a * s, (b - a) * s * 0.95, 0.13); for (let st = a, i = 0; st < b; st += 0.5, i++) { const f = noteFreq(up[c][i % 4]) * (i >= 4 ? 2 : 1); chip(0.25, f, st * s, s * 0.46, 0.13, { to: lead }); chip(0.125, f * 0.5, (st + 0.5) * s, s * 0.46, 0.07, { to: side }); } });
+        lens.forEach(([a, b], c) => { tri(noteFreq(['A2', 'F2', 'G2'][c]), a * s, (b - a) * s * 0.95, 0.09); for (let st = a, i = 0; st < b; st += 0.5, i++) { const f = noteFreq(up[c][i % 4]) * (i >= 4 ? 2 : 1); chip(0.25, f, st * s, s * 0.46, 0.13, { to: lead }); chip(0.125, f * 0.5, (st + 0.5) * s, s * 0.46, 0.07, { to: side }); } });
         [22, 26, 29].forEach(st => k.crunch(st * s, 0.09, 0.2, { dec: 0.035, to: fx })); [24, 28, 30, 31, 31.5].forEach(st => k.crunch(st * s, 0.06, 0.75, { dec: 0.045, to: fx }));
-        let i = 0; for (let t = tb + 0.05; t < end - 0.3; t += s / 2, i++) { const f = noteFreq(['E5', 'G#5', 'B5', 'E6'][i % 4]); chip(0.25, f, t, s * 0.46, 0.11, { to: lead }); if (i % 4 === 0) tri(noteFreq('E2'), t, s * 1.8, 0.12); if (i % 2 === 0) k.crunch(t, 0.05, 0.75, { dec: 0.03, to: fx }); }
+        let i = 0; for (let t = tb + 0.05; t < end - 0.3; t += s / 2, i++) { const f = noteFreq(['E5', 'G#5', 'B5', 'E6'][i % 4]); chip(0.25, f, t, s * 0.46, 0.11, { to: lead }); if (i % 4 === 0) tri(noteFreq('E2'), t, s * 1.8, 0.085); if (i % 2 === 0) k.crunch(t, 0.05, 0.75, { dec: 0.03, to: fx }); }
       },
       arrive(k) {
-        const chipBus = k.group({ lp: k.pix ? 6000 : 7500, hp: 60 }), echo = k.echo(0.15, 0.24, 3000, 0.24), lead = k.group({ to: chipBus, echo, send: 0.55, pan: -0.08 }), low = k.group({ to: chipBus }), fx = k.group({ to: chipBus }), sp = k.group({ to: chipBus, echo, send: 0.4 });
+        const chipBus = k.group({ lp: k.pix ? 3800 : 4200, hp: 60 }), echo = k.echo(0.15, 0.24, 2400, 0.24), lead = k.group({ to: chipBus, echo, send: 0.55, pan: -0.08, gain: 0.75 }), low = k.group({ to: chipBus }), fx = k.group({ to: chipBus }), sp = k.group({ to: chipBus, echo, send: 0.4 });
         const chip = (d, f, t, dur, v, o = {}) => (k.pix ? k.fm(f, t, v * 1.5, { ratio: d > 0.3 ? 1 : 2, index: d * 5, dur: Math.max(dur, 0.02), mdec: 0.09, keep: 0.25, r: o.r || 0.02, a: 0.003, to: o.to, pan: o.pan }) : k.osc(k.pulse(d), f, t, dur, v, Object.assign({ a: 0.002, r: 0.012 }, o)));
-        'A5 C6 E6 A6'.split(' ').forEach((n, i) => { chip(0.25, noteFreq(n), i * 0.05, 0.05, 0.12, { to: lead }); chip(0.5, noteFreq(n) / 2, i * 0.05, 0.05, 0.07, { to: lead }); });
-        chip(0.25, noteFreq('C7'), 0.2, 0.62, 0.1, { to: lead, r: 0.3, vib: [6.5, 14, 0.2] }); chip(0.5, noteFreq('A5'), 0.2, 0.62, 0.075, { to: lead, r: 0.3 }); chip(0.125, noteFreq('E6'), 0.2, 0.62, 0.06, { to: lead, r: 0.3 });
-        [['A3', 0, 0.1], ['A2', 0.1, 0.1], ['A3', 0.2, 0.1], ['A2', 0.3, 0.5]].forEach(([n, t, d]) => (k.pix ? k.fm(noteFreq(n), t, 0.16, { ratio: 1, index: 1.1, dur: d, mdec: 0.05, keep: 0.1, r: 0.04, to: low }) : k.osc(k.tri8(), noteFreq(n), t, d, 0.14, { r: 0.04, to: low })));
+        'A4 C5 E5 A5'.split(' ').forEach((n, i) => { chip(0.25, noteFreq(n), i * 0.05, 0.05, 0.12, { to: lead }); chip(0.5, noteFreq(n) / 2, i * 0.05, 0.05, 0.07, { to: lead }); });
+        chip(0.25, noteFreq('C6'), 0.2, 0.7, 0.1, { to: lead, r: 0.4, vib: [6.5, 14, 0.2] }); chip(0.5, noteFreq('A4'), 0.2, 0.7, 0.075, { to: lead, r: 0.4 }); chip(0.25, noteFreq('E5'), 0.2, 0.7, 0.05, { to: lead, r: 0.4 });
+        [['A3', 0, 0.1], ['A2', 0.1, 0.1], ['A3', 0.2, 0.1], ['A2', 0.3, 0.5]].forEach(([n, t, d]) => (k.pix ? k.fm(noteFreq(n), t, 0.16, { ratio: 1, index: 1.1, dur: d, mdec: 0.05, keep: 0.1, r: 0.04, to: low }) : k.osc(k.tri8(), noteFreq(n), t, d, 0.1, { r: 0.04, to: low })));
         k.crunch(0, 0.14, 0.95, { dec: 0.2, to: fx }); k.crunch(0, 0.14, 0.16, { dec: 0.05, to: fx });
-        const pent = 'E7 C7 A6 G6 E6 C6 A5 G5 E5 C5'.split(' ');                // пікселі сиплються згори вниз
-        pent.forEach((n, i) => { const t = 0.34 + i * 0.075 + wsRnd() * 0.02; k.osc(k.pulse(0.125), noteFreq(n), t, 0.045, 0.055 * (1 - i * 0.05), { a: 0.001, r: 0.012, to: sp, pan: wsRnd() * 1.2 - 0.6 }); });
+        const pent = 'E6 C6 A5 G5 E5 C5 A4 G4 E4 C4'.split(' ');                // пікселі сиплються згори вниз
+        pent.forEach((n, i) => { const t = 0.34 + i * 0.075 + wsRnd() * 0.02; k.osc(k.pulse(0.25), noteFreq(n), t, 0.05, 0.032 * (1 - i * 0.05), { a: 0.003, r: 0.02, to: sp, pan: wsRnd() * 1.2 - 0.6 }); });
       }
     },
     { /* 4. ІНТЕРНЕТ, ля мінор: модем набирає номер і пищить (приглушено, як із телефонної лінії), вікна-реклами вискакують нота за нотою, євроденс-пили й хлопки розганяються; прибуття — «з'єднано» і сторінка вантажиться зліва направо */
       room: [1.3, 0.6, 0.015, 0.36], trim: [0.85, 1.4],
       build(k, tb) {
-        const u = tb / 3.256, s = tb / 30, end = tb + WARP_HOLD, tel = k.group({ hp: 330, lp: 3100, wet: 0.05, auto: [[1.55 * u, 1], [tb, 0.35]] }), pop = k.group({ wet: 0.22, hp: 200 }), sw = k.group({ lp: 450, lq: 1.6, wet: 0.25, sweep: [[13 * s, 450], [tb, 6200]] }), kit = k.group({ wet: 0.12 }), rise = k.group({ wet: 0.15 });
+        const u = tb / 3.256, s = tb / 30, end = tb + WARP_HOLD, tel = k.group({ hp: 330, lp: 2200, wet: 0.05, gain: 0.6, auto: [[1.55 * u, 1], [tb, 0.35]] }), pop = k.group({ wet: 0.22, hp: 200 }), sw = k.group({ lp: 450, lq: 1, wet: 0.25, sweep: [[13 * s, 450], [tb, 3400]] }), kit = k.group({ wet: 0.12 }), rise = k.group({ wet: 0.15 });
         [[941, 1336], [697, 1209], [770, 1336], [852, 1477], [697, 1336], [770, 1477], [941, 1209]].forEach(([a, b], i) => { const t = 0.05 + i * 0.09 * u; k.osc('sine', a, t, 0.062 * u, 0.042, { a: 0.007, r: 0.007, to: tel }); k.osc('sine', b, t, 0.062 * u, 0.042, { a: 0.007, r: 0.007, to: tel }); });
-        k.osc('sine', 2100, 0.74 * u, 0.42 * u, 0.03, { a: 0.012, r: 0.02, to: tel });
+        k.osc('sine', 1650, 0.74 * u, 0.42 * u, 0.014, { a: 0.03, r: 0.04, to: tel });
         const warble = (t0, len, fs, step, v) => { const steps = []; for (let t = 0, i = 0; t < len; t += step, i++) steps.push([t, fs[(i * 7 + (wsRnd() * 3 | 0)) % fs.length]]); k.osc('sine', fs[0], t0, len, v, { a: 0.01, r: 0.02, steps, to: tel }); };
         warble(1.18 * u, 0.4 * u, [1270, 1070, 2225, 2025], 0.03, 0.036);
         k.hiss(1.58 * u, tb - 1.58 * u + 0.1, 0.075, { f: 1750, q: 0.9, a: 0.02, r: 0.08, to: tel });
-        'A4 C5 D5 E5 G5 A5 C6'.split(' ').forEach((n, i) => k.fm(noteFreq(n), (0.14 + i * 0.065) * tb / 0.74, 0.13, { ratio: 2, index: 1.5, dec: 0.1, mdec: 0.03, to: pop, pan: i % 2 ? 0.42 : -0.42 }));
+        'A4 C5 D5 E5 G5 A5 C6'.split(' ').forEach((n, i) => k.fm(noteFreq(n), (0.14 + i * 0.065) * tb / 0.74, 0.08, { ratio: 2, index: 0.8, dec: 0.1, mdec: 0.03, to: pop, pan: i % 2 ? 0.42 : -0.42 }));
         const CH = [[14, 22, 'A3 C4 E4'], [22, 26, 'A3 C4 F4'], [26, 30, 'B3 D4 G4']];
         CH.forEach(([a, b, c]) => { for (let st = a; st < b; st++) wsChord(c).forEach(f => k.saws(f, st * s, s * 0.82, 0.03 + st * 0.0013, { n: 3, spread: 14, a: 0.004, r: 0.03, to: sw })); });
         for (let st = 14; st < 30; st += 4) k.kick(st * s, 0.3, { to: kit });
         for (let st = 14; st < 30; st += st < 22 ? 2 : st < 26 ? 1 : 0.5) k.clap(st * s, 0.05 + st * 0.0042, { to: kit, dec: 0.03 });
-        k.hiss(1.4 * u, tb - 1.4 * u + 0.04, 0.05, { f: 500, q: 0.9, a: (tb - 1.4 * u) * 0.8, r: 0.03, sweep: [[7000, tb - 1.4 * u]], to: rise });
+        k.hiss(1.4 * u, tb - 1.4 * u + 0.04, 0.05, { f: 500, q: 0.9, a: (tb - 1.4 * u) * 0.8, r: 0.05, sweep: [[3400, tb - 1.4 * u]], to: rise });
         let i = 0; for (let t = tb + 0.05; t < end - 0.3; t += s, i++) { wsChord('B3 D4 G4').forEach(f => k.saws(f, t, s * 0.8, 0.05, { n: 2, spread: 14, a: 0.004, r: 0.03, to: sw })); if (i % 4 === 0) k.kick(t, 0.3, { to: kit }); k.clap(t, 0.13, { to: kit, dec: 0.025 }); }
       },
       arrive(k) {
-        const sw = k.group({ lp: 6500, wet: 0.6 }), kit = k.group({ wet: 0.25 }), glass = k.group({ wet: 0.55, hp: 500 }), echo = k.echo(0.165, 0.28, 3600, 0.3, true), page = k.group({ wet: 0.3, echo, send: 0.35, hp: 300 });
-        k.kick(0, 0.4, { to: kit, dec: 0.13 }); k.clap(0, 0.32, { to: kit, dec: 0.1 }); k.hiss(0, 0, 0.07, { type: 'highpass', f: 6000, dec: 0.3, to: kit });
+        const sw = k.group({ lp: 3200, wet: 0.6 }), kit = k.group({ wet: 0.25 }), glass = k.group({ wet: 0.55, hp: 300 }), echo = k.echo(0.165, 0.28, 2400, 0.3, true), page = k.group({ wet: 0.3, echo, send: 0.35, hp: 300 });
+        k.kick(0, 0.4, { to: kit, dec: 0.13 }); k.clap(0, 0.32, { to: kit, dec: 0.1 }); k.hiss(0, 0, 0.025, { type: 'highpass', f: 4000, a: 0.01, dec: 0.28, to: kit });
         wsChord('A3 C4 E4 A4 C5 E5').forEach((f, i) => k.saws(f, 0, 0, 0.034, { n: 5, spread: 22, a: 0.006, dec: 0.32, to: sw, pan: -0.4 + i * 0.16 }));
         k.osc('triangle', noteFreq('A2'), 0, 0, 0.17, { dec: 0.2, to: k.group({ hp: 45 }) });
-        k.fm(noteFreq('E6'), 0.02, 0.12, { ratio: 3.5, index: 1.1, dec: 0.28, mdec: 0.07, to: glass, pan: -0.15 }); k.fm(noteFreq('A6'), 0.17, 0.125, { ratio: 3.5, index: 1.1, dec: 0.5, mdec: 0.07, to: glass, pan: 0.15 });
-        'A4 C5 E5 G5 A5 C6 E6 G6 A6'.split(' ').forEach((n, i) => k.fm(noteFreq(n), 0.12 + i * 0.075, 0.08, { ratio: 2, index: 1.1, dec: 0.15, mdec: 0.04, to: page, pan: -0.85 + i * 0.21 }));
+        k.fm(noteFreq('E5'), 0.02, 0.06, { ratio: 2, index: 0.5, dec: 0.28, mdec: 0.07, a: 0.01, to: glass, pan: -0.15 }); k.fm(noteFreq('A5'), 0.17, 0.065, { ratio: 2, index: 0.5, dec: 0.5, mdec: 0.07, a: 0.01, to: glass, pan: 0.15 });
+        'A4 C5 E5 G5 A5 C6 E6 G6 A6'.split(' ').forEach((n, i) => k.fm(noteFreq(n), 0.12 + i * 0.075, 0.046, { ratio: 2, index: 0.6, dec: 0.15, mdec: 0.04, a: 0.008, to: page, pan: -0.85 + i * 0.21 }));
       }
     },
     { /* 5. ЕКО, соль мажор: вітер у листі, пташки, краплі, укулеле і свист ведуть мелодію епохи, тупіт і плескання; прибуття — розквіт: мажорний перебір, калімба, листя пролітає над головою */
       room: [1.7, 0.55, 0.022, 0.42], trim: [1.1, 1.35],
       build(k, tb) {
-        const e = tb / 12, end = tb + WARP_HOLD, uke = k.group({ wet: 0.2, hp: 170, peak: [[2100, 2, 1]] }), wh = k.group({ wet: 0.55, pan: 0.14 }), birds = k.group({ wet: 0.75, hp: 1400 }), kit = k.group({ wet: 0.22 }), air = k.group({ wet: 0.2 }), drop = k.group({ wet: 0.7 });
+        const e = tb / 12, end = tb + WARP_HOLD, uke = k.group({ wet: 0.2, hp: 170 }), wh = k.group({ wet: 0.55, pan: 0.14 }), birds = k.group({ wet: 0.85, hp: 1400, gain: 0.5 }), kit = k.group({ wet: 0.22 }), air = k.group({ wet: 0.2 }), drop = k.group({ wet: 0.7 });
         k.hiss(0, end, 0.075, { f: 430, q: 1.2, a: tb * 0.5, r: 0.4, sweep: [[1250, tb * 0.72], [820, tb], [1050, end - 0.05]], to: air, pan: -0.32 });
-        k.hiss(0, end, 0.036, { f: 1500, q: 1, a: tb * 0.7, r: 0.4, sweep: [[3300, tb], [2300, end - 0.05]], to: air, pan: 0.32 });
-        for (let i = 0; i < 16; i++) k.hiss(0.15 + wsRnd() * (end - 0.6), 0, 0.01 + wsRnd() * 0.016, { type: 'highpass', f: 3200 + wsRnd() * 2400, dec: 0.02 + wsRnd() * 0.03, pan: wsRnd() * 1.6 - 0.8, to: air });
+        k.hiss(0, end, 0.026, { f: 1300, q: 1, a: tb * 0.7, r: 0.4, sweep: [[2500, tb], [1900, end - 0.05]], to: air, pan: 0.32 });
+        for (let i = 0; i < 16; i++) k.hiss(0.15 + wsRnd() * (end - 0.6), 0, 0.006 + wsRnd() * 0.01, { type: 'highpass', f: 2600 + wsRnd() * 1600, a: 0.004, dec: 0.02 + wsRnd() * 0.03, pan: wsRnd() * 1.6 - 0.8, to: air });
         const strum = (c, t, v, up) => { const ns = wsChord(c); (up ? ns.slice().reverse() : ns).forEach((f, i) => k.pluck(f, t + i * 0.014, v * (up ? 0.72 : 1), { kind: 'uke', to: uke, len: 0.85, pdec: 0.14 })); };
         const G = 'G4 D4 G4 B4', DD = 'A4 D4 F#4 A4';
         [[0, G, 0], [2, G, 0], [3, G, 1], [5, G, 1], [6, G, 0], [7, G, 1], [8, DD, 0], [10, DD, 0], [11, DD, 1]].forEach(([p, c, up]) => strum(c, p * e, 0.11 + p * 0.009, up));
-        k.flute(wsLine(0, e / 2, 'D5:2 G5:2 B5:4 A5:2 G5:2 D5:4 F#5:2 A5:2 D6:4', WARP_HOLD), 0.08, { a: 0.05, r: 0.2, to: wh, breath: 0.2, vib: [5.6, 16, 0.25], swell: 1.7, glideT: 0.03 });
+        k.flute(wsLine(0, e / 2, 'D5:2 G5:2 B5:4 A5:2 G5:2 D5:4 F#5:2 A5:2 D6:4', WARP_HOLD), 0.06, { a: 0.05, r: 0.2, to: wh, breath: 0.2, vib: [5.6, 16, 0.25], swell: 1.7, glideT: 0.03 });
         const chirp = (t, pan, kind) => {
           const go = (f0, f1, d, tt, v) => k.osc('sine', f0, t + tt, d, v, { a: 0.008, r: 0.014, glide: [[f1, d]], to: birds, pan });
           if (kind === 0) [0, 0.11, 0.22].forEach(tt => go(2900, 3900, 0.07, tt, 0.05));
@@ -14760,46 +14811,46 @@ function wsSynthCode() {
         for (let t = tb + 0.05, i = 0; t < end - 0.3; t += e, i++) { strum(DD, t, 0.16, i % 2); if (i % 4 === 0) k.kick(t, 0.25, { f: 100, f1: 52, dec: 0.12, to: kit }); if (i % 4 === 2) k.clap(t, 0.12, { to: kit, dec: 0.08 }); }
       },
       arrive(k) {
-        const uke = k.group({ wet: 0.35, hp: 110, peak: [[2100, 2, 1]] }), kal = k.group({ wet: 0.55, hp: 240 }), kit = k.group({ wet: 0.28 }), pad = k.group({ wet: 0.7, lp: 1600 }), wh = k.group({ wet: 0.6, pan: 0.14 }), birds = k.group({ wet: 0.75, hp: 1400 });
+        const uke = k.group({ wet: 0.35, hp: 110 }), kal = k.group({ wet: 0.55, hp: 240 }), kit = k.group({ wet: 0.28 }), pad = k.group({ wet: 0.7, lp: 1600 }), wh = k.group({ wet: 0.6, pan: 0.14 }), birds = k.group({ wet: 0.75, hp: 1400 });
         k.kick(0, 0.32, { f: 100, f1: 52, dec: 0.16, to: kit }); k.clap(0, 0.2, { to: kit, dec: 0.1 });
         wsChord('G3 D4 G4 B4 D5 G5').forEach((f, i) => k.pluck(f, i * 0.022, 0.23, { kind: 'nylon', to: uke, len: 1.7, pan: -0.3 + i * 0.12, pdec: 0.4 }));
-        wsChord('G5 B5 D6 G6 B6').forEach((f, i) => k.fm(f, 0.14 + i * 0.085, 0.12 - i * 0.008, { ratio: 5.04, index: 0.7, dec: 0.36, mdec: 0.025, to: kal, pan: i % 2 ? 0.4 : -0.4 }));
+        wsChord('G4 B4 D5 G5 B5').forEach((f, i) => k.fm(f, 0.14 + i * 0.085, 0.07 - i * 0.006, { ratio: 3.01, index: 0.45, dec: 0.36, mdec: 0.03, a: 0.008, to: kal, pan: i % 2 ? 0.4 : -0.4 }));
         wsChord('G2 D3 G3 B3').forEach(f => k.osc('triangle', f, 0, 2.2, 0.075, { a: 0.1, r: 1.4, to: pad }));
-        k.hiss(0, 1.15, 0.13, { f: 500, q: 1, a: 0.25, r: 0.7, sweep: [[3400, 0.5], [800, 1.15]], move: [-0.7, 0.7], to: k.group({ wet: 0.3 }) });
-        for (let i = 0; i < 12; i++) k.hiss(0.05 + wsRnd() * 0.95, 0, 0.012 + wsRnd() * 0.02, { type: 'highpass', f: 3600 + wsRnd() * 2000, dec: 0.02 + wsRnd() * 0.04, pan: -0.8 + i * 0.14 });
-        k.flute(wsLine(0.12, 0.21, 'G5:1 B5:1 D6:6'), 0.085, { a: 0.03, r: 0.75, to: wh, breath: 0.2, vib: [5.6, 20, 0.2], glideT: 0.03 });
-        [[1.5, 2900, 3900], [1.61, 2900, 4100], [1.74, 3000, 4400]].forEach(([t, a, b]) => k.osc('sine', a, t, 0.08, 0.04, { a: 0.008, r: 0.016, glide: [[b, 0.08]], to: birds, pan: 0.5 }));
+        k.hiss(0, 1.15, 0.13, { f: 500, q: 1, a: 0.3, r: 0.7, sweep: [[2400, 0.5], [700, 1.15]], move: [-0.7, 0.7], to: k.group({ wet: 0.3 }) });
+        for (let i = 0; i < 12; i++) k.hiss(0.05 + wsRnd() * 0.95, 0, 0.006 + wsRnd() * 0.01, { type: 'highpass', f: 2600 + wsRnd() * 1400, a: 0.004, dec: 0.02 + wsRnd() * 0.04, pan: -0.8 + i * 0.14 });
+        k.flute(wsLine(0.12, 0.21, 'G5:1 B5:1 D6:6'), 0.055, { a: 0.03, r: 0.75, to: wh, breath: 0.2, vib: [5.6, 20, 0.2], glideT: 0.03 });
+        [[1.5, 2900, 3900], [1.61, 2900, 4100], [1.74, 3000, 4400]].forEach(([t, a, b]) => k.osc('sine', a, t, 0.08, 0.018, { a: 0.012, r: 0.02, glide: [[b, 0.08]], to: k.group({ wet: 0.85, hp: 1400 }), pan: 0.5 }));
       }
     },
     { /* 6. КОСМОС, ре мінор: гул двигуна, м'які синт-струнні, сонар, планети пролітають із боку в бік, тема епохи звучить над усім, накопичувач стрибка наростає; прибуття — гіперстрибок і широкий акорд */
       room: [3.6, 0.38, 0.04, 0.68], trim: [0.92, 1.45],
       build(k, tb) {
-        const end = tb + WARP_HOLD, drone = k.group({ lp: 120, lq: 1.2, sweep: [[0, 120], [tb, 800]] }), padG = k.group({ lp: 800, wet: 0.85, sweep: [[0, 800], [tb, 2600]] }), lead = k.group({ lp: 3000, wet: 0.8, pan: -0.08 }), ping = k.echo(0.28, 0.42, 2600, 0.34, true), sonar = k.group({ wet: 0.5, echo: ping, send: 0.7 }), pass = k.group({ wet: 0.4 }), coil = k.group({ wet: 0.35, hp: 150 });
+        const end = tb + WARP_HOLD, drone = k.group({ lp: 120, lq: 1.2, sweep: [[0, 120], [tb, 800]] }), padG = k.group({ lp: 800, wet: 0.85, sweep: [[0, 800], [tb, 2600]] }), lead = k.group({ lp: 2400, wet: 0.8, pan: -0.08 }), ping = k.echo(0.28, 0.42, 2600, 0.34, true), sonar = k.group({ wet: 0.5, echo: ping, send: 0.7 }), pass = k.group({ wet: 0.4 }), coil = k.group({ wet: 0.35, hp: 150 });
         [[73.42, 0.05, -6], [73.42, 0.05, 6], [146.83, 0.04, 3]].forEach(([f, v, det]) => k.osc('sawtooth', f, 0, end, v, { a: 0.8, r: 0.4, det, to: drone }));
-        k.osc('sine', 73.42, 0, end, 0.07, { a: 0.8, r: 0.4 });
+        k.osc('sine', 73.42, 0, end, 0.045, { a: 0.8, r: 0.4 });
         [[0.02, 0.35, 'D3 A3 D4 F4'], [0.3, 0.6, 'Bb2 F3 Bb3 D4'], [0.55, 0.8, 'G2 D3 G3 Bb3'], [0.76, 2, 'A2 E3 A3 C#4']].forEach(([a, b, c]) => { const t = a * tb, d = Math.min(b * tb, end) - t + 0.25; wsChord(c).forEach(f => k.saws(f, t, d, 0.048, { n: 2, spread: 8, a: 0.34, r: 0.25, vib: [4.8, 9, 0.5], to: padG })); });
-        k.flute(wsLine(0.5, tb / 20, 'A5:6 D6:2 F6:4 E6:2 D6:2'), 0.075, { a: 0.07, r: 0.18, to: lead, harm: [1, 0.45, 0.28, 0.16, 0.09], vib: [4.8, 14, 0.4], glideT: 0.07, swell: 1.3 });
-        [0.14, 0.38, 0.62].forEach(p => k.osc('sine', 1175, tb * p, 0, 0.075, { a: 0.003, dec: 0.1, to: sonar }));
-        for (let i = 0; i < 9; i++) k.osc(k.pulse(0.25), 1800 + (wsRnd() * 5 | 0) * 300, 0.12 + i * tb * 0.06, 0.03, 0.009, { a: 0.002, r: 0.008, to: sonar, pan: wsRnd() - 0.5 });
+        k.flute(wsLine(0.5, tb / 20, 'A5:6 D6:2 F6:4 E6:2 D6:2'), 0.05, { a: 0.07, r: 0.18, to: lead, harm: [1, 0.45, 0.28, 0.16, 0.09], vib: [4.8, 14, 0.4], glideT: 0.07, swell: 1.3 });
+        [0.14, 0.38, 0.62].forEach(p => k.osc('sine', 880, tb * p, 0, 0.04, { a: 0.01, dec: 0.1, to: sonar }));
+        for (let i = 0; i < 9; i++) k.osc('sine', 1100 + (wsRnd() * 5 | 0) * 180, 0.12 + i * tb * 0.06, 0.04, 0.008, { a: 0.006, r: 0.015, to: sonar, pan: wsRnd() - 0.5 });
         [[0.34, -0.85, 0.85], [0.56, 0.85, -0.85], [0.78, -0.85, 0.85]].forEach(([p, a, b]) => { const t = tb * p - 0.32; k.hiss(t, 0.82, 0.13, { f: 280, q: 1.4, a: 0.32, r: 0.46, sweep: [[1900, 0.36], [240, 0.82]], move: [a, b], to: pass }); k.osc('sine', 210, t + 0.14, 0.62, 0.05, { a: 0.18, r: 0.3, glide: [[92, 0.62]], to: pass }); });
         const t1 = tb * 0.42, len = tb - t1, tq = { trem: [5, 0.45], tremTo: [30, len], to: coil };      // накопичувач: тон і биття наростають
-        k.osc('sine', 170, t1, end - t1, 0.05, Object.assign({ a: len * 0.8, r: 0.3, glide: [[2200, len], [2300, end - t1]] }, tq));
-        k.osc('triangle', 85, t1, end - t1, 0.05, Object.assign({ a: len * 0.8, r: 0.3, glide: [[1100, len], [1150, end - t1]] }, tq));
-        k.hiss(t1, end - t1, 0.05, { f: 420, q: 1.1, a: len * 0.9, r: 0.3, sweep: [[6000, len]], to: coil });
+        k.osc('sine', 170, t1, end - t1, 0.05, Object.assign({ a: len * 0.8, r: 0.3, glide: [[1200, len], [1250, end - t1]] }, tq));
+        k.osc('triangle', 85, t1, end - t1, 0.05, Object.assign({ a: len * 0.8, r: 0.3, glide: [[600, len], [625, end - t1]] }, tq));
+        k.hiss(t1, end - t1, 0.03, { f: 420, q: 1.1, a: len * 0.9, r: 0.3, sweep: [[2800, len]], to: coil });
       },
       arrive(k) {
-        const hit = k.group({ wet: 0.6 }), brass = k.group({ lp: 500, lq: 1.1, wet: 0.9, sweep: [[0, 500], [0.2, 3400], [2.2, 1100]] }), glass = k.group({ wet: 0.95, hp: 700 }), cr = k.group({ wet: 0.75 });
-        k.osc('sine', 96, 0, 0, 0.34, { a: 0.003, dec: 0.5, glide: [[38, 0.5]], to: hit }); k.osc('sine', 196, 0, 0, 0.24, { a: 0.003, dec: 0.14, glide: [[70, 0.2]], to: hit });
-        k.hiss(0, 0, 0.24, { type: 'lowpass', f: 2000, dec: 0.2, to: hit }); k.hiss(0, 0, 0.09, { type: 'highpass', f: 3200, dec: 0.75, to: cr });
+        const hit = k.group({ wet: 0.6 }), brass = k.group({ lp: 500, lq: 1.1, wet: 0.9, sweep: [[0, 500], [0.25, 2300], [2.2, 900]] }), glass = k.group({ wet: 0.95, hp: 700 }), cr = k.group({ wet: 0.75 });
+        k.osc('sine', 96, 0, 0, 0.24, { a: 0.012, dec: 0.5, glide: [[38, 0.5]], to: hit }); k.osc('sine', 196, 0, 0, 0.24, { a: 0.003, dec: 0.14, glide: [[70, 0.2]], to: hit });
+        k.hiss(0, 0, 0.24, { type: 'lowpass', f: 2000, dec: 0.2, to: hit }); k.hiss(0, 0, 0.03, { type: 'highpass', f: 2600, a: 0.02, dec: 0.7, to: cr });
         wsChord('D2 A2 D3 A3 D4 F4 A4').forEach((f, i) => k.saws(f, 0, 0, 0.05, { n: 2, spread: 9, a: 0.02, dec: 0.85, vib: [4.6, 8, 0.6], to: brass, pan: -0.45 + i * 0.15 }));
-        'D6 F6 A6 D7 F7'.split(' ').forEach((n, i) => k.fm(noteFreq(n), 0.28 + i * 0.1, 0.085, { ratio: 3.5, index: 0.8, dec: 0.42, mdec: 0.06, to: glass, pan: i % 2 ? 0.65 : -0.65 }));
+        'D5 F5 A5 D6 F6'.split(' ').forEach((n, i) => k.fm(noteFreq(n), 0.28 + i * 0.1, 0.042, { ratio: 2, index: 0.4, dec: 0.42, mdec: 0.06, a: 0.015, to: glass, pan: i % 2 ? 0.65 : -0.65 }));
       }
     },
     { /* 7. НЕОН, до мінор: арпеджіо шістнадцятими з луною, октавний бас, що «дихає» від бочки, лазери на кожне кільце тунелю, малий із обрізаним відлунням вісімдесятих; прибуття — важкий спуск і широка стіна пил, неон ще гуде */
       room: [1.6, 0.6, 0.02, 0.36], trim: [1.15, 1.45],
       build(k, tb) {
-        const s = tb / 24, end = tb + WARP_HOLD, echo = k.echo(s * 3, 0.36, 3000, 0.3, true);
-        const PUMP = []; const arp = k.group({ lp: 800, lq: 2.4, wet: 0.12, echo, send: 0.45, sweep: [[0, 800], [tb, 5400]] }), pump = k.group({ wet: 0.25, auto: PUMP }), pad = k.group({ lp: 700, lq: 0.9, to: pump, sweep: [[0, 700], [tb, 4300]] }), bass = k.group({ lp: 460, lq: 2, to: pump }), kit = k.group({}), zap = k.group({ wet: 0.2, echo, send: 0.5, hp: 180 }), sn = (t, v, dec) => { k.snare(t, v, { f: 2000, dec }); k.hiss(t + 0.006, 0.2, v * 0.3, { f: 1800, q: 0.5, a: 0.006, r: 0.012 }); };
+        const s = tb / 24, end = tb + WARP_HOLD, echo = k.echo(s * 3, 0.36, 2200, 0.3, true);
+        const PUMP = []; const arp = k.group({ lp: 800, lq: 2.4, wet: 0.12, echo, send: 0.45, sweep: [[0, 800], [tb, 2800]] }), pump = k.group({ wet: 0.25, auto: PUMP }), pad = k.group({ lp: 700, lq: 0.9, to: pump, sweep: [[0, 700], [tb, 2600]] }), bass = k.group({ lp: 460, lq: 2, to: pump }), kit = k.group({}), zap = k.group({ wet: 0.2, echo, send: 0.5, hp: 180 }), sn = (t, v, dec) => { k.snare(t, v, { f: 2000, dec }); k.hiss(t + 0.006, 0.2, v * 0.16, { f: 1400, q: 0.5, a: 0.01, r: 0.03 }); };
         const PLAN = [[0, 8, 'C4 Eb4 G4 Bb4 C5', 'C2', 'C3 Eb3 G3 C4'], [8, 16, 'Ab3 C4 Eb4 G4 Ab4', 'Ab1', 'Ab2 C3 Eb3 Ab3'], [16, 20, 'F3 Ab3 C4 Eb4 F4', 'F1', 'F2 Ab2 C3 F3'], [20, 24, 'G3 B3 D4 F4 G4', 'G1', 'G2 B2 D3 G3']];
         const ARP = [0, 1, 2, 3, 4, 3, 2, 1];
         const bar = (st0, st1, ar, b, ch, vUp) => {
@@ -14810,45 +14861,45 @@ function wsSynthCode() {
         PLAN.forEach(([a, b, ar, bs, ch]) => bar(a, b, ar, bs, ch, a / 24));
         const HOLD_ST = Math.floor(WARP_HOLD / s);
         bar(24.4, 24.4 + HOLD_ST, 'G3 B3 D4 F4 G4', 'G1', 'G2 B2 D3 G3', 1);
-        for (let st = 0; st < 24 + HOLD_ST; st += 4) { const t = st * s; if (st >= 8) k.kick(t, 0.3, { to: kit, f: 150, dec: 0.1 }); PUMP.push([Math.max(0, t - 0.005), 1], [t, 0.32], [t + s * 2.4, 1]); }
+        for (let st = 0; st < 24 + HOLD_ST; st += 4) { const t = st * s; if (st >= 8) k.kick(t, 0.24, { to: kit, f: 125, dec: 0.1 }); PUMP.push([Math.max(0, t - 0.005), 1], [t, 0.32], [t + s * 2.4, 1]); }
         [12, 20].forEach(st => sn(st * s, 0.26, 0.05));
         for (let st = 24 - 4, i = 0; st < 24 + HOLD_ST; st += st < 24 ? 1 : 0.5, i++) sn(st * s, Math.min(0.15, 0.07 + i * 0.012), 0.03);
-        [6, 10, 14, 17, 19, 21, 22, 23].forEach((st, i) => k.osc('square', 2300, st * s, 0.15, 0.024, { a: 0.001, r: 0.03, glide: [[190, 0.14]], lp: [4200], to: zap, pan: i % 2 ? 0.55 : -0.55 }));
-        k.hiss(0, end, 0.055, { f: 300, q: 1, a: tb * 0.85, r: 0.3, sweep: [[7500, tb]], to: k.group({ wet: 0.12 }) });
-        k.osc('sawtooth', noteFreq('C3'), tb * 0.4, end - tb * 0.4, 0.028, { a: tb * 0.5, r: 0.3, glide: [[noteFreq('C6'), tb * 0.6], [noteFreq('D6'), end - tb * 0.4]], lp: [3400], to: k.group({ wet: 0.2 }) });
+        [6, 10, 14, 17, 19, 21, 22, 23].forEach((st, i) => k.osc('triangle', 1300, st * s, 0.15, 0.03, { a: 0.003, r: 0.04, glide: [[170, 0.14]], lp: [2200], to: zap, pan: i % 2 ? 0.55 : -0.55 }));
+        k.hiss(0, end, 0.03, { f: 300, q: 1, a: tb * 0.85, r: 0.3, sweep: [[3400, tb]], to: k.group({ wet: 0.12 }) });
+        k.osc('sawtooth', noteFreq('C3'), tb * 0.4, end - tb * 0.4, 0.018, { a: tb * 0.5, r: 0.3, glide: [[noteFreq('C5'), tb * 0.6], [noteFreq('D5'), end - tb * 0.4]], lp: [2000], to: k.group({ wet: 0.2 }) });
       },
       arrive(k) {
-        const wall = k.group({ lp: 600, wet: 0.65, sweep: [[0, 600], [0.2, 7000], [2, 1700]] }), hit = k.group({}), echo = k.echo(0.21, 0.42, 3200, 0.34, true), arp = k.group({ lp: 4400, wet: 0.2, echo, send: 0.55 }), buzz = k.group({ hp: 700, lp: 3800, wet: 0.12 });
-        k.osc('sine', 118, 0, 0, 0.26, { a: 0.003, dec: 0.42, glide: [[40, 0.4]], to: hit }); k.kick(0, 0.24, { to: hit, f: 165, dec: 0.1 });
-        k.snare(0, 0.5, { f: 1900, dec: 0.08 }); k.hiss(0.006, 0.3, 0.16, { f: 1700, q: 0.5, a: 0.006, r: 0.014 });
+        const wall = k.group({ lp: 600, wet: 0.65, sweep: [[0, 600], [0.25, 3600], [2, 1300]] }), hit = k.group({}), echo = k.echo(0.21, 0.42, 2200, 0.34, true), arp = k.group({ lp: 2600, wet: 0.2, echo, send: 0.55 }), buzz = k.group({ hp: 500, lp: 2200, wet: 0.12 });
+        k.osc('sine', 118, 0, 0, 0.2, { a: 0.01, dec: 0.42, glide: [[40, 0.4]], to: hit }); k.kick(0, 0.2, { to: hit, f: 140, dec: 0.1 });
+        k.snare(0, 0.32, { f: 1500, dec: 0.08 }); k.hiss(0.006, 0.3, 0.07, { f: 1300, q: 0.5, a: 0.012, r: 0.05 });
         wsChord('C3 C4 G4 C5 Eb5 G5 Bb5').forEach((f, i) => k.saws(f, 0, 0, 0.034, { n: 7, spread: 24, a: 0.006, dec: 0.7, to: wall, pan: -0.55 + i * 0.18 }));
-        'C5 G5 Eb5 C6 G5 Eb6 C6 G6'.split(' ').forEach((n, i) => k.osc('sawtooth', noteFreq(n), 0.04 + i * 0.105, 0, 0.1 - i * 0.005, { a: 0.002, dec: 0.08, to: arp, pan: i % 2 ? 0.3 : -0.3 }));
-        k.osc('sawtooth', 120, 0.1, 0.95, 0.024, { a: 0.03, r: 0.5, trem: [37, 0.6], to: buzz });   // гудіння неонової трубки
+        'C4 G4 Eb4 C5 G4 Eb5 C5 G5'.split(' ').forEach((n, i) => k.osc('sawtooth', noteFreq(n), 0.04 + i * 0.105, 0, 0.07 - i * 0.004, { a: 0.002, dec: 0.08, to: arp, pan: i % 2 ? 0.3 : -0.3 }));
+        k.osc('sawtooth', 120, 0.1, 0.95, 0.012, { a: 0.06, r: 0.5, trem: [37, 0.5], to: buzz });   // гудіння неонової трубки
       }
     },
     { /* 8. ЯПОНІЯ, ре (гама йо): вітер, сякухаті з ковзанням на звук, кото з відтягуванням струни, тайко прискорюється, сухі клацання дерев'яних хьосіґі; прибуття — храмовий дзвін, удар одайко, «розсип» кото й м'який акорд сьо */
       room: [2.6, 0.38, 0.03, 0.56], trim: [0.72, 1.3],
       build(k, tb) {
-        const b = tb / 5.2, end = tb + WARP_HOLD, koto = k.group({ wet: 0.34, hp: 120, peak: [[2800, 3, 1.2]] }), sh = k.group({ wet: 0.7, pan: 0.12 }), tk = k.group({ wet: 0.4 }), wood = k.group({ wet: 0.5, hp: 700 }), air = k.group({ wet: 0.15 }), chime = k.group({ wet: 0.8, hp: 1800 });
+        const b = tb / 5.2, end = tb + WARP_HOLD, koto = k.group({ wet: 0.34, hp: 120 }), sh = k.group({ wet: 0.7, pan: 0.12 }), tk = k.group({ wet: 0.4 }), wood = k.group({ wet: 0.5, hp: 700 }), air = k.group({ wet: 0.15 }), chime = k.group({ wet: 0.8, hp: 900 });
         k.hiss(0, end, 0.03, { f: 620, q: 0.9, a: tb * 0.6, r: 0.4, sweep: [[1500, tb]], to: air, pan: -0.25 });
-        k.flute(wsLine(0.12, b / 4, 'D5:3 E5:3 G5:4 A5:6', tb - 0.12 - 4 * b + WARP_HOLD), 0.11, { a: 0.14, r: 0.3, to: sh, harm: [1, 0.32, 0.14, 0.05], scoop: 0.945, glideT: 0.11, vib: [4.4, 16, 0.5], breath: 0.75, swell: 1.25 });
+        k.flute(wsLine(0.12, b / 4, 'D5:3 E5:3 G5:4 A5:6', tb - 0.12 - 4 * b + WARP_HOLD), 0.11, { a: 0.14, r: 0.3, to: sh, harm: [1, 0.32, 0.14, 0.05], scoop: 0.945, glideT: 0.11, vib: [4.4, 16, 0.5], breath: 0.45, swell: 1.2 });
         [['D4', 0.05], ['A4', 0.5], ['G4', 1], ['D4', 1.5], ['E4', 2], ['B4', 2.5], ['A4', 3]].forEach(([n, p], i) => k.pluck(noteFreq(n), p * b, 0.33, { kind: 'koto', to: koto, pan: i % 2 ? 0.25 : -0.25, len: 1.5, bend: i % 3 === 1 ? [0.12, 1.055, 0.09] : null, pdec: 0.3 }));
         const up = 'D4 E4 G4 A4 B4 D5 E5 G5 A5 B5 D6'.split(' ');
         up.forEach((n, i) => k.pluck(noteFreq(n), tb - b * 1.4 + b * 1.4 * Math.pow(i / up.length, 0.75), 0.22 + i * 0.01, { kind: 'koto', to: koto, pan: -0.5 + i * 0.1, len: 1.3, pdec: 0.25 }));
         [0.05, 0.34, 0.56, 0.71, 0.81, 0.88, 0.93, 0.97].forEach((p, i) => k.taiko(tb * p, 0.14 + i * 0.03, { f: 92, to: tk, dec: 0.22 }));
         [0.71, 0.81, 0.88, 0.93, 0.96, 0.98].forEach((p, i) => k.taiko(tb * p + b * 0.25, 0.08 + i * 0.01, { f: 130, dec: 0.1, to: tk }));
-        [0.68, 0.79, 0.87, 0.92, 0.955, 0.98].forEach((p, i) => { const t = tb * p, v = 0.05 + i * 0.014; k.osc('triangle', 1900, t, 0, v, { dec: 0.009, to: wood, pan: 0.1 }); k.osc('sine', 3100, t, 0, v * 0.5, { dec: 0.006, to: wood, pan: 0.1 }); k.hiss(t, 0, v * 0.7, { f: 2700, q: 1.6, dec: 0.006, to: wood, pan: 0.1 }); });
+        [0.68, 0.79, 0.87, 0.92, 0.955, 0.98].forEach((p, i) => { const t = tb * p, v = 0.028 + i * 0.008; k.osc('triangle', 1250, t, 0, v, { a: 0.002, dec: 0.012, to: wood, pan: 0.1 }); k.osc('sine', 1950, t, 0, v * 0.35, { a: 0.002, dec: 0.008, to: wood, pan: 0.1 }); k.hiss(t, 0, v * 0.4, { f: 1700, q: 1.4, a: 0.002, dec: 0.007, to: wood, pan: 0.1 }); });
         for (let t = tb + 0.05, i = 0; t < end - 0.3; t += b / 4, i++) { k.taiko(t, i % 4 === 0 ? 0.24 : 0.14, { f: i % 4 === 0 ? 92 : 130, dec: 0.13, to: tk }); if (i % 4 === 2) k.pluck(noteFreq('A4'), t, 0.2, { kind: 'koto', to: koto, len: 1, pdec: 0.25 }); }
-        for (let i = 0; i < 7; i++) k.fm(3200 + wsRnd() * 3000, tb * (0.2 + i * 0.11), 0.018, { ratio: 2.76, index: 0.5, dec: 0.3, mdec: 0.05, to: chime, pan: wsRnd() * 1.4 - 0.7 });
+        for (let i = 0; i < 7; i++) k.fm(1500 + wsRnd() * 1400, tb * (0.2 + i * 0.11), 0.012, { ratio: 2, index: 0.3, dec: 0.3, mdec: 0.05, a: 0.01, to: chime, pan: wsRnd() * 1.4 - 0.7 });
       },
       arrive(k) {
-        const tk = k.group({ wet: 0.55 }), koto = k.group({ wet: 0.42, hp: 110, peak: [[2800, 3, 1.2]] }), bell = k.group({ wet: 0.7 }), sho = k.group({ wet: 0.85, lp: 2400 }), chime = k.group({ wet: 0.8, hp: 1800 });
+        const tk = k.group({ wet: 0.55 }), koto = k.group({ wet: 0.42, hp: 110 }), bell = k.group({ wet: 0.7 }), sho = k.group({ wet: 0.85, lp: 1800 }), chime = k.group({ wet: 0.8, hp: 900 });
         k.taiko(0, 0.46, { f: 72, dec: 0.42, to: tk }); k.hiss(0, 0, 0.16, { type: 'lowpass', f: 1800, dec: 0.1, to: tk });
-        const f = noteFreq('D3'); k.bell(f, 0.012, 0.15, { dec: 3.2, to: bell, det: 0, parts: [[1, 1, 1], [1.005, 0.7, 0.9], [2.01, 0.42, 0.62], [2.75, 0.3, 0.42], [3.76, 0.18, 0.3], [5.4, 0.09, 0.18]] });
+        const f = noteFreq('D3'); k.bell(f, 0.012, 0.15, { dec: 3.2, to: bell, det: 0, parts: [[1, 1, 1], [1.005, 0.7, 0.9], [2.01, 0.3, 0.62], [2.75, 0.14, 0.42], [3.76, 0.05, 0.3]] });
         'D6 B5 A5 G5 E5 D5 B4 A4 G4 E4'.split(' ').forEach((n, i) => k.pluck(noteFreq(n), 0.03 + i * 0.045, 0.25, { kind: 'koto', to: koto, pan: 0.5 - i * 0.1, len: 1.4, pdec: 0.28 }));
         wsChord('D4 A4 D5').forEach((fq, i) => k.pluck(fq, 0.62 + i * 0.03, 0.3, { kind: 'koto', to: koto, len: 1.7, pdec: 0.4, bend: i === 2 ? [0.1, 1.05, 0.08] : null }));
         wsChord('D5 E5 A5 B5 D6').forEach(fq => k.osc(k.pix ? k.pulse(0.25) : k.pw([1, 0.55, 0.42, 0.28, 0.2, 0.12, 0.08]), fq, 0.08, 2.5, 0.024, { a: 0.28, r: 1.5, vib: [3.2, 4, 0.5], to: sho }));
-        for (let i = 0; i < 6; i++) k.fm(3000 + wsRnd() * 3400, 0.55 + i * 0.2 + wsRnd() * 0.1, 0.032, { ratio: 2.76, index: 0.55, dec: 0.34, mdec: 0.05, to: chime, pan: wsRnd() * 1.4 - 0.7 });
+        for (let i = 0; i < 6; i++) k.fm(1500 + wsRnd() * 1400, 0.55 + i * 0.2 + wsRnd() * 0.1, 0.016, { ratio: 2, index: 0.3, dec: 0.34, mdec: 0.05, a: 0.01, to: chime, pan: wsRnd() * 1.4 - 0.7 });
       }
     }
   ];
@@ -14859,7 +14910,7 @@ function wsSynthCode() {
     wsSeed = 7 + ep * 31 + (part === 'build' ? 0 : 500);
     const k = wsKit(sr, len, pix); if (def.room) k.room(...def.room);
     def[part](k, tb);
-    return k.finish(1, WARP_LEVEL[ep][pix ? 1 : 0] * (part === 'build' ? tr[0] : tr[1]), part === 'build' ? 0.03 : 0.002);
+    return k.finish(1, WARP_LEVEL[ep][pix ? 1 : 0] * (part === 'build' ? tr[0] : tr[1]), part === 'build' ? 0.15 : 0.025);
   };
 }
 let wsCache = null, WS = null;
@@ -14923,8 +14974,8 @@ function warpSoundStart(dur, ep) {
 function warpSoundHit() {
   const W = WS; if (!W || W.hit) return;
   const ac = audio.ctx, now = ac.currentTime + 0.003; W.hit = true; W.hitAt = now;
-  if (W.buildNode) { W.buildNode.g.gain.setTargetAtTime(0, now, 0.014); W.buildNode.s.stop(now + 0.25); }
-  if (W.c.arrive) W.arr = wsPlay(W.c.arrive, now + 0.012);                   // розгін уже майже згас: піки не складаються
+  if (W.buildNode) { W.buildNode.g.gain.setTargetAtTime(0, now, 0.05); W.buildNode.s.stop(now + 0.5); }
+  if (W.c.arrive) W.arr = wsPlay(W.c.arrive, now + 0.008);                   // розгін плавно поступається: без стрибка гучності
   wsCache = null; warpDuck(false, now + 0.45);
 }
 // Чи щойно прозвучало прибуття: тоді заставка епохи не грає поверх нього свою фанфару
@@ -14933,12 +14984,11 @@ SFX.warp = warpSoundStart;
 // Удар годинника на старті: дзвін зі справжнім згасанням. Грає наживо, тож лунає в ту ж мить, навіть якщо синтез ще не завершився
 SFX.warpChime = ep => {
   const ac = audio.ctx, t = ac.currentTime + 0.01, f = noteFreq(WARP_KEY[((ep | 0) % WARP_KEY.length + WARP_KEY.length) % WARP_KEY.length]), dest = audio.warpOut;
-  [[0.5, 0.05, 1.7], [1, 0.12, 1.2], [1.2, 0.04, 0.8], [1.5, 0.03, 0.6], [2, 0.055, 0.45], [2.51, 0.016, 0.3], [3.01, 0.014, 0.2]].forEach(([r, v, d]) => {
+  WARP_CHIME.forEach(([r, v, d]) => {
     const s = ac.createOscillator(), g = ac.createGain(), tc = d * 0.55; s.frequency.value = f * r;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.004); g.gain.setTargetAtTime(0, t + 0.004, tc);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.012); g.gain.setTargetAtTime(0, t + 0.012, tc);
     s.connect(g); g.connect(dest); s.start(t); s.stop(t + tc * 8 + 0.02);
   });
-  noiseHit(dest, t, 0.02, 0.05, 'bandpass', 2400);
 };
 //#part 200_a_travel_ui_warp_base.js
 /* =====================================================================
@@ -15004,10 +15054,18 @@ function currentEpoch() { return EPOCHS[viewEpoch() % EPOCHS.length]; }
 
 /* ---------- Епохи: зовнішній вигляд міста ---------- */
 // Етапи перебудови шарів епохи: під час подорожі їх виконуємо по одному на кадр (вир закриває сцену), щоб не було одного довгого провалу
-function epochLayerSteps() {
+// Крок перебудови — функція; якщо вона повертає генератор, той виконується порціями (updateWarp), а без вира — одразу цілком
+function runStepsNow(list) { list.forEach(fn => { const r = fn(); if (r && r.next) while (!r.next().done); }); }
+const warpLate = fn => { fn.late = true; return fn; };            // цей крок — не раніше середини вира (музика нової епохи, збереження)
+function* layerSteps(gen, rebuild, set) {                          // шар порціями; якщо за цей час змінився розмір вікна, будуємо заново
+  const c = yield* gen;
+  set(c.width === view.w && c.height === view.h ? c : rebuild());
+}
+function epochLayerSteps(noShop, panels) {
   return [
-    () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); skyLayer = buildSkyLayer(); },
-    () => { groundLayer = buildGroundLayer(); },
+    () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); if (panels) panels(); },   // панелі — на перших кадрах: вир уже закрив їх і ще майже не рухається, тож перекомпонування сторінки непомітне
+    () => layerSteps(skyLayerGen(), buildSkyLayer, c => { skyLayer = c; }),
+    () => layerSteps(groundLayerGen(), buildGroundLayer, c => { groundLayer = c; }),
     // спрайти героїв нової епохи — по одному на кадр, ще до портретів (інакше портрети будували їх усі разом — ривок ~0,1 с)
     ...(typeof TEAM !== 'undefined' ? TEAM : []).map(m => () => { try { getSpriteCanvas(teamSprite(m.id)); } catch (e) { /* домалюється в кадрі */ } }),
     () => {
@@ -15017,12 +15075,23 @@ function epochLayerSteps() {
       refreshTeamPortraits();
       drawCapiPortrait();             // скін Капі залежить від епохи
     },
-    () => { if (shop) rebuildShop(true); },
+    ...(noShop ? [] : [() => { if (shop) rebuildShop(true); }]),
     // спрайти покупців нової епохи — заздалегідь, по одному на кадр: інакше вони будувались у першому кадрі нової епохи (ривок до 0,3 с)
     ...CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => () => { try { evenScaled(getSpriteCanvas(tp + '_' + f), CUST_K); } catch (e) { /* домалюється */ } }))
   ];
 }
-function rebuildEpochLayers() { epochLayerSteps().forEach(fn => fn()); }
+function rebuildEpochLayers() { runStepsNow(epochLayerSteps()); }
+// Спрайти покупців не залежать від епохи: будуємо їх заздалегідь у вільний час, щоб ні подорож, ні перший покупець цього типу не давали ривка
+function warpWarmIdle() {
+  const list = CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => tp + '_' + f));
+  const later = fn => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 400));
+  const next = d => {
+    do { const n = list.shift(); try { evenScaled(getSpriteCanvas(n), CUST_K); } catch (e) { /* домалюється в кадрі */ } } while (list.length && d && d.timeRemaining && d.timeRemaining() > 8);
+    if (list.length) later(next);
+  };
+  later(next);
+}
+window.addEventListener('load', () => setTimeout(warpWarmIdle, 8000));
 function resetEpochFx() {
   stars.length = 0; leaves.length = 0;
   const e = currentEpoch();
@@ -15330,7 +15399,7 @@ function playEpochIntro(epochNo, done) {
   epochIntro.active = true; epochIntro.done = done || null; epochIntro.startedAt = performance.now();
   state.epochIntroSeen = epochNo; saveGame();
   const i = curEpoch(), ep = EPOCHS[i], box = ui.epochIntro;
-  box.dataset.ep = i; epochIntro.idx = i; eiT0 = performance.now(); if (eiRaf) cancelAnimationFrame(eiRaf); eiRaf = requestAnimationFrame(eiLoop);
+  box.dataset.ep = i; epochIntro.idx = i; eiT0 = performance.now(); if (eiRaf) cancelAnimationFrame(eiRaf); eiLoop();      // перший кадр одразу: інакше на мить видно полотно попередньої заставки
   box.style.setProperty('--ei1', PALETTE[ep.sky[0]]); box.style.setProperty('--ei2', PALETTE[ep.sky[1]]); box.style.setProperty('--ei3', PALETTE[ep.sky[2]]);
   drawEpochEmblem(ui.eiEmblem.getContext('2d'), i);
   ui.eiNum.textContent = t('epochLabel', EPOCH_ROMAN[i]);
@@ -15385,6 +15454,7 @@ function startWarp(view, demo) {
   const [fx, fy] = clockFaceFrac();
   clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('warpChime', target);
   warp = { demo: !!demo, fromEpoch: viewEpoch() % EPOCHS.length, toEpoch: target, t: 0, applied: false, fx, fy, W, H, snap, view, dur: (view === undefined || demo) ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
+  warp.showK = WARP_HIT[target % WARP_HIT.length] - 0.012; warp.warm = 0; warp.iter = null;   // showK — коли знову малювати сцену: перед самим відкриттям нової епохи
   ui.timeWarp.classList.remove('out'); ui.timeWarp.hidden = false;
   playSfx('warp', warp.dur, target);
 }
@@ -15449,6 +15519,7 @@ function drawWarpRewind(k) {
   const kg = seg(k, 0, 0.45), kn = seg(k, 0.4, 0.5), kbar = seg(k, 0.5, 0.74), kr = seg(k, 0.74, 1), from = EPOCH_YEARS[(warp.fromEpoch || 0) % EPOCHS.length], to = EPOCH_YEARS[(warp.toEpoch || 0) % EPOCHS.length];
   const bh = Math.max(3, Math.round(5 * sc * 0.6));
   if (k < 0.5) {
+    g.drawImage(warp.snap, 0, 0);                                                   // під смугами той самий знімок: вир непрозорий з першого кадру
     for (let y = 0; y < H; y += bh) {                                               // горизонтальні смуги зсуваються, як на зіпсованій плівці
       const off = Math.round(Math.sin(y * 0.37 + k * 70) * kg * 14 * (warpSeed(Math.floor(y / bh) + Math.floor(k * 14)) > 0.55 ? 1.4 : 0.15));
       g.drawImage(warp.snap, 0, y, W, bh, off, y, W, bh);
@@ -15754,16 +15825,33 @@ function drawWarpGreece(k) {
   }
 }
 const WARP_BY_EPOCH = [drawWarpGreece, drawWarpRewind, drawWarpDisco, drawWarpArcade, drawWarpNet, drawWarpEco, drawWarpSpace, drawWarpTunnel];
+const WARP_COVER = 0.42;                                              // с: вир проявляється 0,4 с (CSS twIn), далі він закриває всю сторінку, і під ним можна міняти що завгодно
+// Перебудова епохи під виром: щойно він закрив сторінку, робимо її порціями за часом, кадр ніколи не затримується.
+// Нова епоха готова задовго до відкриття; якщо пристрій дуже повільний, бюджет росте, а перед самим відкриттям решта добудовується разом.
+function warpPump(k, hitK, dt) {
+  const W = warp;
+  if (!W.applied) { if (W.t < WARP_COVER) return; W.applied = true; W.steps = W.view !== undefined ? setEpochPreviewSteps(W.view) : applyTimeTravelSteps(); return; }
+  if (W.warm > 0) W.warm--;
+  if (!W.steps) return;
+  const all = k >= hitK - 0.02, end = performance.now() + Math.max(k < hitK * 0.5 ? 3 : k < hitK * 0.8 ? 7 : 12, dt * 150);
+  while (W.iter || W.steps.length) {
+    if (W.iter) { if (W.iter.next().done) W.iter = null; }
+    else {
+      if (W.steps[0].late && k < 0.5 && !all) break;
+      const r = W.steps.shift()(); if (r && r.next) W.iter = r;
+    }
+    if (!all && performance.now() >= end) break;
+  }
+  if (!W.ready && !W.iter && (!W.steps.length || W.steps[0].late)) { W.ready = true; W.warm = 2; stageEdgesFromLayers(); }   // сцена готова: два кадри під виром прогрівають її малювання
+}
 function updateWarp(dt) {
   if (!warp) return;
   warp.t += Math.min(dt, 1 / 30);                                      // довгий кадр перебудови сцени не стрибає вперед: рух вира лишається рівним
   const k = Math.min(1, warp.t / warp.dur);
   if (k >= WARP_HIT[(warp.toEpoch | 0) % WARP_HIT.length]) warpSoundHit();     // удар звуку в мить, коли відкривається нова епоха
   (WARP_BY_EPOCH[(warp.toEpoch | 0) % EPOCHS.length] || drawWarpGreece)(k);               // у кожної епохи своя анімація подорожі
-  if (!warp.applied && k >= 0.5) { warp.applied = true; warp.steps = warp.view !== undefined ? setEpochPreviewSteps(warp.view) : applyTimeTravelSteps(); }
-  if (warp.steps && warp.steps.length) warp.steps.shift()();          // по одному етапу на кадр: вир закриває сцену, тож перебудова епохи не дає провалу
+  warpPump(k, WARP_HIT[(warp.toEpoch | 0) % WARP_HIT.length], dt);
   if (k >= 1) {
-    while (warp.steps && warp.steps.length) warp.steps.shift()();
     warp.steps = null;
     const viewOnly = warp.view !== undefined;
     if (!warp.demo) state.warpSeen = 1;
@@ -15786,6 +15874,7 @@ function updateWarp(dt) {
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
 // Подорож у часі по етапах (updateWarp виконує по одному на кадр, поки вир закриває сцену); applyTimeTravel виконує всі одразу
 function applyTimeTravelSteps() {
+  let moved = false;
   return [
     () => {
   syncEpochEarned();
@@ -15811,23 +15900,16 @@ function applyTimeTravelSteps() {
   customers.length = 0;
   recalcIncome();
     },
-    ...epochLayerSteps(),
-    () => {
-  resetEpochFx();
-  rebuildShop(true);
-  syncActors();
-  syncGuests();
-  layoutScene();
-    },
-    () => {
-  updateMusic();
-  updateUI();
-  checkAchievements();
-  saveGame();
-    }
+    () => { deferLayers = {}; if (shop) rebuildShop(true); },            // спершу магазин і розмір сцени: шари одразу будуються під них, і немає повторної побудови
+    () => { layoutScene(); moved = !!deferLayers.changed; deferLayers = null; },
+    ...epochLayerSteps(true, () => updateUI()),
+    () => { propsLayer = buildPropsLayer(); if (moved) { buildSkyStars(); seedClouds(); seedBirds(); } seedBenches(); },
+    () => { resetEpochFx(); syncActors(); syncGuests(); },
+    warpLate(() => { updateMusic(); }),
+    warpLate(() => { updateUI(); checkAchievements(); saveGame(); })
   ];
 }
-function applyTimeTravel() { applyTimeTravelSteps().forEach(fn => fn()); }
+function applyTimeTravel() { runStepsNow(applyTimeTravelSteps()); }
 
 /* ---------- Майстерня часу ---------- */
 function wsEffectText(id, L) {
@@ -16038,11 +16120,11 @@ function applyViewSettings() {
 function setEpochPreviewSteps(e) {
   return [
     () => { syncEpochEarned(); state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e; },
-    ...epochLayerSteps(),
-    () => { refreshDeptTexts(); updateMusic(); updateUI(); saveGame(); }
+    ...epochLayerSteps(false, () => { refreshDeptTexts(); updateUI(); }),
+    warpLate(() => { updateMusic(); updateUI(); saveGame(); })
   ];
 }
-function setEpochPreview(e) { setEpochPreviewSteps(e).forEach(fn => fn()); }
+function setEpochPreview(e) { runStepsNow(setEpochPreviewSteps(e)); }
 function refreshDeptTexts() { uiCache.reqSig = ''; uiCache.boostSig = ''; DEPARTMENTS.forEach((d, i) => { if (deptEls[i]) { deptEls[i].name.textContent = deptName(i); deptEls[i].icon.textContent = deptIcon(i); } }); }
 function updateEpochViewUI() {
   const card = $('epochViewCard');
@@ -24263,14 +24345,16 @@ function fxBob(seed) {
 }
 
 // будинки: світлі краї зверху й зліва, тінь під виступами, темніший правий бік (піксель-арт «об'єм» без перемальовування кожної епохи)
-function fxHousePass(c) {
+function* fxHousePassGen(c) {
   if (state.settings.fxPlus === false) return;
   const y0 = Math.max(0, view.offY + 30), y1 = Math.min(c.height, view.offY + LAYOUT.horizonY), h = y1 - y0, w = c.width;
   if (h < 8) return;
   const g2 = c.getContext('2d'), im = g2.getImageData(0, y0, w, h), d = im.data, src = new Uint8ClampedArray(d);
   const lum = i => 0.3 * src[i] + 0.59 * src[i + 1] + 0.11 * src[i + 2];
   const mix = (i, k) => { if (k > 0) { d[i] += (255 - d[i]) * k; d[i + 1] += (255 - d[i + 1]) * k; d[i + 2] += (255 - d[i + 2]) * k; } else { d[i] *= 1 + k; d[i + 1] *= 1 + k; d[i + 2] *= 1 + k; } };
-  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+  for (let y = 1; y < h - 1; y++) {
+    if (!(y & 7)) yield;                                                           // по кілька рядків за раз
+    for (let x = 1; x < w - 1; x++) {
     const i = (y * w + x) * 4; if (src[i + 3] < 200) continue;
     const up = i - w * 4, lf = i - 4, rt = i + 4, dn = i + w * 4, L = lum(i);
     if (src[up + 3] < 40) { mix(i, 0.24); continue; }                              // верхній силует
@@ -24280,7 +24364,9 @@ function fxHousePass(c) {
     if (Lu - L > 16) mix(i, -0.12);                                                // тінь під карнизом, підвіконням і балконом
     else if (L - Lu > 16 && src[up + 3] > 200) mix(i, 0.07);                       // верхня грань виступу
     if (Ll - L > 20) mix(i, -0.07);                                                // тінь праворуч від світлого елемента
+    }
   }
+  yield;
   // відкоси вікон: скло «в’їхало» у стіну — тінь зверху й зліва, світла нижня кромка
   const gl = (typeof houseGlass !== 'undefined' && houseGlass) ? houseGlass : [];
   for (const r of gl) {
@@ -24290,7 +24376,9 @@ function fxHousePass(c) {
     for (let yy = 1; yy < gh; yy++) { mix(((gy + yy) * w + gx) * 4, -0.2); }
   }
   // м’яке освітлення згори донизу + ледь більше контрасту: фасади чіткіші
+  yield;
   for (let y = 0; y < h; y++) {
+    if (!(y & 7)) yield;
     const k = 0.06 - 0.14 * (y / h), row = y * w * 4;
     for (let x = 0; x < w; x++) {
       const i = row + x * 4; if (d[i + 3] < 200) continue;
@@ -24298,6 +24386,7 @@ function fxHousePass(c) {
       d[i] = (d[i] - 128) * 1.06 + 128; d[i + 1] = (d[i + 1] - 128) * 1.06 + 128; d[i + 2] = (d[i + 2] - 128) * 1.06 + 128;
     }
   }
+  yield;
   g2.putImageData(im, 0, y0);
 }
 //#part 263_build_cinema.js
@@ -25532,24 +25621,29 @@ function frameStep(now) {
   countNights(dt, prevPhase);
   updateSkyState();
 
-  updateAnimations(dt);
-  updateBubbles();
-  updateDialog(dt);
-  checkStory(dt);
-  updateEvents(dt);
+  const underWarp = warp && warp.t >= WARP_COVER && !warp.warm && warp.t / warp.dur < warp.showK - 0.02;      // сцену й панелі закриває вир: не рахуємо те, чого не видно, увесь кадр йому
+  if (!underWarp) {
+    updateAnimations(dt);
+    updateBubbles();
+    updateDialog(dt);
+    checkStory(dt);
+    updateEvents(dt);
+  }
   updateWarp(dt);
-  updateSeasonFx(dt);
-  updateSeasonsIntro();
-  updateFxPlus(dt);
-  updateDailyReminder(dt);
-  const hidden = (warp && warp.t > 0.15 && (!warp.applied || (warp.steps && warp.steps.length))) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 5600) || cut.on;     // сцену не малюємо, поки її закриває вир (до застосування нової епохи) або заставка; далі вир прозорішає, і під ним уже НОВА епоха
+  if (!underWarp) {
+    updateSeasonFx(dt);
+    updateSeasonsIntro();
+    updateFxPlus(dt);
+    updateDailyReminder(dt);
+  }
+  const hidden = (warp && warp.t >= WARP_COVER && !warp.warm && warp.t / warp.dur < warp.showK) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 5600) || cut.on;     // сцену не малюємо, поки її закриває вир або заставка: два кадри під виром (warp.warm) прогрівають нову епоху, а перед відкриттям вона вже намальована
   if (!hidden) { try { render(animClock); } catch (e) { frameErr(e); } }                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
 
   uiTimer += dt;
-  if (uiTimer >= CONFIG.UI_REFRESH_SECONDS) { uiTimer = 0; updateUI(); }
+  if (uiTimer >= CONFIG.UI_REFRESH_SECONDS) { uiTimer = 0; if (!warp) updateUI(); }      // під виром панелей не видно
 
   saveTimer += dt;
-  if (saveTimer >= CONFIG.AUTOSAVE_SECONDS) { saveTimer = 0; saveGame(); }
+  if (saveTimer >= CONFIG.AUTOSAVE_SECONDS) { saveTimer = 0; if (!warp) saveGame(); }
 }
 
 //#part 275_a_sakura.js
@@ -25999,8 +26093,9 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
   function roofTopY() { return (typeof shop !== 'undefined' && shop) ? shop.y + (shop.level >= 6 ? Math.max(0, (shop.roofTop | 0) - 2) - CLOCK_H : 0) : LAYOUT.horizonY - MAX_HOUSE_H; }      // найвища точка ТЦ (з годинниковою вежею)
   function skySpan(top) { return Math.max(60, Math.min(LAYOUT.horizonY - MAX_HOUSE_H - 6, roofTopY() - 24) - top - 24); }      // дракон літає лише в небі над ТЦ
   const fujiOcCache = {};
-  function buildSky() {
-    const { c, g } = newLayer();
+  function buildSky() { const it = buildSkyGen(); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+  function* buildSkyGen() {
+    const { c, g } = newLayer(true);
     const x0 = -view.offX, W = view.w, top = -view.offY, hor = LAYOUT.horizonY + 10;
     const stops = [[0, '#18356e'], [0.16, '#2a5aa8'], [0.34, '#4f8fd8'], [0.5, '#8fc4ec'], [0.64, '#cfe2f4'], [0.76, '#ffd9e2'], [0.88, '#ffc0c8'], [1, '#ffd8a0']];
     const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
@@ -26008,6 +26103,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
     const bayer = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], rows = hor - top;
     const img = g.createImageData(W, Math.max(1, rows)), px = img.data;                    // пікселі напряму (fillRect на піксель — сотні мілісекунд при подорожі)
     for (let y = top; y < hor; y++) {
+      if (!(y & 15)) yield;
       const f = (y - top) / rows, col = at(f), lv = 8;
       let o = (y - top) * W * 4;
       for (let xi = 0; xi < W; xi++, o += 4) {
@@ -26016,7 +26112,9 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
         px[o + 3] = 255;
       }
     }
+    yield;
     g.putImageData(img, x0 + view.offX, top + view.offY);
+    yield;
     { const L2 = newLayer(); const FD = fujiDims(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, FD.H, FD.hw); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
@@ -26572,7 +26670,7 @@ setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // �
 
   /* ---------- реєстрація ---------- */
   ARCH.japan = {
-    buildSky, farSkyline, bush, tree, house, skyExtra,
+    buildSky, skyGen: buildSkyGen, farSkyline, bush, tree, house, skyExtra,
     sunRx: W => Math.round(W * 0.26),                              // вужча дуга сонця й місяця: виходять з-за схилу Фудзі, ховаються за нею близько полудня й виходять знову
     skyFront(c) {                                                   // Фудзі поверх сонця/місяця/зір, із нічним і вечірнім затемненням як у шару неба
       if (!fujiC) return;

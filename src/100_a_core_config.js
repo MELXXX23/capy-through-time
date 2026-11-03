@@ -1,6 +1,8 @@
 <!--#part 100_a_core_config.js-->
 <script>
 'use strict';
+// Малі полотна (спрайти, значки, іконки) — у звичайній пам'яті: читання їхніх пікселів ~0,3 мс замість ~5 мс, а гра читає їх сотнями (без цього перша подорож і нові покупці давали ривки)
+(() => { const gc = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (type, attrs) { return gc.call(this, type, type === '2d' && !attrs && this.width * this.height <= 16384 ? { willReadFrequently: true } : attrs); }; })();
 
 // ---- Прихований «режим бога» власника ----
 // Вмикається вставленням коду GOD:<пароль> у поле імпорту прогресу (Налаштування). У грі лишається лише SHA-256 пароля;

@@ -2,6 +2,7 @@
 // Власне скидання: лишаються кристали, досягнення, статистика, прочитані глави й покращення майстерні
 // Подорож у часі по етапах (updateWarp виконує по одному на кадр, поки вир закриває сцену); applyTimeTravel виконує всі одразу
 function applyTimeTravelSteps() {
+  let moved = false;
   return [
     () => {
   syncEpochEarned();
@@ -27,23 +28,16 @@ function applyTimeTravelSteps() {
   customers.length = 0;
   recalcIncome();
     },
-    ...epochLayerSteps(),
-    () => {
-  resetEpochFx();
-  rebuildShop(true);
-  syncActors();
-  syncGuests();
-  layoutScene();
-    },
-    () => {
-  updateMusic();
-  updateUI();
-  checkAchievements();
-  saveGame();
-    }
+    () => { deferLayers = {}; if (shop) rebuildShop(true); },            // спершу магазин і розмір сцени: шари одразу будуються під них, і немає повторної побудови
+    () => { layoutScene(); moved = !!deferLayers.changed; deferLayers = null; },
+    ...epochLayerSteps(true, () => updateUI()),
+    () => { propsLayer = buildPropsLayer(); if (moved) { buildSkyStars(); seedClouds(); seedBirds(); } seedBenches(); },
+    () => { resetEpochFx(); syncActors(); syncGuests(); },
+    warpLate(() => { updateMusic(); }),
+    warpLate(() => { updateUI(); checkAchievements(); saveGame(); })
   ];
 }
-function applyTimeTravel() { applyTimeTravelSteps().forEach(fn => fn()); }
+function applyTimeTravel() { runStepsNow(applyTimeTravelSteps()); }
 
 /* ---------- Майстерня часу ---------- */
 function wsEffectText(id, L) {
@@ -254,11 +248,11 @@ function applyViewSettings() {
 function setEpochPreviewSteps(e) {
   return [
     () => { syncEpochEarned(); state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e; },
-    ...epochLayerSteps(),
-    () => { refreshDeptTexts(); updateMusic(); updateUI(); saveGame(); }
+    ...epochLayerSteps(false, () => { refreshDeptTexts(); updateUI(); }),
+    warpLate(() => { updateMusic(); updateUI(); saveGame(); })
   ];
 }
-function setEpochPreview(e) { setEpochPreviewSteps(e).forEach(fn => fn()); }
+function setEpochPreview(e) { runStepsNow(setEpochPreviewSteps(e)); }
 function refreshDeptTexts() { uiCache.reqSig = ''; uiCache.boostSig = ''; DEPARTMENTS.forEach((d, i) => { if (deptEls[i]) { deptEls[i].name.textContent = deptName(i); deptEls[i].icon.textContent = deptIcon(i); } }); }
 function updateEpochViewUI() {
   const card = $('epochViewCard');
