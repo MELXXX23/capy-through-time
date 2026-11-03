@@ -29,12 +29,12 @@
 | `110_a3_texts_uk.js` | 30 | ТЕКСТИ uk: вкладки, епохи, подорож, майстерня, досягнення, репліки, пори року, лавочка |  |
 | `110_b1_texts_en.js` | 9 | ТЕКСТИ en (початок en-об'єкта): ті самі теми, що 110_a1 |  |
 | `110_b2_texts_en.js` | 23 | ТЕКСТИ en: сюжет, події, свята, міні-ігри |  |
-| `110_b3_texts_en.js` | 22 | ТЕКСТИ en: вкладки, епохи, подорож…, кінець translations, GENDER_TEXTS, SEASONS | GENDER_TEXTS, SEASONS |
+| `110_b3_texts_en.js` | 21 | ТЕКСТИ en: вкладки, епохи, подорож…, кінець translations, GENDER_TEXTS, SEASONS | GENDER_TEXTS, SEASONS |
 | `120_state.js` | 16 | стан гри (state), множники, зірки, вимоги | createDefaultState, state, milestonesReached, nextMilestone, levelMult, teamLevelOf, STAR_MULT, STAR_HARD_CAP |
-| `125_save.js` | 16 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
+| `125_save.js` | 18 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
 | `130_format.js` | 42 | t() — переклади, формат чисел | t, tierSuffix, formatNumber, fmt |
 | `140_a_sprite_core_world_props.js` | 46 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
-| `140_b_ground_houses_layers.js` | 41 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGround, manholeSpots, buildGroundLayer, autumnGroundLeaves, drawRoadG, manholeG |
+| `140_b_ground_houses_layers.js` | 42 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGround, manholeSpots, buildGroundLayer, autumnGroundLeaves, drawRoadG, manholeG |
 | `150_a1_facade_items_decor.js` | 29 | магазин: предмети вітрин, прилавки | tierOf, drawItem, drawDisplay, drawShelf, posterG, DOOR_LEAF_STYLES, drawDoorLeaves, placeRow |
 | `150_a2_facade_items_decor.js` | 24 | магазин: епохальний декор фасаду, skinShopDeco | leafPileG, skinGlints, bigLollipopG, gumdropG, coinStackG, goldBarsG, gemG, snowmanG |
 | `150_a3_skins_new_decor.js` | 11 | — | SHOP_DECO_EXTRA, STREET_EXTRA, sprG, thickG, roofRecolor, SPR_STAR7, SPR_CHEST, wheelG |
@@ -45,24 +45,25 @@
 | `151_c_arch_arcade_internet_eco.js` | 39 | ARCH: епохи 3–5 (Аркади, Інтернет, Еко) |  |
 | `151_d_arch_space_neon.js` | 26 | ARCH: епохи 6–7 (Космос, Неон) |  |
 | `160_refs.js` | 7 | посилання на елементи DOM (ui) | $, ui, ctx, skyLayer, shop, uiCache, sceneUnit, viewCrop |
-| `165_shop.js` | 15 | rebuildShop, layoutScene, камера, панель на телефоні | rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK, layoutScene |
+| `165_shop.js` | 17 | rebuildShop, layoutScene, камера, панель на телефоні | rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK, layoutScene |
 | `165_tab_icons_hd.js` | 14 | — | TAB_ICONS_HD, tabImgHD, tabGlyphHD |
 | `170_ui.js` | 32 | інтерфейс: вкладки, картки відділів і команди | detectLanguage, setText, outlineCanvas, tabGlyph, tabIconCanvas, buildTabs, TABS_PRIMARY, setSheet |
 | `175_buy.js` | 1 | купівля | buyDept, expandShop |
 | `178_offline.js` | 2 | дохід, поки гравця не було | addOfflineEarnings, refreshOfflineModal, showOfflineModal, claimOffline |
-| `180_a9_team_props.js` | 11 | — | PAW_COL, PAW_TINT, TPG, TP, TPBX, TPART, TPAW, TEAM_PROP_ART |
+| `180_a9_team_props.js` | 13 | — | PAW_COL, PAW_TINT, TPG, TP, TPBX, TPART, TPX, TPAW |
 | `180_a_anim_weather_actors.js` | 41 | анімації: погода, хмари, звірята-помічники (actorHome, syncActors, updateActors) | shopAnim, capyAnim, fx, clouds, weather, raindrops, updateWeather, rainSpotCache |
-| `180_b_actor_draw_lines.js` | 45 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, ACTOR_K, actorK, evenScaleCache, evenScaled, crispFigCache, HERO_K |
+| `180_b_actor_draw_lines.js` | 46 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, PROP_CV, drawCrispProp, ACTOR_K, actorK, evenScaleCache, evenScaled |
 | `180_c_customers_updates.js` | 45 | покупці (spawnCustomer, drawCustomer, spaceHelmet), updateAnimations, спливаючі числа | skinLineLast, skinLine, capySay, buyStar, hireOrUpgrade, CUSTOMERS_BY_LEVEL, customerTarget, passEdge |
-| `190_a_audio_music_cutscene.js` | 48 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
-| `190_b_cutscene_draw.js` | 39 | кат-сцена: малювання | cutFace, cutMark, cutEmo, cutTextPx, cutPopText, cutSpark, cutBubble, cutSayState |
-| `190_c_cutscene_panel_tour_sfx.js` | 39 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |
+| `190_a_audio_music_cutscene.js` | 43 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
+| `190_b_cutscene_draw.js` | 40 | кат-сцена: малювання | cutFace, cutMark, cutEmo, cutTextPx, cutPopText, cutSpark, cutBubble, cutSayState |
+| `190_c_cutscene_panel_tour_sfx.js` | 42 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |
 | `190_cz_cutscene_epic.js` | 21 | кат-сцена v3: кіно-вступ, кінорамки, тапи (монетка, заряд), будівництво маркету з блоків | CUT_CHG, CB, CUT_TXT2, cutT2, cutRate, cutBars, cutIntroCam, cutIntroText |
 | `190_d_epoch_tunes.js` | 17 | музика епох 1–8: EPOCH_TUNES (дві мелодії на епоху, акорди), epochTrackDef/epochTrackKey | TUNE_Q, ARP_FAST, ARP_SOFT, LEAD_VOL, BASS_VOL, ARP_VOL, EPOCH_TUNES, chordInfo |
-| `200_a_travel_ui_warp_base.js` | 44 | налаштування, вікна-підтвердження, основа анімації подорожі | warp, confirmCb, savingDisabled, achTimer, autoTapAcc, stars, leaves, wsEls |
+| `190_e_warp_sound.js` | 72 | звук подорожі: 9 переходів епох (власний синтез у Worker), удар за виром, притишення музики | WARP_HIT, WARP_PIX, WARP_KEY, wsSynthCode, wsCache, wsSynth, wsSynthHere, wsBuffer |
+| `200_a_travel_ui_warp_base.js` | 54 | налаштування, вікна-підтвердження, основа анімації подорожі | warp, confirmCb, savingDisabled, achTimer, autoTapAcc, stars, leaves, wsEls |
 | `200_b_warp_epoch_animations.js` | 34 | анімації подорожі для кожної епохи (WARP_BY_EPOCH) | warpPix, warpCapy, warpFont, warpText, drawWarpDisco, WARP_INV, drawWarpArcade, drawWarpNet |
 | `200_c_time_travel_workshop_stats.js` | 27 | подорож (applyTimeTravel), майстерня часу, досягнення, статистика, налаштування | applyTimeTravelSteps, applyTimeTravel, wsEffectText, buildWorkshop, wsNeedTrips, buyWorkshop, routeSig, updateRouteCard |
-| `210_skins.js` | 33 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinCatIcon, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust |
+| `210_skins.js` | 34 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinCatIcon, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust |
 | `211_skins_new_fx.js` | 3 | — | SHOP_FX_DRAW, FX_SEA_COLS |
 | `212_skins_shop_anim.js` | 9 | — | SKIN_SIGN_ANIM, signStripes, signFlakes, signSpark, drawRoofFountains, aquariumSpot, drawSkinInterior, drawSkinShopExtras |
 | `213_epoch_roof_anim.js` | 3 | — | drawEpochRoofAnim, drawSpaceTelescope |
@@ -93,14 +94,14 @@
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
 | `260_render.js` | 30 | головний render, будівельна техніка | render, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum, drawTruckWheel |
 | `262_fx_plus.js` | 26 | — | FXP, fxLevel, EPFX, fxPx, fxFrac, fxSeed, updateFxPlus, fxCoin |
-| `263_build_cinema.js` | 7 | — | bc, bcSweepCv, bcMake, bcPlace, buildCinemaStart, buildCinemaTick, buildCinemaEnd, drawBuildSweep |
+| `263_build_cinema.js` | 8 | — | bc, bcSweepCv, bcMake, bcPlace, buildCinemaStart, buildCinemaTick, buildCinemaEnd, drawBuildSweep |
 | `264_smooth_ui.js` | 2 | — |  |
 | `265_b_icons_art.js` | 9 | — | PX_PAL, PX_ART, pxArtCache, pxArt, pxArtImg |
 | `265_d_card_scenes.js` | 20 | — | cardRect, cardMod, cardSparkle, cardBall, cardTri, cardSky, cardStars, CARD_GY |
 | `265_e_capy_scenes.js` | 23 | — | CAPY_SCENES |
 | `265_icons_plus.js` | 27 | — | pxIconCache, pxEmojiIcon, iconBox, setIconBox, iconBackdrop, iconAvgColor, mixCol, skinTwinkles |
-| `270_loop.js` | 2 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frame |
-| `275_a_sakura.js` | 17 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild, TREE2_CACHE |
+| `270_loop.js` | 3 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frameErrN, frameErr, frame, frameStep |
+| `275_a_sakura.js` | 22 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild, TREE2_CACHE |
 | `275_ads.js` | 9 | реклама AdMob (лише Android-обгортка, прапорець window.__ADS з mobile/sync-web.js): Ads.init/available/showRewarded, кнопки «×2» у вікні офлайну й пропуск очікування бонус-гри; див. store/ADS_PLAN.md | Ads, adsAddPrivacyButton, adsLog, adOfflineDone, updateAdButtons, adsOfferOffline, adsBoostClick, adsOfferBonusSkip |
 | `275_japan.js` | 78 | епоха 9 Японія: малюнки, ARCH.japan, дракон, ліхтарі |  |
 | `275_k_stand_sora.js` | 7 | — |  |
@@ -116,8 +117,8 @@
 | `279_d_bonus_games_jp_hw.js` | 12 | — | dsc |
 | `279_e_bonus_bg.js` | 11 | — | BBG_P, BBG_THEMES, BBG_ART, bbg, bbgShade, bbgMix, bbgThemeId, bbgSprite |
 | `279_y_lang_base.js` | 1 | — | installLang |
-| `279_z_lang_es.js` | 165 | — |  |
-| `279_z_lang_it.js` | 165 | — |  |
-| `279_z_lang_pl.js` | 159 | — |  |
-| `279_z_lang_pt.js` | 163 | — |  |
+| `279_z_lang_es.js` | 167 | — |  |
+| `279_z_lang_it.js` | 167 | — |  |
+| `279_z_lang_pl.js` | 160 | — |  |
+| `279_z_lang_pt.js` | 165 | — |  |
 | `280_launch.js` | 8 | запуск: ініціалізація, </script> | perf, ecoOn, perfSample, buildReport, copyText, hiddenAt, init, setupNativeApp |

@@ -405,7 +405,7 @@ function playEpochIntro(epochNo, done) {
     ui.eiSparks.appendChild(sp);
   }
   box.hidden = false; box.classList.remove('out');
-  playSfx('levelup');
+  if (!warpSoundFresh()) playSfx('levelup');           // після подорожі звучить її прибуття, власна фанфара заставки зайва
   const full = t('epochTitle_' + i);
   for (let k = 1; k <= full.length; k++) epochIntro.timers.push(setTimeout(() => { ui.eiTitle.textContent = full.slice(0, k); if (k % 3 === 0) playSfx('pip'); }, 1900 + k * 65));
   epochIntro.timers.push(setTimeout(() => box.classList.add('out'), 6200));
@@ -430,6 +430,7 @@ function startLevel() { return 1; }                                             
 function askTimeTravel() {
   const gain = prestigeGain();
   if (!state.story.finale || gain < 1) return;
+  warpSoundAhead(nextEpochId(curEpoch()), CONFIG.WARP_SECONDS);          // поки гравець вирішує, звук уже синтезується
   askConfirm(t('warpConfirmTitle'), t('warpConfirmText', gain, eraStep((state.stats && state.stats.timeTravels) || 0)), t('warpConfirmYes'), travelWithThanks);
 }
 function startWarp(view, demo) {
@@ -440,7 +441,7 @@ function startWarp(view, demo) {
   const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
   const target = view === undefined ? nextEpochId(curEpoch()) : (view % EPOCHS.length);
   const [fx, fy] = clockFaceFrac();
-  clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('clockBong');
+  clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('warpChime', target);
   warp = { demo: !!demo, fromEpoch: viewEpoch() % EPOCHS.length, toEpoch: target, t: 0, applied: false, fx, fy, W, H, snap, view, dur: (view === undefined || demo) ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
   ui.timeWarp.classList.remove('out'); ui.timeWarp.hidden = false;
   playSfx('warp', warp.dur, target);

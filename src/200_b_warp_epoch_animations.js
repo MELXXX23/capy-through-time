@@ -276,6 +276,7 @@ function updateWarp(dt) {
   if (!warp) return;
   warp.t += Math.min(dt, 1 / 30);                                      // довгий кадр перебудови сцени не стрибає вперед: рух вира лишається рівним
   const k = Math.min(1, warp.t / warp.dur);
+  if (k >= WARP_HIT[(warp.toEpoch | 0) % WARP_HIT.length]) warpSoundHit();     // удар звуку в мить, коли відкривається нова епоха
   (WARP_BY_EPOCH[(warp.toEpoch | 0) % EPOCHS.length] || drawWarpGreece)(k);               // у кожної епохи своя анімація подорожі
   if (!warp.applied && k >= 0.5) { warp.applied = true; warp.steps = warp.view !== undefined ? setEpochPreviewSteps(warp.view) : applyTimeTravelSteps(); }
   if (warp.steps && warp.steps.length) warp.steps.shift()();          // по одному етапу на кадр: вир закриває сцену, тож перебудова епохи не дає провалу
