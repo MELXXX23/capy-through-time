@@ -364,7 +364,7 @@ function drawEpochMid(time) {
   for (let i = 0; i + 1 < xs.length; i++) {
     const a = xs[i] + 1, b = xs[i + 1] + 1;
     if (a < mid && b > mid) continue;                     // перед магазином гірлянди нема — вона закривала б фасад
-    for (let x = a; x <= b; x++) {
+    for (let x = Math.max(a, Math.floor(visL()) - VIS_PAD), xe = Math.min(b, Math.ceil(visR()) + VIS_PAD); x <= xe; x++) {
       const sag = Math.round(7 * Math.sin((x - a) / (b - a) * Math.PI));
       R(ctx, x, 86 + sag, 1, 1, 'd');
       if ((x - a) % 8 === 4) { const c = cols[Math.floor((x - a) / 8) % cols.length]; R(ctx, x - 1, 87 + sag, 3, 1, c); R(ctx, x - 1, 88 + sag, 3, 1, c); R(ctx, x, 89 + sag, 1, 1, c); }
@@ -392,22 +392,40 @@ function drawEpochGlow(time) {
 // Один повний день триває CONFIG.DAY_SECONDS. Сонце йде дугою зліва направо, увечері небо червоніє,
 // вночі з'являються зорі й місяць, горять ліхтарі та вікна.
 const sky = { night: 0, dusk: 0, lamp: 0, h: 1 };   // стан неба на цьому кадрі
-let skyStars = [];                                  // зорі (координати полотна)
-let skyDust = [];                                  // слабкий пил Чумацького Шляху
+let skyDust = [], skyDustCv = null;                // слабкий пил Чумацького Шляху і готовий шар із ним
+let starTiles = null;                              // зорі: готові плитки-візерунки (getStarTiles)
 let shootingStar = null, shootTimer = 6;
 function buildSkyStars() {
-  skyStars = []; skyDust = [];
-  const n = Math.round(view.w * (view.offY + 100) / 120);          // зір багато
-  for (let i = 0; i < n; i++) {
-    const r = Math.random();
-    skyStars.push({ x: Math.floor(rand(0, view.w)), y: Math.floor(rand(0, view.offY + 100)), ph: rand(0, 6.3), sp: rand(0.8, 2.6),
-      t: r < 0.58 ? 0 : r < 0.86 ? 1 : r < 0.96 ? 2 : 3, c: ['w', 'w', 'S', 'y'][Math.floor(rand(0, 4))] });
-  }
+  skyDust = []; skyDustCv = null;
   const m = Math.round(view.w * 0.8);                               // діагональна смуга з дрібних цяточок
   for (let i = 0; i < m; i++) {
     const u = Math.random();
     skyDust.push({ x: Math.floor(u * view.w), y: Math.floor(view.offY + 92 - u * (view.offY + 62) + rand(-9, 9) + rand(-9, 9)), a: rand(0.12, 0.4), c: ['S', 'u', 'w', 'S'][i % 4] });
   }
+}
+function getSkyDustLayer() {
+  if (skyDustCv) return skyDustCv;
+  const c = document.createElement('canvas'), g = (c.width = view.w, c.height = view.offY + 112, c.getContext('2d'));
+  skyDust.forEach(d => { g.globalAlpha = d.a; R(g, d.x, d.y, 1, 1, d.c); });
+  return (skyDustCv = c);
+}
+// Зір на небі тисячі: окремими малюнками це ~11 тис. викликів на кадр (на телефоні гальмує). Тому вони лежать на 8 плитках 512×512,
+// плитки повторюються візерунком, у кожної своє мерехтіння. Густота й вигляд зір ті самі; плитки будуються раз, коли вперше настає ніч.
+const STAR_TILE = 512, STAR_GROUPS = 8;
+function getStarTiles() {
+  if (starTiles) return starTiles;
+  const T = STAR_TILE, tiles = [];
+  for (let i = 0; i < STAR_GROUPS; i++) { const c = document.createElement('canvas'); c.width = c.height = T; tiles.push({ c, g: c.getContext('2d'), sp: 0.8 + 1.8 * (i + 0.5) / STAR_GROUPS, ph: rand(0, 6.3) }); }
+  const n = Math.round(T * T / 120);                                // зір багато
+  for (let i = 0; i < n; i++) {
+    const r = Math.random(), t = r < 0.58 ? 0 : r < 0.86 ? 1 : r < 0.96 ? 2 : 3, c = ['w', 'w', 'S', 'y'][Math.floor(rand(0, 4))], g = tiles[i % STAR_GROUPS].g;
+    const m = t < 2 ? 0 : 3, x = Math.floor(rand(m, T - m)), y = Math.floor(rand(m, T - m));      // промені яскравих зір не обрізаються краєм плитки
+    if (t === 0) { g.globalAlpha = 0.5; R(g, x, y, 1, 1, 'w'); }
+    else if (t === 1) { g.globalAlpha = 0.85; R(g, x, y, 1, 1, c); }
+    else if (t === 2) { g.globalAlpha = 1; R(g, x, y, 1, 1, 'w'); g.globalAlpha = 0.55; R(g, x - 1, y, 3, 1, c); R(g, x, y - 1, 1, 3, c); }
+    else { g.globalAlpha = 1; R(g, x, y, 2, 2, 'w'); g.globalAlpha = 0.6; R(g, x - 2, y, 6, 1, c); R(g, x + 0, y - 2, 1, 6, c); R(g, x + 1, y - 2, 1, 6, c); }
+  }
+  return (starTiles = tiles.map(s => ({ pat: ctx.createPattern(s.c, 'repeat'), sp: s.sp, ph: s.ph })));
 }
 let auroraK = 0, auroraT = 0;      // «Полярне сяйво»: скільки ночі додано (0 — звичайний день, 1 — повна ніч); плавно росте й спадає
 function updateSkyState() {

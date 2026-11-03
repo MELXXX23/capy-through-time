@@ -153,17 +153,31 @@ function aurStrips(cols) {                                  // вертикал�
   });
   AUR_KEY = key; return AUR_STRIPS;
 }
+// Шторки — ~3000 важких малюнків. Тому вони малюються лише у видимій частині неба в окремий шар, який оновлюється 20 разів на секунду (сяйво рухається повільно); на кадр лишається один малюнок.
+const aurBuf = { c: null, g: null, t: -9, cropX: -1e6, x: 0, y: 0 };
 function fxAurora(C, L, t, x0, W, top, nightK) {                  // C.aurora — кольори (AURORA_COLS)
-  const step = L === 1 ? 3 : 2, n = L === 1 ? 3 : 4, st = aurStrips(C.aurora);
   const maxH = Math.max(28, Math.min(112, (LAYOUT.horizonY - top) * 0.42)), sx = Math.round(x0), b0 = top + maxH * 0.5 + 40;
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.imageSmoothingEnabled = true;       // шторки світяться, а не просто фарбують небо
-  { const g0 = Math.round(b0 - maxH * 1.5), g1 = Math.round(b0 + 30), gr = ctx.createLinearGradient(0, g0, 0, g1);       // м'яке зелене сяйво на півнеба
+  const B = aurBuf, vx0 = Math.max(0, Math.floor(viewCrop.x) - VIS_PAD), vx1 = Math.min(W, Math.ceil(viewCrop.x + viewCrop.w) + VIS_PAD), yT = Math.max(top, Math.floor(b0 - maxH * 1.8 - 30)), bw = Math.max(1, vx1 - vx0), bh = Math.ceil(b0 + 62) - yT;
+  if (!B.c) { B.c = document.createElement('canvas'); B.g = B.c.getContext('2d'); }
+  const resized = B.c.width !== bw || B.c.height !== bh;
+  if (resized || yT !== B.y || Math.abs(viewCrop.x - B.cropX) > VIS_PAD / 2 || Math.abs(t - B.t) >= 0.05) {
+    if (resized) { B.c.width = bw; B.c.height = bh; } else { B.g.setTransform(1, 0, 0, 1, 0, 0); B.g.clearRect(0, 0, bw, bh); }
+    B.t = t; B.cropX = viewCrop.x; B.x = vx0; B.y = yT;
+    B.g.setTransform(1, 0, 0, 1, -(sx + vx0), -yT);                 // далі ті самі координати, що й на сцені
+    fxAuroraPaint(B.g, C, L, t, W, top, nightK, maxH, sx, b0, vx0, vx1);
+  }
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1; ctx.drawImage(B.c, sx + B.x, B.y); ctx.restore();       // шторки світяться, а не просто фарбують небо
+}
+function fxAuroraPaint(g, C, L, t, W, top, nightK, maxH, sx, b0, vx0, vx1) {
+  const step = L === 1 ? 3 : 2, n = L === 1 ? 3 : 4, st = aurStrips(C.aurora);
+  g.globalCompositeOperation = 'lighter'; g.imageSmoothingEnabled = true;
+  { const g0 = Math.round(b0 - maxH * 1.5), g1 = Math.round(b0 + 30), gr = g.createLinearGradient(0, g0, 0, g1);       // м'яке зелене сяйво на півнеба
     gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(0.65, 'rgba(40,240,170,1)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.globalAlpha = 0.07 * nightK; ctx.fillStyle = gr; ctx.fillRect(sx, g0, W, g1 - g0); }
+    g.globalAlpha = 0.07 * nightK; g.fillStyle = gr; g.fillRect(sx + vx0, g0, vx1 - vx0, g1 - g0); }
   for (let c = 0; c < n; c++) {
     const d = c / (n - 1), sp = 0.55 + 0.7 * d, amp = 0.6 + 0.7 * d, hk = 0.7 + 0.45 * d, ak = 0.5 + 0.5 * d, pal = st[[1, 0, 0, 0][c]];       // 0 — далека, бліда й повільна, 1 — ближня, яскрава й висока
     const base = b0 + c * 11 - (1 - d) * 8;
-    for (let x = 0; x < W; x += step) {
+    for (let x = vx0 - vx0 % step; x < vx1; x += step) {
       const u = x / W;
       const yb = base + (Math.sin(u * 3.4 + t * 0.17 * sp + c * 2.1) * 11 + Math.sin(u * 8.5 - t * 0.3 * sp + c) * 3.5) * amp;           // складки шторки
       const wave = 0.5 + 0.5 * Math.sin(u * 9.5 - t * 0.8 * sp + c * 1.7);                                                              // хвиля яскравості вздовж шторки
@@ -173,14 +187,13 @@ function fxAurora(C, L, t, x0, W, top, nightK) {                  // C.aurora �
       const a0 = nightK * ak * (0.14 + 0.46 * wave) * (0.2 + 0.8 * env) * ray * flick;
       if (a0 < 0.012) continue;
       const h = Math.max(6, maxH * hk * (0.35 + 0.65 * wave) * (0.45 + 0.55 * env) * (0.55 + 0.45 * ray) * (0.88 + 0.12 * Math.sin(t * 0.5 + x * 0.09 + c))), px = sx + x;
-      ctx.globalAlpha = Math.min(1, a0);
-      ctx.drawImage(pal.s, 0, 0, 1, 64, px, Math.round(yb - h), step, Math.round(h) + 2);
-      if (ray > 0.82 && wave > 0.55) { ctx.globalAlpha = Math.min(1, a0 * 0.55); ctx.drawImage(pal.s, 0, 20, 1, 44, px, Math.round(yb - h * 1.5), step, Math.round(h * 1.5) + 2); }       // тонкі високі промені-голки
-      if ((x / step) % 3 === 0) { ctx.globalAlpha = Math.min(1, a0 * 0.4); ctx.drawImage(pal.s, 0, 8, 1, 56, px - step * 2, Math.round(yb - h * 1.12), step * 5, Math.round(h * 1.12) + 3); }       // м'яка широка пелена між променями: сяйво об'ємне, а не набір рисок
-      ctx.globalAlpha = Math.min(1, a0 * 1.1); ctx.fillStyle = pal.hot; ctx.fillRect(px, Math.round(yb), step, 2);                       // гарячий нижній край
+      g.globalAlpha = Math.min(1, a0);
+      g.drawImage(pal.s, 0, 0, 1, 64, px, Math.round(yb - h), step, Math.round(h) + 2);
+      if (ray > 0.82 && wave > 0.55) { g.globalAlpha = Math.min(1, a0 * 0.55); g.drawImage(pal.s, 0, 20, 1, 44, px, Math.round(yb - h * 1.5), step, Math.round(h * 1.5) + 2); }       // тонкі високі промені-голки
+      if ((x / step) % 3 === 0) { g.globalAlpha = Math.min(1, a0 * 0.4); g.drawImage(pal.s, 0, 8, 1, 56, px - step * 2, Math.round(yb - h * 1.12), step * 5, Math.round(h * 1.12) + 3); }       // м'яка широка пелена між променями: сяйво об'ємне, а не набір рисок
+      g.globalAlpha = Math.min(1, a0 * 1.1); g.fillStyle = pal.hot; g.fillRect(px, Math.round(yb), step, 2);                       // гарячий нижній край
     }
   }
-  ctx.restore();
 }
 // реакції світу на епоху: промені, прожектори, полярне сяйво, листя й пелюстки, метелики, світлячки, пульс музики, блиски на фасаді
 function fxAuroraSolo() {                                       // скін «Полярне сяйво» — куплена річ: світить і коли «Покращені ефекти» чи економія вимкнені (легка версія, свій годинник)
@@ -190,10 +203,10 @@ function fxAuroraSolo() {                                       // скін «П
 }
 function fxFront() {
   const L = FXP.lv; if (!L) { fxAuroraSolo(); return; }
-  const C = EPFX[currentEpoch().id] || {}, t = FXP.t, x0 = worldL(), W = view.w, top = -view.offY, hz = LAYOUT.horizonY, rain = weather.rain || 0, day = Math.max(0, 1 - sky.night * 1.4), nightK = Math.max(0, Math.min(1, (sky.night - 0.2) / 0.4));
+  const C = EPFX[currentEpoch().id] || {}, t = FXP.t, x0 = worldL(), W = view.w, top = -view.offY, hz = LAYOUT.horizonY, rain = weather.rain || 0, day = Math.max(0, 1 - sky.night * 1.4), nightK = Math.max(0, Math.min(1, (sky.night - 0.2) / 0.4)), vl = visL() - VIS_PAD, vr = visR() + VIS_PAD;
   if (C.rays && day > 0.15 && sky.h > 0.1) {                  // пасма світла, що тихо дихають
     ctx.fillStyle = C.rays;
-    for (let i = 0; i < 3; i++) { ctx.globalAlpha = (0.05 + 0.03 * Math.sin(t * 0.7 + i * 1.7)) * day * (1 - rain); const bx = x0 + W * (0.1 + i * 0.3) + Math.sin(t * 0.3 + i) * 6; for (let y = top; y < hz + 8; y += 3) fxPx(bx + (y - top) * 0.55, y, 12 + (y - top) * 0.04, 3, C.rays); }
+    for (let i = 0; i < 3; i++) { ctx.globalAlpha = (0.05 + 0.03 * Math.sin(t * 0.7 + i * 1.7)) * day * (1 - rain); const bx = x0 + W * (0.1 + i * 0.3) + Math.sin(t * 0.3 + i) * 6; for (let y = top; y < hz + 8; y += 3) { const rx = bx + (y - top) * 0.55; if (rx >= vl && rx <= vr) fxPx(rx, y, 12 + (y - top) * 0.04, 3, C.rays); } }
   }
   if (C.beams) {                                              // прожектори хитаються
     const ba = 0.1 * (0.5 + 0.5 * Math.max(nightK, 0.5)) * (L === 1 ? 0.8 : 1);
@@ -209,6 +222,7 @@ function fxFront() {
     ctx.globalAlpha = a; ctx.fillStyle = C.pulse.c; ctx.fillRect(x0, top, W, LAYOUT.streetTop - top + 6);
   }
   for (const p of FXP.falls) {                                // листя, пелюстки, конфеті, блоки, цифрові іскри
+    if (p.x < vl || p.x > vr) continue;
     ctx.globalAlpha = 1; const x = Math.round(p.x), y = Math.round(p.y), f = Math.floor(FXP.t * 4 + p.ph) % 2;
     if (p.sq) fxPx(x, y, p.sq, p.sq, p.c); else { fxPx(x, y, p.big ? 3 : 2, f ? 2 : 1, p.c); }
   }

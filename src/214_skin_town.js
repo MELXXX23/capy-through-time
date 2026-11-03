@@ -165,7 +165,7 @@ function skinTownPreview(g, W, H) {
 function drawSkinTownAnim(time) {
   const tw = skinTownOn();
   if (!tw || !tw.anim || !townHouses.length) return;
-  const t = animOn() ? animClock : 0, L = -view.offX - 30, Rr = -view.offX + view.w + 30;
+  const t = animOn() ? animClock : 0, L = visL() - 30, Rr = visR() + 30;
   if (!townHouses.glassReady) {                                        // вікна, сховані деревами чи магазином, не анімуються
     const vis = new Set(houseGlass.map(r => r[0] + ',' + r[1]));
     townHouses.forEach(hs => { hs.glass = hs.glass.filter(r => vis.has(r[0] + ',' + r[1])); });

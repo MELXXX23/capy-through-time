@@ -221,6 +221,12 @@ function wordBig(g, x, y, word, c) {                // товстий напис
   const rows = [0, 1, 1, 2, 3, 3, 4];
   for (let i = 0; i < word.length; i++) rows.forEach((fr, ry) => { const row = FONT5[word[i]][fr]; for (let rx = 0; rx < 5; rx++) if (row[rx] === '#') { R(g, x + i * 7 + rx, y + ry, 2, 1, c); } });
 }
+const WORD_SPR = new Map();
+function wordBigFast(x, y, word, c) {                // той самий напис на основному полотні, але одним малюнком (вночі він світиться й малюється п'ять разів на кадр)
+  const k = word + '|' + c; let s = WORD_SPR.get(k);
+  if (!s) { s = document.createElement('canvas'); s.width = word.length * 7; s.height = 7; wordBig(s.getContext('2d'), 0, 0, word, c); WORD_SPR.set(k, s); }
+  ctx.drawImage(s, x, y);
+}
 function roofSignG(g, cx, y, big) {
   const [fill, ink] = EPOCH_ROOF_SIGN[viewEpoch() % EPOCH_ROOF_SIGN.length];
   const pw = big ? 70 : 62, ph = big ? 17 : 14, x = cx - (pw >> 1), ty = y + ((ph - 8) >> 1);

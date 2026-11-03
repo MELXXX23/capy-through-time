@@ -11,14 +11,9 @@ function drawSkyScreen(time) {
   ctx.globalAlpha = 1;
   if (sky.night > 0.05) {
     const nt = Math.min(1, sky.night * 1.1);
-    skyDust.forEach(d => { ctx.globalAlpha = nt * d.a; R(ctx, d.x, d.y, 1, 1, d.c); });
-    skyStars.forEach(s => {
-      const tw = animOn() ? 0.55 + 0.45 * Math.sin(time * s.sp + s.ph) : 1;
-      if (s.t === 0) { ctx.globalAlpha = nt * 0.5 * tw; R(ctx, s.x, s.y, 1, 1, 'w'); }
-      else if (s.t === 1) { ctx.globalAlpha = nt * 0.85 * tw; R(ctx, s.x, s.y, 1, 1, s.c); }
-      else if (s.t === 2) { ctx.globalAlpha = nt * tw; R(ctx, s.x, s.y, 1, 1, 'w'); ctx.globalAlpha = nt * tw * 0.55; R(ctx, s.x - 1, s.y, 3, 1, s.c); R(ctx, s.x, s.y - 1, 1, 3, s.c); }
-      else { ctx.globalAlpha = nt * tw; R(ctx, s.x, s.y, 2, 2, 'w'); ctx.globalAlpha = nt * tw * 0.6; R(ctx, s.x - 2, s.y, 6, 1, s.c); R(ctx, s.x + 0, s.y - 2, 1, 6, s.c); R(ctx, s.x + 1, s.y - 2, 1, 6, s.c); }
-    });
+    const cl = Math.max(0, Math.floor(viewCrop.x) - VIS_PAD), cw = Math.min(W - cl, Math.ceil(viewCrop.w) + VIS_PAD * 2), dust = getSkyDustLayer(), anim = animOn();       // лише видима частина неба
+    ctx.globalAlpha = nt; ctx.drawImage(dust, cl, 0, cw, dust.height, cl, 0, cw, dust.height);
+    getStarTiles().forEach(s => { ctx.globalAlpha = nt * (anim ? 0.55 + 0.45 * Math.sin(time * s.sp + s.ph) : 1); ctx.fillStyle = s.pat; ctx.fillRect(cl, 0, cw, view.offY + 102); });
     // падаюча зірка: раз на кілька секунд вночі
     if (animOn() && sky.night > 0.6) {
       if (shootingStar) {
@@ -71,13 +66,14 @@ function garlandSpans() {
 }
 function garlandY(a, b, x) { return 92 + Math.round(6 * Math.sin((x - a) / (b - a) * Math.PI)); }
 function forEachBulb(fn) {
-  const cols = bulbColors(), tw = Math.floor(animClock * 1.5);
+  const cols = bulbColors(), tw = Math.floor(animClock * 1.5), vl = visL() - VIS_PAD, vr = visR() + VIS_PAD;
   garlandSpans().forEach(([a, b]) => {
-    for (let k = 4; k < b - a - 2; k += 7) { const x = a + k; fn(x, garlandY(a, b, x) + 1, cols[(Math.floor(k / 7) + tw) % cols.length]); }
+    for (let k = 4; k < b - a - 2; k += 7) { const x = a + k; if (x >= vl && x <= vr) fn(x, garlandY(a, b, x) + 1, cols[(Math.floor(k / 7) + tw) % cols.length]); }
   });
 }
 function drawStreetGarlands() {
-  garlandSpans().forEach(([a, b]) => { for (let x = a; x <= b; x++) R(ctx, x, garlandY(a, b, x), 1, 1, 'd'); });
+  const vl = Math.floor(visL()) - VIS_PAD, vr = Math.ceil(visR()) + VIS_PAD;
+  garlandSpans().forEach(([a, b]) => { for (let x = Math.max(a, vl), xe = Math.min(b, vr); x <= xe; x++) R(ctx, x, garlandY(a, b, x), 1, 1, 'd'); });
   const day = 1 - Math.min(1, sky.lamp * 1.4);                           // удень — тьмяні лампочки
   ctx.globalAlpha = 0.55 + 0.45 * (1 - day);
   forEachBulb((x, y, c) => R(ctx, x, y, 2, 2, c));
@@ -85,10 +81,10 @@ function drawStreetGarlands() {
   ctx.globalAlpha = 1;
 }
 function drawStreetGarlandGlow(L) {
-  awningBulbs((x, y, c) => { ctx.globalAlpha = L * 0.16; disc(ctx, x, y, 6, c); ctx.globalAlpha = L; R(ctx, x, y, 2, 2, c); });
+  awningBulbs((x, y, c) => { ctx.globalAlpha = L * 0.16; discFast(x, y, 6, c); ctx.globalAlpha = L; R(ctx, x, y, 2, 2, c); });
   forEachBulb((x, y, c) => {
-    ctx.globalAlpha = L * 0.13; disc(ctx, x, y, 8, c);
-    ctx.globalAlpha = L * 0.3; disc(ctx, x, y, 4, c);
+    ctx.globalAlpha = L * 0.13; discFast(x, y, 8, c);
+    ctx.globalAlpha = L * 0.3; discFast(x, y, 4, c);
     ctx.globalAlpha = L; R(ctx, x - 1, y - 1, 3, 3, c); R(ctx, x, y, 1, 1, 'w');
   });
   ctx.globalAlpha = 1;
@@ -127,20 +123,21 @@ function drawNightLights() {
       const gc = ROOF_GLOW[viewEpoch() % ROOF_GLOW.length];
       [[10, 0.07], [7, 0.1], [4, 0.14], [2, 0.2]].forEach(([pad, al]) => { ctx.globalAlpha = L * al * pulse; R(ctx, shop.x + rs.x - pad, shop.y + rs.y - pad, rs.w + pad * 2, rs.h + pad * 2, gc); });
       ctx.globalAlpha = L * 0.14; R(ctx, shop.x + rs.x + 1, shop.y + rs.y + 1, rs.w - 2, rs.h - 2, gc);
-      ctx.globalAlpha = L * 0.55 * pulse; wordBig(ctx, shop.x + rs.tx - 1, shop.y + rs.ty, 'CAPYTAP', gc); wordBig(ctx, shop.x + rs.tx + 1, shop.y + rs.ty, 'CAPYTAP', gc); wordBig(ctx, shop.x + rs.tx, shop.y + rs.ty - 1, 'CAPYTAP', gc); wordBig(ctx, shop.x + rs.tx, shop.y + rs.ty + 1, 'CAPYTAP', gc);
-      ctx.globalAlpha = L; wordBig(ctx, shop.x + rs.tx, shop.y + rs.ty, 'CAPYTAP', 'w');
+      ctx.globalAlpha = L * 0.55 * pulse; wordBigFast(shop.x + rs.tx - 1, shop.y + rs.ty, 'CAPYTAP', gc); wordBigFast(shop.x + rs.tx + 1, shop.y + rs.ty, 'CAPYTAP', gc); wordBigFast(shop.x + rs.tx, shop.y + rs.ty - 1, 'CAPYTAP', gc); wordBigFast(shop.x + rs.tx, shop.y + rs.ty + 1, 'CAPYTAP', gc);
+      ctx.globalAlpha = L; wordBigFast(shop.x + rs.tx, shop.y + rs.ty, 'CAPYTAP', 'w');
     }
     const sg = shop.sign; [[5, 0.06], [2, 0.1]].forEach(([pad, al]) => { ctx.globalAlpha = L * al; R(ctx, shop.x + sg.x - pad, shop.y + sg.y - pad, sg.w + pad * 2, sg.h + pad * 2, 'y'); });
     ctx.globalAlpha = 1;
     });
   }
   lampXs.forEach(x => {
+    if (x < visL() - VIS_PAD || x > visR() + VIS_PAD) return;
     const cp = LAYOUT.capy, nearC = cp ? Math.max(0.3, Math.min(1, (Math.abs(x - cp.x) - 6) / 44)) : 1;       // біля Капі ореол слабшає: світло не засвічує саму Капі
     ctx.globalAlpha = L * 0.07 * nearC;
     for (let i = 0; i < 6; i++) { const hw = 30 - i * 4; R(ctx, x + 1 - hw, 126 + i * 4, hw * 2, 4, 'y'); }   // пляма світла на землі (слабка: вона лежить поверх звірят і Капі)
-    ctx.globalAlpha = L * 0.06 * nearC; disc(ctx, x + 1, 90, 28, 'y');
-    ctx.globalAlpha = L * 0.13 * nearC; disc(ctx, x + 1, 90, 18, 'y');
-    ctx.globalAlpha = L * 0.24 * (0.5 + 0.5 * nearC); disc(ctx, x + 1, 90, 11, 'y');
+    ctx.globalAlpha = L * 0.06 * nearC; discFast(x + 1, 90, 28, 'y');
+    ctx.globalAlpha = L * 0.13 * nearC; discFast(x + 1, 90, 18, 'y');
+    ctx.globalAlpha = L * 0.24 * (0.5 + 0.5 * nearC); discFast(x + 1, 90, 11, 'y');
     ctx.globalAlpha = L;
     R(ctx, x - 2, 88, 6, 5, 'y'); R(ctx, x - 1, 89, 2, 2, 'w');
   });

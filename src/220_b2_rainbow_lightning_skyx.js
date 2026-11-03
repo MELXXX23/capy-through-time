@@ -97,11 +97,19 @@ function skyxDrone2(x, y, ph, box) {
   ctx.globalAlpha = 0.25; R(ctx, x - 10, y - 4, 7, 1, 'w'); R(ctx, x + 4, y - 4, 7, 1, 'w'); ctx.globalAlpha = 1;
   R(ctx, x - 7, y + 2, 1, 1, Math.floor(animClock * 2 + ph) % 2 ? 'r' : 'd'); R(ctx, x + 7, y + 2, 1, 1, Math.floor(animClock * 2 + ph) % 2 ? 'd' : 'g');   // бортові вогні
 }
+const KITE_SPR = new Map();
 function skyxKite(x, y, ph, c) {                                   // повітряний змій-ромб із хвостом і бантиками
   x = Math.round(x); y = Math.round(y + Math.sin(ph) * 2);
-  const rp = c.map(b => { const h = PALETTE[b] || b; return [mixHex(h, '#ffffff', 0.4), h, mixHex(h, '#272048', 0.45)]; });
-  for (let j = -8; j <= 8; j++) { const half = Math.round(6 * (1 - Math.abs(j) / 9) + (j < 0 ? 1 : 0)); for (let i = -half; i <= half; i++) { const left = i < 0, top = j < 0; R(ctx, x + i, y + j, 1, 1, i === 0 ? '#2a1f2e' : (left === top ? rp[0][top ? 1 : 0] : rp[1][1])); } }
-  R(ctx, x, y - 9, 1, 18, '#2a1f2e'); R(ctx, x - 6, y, 13, 1, '#2a1f2e');
+  if (x < visL() - VIS_PAD || x > visR() + VIS_PAD) return;
+  const key = c.join(); let kite = KITE_SPR.get(key);
+  if (!kite) {                                                      // ромб малюємо раз: ~150 окремих точок на кожного змія на кожен кадр — забагато
+    const rp = c.map(b => { const h = PALETTE[b] || b; return [mixHex(h, '#ffffff', 0.4), h, mixHex(h, '#272048', 0.45)]; }), s = document.createElement('canvas'); s.width = 13; s.height = 18;
+    const g = s.getContext('2d');
+    for (let j = -8; j <= 8; j++) { const half = Math.round(6 * (1 - Math.abs(j) / 9) + (j < 0 ? 1 : 0)); for (let i = -half; i <= half; i++) { const left = i < 0, top = j < 0; R(g, 6 + i, 9 + j, 1, 1, i === 0 ? '#2a1f2e' : (left === top ? rp[0][top ? 1 : 0] : rp[1][1])); } }
+    R(g, 6, 0, 1, 18, '#2a1f2e'); R(g, 0, 9, 13, 1, '#2a1f2e');
+    kite = { s, rp }; KITE_SPR.set(key, kite);
+  }
+  const rp = kite.rp; ctx.drawImage(kite.s, x - 6, y - 9);
   for (let k = 1; k <= 20; k++) { const tx = x + Math.round(Math.sin(ph * 1.5 - k * 0.5) * (1 + k * 0.28)), ty = y + 8 + k; R(ctx, tx, ty, 1, 1, '#2a1f2e'); if (k % 5 === 0) { R(ctx, tx - 2, ty, 5, 1, rp[1][1]); R(ctx, tx, ty - 2, 1, 5, rp[0][1]); } }
 }
 const noteCache = {};

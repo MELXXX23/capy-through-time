@@ -113,7 +113,8 @@ function drawEpochBack() {
 }
 function drawEpochFront() {
   if (!animOn()) return;
-  leaves.forEach(l => R(ctx, Math.round(l.x + Math.sin(animClock * 1.5 + l.ph) * 6), Math.round(l.y), l.petal ? 3 : 2, l.petal ? 2 : 1, l.col));
+  const vl = visL() - VIS_PAD, vr = visR() + VIS_PAD;
+  leaves.forEach(l => { if (l.x >= vl && l.x <= vr) R(ctx, Math.round(l.x + Math.sin(animClock * 1.5 + l.ph) * 6), Math.round(l.y), l.petal ? 3 : 2, l.petal ? 2 : 1, l.col); });
 }
 function updateEpochFx(dt) {
   if (!animOn()) return;

@@ -95,6 +95,12 @@ function disc(g, cx, cy, r, ch) {
     g.fillRect(cx - half, cy + dy, half * 2 + 1, 1);
   }
 }
+const DISC_SPR = new Map();
+function discFast(cx, cy, r, ch) {                          // той самий круг на основному полотні, але одним малюнком, а не 2r+1 смугами (ореоли ліхтарів і лампочок)
+  const k = r + ch; let c = DISC_SPR.get(k);
+  if (!c) { c = document.createElement('canvas'); c.width = c.height = r * 2 + 1; const g = c.getContext('2d'); g.fillStyle = ch; disc(g, r, r, r, ch); DISC_SPR.set(k, c); }
+  ctx.drawImage(c, cx - r, cy - r);
+}
 function hash2(x, y) { return (((x * 73856093) ^ (y * 19349663)) >>> 0); }
 // Полотно: «ядро» сцени 320×180 завжди посередині, а на широкому екрані до нього додаються
 // ще вулиця з боків (offX) і небо зверху (offY). Усе, що малюється в шарах, — у координатах «ядра».
@@ -111,6 +117,7 @@ function worldB() { return CONFIG.SCENE_H + view.extraB; }  // нижній кр
 function roadFloor() { return worldB() - (view.extraB >= 30 ? 40 : 8); }   // найнижче, куди заходять гуляти (нижче — дорога поштової машини)
 function visL() { return viewCrop.x - view.offX; }          // лівий край того, що видно зараз
 function visR() { return viewCrop.x + viewCrop.w - view.offX; }
+const VIS_PAD = 48;                                         // запас навколо видимого: поза ним важке не малюємо (на телефоні видно лише третину вулиці)
 function pctX(x) { return (x + view.offX) / view.w * 100; } // координата сцени → відсотки ширини полотна
 function pctY(y) { return (y + view.offY) / view.h * 100; }
 
