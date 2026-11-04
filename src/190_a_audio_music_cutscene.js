@@ -300,25 +300,6 @@ const SFX = {
     bell(659, t0 + 0.42, 0.2, 1.7);        // дон
   },
   paper() { const ac = audio.ctx, t0 = ac.currentTime + 0.01; noiseHit(audio.sfxGain, t0, 0.14, 0.32, 'bandpass', 3200); noiseHit(audio.sfxGain, t0 + 0.08, 0.1, 0.22, 'highpass', 5200); },
-  buildTheme() {   // бадьорий будівельний марш (≈8 с): мелодія на квадраті, бас і стукіт молотків
-    const ac = audio.ctx, beat = 0.5, t0 = ac.currentTime + 0.05;
-    const MEL = [[['G4', .5], ['C5', .5], ['E5', .5], ['C5', .5], ['G4', .5], ['E5', .5], ['G5', 1]], [['F4', .5], ['A4', .5], ['C5', .5], ['A4', .5], ['F5', .5], ['E5', .5], ['D5', 1]], [['E5', .5], ['G5', .5], ['E5', .5], ['C5', .5], ['D5', .5], ['E5', .5], ['G5', 1]], [['G5', .5], ['E5', .5], ['D5', .5], ['B4', .5], ['C5', 2]]];
-    const ROOTS = ['C3', 'F2', 'C3', 'G2'];
-    MEL.forEach((bar, bi) => {
-      const t = t0 + bi * 4 * beat; let b = 0;
-      bar.forEach(([n, len]) => { tone(audio.sfxGain, 'square', noteFreq(n), t + b * beat, len * beat * 0.85, 0.13); b += len; });
-      for (let k = 0; k < 4; k++) {
-        tone(audio.sfxGain, 'triangle', noteFreq(ROOTS[bi]) * (k % 2 ? 2 : 1), t + k * beat, beat * 0.8, 0.28);
-        if (k % 2) noiseHit(audio.sfxGain, t + k * beat, 0.05, 0.35, 'bandpass', 2400);          // «тук» молотка на другій і четвертій долі
-        else noiseHit(audio.sfxGain, t + k * beat + beat * 0.5, 0.03, 0.18, 'highpass', 5000);
-      }
-    });
-  },
-  buildDone() {    // урочиста фанфара, коли магазин добудовано
-    melody('square', [['C5', .09], ['E5', .09], ['G5', .09], ['C6', .22], ['G5', .09], ['C6', .09], ['E6', .5]], 0.22);
-    const ac = audio.ctx, t = ac.currentTime + 0.05;
-    ['C4', 'E4', 'G4'].forEach(n => tone(audio.sfxGain, 'triangle', noteFreq(n), t + 0.5, 1.2, 0.16));
-  },
   sale()      { melody('square', [['G5', 0.07], ['C6', 0.07], ['E6', 0.07], ['G6', 0.07], ['E6', 0.07], ['G6', 0.25]], 0.2); },
   hammer() {  // один стукіт молотка по цеглі
     const ac = audio.ctx, t = ac.currentTime + 0.02;
@@ -397,34 +378,6 @@ const SFX = {
     const ac = audio.ctx; if (!audio.softLP) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 1500; fl.Q.value = 0.2; fl.connect(audio.sfxGain); audio.softLP = fl; }
     const now = ac.currentTime; if (now - (SFX._softLast || 0) < 0.08) return; SFX._softLast = now;
     tone(audio.softLP, 'triangle', 520 + Math.random() * 60, now + 0.004, 0.11, 0.09, 700);
-  },
-  themeArrive(ep) {   // прильот команди тематичного будівництва: коротка «візитка» епохи
-    const ac = audio.ctx, t = ac.currentTime + 0.02, g = audio.sfxGain;
-    switch (ep % 9) {
-      case 0: melody('triangle', [['C5', 0.12], ['E5', 0.12], ['G5', 0.12], ['C6', 0.45]], 0.22); melody('sine', [['G6', 0.1], ['C7', 0.4]], 0.08); break;       // ангельський передзвін
-      case 1: noiseHit(g, t, 0.6, 0.18, 'bandpass', 900); melody('sawtooth', [['G3', 0.2], ['C4', 0.4]], 0.12); break;                                          // дирижабль
-      case 2: for (let i = 0; i < 4; i++) { tone(g, 'sine', 125, t + i * 0.25, 0.2, 0.26, 45); noiseHit(g, t + i * 0.25 + 0.125, 0.04, 0.12, 'highpass', 6000); } break;   // бочка й хет
-      case 3: melody('square', [['C5', 0.06], ['E5', 0.06], ['G5', 0.06], ['C6', 0.06], ['E6', 0.14]], 0.16); break;                                            // чіптюн
-      case 4: for (let i = 0; i < 6; i++) tone(g, 'square', i % 2 ? 2100 : 1300, t + i * 0.06, 0.05, 0.07); noiseHit(g, t + 0.4, 0.5, 0.06, 'bandpass', 3000); break;   // модем
-      case 5: for (let i = 0; i < 4; i++) tone(g, 'sine', 2100 + i * 250, t + i * 0.12, 0.09, 0.1, 3000 + i * 150); break;                                      // пташки
-      case 6: noiseHit(g, t, 0.8, 0.14, 'bandpass', 500); tone(g, 'sine', 120, t, 0.8, 0.2, 520); tone(g, 'sine', 880, t + 0.7, 0.12, 0.1); break;              // тарілка
-      case 7: tone(g, 'sawtooth', 70, t, 0.6, 0.14, 700); tone(g, 'square', 1500, t + 0.55, 0.1, 0.08, 400); break;                                              // синті-гул
-      default: tone(g, 'sine', 95, t, 0.35, 0.3, 50); tone(g, 'sine', 95, t + 0.4, 0.35, 0.3, 50); melody('triangle', [['D5', 0.1], ['A5', 0.1], ['D6', 0.3]], 0.14);   // тайко й кото
-    }
-  },
-  themeHit(ep) {      // один «стук» команди епохи (грає ритмічно, поки будується)
-    const ac = audio.ctx, t = ac.currentTime + 0.01, g = audio.sfxGain;
-    switch (ep % 9) {
-      case 0: tone(g, 'sine', 1568, t, 0.14, 0.1); tone(g, 'sine', 2093, t + 0.02, 0.1, 0.06); break;
-      case 1: noiseHit(g, t, 0.05, 0.3, 'bandpass', 2600); tone(g, 'square', 220, t, 0.06, 0.12, 110); break;
-      case 2: tone(g, 'sine', 115, t, 0.14, 0.24, 48); break;
-      case 3: tone(g, 'square', 988, t, 0.05, 0.1); tone(g, 'square', 1319, t + 0.05, 0.1, 0.1); break;
-      case 4: noiseHit(g, t, 0.02, 0.3, 'highpass', 4000); tone(g, 'square', 1500, t, 0.03, 0.08); break;
-      case 5: tone(g, 'triangle', 620, t, 0.14, 0.16, 420); break;
-      case 6: tone(g, 'sawtooth', 300, t, 0.08, 0.09, 1200); noiseHit(g, t, 0.05, 0.1, 'highpass', 5000); break;
-      case 7: tone(g, 'sawtooth', 1500, t, 0.08, 0.09, 300); break;
-      default: noiseHit(g, t, 0.04, 0.3, 'bandpass', 1200); tone(g, 'triangle', 520, t, 0.1, 0.16, 300);
-    }
   },
   click()     { tone(audio.sfxGain, 'square', 660, audio.ctx.currentTime, 0.03, 0.14); },
 };

@@ -320,9 +320,9 @@ function getShopScale() {
 function startBuild(old) {
   ejectInside();
   const style = (state.shopLevel + 1) % 3;                       // три способи будівництва по черзі: молоток, кран, дошки
-  playSfx('buildTheme');
+  buildSoundStart();                                             // звук будування епохи (190_f)
   if (!buildPreview) showToast(t('buildTapHint'), 'good');
-  build = { t: 0, dur: CONFIG.BUILD_SECONDS, boost: 0, hitSfx: 0, old, dustTimer: 0, burst: false, style, r: 0, shake: 0, hitT: 0, lastSfx: 0, bx: old.x - 30, by: LAYOUT.curbY + 4, bdir: 1, fw: 0, fwT: 0, landed: -1, bands: 0, fin: false };
+  build = { t: 0, dur: CONFIG.BUILD_SECONDS, boost: 0, old, dustTimer: 0, burst: false, style, r: 0, shake: 0, hitT: 0, bx: old.x - 30, by: LAYOUT.curbY + 4, bdir: 1, fw: 0, fwT: 0, landed: -1, bands: 0, fin: false };
   ui.shopOverlay.style.visibility = 'hidden';
   buildCinemaStart();
 }
@@ -332,7 +332,7 @@ function finishBuild() {
   ui.scene.style.transform = '';
   ui.shopOverlay.style.visibility = '';
   shopAnim.vel = 6;
-  playSfx('levelup');
+  buildSoundEnd();
   if (buildPreview) {                                                      // показ у режимі бога: повертаємо справжній рівень (або лишаємо новий, якщо так обрано)
     const bp = buildPreview; buildPreview = null;
     if (!bp.keep && state.shopLevel !== bp.back) { state.shopLevel = bp.back; rebuildShop(true); }
@@ -355,7 +355,6 @@ function spawnDust(x, y, n) {
 // Будівництво (≈8,5 с): прибуття Боді, руйнування старого, зведення нового (три стилі), обвалення риштувань, салют
 const BUILD_A = 0.16, BUILD_C = 0.84;
 function smooth01(v) { v = Math.max(0, Math.min(1, v)); return v * v * (3 - 2 * v); }
-function buildSfx(b, n) { if (b.t - b.lastSfx > n) { b.lastSfx = b.t; playSfx('build'); } }
 function buildSparks(x, y, n, cols) { for (let i = 0; i < n; i++) { const a = rand(0, Math.PI * 2), sp = rand(20, 55); fx.sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 22, age: 0, life: rand(0.35, 0.65), col: cols[i % cols.length] }); } }
 function buildBands() { return Math.max(4, Math.ceil(shop.h / 6)); }
 function updateBuild(dt) {
@@ -380,14 +379,14 @@ function updateBuild(dt) {
   else { const u = Math.max(0, (p - BUILD_C) / (1 - BUILD_C)); b.truckX = b.parkX + (endX - b.parkX) * u * u; b.truckMoving = u > 0.02; }
   b.pour = p >= BUILD_A && p < BUILD_A + 0.3;
   const themed = !!BTH.list[viewEpoch() % BTH.list.length];                                              // у тематичній анімації немає вантажівок — звуки епохи
-  if (!b.sArr && p > 0.005) { b.sArr = true; playSfx(themed ? 'themeArrive' : 'truckDrive', themed ? viewEpoch() : BUILD_A * b.dur * 0.9); }   // приїзд
+  if (!b.sArr && p > 0.005) { b.sArr = true; if (!themed) playSfx('truckDrive', BUILD_A * b.dur * 0.9); }   // приїзд
   if (!b.sPour && p >= BUILD_A) { b.sPour = true; if (!themed) playSfx('concrete'); }                  // бетон із жолоба
   if (!b.sLeave && p >= BUILD_C + 0.03) { b.sLeave = true; if (!themed) playSfx('truckDrive', 2.2); }       // від'їзд
-  if (themed && p >= BUILD_A && p < BUILD_C && b.t - b.hitSfx > 0.55) { b.hitSfx = b.t; playSfx('themeHit', viewEpoch()); }   // ритмічний «стук» епохи
+  buildSoundTick(b, p);                                                                                  // звук епохи: удари в такт музики (190_f)
   b.build = false; b.carry = false;
   if (p < BUILD_A) {                                           // Боді вибігає назустріч вантажівці, старий магазин ховається під шатро й розсипається
     b.r = 0; run = true; tx = (visL() - 20) + (b.parkX - 10 - (visL() - 20)) * smooth01(p / BUILD_A); b.bx = tx;
-    if (p > 0.115 && !b.crumbled) { b.crumbled = true; b.shake = 0.9; playSfx('hammer'); if (!themed) playSfx('truckBrake'); for (let i = 0; i < 16; i++) spawnDust(o.x - 6 + (i / 15) * (o.w + 12), LAYOUT.curbY + 2, 1); buildSparks(o.x + o.w / 2, o.y + 8, 6, ['w', 'E']); }      // шатро лягло на магазин
+    if (p > 0.115 && !b.crumbled) { b.crumbled = true; b.shake = 0.9; if (!themed) { playSfx('hammer'); playSfx('truckBrake'); } for (let i = 0; i < 16; i++) spawnDust(o.x - 6 + (i / 15) * (o.w + 12), LAYOUT.curbY + 2, 1); buildSparks(o.x + o.w / 2, o.y + 8, 6, ['w', 'E']); }      // шатро лягло на магазин
   } else if (p < BUILD_C) {
     b.r = 0;                                                     // новий магазин лишається під шатром до самого кінця
     const ph = ((b.t - BUILD_A * b.dur) / 1.5) % 1, siteX = shop.x + shop.w * 0.24, pileX = b.parkX - 8;
@@ -395,15 +394,15 @@ function updateBuild(dt) {
     if (ph < 0.36) { tx = pileX + (siteX - pileX) * smooth01(ph / 0.36); run = true; b.carry = true; }                // несе відро бетону й цеглу до шатра
     else if (ph < 0.72) {                                                                                        // будує: мастерок і молоток б'ють по стіні під шатром
       tx = siteX; b.build = true; b.hitT += dt;
-      if (b.hitT >= 0.2) { b.hitT = 0; b.shake = Math.max(b.shake, 0.3); buildSparks(siteX + b.bdir * 8, LAYOUT.curbY - 12, 3, ['y', 'w', 'c']); spawnDust(siteX, LAYOUT.curbY + 2, 1); b.hn = (b.hn | 0) + 1; if (b.hn % 2) playSfx('hammer'); }
+      if (b.hitT >= 0.2) { b.hitT = 0; b.shake = Math.max(b.shake, 0.3); buildSparks(siteX + b.bdir * 8, LAYOUT.curbY - 12, 3, ['y', 'w', 'c']); spawnDust(siteX, LAYOUT.curbY + 2, 1); b.hn = (b.hn | 0) + 1; if (!themed && b.hn % 2) playSfx('hammer'); }
     } else { tx = siteX + (pileX - siteX) * smooth01((ph - 0.72) / 0.28); run = true; }                       // повертається по нову порцію
     if (b.dustTimer <= 0) { b.dustTimer = 0.14; spawnDust(shop.x + rand(0, shop.w), LAYOUT.curbY + rand(-2, 4), 1); } else b.dustTimer -= dt;
   } else {                                                      // фінал: шатро знімається, салют, Боді підстрибує від радості
     b.r = 1; tx = cx; ty = LAYOUT.curbY + 5;
-    if (!b.fin) { b.fin = true; b.shake = 1; playSfx('buildDone'); for (let i = 0; i < 18; i++) spawnDust(shop.x + (i / 17) * shop.w, LAYOUT.curbY, 1); }
-    if (!b.cut && (p - BUILD_C) / (1 - BUILD_C) >= 0.5) { b.cut = true; const dr = doorWorld(); for (let i = 0; i < 12; i++) fx.sparks.push({ x: dr.cx + rand(-4, 4), y: shop.y + shop.door.y + 14, vx: rand(-40, 40), vy: rand(-50, -10), age: 0, life: 0.6, col: ['y', 'w', 'r', 'f'][i % 4] }); playSfx('pip'); }
+    if (!b.fin) { b.fin = true; b.shake = 1; for (let i = 0; i < 18; i++) spawnDust(shop.x + (i / 17) * shop.w, LAYOUT.curbY, 1); }
+    if (!b.cut && (p - BUILD_C) / (1 - BUILD_C) >= 0.5) { b.cut = true; const dr = doorWorld(); for (let i = 0; i < 12; i++) fx.sparks.push({ x: dr.cx + rand(-4, 4), y: shop.y + shop.door.y + 14, vx: rand(-40, 40), vy: rand(-50, -10), age: 0, life: 0.6, col: ['y', 'w', 'r', 'f'][i % 4] }); buildSoundSpark(); }
     if (!b.vanish && p >= BUILD_C + 0.1) {                                                       // будівельні матеріали зникають у хмарках пилу
-      b.vanish = true; playSfx('pip');
+      b.vanish = true; buildSoundSpark();
       [b.parkX - 8, shop.x + shop.w * 0.24 - 20].forEach(vx => { spawnDust(vx, LAYOUT.curbY + 8, 3); buildSparks(vx, LAYOUT.curbY + 2, 5, ['y', 'w']); });
     }
     b.fwT -= dt;
@@ -411,7 +410,7 @@ function updateBuild(dt) {
       b.fwT = 0.24; const pairs = [['y', 'h'], ['f', 'p'], ['s', 'a'], ['g', 'm'], ['r', 'o']], cols = pairs[b.fw++ % 5];
       const fxX = shop.x + rand(0, shop.w), fyY = shop.y - rand(8, 36);
       for (let i = 0; i < 20; i++) { const a = i / 20 * Math.PI * 2, sp = rand(26, 62); fx.sparks.push({ x: fxX, y: fyY, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 10, age: 0, life: rand(0.7, 1.1), col: cols[i % 2] }); }
-      playSfx('pip');
+      buildSoundSpark();
     }
   }
   if (!(p < BUILD_A)) { b.bx += (tx - b.bx) * Math.min(1, dt * 7); }
