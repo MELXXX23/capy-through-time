@@ -72,6 +72,9 @@
   /* хатка відьми й лапшична: гра вдвічі крупніше, рівно ×2 */
   #circusModal.hag:not(.mg) .modal-box { width: min(96vw, 560px); }
   #circusModal.hag:not(.mg) #circusWheel { width: min(100%, 512px, max(256px, calc((100dvh - 400px) * 1.6))); }
+  /* шрифт чіткого розміру трохи ширший: вікна звуку й відгуку ширші, щоб слова в кнопках не рвались */
+  #soundModal .modal-box { width: min(94vw, 600px); }
+  #feedbackModal .modal-box { width: min(94vw, 480px); }
   /* прапорці бонус-вікна не заходять на заголовок */
   #circusModal .modal-box, #circusModal.mg .modal-box { padding-top: 40px; }
   /* текст із гнучким розміром: на ПК лише чіткі розміри */
@@ -88,6 +91,9 @@
   #boot .b-title { font-size: 48px; }
   #boot .b-tip b { font-size: 12px; }
   #boot .b-tip small { font-size: 8px; }
+}
+@media (min-width: 821px) and (max-width: 1200px) and (min-height: 600px) {
+  #setSeason .btn, .daily-row .dtext { font-size: var(--f8, 8px); }                  /* вузька панель: пори року в три колонки й завдання дня без розірваних слів */
 }
 @supports (width: round(3px, 1px)) {
   .team-card .portrait { width: calc(round(102 * var(--dpr) / 34, 1) * 34px / var(--dpr)); height: calc(round(102 * var(--dpr) / 34, 1) * 27px / var(--dpr)); }
