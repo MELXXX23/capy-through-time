@@ -101,7 +101,7 @@
 | `265_e_capy_scenes.js` | 23 | — | CAPY_SCENES |
 | `265_icons_plus.js` | 27 | — | pxIconCache, pxEmojiIcon, iconBox, setIconBox, iconBackdrop, iconAvgColor, mixCol, skinTwinkles |
 | `270_loop.js` | 3 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frameErrN, frameErr, frame, frameStep |
-| `275_a_fuji.js` | 14 | Фудзі: верхівка, сніговий ковпак, карта кольорів і палітри дня, вечора й ночі | FUJI_Q, FUJI_CRATER, fujiCone, fujiConeW, FUJI_RIM, fujiHeight, FUJI_RAV, FUJI_PATCH |
+| `275_a_fuji.js` | 12 | Фудзі: верхівка, сніговий ковпак, карта кольорів і палітри дня, вечора й ночі | fujiCone, fujiConeW, FUJI_RAV, FUJI_PATCH, FUJI_TAU, FJ_RIMC, FJ_SNOW_OF, fjHex |
 | `275_a_sakura.js` | 22 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild, TREE2_CACHE |
 | `275_ads.js` | 9 | реклама AdMob (лише Android-обгортка, прапорець window.__ADS з mobile/sync-web.js): Ads.init/available/showRewarded, кнопки «×2» у вікні офлайну й пропуск очікування бонус-гри; див. store/ADS_PLAN.md | Ads, adsAddPrivacyButton, adsLog, adOfflineDone, updateAdButtons, adsOfferOffline, adsBoostClick, adsOfferBonusSkip |
 | `275_iap.js` | 4 | — | Iap |

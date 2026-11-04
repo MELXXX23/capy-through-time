@@ -1,32 +1,19 @@
 //#part 275_a_fuji.js
 /* =====================================================================
-   ФУДЗІ (Японія). Тіло гори, її розмір і схили — ті самі, що були. Нова лише верхівка: зрізана вершина з кратером,
-   сніговий ковпак із довгими «пальцями», плоскі тони снігу, свої кольори снігу ввечері й уночі. Пікселі 1×1, як у будинків.
+   ФУДЗІ (Японія). Тіло гори, її розмір і схили — ті самі, що були. Нова лише верхівка: сніговий ковпак
+   із довгими «пальцями», плоскі тони снігу, свої кольори снігу ввечері й уночі. Вершина гостра. Пікселі 1×1, як у будинків.
    Гора будується ОДИН раз у карту номерів кольорів (на кожен розмір). День, вечір і ніч — та сама карта з іншою
    палітрою: кадр лише копіює готове полотно, перефарбовується воно, коли змінюється фаза доби.
-   Політ дракона рахується від того самого конуса, що й раніше (dseqBuild у 275_japan), кратер потрібен лише там,
-   де тіло дракона ховається за гору (fujiHeight).
+   Політ дракона рахується від того самого конуса (dseqGeo і dseqBuild у 275_japan): форму гори міняти не можна окремо від нього.
    ===================================================================== */
-const FUJI_CRATER = 0.029;                                     // на яку частку висоти зрізана гостра вершина
 function fujiCone(dx, H, hw) { return H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3); }      // схил: висота над основою на відстані dx від осі
 function fujiConeW(d, H, hw) { return hw * (1 - Math.pow(Math.max(0, 1 - d / H), 1 / 1.3)); }       // півширина конуса на глибині d від вершини
-const FUJI_RIM = [[-1, 0], [-0.72, 1], [-0.46, 2], [-0.2, 1], [0.12, 0], [0.44, 2], [0.72, 1], [1, 0]];      // зубці кратера: на скільки пікселів нижче краю (при H = 350)
-function fujiHeight(dx, H, hw) {                               // справжній силует: конус із кратером угорі
-  const h = fujiCone(dx, H, hw), rim = H * (1 - FUJI_CRATER);
-  if (h <= rim) return h;
-  const q = dx / fujiConeW(H * FUJI_CRATER, H, hw); let i = 0;
-  while (i < FUJI_RIM.length - 2 && q > FUJI_RIM[i + 1][0]) i++;
-  const A = FUJI_RIM[i], B = FUJI_RIM[i + 1];
-  return rim - (A[1] + (B[1] - A[1]) * Math.max(0, Math.min(1, (q - A[0]) / (B[0] - A[0])))) * Math.max(0.7, H / 350);
-}
 
 /* Яри й пальці снігу: [a — місце на схилі (−1 лівий край, 1 правий), довжина пальця, довжина яру нижче пальця, ширина, глибина тіні] */
 const FUJI_RAV = [[-0.87, 0.3, 0.1, 0.03, 1], [-0.72, 0.62, 0.22, 0.034, 1], [-0.58, 0.28, 0.12, 0.026, 1], [-0.44, 1, 0.3, 0.036, 1], [-0.3, 0.42, 0.14, 0.026, 1], [-0.17, 0.76, 0.32, 0.032, 1], [-0.05, 0.32, 0.12, 0.024, 1],
   [0.07, 1.12, 0.38, 0.036, 2], [0.2, 0.4, 0.15, 0.026, 1], [0.33, 0.84, 0.3, 0.034, 1], [0.47, 0.3, 0.12, 0.026, 1], [0.6, 0.72, 0.26, 0.034, 1], [0.74, 0.34, 0.12, 0.028, 1], [0.88, 0.5, 0.16, 0.03, 1]];
 /* Окремі латки снігу в тих самих ярах нижче довгих пальців: [a, початок, кінець, ширина] */
 const FUJI_PATCH = FUJI_RAV.filter(r => r[1] >= 0.6).map(r => { const tip = 0.2 + 0.205 * r[1]; return [r[0], tip + 0.03, tip + 0.085, 0.006]; });
-/* Темні скелі під кратером, клинці вістрям униз: [місце вздовж кратера (−1…1), висота, півширина] у пікселях при H = 350 */
-const FUJI_ROCK = [[-0.74, 8, 2.5], [-0.42, 5, 2], [0.42, 9, 3], [0.76, 6, 2.5]];      // посередині порожньо: там хрест годинникової вежі
 const FUJI_TAU = 0.53;                                         // нижче цієї глибини (частка висоти) снігу вже немає
 
 /* Номери кольорів у карті: 0 порожньо; 1–16 скеля (4 тони × 4 смуги серпанку); 17–32 те саме зі світлою лінією краю; далі контур, сніг і контур снігу */
@@ -57,7 +44,7 @@ function* fujiMapGen(H, hw, viewW) {                        // карта ном
   const Wf = hw * 2 + 8, Hc = Math.ceil(H / 2) * 2 + 2, crop = Math.max(0, (hw + 4 - (viewW >> 1) - 4) & ~1), W = Wf - 2 * crop;      // що за межами полотна сцени, не будуємо
   const map = new Uint8Array(W * Hc), n = Wf, i0 = crop, i1 = Wf - crop - 1, top = new Int16Array(n);
   const dxOf = i => i + 1 - hw - 4, colOf = dx => Math.round(dx + hw + 3);
-  for (let i = 0; i < n; i++) { const h = fujiHeight(dxOf(i), H, hw); top[i] = h < 1 ? Hc : Math.max(0, Math.ceil(Hc - 1 - h)); }
+  for (let i = 0; i < n; i++) { const h = fujiCone(dxOf(i), H, hw); top[i] = h < 1 ? Hc : Math.max(0, Math.ceil(Hc - 1 - h)); }
   const ST = new Float32Array(1025);                           // межа снігу (глибина τ) для кожного місця на схилі
   for (let i = 0; i <= 1024; i++) {
     const a = i / 512 - 1; let v = 0;
@@ -68,16 +55,15 @@ function* fujiMapGen(H, hw, viewW) {                        // карта ном
   const at = (p, t) => { let i = 0; while (i < p.length - 2 && t > p[i + 1][0]) i++; const A = p[i], B = p[i + 1]; return A[1] + (B[1] - A[1]) * Math.max(0, Math.min(1, (t - A[0]) / (B[0] - A[0]))); };
   const ZB = [[-0.66, zig(11, 14)], [-0.2, zig(29, 14)], [0.12, zig(47, 14)], [0.44, zig(83, 14)]], ZT = [3, 4, 3, 2, 1];      // зони світла на снігу: зліва освітлений бік, справа тіньовий
   const gul = FUJI_RAV.map(r => { const tip = 0.2 + 0.205 * r[1]; return { a: r[0], t0: tip * 0.5, t1: tip + r[2], w: r[3], d: r[4], z: zig(101 + Math.round(r[0] * 90), 8) }; });
-  const T = new Int8Array(n), G = new Uint8Array(n), F = new Uint8Array(n), C = new Uint8Array(n), PF = new Uint8Array(n);
-  const ps = Math.max(0.7, H / 350), rimD = H * FUJI_CRATER, rimW = fujiConeW(rimD, H, hw);
+  const T = new Int8Array(n), G = new Uint8Array(n), F = new Uint8Array(n), PF = new Uint8Array(n);
   const RID = new Float32Array(4097), GUL = new Uint8Array(4097);      // промені на схилах: таблиця за кутом (u від −2 до 2), щоб не рахувати синуси на кожен піксель
   for (let i = 0; i <= 4096; i++) { const u = i / 1024 - 2; RID[i] = Math.sin(u * 15 + 0.9 * Math.sin(u * 4.3 + 1)) * 0.6 + Math.sin(u * 38 + 2) * 0.25 + Math.sin(u * 7 + 0.4) * 0.4; GUL[i] = Math.sin(u * 21 + 1.3 * Math.sin(u * 5 + 0.5)) > 0.9 ? 1 : 0; }
   for (let py = 0; py < Hc; py++) {
     if (!(py & 31)) yield;
-    const hgt = Hc - py - 1, d = H - hgt, tau = d / H, cap = d > 0 && tau < FUJI_TAU;
+    const hgt = Hc - py - 1, d = H - hgt, tau = d / H, cap = d >= 0 && tau < FUJI_TAU;
     if (cap) {                                                 // верхівка: який тон і де сніг у цьому рядку
       const hr = Math.max(1, fujiConeW(d, H, hw)), calm = 1 / (1 + tau * tau * 9), xL = Math.max(i0, colOf(-hr) - 1), xR = Math.min(i1, colOf(hr) + 1);
-      G.fill(0, xL, xR + 1); C.fill(0, xL, xR + 1);
+      G.fill(0, xL, xR + 1);
       let x = xL; ZB.forEach((z, i) => { const b = Math.min(xR + 1, Math.max(x, colOf((z[0] + at(z[1], tau) * calm) * hr))); for (; x < b; x++) T[x] = ZT[i]; }); for (; x <= xR; x++) T[x] = ZT[4];
       for (const s of gul) {
         if (tau <= s.t0 || tau >= s.t1) continue;
@@ -89,7 +75,6 @@ function* fujiMapGen(H, hw, viewW) {                        // карта ном
       }
       for (let i = xL; i <= xR; i++) F[i] = tau < ST[Math.max(0, Math.min(1024, ((dxOf(i) / hr + 1) * 512) | 0))] ? 1 : 0;
       for (const s of FUJI_PATCH) if (tau > s[1] && tau < s[2]) { const wa = s[3] * Math.sin((tau - s[1]) / (s[2] - s[1]) * Math.PI), xa = Math.max(xL, colOf((s[0] - wa) * hr)), xb = Math.min(xR, colOf((s[0] + wa) * hr)); for (let k = xa; k <= xb; k++) F[k] = 1; }
-      for (const s of FUJI_ROCK) { const hh = s[1] * ps, dr = d - rimD; if (dr < hh) { const wa = s[2] * ps * (1 - Math.max(0, dr) / hh), xm = s[0] * rimW, xa = Math.max(xL, colOf(xm - wa)), xb = Math.min(xR, colOf(xm + wa)); for (let k = xa; k <= xb; k++) { F[k] = 0; C[k] = s[0] > 0 ? 1 : 2; } } }
     }
     for (let i = i0; i <= i1; i++) {
       const tp = top[i];
@@ -102,7 +87,7 @@ function* fujiMapGen(H, hw, viewW) {                        // карта ном
         let I = Math.max(0, Math.min(1, 0.5 - 0.46 * nxe + 0.1 * (hgt / H))); I = I * I * (3 - 2 * I) * 0.85 + I * 0.15;
         let L = Math.min(3, Math.floor(I * 4));
         if (GUL[ui] && hgt > 12) L = Math.max(0, L - 2);
-        if (cap) { if (C[i]) L = C[i] - 1; else if (PF[i]) L = Math.max(0, L - 1); PF[i] = 0; }      // під краєм снігу тонка тінь: сніг лежить на скелі
+        if (cap) { if (PF[i]) L = Math.max(0, L - 1); PF[i] = 0; }      // під краєм снігу тонка тінь: сніг лежить на скелі
         const band = hgt < 10 ? 3 : hgt < 22 ? 2 : hgt < 36 ? 1 : 0;
         v = edge ? FJ_OT : (dx < 0 && !(i >= 2 && py - 1 >= top[i - 2]) ? FJ_RIMC : 1) + L + 4 * band;
       }

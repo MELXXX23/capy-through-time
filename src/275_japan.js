@@ -380,7 +380,7 @@
   }
   function dseqGeo(wl, wr, top, span) {                 // та сама Фудзі, що в buildSky: центр, основа, вершина
     const { H, hw } = fujiDims(), cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
-    return { H, hw, kS: Math.max(0.6, Math.min(1, (bY - top - 250) / 150)), cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - fujiHeight(dx, H, hw) };
+    return { H, hw, kS: Math.max(0.6, Math.min(1, (bY - top - 250) / 150)), cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3) };
   }
   function dseqBuild(route, G, T0) {                    // політ: підліт (дракон меншає — віддаляється до гори) → зупинка в небі над дахами → виток навколо верхівки Фудзі → лягає дугою на передній схил (хвіст за горою) → сон → відліт уранці. Ніде не заходить на ТЦ, вежу й будинки
     const { cx, top, surf, ex, H, hw } = G;
