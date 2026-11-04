@@ -47,7 +47,8 @@ function frameStep(now) {
   countNights(dt, prevPhase);
   updateSkyState();
 
-  const underWarp = warp && warp.t >= WARP_COVER && !warp.warm && warp.t / warp.dur < warp.showK - 0.02;      // сцену й панелі закриває вир: не рахуємо те, чого не видно, увесь кадр йому
+  const introCovers = epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 5600;     // заставка повністю закриває сторінку
+  const underWarp = introCovers || (warp && warp.t >= WARP_COVER && !warp.warm && warp.t / warp.dur < warp.showK - 0.02);      // сцену й панелі закриває вир чи заставка: не рахуємо те, чого не видно, увесь кадр їм
   if (!underWarp) {
     updateAnimations(dt);
     updateBubbles();
@@ -62,11 +63,11 @@ function frameStep(now) {
     updateFxPlus(dt);
     updateDailyReminder(dt);
   }
-  const hidden = (warp && warp.t >= WARP_COVER && !warp.warm && warp.t / warp.dur < warp.showK) || (epochIntro.active && performance.now() - epochIntro.startedAt > 1400 && performance.now() - epochIntro.startedAt < 5600) || cut.on;     // сцену не малюємо, поки її закриває вир або заставка: два кадри під виром (warp.warm) прогрівають нову епоху, а перед відкриттям вона вже намальована
+  const hidden = (warp && warp.t >= WARP_FREEZE && !warp.warm && warp.t / warp.dur < warp.showK) || introCovers || cut.on;     // сцену не малюємо, поки її закриває вир або заставка: два кадри під виром (warp.warm) прогрівають нову епоху, а перед відкриттям вона вже намальована
   if (!hidden) { try { render(animClock); } catch (e) { frameErr(e); } }                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
 
   uiTimer += dt;
-  if (uiTimer >= CONFIG.UI_REFRESH_SECONDS) { uiTimer = 0; if (!warp) updateUI(); }      // під виром панелей не видно
+  if (uiTimer >= CONFIG.UI_REFRESH_SECONDS) { uiTimer = 0; if (!warp && !introCovers) updateUI(); }      // під виром і заставкою панелей не видно
 
   saveTimer += dt;
   if (saveTimer >= CONFIG.AUTOSAVE_SECONDS) { saveTimer = 0; if (!warp) saveGame(); }

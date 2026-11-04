@@ -7,7 +7,7 @@
 const perf = { ema: 1 / 60, slow: 0, auto: false };
 function ecoOn() { return !!state.settings.eco; }
 function perfSample(raw) {
-  if (raw <= 0 || raw > 0.5 || document.hidden) return;             // вкладка спала або була пауза
+  if (raw <= 0 || raw > 0.5 || document.hidden || warp || epochIntro.active) return;             // вкладка спала або була пауза; перехід між епохами — разова важка мить, режим економії через нього не вмикаємо
   perf.ema += (raw - perf.ema) * 0.05;
   if (state.settings.eco || state.settings.ecoAsked || animClock < 8) return;
   if (perf.ema > 0.04) perf.slow += raw; else perf.slow = Math.max(0, perf.slow - raw * 2);       // менше 25 кадрів/с довше 6 секунд

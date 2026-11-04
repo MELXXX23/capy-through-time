@@ -222,7 +222,8 @@ function roofTopOf(cv, w) {                                          // рядо
   try { const x0 = Math.max(0, (w >> 1) - 20), n = Math.min(40, w - x0), d = cv.getContext('2d').getImageData(x0, 0, n, Math.min(70, cv.height)).data; for (let y = 0; y < Math.min(70, cv.height); y++) for (let x = 0; x < n; x++) if (d[(y * n + x) * 4 + 3] > 40) return y; } catch (e) { /* без цього теж працює */ }
   return 0;
 }
-function buildShopCanvas(level, tiers) {
+function buildShopCanvas(level, tiers) { const it = buildShopCanvasGen(level, tiers); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+function* buildShopCanvasGen(level, tiers) {                          // порціями: під виром кадр не чекає цілого магазину (yield — місце, де можна перерватися)
   glassRects = []; skinGlints = [];
   const shelfLights = [];            // де стоять прилавки (вночі над ними м'яке тепле світло)
   const skinShop = SHOP_SKINS[skinOn('shop')] || null, es = Object.assign({}, epochShopStyle(), skinShop || {}), look0 = SHOP_LOOK[level - 1];
@@ -234,7 +235,7 @@ function buildShopCanvas(level, tiers) {
   const h = yG + 41;
   const mk = () => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; return cv; };
   const back = mk(), front = mk(), canvas = mk();
-  const b = back.getContext('2d'); let g = front.getContext('2d');
+  const b = back.getContext('2d'); let g = front.getContext('2d', level >= 6 ? { willReadFrequently: true } : undefined);   // рівень 6: контур даху читаємо (roofTopOf), читання з відеокарти зупиняло кадр на 20–35 мс
   const innerX = 8, innerW = w - 16;
 
   // --- геометрія поверхів: top — стеля, fy — підлога (де стоять ноги)
@@ -287,7 +288,8 @@ function buildShopCanvas(level, tiers) {
 
   /* ========== ІНТЕР'ЄР (back) ========== */
   let bayNo = 0;
-  floors.forEach(fl => {
+  yield;
+  for (const fl of floors) {
     const hF = fl.fy - fl.top;
     R(b, innerX, fl.top, innerW, hF, fl.cinema ? 'V' : look.inner[fl.f % look.inner.length]);        // стіна (кожен поверх свого кольору; у кінозалі темна)
     b.globalAlpha = 0.12; for (let x = innerX + 3; x < innerX + innerW; x += 6) R(b, x, fl.top, 1, hF, 'e'); b.globalAlpha = 1;
@@ -341,7 +343,8 @@ function buildShopCanvas(level, tiers) {
       }
     });
     glassRects.push([innerX, fl.top, innerW, hF]);                                // вночі інтер'єр світиться
-  });
+    yield;
+  }
   escalators.forEach(e => {
     const dir = e.xHigh > e.xLow ? 1 : -1, hi = floors[e.hi];
     const ox = dir > 0 ? e.xHigh - 14 : e.xHigh - 1;
@@ -361,10 +364,11 @@ function buildShopCanvas(level, tiers) {
     R(b, e.xLow, e.yLow - 11, 2, 11, 'd'); R(b, e.xLow, e.yLow - 10, 1, 9, 'e'); R(b, e.xHigh - (dir > 0 ? 1 : 0), e.yHigh - 11, 2, 11, 'd'); R(b, e.xHigh - (dir > 0 ? 0 : 0), e.yHigh - 10, 1, 9, 'e');
   });
 
+  yield;
   /* ========== ФАСАД (front) ========== */
   const arch = skinShop ? null : (ARCH[currentEpoch().id] || null), AC = { es, w, h, look, level, floors, yG, yB, door, innerX, innerW };
   deferSign = true; pendingSign = null;
-  if (arch && arch.front) { arch.front(g, AC); deferSign = false; } else {
+  if (arch && arch.front) { arch.front(g, AC); deferSign = false; yield; } else {
   withPal(es.roofPal, () => drawRoof(g, look.roof, w, look.top, look));
   deferSign = false;
   corniceG(g, w, look.top + 4, trim);
@@ -379,6 +383,7 @@ function buildShopCanvas(level, tiers) {
   if (level >= 3) for (let x = 12; x < w - 12; x += 6) R(g, x, look.top + 9, 1, 1, 'y');
   if (level === 2) buntingG(g, 8, w - 9, yB + 1);
   signMotif(g, es, w, look.top);
+  yield;
 
   floors.forEach(fl => {
     const hF = fl.fy - fl.top;
@@ -400,6 +405,7 @@ function buildShopCanvas(level, tiers) {
     g.globalAlpha = 1;
   });
 
+  yield;
   // навіс у смужку з зубчиками
   const sv = shopVariant(level), [a1, a2] = (skinShop && skinShop.awningCols) || (EPOCH_AWN[viewEpoch() % EPOCH_AWN.length] || [])[sv] || currentEpoch().awning || look.awning;
   for (let x = 0; x < w; x++) R(g, x, yG, 1, 8, (Math.floor(x / 6) % 2) ? a2 : a1);
@@ -432,6 +438,7 @@ function buildShopCanvas(level, tiers) {
   if (level === 3) { acG(g, w - 22, floors[1].top + 4); }
   modernG(g, level, w, h, yG, door, look, yB);
   }
+  yield;
 
   // декор даху малюємо на окремому шарі: навколо вивіски «CAPYTAP» лишається вільний проміжок
   const ks = lastRoofSign, K = { x: ks.x - 5, y: ks.y - 4, w: ks.w + 10, h: ks.h + 4 };
@@ -442,11 +449,15 @@ function buildShopCanvas(level, tiers) {
   const half = es.fx === 'neon' ? 19 : 8, pL = Math.max(half, Math.min(Math.round(w * 0.16), K.x - half - 2)), pR = Math.min(w - half, Math.max(Math.round(w * 0.84), K.x + K.w + half + 2));
   roofProp(g, es, w, look.top, level, pL); if (es.fx !== "neon") roofProp(g, es, w, look.top, level, pR);
   shopRoofExtras(g, es, w, look.top, level);       // примітні деталі на даху по боках від вивіски
+  yield;
   epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
+  yield;
   epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB);
+  yield;
   if (!skinShop) shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, shopVariant(level));
   if (skinShop) skinShopDeco(g, skinOn('shop'), w, h, look, yG, door);
   }
+  yield;
   gD.save(); gD.globalCompositeOperation = 'destination-out'; gD.fillStyle = '#000'; gD.fillRect(K.x, K.y, K.w, K.h); gD.restore();
   g = gFront; g.drawImage(dcv, 0, 0);
   if (level <= 2 && viewEpoch() % EPOCHS.length !== 0) openSignG(g, yG);                      // у Відродженні вивіски OPEN немає
@@ -458,6 +469,7 @@ function buildShopCanvas(level, tiers) {
   const cg = canvas.getContext('2d');
   cg.drawImage(back, 0, 0); cg.drawImage(front, 0, 0); drawDoorLeaves(cg, door, 0);
 
+  yield;
   // освітлені вітрини й інтер'єр (вночі накладаються поверх магазину)
   const lit = document.createElement('canvas');
   lit.width = w; lit.height = h;

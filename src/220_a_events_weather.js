@@ -134,7 +134,7 @@ function showSeasonsIntro() {
 }
 function updateSeasonsIntro() {
   if (state.seasonsIntro || state.epoch < 2) return;
-  if (dialog.active || epochIntro.active || build || !ui.modal.hidden || !ui.letterModal.hidden || !ui.circusModal.hidden || !ui.lootModal.hidden) return;
+  if (warp || dialog.active || epochIntro.active || build || !ui.modal.hidden || !ui.letterModal.hidden || !ui.circusModal.hidden || !ui.lootModal.hidden) return;   // warp: вікно вискакувало прямо у вирі на другій подорожі, а заставка малювалась поверх нього
   showSeasonsIntro();
 }
 function updateTheme() {

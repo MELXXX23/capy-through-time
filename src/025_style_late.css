@@ -143,7 +143,7 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 @keyframes dlgShine { to { background-position: 160% 0; } }
 /* заставка епохи: спалах, плавні вхід і вихід, текст наїжджає */
 #epochIntro:not([hidden])::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 50%, #fffbe8, rgba(255,240,200,.75) 55%, rgba(255,230,170,.4)); animation: eiFlash 1.1s ease-out both; }
-@keyframes eiFlash { 0% { opacity: .9; } 100% { opacity: 0; } }
+@keyframes eiFlash { 0% { opacity: 0; } 9% { opacity: .9; } 100% { opacity: 0; } }
 #epochIntro:not([data-ep="1"]) #eiStage { animation-timing-function: cubic-bezier(.6,0,.2,1); }
 #eiEmblem { animation-timing-function: cubic-bezier(.2,1.25,.35,1); }
 #eiNum { animation: eiNumIn .8s cubic-bezier(.2,.8,.2,1) 1.7s both; }
@@ -151,10 +151,12 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 #eiSub { animation: eiSubIn .9s cubic-bezier(.2,.8,.2,1) 3.3s both; }
 @keyframes eiSubIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 #epochIntro.out #eiBox { animation: eiBoxOut .55s cubic-bezier(.5,0,.9,.5) forwards; }
-@keyframes eiBoxOut { to { opacity: 0; transform: scale(1.08); filter: blur(3px); } }
-#epochIntro.out #eiStage { animation-timing-function: cubic-bezier(.55,0,.8,.4); }
+@keyframes eiBoxOut { to { opacity: 0; transform: scale(1.08); } }
+#epochIntro.in:not(.out) #eiStage { animation: none; clip-path: none; }
+#epochIntro.out #eiStage { animation-timing-function: cubic-bezier(.45,0,.55,1); }   /* коло закривається плавно й наприкінці сповільнюється: не зникає ривком на стику зі сценою */
 /* подорож у часі: плавно з'являється і розчиняється під заставкою епохи */
 #timeWarp:not([hidden]) { animation: twIn .4s ease-out both; }
+#timeWarp:not(.out) { pointer-events: auto; }   /* поки вир іде, натискання не проходять до панелей і магазину під ним */
 #timeWarp.out { animation: twOut .7s ease-in both; }
 @keyframes twIn { from { opacity: 0; filter: brightness(2.2); } to { opacity: 1; filter: none; } }
 @keyframes twOut { from { opacity: 1; } to { opacity: 0; } }

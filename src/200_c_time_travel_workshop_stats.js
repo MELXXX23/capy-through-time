@@ -28,13 +28,18 @@ function applyTimeTravelSteps() {
   customers.length = 0;
   recalcIncome();
     },
-    () => { deferLayers = {}; if (shop) rebuildShop(true); },            // спершу магазин і розмір сцени: шари одразу будуються під них, і немає повторної побудови
+    () => { deferLayers = {}; return shop ? rebuildShopSliced() : null; },   // спершу магазин і розмір сцени: шари одразу будуються під них, і немає повторної побудови
     () => { layoutScene(); moved = !!deferLayers.changed; deferLayers = null; },
     ...epochLayerSteps(true, () => updateUI()),
-    () => { propsLayer = buildPropsLayer(); if (moved) { buildSkyStars(); seedClouds(); seedBirds(); } seedBenches(); },
-    () => { resetEpochFx(); syncActors(); syncGuests(); },
+    () => { propsLayer = buildPropsLayer(); },
+    () => { if (moved) { buildSkyStars(); seedClouds(); seedBirds(); } seedBenches(); },
+    () => { resetEpochFx(); },
+    () => { syncActors(); syncGuests(); },
     warpLate(() => { updateMusic(); }),
-    warpLate(() => { updateUI(); checkAchievements(); saveGame(); })
+    warpLate(() => { eiWarm(); }),
+    warpLate(() => { updateUI(); }),
+    warpLate(() => { checkAchievements(); }),
+    warpLate(() => { saveGame(); })
   ];
 }
 function applyTimeTravel() { runStepsNow(applyTimeTravelSteps()); }
@@ -249,7 +254,9 @@ function setEpochPreviewSteps(e) {
   return [
     () => { syncEpochEarned(); state.activeEpoch = (e === null || e === curEpoch()) ? -1 : e; },
     ...epochLayerSteps(false, () => { refreshDeptTexts(); updateUI(); }),
-    warpLate(() => { updateMusic(); updateUI(); saveGame(); })
+    warpLate(() => { updateMusic(); }),
+    warpLate(() => { updateUI(); }),
+    warpLate(() => { saveGame(); })
   ];
 }
 function setEpochPreview(e) { runStepsNow(setEpochPreviewSteps(e)); }

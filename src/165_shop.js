@@ -5,13 +5,16 @@
 
 // Перебудовує спрайт магазину, якщо змінився рівень або наповненість вітрин
 let deferLayers = null;                          // подорож у часі: шари перебудовуються порціями окремими кроками, тут їх не чіпаємо (див. applyTimeTravelSteps)
-function rebuildShop(force) {
+let shopSlicing = false;                         // магазин будується порціями під виром: у цей час друга побудова зіпсувала б спільні glassRects (встигне наступна перевірка)
+function rebuildShop(force) { if (shopSlicing) return false; const it = rebuildShopGen(force); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
+function* rebuildShopSliced() { shopSlicing = true; try { return yield* rebuildShopGen(true); } finally { shopSlicing = false; } }
+function* rebuildShopGen(force) {
   const tiers = state.depts.map(tierOf);
   const sig = state.shopLevel + '|' + tiers.slice(0, state.shopLevel * 2).join('') + '|' + seasonNow() + '|' + (viewEpoch() % EPOCH_SHOP.length) + '|' + (skinOn('shop') || '');
   if (!force && shop && shop.sig === sig) return false;
   const levelChanged = !shop || shop.level !== state.shopLevel;
   if (levelChanged && shop) ejectInside();
-  const geo = buildShopCanvas(state.shopLevel, tiers);
+  const geo = yield* buildShopCanvasGen(state.shopLevel, tiers);
   shop = Object.assign(geo, {
     sig, level: state.shopLevel, doorOpen: shop ? (shop.doorOpen || 0) : 0,
     x: Math.round(LAYOUT.centerX - geo.w / 2),

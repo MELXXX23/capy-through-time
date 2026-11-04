@@ -60,7 +60,7 @@ function fxCoin(dt) {
   if (FXP.coin === null) FXP.coin = tgt;
   const d = tgt - FXP.coin;
   if (Math.abs(d) < 3 + Math.abs(tgt) * 0.004) { FXP.coin = tgt; return; }
-  if (d > 0 && FXP.coin !== null && ui.coinCount) { ui.coinCount.classList.remove('fxPop'); void ui.coinCount.offsetWidth; ui.coinCount.classList.add('fxPop'); }
+  if (d > 0 && FXP.coin !== null && ui.coinCount && animClock - (FXP.coinPopAt || -9) > 0.3) { FXP.coinPopAt = animClock; ui.coinCount.classList.remove('fxPop'); void ui.coinCount.offsetWidth; ui.coinCount.classList.add('fxPop'); }   // щонайбільше кілька разів на секунду: при швидкому доході анімація перезапускалась і змушувала перераховувати сторінку щокадру
   FXP.coin += d * Math.min(1, dt * 9);
   setText(ui.coinCount, fmt(Math.floor(FXP.coin)), 'coins');
 }
@@ -153,28 +153,36 @@ function aurStrips(cols) {                                  // вертикал�
   });
   AUR_KEY = key; return AUR_STRIPS;
 }
-// Шторки — ~3000 важких малюнків. Тому вони малюються лише у видимій частині неба в окремий шар, який оновлюється 20 разів на секунду (сяйво рухається повільно); на кадр лишається один малюнок.
-const aurBuf = { c: null, g: null, t: -9, cropX: -1e6, x: 0, y: 0 };
+// Шторки — ~3000 важких малюнків. Тому вони малюються лише у видимій частині неба, кожна у свій шар. За кадр оновлюється найстаріша шторка (кожна щонайбільше 12 разів на секунду: сяйво рухається повільно):
+// раніше всі перемальовувались разом, і кожен третій кадр був утричі важчий за сусідні. На повільному пристрої шторки просто оновлюються рідше, а кадр не важчає.
+const aurBufs = [];
+const AUR_MIN_AGE = 1 / 12;
 function fxAurora(C, L, t, x0, W, top, nightK) {                  // C.aurora — кольори (AURORA_COLS)
   const maxH = Math.max(28, Math.min(112, (LAYOUT.horizonY - top) * 0.42)), sx = Math.round(x0), b0 = top + maxH * 0.5 + 40;
-  const B = aurBuf, vx0 = Math.max(0, Math.floor(viewCrop.x) - VIS_PAD), vx1 = Math.min(W, Math.ceil(viewCrop.x + viewCrop.w) + VIS_PAD), yT = Math.max(top, Math.floor(b0 - maxH * 1.8 - 30)), bw = Math.max(1, vx1 - vx0), bh = Math.ceil(b0 + 62) - yT;
-  if (!B.c) { B.c = document.createElement('canvas'); B.g = B.c.getContext('2d'); }
-  const resized = B.c.width !== bw || B.c.height !== bh;
-  if (resized || yT !== B.y || Math.abs(viewCrop.x - B.cropX) > VIS_PAD / 2 || Math.abs(t - B.t) >= 0.05) {
+  const vx0 = Math.max(0, Math.floor(viewCrop.x) - VIS_PAD), vx1 = Math.min(W, Math.ceil(viewCrop.x + viewCrop.w) + VIS_PAD), yT = Math.max(top, Math.floor(b0 - maxH * 1.8 - 30)), bw = Math.max(1, vx1 - vx0), bh = Math.ceil(b0 + 62) - yT;
+  const n = L === 1 ? 3 : 4; let oldest = null;
+  const paint = (B, i) => {
+    const resized = B.c.width !== bw || B.c.height !== bh;
     if (resized) { B.c.width = bw; B.c.height = bh; } else { B.g.setTransform(1, 0, 0, 1, 0, 0); B.g.clearRect(0, 0, bw, bh); }
     B.t = t; B.cropX = viewCrop.x; B.x = vx0; B.y = yT;
     B.g.setTransform(1, 0, 0, 1, -(sx + vx0), -yT);                 // далі ті самі координати, що й на сцені
-    fxAuroraPaint(B.g, C, L, t, W, top, nightK, maxH, sx, b0, vx0, vx1);
+    fxAuroraPaint(B.g, C, L, t, W, top, nightK, maxH, sx, b0, vx0, vx1, i);
+  };
+  for (let i = 0; i < n; i++) {
+    let B = aurBufs[i]; if (!B) { const c = document.createElement('canvas'); B = aurBufs[i] = { c, g: c.getContext('2d'), t: -9, cropX: -1e6, x: 0, y: 0 }; }
+    if (B.c.width !== bw || B.c.height !== bh || yT !== B.y || Math.abs(viewCrop.x - B.cropX) > VIS_PAD / 2 || Math.abs(t - B.t) > 1) paint(B, i);     // змінився розмір або камера: цю шторку одразу
+    else if (t - B.t >= AUR_MIN_AGE && (!oldest || B.t < oldest.b.t)) oldest = { b: B, i };
   }
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1; ctx.drawImage(B.c, sx + B.x, B.y); ctx.restore();       // шторки світяться, а не просто фарбують небо
+  if (oldest) paint(oldest.b, oldest.i);
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1; for (let i = 0; i < n; i++) ctx.drawImage(aurBufs[i].c, sx + aurBufs[i].x, aurBufs[i].y); ctx.restore();       // шторки світяться, а не просто фарбують небо
 }
-function fxAuroraPaint(g, C, L, t, W, top, nightK, maxH, sx, b0, vx0, vx1) {
+function fxAuroraPaint(g, C, L, t, W, top, nightK, maxH, sx, b0, vx0, vx1, only) {
   const step = L === 1 ? 3 : 2, n = L === 1 ? 3 : 4, st = aurStrips(C.aurora);
   g.globalCompositeOperation = 'lighter'; g.imageSmoothingEnabled = true;
-  { const g0 = Math.round(b0 - maxH * 1.5), g1 = Math.round(b0 + 30), gr = g.createLinearGradient(0, g0, 0, g1);       // м'яке зелене сяйво на півнеба
+  if (only === 0) { const g0 = Math.round(b0 - maxH * 1.5), g1 = Math.round(b0 + 30), gr = g.createLinearGradient(0, g0, 0, g1);       // м'яке зелене сяйво на півнеба
     gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(0.65, 'rgba(40,240,170,1)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
     g.globalAlpha = 0.07 * nightK; g.fillStyle = gr; g.fillRect(sx + vx0, g0, vx1 - vx0, g1 - g0); }
-  for (let c = 0; c < n; c++) {
+  for (let c = only; c <= only; c++) {
     const d = c / (n - 1), sp = 0.55 + 0.7 * d, amp = 0.6 + 0.7 * d, hk = 0.7 + 0.45 * d, ak = 0.5 + 0.5 * d, pal = st[[1, 0, 0, 0][c]];       // 0 — далека, бліда й повільна, 1 — ближня, яскрава й висока
     const base = b0 + c * 11 - (1 - d) * 8;
     for (let x = vx0 - vx0 % step; x < vx1; x += step) {
