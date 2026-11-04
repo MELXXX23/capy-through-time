@@ -62,6 +62,7 @@
 /* ПК і великі екрани (телефони мають затверджені розкладки) */
 @media (min-width: 821px) and (min-height: 600px) {
   .tab { --icw: 64px; }
+  .btn.lang-pick { min-height: 32px; }
   /* смуга прокрутки в стилі гри, а не системна сіра */
   ::-webkit-scrollbar { width: 12px; height: 12px; }
   ::-webkit-scrollbar-track { background: var(--tc-card, #e9f7fc); box-shadow: inset 2px 0 0 var(--dark); }
@@ -81,7 +82,7 @@
   .np-in, .np-cover p, .np-sign, .np-tab, .np-btns .btn, .np-gift, .np-toc, .np-fig figcaption, .np-nav span, .np-mast small, .np-mast .who { font-size: var(--f12, 12px); }
   .np-in h3, .np-lead, #newsTitle { font-size: var(--f16, 16px); }
   #dialog.isTitle #dlgText { font-size: var(--f24, 24px); }
-  .skin-name { font-size: var(--f8, 8px); }
+  .skin-name { font-size: min(var(--f8, 8px), 7.6cqw); }          /* чіткий розмір, а довга назва у вузькій картці все ще дрібнішає й не вилазить */
   .floater { font-size: max(16px, calc(var(--u) * 8)); }
   /* газета: малюнки рівно ×2 */
   .np-fig, .np-cover .np-fig { width: fit-content; margin-left: auto; margin-right: auto; }
