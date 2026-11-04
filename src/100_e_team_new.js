@@ -90,6 +90,7 @@ function dressHero(id, o) {
   const extB = y => { let a = -1, b = -1; for (let x = 3; x <= W - 4; x++) if (solid(x, y)) { if (a < 0) a = x; b = x; } return [a, b]; };   // межі самого тулуба: хвіст поза ними
   const col = ch => PALETTE[ch] || ch, put = (x, y, ch) => { g.fillStyle = col(ch); g.fillRect(x, y, 1, 1); };
   let y0 = 0; for (; y0 < H; y0++) { let run = 0, best = 0; for (let x = 0; x < W; x++) { run = solid(x, y0) ? run + 1 : 0; if (run > best) best = run; } if (best >= 8) break; }       // верх голови: перший рядок із суцільною смугою ≥ 8 (вуха не рахуємо)
+  if (y0 < 7) y0 = 11;                                              // довгі вуха поруч дають таку смугу вище за голову (зайчик)
   // тулуб: светр/жилет по силуету
   const T0 = 16 + TEAM_PAD, T1 = 21 + TEAM_PAD;
   if (o.outfit) paintOutfit(g, solid, extB, W, H, o.outfit);
@@ -117,7 +118,7 @@ function dressHero(id, o) {
     g.globalAlpha = 0.14; g.fillStyle = '#1e140f'; for (let y = T1 - 1; y <= T1; y++) { const [a, b] = extB(y); for (let x = a + 2; x <= b - 2; x++) g.fillRect(x, y, 1, 1); } g.globalAlpha = 1;        // легка тінь внизу
   }
   // головний убір: стоїть на голові, обличчя не закриває
-  const hy = y0 - 4;
+  const hy = y0 - (Array.isArray(o.hat) ? o.hat.length : 4);
   if (Array.isArray(o.hat) && o.outfit) paintHat(g, o.hat, 1, hy);
   else if (Array.isArray(o.hat)) o.hat.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] !== '.') put(1 + i, hy + j, r[i]); });
   if (Array.isArray(o.hat)) earsThroughHat(g, px, W, y0, o.hat, 1, hy);
@@ -136,7 +137,7 @@ function dressHero(id, o) {
     for (let y = y0; y <= y0 + 2; y++) { const [a, b] = ext(y); for (let x = a; x <= b; x++) if (solid(x, y)) put(x, y, 'z'); }
     const [a, b] = ext(y0 + 3); for (let x = a; x <= b; x++) if (solid(x, y0 + 3)) put(x, y0 + 3, 'r'); put(b + 1, y0 + 3, 'r'); put(b + 2, y0 + 4, 'r');
   }
-  if (base.chibi && CHIBI_MODELS.has(base.chibi)) {                 // лапки лишаються звірячими й лежать поверх одягу
+  if (base.chibi) {                                                 // лапки лишаються звірячими й лежать поверх одягу
     const A = CHIBI_ARM_Y[base.armF | 0];
     g.drawImage(base, 3, A[0] + 1 + TEAM_PAD, 2, 2, 3, A[0] + 1 + TEAM_PAD, 2, 2); g.drawImage(base, 13, A[1] + 1 + TEAM_PAD, 2, 2, 13, A[1] + 1 + TEAM_PAD, 2, 2);
   }
@@ -154,11 +155,11 @@ function teamEpochSprite(id, epoch) {
 // Скіни героїв (під вулиці): капелюх + тулуб
 const TEAM_SKIN_HATS = {
   ninja: ['......zzzz......', '....zzzzzzzz....', '...zzzzzzzzzz...', '...rrrrrrrrrrrr.'],
-  party: ['.......yy.......', '......dffd......', '.....dfTfTd.....', '....dfTfTfTd....'],
-  chef: ['.....wwwwww.....', '....wwwwwwww....', '....wwwwwwww....', '....EEEEEEEE....'],
-  wizard: ['.......yy.......', '......uuuu......', '.....uuyuuu.....', '...hhhhhhhhhh...'],
-  santa: ['.......ww.......', '......rrrr......', '.....rrrrrr.....', '....wwwwwwww....'],
-  witch: ['.......VV.......', '......VVVV......', '....oooooooo....', '...VVVVVVVVVV...'],
+  party: ['.......yy.......', '.......yy.......', '.......ff.......', '......fTff......', '......ffTf......', '.....fTffTf.....', '....fTffTffT....'],
+  chef: ['.....wwwwww.....', '....wwwwwwww....', '....wwEwwEww....', '.....wEwwEw.....', '.....wwwwww.....', '....EEEEEEEE....'],
+  wizard: ['.......yy.......', '.......uu.......', '......uuuu......', '......uuyu......', '.....uuuuuu.....', '.....uyuuuu.....', '....uuuuuuuu....', '..hhhhhhhhhhhh..'],
+  santa: ['........rrr.....', '......rrrrrrww..', '.....rrrrr..ww..', '.....rrrrrr.....', '....wwwwwwww....'],
+  witch: ['.......VV.......', '.......VV.......', '......VVVV......', '......VVVV......', '.....VVVVVV.....', '.....oooooo.....', '.....VVyyVV.....', '..VVVVVVVVVVVV..'],
   candy: ['.......rr.......', '......wwww......', '.....qwqqwq.....', '...pppppppppp...'],
   sand: ['.....wwwwww.....', '....wwEwwEww....', '....wwwrrwww....', '....nnnnnnnn....'],
   moss: ['.....g.ff.g.....', '....gGgyyGgG....', '...GgmgGGgmgG...', '...GGGGGGGGGG...'],

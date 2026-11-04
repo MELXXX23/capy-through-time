@@ -538,6 +538,8 @@ function drawCustomer(c) {
   if (c.bag && !(c.scale && c.scale < 0.9)) {   // пакет з покупками в лапці, злегка гойдається
     const bc = CHIBI.bag(c.bagKind || 0, c.bag), bx = c.dir > 0 ? sx + 14 : sx - 8;     // сумка на однаковій відстані від тіла з обох боків
     drawCanvasSprite(ctx, bc, bx, sy + 9 - ext + (frame ? 1 : 0), { alpha: c.alpha });
+    const pc = PAW_COL[c.type] || PAW_COL.hedgehog, pw = c.dir > 0 ? sx + 14 : sx + 1, py = sy + 15 + (frame ? 1 : 0);      // лапка лежить на сумці
+    ctx.globalAlpha = c.alpha; R(ctx, pw, py, 3, 3, pc[0]); R(ctx, pw + 1, py + 1, 1, 1, pc[1]); R(ctx, pw + 1, py, 1, 1, pc[1]); R(ctx, pw, py + 1, 1, 1, pc[2]); ctx.globalAlpha = 1;
   }
 }
 
