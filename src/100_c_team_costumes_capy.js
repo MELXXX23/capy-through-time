@@ -33,6 +33,7 @@
 CUSTOMER_TYPES.forEach(type => {
   SPRITES[type + '_0'] = { canvas: CHIBI.make(type, 0) };
   SPRITES[type + '_1'] = { canvas: CHIBI.make(type, 1) };
+  SPRITES[type + '_2'] = { canvas: CHIBI.make(type, 2) };
 });
 // Звірята-працівники: збираємо 16×16 з верхньої половини голови + спільного тулуба, права половина — дзеркало
 const CHIBI_LOWER = ['...d1111', '...d1122', '...d1222', '...d1222', '...d1111', '....33..'];

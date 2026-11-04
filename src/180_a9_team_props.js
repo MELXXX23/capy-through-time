@@ -15,11 +15,14 @@ const TP = (x, y, w, h, ch) => R(TPG, x, y, w, h, ch);
 const TPBX = (x, y, w, h, f, l, s) => { TP(x, y, w, h, 'd'); TP(x + 1, y + 1, w - 2, h - 2, f); TP(x + 1, y + 1, w - 2, 1, l); TP(x + 1, y + 1, 1, h - 2, l); TP(x + 1, y + h - 2, w - 2, 1, s); TP(x + w - 2, y + 1, 1, h - 2, s); };
 const TPART = (x, y, rows) => rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] !== '.') TP(x + i, y + j, 1, 1, r[i]); });
 let TPX = 0, TPY = 0;                                        // центр і ноги героя — звідси росте рука до лапки
-const TPAW = (x, y) => {                                     // лапка 3×3 і рука від плеча до неї (р. 73е: предмет тримається за тіло, а не висить поруч)
+const TPAW = (x, y) => {                                     // кругла лапка 4×4 і рука від плеча (плече на тулубі, рука йде за контуром)
   if (TPNOPAW) return;
-  const sx = TPX + 4, sy = TPY - 11, ex = x, ey = y + 1, n = Math.max(Math.abs(ex - sx), Math.abs(ey - sy));
-  for (let k = 0; k <= n; k++) { const ax = Math.round(sx + (ex - sx) * k / Math.max(1, n)), ay = Math.round(sy + (ey - sy) * k / Math.max(1, n)); TP(ax, ay - 1, 1, 1, TPC[0]); TP(ax, ay, 1, 1, TPC[1]); TP(ax, ay + 1, 1, 1, TPC[0]); }
-  TP(x, y, 3, 3, TPC[0]); TP(x + 1, y + 1, 1, 1, TPC[1]); TP(x + 1, y, 1, 1, TPC[2]); TP(x, y + 1, 1, 1, TPC[1]);
+  const sx = TPX + 7, sy = TPY - 7, ex = x + 1, ey = y + 1, n = Math.max(1, Math.abs(ex - sx), Math.abs(ey - sy)), pts = [];
+  for (let k = 0; k <= n; k++) pts.push([Math.round(sx + (ex - sx) * k / n), Math.round(sy + (ey - sy) * k / n)]);
+  pts.forEach(p => { TP(p[0] - 1, p[1], 1, 1, TPC[0]); TP(p[0] + 1, p[1], 1, 1, TPC[0]); TP(p[0], p[1] - 1, 1, 1, TPC[0]); TP(p[0], p[1] + 1, 1, 1, TPC[0]); });
+  pts.forEach(p => TP(p[0], p[1], 1, 1, TPC[1]));
+  TP(x + 1, y, 2, 1, TPC[0]); TP(x + 1, y + 3, 2, 1, TPC[0]); TP(x, y + 1, 1, 2, TPC[0]); TP(x + 3, y + 1, 1, 2, TPC[0]);
+  TP(x + 1, y + 1, 2, 2, TPC[1]); TP(x + 1, y + 1, 1, 1, TPC[2]);
 };
 const TP_PH = [0, 1, 2, 1];                                  // 4 кадри «туди-назад»: 0 → середина → 2 → середина (плавніше за колишні 2 кадри)
 const TEAM_PROP_ART = {
@@ -32,21 +35,24 @@ const TEAM_PROP_ART = {
     const cy = y - 19 - s * 2; TP(rx + 15, cy, 3, 3, 'd'); TP(rx + 16, cy + 1, 1, 1, s === 2 ? 'w' : 'y'); TP(rx + 15, cy + 1, 1, 1, 'h');
     if (s === 2) { TP(rx + 19, cy - 1, 1, 1, 'w'); TP(rx + 13, cy, 1, 1, 'y'); }
   },
-  hammer(x, y, f) {                            // молоток замахується (угорі → навскоси → удар) і б'є по цвяху
-    const s = TP_PH[f & 3];
-    TPBX(x + 10, y - 4, 20, 4, 'c', 'y', 'b'); TP(x + 18, y - 3, 1, 1, 'b'); TP(x + 25, y - 3, 1, 1, 'b');
-    TP(x + 19, y - 6 + (s === 2 ? 1 : 0), 1, 2, 'Y'); TP(x + 19, y - 7 + (s === 2 ? 1 : 0), 1, 1, 'E');
-    if (s === 0) {
-      TP(x + 12, y - 22, 3, 11, 'd'); TP(x + 13, y - 21, 1, 9, 'l'); TPAW(x + 11, y - 12);
-      TPBX(x + 10, y - 28, 9, 6, 'Y', 'w', 'e'); TP(x + 10, y - 28, 1, 6, 'd'); TP(x + 18, y - 27, 1, 4, 'e');
-    } else if (s === 1) {                       // рукоять навскоси, головка на півдорозі
-      for (let k = 0; k < 8; k++) { TP(x + 12 + Math.round(k * 0.7), y - 13 - k, 2, 1, 'd'); TP(x + 13 + Math.round(k * 0.7), y - 13 - k, 1, 1, 'l'); }
-      TPAW(x + 11, y - 13);
-      TPBX(x + 16, y - 25, 8, 6, 'Y', 'w', 'e'); TP(x + 23, y - 24, 1, 4, 'd');
-    } else {
-      TP(x + 12, y - 14, 3, 9, 'd'); TP(x + 13, y - 13, 1, 7, 'l'); TPAW(x + 11, y - 13);
-      TPBX(x + 15, y - 10, 9, 5, 'Y', 'w', 'e');
-      TP(x + 25, y - 9, 1, 1, 'y'); TP(x + 26, y - 11, 1, 1, 'w'); TP(x + 24, y - 12, 1, 1, 'h'); TP(x + 27, y - 8, 1, 1, 'y');
+  hammer(x, y, f) {                            // молоток замахується (угорі → навскоси → удар) і б'є по цвяху; дошка з волокнами, гумова ручка
+    const s = TP_PH[f & 3], nail = s === 2 ? 1 : 0;
+    TPBX(x + 11, y - 5, 21, 5, 'c', 'y', 'b'); TP(x + 14, y - 3, 4, 1, 'b'); TP(x + 21, y - 3, 6, 1, 'b'); TP(x + 28, y - 2, 2, 1, 'b');   // дошка
+    TP(x + 13, y - 6, 3, 1, 'e'); TP(x + 14, y - 7, 1, 1, 'E');                                                                            // забитий цвях
+    TP(x + 24, y - 7 + nail, 1, 2, 'Y'); TP(x + 23, y - 8 + nail, 3, 1, 'E'); TP(x + 23, y - 8 + nail, 1, 1, 'w');                          // цвях, по якому б'є
+    if (s === 0) {                                  // угорі
+      TP(x + 14, y - 23, 4, 17, 'd'); TP(x + 15, y - 22, 2, 15, 'c'); TP(x + 15, y - 22, 1, 15, 'y'); TP(x + 15, y - 12, 2, 5, 'r'); TP(x + 15, y - 12, 1, 5, 'j'); TP(x + 15, y - 10, 2, 1, 'R');
+      TPART(x + 10, y - 29, ['...dddddddd.', '.ddwwwwwwwwd', 'dwwYYYYYYYed', 'deYYYYYYYYed', '.ddeeeeeeeed', '...ddddddddd']);
+      TPAW(x + 12, y - 12);
+    } else if (s === 1) {                           // навскоси
+      for (let k = 0; k < 9; k++) { const X = x + 15 + Math.round(k * 0.7), Y = y - 10 - k; TP(X - 1, Y, 4, 1, 'd'); TP(X, Y, 2, 1, k < 4 ? 'r' : 'c'); TP(X, Y, 1, 1, k < 4 ? 'j' : 'y'); }
+      TPART(x + 17, y - 26, ['...dd.....', '..dwwd....', '.dwYYwd...', 'dwYYYYwd..', '.dYYYYYwd.', '..deYYYYd.', '...deYYed.', '....deed..', '.....dd...']);
+      TPAW(x + 12, y - 11);
+    } else {                                        // удар
+      TP(x + 14, y - 13, 12, 4, 'd'); TP(x + 15, y - 12, 10, 2, 'c'); TP(x + 15, y - 12, 10, 1, 'y'); TP(x + 15, y - 12, 4, 2, 'r'); TP(x + 15, y - 12, 4, 1, 'j');
+      TPART(x + 21, y - 19, ['.ddddd.', 'dwwYYed', 'dwYYYed', 'dwYYYed', 'dYYYYed', 'dYYYYed', 'dYYYYed', 'dYYYeed', 'dYYeeed', '.ddddd.']);
+      TP(x + 29, y - 9, 1, 1, 'y'); TP(x + 30, y - 12, 1, 1, 'w'); TP(x + 19, y - 8, 1, 1, 'h'); TP(x + 31, y - 7, 1, 1, 'y'); TP(x + 18, y - 6, 1, 1, 'w');
+      TPAW(x + 12, y - 13);
     }
   },
   tray(x, y, f) {                               // таця з цукерками в лапці збоку, м'яко погойдується
@@ -57,14 +63,18 @@ const TEAM_PROP_ART = {
     TPART(x + 26, y - 16 - b, ['.ddd..', 'dfffd.', 'dqffdd', 'dfffd.', '.ddd..']);
     if (b === 2) TP(x + 14, y - 20 - b, 1, 1, 'w');
   },
-  baton(x, y, f) {                             // кийок охоронниці, відблиск пробігає згори донизу
+  baton(x, y, f) {                             // кийок охоронниці: чорний гумовий, срібні кінці, смугаста ручка з ремінцем; відблиск пробігає згори донизу
     const s = TP_PH[f & 3];
-    TP(x + 10, y - 17, 4, 16, 'd'); TP(x + 11, y - 16, 2, 14, 'k'); TP(x + 11, y - 16, 1, 14, 'e');
-    TP(x + 11, y - 16, 2, 2, 'h'); TP(x + 11, y - 9, 2, 1, 'w'); TP(x + 11, y - 12, 2, 1, 'w'); TPAW(x + 9, y - 9);
-    TP(x + 14, y - 11, 1, 3, 'd'); TP(x + 15, y - 12, 1, 1, 'd');
-    TP(x + 12, y - 15 + s * 2, 1, 2, 'w');
-    if (s === 1) TP(x + 15, y - 15, 1, 1, 'w');
-    if (s === 2) { TP(x + 15, y - 16, 1, 3, 'w'); TP(x + 14, y - 15, 3, 1, 'w'); }
+    TP(x + 11, y - 25, 6, 21, 'd');  TP(x + 12, y - 26, 4, 1, 'd');  TP(x + 12, y - 4, 4, 1, 'd');
+    TP(x + 12, y - 25, 4, 19, 'k');  TP(x + 12, y - 25, 1, 19, 'e'); TP(x + 15, y - 24, 1, 17, 'z');
+    TP(x + 12, y - 25, 4, 2, 'Y');   TP(x + 12, y - 25, 2, 1, 'w');  TP(x + 15, y - 24, 1, 1, 'e');
+    TP(x + 12, y - 6, 4, 2, 'Y');    TP(x + 12, y - 6, 2, 1, 'w');   TP(x + 15, y - 5, 1, 1, 'e');
+    for (let k = 0; k < 3; k++) { TP(x + 12, y - 15 + k * 2, 4, 1, 'h'); TP(x + 12, y - 15 + k * 2, 1, 1, 'y'); TP(x + 15, y - 15 + k * 2, 1, 1, 'o'); }   // смугаста ручка
+    TP(x + 9, y - 4, 3, 1, 'r'); TP(x + 8, y - 3, 1, 2, 'r'); TP(x + 9, y - 2, 3, 1, 'R');                                                                // ремінець
+    TP(x + 13, y - 23 + s * 3, 1, 4, 'w');
+    if (s === 1) { TP(x + 18, y - 21, 1, 1, 'w'); }
+    if (s === 2) { TP(x + 18, y - 21, 1, 3, 'w'); TP(x + 17, y - 20, 3, 1, 'w'); }
+    TPAW(x + 9, y - 13);
   },
   box(x, y, f) {                               // ящик у лапці збоку, підстрибує в такт
     const b = TP_PH[f & 3];
@@ -85,12 +95,27 @@ const TEAM_PROP_ART = {
     if (s > 0) { TP(bx + 9, y - 5, 1, 1, 'c'); TP(bx + 10, y - 7, 1, 1, 'c'); }
     TP(bx - 1, y - 8, 5, 2, 'r'); TP(bx - 1, y - 8, 5, 1, 'J');
   },
-  dress(x, y, f) {                             // сукня на вішаку повільно міняє колір, блиск пробігає по ній
-    const alt = f >= 6, c = alt ? 'p' : 'u', l = alt ? 'q' : 'v', s = alt ? 'J' : 'P', X = x + 11, sw = TP_PH[f & 3] - 1;
-    TP(X + 5, y - 28, 1, 2, 'd'); TP(X + 4, y - 29, 3, 1, 'Y'); TP(X + 3, y - 26, 5, 1, 'd'); TP(X + 2, y - 25, 1, 1, 'd'); TP(X + 8, y - 25, 1, 1, 'd');
-    TPART(X, y - 24, ['..dd...dd..', '..d' + c + 'd.d' + c + 'd..', '..d' + l + c + c + c + c + 'd..', '...d' + c + c + c + 'd...', '..drrrrrd..', '..d' + l + c + c + c + s + 'd..', '.d' + l + c + c + c + c + s + 'd.', 'd' + l + c + c + c + c + c + s + 'd', 'd' + l + c + c + c + c + c + s + 'd', 'd' + c + l + c + c + c + c + s + 'd', 'dwdwdwdwdwd']);
-    const gx = X + 5 + sw * 2; TP(gx, y - 17, 1, 1, 'w'); TP(gx - 1, y - 16, 3, 1, 'w'); TP(gx, y - 15, 1, 1, 'w');
-    TPAW(X - 2, y - 14);
+  dress(x, y, f) {                             // святкова сукня на вішаку: бретельки, пасок, спідниця зі складками й мереживом; повільно міняє колір, блиск пробігає
+    const alt = f >= 6, c = alt ? 'p' : 'u', l = 'q', s = alt ? 'J' : 'P', X = x + 11, sw = TP_PH[f & 3] - 1, B = alt ? 'r' : 'h', Q = alt ? 'w' : 'y';
+    TPART(X + 4, y - 27, ['...YY..', '..Y..Y.', '.....Y.', '....Y..', '..dYd..', '.dYYYd.', 'dYd.dYd']);
+    TPART(X, y - 20, [
+      '....d' + l + 'd.d' + l + 'd....',
+      '....d' + l + 'ddd' + c + 'd....',
+      '...d' + l + c + c + Q + c + c + s + 'd...',
+      '...d' + l + c + c + c + c + c + s + 'd...',
+      '....d' + c + c + c + c + s + 'd....',
+      '....d' + B + B + B + B + B + 'd....',
+      '...d' + l + c + c + c + c + s + s + 'd...',
+      '..d' + l + c + c + s + c + c + c + s + s + 'd..',
+      '..d' + l + c + c + s + c + c + c + s + s + 'd..',
+      '.d' + l + l + c + c + s + c + c + c + c + s + s + 'd.',
+      '.d' + l + c + c + c + s + c + c + c + c + s + s + 'd.',
+      'd' + l + l + c + c + c + s + c + c + c + c + s + s + s + 'd',
+      'd' + l + c + c + c + c + s + c + c + c + c + c + s + s + 'd',
+      'dwdwdwdwdwdwdwd'
+    ]);
+    const gx = X + 7 + sw * 4; TP(gx, y - 12, 1, 1, 'w'); TP(gx - 1, y - 11, 3, 1, 'w'); TP(gx, y - 10, 1, 1, 'w');
+    TPAW(X + 1, y - 15);
   },
   clipboard(x, y, f) {                         // планшет із папером, олівець виводить рядок
     const s = TP_PH[f & 3];
@@ -99,13 +124,27 @@ const TEAM_PROP_ART = {
     TP(x + 13, y - 15, 6, 1, 'e'); TP(x + 13, y - 13, 2 + s * 2, 1, 'n'); TP(x + 13, y - 11, 5, 1, 'e'); TP(x + 13, y - 9, 3, 1, 'e'); TPAW(x + 8, y - 13);
     TP(x + 23, y - 11 - s, 1, 7, 'o'); TP(x + 23, y - 12 - s, 1, 1, 'd'); TP(x + 23, y - 4 - s, 1, 1, 'k');
   },
-  megaphone(x, y, f) {                         // гучномовець; хвилі звуку розходяться одна за одною
-    TPART(x + 10, y - 22, ['.dd.....', 'dppd....', 'dqppdd..', 'dqpppdd.', 'dwwwppdd', 'dqpppdd.', 'dqppdd..', 'dppd....', '.dd.....']);
-    TP(x + 15, y - 22, 3, 1, 'd'); TP(x + 16, y - 14, 2, 1, 'd');
-    TP(x + 17, y - 21, 1, 9, 'd'); TP(x + 18, y - 20, 1, 7, 'r'); TP(x + 18, y - 20, 1, 2, 'p');
-    TP(x + 11, y - 14, 2, 6, 'd'); TP(x + 12, y - 13, 1, 4, 'k'); TPAW(x + 9, y - 11);
-    const w = f % 3;                            // три хвилі по черзі: ближня, середня, дальня
-    TP(x + 20, y - 18, 1, 3, w === 0 ? 'w' : 'e'); TP(x + 22, y - 19, 1, 5, w === 1 ? 'w' : 'e'); TP(x + 24, y - 20, 1, 7, w === 2 ? 'w' : 'e');
+  megaphone(x, y, f) {                         // гучномовець збоку: дзвін, біла смуга, ручка; дуги звуку розходяться одна за одною
+    TPART(x + 10, y - 25, [
+      '.........ddd.',
+      '.......ddrrd.',
+      '.....ddjrrkd.',
+      '...ddjjrrrkd.',
+      'dddjjrrrrRkd.',
+      'dEwwwwwwwRkd.',
+      'dEwwwwwwwRkd.',
+      'dddrrrrRRRkd.',
+      '...ddrRRRRkd.',
+      '.....ddRRRkd.',
+      '.......ddRRd.',
+      '.........ddd.'
+    ]);
+    TP(x + 15, y - 14, 4, 6, 'd'); TP(x + 16, y - 14, 2, 5, 'e'); TP(x + 16, y - 14, 1, 5, 'E');
+    const w = f % 3, wc = n => (w === n ? 'w' : 'e');
+    TP(x + 24, y - 21, 1, 1, wc(0)); TP(x + 25, y - 20, 1, 4, wc(0)); TP(x + 24, y - 16, 1, 1, wc(0));
+    TP(x + 26, y - 23, 1, 1, wc(1)); TP(x + 27, y - 22, 1, 1, wc(1)); TP(x + 28, y - 21, 1, 6, wc(1)); TP(x + 27, y - 15, 1, 1, wc(1)); TP(x + 26, y - 14, 1, 1, wc(1));
+    TP(x + 29, y - 25, 1, 1, wc(2)); TP(x + 30, y - 24, 1, 2, wc(2)); TP(x + 31, y - 22, 1, 8, wc(2)); TP(x + 30, y - 14, 1, 2, wc(2)); TP(x + 29, y - 12, 1, 1, wc(2));
+    TPAW(x + 13, y - 12);
   },
   tablet(x, y, f) {                            // планшет із графіком, стовпчик росте
     const s = TP_PH[f & 3];
@@ -113,19 +152,33 @@ const TEAM_PROP_ART = {
     TP(x + 13, y - 11, 2, 2, 'g'); TP(x + 16, y - 13, 2, 4, 'g'); TP(x + 19, y - 13 - s, 2, 4 + s, 'r'); TP(x + 12, y - 17, 12, 1, 'w'); TPAW(x + 8, y - 11);
     TP(x + 13, y - 16, 1, 1, 'w'); TP(x + 14, y - 15, 1, 1, 'w');
   },
-  cart(x, y, f) {                              // візок із товаром, колеса крутяться
-    const cx = x + 20, s = TP_PH[f & 3], sp = f & 1;
-    TPBX(cx - 7, y - 11, 15, 7, 'e', 'E', 'k'); TP(cx - 7, y - 12, 15, 1, 'd'); TP(cx + 8, y - 18, 2, 14, 'd'); TP(cx + 8, y - 18, 1, 13, 'b'); TP(cx + 5, y - 18, 5, 1, 'd');
-    TPBX(cx - 6, y - 16, 5, 5, 'r', 'J', 'R'); TPBX(cx - 1, y - 15 - (s >> 1), 5, 4, 'g', 'm', 'G'); TP(cx - 5, y - 14, 3, 1, 'w');
-    [cx - 6, cx + 2].forEach(wx => { TP(wx, y - 4, 4, 4, 'd'); TP(wx + 1, y - 3, 2, 2, 'e'); TP(wx + 1 + sp, y - 3 + sp, 1, 1, 'k'); });
-    TPAW(x + 8, y - 12);
-  }
+  cart(x, y, f) {                              // магазинний візок: дротяний кошик із товаром, ручка до лапки, колеса крутяться
+    const s = TP_PH[f & 3], sp = f & 1, B = x + 16, u = s >> 1;
+    // товар стоїть у кошику за дротом, підстрибує на кроці
+    TPBX(B + 1, y - 19 - u, 6, 13 + u, 'r', 'J', 'R'); TP(B + 2, y - 17 - u, 4, 1, 'w');                                                       // коробка
+    TP(B + 8, y - 23 - u, 3, 5, 'd'); TP(B + 9, y - 22 - u, 1, 4, 'g'); TPBX(B + 7, y - 19 - u, 5, 13 + u, 'g', 'm', 'G'); TP(B + 8, y - 16 - u, 3, 2, 'w');  // пляшка
+    TPBX(B + 11, y - 17 - u, 5, 11 + u, 'h', 'y', 'o'); TP(B + 12, y - 15 - u, 3, 1, 'o');                                                      // хліб
+    // кошик: верхній край, дріт, низ
+    for (let j = 0; j < 7; j++) {
+      const Y = y - 12 + j, W = 16 - Math.round(j * 0.45);
+      TP(B - 1, Y, 1, 1, 'd'); TP(B + W, Y, 1, 1, 'd');
+      if (j % 2) TP(B, Y, W, 1, 'Y');
+      for (let i = 2; i < W; i += 3) TP(B + i, Y, 1, 1, 'E');
+    }
+    TP(B - 2, y - 14, 20, 2, 'd'); TP(B - 1, y - 14, 18, 1, 'Y'); TP(B - 1, y - 14, 3, 1, 'w');
+    TP(B - 1, y - 5, 16, 1, 'd');
+    // ручка
+    TP(B - 4, y - 17, 2, 4, 'd'); TP(B - 3, y - 16, 1, 2, 'Y'); TP(B - 6, y - 19, 5, 3, 'd'); TP(B - 5, y - 18, 3, 1, 'r');
+    // колеса
+    [B + 1, B + 10].forEach(wx => { TP(wx, y - 4, 4, 4, 'd'); TP(wx + 1, y - 3, 2, 2, 'E'); TP(wx + 1 + sp, y - 3 + sp, 1, 1, 'k'); });
+    TPAW(B - 6, y - 19);
+  },
 };
 function teamPropArt(g, prop, x, y, f, id, dir, noPaw) {   // x — центр звіра, y — ноги; f — кадр 0..11 (4 кадри руху × 3)
   const fn = TEAM_PROP_ART[prop]; if (!fn) return;
   TPG = g; TPNOPAW = !!noPaw; TPC = PAW_TINT[id] || PAW_COL[TEAM_SPECIES[id]] || PAW_COL.hedgehog; TPX = x; TPY = y;
   if (dir < 0) { g.save(); g.translate(2 * x, 0); g.scale(-1, 1); }
-  fn(noPaw ? x : x - 2, y, f | 0);                          // у грі предмет на 2 px ближче: лапка торкається тіла
+  fn(noPaw ? x : x + 1, y, f | 0);                          // герой у грі ширший за портрет на картці
   if (dir < 0) g.restore();
 }
 // Портрет героя на картці команди (34×27): справа від нього — його предмет у руках; колір фону портрета й сам звір — як і раніше

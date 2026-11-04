@@ -25,7 +25,7 @@ function teamBaseCanvas(id) {
   if (teamBaseCache[id]) return teamBaseCache[id];
   const src0 = SPRITES[TEAM_SPECIES[id] + '_0'].canvas, ht = TEAM_TINT[id], src = ht ? tintCanvas(src0, ht) : src0;
   const c = document.createElement('canvas'); c.width = src.width; c.height = src.height + TEAM_PAD;
-  c.getContext('2d').drawImage(src, 0, TEAM_PAD);
+  c.getContext('2d').drawImage(src, 0, TEAM_PAD); c.chibi = TEAM_SPECIES[id]; c.armF = 0; c.evenFix = { cols: [3, 7, 10, 14], rows: [12, 19, 23] };   // герой на дві пари колонок (щоки, між очима й носом) і три рядки (лоб, щоки, живіт) більший за покупця; план один на всіх: обличчя однакові в кожному костюмі
   return (teamBaseCache[id] = c);
 }
 // Одяг скіна на ВСЕ тіло під головою (р. 73): колір ставимо по силуету звірка, світло/тінь/облямівку рахуємо від краю силуету.
@@ -36,7 +36,7 @@ const outTone = (h, t) => t <= -2 ? outMix(h, '#24151c', 0.62) : t === -1 ? outM
 function paintOutfit(g, solid, ext, W, H, ot) {
   const T0 = 20, cx = W >> 1, key = {}, flat = {}, ex = {}, col = ch => PALETTE[ch] || ch;
   for (let y = T0; y < H; y++) ex[y] = ext(y);
-  const inb = (x, y) => y >= T0 && y < H && solid(x, y) && x >= (y >= 25 ? 3 : 4) && x <= (y >= 25 ? W - 3 : W - 4);       // хвіст і вуха за межами тулуба лишаються рідними
+  const inb = (x, y) => y >= T0 && y < H && solid(x, y) && x >= 3 && x <= W - 4;       // хвіст і вуха за межами тулуба лишаються рідними
   const api = { T0, cx, W, H, a: y => ex[y][0], b: y => ex[y][1],
     px: (x, y, h, f) => { if (inb(x, y)) { key[x + ',' + y] = col(h); if (f) flat[x + ',' + y] = 1; } },
     row: (y, h, i0 = 0, i1 = i0) => { if (ex[y][0] < 0) return; for (let x = ex[y][0] + i0; x <= ex[y][1] - i1; x++) api.px(x, y, h); } };
@@ -83,18 +83,19 @@ function earsThroughHat(g, px, W, y0, rows, x0, hy) {
 // o: { hat: [4 рядки 16 символів] | 'headphones' | 'bubble' | 'hood' | null, b, l, c, d (тулуб: колір, обшивка, акцент, прикраса), pat: [5 рядків по 8], outfit: опис одягу на все тіло }
 function dressHero(id, o) {
   const base = o.base || teamBaseCanvas(id), W = base.width, H = base.height;
-  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const c = document.createElement('canvas'); c.width = W; c.height = H; c.evenRef = base;
   const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(base, 0, 0);
   const px = g.getImageData(0, 0, W, H).data, solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && px[(y * W + x) * 4 + 3] > 128;
   const ext = y => { let a = -1, b = -1; for (let x = 0; x < W; x++) if (solid(x, y)) { if (a < 0) a = x; b = x; } return [a, b]; };
+  const extB = y => { let a = -1, b = -1; for (let x = 3; x <= W - 4; x++) if (solid(x, y)) { if (a < 0) a = x; b = x; } return [a, b]; };   // межі самого тулуба: хвіст поза ними
   const col = ch => PALETTE[ch] || ch, put = (x, y, ch) => { g.fillStyle = col(ch); g.fillRect(x, y, 1, 1); };
   let y0 = 0; for (; y0 < H; y0++) { let run = 0, best = 0; for (let x = 0; x < W; x++) { run = solid(x, y0) ? run + 1 : 0; if (run > best) best = run; } if (best >= 8) break; }       // верх голови: перший рядок із суцільною смугою ≥ 8 (вуха не рахуємо)
   // тулуб: светр/жилет по силуету
   const T0 = 16 + TEAM_PAD, T1 = 21 + TEAM_PAD;
-  if (o.outfit) paintOutfit(g, solid, ext, W, H, o.outfit);
+  if (o.outfit) paintOutfit(g, solid, extB, W, H, o.outfit);
   else if (o.b || o.pat) {
     for (let y = T0; y <= T1; y++) {
-      const [a, b] = ext(y); if (a < 0) continue;
+      const [a, b] = extB(y); if (a < 0) continue;
       for (let x = a + 2; x <= b - 2; x++) {
         let ch = o.b;
         if (o.pat) { const px0 = x - 5, py0 = y - T0; ch = (px0 >= 0 && px0 < 8 && py0 < 5) ? o.pat[py0][px0] : o.pat[Math.min(4, py0)][px0 < 0 ? 0 : 7]; }
@@ -104,8 +105,8 @@ function dressHero(id, o) {
     if (!o.pat) {
       const accent = o.c || 'w', cx = W >> 1;
       if (o.l) for (let x = 0; x < W; x++) if (solid(x, T1) && x > 1) put(x, T1, o.l);
-      if (o.d === 'stripes') { [T0 + 2, T0 + 4].forEach(y => { const [a, b] = ext(y); for (let x = a + 2; x <= b - 2; x++) put(x, y, accent); }); }
-      else if (o.d === 'belt') { const [a, b] = ext(T0 + 4); for (let x = a + 2; x <= b - 2; x++) put(x, T0 + 4, accent); put(cx - 1, T0 + 4, 'y'); put(cx, T0 + 4, 'y'); }
+      if (o.d === 'stripes') { [T0 + 2, T0 + 4].forEach(y => { const [a, b] = extB(y); for (let x = a + 2; x <= b - 2; x++) put(x, y, accent); }); }
+      else if (o.d === 'belt') { const [a, b] = extB(T0 + 4); for (let x = a + 2; x <= b - 2; x++) put(x, T0 + 4, accent); put(cx - 1, T0 + 4, 'y'); put(cx, T0 + 4, 'y'); }
       else if (o.d === 'buttons') { [T0 + 1, T0 + 3].forEach(y => { put(cx - 1, y, accent); put(cx, y, accent); }); }
       else if (o.d === 'collar') { put(cx - 3, T0, accent); put(cx - 2, T0, accent); put(cx - 1, T0 + 1, accent); put(cx, T0 + 1, accent); put(cx + 1, T0, accent); put(cx + 2, T0, accent); }
       else if (o.d === 'scarf') { const [a, b] = ext(T0 - 1); for (let x = a + 1; x <= b - 1; x++) put(x, T0 - 1, accent); for (let x = a + 2; x <= b - 2; x++) put(x, T0, accent); put(cx + 2, T0 + 1, accent); put(cx + 2, T0 + 2, accent); put(cx + 3, T0 + 2, accent); }
@@ -113,7 +114,7 @@ function dressHero(id, o) {
       else if (o.d === 'dots') { [[5, 1], [8, 3], [11, 1], [6, 4], [10, 4], [13, 3]].forEach(([dx, dy]) => { if (solid(dx, T0 + dy)) put(dx, T0 + dy, accent); }); }
       else if (o.d === 'pocket') { for (let x = cx - 4; x <= cx - 2; x++) put(x, T0 + 3, accent); put(cx - 4, T0 + 2, accent); put(cx - 3, T0 + 2, accent); }
     }
-    g.globalAlpha = 0.14; g.fillStyle = '#1e140f'; for (let y = T1 - 1; y <= T1; y++) { const [a, b] = ext(y); for (let x = a + 2; x <= b - 2; x++) g.fillRect(x, y, 1, 1); } g.globalAlpha = 1;        // легка тінь внизу
+    g.globalAlpha = 0.14; g.fillStyle = '#1e140f'; for (let y = T1 - 1; y <= T1; y++) { const [a, b] = extB(y); for (let x = a + 2; x <= b - 2; x++) g.fillRect(x, y, 1, 1); } g.globalAlpha = 1;        // легка тінь внизу
   }
   // головний убір: стоїть на голові, обличчя не закриває
   const hy = y0 - 4;
@@ -134,6 +135,10 @@ function dressHero(id, o) {
   } else if (o.hat === 'hood') {                                    // ніндзя: темний капюшон на тімені, червона пов'язка, лице видно
     for (let y = y0; y <= y0 + 2; y++) { const [a, b] = ext(y); for (let x = a; x <= b; x++) if (solid(x, y)) put(x, y, 'z'); }
     const [a, b] = ext(y0 + 3); for (let x = a; x <= b; x++) if (solid(x, y0 + 3)) put(x, y0 + 3, 'r'); put(b + 1, y0 + 3, 'r'); put(b + 2, y0 + 4, 'r');
+  }
+  if (base.chibi && CHIBI_MODELS.has(base.chibi)) {                 // лапки лишаються звірячими й лежать поверх одягу
+    const A = CHIBI_ARM_Y[base.armF | 0];
+    g.drawImage(base, 3, A[0] + 1 + TEAM_PAD, 2, 2, 3, A[0] + 1 + TEAM_PAD, 2, 2); g.drawImage(base, 13, A[1] + 1 + TEAM_PAD, 2, 2, 13, A[1] + 1 + TEAM_PAD, 2, 2);
   }
   return c;
 }
@@ -256,7 +261,7 @@ function customerSkinCanvas(type, frame, kind, af) {       // af — кадр о
   const key = type + '_' + frame + '_' + kind + (af ? '~' + af : '');
   if (custSkinCache[key]) return custSkinCache[key];
   const src = getSpriteCanvas(type + '_' + frame), base = document.createElement('canvas');
-  base.width = src.width; base.height = src.height + TEAM_PAD; base.getContext('2d').drawImage(src, 0, TEAM_PAD);
+  base.width = src.width; base.height = src.height + TEAM_PAD; base.getContext('2d').drawImage(src, 0, TEAM_PAD); base.chibi = type; base.armF = frame | 0;
   return (custSkinCache[key] = skinAnimDress(null, kind, af | 0, base));
 }
 function teamSkinSprite(id, kind) {

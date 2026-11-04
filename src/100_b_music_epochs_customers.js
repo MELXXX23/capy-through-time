@@ -389,6 +389,7 @@ const CHIBI = (function () {
   };
   const eye = (S, x, y) => { rect(S, x, y, 2, 2, E); px(S, x, y, WH); };
   function make(a, frame) {
+    if (CHIBI_MODELS.has(a)) return CHIBI_MODELS.build(a, frame | 0, PAL[a], mk, outline);
     const p = PAL[a], S = mk(16, 21), hy = 11, step = frame ? 1 : 0, DK = '#2a1d1a';
     let fc = p.s, belly = p.h;                                    // колір ніжок і животика
     // --- що за головою / тілом (вуха, роги, хвіст)

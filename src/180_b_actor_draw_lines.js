@@ -23,15 +23,14 @@ function pickWanderTarget(a) {
 
 // Предмет у лапках звірятка (малюється поверх спрайта). t — час, dir — куди йде
 function drawTeamProp(prop, x, y, t, dir, id) { teamPropArt(ctx, prop, x, y, Math.floor(t * 6) % 12, id, dir); }
-// Предмет у руках (р. 73е): малюється в полотно 1:1 і збільшується тим самим evenScaled, що й фігура, з тим самим округленням позиції —
-// пікселі предмета й тіла збігаються, предмет рухається разом із тілом у тому ж кадрі (без відставання й розмиття дробового масштабу).
+// Предмет у руках (р. 78): малюється 1:1 у полотно 54×45 (x — вісь героя, y — ноги); рухається разом із тілом у тому ж кадрі, без подвоєних пікселів.
 const PROP_CV = new Map();
 function drawCrispProp(prop, id, x0, y0, bob, flip, t) {
   if (!TEAM_PROP_ART[prop]) return;
   const f = Math.floor(t * 6) % 12, cx = flip ? 39 : 14, key = prop + '|' + id + '|' + f + '|' + (flip ? 1 : 0);
   let c = PROP_CV.get(key);
   if (!c) { if (PROP_CV.size > 300) PROP_CV.clear(); c = document.createElement('canvas'); c.width = 54; c.height = 45; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; teamPropArt(g, prop, cx, 42, f, id, flip ? -1 : 1); PROP_CV.set(key, c); }
-  const K = HERO_K; ctx.drawImage(evenScaled(c, K), Math.round(x0 - cx * K), Math.round(y0 - (42 + bob) * K));
+  ctx.drawImage(c, Math.round(x0) - cx, Math.round(y0 - bob * ACTOR_K) - 42);          // предмет 1:1, точно під пікселі фігури: той самий x0 і те саме округлення підстрибування
 }      // малюнки предметів — у 180_a9_team_props.js
 
 const ACTOR_K = 1.4;                                   // звірята-працівники й гості: 16 px × 1,4 ≈ 22 px (було 1,56; −10%), Капі 24 px × 1,3 ≈ 31 px
@@ -41,11 +40,17 @@ function actorK(a) { return HERO_K; }                  // увесь «вист�
 // Рівне масштабування спрайта в k разів (k ≥ 1). Звичайне «nearest» дає то 1, то 2 пікселі на кожен піксель оригіналу,
 // тому два однакових ока виходили різного розміру. Тут зайві колонки дублюються ЛИШЕ симетричними парами (ліве й праве око завжди однакові),
 // а дублюються колонки/рядки з найменшою кількістю деталей (очі, ніс, рот лишаються по 1 пікселю на піксель оригіналу).
-const evenScaleCache = new WeakMap();
-function evenScaled(src, k) {
-  let memo = evenScaleCache.get(src); if (!memo) { memo = {}; evenScaleCache.set(src, memo); }
+// План (які колонки й рядки подвоїти) рахується від еталона: canvas.evenRef — голе тіло під одягом або кадр стояння.
+// Так усі костюми й кадри оживлення скінів мають однакову геометрію: обличчя не смикається ні вгору, ні вбік.
+// Еталон із полем evenFix { cols, rows } має готовий план (звичайний підрахунок спершу подвоює порожні поля полотна, і фігура майже не більшає).
+const evenPlanCache = new WeakMap();
+function evenPlan(src, k) {
+  while (src.evenRef) src = src.evenRef;
+  let memo = evenPlanCache.get(src); if (!memo) { memo = {}; evenPlanCache.set(src, memo); }
   if (memo[k]) return memo[k];
-  const W = src.width, H = src.height, d = src.getContext('2d').getImageData(0, 0, W, H).data;
+  const W = src.width, H = src.height;
+  if (src.evenFix) { const dc = new Array(W).fill(0), dr = new Array(H).fill(0); src.evenFix.cols.forEach(i => { dc[i] = 1; }); src.evenFix.rows.forEach(i => { dr[i] = 1; }); return (memo[k] = { dc, dr }); }
+  const d = src.getContext('2d').getImageData(0, 0, W, H).data;
   const same = (a, b) => { const i = a * 4, j = b * 4; if (d[i + 3] < 8 && d[j + 3] < 8) return true; return d[i] === d[j] && d[i + 1] === d[j + 1] && d[i + 2] === d[j + 2] && d[i + 3] === d[j + 3]; };
   const cs = new Array(W).fill(0), rs = new Array(H).fill(0);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
@@ -77,6 +82,14 @@ function evenScaled(src, k) {
     if (best < 0) break;
     dr[best] = 1;
   }
+  return (memo[k] = { dc, dr });
+}
+const evenScaleCache = new WeakMap();
+function evenScaled(src, k) {
+  if (k === 1) return src;
+  let memo = evenScaleCache.get(src); if (!memo) { memo = {}; evenScaleCache.set(src, memo); }
+  if (memo[k]) return memo[k];
+  const W = src.width, H = src.height, d = src.getContext('2d').getImageData(0, 0, W, H).data, plan = evenPlan(src, k), dc = plan.dc, dr = plan.dr;
   const Wt = W + dc.reduce((a, b) => a + b, 0), Ht = H + dr.reduce((a, b) => a + b, 0);
   const out = document.createElement('canvas'); out.width = Wt; out.height = Ht;
   const og = out.getContext('2d'), od = og.createImageData(Wt, Ht), o = od.data;
@@ -94,7 +107,7 @@ function evenScaled(src, k) {
   return (memo[k] = out);
 }
 const crispFigCache = new Map();
-const HERO_K = 1.4;                                     // герої команди 18×27 (стиль покупців): +12% до 1,25 (р. 73: було +20%, потім −7%) ≈ 38 px заввишки; предмет, тінь, репліки масштабуються цим же коефіцієнтом
+const HERO_K = 1.4;                                     // виступ героя: тінь, репліки, шапочки, влучання. Сама фігура — полотно 18×27 плюс готовий план (пара колонок і два рядки, evenFix у teamBaseCanvas) і темний контур
 function figK(name) { return getSpriteCanvas(name).height > 16 ? HERO_K : ACTOR_K; }
 function crispFigure(name, flip) {
   const K = figK(name), key = name + '|' + (flip ? 1 : 0) + '|' + K;
@@ -123,12 +136,12 @@ function earsOverlay(c) {
 }
 function drawCrispEars(name, x0, y0, bob, flip) {
   if (!theme.decor.has('hats')) return;
-  const sp = getSpriteCanvas(name), K = figK(name), e = earsOverlay(crispFigure(name, flip)); if (!e) return;
-  ctx.drawImage(e, Math.round(x0 - (sp.width / 2) * K) - 1, Math.round(y0 - (sp.height + bob * (ACTOR_K / K)) * K) - 1);
+  const c = crispFigure(name, flip), e = earsOverlay(c); if (!e) return;
+  ctx.drawImage(e, Math.round(x0 - c.width / 2), Math.round(y0 - bob * ACTOR_K) - c.height + 1);
 }
 function drawCrispFigure(name, x0, y0, bob, flip) {      // x0, y0 — ноги по центру; bob — підстрибування в «малих» пікселях
-  const sp = getSpriteCanvas(name), K = figK(name);
-  ctx.drawImage(crispFigure(name, flip), Math.round(x0 - (sp.width / 2) * K) - 1, Math.round(y0 - (sp.height + bob * (ACTOR_K / K)) * K) - 1);
+  const c = crispFigure(name, flip);
+  ctx.drawImage(c, Math.round(x0 - c.width / 2), Math.round(y0 - bob * ACTOR_K) - c.height + 1);   // середина фігури рівно над x0, ноги на y0: тінь і предмет рахуються від тієї ж осі
 }
 function actorPose(a) {
   const m = TEAM[a.i];

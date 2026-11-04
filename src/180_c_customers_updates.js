@@ -108,6 +108,7 @@ function goldCanvas(type, frame) {
   const g = c.getContext('2d'); g.drawImage(src, 0, 0);
   g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(255, 196, 48, 0.66)'; g.fillRect(0, 0, c.width, c.height);
   g.fillStyle = 'rgba(255, 255, 255, 0.22)'; g.fillRect(0, 0, c.width, c.height >> 1);
+  c.evenFix = { cols: [3, 5, 7, 8, 9, 10, 12, 14], rows: [7, 9, 11, 13, 15, 17, 19, 21] };   // рівномірно більший: той самий план у всіх кроках і в усіх звірів
   return (goldCache[key] = c);
 }
 function spawnVip() {
@@ -119,7 +120,7 @@ function spawnVip() {
 function hitVip(p) {
   for (const c of customers) {
     if (!c.vip || c.vipDone) continue;
-    if (Math.abs(p.x - c.x) <= 20 && p.y >= c.y - 44 && p.y <= c.y + 5) {
+    if (Math.abs(p.x - c.x) <= 21 && p.y >= c.y - 50 && p.y <= c.y + 5) {
       c.vipDone = true; c.speed = 62; state.stats.vipTaps = (state.stats.vipTaps || 0) + 1;
       const crystal = Math.random() < 0.2;                                  // нагорода одна з двох: кристал або ×5 золота
       const gain = crystal ? 0 : Math.floor((state.cps * 40 + 200 * levelMult()) * 5);
@@ -436,7 +437,7 @@ function homeSparks(d, n) { for (let i = 0; i < n; i++) fx.sparks.push({ x: d.x 
 let spaceHelmetCv = null;
 function spaceHelmet() {                                                       // скляна куля навколо голови покупця (малюється один раз)
   if (spaceHelmetCv) return spaceHelmetCv;
-  const W = 19, H = 17, cx = 9.5, cy = 8.5, rx = 8.2, ry = 6.7, c = document.createElement('canvas'), g = c.getContext('2d');
+  const W = 20, H = 17, cx = 10, cy = 8.5, rx = 9.4, ry = 7.2, c = document.createElement('canvas'), g = c.getContext('2d');   // ширина парна, як у покупця: шолом рівно по осі, голова в ньому не торкається скла
   c.width = W; c.height = H;
   const inE = (x, y, k) => Math.pow((x + .5 - cx) / (rx - k), 2) + Math.pow((y + .5 - cy) / (ry - k), 2) <= 1;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
@@ -444,10 +445,11 @@ function spaceHelmet() {                                                       /
     if (inE(x, y, 1)) { g.fillStyle = 'rgba(184,227,255,0.16)'; g.fillRect(x, y, 1, 1); continue; }
     g.fillStyle = (x - cx < -2 && y - cy < -2) ? PALETTE.w : PALETTE.a; g.fillRect(x, y, 1, 1);
   }
-  g.fillStyle = PALETTE.e; for (let x = 4; x <= 14; x++) if (inE(x, H - 3, 0) && !inE(x, H - 3, 1)) g.fillRect(x, H - 3, 1, 1);      // нижній обідок шолома
+  g.fillStyle = PALETTE.e; for (let x = 3; x <= 16; x++) if (inE(x, H - 3, 0) && !inE(x, H - 3, 1)) g.fillRect(x, H - 3, 1, 1);      // нижній обідок шолома
   return (spaceHelmetCv = c);
 }
-const CUST_K = 1.10;                                                         // покупці на 10% більші (р. 72: ще +5%) (рівномірне збільшення пікселів, без розмиву)
+const CUST_K = 1;                                                            // покупці 1:1, полотно 18×23: більшими їх робить сама модель (р. 78: голова 16×14 замість 15×13, фігура 18 рядків замість 17, тобто +6%). Подвоєння пікселів не потрібне
+const VIP_K = 1.45;                                                          // золотий покупець: план подвоєння — evenFix у goldCanvas (фігура 24×26)
 const UMB_COLS = [['r', 'w'], ['n', 'S'], ['h', 'y'], ['f', 'q'], ['g', 'm'], ['v', 'u'], ['o', 'y']];
 const UMB_ART = ['....ddddddddddd....', '..ddaabbbbbbbaadd..', '.daaabbbaaabbbaaad.', 'daaabbbaaaaabbbaaad', 'daabbbaaaaaaaaabbad', 'd.dd.dd.ddd.dd.dd.d'];
 const silCache = new WeakMap();
@@ -474,28 +476,30 @@ function drawUmbrella(hx, top, seed, dir, pawY, type) {
 function drawCustomer(c) {
   const exitPause = c.mode === 'exiting' && c.t < 0.38;
   const moving = (c.fear && c.fear.stage !== 1) ? false : (c.mode === 'homeKnock' || c.mode === 'doorWait' || exitPause) ? false : c.mode === 'inside' ? !!c.moving : true;
-  const frame = moving ? Math.floor(c.anim * 6) % 2 : 0;
+  const frame = moving ? [0, 1, 0, 2][Math.floor(c.anim * 6) % 4] : 0;       // крок лівою, крок правою
   const bob = frame ? -1 : 0;
   const sx = Math.round(c.x - 9) + (c.fear ? c.fear.sx : 0), sy = Math.round(c.y - 23) + bob + (c.fear ? Math.round(c.fear.fy) : 0) - ((c.mode === 'exiting' || c.mode === 'toEntrance' || c.mode === 'entering' || c.mode === 'doorWait') ? Math.round(curbLift(c.y)) : 0) - (exitPause ? Math.round(Math.abs(Math.sin(c.t / 0.38 * Math.PI * 2)) * 3) : 0);            // спрайт 18×23: ноги внизу, центр по x
   if ((c.mode === 'homeKnock' || c.mode === 'homeIn' || c.mode === 'homeOut') && c.homeDoor) drawHomeDoor(c);
-  ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 3, Math.round(c.y), 12, 1, 'd'); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.2 * c.alpha; R(ctx, sx + 2, Math.round(c.y), 14, 1, 'd'); ctx.globalAlpha = 1;
+  const px0 = sx;                                                             // вісь спрайта рівно над c.x: тінь, шапочка, шолом, сумка рахуються від тієї ж осі
   const ext = (c.vip || (c.scale || 1) !== 1) ? 0 : evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K).height - 23;    // на скільки пікселів покупець став вищим
   let drawn = null, drawnY = 0, outfitDrawn = false;                           // полотно, яким намальований звір (для парасольки)
   const rainy = weather.rain > 0.35 && !c.inside && c.mode !== 'inside' && c.alpha > 0.9 && !c.fear && !c.vip;
   if (c.vip) {
     const pulse = animOn() ? Math.sin(animClock * 5) : 0;
-    ctx.globalAlpha = (0.2 + 0.08 * pulse) * c.alpha; disc(ctx, sx + 9, sy + 8, 21, 'y'); ctx.globalAlpha = 1;
-    drawCanvasSprite(ctx, evenScaled(goldCanvas(c.type, frame), 1.56), sx, sy, { flip: c.dir < 0, alpha: c.alpha });
-    for (let k = 0; k < 3; k++) { const a = animClock * 2.2 + k * 2.1, px = Math.round(sx + 9 + Math.cos(a) * 13), py = Math.round(sy + 7 + Math.sin(a * 1.3) * 12); if (Math.floor(animClock * 6 + k) % 2) { R(ctx, px, py - 1, 1, 3, 'y'); R(ctx, px - 1, py, 3, 1, 'y'); } }
-    if (!c.vipDone) { const by = sy - 13 + (animOn() ? Math.round(Math.sin(animClock * 4)) : 0); R(ctx, sx + 7, by + 2, 5, 3, 'd'); R(ctx, sx + 8, by + 1, 3, 1, 'd'); R(ctx, sx + 8, by + 2, 3, 2, 'h'); R(ctx, sx + 9, by, 1, 1, 'y'); }
+    const vc = evenScaled(goldCanvas(c.type, frame), VIP_K), vy = sy + 23 - vc.height, vt = vy + silhouetteTop(vc).top, vm = Math.round((vt + sy + 23) / 2);   // ноги на рівні c.y, середина над c.x (раніше полотно малювалось від sx, sy і стояло нижче за тінь)
+    ctx.globalAlpha = (0.2 + 0.08 * pulse) * c.alpha; disc(ctx, sx + 9, vm, 23, 'y'); ctx.globalAlpha = 1;
+    drawCanvasSprite(ctx, vc, sx + 9 - (vc.width >> 1), vy, { flip: c.dir < 0, alpha: c.alpha });
+    for (let k = 0; k < 3; k++) { const a = animClock * 2.2 + k * 2.1, px = Math.round(sx + 9 + Math.cos(a) * 16), py = Math.round(vm + Math.sin(a * 1.3) * 15); if (Math.floor(animClock * 6 + k) % 2) { R(ctx, px, py - 1, 1, 3, 'y'); R(ctx, px - 1, py, 3, 1, 'y'); } }
+    if (!c.vipDone) { const by = vt - 9 + (animOn() ? Math.round(Math.sin(animClock * 4)) : 0); R(ctx, sx + 7, by + 2, 5, 3, 'd'); R(ctx, sx + 8, by + 1, 3, 1, 'd'); R(ctx, sx + 8, by + 2, 3, 2, 'h'); R(ctx, sx + 9, by, 1, 1, 'y'); }
   } else {
     const sc = c.scale || 1;
     const hs0 = skinOn('hero');
     if (sc === 1 && hs0 && TEAM_OUTFITS[hs0]) {                                // скін героїв: одягнений спрайт замість голого (одяг по силуету, капелюх над головою)
       const dc = evenScaled(customerSkinCanvas(c.type, frame, hs0, SKIN_ANIM[hs0] ? skinAF() : 0), CUST_K), h0 = evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K).height;
-      drawCanvasSprite(ctx, dc, sx, sy - ext - (dc.height - h0), { flip: c.dir < 0, alpha: c.alpha }); drawn = dc; drawnY = sy - ext - (dc.height - h0); outfitDrawn = true;
-    } else if (sc === 1) { const pc = evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K); drawCanvasSprite(ctx, pc, sx, sy - ext, { flip: c.dir < 0, alpha: c.alpha }); drawn = pc; drawnY = sy - ext; }
-    else drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc, sy: sc });
+      drawCanvasSprite(ctx, dc, px0, sy - ext - (dc.height - h0), { flip: c.dir < 0, alpha: c.alpha }); drawn = dc; drawnY = sy - ext - (dc.height - h0); outfitDrawn = true;
+    } else if (sc === 1) { const pc = evenScaled(getSpriteCanvas(c.type + '_' + frame), CUST_K); drawCanvasSprite(ctx, pc, px0, sy - ext, { flip: c.dir < 0, alpha: c.alpha }); drawn = pc; drawnY = sy - ext; }
+    else drawSprite(ctx, c.type + '_' + frame, sx, sy, { flip: c.dir < 0, alpha: c.alpha, sx: sc * CUST_K, sy: sc * CUST_K });   // у дверях будиночка: той самий розмір, плавно менше
   }
   if (c.fear) {                                                               // жартівливий переляк
     const f = c.fear;
@@ -512,28 +516,28 @@ function drawCustomer(c) {
       if (Math.floor(f.wait * 4) % 2) { R(ctx, sx + 7, sy - 4, 1, 3, 'd'); R(ctx, sx + 11, sy - 4, 1, 3, 'd'); }
     }
   }
-  const gx = sx + (c.dir < 0 ? -1 : 0);                                       // у дзеркальному вигляді тіло зсунуте на піксель, одяг іде слідом
+  const gx = sx;                                                              // тіло симетричне: у дзеркалі нічого не зсувається
   const hs = skinOn('hero');
   if (c.vip) return;                                                           // золотий покупець: без скінів, капелюхів і шарфів
   if (hs && c.alpha > 0.9 && !((c.scale || 1) === 1 && TEAM_OUTFITS[hs])) drawSkinGear(gx, sy - ext, hs, true);
   const suited = viewEpoch() % EPOCHS.length === 6;                            // Космос: усі покупці в скляних шоломах (шапочки свят під ними не потрібні)
-  if (suited && c.alpha > 0.9) drawCanvasSprite(ctx, spaceHelmet(), gx, sy + 4 - ext, {});
-  if (hasHats() && !hs && !suited && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(gx + 9, sy + 8 - ext, c.hat); if (drawn && theme.decor.has('hats')) { const e = earsOverlay(drawn); if (e) drawCanvasSprite(ctx, e, sx, drawnY, { flip: c.dir < 0, alpha: c.alpha }); } }
+  if (suited && c.alpha > 0.9) drawCanvasSprite(ctx, spaceHelmet(), gx - 1, sy + 3 - ext, {});
+  if (hasHats() && !hs && !suited && c.alpha > 0.9) { if (c.hat === undefined) c.hat = Math.floor(Math.random() * 42); drawHat(gx + 9, sy + 8 - ext, c.hat); if (drawn && theme.decor.has('hats')) { const e = earsOverlay(drawn); if (e) drawCanvasSprite(ctx, e, px0, drawnY, { flip: c.dir < 0, alpha: c.alpha }); } }
   if (hasScarves() && c.alpha > 0.9) {       // шарфик на шиї покупця
     const sc = SCARF_COLORS[CUSTOMER_TYPES.indexOf(c.type) % SCARF_COLORS.length], nx = c.dir > 0 ? gx + 10 : gx + 5;
-    R(ctx, gx + 4, sy + 16 - ext, 10, 2, sc); R(ctx, gx + 4, sy + 17 - ext, 10, 1, 'w'); R(ctx, nx, sy + 18 - ext, 3, 4, sc);
+    R(ctx, gx + 4, sy + 17 - ext, 10, 2, sc); R(ctx, gx + 4, sy + 18 - ext, 10, 1, 'w'); R(ctx, nx, sy + 19 - ext, 3, 3, sc);
   }
   if (rainy) {                                                                 // парасолька: над справжнім верхом силуету звіра (скін, капелюх — частина полотна), ручка йде до лапки
     const lift = hs ? ({ wizard: 10, witch: 10, santa: 8, party: 7, chef: 7, royal: 6, gold: 6, diamond: 7, ninja: 2 }[hs] || 6) : (hasHats() && !suited ? (theme.decor.has('hats') ? 9 : 6) : 0);
     const silh = drawn && !suited && !(hasHats() && !hs) && !(hs && !outfitDrawn);
     let top, cxh, pawY;
-    if (silh) { const si = silhouetteTop(drawn), cw = drawn.width; top = drawnY + si.top; cxh = sx + Math.round(c.dir < 0 ? cw - 1 - si.cx : si.cx); pawY = drawnY + Math.round(drawn.height * 0.58); }
+    if (silh) { const si = silhouetteTop(drawn), cw = drawn.width; top = drawnY + si.top; cxh = px0 + Math.round(c.dir < 0 ? cw - 1 - si.cx : si.cx); pawY = drawnY + Math.round(drawn.height * 0.58); }
     else { top = (lift ? sy - ext + 8 - lift : sy - ext) + 2; cxh = gx + 9; pawY = sy - ext + 14; }
     ctx.globalAlpha = c.alpha; drawUmbrella(cxh, top, c.hat !== undefined ? c.hat : CUSTOMER_TYPES.indexOf(c.type), c.dir < 0 ? -1 : 1, pawY, c.type); ctx.globalAlpha = 1;
   }
   if (c.bag && !(c.scale && c.scale < 0.9)) {   // пакет з покупками в лапці, злегка гойдається
-    const bc = CHIBI.bag(c.bagKind || 0, c.bag), bx = c.dir > 0 ? sx + 14 : sx - 6;
-    drawCanvasSprite(ctx, bc, bx, sy + 11 - ext + (frame ? 1 : 0), { alpha: c.alpha });
+    const bc = CHIBI.bag(c.bagKind || 0, c.bag), bx = c.dir > 0 ? sx + 14 : sx - 8;     // сумка на однаковій відстані від тіла з обох боків
+    drawCanvasSprite(ctx, bc, bx, sy + 9 - ext + (frame ? 1 : 0), { alpha: c.alpha });
   }
 }
 
