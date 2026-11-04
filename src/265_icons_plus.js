@@ -188,7 +188,7 @@ setInterval(() => {
   const t = performance.now() / 1000;
   ui.skinsList.querySelectorAll('canvas.skin-prev').forEach(cv => {
     const sp = cv._sp; if (!sp) return;
-    if (sp[0] === 'weather' || sp[0] === 'street') { skinPreviewCanvas(sp[0], sp[1], cv); return; }
+    if (sp[0] === 'weather' || sp[0] === 'street' || sp[0] === 'shop') { skinPreviewCanvas(sp[0], sp[1], cv); return; }
     if (sp[0] !== 'capy' && sp[0] !== 'hero') return;
     const save = skinPreview[sp[0]]; skinPreview[sp[0]] = sp[1];
     try { if (sp[0] === 'capy') capySkinPreview(cv, sp[1] || '', t); else heroSkinPreview(cv, t); } finally { if (save === undefined) delete skinPreview[sp[0]]; else skinPreview[sp[0]] = save; }
@@ -224,6 +224,43 @@ function drawCobbleLay() {                                        // true — м
   }
   ctx.globalAlpha = 1;
   return true;
+}
+
+/* ---------- Картка скіна магазину (р. 78): фасад 1-го рівня в рідних пікселях (полотно = розмір картки), жива вивіска й частинки скіна ---------- */
+const shopCardCache = {};
+function shopCardBase(name) {
+  const tiers = state.depts.map(tierOf), key = (name || '') + '|' + (viewEpoch() % EPOCHS.length) + '|' + tiers.slice(0, 2).join('');
+  if (!shopCardCache[key]) { const geo = buildShopCanvas(1, tiers); shopCardCache[key] = { c: geo.canvas, w: geo.w, h: geo.h, sign: geo.sign }; }
+  return shopCardCache[key];
+}
+const SHOP_CARD_SKY = { candy: ['#ffc4dc', '#ffe4ef'], gold: ['#ffe39a', '#fff4cc'], diamond: ['#a8dcfa', '#dcf4ff'], wood: ['#a8d8ec', '#dcf0f6'], garden: ['#a8e4c4', '#e4f8d4'], xmas: ['#8cb4dc', '#d4e4f4'], halloween: ['#1c1238', '#3a2458'], ocean: ['#5fc0ec', '#bff0f8'], ice: ['#a8dcfa', '#e8f8ff'], spring: ['#ffc8dc', '#fff0f4'], autumn: ['#f4c88c', '#fde8c0'] };
+const SHOP_CARD_FX = {
+  candy(g, W, H, t) { for (let i = 0; i < 12; i++) cardRect(g, cardMod(i * 37 + Math.sin(t + i) * 3, W), cardMod(i * 19 + t * 13, H), 2, 1, ['#ff5f8f', '#52c4ff', '#ffd23f', '#7ad66a'][i % 4]); },
+  gold(g, W, H, t) { for (let i = 0; i < 8; i++) if ((t * 0.8 + i * 0.27) % 1 < 0.4) cardSparkle(g, 6 + (i * 37) % (W - 12), 6 + (i * 23) % (H - 12), '#fff6c0'); },
+  diamond(g, W, H, t) { for (let i = 0; i < 9; i++) if ((t * 0.9 + i * 0.31) % 1 < 0.42) cardSparkle(g, 5 + (i * 41) % (W - 10), 5 + (i * 19) % (H - 10), i % 3 ? '#ffffff' : '#8ff0ff'); },
+  wood(g, W, H, t) { for (let i = 0; i < 4; i++) { const p = (t * 0.28 + i * 0.25) % 1; g.globalAlpha = 0.65 * (1 - p); cardRect(g, Math.round(W * 0.2 + Math.sin(p * 6 + i) * 3 + p * 6), Math.round(14 - p * 16), 3 + Math.round(p * 2), 2 + Math.round(p * 2), '#e8e4dc'); g.globalAlpha = 1; } },
+  garden(g, W, H, t) { [[0.2, 0.32, '#ff8fbc'], [0.72, 0.5, '#ffd84f']].forEach(([fx, fy, c], i) => { const x = Math.round(W * fx + Math.sin(t * 0.7 + i * 2) * 12), y = Math.round(H * fy + Math.sin(t * 1.3 + i) * 5), fl = Math.floor(t * 8 + i) % 2; cardRect(g, x, y, 1, 2, '#3a2a1e'); cardRect(g, x - 2, y - fl, 2, 2 - fl, c); cardRect(g, x + 1, y - fl, 2, 2 - fl, c); }); for (let i = 0; i < 5; i++) cardRect(g, cardMod(i * 29 + t * 6, W), cardMod(i * 17 + t * 8, H), 1, 1, '#ffffff'); },
+  xmas(g, W, H, t) { for (let i = 0; i < 18; i++) cardRect(g, cardMod(i * 23 + Math.sin(t * 1.2 + i) * 3, W), cardMod(i * 13 + t * (8 + (i % 3) * 3), H), 1 + (i % 4 === 0 ? 1 : 0), 1 + (i % 4 === 0 ? 1 : 0), '#ffffff'); },
+  halloween(g, W, H, t) { [[0.25, 8], [0.68, 14]].forEach(([fx, y0], i) => { const x = Math.round(W * fx + Math.sin(t * 0.8 + i * 2.2) * 16), y = y0 + Math.round(Math.sin(t * 1.7 + i) * 3), fl = Math.floor(t * 8 + i) % 2; cardRect(g, x - 1, y, 3, 2, '#120c24'); cardRect(g, x - 4, y - fl, 3, 1, '#120c24'); cardRect(g, x + 2, y - fl, 3, 1, '#120c24'); cardRect(g, x - 1, y, 1, 1, '#ff9e3c'); cardRect(g, x + 1, y, 1, 1, '#ff9e3c'); }); },
+  ocean(g, W, H, t) { for (let i = 0; i < 10; i++) { const y = H - cardMod(i * 17 + t * (7 + (i % 3) * 2), H + 4), x = cardMod(i * 31, W) + Math.round(Math.sin(t * 2 + i) * 2), r = i % 3 === 0; cardRect(g, x, y, r ? 2 : 1, r ? 2 : 1, '#d8f6ff'); if (r) cardRect(g, x, y, 1, 1, '#ffffff'); } },
+  ice(g, W, H, t) { SHOP_CARD_FX.xmas(g, W, H, t); },
+  spring(g, W, H, t) { for (let i = 0; i < 12; i++) cardRect(g, cardMod(i * 23 + Math.sin(t + i) * 5, W), cardMod(i * 17 + t * 9, H), 2, 1, i % 2 ? '#ff9fc0' : '#ffe4ef'); },
+  autumn(g, W, H, t) { for (let i = 0; i < 11; i++) cardRect(g, cardMod(i * 23 + Math.sin(t * 1.3 + i) * 5, W), cardMod(i * 17 + t * 10, H), 2, 1, ['#e8701e', '#d23a2a', '#f2b84b'][i % 3]); }
+};
+function shopSkinPreview(cv, name, t) {
+  const sz = cardPixels(cv), W = sz[0], H = sz[1], base = shopCardBase(name);
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+  const sky = SHOP_CARD_SKY[name] || null;
+  if (sky) { cardRect(g, 0, 0, W, H, sky[1]); cardRect(g, 0, 0, W, Math.round(H * 0.22), sky[0]); for (let x = 0; x < W; x += 2) cardRect(g, x, Math.round(H * 0.22), 1, 1, sky[0]); }
+  else { const c = currentEpoch().sky || ['s', 'S', 'w']; for (let y = 0; y < H; y++) R(g, 0, y, W, 1, c[Math.min(2, Math.floor(y * 3 / H))]); }
+  const x0 = Math.round((W - base.w) / 2), y0 = Math.round((H - base.h) * 0.3);
+  g.drawImage(base.c, x0, y0);
+  if (SKIN_SIGN_ANIM[name]) {
+    const s = base.sign, keep = sg; sg = g;
+    try { g.save(); g.beginPath(); g.rect(x0 + s.x, y0 + s.y, s.w, s.h); g.clip(); SKIN_SIGN_ANIM[name](x0 + s.x, y0 + s.y, s.w, s.h, t); g.restore(); } finally { sg = keep; g.globalAlpha = 1; }
+  }
+  if (SHOP_CARD_FX[name]) SHOP_CARD_FX[name](g, W, H, t);
 }
 
 /* ---------- 5. Скіни погоди: рухомі картки (р. 72) ---------- */
