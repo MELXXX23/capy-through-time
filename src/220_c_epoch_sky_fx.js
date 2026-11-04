@@ -102,30 +102,48 @@ function spacePlanets() {
 }
 // Диско: великі прожектори на щоглах за будинками. Стоять на місці у світі (рухаються разом із камерою), кожен має три промені, що гойдаються й блимають різними кольорами
 const DISCO_COLS = ['f', 'T', 'y', 'N', 'p', 'j'];
-function pxTri(g, x0, y0, x1, y1, x2, y2) {                      // трикутник без згладжування: цілими рядками
-  const top = Math.ceil(Math.min(y0, y1, y2)), bot = Math.floor(Math.max(y0, y1, y2));
-  const ed = (y, ax, ay, bx, by, m) => { if ((ay <= y && by > y) || (by <= y && ay > y)) { const v = ax + (y - ay) * (bx - ax) / (by - ay); if (v < m[0]) m[0] = v; if (v > m[1]) m[1] = v; } };
-  const m = [0, 0];
-  for (let y = top; y <= bot; y++) {
-    m[0] = 1e9; m[1] = -1e9;
-    ed(y, x0, y0, x1, y1, m); ed(y, x1, y1, x2, y2, m); ed(y, x2, y2, x0, y0, m);
-    if (m[1] >= m[0]) { const a = Math.round(m[0]); g.fillRect(a, y, Math.max(1, Math.round(m[1]) - a), 1); }
+function pxTri(g, x0, y0, x1, y1, x2, y2, step) {                // трикутник без згладжування: цілими рядками (step — висота рядка)
+  const st = step || 1, top = Math.floor(Math.min(y0, y1, y2)), bot = Math.ceil(Math.max(y0, y1, y2));
+  for (let y = top; y <= bot; y += st) {
+    const yc = y + st / 2; let lo = 1e9, hi = -1e9;
+    if ((y0 <= yc && y1 > yc) || (y1 <= yc && y0 > yc)) { const v = x0 + (yc - y0) * (x1 - x0) / (y1 - y0); if (v < lo) lo = v; if (v > hi) hi = v; }
+    if ((y1 <= yc && y2 > yc) || (y2 <= yc && y1 > yc)) { const v = x1 + (yc - y1) * (x2 - x1) / (y2 - y1); if (v < lo) lo = v; if (v > hi) hi = v; }
+    if ((y2 <= yc && y0 > yc) || (y0 <= yc && y2 > yc)) { const v = x2 + (yc - y2) * (x0 - x2) / (y0 - y2); if (v < lo) lo = v; if (v > hi) hi = v; }
+    if (hi >= lo) { const l = Math.round(lo); g.fillRect(l, y, Math.max(1, Math.round(hi) - l), st); }
   }
+}
+// Промені прожекторів — окремий шар: малюється рядками й оновлюється 15 разів на секунду, у кадрі лише одне копіювання
+const discoBeam = { cv: null, key: '' };
+function discoBeams(time, W, n, a0, on) {
+  const L = Math.floor(visL() - 170), w = Math.ceil(visR() + 170 - L), TOP = 172;
+  if (!discoBeam.cv || discoBeam.cv.width !== w) { discoBeam.cv = document.createElement('canvas'); discoBeam.cv.width = w; discoBeam.cv.height = TOP; discoBeam.key = ''; }
+  const key = (on ? Math.floor(time * 15) : 0) + '|' + L + '|' + Math.round(a0 * 50);
+  if (key !== discoBeam.key) {
+    discoBeam.key = key;
+    const g = discoBeam.cv.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, w, TOP); g.setTransform(1, 0, 0, 1, -L, TOP);
+    for (let k = 0; k < n; k++) {
+      const hx = hash2(k * 31, 9), x = Math.round(worldL() + (k + 0.5) * W / n + (hx % 30) - 15), y = -18 + (hx >>> 5) % 16, ph = k * 1.9;
+      if (x < L || x > L + w) continue;
+      for (let b = 0; b < 3; b++) {
+        const ang = -Math.PI / 2 + (b - 1) * 0.62 + (on ? Math.sin(time * (0.7 + b * 0.23) + ph + b * 2.1) * 0.55 : 0), len = 118 + b * 14;
+        const idx = Math.floor((on ? time * 1.3 : 0) + k + b * 2) % DISCO_COLS.length, blink = on ? Math.floor(time * 2.2 + ph + b * 1.7) % 4 !== 0 : true;
+        if (!blink) continue;
+        g.globalAlpha = a0; g.fillStyle = PALETTE[DISCO_COLS[idx]];
+        pxTri(g, x, y, x + Math.cos(ang - 0.12) * len, y + Math.sin(ang - 0.12) * len, x + Math.cos(ang + 0.12) * len, y + Math.sin(ang + 0.12) * len, 2);
+        g.globalAlpha = a0 * 0.9; pxTri(g, x, y, x + Math.cos(ang - 0.04) * len, y + Math.sin(ang - 0.04) * len, x + Math.cos(ang + 0.04) * len, y + Math.sin(ang + 0.04) * len, 2);
+      }
+    }
+    g.globalAlpha = 1;
+  }
+  ctx.drawImage(discoBeam.cv, L, -TOP);
 }
 function discoLamps(time) {
   const W = worldR() - worldL(), n = Math.max(4, Math.round(W / 170)), a0 = 0.16 + 0.22 * sky.night, on = animOn();
+  discoBeams(time, W, n, a0, on);
   for (let k = 0; k < n; k++) {
     const hx = hash2(k * 31, 9), x = Math.round(worldL() + (k + 0.5) * W / n + (hx % 30) - 15), y = -18 + (hx >>> 5) % 16, ph = k * 1.9;
     if (x < visL() - 170 || x > visR() + 170) continue;                              // поза кадром не малюємо
     R(ctx, x - 1, y + 6, 3, LAYOUT.horizonY - y - 6, 'd');                          // щогла (нижню частину закривають будинки)
-    for (let b = 0; b < 3; b++) {
-      const ang = -Math.PI / 2 + (b - 1) * 0.62 + (on ? Math.sin(time * (0.7 + b * 0.23) + ph + b * 2.1) * 0.55 : 0), len = 118 + b * 14;
-      const idx = Math.floor((on ? time * 1.3 : 0) + k + b * 2) % DISCO_COLS.length, blink = on ? Math.floor(time * 2.2 + ph + b * 1.7) % 4 !== 0 : true;
-      if (!blink) continue;
-      ctx.globalAlpha = a0; ctx.fillStyle = PALETTE[DISCO_COLS[idx]];
-      pxTri(ctx, x, y, x + Math.cos(ang - 0.12) * len, y + Math.sin(ang - 0.12) * len, x + Math.cos(ang + 0.12) * len, y + Math.sin(ang + 0.12) * len);
-      ctx.globalAlpha = a0 * 0.9; pxTri(ctx, x, y, x + Math.cos(ang - 0.04) * len, y + Math.sin(ang - 0.04) * len, x + Math.cos(ang + 0.04) * len, y + Math.sin(ang + 0.04) * len);
-    }
     ctx.globalAlpha = 1;
     const lens = DISCO_COLS[Math.floor((on ? time * 2 : 0) + k) % DISCO_COLS.length];              // корпус прожектора з кольоровою лінзою, що змінюється
     ctx.globalAlpha = 0.22; disc(ctx, x, y, 15, lens); ctx.globalAlpha = 0.4; disc(ctx, x, y, 11, lens); ctx.globalAlpha = 1;

@@ -1,10 +1,11 @@
 <!--#part 026_style_crisp.html-->
 <style>
-/* ===== Чіткість (р. 78): піксельні картинки меню лише в цілому масштабі =====
-   --dpr ставить crispSync() (264_crisp.js). Формула: round(ціль × dpr / бітмап) × бітмап / dpr — рівно ціла кількість пікселів екрана на піксель малюнка.
-   Спершу звичайне значення (старий браузер без round() просто пропустить другий рядок). */
+/* ===== Чіткість (р. 78): піксельні картинки лише в цілому масштабі, рамки й сяйво без розмиття =====
+   --dpr ставить crispSync() (264_crisp.js), --f8…--f24 — найближчі чіткі розміри шрифту для цього екрана.
+   Формула в блоці @supports: round(ціль × dpr / бітмап) × бітмап / dpr — рівно ціла кількість пікселів екрана на піксель малюнка
+   (екрани з масштабом Windows 125–150%). Старий браузер без round() лишається зі звичайними значеннями. */
 :root { --dpr: 1; }
-.team-card .portrait { width: 102px; height: 81px; width: calc(round(102 * var(--dpr) / 34, 1) * 34px / var(--dpr)); height: calc(round(102 * var(--dpr) / 34, 1) * 27px / var(--dpr)); }
+.team-card .portrait { width: 102px; height: 81px; }
 .toast canvas { width: 32px; height: 32px; }
 .tab-lock { width: 12px; height: 14px; }
 #setSeason .btn img.lock, .skin-state img.lock { width: 12px; height: 14px; vertical-align: -3px; }
@@ -12,9 +13,8 @@
 /* Центрування без пів-пікселя (текст не розмивається) */
 #eventBanner, #toasts { left: 0; right: 0; margin-inline: auto; transform: none; }
 #eventBanner { width: fit-content; }
-/* Вивіска: тінь на цілий піксель; нічний напис — чіткий контур замість розмитого сяйва */
-#signText { text-shadow: 0 max(1px, round(calc(var(--u) * 0.5), 1px)) 0 var(--darker); }
-#shopOverlay.lit #signText { text-shadow: 1px 0 0 var(--glow, #ffd36a), -1px 0 0 var(--glow, #ffd36a), 0 -1px 0 var(--glow, #ffd36a), 0 max(1px, round(calc(var(--u) * 0.5), 1px)) 0 var(--darker); }
+/* Нічна вивіска: чіткий контур замість розмитого сяйва */
+#shopOverlay.lit #signText { text-shadow: 1px 0 0 var(--glow, #ffd36a), -1px 0 0 var(--glow, #ffd36a), 0 -1px 0 var(--glow, #ffd36a), 0 calc(var(--u) * 0.5) 0 var(--darker); }
 /* Заставка: рух цілими пікселями, без розмитих ореолів і поворотів піксельної Капі */
 #boot .b-capy { filter: none; animation: bRunPx .6s steps(1, end) infinite; }
 @keyframes bRunPx { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-6px); } 50% { transform: translateY(-10px); } 75% { transform: translateY(-6px); } }
@@ -34,20 +34,80 @@
 #boot #bootOrb .sunball { width: auto; height: auto; background: none; border-radius: 0; box-shadow: none; }
 #boot #bootOrb .sunrays { background: none; border-radius: 0; -webkit-mask-image: none; mask-image: none; image-rendering: pixelated; animation: bRayPx 5s steps(1, end) infinite; }
 @keyframes bRayPx { 0%, 100% { opacity: 1; } 33% { opacity: .82; } 66% { opacity: .68; } }
+#boot .b-car .beam { background: linear-gradient(90deg, rgba(255, 244, 190, .5) 0 30%, rgba(255, 244, 190, .28) 30% 65%, rgba(255, 244, 190, .12) 65% 100%); }
+#boot .b-title::after { background: linear-gradient(90deg, transparent 0 8%, rgba(255, 224, 138, .45) 8% 20%, #ffe08a 20% 80%, rgba(255, 224, 138, .45) 80% 92%, transparent 92%); }
 #boot .ff, #boot .ff.gr { border-radius: 0; box-shadow: 0 0 0 2px rgba(255, 240, 140, .32); }
 #boot .mote { box-shadow: 0 0 0 2px rgba(255, 240, 180, .28); }
+@media (prefers-reduced-motion: reduce) { #boot .b-capy, #boot #bootOrb .sunrays { animation: none; } }
+#bonusOpen.ready { animation-name: bonusPulsePx; }
+@keyframes bonusPulsePx { 50% { filter: brightness(1.3); } }
+/* Гучність: піксельний повзунок замість круглого системного */
+.vol input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; height: 28px; }
+.vol input[type="range"]::-webkit-slider-runnable-track { height: 12px; background: var(--green); box-shadow: inset 0 0 0 2px var(--dark), inset 0 -4px 0 0 rgba(0, 0, 0, .2); }
+.vol input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 28px; margin-top: -8px; background: var(--honey); box-shadow: inset 0 0 0 2px var(--dark), inset 4px 4px 0 0 rgba(255, 255, 255, .5); }
+.vol input[type="range"]::-moz-range-track { height: 12px; background: var(--green); box-shadow: inset 0 0 0 2px var(--dark); }
+.vol input[type="range"]::-moz-range-thumb { width: 20px; height: 28px; border: 0; border-radius: 0; background: var(--honey); box-shadow: inset 0 0 0 2px var(--dark), inset 4px 4px 0 0 rgba(255, 255, 255, .5); }
+/* Вікна: жорсткі піксельні рамки замість розмитих ореолів */
+.loot-card { box-shadow: 0 0 0 3px #1a0f26, 0 0 0 6px #f2b84b, 0 0 0 10px rgba(255, 200, 60, .38), 0 0 0 14px rgba(255, 200, 60, .16); }
+.loot-card { background: linear-gradient(#3b2358 0 25%, #342050 25% 50%, #2c1a46 50% 75%, #24143a 75%); }
+.loot-tag { text-shadow: 2px 2px 0 #1a0f26; }
+.loot-spark { text-shadow: none; }
+.loot-stage { background: #2c1a46; box-shadow: inset 0 0 0 3px #1a0f26, inset 0 0 0 9px rgba(255, 214, 102, .16), inset 0 0 0 15px rgba(255, 214, 102, .08); }
+.loot-stage canvas { filter: none; }
+#dialog.isTitle #dialogWrap { filter: none; }
+#dialog.isTitle #dialogBox { box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 7px #f4c15d, inset 0 0 0 9px var(--dark), 0 0 0 4px rgba(244, 193, 93, .5), 0 0 0 8px rgba(244, 193, 93, .22); }
+.bc-card span { text-shadow: 0 3px 0 #1a0f2a; }
+#tourRing { box-shadow: 0 0 0 3px #3a2a22, 0 0 0 6px rgba(255, 227, 106, .6); animation-name: tourPulsePx; animation-timing-function: steps(1, end); }
+@keyframes tourPulsePx { 50% { box-shadow: 0 0 0 3px #3a2a22, 0 0 0 7px rgba(255, 227, 106, .7), 0 0 0 11px rgba(255, 227, 106, .3); } }
 /* ПК і великі екрани (телефони мають затверджені розкладки) */
 @media (min-width: 821px) and (min-height: 600px) {
-  .tab { --icw: 64px; --icw: calc(round(48 * var(--dpr) / 32, 1) * 32px / var(--dpr)); }
-  #bonusOpenI { width: 32px; height: 32px; width: calc(round(24 * var(--dpr) / 16, 1) * 16px / var(--dpr)); height: calc(round(24 * var(--dpr) / 16, 1) * 16px / var(--dpr)); }
-  .bubble { font-size: 8px; font-size: calc(round(10 * var(--dpr) / 8, 1) * 8px / var(--dpr)); }
+  .tab { --icw: 64px; }
+  /* смуга прокрутки в стилі гри, а не системна сіра */
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: var(--tc-card, #e9f7fc); box-shadow: inset 2px 0 0 var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--tc-btn, #8fd3ea); box-shadow: inset 0 0 0 2px var(--dark), inset 4px 4px 0 0 rgba(255, 255, 255, .35); }
+  ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+  #bonusOpenI { width: 32px; height: 32px; }
+  .bubble { font-size: 8px; }
   /* хатка відьми й лапшична: гра вдвічі крупніше, рівно ×2 */
   #circusModal.hag:not(.mg) .modal-box { width: min(96vw, 560px); }
   #circusModal.hag:not(.mg) #circusWheel { width: min(100%, 512px, max(256px, calc((100dvh - 400px) * 1.6))); }
+  /* прапорці бонус-вікна не заходять на заголовок */
+  #circusModal .modal-box, #circusModal.mg .modal-box { padding-top: 40px; }
+  /* текст із гнучким розміром: на ПК лише чіткі розміри */
+  .np-in, .np-cover p, .np-sign, .np-tab, .np-btns .btn, .np-gift, .np-toc, .np-fig figcaption, .np-nav span, .np-mast small, .np-mast .who { font-size: var(--f12, 12px); }
+  .np-in h3, .np-lead, #newsTitle { font-size: var(--f16, 16px); }
+  #dialog.isTitle #dlgText { font-size: var(--f24, 24px); }
+  .skin-name { font-size: var(--f8, 8px); }
+  .floater { font-size: max(16px, calc(var(--u) * 8)); }
+  /* газета: малюнки рівно ×2 */
+  .np-fig, .np-cover .np-fig { width: fit-content; margin-left: auto; margin-right: auto; }
+  .np-fig canvas { width: 320px; height: 168px; }
+  .np-mast .who canvas { width: 64px; height: 64px; box-sizing: content-box; }
   /* заставка: заголовок і написи чіткими розмірами */
   #boot .b-title { font-size: 48px; }
   #boot .b-tip b { font-size: 12px; }
   #boot .b-tip small { font-size: 8px; }
-  #circusModal .modal-box, #circusModal.mg .modal-box { padding-top: 40px; }
+}
+@supports (width: round(3px, 1px)) {
+  .team-card .portrait { width: calc(round(102 * var(--dpr) / 34, 1) * 34px / var(--dpr)); height: calc(round(102 * var(--dpr) / 34, 1) * 27px / var(--dpr)); }
+  #signText { text-shadow: 0 max(1px, round(calc(var(--u) * 0.5), 1px)) 0 var(--darker); }
+  #shopOverlay.lit #signText { text-shadow: 1px 0 0 var(--glow, #ffd36a), -1px 0 0 var(--glow, #ffd36a), 0 -1px 0 var(--glow, #ffd36a), 0 max(1px, round(calc(var(--u) * 0.5), 1px)) 0 var(--darker); }
+  @media (min-width: 821px) and (min-height: 600px) {
+    .tab { --icw: calc(round(48 * var(--dpr) / 32, 1) * 32px / var(--dpr)); }
+    /* значки кристала й осколка в тексті (малюнок 8×8): кратно 8 пікселям екрана, текст після них на цілому пікселі */
+    .shard, .gem { width: round(1.1em, calc(8px / var(--dpr))); height: round(1.1em, calc(8px / var(--dpr))); margin: 0 1px; vertical-align: round(-0.2em, 1px); }
+    #bonusOpenI { width: calc(round(24 * var(--dpr) / 16, 1) * 16px / var(--dpr)); height: calc(round(24 * var(--dpr) / 16, 1) * 16px / var(--dpr)); }
+    .bubble { font-size: calc(round(10 * var(--dpr) / 8, 1) * 8px / var(--dpr)); }
+    .ico-box { --c: calc(round(54 * var(--dpr) / 18, 1) * 18px / var(--dpr)); width: calc(var(--c) + 6px); height: calc(var(--c) + 6px); }
+    .ico-box canvas { width: var(--c); height: var(--c); }
+    .ico-box.sm { --c: calc(round(36 * var(--dpr) / 18, 1) * 18px / var(--dpr)); width: calc(var(--c) + 4px); height: calc(var(--c) + 4px); }
+    .ico-box.sm canvas { width: var(--c); height: var(--c); }
+    .toast canvas { width: calc(round(32 * var(--dpr) / 16, 1) * 16px / var(--dpr)); height: calc(round(32 * var(--dpr) / 16, 1) * 16px / var(--dpr)); }
+    .ach-row .badge { width: calc(round(48 * var(--dpr) / 16, 1) * 16px / var(--dpr)); height: calc(round(48 * var(--dpr) / 16, 1) * 16px / var(--dpr)); }
+    .clown-win { width: calc(round(down, 288 * var(--dpr) / 144, 1) * 144px / var(--dpr)); }
+    .np-fig canvas { width: calc(round(320 * var(--dpr) / 160, 1) * 160px / var(--dpr)); height: calc(round(320 * var(--dpr) / 160, 1) * 84px / var(--dpr)); }
+    .np-mast .who canvas { width: calc(round(50 * var(--dpr) / 32, 1) * 32px / var(--dpr)); height: calc(round(50 * var(--dpr) / 32, 1) * 32px / var(--dpr)); }
+  }
 }
 </style>

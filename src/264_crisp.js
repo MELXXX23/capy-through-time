@@ -32,7 +32,7 @@ function pxFit(cv) {
   cv.style.width = ''; cv.style.height = '';
   const dpr = window.devicePixelRatio || 1, avail = cv.clientWidth;
   if (!avail) return;
-  const s = avail * dpr / cv.width, n = Math.floor(s + 0.02);
+  const s = avail * dpr / cv.width, n = s - Math.floor(s) > 0.9 ? Math.ceil(s) : Math.floor(s + 0.02);       // майже наступне ціле (×3,91): беремо його, це +2%
   if (n < 1 || (dpr >= 2 && (s - n) / s > 0.1)) return;
   cv.style.width = (n * cv.width / dpr) + 'px'; cv.style.height = (n * cv.height / dpr) + 'px';
 }
@@ -42,6 +42,7 @@ function crispSync() {
   if (sig === crispSig) return;
   crispSig = sig;
   document.documentElement.style.setProperty('--dpr', window.devicePixelRatio || 1);
+  [8, 12, 16, 24].forEach(n => document.documentElement.style.setProperty('--f' + n, crispFontSize(n, window.devicePixelRatio || 1) + 'px'));
   crispFonts();
 }
 crispSync();
