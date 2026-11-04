@@ -34,11 +34,9 @@
   let neonSigns = [], neonOwner = null, neonLayer = null;      // неонові вивіски будинків: уночі світяться окремим шаром (скидається разом із houseGlass)
 
   /* ---------- небо: багато відтінків градієнта з дізерингом (не кулі кольорів, а плавний захід) ---------- */
-  let fujiC = null, fujiT = null, fujiKey = '';
   function fujiDims() { const avail = LAYOUT.horizonY - (8 - view.offY), H = Math.round(Math.max(315, Math.min(560, avail - 40 - 70 / Math.max(0.3, sceneUnit)))); return { H, hw: Math.round(600 + (H - 315) * 1.2) }; }      // Фудзі росте, поки на екрані є місце над горизонтом (телефон-горизонт лишається як був)
   function roofTopY() { return (typeof shop !== 'undefined' && shop) ? shop.y + (shop.level >= 6 ? Math.max(0, (shop.roofTop | 0) - 2) - CLOCK_H : 0) : LAYOUT.horizonY - MAX_HOUSE_H; }      // найвища точка ТЦ (з годинниковою вежею)
   function skySpan(top) { return Math.max(60, Math.min(LAYOUT.horizonY - MAX_HOUSE_H - 6, roofTopY() - 24) - top - 24); }      // дракон літає лише в небі над ТЦ
-  const fujiOcCache = {};
   function buildSky() { const it = buildSkyGen(); let r = it.next(); while (!r.done) r = it.next(); return r.value; }
   function* buildSkyGen() {
     const { c, g } = newLayer(true);
@@ -61,7 +59,7 @@
     yield;
     g.putImageData(img, x0 + view.offX, top + view.offY);
     yield;
-    { const L2 = newLayer(); const FD = fujiDims(); fuji(L2.g, x0 + Math.round(W * 0.5), LAYOUT.horizonY, FD.H, FD.hw); fujiC = L2.c; fujiKey = ''; }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори)
+    { const FD = fujiDims(); yield* fujiPrepareGen(FD.H, FD.hw, x0 + Math.round(W * 0.5), LAYOUT.horizonY); }       // Фудзі окремим шаром: малюється ПІСЛЯ сонця й місяця (вони сходять з-за гори); 275_a_fuji.js
     for (let k = 0; k < 14; k++) { g.globalAlpha = 0.012 * (14 - k) * 2; R(g, x0, hor - 28 + k * 2, W, 2, 'W'); }
     g.globalAlpha = 1;
     for (let i = 0; i < 9; i++) { const hs = hash2(i * 31, 9), cx = x0 + (hs % W), cy = top + rows * (0.4 + (hs >>> 8) % 40 / 100), ww = 40 + hs % 70; g.globalAlpha = 0.22; R(g, cx, cy, ww, 2, '#ffffff'); R(g, cx + 8, cy + 2, ww - 16, 1, '#ffd0d8'); g.globalAlpha = 1; }
@@ -69,7 +67,6 @@
   }
 
   /* ---------- далекий вид, сакура, кущі ---------- */
-  const fjTri = x => Math.abs((((x % 2) + 2) % 2) - 1);
   function fjCloud(g, x, y, w, h, pink) {                      // чітка піксельна хмара: плоскі тони й контур на сітці 2×2
     const lumps = [[0.2, 0.62, 0.2], [0.42, 0.42, 0.26], [0.68, 0.56, 0.24], [0.86, 0.68, 0.16], [0.5, 0.72, 0.34]];
     const ins = (px, py) => lumps.some(l => ((px + 1 - l[0] * w) ** 2 + ((py + 1 - l[1] * h) * 1.7) ** 2) < (l[2] * w) ** 2 && py + 1 < h * 0.92);
@@ -84,45 +81,6 @@
     const disc2 = (rr, c, a) => { g.globalAlpha = a; g.fillStyle = c; for (let y = -rr; y <= rr; y += 2) { const hw2 = Math.floor(Math.sqrt(rr * rr - y * y) / 2) * 2; if (hw2 > 0) g.fillRect(cx - hw2, cy + y, hw2 * 2, 2); } g.globalAlpha = 1; };
     disc2(Math.round(r * 2.1), '#ffe2dc', 0.35); disc2(Math.round(r * 1.6), '#ffc4c0', 0.45); disc2(r, '#e8453c', 1);
     g.fillStyle = '#ff7a64'; for (let y = -r + 2; y <= -r * 0.2; y += 2) for (let x = -r * 0.7; x <= -r * 0.1; x += 2) if (x * x + y * y < (r - 3) * (r - 3)) g.fillRect(cx + Math.round(x / 2) * 2, cy + y, 2, 2);
-  }
-  function fuji(g, cx, bY, H, hw) {                            // Фудзі: чіткі плоскі тони (4 скелі + 4 снігу), зубчастий сніг, яри, кант силуету, ступінчастий серпанок; червоне сонце й хмари; пікселі 2×2
-    const heightAt = dx => H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3);      // гостра вершина
-    const snowEndAt = dx => { const streak = Math.pow(Math.max(0, Math.sin(dx * 0.11 + 1)), 6) * 22 + Math.pow(Math.max(0, Math.sin(dx * 0.061 + 2.3)), 8) * 28; return bY - H * 0.68 + 9 * fjTri(dx / 15) + 5 * fjTri(dx / 5.5 + 0.4) + streak * (Math.abs(dx) / hw < 0.1 ? 1 : 0.45); };
-    const hex = c => [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
-    const lerp = (A, B, t) => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
-    const RL = hex('#c2c8fb'), RS = hex('#454b90'), SL = hex('#ffffff'), SS = hex('#8fa1e6'), HZ = hex('#d0d4f8'), OT = hex('#2c2b66');
-    const ROCK = [0, 0.34, 0.68, 1].map(t => lerp(RS, RL, t)), SNOW = [SS, lerp(SS, SL, 0.5), lerp(SS, SL, 0.82), SL];
-    const s = hw / 300;                                        // сонце й хмари намальовані для hw = 300: масштабуємо
-    const W = hw * 2 + 8, Hc = Math.ceil(H / 2) * 2 + 2, y0 = bY - Hc, x0 = cx - hw - 4;
-    const fk = hw + '|' + H;
-    let oc = fujiOcCache[fk];                                  // Фудзі однакова на всіх розмірах екрана з тим самим hw/H: кеш (~30 мс при подорожі)
-    if (!oc) {
-      oc = document.createElement('canvas'); oc.width = W; oc.height = Hc;
-      const ox = oc.getContext('2d'), im = ox.createImageData(W, Hc), d = im.data;
-      const inside = (px, py) => { if (px < 0 || py < 0 || px >= W || py >= Hc) return false; const dx = px + 1 - hw - 4, hgt = bY - (y0 + py + 1); return hgt >= 0 && hgt <= heightAt(dx); };
-      for (let px = 0; px < W; px += 2) {
-        const dx = px + 1 - hw - 4, hh = heightAt(dx);
-        if (hh < 1) continue;
-        const sE = Math.round(snowEndAt(dx) / 2) * 2;
-        for (let py = 0; py < Hc; py += 2) {
-          if (!inside(px, py)) continue;
-          const y = y0 + py + 1, hgt = bY - y, u = dx / (y - (bY - H) + 46);
-          const ridge = Math.sin(u * 15 + 0.9 * Math.sin(u * 4.3 + 1)) * 0.6 + Math.sin(u * 38 + 2) * 0.25 + Math.sin(u * 7 + 0.4) * 0.4;
-          const nxe = Math.max(-1, Math.min(1, dx / (hw * 0.75) + 0.26 * ridge));
-          let I = Math.max(0, Math.min(1, 0.5 - 0.46 * nxe + 0.1 * (hgt / H))); I = I * I * (3 - 2 * I) * 0.85 + I * 0.15;
-          let L = Math.min(3, Math.floor(I * 4));
-          const gul = Math.sin(u * 21 + 1.3 * Math.sin(u * 5 + 0.5)); if (gul > 0.9 && hgt > 12) L = Math.max(0, L - 2);
-          let c = y <= sE ? SNOW[L] : ROCK[L];
-          const hz = hgt < 10 ? 0.62 : hgt < 22 ? 0.4 : hgt < 36 ? 0.2 : 0; if (hz) c = lerp(c, HZ, hz);
-          if (!(inside(px - 2, py) && inside(px + 2, py) && inside(px, py - 2) && inside(px, py + 2))) c = OT;
-          else if (!inside(px - 4, py - 2) && dx < 0) c = lerp(c, SL, 0.55);
-          for (let qy = 0; qy < 2; qy++) for (let qx = 0; qx < 2; qx++) { if (px + qx >= W) continue; const o = ((py + qy) * W + px + qx) * 4; d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255; }
-        }
-      }
-      ox.putImageData(im, 0, 0);
-      fujiOcCache[fk] = oc;
-    }
-    g.drawImage(oc, x0, y0);
   }
   function farSkyline(g, x0, W) {                       // гора Фудзі, телевежа, пагода, високі будинки
     const base = 112;
@@ -422,7 +380,7 @@
   }
   function dseqGeo(wl, wr, top, span) {                 // та сама Фудзі, що в buildSky: центр, основа, вершина
     const { H, hw } = fujiDims(), cx = -view.offX + Math.round(view.w * 0.5), bY = LAYOUT.horizonY;
-    return { H, hw, kS: Math.max(0.6, Math.min(1, (bY - top - 250) / 150)), cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - H * Math.pow(Math.max(0, 1 - Math.abs(dx) / hw), 1.3) };
+    return { H, hw, kS: Math.max(0.6, Math.min(1, (bY - top - 250) / 150)), cx, bY, top, wl, wr, span, ex: Math.max(150, Math.min(300, (visR() - visL()) / 2 - 10)), sy: bY - H * 0.985, surf: dx => bY - fujiHeight(dx, H, hw) };
   }
   function dseqBuild(route, G, T0) {                    // політ: підліт (дракон меншає — віддаляється до гори) → зупинка в небі над дахами → виток навколо верхівки Фудзі → лягає дугою на передній схил (хвіст за горою) → сон → відліт уранці. Ніде не заходить на ТЦ, вежу й будинки
     const { cx, top, surf, ex, H, hw } = G;
@@ -618,18 +576,7 @@
   ARCH.japan = {
     buildSky, skyGen: buildSkyGen, farSkyline, bush, tree, house, skyExtra,
     sunRx: W => Math.round(W * 0.26),                              // вужча дуга сонця й місяця: виходять з-за схилу Фудзі, ховаються за нею близько полудня й виходять знову
-    skyFront(c) {                                                   // Фудзі поверх сонця/місяця/зір, із нічним і вечірнім затемненням як у шару неба
-      if (!fujiC) return;
-      const n = Math.round(sky.night * 24), d = Math.round(sky.dusk * 12), key = n + ':' + d + ':' + fujiC.width + 'x' + fujiC.height;
-      if (key !== fujiKey || !fujiT) {
-        fujiKey = key; if (!fujiT) fujiT = document.createElement('canvas');
-        fujiT.width = fujiC.width; fujiT.height = fujiC.height;
-        const t = fujiT.getContext('2d'); t.drawImage(fujiC, 0, 0); t.globalCompositeOperation = 'source-atop';
-        if (n > 0) { t.globalAlpha = n / 24 * 0.72; t.fillStyle = '#141a40'; t.fillRect(0, 0, fujiT.width, fujiT.height); }
-        if (d > 0) { t.globalAlpha = d / 12 * 0.1; t.fillStyle = '#ff8a4a'; t.fillRect(0, 0, fujiT.width, fujiT.height); }
-      }
-      c.drawImage(fujiT, 0, 0);
-    },
+    skyFront(c) { fujiDraw(c, sky.night, sky.dusk); },              // Фудзі поверх сонця/місяця/зір (275_a_fuji.js)
     filterNeon(keep) { neonSigns = neonSigns.filter(s => keep([s.x, s.y, s.w, s.h])); neonLayer = null; },
     skyPath() { const wl = worldL(), wr = worldR(), top = 8 - view.offY, span = skySpan(top); return tt => dragonPath(tt, wl, wr, top + 12, span); },       // маршрут дракона в небі: за ним злітає й вертається будівельний
     drawDragon: (g, t, pos) => dragonDraw(g, t, pos, 0),
