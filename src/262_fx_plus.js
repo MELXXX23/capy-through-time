@@ -178,7 +178,7 @@ function fxAuroraPaint(g, C, L, t, W, top, nightK, maxH, sx, b0, vx0, vx1) {
     const d = c / (n - 1), sp = 0.55 + 0.7 * d, amp = 0.6 + 0.7 * d, hk = 0.7 + 0.45 * d, ak = 0.5 + 0.5 * d, pal = st[[1, 0, 0, 0][c]];       // 0 — далека, бліда й повільна, 1 — ближня, яскрава й висока
     const base = b0 + c * 11 - (1 - d) * 8;
     for (let x = vx0 - vx0 % step; x < vx1; x += step) {
-      const u = x / W;
+      const u = x / Math.min(W, 620);                                  // складки однієї величини на будь-якому екрані (на широкому їх більше, а не вони ширші)
       const yb = base + (Math.sin(u * 3.4 + t * 0.17 * sp + c * 2.1) * 11 + Math.sin(u * 8.5 - t * 0.3 * sp + c) * 3.5) * amp;           // складки шторки
       const wave = 0.5 + 0.5 * Math.sin(u * 9.5 - t * 0.8 * sp + c * 1.7);                                                              // хвиля яскравості вздовж шторки
       const env = Math.pow(0.5 + 0.5 * Math.sin(u * 2.6 + t * 0.11 * sp + c * 3.3 + Math.sin(u * 5.1 - t * 0.07) * 1.4), 1.6);        // повільні «плями»: де шторка густа, де майже темна

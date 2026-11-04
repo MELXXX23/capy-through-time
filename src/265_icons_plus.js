@@ -344,6 +344,71 @@ function stormCardDraw(g, name, T) {
   // хмари поверх початку блискавки; у спалах підсвічені
   [[0, 2, -2], [1, 52, 4], [2, 92, -3]].forEach(([k, b, y]) => { const cv = cloudCanvas(k, S.tint + (flash ? 'l' : '')), x = ((b + T * 7) % (128 + cv.width + 8)) - cv.width - 4; g.drawImage(cv, Math.round(x), y); });
 }
+// Денні картки погоди: небо смугами з пунктирними стиками, далекі пагорби, трава; хмари й веселка в рідних пікселях, не затуляють маркет
+const DAY_CARD = {
+  '': ['#7ec8e6', '#a8dcf0', '#d4f0fa'], rainbow: ['#7ec8e6', '#a8dcf0', '#e4f6fc'], cottoncloud: ['#9ad4ee', '#ffd8e8', '#fff2f6'], goldcloud: ['#8ccce4', '#d4e8cc', '#fff0c0'],
+  starcloud: ['#5a4aa8', '#8f78d0', '#dcc4f0'], diamondcloud: ['#9adcf6', '#c8eefa', '#f0fbff']
+};
+const dayBackCache = {};
+function dayCardBack(name) {
+  const key = DAY_CARD[name] ? name : '';
+  if (dayBackCache[key]) return dayBackCache[key];
+  const S = DAY_CARD[key], c = document.createElement('canvas'); c.width = 128; c.height = 80;
+  const g = c.getContext('2d'), P = AR.P, band = [0, 22, 44, 80];
+  for (let i = 0; i < 3; i++) P(g, 0, band[i], 128, band[i + 1] - band[i], S[i]);
+  for (let i = 1; i < 3; i++) for (let x = 0; x < 128; x++) { if ((x + band[i]) % 2 === 0) P(g, x, band[i], 1, 1, S[i - 1]); if (x % 4 === 0) P(g, x, band[i] + 1, 1, 1, S[i - 1]); }
+  const hill = key === 'starcloud' ? ['#6a5a9a', '#54467e'] : ['#a4d8a8', '#7fc08a'];
+  for (let x = 0; x < 128; x++) { const h1 = Math.round(10 + Math.sin(x * 0.07 + 1) * 4 + Math.sin(x * 0.19) * 1.5), h2 = Math.round(6 + Math.sin(x * 0.11 + 3) * 3); P(g, x, 72 - h1, 1, h1, hill[0]); P(g, x, 72 - h2, 1, h2, hill[1]); }
+  P(g, 0, 72, 128, 8, '#5aa85a'); P(g, 0, 72, 128, 1, '#8fd47a'); for (let i = 0; i < 26; i++) { const hs = hash2(i * 7 + 1, 11); P(g, hs % 126, 73 + (hs >>> 5) % 6, 2, 1, i % 3 ? '#4a9450' : '#7cc46c'); }
+  return (dayBackCache[key] = c);
+}
+const CARD_STAR_SPEC = ['star', 'sp_blue', 'star2', 'sp_green', 'sp_gold', 'sp_orange', 'sp_red', 'star3'];
+function dayCardDraw(g, name, T) {
+  const P = AR.P;
+  g.drawImage(dayCardBack(name), 0, 0);
+  const tint = CLOUD_SKIN_TINT[name] || '', cl = (k, b, y, sp) => { const cv = cloudCanvas(k, tint), x = Math.round(((b + T * sp) % (128 + cv.width + 8)) - cv.width - 4); return { cv, x, y }; };
+  if (name === 'rainbow') {                                                       // велика дуга навколо маркету, блискітки біжать по ній, біля основ хмарки
+    const rb = weatherRainbow(), cx = 64, cy = 74, R0 = 56;
+    g.drawImage(rb, cx - rb.width / 2, cy - (rb.height - 2));
+    for (let k = 0; k < 7; k++) {
+      const th = ((T * 0.16 + k / 7) % 1) * Math.PI, r = R0 - 3 - (k * 5) % 22, x = Math.round(cx - Math.cos(th) * r), y = Math.round(cy - Math.sin(th) * r);
+      if (Math.sin(T * 4 + k * 2.3) > 0) cardSparkle(g, x, y, '#fff6c0');
+    }
+    g.drawImage(cloudCanvas(1, ''), -14, 50); g.drawImage(cloudCanvas(1, ''), 98, 50);
+    weatherHouse(g, 'day');
+    return;
+  }
+  weatherHouse(g, 'day');
+  if (!tint) {                                                                    // звичайна погода: сонце, білі хмарки, пташки
+    P(g, 16, 8, 9, 9, '#ffe27a'); P(g, 14, 10, 13, 5, '#ffe27a'); P(g, 18, 6, 5, 13, '#ffe27a'); P(g, 18, 9, 3, 2, '#fff6c0');
+    [[1, 6, 4, 4], [2, 70, 14, 3]].forEach(([k, b, y, sp]) => { const c = cl(k, b, y, sp); g.drawImage(c.cv, c.x, c.y); });
+    [[34, 16, 0], [46, 11, 1], [92, 20, 2]].forEach(([x, y, i]) => { const fl = Math.floor(T * 3 + i) % 2, xx = Math.round(x + T * 4) % 128; P(g, xx - 2, y - fl, 2, 1, '#3a4a5a'); P(g, xx + 1, y - fl, 2, 1, '#3a4a5a'); P(g, xx, y, 1, 1, '#3a4a5a'); });
+    return;
+  }
+  const clouds2 = [cl(0, 6, -3, 5), cl(1, 62, 6, 5), cl(2, 104, 0, 5)];
+  clouds2.forEach(c => {
+    if (name === 'starcloud') {                                                   // колір пливе всім спектром, зорі мерехтять
+      const u = (((T * 0.14 + c.x * 0.004) % 1) + 1) % 1 * CARD_STAR_SPEC.length, i0 = Math.floor(u) % CARD_STAR_SPEC.length, fr = u - Math.floor(u), k = [0, 1, 2][clouds2.indexOf(c)];
+      g.drawImage(cloudCanvas(k, CARD_STAR_SPEC[i0]), c.x, c.y); g.globalAlpha = fr; g.drawImage(cloudCanvas(k, CARD_STAR_SPEC[(i0 + 1) % CARD_STAR_SPEC.length]), c.x, c.y); g.globalAlpha = 1;
+      cloudCanvas(k, 'star').starPts.forEach(([px, py], i) => { if (Math.sin(T * 2.6 + i * 1.9) > 0.45) { P(g, c.x + px, c.y + py, 1, 1, '#ffffff'); if (i % 3 === 0) { P(g, c.x + px - 1, c.y + py, 3, 1, '#ffe9a0'); P(g, c.x + px, c.y + py - 1, 1, 3, '#ffe9a0'); P(g, c.x + px, c.y + py, 1, 1, '#ffffff'); } } });
+    } else {
+      g.drawImage(c.cv, c.x, c.y);
+      if (name === 'goldcloud' || name === 'diamondcloud') c.cv.litPts.forEach(([px, py], i) => { if (i % 3) return; const v = Math.sin(T * 2.2 + i * 2.7 + c.x * 0.02); if (v > 0.72) cardSparkle(g, c.x + px, c.y + py, name === 'goldcloud' ? '#fff2b0' : ['#d8f6ff', '#ffd6f4', '#c8fff0'][i % 3]); });
+    }
+  });
+  if (name === 'goldcloud') for (let i = 0; i < 5; i++) {                         // монетки падають і зникають на траві
+    const p = (T * 0.34 + i * 0.2) % 1, x = Math.round(14 + (i * 27) % 104 + Math.sin(i * 3) * 2), y = Math.round(26 + p * p * 48), w = [3, 2, 1, 2][Math.floor(T * 9 + i) % 4];
+    P(g, x - (w >> 1), y, w, 3, '#b5802a'); P(g, x - (w >> 1), y, w, 2, '#ffd23f'); if (w > 1) P(g, x - (w >> 1), y, 1, 1, '#fff6c0');
+  } else if (name === 'starcloud') for (let i = 0; i < 14; i++) {                 // зоряний пил
+    P(g, cardMod(i * 19 + Math.sin(T + i) * 3, 128), 24 + cardMod(i * 11 + T * 9, 48), 1, 1, ['#fff6c0', '#c9b8ff', '#9be8ff', '#ffc4ec'][i % 4]);
+  } else if (name === 'diamondcloud') for (let i = 0; i < 16; i++) {              // діамантовий пил
+    const y = 24 + cardMod(i * 13 + T * 11, 48), x = cardMod(i * 23 + Math.sin(T * 0.8 + i) * 3, 128); P(g, x, y, 1, 1, ['#ffffff', '#d8f6ff', '#9be8ff'][i % 3]); if (i % 5 === 0 && (Math.floor(T * 4) + i) % 2) { P(g, x - 1, y, 3, 1, '#ffffff'); P(g, x, y - 1, 1, 3, '#ffffff'); }
+  } else if (name === 'cottoncloud') for (let i = 0; i < 7; i++) {                // цукрова вата: клаптики повільно летять униз
+    const x = cardMod(i * 31 + Math.sin(T * 0.6 + i) * 6, 128), y = 26 + cardMod(i * 13 + T * 5, 44); P(g, x, y, 3, 2, '#ffd9e8'); P(g, x + 1, y - 1, 2, 1, '#fff1f6'); P(g, x, y + 1, 2, 1, '#f4b6d0');
+  }
+}
+let weatherRainbowCv = null;
+function weatherRainbow() { return weatherRainbowCv || (weatherRainbowCv = buildRainbow(56, 4, 3, false)); }
 function cardPixels(cv) {                                                 // розмір полотна = розмір картки в CSS-пікселях (не більше 128×80): картинка не зменшується, тож жоден рядок пікселів не випадає
   const now = performance.now();
   if (!cv._sz || now - cv._szT > 900) { const w = cv.clientWidth, h = cv.clientHeight; cv._sz = w > 60 && h > 40 ? [Math.min(128, w), Math.min(80, h)] : [128, 80]; cv._szT = now; }
@@ -376,22 +441,6 @@ function weatherSkinPreview(cv, name, T) {
     stormCardDraw(g, name, T);
     return;
   }
-  for (let y = 0; y < H; y++) { g.fillStyle = y < 14 ? '#8fd3ea' : y < 28 ? '#b8e3f5' : '#dff3fa'; g.fillRect(0, y, W, 1); }
-  R(g, 0, 34, W, 6, 'g'); R(g, 0, 34, W, 1, 'm');
-  if (name === 'rainbow') {                                      // веселка розкривається зліва направо, тримається й тане; цикл 5,5 с
-    const C = 6.5, p = T % C, r = Math.min(1, p / 2.6), e = r * r * (3 - 2 * r), a = p > 5.6 ? Math.max(0, 1 - (p - 5.6) / 0.9) : 1;
-    const rb = buildRainbow(30, 3.4, 3, false);
-    g.save(); g.beginPath(); g.rect(0, 0, Math.round(e * (W + 2)), H); g.clip(); g.globalAlpha = a; g.drawImage(rb, -1, 1); g.restore(); g.globalAlpha = 1;
-    if (r < 1) { g.fillStyle = '#ffffff'; g.fillRect(Math.round(e * (W + 2)) - 1, 14 + Math.round(Math.abs(Math.sin(e * 3.14)) * -2), 1, 1); }
-    weatherHouse(g, 'day');
-    [[3, 6], [34, 12]].forEach(([b, y]) => { const x = Math.round(wrap(b, 14)); R(g, x, y, 12, 4, 'w'); R(g, x + 3, y - 2, 8, 3, 'w'); });
-    return;
-  }
-  weatherHouse(g, 'day');
-  if (CLOUD_SKIN_TINT[name]) {
-    const c0 = cloudCanvas(0, CLOUD_SKIN_TINT[name]), c1 = cloudCanvas(1, CLOUD_SKIN_TINT[name]);
-    g.drawImage(c0, Math.round(wrap(2, c0.width)), 0); g.drawImage(c1, Math.round(wrap(34, c1.width)), 6);
-  } else {
-    [[6, 8], [40, 14]].forEach(([b, y]) => { const x = Math.round(wrap(b, 14)); R(g, x, y, 12, 4, 'w'); R(g, x + 3, y - 2, 8, 3, 'w'); });
-  }
+  g.setTransform(1, 0, 0, 1, -ox, -oy);
+  dayCardDraw(g, name, T);
 }
