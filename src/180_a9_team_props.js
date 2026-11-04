@@ -60,12 +60,12 @@ const TEAM_PROP_ART = {
   },
   tray(x, y, f) {                               // таця в лапці збоку: кекс, пончик, макарун; м'яко погойдується
     const b = TP_PH[f & 3], Y = y - 12 - b;
-    TPART(x + 12, Y - 8, ['..dddd..', '.dqqwqd.', 'dqppqppd', 'dppppqpd', '.dcccbd.', '.dcbcbd.', '..dddd..'].map(r => r));
-    TP(x + 15, Y - 9, 2, 1, 'r');                                                                                                 // вишенька
-    TPART(x + 21, Y - 6, ['..ddddd..', '.dhyyhhd.', 'dhfyhfhhd', 'dhhkkhhod', 'dhyhhfhod', '.dhhhood.', '..ddddd..'].map(r => r.slice(0, 9)));
-    TPART(x + 31, Y - 5, ['.dddd.', 'dmmmGd', 'dwwwwd', 'dmmmGd', '.dddd.']);
-    TP(x + 9, Y, 30, 3, 'd'); TP(x + 10, Y, 28, 1, 'w'); TP(x + 10, Y + 1, 28, 1, 'E'); TP(x + 12, Y + 3, 24, 1, 'd');           // таця
-    if (b === 2) { TP(x + 16, Y - 11, 1, 1, 'w'); TP(x + 34, Y - 7, 1, 1, 'w'); }
+    TPART(x + 10, Y - 8, ['..dddd..', '.dqqwqd.', 'dqppqppd', 'dppppqpd', '.dcccbd.', '.dcbcbd.', '..dddd..']);
+    TP(x + 13, Y - 9, 2, 1, 'r');                                                                                                 // вишенька
+    TPART(x + 18, Y - 6, ['..ddddd..', '.dhyyhhd.', 'dhfyhfhhd', 'dhhkkhhod', 'dhyhhfhod', '.dhhhood.', '..ddddd..']);
+    TPART(x + 27, Y - 5, ['.dddd.', 'dmmmGd', 'dwwwwd', 'dmmmGd', '.dddd.']);
+    TP(x + 9, Y, 25, 3, 'd'); TP(x + 10, Y, 23, 1, 'w'); TP(x + 10, Y + 1, 23, 1, 'E'); TP(x + 12, Y + 3, 19, 1, 'd');           // таця
+    if (b === 2) { TP(x + 14, Y - 11, 1, 1, 'w'); TP(x + 30, Y - 7, 1, 1, 'w'); }
     TPAW(x + 7, Y);
   },
   baton(x, y, f) {                             // кийок охоронниці: чорний гумовий, срібні кінці, смугаста ручка з ремінцем; відблиск пробігає згори донизу

@@ -85,13 +85,13 @@ function epochLayerSteps(noShop, panels) {
     },
     ...(noShop ? [] : [() => { if (shop) rebuildShop(true); }]),
     // спрайти покупців нової епохи — заздалегідь, по одному на кадр: інакше вони будувались у першому кадрі нової епохи (ривок до 0,3 с)
-    ...CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => () => { try { evenScaled(getSpriteCanvas(tp + '_' + f), CUST_K); } catch (e) { /* домалюється */ } }))
+    ...CUSTOMER_TYPES.flatMap(tp => [0, 1, 2].map(f => () => { try { evenScaled(getSpriteCanvas(tp + '_' + f), CUST_K); } catch (e) { /* домалюється */ } }))
   ];
 }
 function rebuildEpochLayers() { runStepsNow(epochLayerSteps()); }
 // Спрайти покупців не залежать від епохи: будуємо їх заздалегідь у вільний час, щоб ні подорож, ні перший покупець цього типу не давали ривка
 function warpWarmIdle() {
-  const list = CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => tp + '_' + f));
+  const list = CUSTOMER_TYPES.flatMap(tp => [0, 1, 2].map(f => tp + '_' + f));
   const later = fn => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 400));
   const next = d => {
     do { const n = list.shift(); try { evenScaled(getSpriteCanvas(n), CUST_K); } catch (e) { /* домалюється в кадрі */ } } while (list.length && d && d.timeRemaining && d.timeRemaining() > 8);
