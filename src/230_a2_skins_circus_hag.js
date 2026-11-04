@@ -94,17 +94,20 @@ function updateCircus(dt) {
     const k = Math.min(1, circus.drive / (c.hag ? 6 : CONFIG.CIRCUS_DRIVE_SECONDS));
     circus.x = circusStartX() + (circusStopX() - circusStartX()) * k;
     circus.setup = 0;
-    if (k >= 1 && !(c.hag && circus.hold)) { c.phase = 2.7; circus.x = circusStopX(); circus.setupT = 0; playSfx(c.hag ? 'hagCackle' : 'build'); if (c.hag) spawnDust(circus.x, circusY(), 6); }
+    circusSoundTick(k);
+    if (k >= 1 && !(c.hag && circus.hold)) { c.phase = 2.7; circus.x = circusStopX(); circus.setupT = 0; circusSoundStart('setup'); if (c.hag) { playSfx('hagCackle'); spawnDust(circus.x, circusY(), 6); } }
   } else if (c.phase === 2.7) {                    // шатро розкладається: колеса й платформа зникають, вилазять три куполи, виходить клоун
     circus.setupT += dt; circus.x = circusStopX();
     circus.setup = Math.min(1, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
-    if (circus.setup >= 1) { c.phase = 3; showToast(t(c.hag ? 'hagArrived' : c.noodle ? 'noodleArrived' : 'circusArrived'), 'good'); playSfx('wheelWin'); saveGame(); }
+    circusSoundTick(circus.setup);
+    if (circus.setup >= 1) { c.phase = 3; showToast(t(c.hag ? 'hagArrived' : c.noodle ? 'noodleArrived' : 'circusArrived'), 'good'); circusSoundDone('up', 'wheelWin'); saveGame(); }
   } else if (c.phase === 3) {
     circus.x = circusStopX(); circus.setup = 1;
   } else if (c.phase === 3.5) {                    // збирається назад
     circus.setupT -= dt; circus.x = circusStopX();
     circus.setup = Math.max(0, circus.setupT / CONFIG.CIRCUS_SETUP_SECONDS);
-    if (circus.setup <= 0) { c.phase = 4; playSfx('pip'); }
+    circusSoundTick(1 - circus.setup);
+    if (circus.setup <= 0) { c.phase = 4; circusSoundDone('dn', 'pip'); }
   } else if (c.phase === 4) {                      // від'їжджає ліворуч
     circus.x -= (c.hag ? 48 : 60) * dt;
     if (circus.x < worldL() - 140) { c.phase = 0; if (c.next < now + 3 * 60000) c.next = now + 3 * 60000; saveGame(); }
