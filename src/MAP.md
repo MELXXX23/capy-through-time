@@ -19,7 +19,7 @@
 | `100_a_core_config.js` | 40 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
 | `100_b_music_epochs_customers.js` | 44 | музика (MUSIC, EPOCH_MUSIC), майстерня часу, EPOCHS, досягнення, SPRITES, PALETTE, покупці CHIBI | arpBar, DRUMS_CALM, DRUMS_BOUNCE, MUSIC, DRUMS_CHIP, DRUMS_CHILL, MUSIC_STYLES, EPOCH_MUSIC |
 | `100_c_team_costumes_capy.js` | 45 | костюми героїв по епохах (TEAM_COSTUMES, composeTeamCostume, скіни героїв), спрайти Капі | CHIBI_LOWER, composeChibi, TEAM_GLASSES, teamDeco, TEAM_COSTUMES, teamEyes, composeTeamCostume, TEAM_SKIN_BODY |
-| `100_d_capy_coins_epoch_state.js` | 47 | Капі (нові/старі рядки), монети й кристали епох, curEpoch/nextEpochId/viewEpoch | makeCapyNewRows, makeCapyOldDetail, EPOCH_COIN_ROWS, EPOCH_COIN_COLORS, SHARD_CH, GEM_CH, GEM_ROWS, gemUrls |
+| `100_d_capy_coins_epoch_state.js` | 53 | Капі (нові/старі рядки), монети й кристали епох, curEpoch/nextEpochId/viewEpoch | makeCapyNewRows, makeCapyOldDetail, EPOCH_COIN_ROWS, EPOCH_COIN_COLORS, SHARD_CH, GEM_CH, GEM_ROWS, gemUrls |
 | `100_e2_skin_anim.js` | 9 | — | SKIN_NF, skinAF, sk_sw, sk_set, sk_tip, sk_on, SK_GOLD, SKIN_ANIM |
 | `100_e3_capy_skin_anim.js` | 3 | — | capyFurCols, capyFurPal, capyOvCache, capyOverlayCanvas, capyOverlay |
 | `100_e_team_new.js` | 24 | — | TEAM_SPECIES, TEAM_TINT, tintCanvas, TEAM_PAD, teamBaseCache, teamBaseCanvas, outRGB, outMix |
@@ -33,18 +33,18 @@
 | `120_state.js` | 16 | стан гри (state), множники, зірки, вимоги | createDefaultState, state, milestonesReached, nextMilestone, levelMult, teamLevelOf, STAR_MULT, STAR_HARD_CAP |
 | `125_save.js` | 18 | ЗБЕРЕЖЕННЯ: міграції, mergeInto, saveGame/loadGame | storageOk, SAVE_MIGRATIONS, migrateSave, mergeInto, nativeApp, nativePlugin, lastNativeAt, nativeMirror |
 | `130_format.js` | 45 | t() — переклади, формат чисел | t, pluralForm, tierSuffix, formatNumber, fmt |
-| `140_a_sprite_core_world_props.js` | 47 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
-| `140_b_ground_houses_layers.js` | 43 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGroundGen, manholeSpots, buildGroundLayer, cobbleStrips, groundLayerGen, autumnGroundLeavesGen |
-| `150_a1_facade_items_decor.js` | 29 | магазин: предмети вітрин, прилавки | tierOf, drawItem, drawDisplay, drawShelf, posterG, DOOR_LEAF_STYLES, drawDoorLeaves, placeRow |
-| `150_a2_facade_items_decor.js` | 24 | магазин: епохальний декор фасаду, skinShopDeco | leafPileG, skinGlints, bigLollipopG, gumdropG, coinStackG, goldBarsG, gemG, snowmanG |
+| `140_a_sprite_core_world_props.js` | 48 | спрайти: кеш, R/disc, будинки, дерева, хмари, декор світу | spriteCache, getSpriteCanvas, OUTLINED, outlineCache, getOutlinedCanvas, drawCanvasSprite, drawSprite, R |
+| `140_b_ground_houses_layers.js` | 44 | бруківка, дорога, будинки, шари освітлення, реквізит Хелловіну | paintCobble, snowBlob, winterGroundGen, manholeSpots, buildGroundLayer, cobbleStrips, groundLayerGen, autumnGroundLeavesGen |
+| `150_a1_facade_items_decor.js` | 28 | магазин: предмети вітрин, прилавки | tierOf, drawItem, drawDisplay, drawShelf, posterG, DOOR_LEAF_STYLES, drawDoorLeaves, placeRow |
+| `150_a2_facade_items_decor.js` | 6 | магазин: епохальний декор фасаду, skinShopDeco | leafPileG, skinGlints, bigLollipopG, gumdropG, coinStackG, goldBarsG, gemG, snowmanG |
 | `150_a3_skins_new_decor.js` | 12 | — | SHOP_DECO_EXTRA, STREET_EXTRA, sprG, thickG, roofRecolor, SPR_STAR7, SPR_CHEST, wheelG |
 | `150_b_facade_epoch_props_roof.js` | 34 | магазин: епохальні деталі, вивіски (signMotif), дах (roofProp, drawRoof) | withPal, bandG, vinesG, neonLine, barrelG, crateG, speakerG, cabinetG |
-| `150_c_facade_pavilions_build.js` | 43 | магазин: павільйони поверхів, кінозал, buildShopCanvas | snowCap, PAV_SEQ, PAV_PAL, PAV_BACK, PAV_CANOPY, PAV_TECH, artG, garmentG |
+| `150_c_facade_pavilions_build.js` | 42 | магазин: павільйони поверхів, кінозал, buildShopCanvas | snowCap, PAV_SEQ, PAV_PAL, PAV_BACK, PAV_CANOPY, PAV_TECH, artG, garmentG |
 | `151_a_arch_core_renaissance.js` | 36 | ARCH: примітиви AR + епоха 0 (Відродження) | AR |
 | `151_b_arch_retro_disco.js` | 26 | ARCH: епохи 1–2 (Ретро, Диско) |  |
 | `151_c_arch_arcade_internet_eco.js` | 39 | ARCH: епохи 3–5 (Аркади, Інтернет, Еко) |  |
 | `151_d_arch_space_neon.js` | 26 | ARCH: епохи 6–7 (Космос, Неон) |  |
-| `151_e_arch_skins.js` | 13 | — | SKIN_ARCH |
+| `151_e_arch_skins.js` | 50 | — | SKIN_ARCH |
 | `160_refs.js` | 7 | посилання на елементи DOM (ui) | $, ui, ctx, skyLayer, shop, uiCache, sceneUnit, viewCrop |
 | `165_shop.js` | 18 | rebuildShop, layoutScene, камера, панель на телефоні | deferLayers, rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK |
 | `165_tab_icons_hd.js` | 14 | — | TAB_ICONS_HD, tabImgHD, tabGlyphHD |
@@ -66,7 +66,7 @@
 | `200_c_time_travel_workshop_stats.js` | 27 | подорож (applyTimeTravel), майстерня часу, досягнення, статистика, налаштування | applyTimeTravelSteps, applyTimeTravel, wsEffectText, buildWorkshop, wsNeedTrips, buyWorkshop, routeSig, updateRouteCard |
 | `210_skins.js` | 34 | скіни: інтерфейс, пил, ефекти магазину | SKIN_ICONS, skinCatIcon, skinsSig, shopFx, SHOP_FX, FX_CANDY_COLS, updateShopSkinFx, skinDust |
 | `211_skins_new_fx.js` | 3 | — | SHOP_FX_DRAW, FX_SEA_COLS |
-| `212_skins_shop_anim.js` | 9 | — | SKIN_SIGN_ANIM, signStripes, signFlakes, signSpark, drawRoofFountains, aquariumSpot, drawSkinInterior, drawSkinShopExtras |
+| `212_skins_shop_anim.js` | 9 | — | sg, SKIN_SIGN_ANIM, signStripes, signFlakes, signSpark, drawRoofFountains, aquariumSpot, drawSkinInterior |
 | `213_epoch_roof_anim.js` | 3 | — | drawEpochRoofAnim, drawSpaceTelescope |
 | `214_skin_town.js` | 25 | — | townHouses, skinTownOn, TW, skinTownHouse, rgbHsl, hslRgb, townRecolor, skinTownPreview |
 | `214_skin_town_b.js` | 15 | — | TW2 |
@@ -74,7 +74,7 @@
 | `220_b1_rainbow_lightning_skyx.js` | 24 | райдуга, блискавки, прикраси неба (початок) | RAINBOW_M, rainbowM, rainbowCanvas, rainbowGeom, drawRainbowSkin, bolts, boltTimer, boltPath |
 | `220_b2_rainbow_lightning_skyx.js` | 23 | прикраси неба (skyx*), кеш-спрайти | skyxDrone, skyxIsland, skyBlockCache, skyHash, skyxBlock, islandCanvas, skyxIsland2, droneBody |
 | `220_c_epoch_sky_fx.js` | 46 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, discoLamps, drawSkyExtra |
-| `220_d_night_garlands_halloween.js` | 40 | нічне небо, гірлянди, Хелловін (привиди, туман) | drawSkyScreen, drawNightShade, SEASON_MOOD, BULB_SETS, bulbColors, awningBulbs, garlandSpans, garlandY |
+| `220_d_night_garlands_halloween.js` | 44 | нічне небо, гірлянди, Хелловін (привиди, туман) | drawSkyScreen, drawNightShade, SEASON_MOOD, BULB_SETS, bulbColors, awningBulbs, garlandSpans, garlandY |
 | `221_sky_life.js` | 4 | — | skyLife, SKY_LIFE_COLS, skyLifeGlow, seedSkyLife, drawSkyLife |
 | `230_a1_skins_circus_hag.js` | 27 | СКІНИ: пули, ціни, володіння | CIRCUS_SECTORS, BONUS_GAME_SKINS, circusFreq, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON |
 | `230_a2_skins_circus_hag.js` | 19 | цирк (CIRCUS_ART), відьма, хатка | hagReset, hagStart, updateHagGame, hagPos, hagClick, circusStopX, circusStartX, bangPos |
@@ -98,9 +98,9 @@
 | `263_build_cinema.js` | 8 | — | bc, bcSweepCv, bcMake, bcPlace, buildCinemaStart, buildCinemaTick, buildCinemaEnd, drawBuildSweep |
 | `264_smooth_ui.js` | 2 | — |  |
 | `265_b_icons_art.js` | 9 | — | PX_PAL, PX_ART, pxArtCache, pxArt, pxArtImg |
-| `265_d_card_scenes.js` | 20 | — | cardRect, cardMod, cardSparkle, cardBall, cardTri, cardSky, cardStars, CARD_GY |
+| `265_d_card_scenes.js` | 21 | — | cardRect, cardMod, cardSparkle, cardBall, cardTri, cardSky, cardStars, CARD_GY |
 | `265_e_capy_scenes.js` | 23 | — | CAPY_SCENES |
-| `265_icons_plus.js` | 32 | — | pxIconCache, pxEmojiIcon, iconBox, setIconBox, iconBackdrop, iconAvgColor, mixCol, skinTwinkles |
+| `265_icons_plus.js` | 42 | — | pxIconCache, pxEmojiIcon, iconBox, setIconBox, iconBackdrop, iconAvgColor, mixCol, skinTwinkles |
 | `270_loop.js` | 3 | ігровий цикл | lastFrame, saveTimer, uiTimer, animClock, frameErrN, frameErr, frame, frameStep |
 | `275_a_sakura.js` | 22 | — | SAKURA_W, SAKURA_CACHE, SAKURA_PAL, SAKURA_WOOD, SAKURA_SHAPES, drawSakura, sakuraBuild, TREE2_CACHE |
 | `275_ads.js` | 9 | реклама AdMob (лише Android-обгортка, прапорець window.__ADS з mobile/sync-web.js): Ads.init/available/showRewarded, кнопки «×2» у вікні офлайну й пропуск очікування бонус-гри; див. store/ADS_PLAN.md | Ads, adsAddPrivacyButton, adsLog, adOfflineDone, updateAdButtons, adsOfferOffline, adsBoostClick, adsOfferBonusSkip |

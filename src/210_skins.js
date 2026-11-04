@@ -270,6 +270,7 @@ function updateSkinsUI() {
       b.append(nm, st);
       b.addEventListener('click', () => equipSkin(type, o.i));
       grid.appendChild(b);
+      skinPreviewCanvas(type, o.name, cv);                               // уже в сторінці: полотно бере точний розмір картки, тож пікселі рівні з першого кадру
     }, j * 45));                                                         // кожну картку — окремим кадром: найважчі (магазини) не збираються разом
     ui.skinsList.appendChild(card);
     if (fillOrder++ === 0) fill(); else later(fill, fillOrder * 50);

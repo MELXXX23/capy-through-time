@@ -170,7 +170,8 @@ function capyFxPreview(g, nm, w, h, t) {
   g.globalAlpha = 1;
 }
 function capySkinPreview(cv, name, t) {                           // Капі в скіні «дихає» на тлі, навколо — частинки скіна
-  const c = getSpriteCanvas(capySprite()), W = Math.max(44, c.width + 18), H = 38;
+  // рівно ×2 до ширини картки (р. 78): кожен піксель однаковий, більше сцени навколо; поза сторінкою — старий розмір
+  const c = getSpriteCanvas(capySprite()), cw = cv.clientWidth, W = cw > 60 ? Math.max(c.width + 6, Math.floor(cw / 2)) : Math.max(44, c.width + 18), H = 38;
   if (cv.width !== W) { cv.width = W; cv.height = H; }
   const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
   const bg = CAPY_BG[name] || [['#8fd3ea', '#b8e3f5', '#dff3fa'], ['#8fcf7a', '#5aa85a']];

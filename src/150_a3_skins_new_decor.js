@@ -1,7 +1,7 @@
 //#part 150_a3_skins_new_decor.js
 /* =====================================================================
    НОВІ СКІНИ: магазин «Океан» (палітра + декор фасаду), бруківки «Цукерна», «Піщана».
-   Підключаються гачками: SHOP_DECO_EXTRA (skinShopDeco у 150_a2), STREET_EXTRA (cobbleExtra у 140_a); літаючі прикраси — у 211_skins_new_fx.js.
+   Підключаються гачками: SHOP_DECO_EXTRA (океанський фасад, 151_e), STREET_EXTRA (cobbleExtra у 140_a); літаючі прикраси — у 211_skins_new_fx.js.
    ===================================================================== */
 Object.assign(SHOP_SKINS, {
   ocean:  { roofPal: { r: 'n', n: 'T' }, trim: 'o', col: ['T', 'S'], frame: ['n', 's'], glass: 'S', base: 'n', band: null, awningCols: ['T', 'w'], signFill: 'n', inner: ['a', 'S', 'm', '*'] }

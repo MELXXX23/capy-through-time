@@ -157,28 +157,41 @@ const STREET_THEME = {                                              // [стін
   snow: ['#dfe8f2', '#a9bccf', '#ffffff', '#b8cde6'], leaves: ['#b8683a', '#7a3c20', '#e0925a', '#e8d8b0'], moss: ['#7f927c', '#55684f', '#a3b89c', '#d4ecd0'],
   gold: ['#e8b030', '#a87414', '#ffe27a', '#fff0c0'], diamond: ['#7fd6f0', '#3a8ab0', '#bdeeff', '#e0f8ff'], candy: ['#ffc4da', '#e0608a', '#ffe4ef', '#e8f4ff'], sand: ['#d9b878', '#a07838', '#f0d8a0', '#bfe6f5']
 };
-const streetCobbleCache = {};
+const streetBackCache = {};
+function streetCardBack(name) {                                    // нерухоме тло: будинки під стиль дороги, бордюр, справжня бруківка 1:1, ліхтар і лавка
+  if (streetBackCache[name]) return streetBackCache[name];
+  const c = document.createElement('canvas'); c.width = 128; c.height = 80;
+  const g = c.getContext('2d'), T = STREET_THEME[name] || STREET_THEME.stone;
+  cardRect(g, 0, 0, 128, 26, T[3]);
+  for (let i = 0; i < 6; i++) {
+    const x = i * 26 - 8, hh = 19 + ((i * 5) % 3) * 3, y0 = 26 - hh;
+    cardRect(g, x, y0, 25, hh, T[0]); cardRect(g, x, y0, 25, 2, T[2]); cardRect(g, x + 24, y0, 1, hh, T[1]); cardRect(g, x - 1, y0 - 2, 27, 2, T[1]);
+    for (let w = 0; w < 2; w++) { const wx = x + 4 + w * 10; cardRect(g, wx, y0 + 5, 7, 9, T[1]); cardRect(g, wx + 1, y0 + 6, 5, 7, (i + w) % 3 ? '#ffe27a' : '#4a5a70'); cardRect(g, wx + 3, y0 + 6, 1, 7, T[1]); cardRect(g, wx + 1, y0 + 9, 5, 1, T[1]); }
+  }
+  cardRect(g, 0, 26, 128, 6, '#c9c4bc'); cardRect(g, 0, 26, 128, 1, '#e8e4dc'); cardRect(g, 0, 31, 128, 1, '#8e8a84'); for (let x = 7; x < 128; x += 16) cardRect(g, x, 27, 1, 4, '#a8a49c');
+  g.save(); g.beginPath(); g.rect(0, 32, 128, 48); g.clip(); paintCobble(g, 0, 32, 128, 48, name); g.restore();
+  g.globalAlpha = 0.28; cardRect(g, 0, 32, 128, 2, '#1a1208'); g.globalAlpha = 1;
+  // ліхтар
+  cardRect(g, 15, 10, 2, 26, '#2e3a46'); cardRect(g, 13, 34, 6, 2, '#2e3a46'); cardRect(g, 12, 6, 8, 5, '#2e3a46'); cardRect(g, 13, 7, 6, 3, '#fff4c0'); cardRect(g, 13, 5, 6, 1, '#2e3a46');
+  // лавка
+  cardRect(g, 96, 38, 24, 2, '#8a5a38'); cardRect(g, 96, 41, 24, 3, '#6b4128'); cardRect(g, 96, 41, 24, 1, '#8a5a38'); cardRect(g, 98, 44, 2, 4, '#3a2616'); cardRect(g, 116, 44, 2, 4, '#3a2616'); cardRect(g, 98, 40, 1, 1, '#3a2616'); cardRect(g, 117, 40, 1, 1, '#3a2616');
+  return (streetBackCache[name] = c);
+}
 function streetSkinPreview(cv, name, t) {
-  const W = 64, H = 40; cv.width = W; cv.height = H;
-  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-  const T = STREET_THEME[name] || STREET_THEME.stone;
-  cardRect(g, 0, 0, W, 12, T[3]);
-  for (let i = 0; i < 4; i++) { const x = i * 17 - 2, hh = 10 + (i % 2) * 3; cardRect(g, x, 12 - hh, 16, hh, T[0]); cardRect(g, x, 12 - hh, 16, 2, T[2]); cardRect(g, x + 15, 12 - hh, 1, hh, T[1]);
-    for (let w = 0; w < 2; w++) cardRect(g, x + 3 + w * 6, 12 - hh + 4, 4, 5, (Math.floor(t * 0.4) + i + w) % 3 ? '#ffe27a' : '#4a5a70'); }
-  cardRect(g, 0, 12, W, 4, '#c9c4bc'); cardRect(g, 0, 12, W, 1, '#e8e4dc'); cardRect(g, 0, 15, W, 1, '#8e8a84');
-  let cob = streetCobbleCache[name];
-  if (!cob) { cob = streetCobbleCache[name] = document.createElement('canvas'); cob.width = W; cob.height = H - 16; const cg = cob.getContext('2d'); cg.imageSmoothingEnabled = false; paintCobble(cg, 0, 0, W, H - 16, name); }
-  g.drawImage(cob, 0, 16);
-  cardRect(g, 8, 4, 2, 14, '#2e3a46'); cardRect(g, 6, 3, 6, 2, '#2e3a46'); g.globalAlpha = (0.5 + 0.2 * Math.sin(t * 3)) * 0.45; cardRect(g, 3, 2, 12, 9, '#ffe27a'); g.globalAlpha = 1; cardRect(g, 7, 4, 4, 1, '#fff4c0');
-  cardRect(g, 48, 22, 12, 2, '#6b4128'); cardRect(g, 48, 24, 1, 3, '#3a2616'); cardRect(g, 59, 24, 1, 3, '#3a2616'); cardRect(g, 48, 20, 12, 1, '#8a5a38');
-  const sp = getSpriteCanvas('bunny_' + (Math.floor(t * 6) % 2)), wx = cardMod(t * 9, W + 24) - 20;
-  g.globalAlpha = 0.3; cardRect(g, wx + 3, 36, 12, 2, '#1a0e08'); g.globalAlpha = 1; g.drawImage(sp, Math.round(wx), 14);
-  if (name === 'snow') for (let i = 0; i < 14; i++) cardRect(g, cardMod(i * 9 + Math.sin(t + i) * 2, W), cardMod(i * 7 + t * 10, H), 1, 1, '#ffffff');
-  else if (name === 'moss') for (let i = 0; i < 5; i++) { const ph = (t * 0.6 + i * 0.2) % 1; g.globalAlpha = Math.sin(ph * Math.PI); cardRect(g, 6 + i * 12 + Math.sin(t + i) * 3, 20 + (i * 5) % 14, 1, 1, '#d8ff7a'); g.globalAlpha = 1; }
-  else if (name === 'candy') for (let i = 0; i < 8; i++) cardRect(g, cardMod(i * 8 + 3, W), cardMod(i * 9 + t * 7, H), 1, 2, ['#ff4f8a', '#4fc0f0', '#ffd23a'][i % 3]);
-  else if (name === 'brick') for (let i = 0; i < 3; i++) { const ph = (t * 0.5 + i * 0.33) % 1; g.globalAlpha = 0.5 * Math.sin(ph * Math.PI); cardRect(g, 26 + i * 8, 6 + (1 - ph) * 8, 2, 2, '#e0e0e0'); g.globalAlpha = 1; }
-  else if (name === 'wood') for (let i = 0; i < 6; i++) cardRect(g, cardMod(i * 11 + t * 4, W), cardMod(i * 7 + t * 6, H), 1, 1, '#ffd9a0');
-  else if (name === 'leaves') for (let i = 0; i < 9; i++) cardRect(g, cardMod(i * 8 + Math.sin(t * 1.5 + i) * 4, W), cardMod(i * 6 + t * 8, H), 2, 1, ['#d9602a', '#e8a030', '#b8402a'][i % 3]);
-  else if (name === 'gold' || name === 'diamond') for (let i = 0; i < 7; i++) if ((t * 0.9 + i * 0.29) % 1 < 0.45) cardSparkle(g, 4 + (i * 17) % (W - 8), 18 + (i * 7) % 18, name === 'gold' ? '#fff6c0' : '#ffffff');
-  else if (name === 'sand') for (let i = 0; i < 7; i++) cardRect(g, cardMod(i * 11 + t * 14, W), 18 + (i * 5) % 20, 2, 1, '#fff0c8');
+  const sz = cardPixels(cv), ox = Math.round((128 - sz[0]) / 2), oy = Math.round((80 - sz[1]) * 0.62); cv.width = sz[0]; cv.height = sz[1];
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.setTransform(1, 0, 0, 1, -ox, -oy);
+  const W = 128, H = 80;
+  g.drawImage(streetCardBack(name), 0, 0);
+  g.globalAlpha = (0.5 + 0.2 * Math.sin(t * 3)) * 0.4; cardRect(g, 8, 3, 16, 12, '#ffe27a'); g.globalAlpha = 1;      // світло ліхтаря
+  const sp = getSpriteCanvas('bunny_' + (Math.floor(t * 6) % 2)), wx = cardMod(t * 11, W + 28) - 22, fy = 62;
+  g.globalAlpha = 0.3; cardRect(g, wx + 2, fy, sp.width - 4, 2, '#1a0e08'); g.globalAlpha = 1; g.drawImage(sp, Math.round(wx), fy - sp.height + 1);
+  if (name === 'snow') for (let i = 0; i < 20; i++) cardRect(g, cardMod(i * 13 + Math.sin(t + i) * 3, W), cardMod(i * 11 + t * 16, H), 1 + (i % 4 === 0 ? 1 : 0), 1 + (i % 4 === 0 ? 1 : 0), '#ffffff');
+  else if (name === 'moss') for (let i = 0; i < 7; i++) { const ph = (t * 0.6 + i * 0.17) % 1; g.globalAlpha = Math.sin(ph * Math.PI); cardRect(g, 10 + i * 17 + Math.sin(t + i) * 5, 38 + (i * 9) % 30, 1, 1, '#d8ff7a'); g.globalAlpha = 1; }
+  else if (name === 'candy') for (let i = 0; i < 12; i++) cardRect(g, cardMod(i * 11 + 3, W), cardMod(i * 13 + t * 12, H), 1, 2, ['#ff4f8a', '#4fc0f0', '#ffd23a'][i % 3]);
+  else if (name === 'brick') for (let i = 0; i < 3; i++) { const ph = (t * 0.5 + i * 0.33) % 1; g.globalAlpha = 0.5 * Math.sin(ph * Math.PI); cardRect(g, 52 + i * 16, 12 + (1 - ph) * 12, 2, 2, '#e0e0e0'); g.globalAlpha = 1; }
+  else if (name === 'wood') for (let i = 0; i < 7; i++) cardRect(g, cardMod(i * 19 + t * 7, W), 36 + cardMod(i * 9 + t * 5, 40), 1, 1, '#ffd9a0');
+  else if (name === 'leaves') for (let i = 0; i < 12; i++) cardRect(g, cardMod(i * 11 + Math.sin(t * 1.5 + i) * 6, W), cardMod(i * 9 + t * 14, H), 2, 1, ['#d9602a', '#e8a030', '#b8402a'][i % 3]);
+  else if (name === 'gold' || name === 'diamond') for (let i = 0; i < 9; i++) if ((t * 0.9 + i * 0.23) % 1 < 0.45) cardSparkle(g, 6 + (i * 29) % (W - 12), 38 + (i * 11) % 36, name === 'gold' ? '#fff6c0' : '#ffffff');
+  else if (name === 'sand') for (let i = 0; i < 9; i++) cardRect(g, cardMod(i * 17 + t * 24, W), 38 + (i * 7) % 38, 3, 1, '#fff0c8');
+
 }

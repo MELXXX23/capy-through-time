@@ -445,7 +445,6 @@ function buildShopCanvas(level, tiers) {
   epochFacadeDeco(g, es, w, h, look, level, floors, yG, door, yB);
   epochFacadeExtra(g, es, w, h, look, level, floors, yG, door, yB);
   if (!skinShop) shopVariantDeco(g, es, w, h, look, level, floors, yG, door, yB, shopVariant(level));
-  if (skinShop) skinShopDeco(g, skinOn('shop'), w, h, look, yG, door);
   }
   gD.save(); gD.globalCompositeOperation = 'destination-out'; gD.fillStyle = '#000'; gD.fillRect(K.x, K.y, K.w, K.h); gD.restore();
   g = gFront; g.drawImage(dcv, 0, 0);

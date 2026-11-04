@@ -23,26 +23,29 @@ function paintCobble(g, X0, Y0, W, H, style) {
   }
   const RH = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
   const ANCHOR = -2600;                                            // з цієї точки рахуємо камені, тож візерунок завжди той самий
-  if (style === 'wood') {                                          // дерев'яний настил
-    RH(X0, Y0, W, H, '#5a3a2a');
-    for (let r = 0, y = Y0; y < Y0 + H; r++, y += 7) {
+  if (style === 'wood') {                                          // дерев'яний настил: дошки різного тону, волокна, сучки й цвяхи
+    RH(X0, Y0, W, H, '#3e2618');
+    for (let r = 0, y = Y0; y < Y0 + H; r++, y += 8) {
       let x = ANCHOR - (hash2(r, 4) % 40);
       while (x < X0 + W) {
-        const w = 28 + (hash2(x, r) % 20), t = ['#a8703f', '#9c6638', '#b57a45', '#946034'][hash2(x + 3, r) % 4];
+        const w = 34 + (hash2(x, r) % 26), hs = hash2(x + 3, r), t = [['#b47a45', '#d09a62', '#8a5630', '#96623a'], ['#a86e3c', '#c48c56', '#7e4e2a', '#8c5a34'], ['#c08450', '#dcaa72', '#946038', '#a4703f'], ['#9c6434', '#b67e4a', '#744826', '#845430']][hs % 4];
         if (x + w > X0) {
-          RH(x + 1, y + 1, w - 1, 6, t); RH(x + 1, y + 1, w - 1, 1, '#c98d57'); RH(x + 1, y + 6, w - 1, 1, '#6e4528');
-          for (let k = 0; k < 3; k++) RH(x + 4 + hash2(x + k, r) % (w - 8), y + 3 + k % 2, 4, 1, '#855430');
-          RH(x + 2, y + 3, 1, 1, '#4a3228'); RH(x + w - 3, y + 3, 1, 1, '#4a3228');
+          RH(x + 1, y + 1, w - 1, 7, t[0]); RH(x + 1, y + 1, w - 1, 1, t[1]); RH(x + 1, y + 7, w - 1, 1, t[2]); RH(x + w - 1, y + 2, 1, 5, t[2]);
+          for (let k = 0; k < 4; k++) { const hk = hash2(x + k * 5, r + k), gx = x + 3 + hk % Math.max(1, w - 16); RH(gx, y + 2 + k % 5, 6 + hk % 9, 1, t[3]); }      // волокна
+          if (hs % 5 === 0) { const kx = x + 8 + (hs >>> 5) % Math.max(1, w - 18), ky = y + 3; RH(kx, ky, 4, 3, t[3]); RH(kx + 1, ky + 1, 2, 1, '#4e2f1b'); RH(kx - 1, ky + 1, 1, 1, t[3]); RH(kx + 4, ky + 1, 1, 1, t[3]); }   // сучок
+          [[2, 3], [2, 5], [w - 3, 3], [w - 3, 5]].forEach(([dx, dy]) => { RH(x + dx, y + dy, 1, 1, '#3e2618'); RH(x + dx, y + dy - 1, 1, 1, t[1]); });          // цвяхи
         }
         x += w;
       }
     }
-  } else if (style === 'brick') {                                  // червона цегла
-    RH(X0, Y0, W, H, '#7a5a4a');
-    for (let r = 0, y = Y0; y < Y0 + H; r++, y += 6) for (let x = Math.floor((X0 - 12) / 12) * 12 + (r % 2) * 6 - 12; x < X0 + W; x += 12) {
-      const t = ['#b5533c', '#a84a35', '#c25e45', '#9f4430'][hash2(x, r) % 4];
-      RH(x + 1, y + 1, 11, 5, t); RH(x + 1, y + 1, 11, 1, '#d77a5e'); RH(x + 1, y + 5, 11, 1, '#7d3224');
-      if (hash2(x + 5, r) % 9 === 0) RH(x + 4, y + 3, 2, 1, '#8a3a28');
+  } else if (style === 'brick') {                                  // червона цегла, викладена «кошиком»: пари цеглин то вздовж, то впоперек
+    RH(X0, Y0, W, H, '#6e4c3e');
+    const TONE = [['#bd573e', '#de8064', '#823426'], ['#ae4c36', '#d07058', '#742c20'], ['#c86248', '#e88c70', '#8c3a2a'], ['#a44530', '#c4664e', '#6c281c']];
+    const brick = (x, y, w, h, k) => { const t = TONE[k % 4]; RH(x + 1, y + 1, w - 1, h - 1, t[0]); RH(x + 1, y + 1, w - 1, 1, t[1]); RH(x + 1, y + 1, 1, h - 1, t[1]); RH(x + 1, y + h - 1, w - 1, 1, t[2]); RH(x + w - 1, y + 2, 1, h - 2, t[2]); if (k % 11 === 0) RH(x + 3, y + 3, 2, 1, t[2]); };
+    const CELL = 14, half = 7;
+    for (let cy = Math.floor(Y0 / CELL), y = cy * CELL; y < Y0 + H; cy++, y += CELL) for (let cx = Math.floor(X0 / CELL) - 1, x = cx * CELL; x < X0 + W; cx++, x += CELL) {
+      if ((cx + cy) & 1) { brick(x, y, CELL, half, hash2(x, y)); brick(x, y + half, CELL, half, hash2(x + 3, y)); }
+      else { brick(x, y, half, CELL, hash2(x, y + 1)); brick(x + half, y, half, CELL, hash2(x, y + 5)); }
     }
   } else {                                                         // звичайна: нерівний булижник з об'ємом, тріщинами й мохом
     RH(X0, Y0, W, H, '#7d7268');
