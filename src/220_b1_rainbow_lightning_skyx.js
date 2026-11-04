@@ -58,27 +58,31 @@ function boltDense(pts) {                                      // ламана �
 function makeBolt() {
   const vl = visL(), vr = visR(), top = -view.offY, roll = Math.random();
   let sx, sy, ex, ey, glow = 0;
-  if (roll < 0.34) { sx = rand(vl + 14, vr - 14); sy = top - 4; ex = sx + rand(-28, 28); ey = rand(88, 128); }                                      // згори вниз
-  else if (roll < 0.62) { const L = Math.random() < 0.5; sx = L ? vl - 6 : vr + 6; sy = rand(top + 24, 70); ex = sx + (L ? 1 : -1) * rand(70, 150); ey = sy + rand(-16, 54); glow = 0.45; }   // збоку, углиб неба
-  else if (roll < 0.8) { sx = rand(vl + 20, vr - 20); sy = rand(104, 124); ex = sx + rand(-40, 40); ey = top + rand(8, 32); glow = 1; }               // знизу вгору, з-за дахів до хмар
+  const vis = clouds.filter(c => c.x + 30 > vl && c.x + 30 < vr && c.y < top + 74); let fromCl = null;
+  if (roll < 0.62 && vis.length) { fromCl = vis[Math.floor(Math.random() * vis.length)]; const b = cloudBox(fromCl); sx = b.x + b.w * rand(0.3, 0.7); sy = b.y + b.h * 0.6; ex = sx + rand(-34, 34); ey = rand(92, 128); fromCl.lit = 1; }   // з хмари вниз
+  else if (roll < 0.62) { sx = rand(vl + 14, vr - 14); sy = top - 4; ex = sx + rand(-28, 28); ey = rand(88, 128); }                                      // згори вниз
+  else if (roll < 0.72) { const L = Math.random() < 0.5; sx = L ? vl - 6 : vr + 6; sy = rand(top + 24, 70); ex = sx + (L ? 1 : -1) * rand(70, 150); ey = sy + rand(-16, 54); glow = 0.45; }   // збоку, углиб неба
+  else if (roll < 0.86) { sx = rand(vl + 20, vr - 20); sy = rand(104, 124); ex = sx + rand(-40, 40); ey = top + rand(8, 32); glow = 1; }               // знизу вгору, з-за дахів до хмар
   else { const R2 = Math.random() < 0.5; sx = R2 ? vl - 4 : vr + 4; sy = rand(top + 28, 72); ex = sx + (R2 ? 1 : -1) * rand(110, 200); ey = sy + rand(-18, 18); glow = 0.5; }   // майже горизонтальна між хмарами
   const len = Math.hypot(ex - sx, ey - sy), ux = (ex - sx) / len, uy = (ey - sy) / len;
-  const main = boltDense(boltPath(sx, sy, ex, ey, len * 0.16, 6)), branches = [];
+  const main = boltDense(boltPath(sx, sy, ex, ey, len * 0.2, 4)), branches = [];        // менше дрібних зламів: чіткий зигзаг, а не шум
   const nb = 2 + Math.floor(rand(0, 3));
   for (let i = 0; i < nb; i++) {
     const at = Math.floor(rand(0.22, 0.8) * main.length), [bx, by] = main[at], sg = Math.random() < 0.5 ? -1 : 1, px = -uy * sg, py = ux * sg;
     const l2 = rand(16, 36);
-    const bp = boltDense(boltPath(bx, by, bx + px * l2 + ux * rand(8, 24), by + py * l2 + uy * rand(8, 24), 9, 5));
+    const bp = boltDense(boltPath(bx, by, bx + px * l2 + ux * rand(8, 24), by + py * l2 + uy * rand(8, 24), 8, 3));
     const twigs = [];
-    if (Math.random() < 0.6) { const ti = Math.floor(rand(0.3, 0.7) * bp.length), [tx, ty] = bp[ti]; twigs.push({ at: ti, pts: boltDense(boltPath(tx, ty, tx + px * rand(6, 14) + ux * 6, ty + py * rand(6, 14) + uy * 6, 4, 4)) }); }
+    if (Math.random() < 0.6) { const ti = Math.floor(rand(0.3, 0.7) * bp.length), [tx, ty] = bp[ti]; twigs.push({ at: ti, pts: boltDense(boltPath(tx, ty, tx + px * rand(6, 14) + ux * 6, ty + py * rand(6, 14) + uy * 6, 3, 2)) }); }
     branches.push({ at, pts: bp, twigs });
   }
   const gi = Math.floor(glow * (main.length - 1));
   return { main, branches, t: 0, dur: rand(0.8, 1.05), seed: Math.random() * 100, gx: main[gi][0], gy: main[gi][1] };
 }
 function updateLightning(dt) {
+  stormClouds(!!lightningKind() && !!state.settings.clouds);
   if (!lightningKind()) { bolts.length = 0; skyFlash = 0; return; }
   if (!animOn()) return;
+  clouds.forEach(c => { if (c.lit > 0) c.lit = Math.max(0, c.lit - dt * 2.6); });
   boltTimer -= dt;
   if (boltTimer <= 0) {                                          // грозові спалахи: одна, іноді дві блискавки підряд
     boltTimer = rand(1.0, 2.6);
@@ -89,20 +93,22 @@ function updateLightning(dt) {
   skyFlash = Math.max(0, skyFlash - dt * 1.5);
   for (let i = bolts.length - 1; i >= 0; i--) { bolts[i].t += dt; if (bolts[i].t >= bolts[i].dur) bolts.splice(i, 1); }
 }
-// шари: [товщина, колір, прозорість] — широке м'яке світіння, яскраве тіло, біле ядро
+// шари: [товщина, колір, прозорість]: кольорова кромка, яскраве тіло, біле ядро; без широкого туману, щоб блискавка була чіткою й на денному небі
 const BOLT_COLS = {                                              // три кольори блискавок: однакові за кодом, різні лише за кольором
-  lightning: { main: [[13, '#5a1aa8', 0.07], [9, '#7a2fd0', 0.14], [6, '#a56ae8', 0.34], [4, '#c9a0ff', 0.72], [2, '#f0e0ff', 1], [1, '#ffffff', 1]], branch: [[7, '#7a2fd0', 0.12], [4, '#a56ae8', 0.4], [2, '#e0ccff', 0.9], [1, '#ffffff', 1]], twig: [[3, '#a56ae8', 0.3], [1, '#ece0ff', 0.9]], tint: '#3b1470', flash: '#c9a0ff', glow: ['v', 'a'], ring: ['v', 'u'], spark: 'a' },
-  lightninggreen: { main: [[13, '#0b5a24', 0.07], [9, '#1d9a45', 0.14], [6, '#4fd77a', 0.34], [4, '#a0f5b8', 0.72], [2, '#e8ffee', 1], [1, '#ffffff', 1]], branch: [[7, '#1d9a45', 0.12], [4, '#4fd77a', 0.4], [2, '#d0ffdc', 0.9], [1, '#ffffff', 1]], twig: [[3, '#4fd77a', 0.3], [1, '#e8ffee', 0.9]], tint: '#0e4a22', flash: '#a0f5b8', glow: ['#1d9a45', '#4fd77a'], ring: ['#1d9a45', '#7ef0a0'], spark: '#7ef0a0' },
-  lightningred: { main: [[13, '#6a0a14', 0.07], [9, '#b01a2a', 0.14], [6, '#e8505a', 0.34], [4, '#ffa0a0', 0.72], [2, '#ffe8e8', 1], [1, '#ffffff', 1]], branch: [[7, '#b01a2a', 0.12], [4, '#e8505a', 0.4], [2, '#ffd0d0', 0.9], [1, '#ffffff', 1]], twig: [[3, '#e8505a', 0.3], [1, '#ffe8e8', 0.9]], tint: '#5a0a14', flash: '#ffa0a0', glow: ['#b01a2a', '#e8505a'], ring: ['#b01a2a', '#ff8088'], spark: '#ff8088' }
+  lightning: { main: [[11, '#8a4fe0', 0.2], [7, '#4a1a98', 0.92], [5, '#c9a0ff', 1], [3, '#ffffff', 1]], branch: [[5, '#4a1a98', 0.85], [3, '#d8c0ff', 1], [1, '#ffffff', 1]], twig: [[1, '#b48af0', 1]], tint: '#3b1470', flash: '#c9a0ff', ring: ['#a56ae8', '#e8dcff'], spark: 'a' },
+  lightninggreen: { main: [[11, '#3fd070', 0.2], [7, '#0e6a30', 0.92], [5, '#8ff0ac', 1], [3, '#ffffff', 1]], branch: [[5, '#0e6a30', 0.85], [3, '#b4f5cc', 1], [1, '#ffffff', 1]], twig: [[1, '#6ae092', 1]], tint: '#0e4a22', flash: '#a0f5b8', ring: ['#4fd77a', '#dcffe6'], spark: '#7ef0a0' },
+  lightningred: { main: [[11, '#f0505a', 0.2], [7, '#8a0f1e', 0.92], [5, '#ff9a9a', 1], [3, '#ffffff', 1]], branch: [[5, '#8a0f1e', 0.85], [3, '#ffc4c4', 1], [1, '#ffffff', 1]], twig: [[1, '#f07a80', 1]], tint: '#5a0a14', flash: '#ffa0a0', ring: ['#e8505a', '#ffe4e4'], spark: '#ff8088' }
 };
 function lightningKind() { const k = skinOn('weather'); return k && BOLT_COLS[k] ? k : null; }
-function strokeBolt(g, pts, count, layers, I) {
+function strokeBolt(g, pts, count, layers, I, taper) {           // taper — кожен шар тоншає на 2 пікселі до кінця шляху; згасає спершу кромка, ядро лишається суцільним
   const n = Math.min(pts.length, Math.floor(count));
   if (n < 1) return;
+  const N = pts.length;
   layers.forEach(([w, c, al]) => {
-    g.globalAlpha = Math.min(1, al * I); g.fillStyle = c;
-    const h = w >> 1;
-    for (let i = 0; i < n; i++) g.fillRect(pts[i][0] - h, pts[i][1] - h, w, w);
+    const a = al >= 1 ? (I > 0.16 ? 1 : 0) : Math.min(1, al * I * I * 1.2);
+    if (a < 0.03) return;
+    g.globalAlpha = a; g.fillStyle = c;
+    for (let i = 0; i < n; i++) { const wi = taper ? Math.max(1, w - Math.floor(i * 3 / N)) : w, h = wi >> 1; g.fillRect(pts[i][0] - h, pts[i][1] - h, wi, wi); }
   });
   g.globalAlpha = 1;
 }
@@ -115,24 +121,22 @@ function boltIntensity(ph) {                                     // різкий
 }
 function drawLightningBack() {                                 // у небі: грозовий відтінок, світіння хмар і самі блискавки
   const BC = BOLT_COLS[lightningKind()];
-  ctx.globalAlpha = bolts.length || skyFlash > 0 ? 0.16 + 0.2 * skyFlash : 0.12; ctx.fillStyle = BC.tint; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.24 + 0.16 * skyFlash; ctx.fillStyle = BC.tint; ctx.fillRect(worldL(), -view.offY, view.w, view.h); ctx.globalAlpha = 1;
   bolts.forEach(bt => {
     if (bt.t < 0) return;
     const ph = bt.t / bt.dur, I = boltIntensity(ph); if (I <= 0.02) return;
     const q = Math.min(1, bt.t / 0.13), cnt = bt.main.length * q;
-    for (let i = 0; i < 4; i++) { ctx.globalAlpha = (0.05 + 0.025 * i) * I; disc(ctx, bt.gx, bt.gy + 6, 34 - i * 8, i < 2 ? BC.glow[0] : BC.glow[1]); }      // хмара світиться зсередини
-    strokeBolt(ctx, bt.main, cnt, BC.main, I);
+    strokeBolt(ctx, bt.main, cnt, BC.main, I, true);
     bt.branches.forEach(br => {
       const p0 = br.at / bt.main.length, bq = Math.max(0, Math.min(1, (q - p0) / 0.35 + (q >= 1 ? 1 : 0)));
-      strokeBolt(ctx, br.pts, br.pts.length * bq, BC.branch, I);
+      strokeBolt(ctx, br.pts, br.pts.length * bq, BC.branch, I, true);
       br.twigs.forEach(tw => { const tq = Math.max(0, Math.min(1, (bq * br.pts.length - tw.at) / tw.pts.length)); strokeBolt(ctx, tw.pts, tw.pts.length * tq, BC.twig, I); });
     });
-    if (q > 0.97) {                                                // вогник у місці удару, кільце світла й іскри
+    if (q > 0.97) {                                                // вогник у місці удару й іскри
       const [ex, ey] = bt.main[bt.main.length - 1];
-      for (let i = 0; i < 4; i++) { ctx.globalAlpha = (0.07 + 0.05 * i) * I; disc(ctx, ex, ey, 16 - i * 4, i < 2 ? BC.ring[0] : BC.ring[1]); }
-      ctx.globalAlpha = I; disc(ctx, ex, ey, 2, 'w');
-      for (let k = 0; k < 7; k++) { const an = bt.seed + k * 0.9 + bt.t * 7, r = 3 + (bt.t * 26 + k * 4) % 16; ctx.globalAlpha = 0.9 * I * (1 - ph); R(ctx, Math.round(ex + Math.cos(an) * r), Math.round(ey + Math.sin(an) * r * 0.55 - 2), 1, 1, k % 2 ? 'w' : BC.spark); }
-    } else { const [lx, ly] = bt.main[Math.max(0, Math.floor(cnt) - 1)]; ctx.globalAlpha = 0.5; disc(ctx, lx, ly, 3, 'w'); }      // яскравий кінчик, що біжить униз
+      if (I > 0.3) { ctx.globalAlpha = 0.55 * I; disc(ctx, ex, ey, 4, BC.ring[0]); ctx.globalAlpha = I; disc(ctx, ex, ey, 2, BC.ring[1]); }
+      for (let k = 0; k < 7; k++) { const an = bt.seed + k * 0.9 + bt.t * 7, r = 3 + (bt.t * 26 + k * 4) % 16; ctx.globalAlpha = I > 0.2 ? 1 : 0; R(ctx, Math.round(ex + Math.cos(an) * r), Math.round(ey + Math.sin(an) * r * 0.55 - 2), 1, 1, k % 2 ? 'w' : BC.spark); }
+    } else { const [lx, ly] = bt.main[Math.max(0, Math.floor(cnt) - 1)]; ctx.globalAlpha = 1; R(ctx, lx - 1, ly - 1, 3, 3, 'w'); }      // яскравий кінчик, що біжить униз
   });
   ctx.globalAlpha = 1;
 }

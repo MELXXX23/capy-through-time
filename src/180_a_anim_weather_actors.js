@@ -163,7 +163,7 @@ function drawBirds() {
 
 // Хмара-канвас: купчаста / середня / довга. Темніші, з об'ємом: світла кромка зверху-ліворуч, борозенки між «бульбашками», важка тінь знизу
 const cloudCache = {};
-const CLOUD_SKIN_TINT = { cottoncloud: 'cotton', goldcloud: 'gold', starcloud: 'star', diamondcloud: 'diamond' };     // скіни погоди, що міняють колір хмар
+const CLOUD_SKIN_TINT = { cottoncloud: 'cotton', goldcloud: 'gold', starcloud: 'star', diamondcloud: 'diamond', lightning: 'storm_v', lightninggreen: 'storm_g', lightningred: 'storm_r' };     // скіни погоди, що міняють колір хмар
 function cloudCanvas(kind, tint) {
   const key = kind + '|' + tint;
   if (cloudCache[key]) return cloudCache[key];
@@ -182,7 +182,10 @@ function cloudCanvas(kind, tint) {
     sp_green: ['#d2f8c8', '#a2e89a', '#72cc6c', '#4ca24c', '#337a3a'],
     sp_gold: ['#fff6c0', '#ffe388', '#f5c750', '#d9a030', '#b0782a'],
     sp_orange: ['#ffe0c4', '#ffbe8a', '#f59a5a', '#d46e3a', '#a84a28'],
-    sp_red: ['#ffd0d8', '#ff9aa8', '#e86a82', '#c04464', '#8c2c48']
+    sp_red: ['#ffd0d8', '#ff9aa8', '#e86a82', '#c04464', '#8c2c48'],
+    storm_v: ['#8f86ae', '#6a608e', '#4c4474', '#352f5a', '#231f42'], storm_vl: ['#f0e6ff', '#d4bcff', '#a98ae8', '#7a5cc4', '#5a3e9c'],     // грозові хмари під колір блискавки; *l — підсвічена спалахом
+    storm_g: ['#8aa89a', '#64857a', '#46645a', '#304a42', '#1e322c'], storm_gl: ['#e8fff0', '#b4f5cc', '#7fe0a4', '#4fb87c', '#32905a'],
+    storm_r: ['#ac868c', '#8a5f68', '#6c4450', '#4f303a', '#372028'], storm_rl: ['#ffecec', '#ffc4c4', '#f09098', '#c86068', '#a03c48']
   }[tint] || ['#f4f7fb', '#d6dfec', '#adbacd', '#8795ad', '#66748e'];
   const puffs = [
     [[14, 19, 10], [27, 13, 13], [42, 16, 11], [53, 20, 8], [22, 21, 10], [36, 21, 11], [47, 22, 8]],
@@ -241,6 +244,7 @@ function drawCloudsLayer() {
       return;
     }
     drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), o);
+    if (c.lit > 0.03 && BOLT_COLS[sk]) drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, tint + 'l'), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: Math.min(1, c.lit) });      // хмару підсвічує блискавка зсередини
     if ((sk === 'goldcloud' || sk === 'diamondcloud') && animOn()) {
       const b = cloudBox(c);
       const dia = sk === 'diamondcloud', step = dia ? 2 : 3, thr = dia ? 0.62 : 0.8;      // діамантові: удвічі більше відблисків, довші спалахи, кольорові іскорки
@@ -281,6 +285,11 @@ function drawCloudSkinFx() {
     drawSprite(ctx, coinSprite(), Math.round(p.x) - 4, Math.round(p.y) - 4, { sx: p.rest > 0 ? 1 : spin, alpha: fade });
   });
   ctx.globalAlpha = 1;
+}
+function stormClouds(on) {                                       // у грозу хмар більше: додаємо кілька важких, а без скіна прибираємо
+  const has = clouds.some(c => c.st);
+  if (on && !has && layoutReady) for (let i = 0; i < 6; i++) { const b = CLOUDS[i % CLOUDS.length]; clouds.push({ x: rand(worldL(), worldR()), y: rand(2 - view.offY, 2 - view.offY + 70), speed: b.speed * rand(0.8, 1.3), v: 'dark', kind: i % 2 ? 2 : 0, big: true, st: 1 }); }
+  if (!on && has) for (let i = clouds.length - 1; i >= 0; i--) if (clouds[i].st) clouds.splice(i, 1);
 }
 function seedClouds() {
   clouds.length = 0;

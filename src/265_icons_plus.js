@@ -229,22 +229,92 @@ function drawCobbleLay() {                                        // true — м
 /* ---------- 5. Скіни погоди: рухомі картки (р. 72) ---------- */
 // Картка погоди: полотно 128×80, логіка малюнка — у координатах 64×40 (масштаб ×2); маркет 1-го рівня (×0,4) малюється вже в повних пікселях (р. 73)
 const weatherMarketCache = {};
-function weatherMarket(kind) {                                          // зменшений до 0,4 маркет; ніч і гроза трохи затемнюють його
-  const key = kind + '|' + state.lang;
-  if (weatherMarketCache[key]) return weatherMarketCache[key];
-  const geo = buildShopCanvas(1, state.depts.map(tierOf)), w = Math.round(geo.w * 0.4), h = Math.round(geo.h * 0.4);
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(geo.canvas, 0, 0, w, h);
-  if (kind !== 'day') { g.globalCompositeOperation = 'source-atop'; g.globalAlpha = kind === 'night' ? 0.6 : 0.42; g.fillStyle = kind === 'night' ? '#0c1636' : '#1a1030'; g.fillRect(0, 0, w, h); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; }
-  return (weatherMarketCache[key] = c);
+function weatherMarket(kind) {                                          // маленький маркет, намальований у повних пікселях; уночі й у грозу темніший, а вікна світяться
+  if (weatherMarketCache[kind]) return weatherMarketCache[kind];
+  const W = 74, H = 40, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), P = AR.P, WALL = '#ecdcb2', WALL2 = '#cdb98a', TRIM = '#f8eed0', DK = '#6a4a30', W1 = '#f6bccb', W2 = '#bfe3c8';
+  const glass = (x, y, w, h, col) => { P(g, x, y, w, h, DK); P(g, x + 1, y + 1, w - 2, h - 2, col); };
+  // дах і вивіска
+  for (let y = 8; y <= 13; y++) { const a = 9 - (y - 8), b = W - 9 + (y - 8); P(g, a, y, b - a, 1, y === 8 ? '#e08a5a' : y % 2 ? '#c9643a' : '#b4552f'); for (let k = a + 1 + (y % 2) * 2; k < b - 1; k += 4) P(g, k, y, 1, 1, '#8a3f24'); }
+  P(g, 19, 0, 36, 9, '#3a2415'); P(g, 20, 1, 34, 7, '#5a3a20'); P(g, 20, 1, 34, 1, '#7a5230'); AR.txt(g, 23, 2, 'CAPYTAP', '#ffd870');
+  // карниз, стіна, верхні вікна
+  P(g, 1, 14, W - 2, 1, TRIM); P(g, 1, 15, W - 2, 1, '#a8946a'); P(g, 3, 16, W - 6, 10, WALL); P(g, 3, 16, 2, 22, WALL2); P(g, W - 5, 16, 2, 22, WALL2);
+  const lit = [];
+  for (let i = 0; i < 5; i++) {
+    const x = 7 + i * 13; glass(x, 17, 9, 8, i % 2 ? W2 : W1); P(g, x, 17, 1, 1, WALL); P(g, x + 8, 17, 1, 1, WALL); P(g, x + 4, 18, 1, 6, DK); P(g, x + 2, 19, 1, 2, '#ffffff');
+    P(g, x + 1, 25, 7, 1, '#7a4a2a'); P(g, x + 2, 24, 1, 1, '#e8353a'); P(g, x + 4, 24, 1, 1, '#ffd84f'); P(g, x + 6, 24, 1, 1, '#e8353a'); lit.push([x + 1, 18, 3, 6], [x + 5, 18, 3, 6]);
+  }
+  // навіс
+  P(g, 2, 26, W - 4, 1, TRIM);
+  for (let x = 2, i = 0; x < W - 2; x += 5, i++) { const cl = i % 2 ? '#fff4dc' : '#d9483b', w = Math.min(5, W - 2 - x); P(g, x, 27, w, 4, cl); P(g, x + 1, 31, Math.max(1, w - 2), 1, cl); }
+  // низ: вітрини й двері
+  P(g, 3, 31, W - 6, 6, WALL); for (let x = 2, i = 0; x < W - 2; x += 5, i++) { const cl = i % 2 ? '#fff4dc' : '#d9483b', w = Math.min(5, W - 2 - x); P(g, x + 1, 31, Math.max(1, w - 2), 1, cl); }
+  P(g, 3, 32, W - 6, 1, WALL2);
+  [[7, 21], [46, 21]].forEach(([x, w]) => { glass(x, 33, w, 5, '#ffe9ae'); P(g, x + 1, 35, w - 2, 1, '#d9a860'); for (let k = x + 2; k < x + w - 2; k += 3) P(g, k, 34, 1, 1, ['#e8353a', '#4f9a63', '#3a6fb0'][(k >> 1) % 3]); lit.push([x + 1, 34, w - 2, 3]); });
+  P(g, 30, 32, 14, 6, DK); P(g, 31, 33, 5, 5, '#7fbce8'); P(g, 38, 33, 5, 5, '#7fbce8'); P(g, 32, 34, 1, 3, '#d8f0ff'); P(g, 39, 34, 1, 3, '#d8f0ff');
+  P(g, 28, 34, 1, 2, '#ffd870'); P(g, 45, 34, 1, 2, '#ffd870');
+  // цоколь
+  P(g, 0, 38, W, 1, '#c8b48a'); P(g, 0, 39, W, 1, '#7a6648'); P(g, 28, 38, 18, 1, TRIM);
+  if (kind !== 'day') {
+    g.globalCompositeOperation = 'source-atop'; g.globalAlpha = kind === 'night' ? 0.62 : 0.4; g.fillStyle = kind === 'night' ? '#0c1636' : '#1a1030'; g.fillRect(0, 0, W, H); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+    lit.forEach(([x, y, w, h]) => P(g, x, y, w, h, '#ffe28a'));                    // вікна світяться
+    AR.txt(g, 23, 2, 'CAPYTAP', '#ffd870');
+  }
+  return (weatherMarketCache[kind] = c);
 }
 function weatherHouse(g, kind) {
-  const m = weatherMarket(kind); g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
-  g.drawImage(m, Math.round((128 - m.width) / 2), 74 - m.height); g.restore();
+  const m = weatherMarket(kind), ox = g._ox || 0, oy = g._oy || 0; g.save(); g.setTransform(1, 0, 0, 1, -ox, -oy);
+  g.drawImage(m, Math.round((128 - m.width) / 2), 76 - m.height); g.restore();
+}
+// Статичні тла карток гроз: небо смугами з пунктирними переходами, силует далекого міста, мокра бруківка
+const STORM_CARD = {
+  lightning: { sky: ['#1c1038', '#2a1650', '#3d2275', '#5a3a96'], hill: '#20123e', win: '#ffd870', road: ['#2c2440', '#463a60', '#7a6aa8'], rain: '#a58ae0', tint: 'storm_v', cols: [[5, '#7a2fd0', 0.75], [3, '#c9a0ff', 1], [1, '#ffffff', 1]] },
+  lightninggreen: { sky: ['#0a2414', '#0f3a1e', '#1a5a30', '#2f8a4c'], hill: '#0c2c18', win: '#ffe28a', road: ['#1a2c22', '#2e4a38', '#5a8a6a'], rain: '#7fd8a0', tint: 'storm_g', cols: [[5, '#1d9a45', 0.75], [3, '#8ff0ac', 1], [1, '#ffffff', 1]] },
+  lightningred: { sky: ['#240a10', '#3a0f16', '#5a1a24', '#8a2f3c'], hill: '#2c0c14', win: '#ffd870', road: ['#2c1a20', '#4a2e36', '#8a5a66'], rain: '#e88a96', tint: 'storm_r', cols: [[5, '#c4202e', 0.75], [3, '#ff9a9a', 1], [1, '#ffffff', 1]] }
+};
+const stormBackCache = {};
+function stormBack(name) {
+  if (stormBackCache[name]) return stormBackCache[name];
+  const S = STORM_CARD[name], c = document.createElement('canvas'); c.width = 128; c.height = 80;
+  const g = c.getContext('2d'), P = AR.P, band = [0, 16, 32, 48, 80];
+  for (let i = 0; i < 4; i++) P(g, 0, band[i], 128, band[i + 1] - band[i], S.sky[i]);
+  for (let i = 1; i < 4; i++) for (let x = 0; x < 128; x++) { if ((x + band[i]) % 2 === 0) P(g, x, band[i], 1, 1, S.sky[i - 1]); if (x % 4 === 0) P(g, x, band[i] + 1, 1, 1, S.sky[i - 1]); }
+  // далеке місто
+  [[0, 22], [10, 28], [20, 18], [84, 20], [96, 30], [108, 24], [118, 16]].forEach(([x, h], i) => { P(g, x, 72 - h, 12, h, S.hill); for (let k = 0; k < 3; k++) if ((i + k) % 2 === 0) P(g, x + 2 + k * 3, 72 - h + 3 + (k % 2) * 4, 2, 2, S.win); });
+  // мокра дорога
+  P(g, 0, 72, 128, 8, S.road[0]); P(g, 0, 72, 128, 1, S.road[2]); for (let i = 0; i < 12; i++) { const hs = hash2(i * 7 + 1, 3); P(g, hs % 124, 74 + (hs >>> 5) % 5, 3 + (hs >>> 9) % 6, 1, S.road[1]); }
+  return (stormBackCache[name] = c);
+}
+function stormCardDraw(g, name, T) {
+  const S = STORM_CARD[name], P = AR.P;
+  g.drawImage(stormBack(name), 0, 0);
+  const C = 1.7, cyc = Math.floor(T / C), p = animOn() ? T % C : 0.2, flash = p < 0.09 || (p > 0.15 && p < 0.26);
+  if (flash) { g.globalAlpha = 0.28; P(g, 0, 0, 128, 72, S.cols[1][1]); g.globalAlpha = 1; }
+  // дощ
+  for (let i = 0; i < 26; i++) { const hs = hash2(i * 5 + 2, 9), x = ((hs % 136) - Math.floor(T * 30) % 136 + 136) % 136 - 4, y = (Math.floor(T * 74) + (hs >>> 5) % 80) % 80; if (y < 73) { P(g, x, y, 1, 2, S.rain); P(g, x - 1, y + 2, 1, 2, S.rain); } }
+  weatherHouse(g, 'storm');
+  // блискавка: з-під хмари вниз, кожного разу з іншого боку
+  if (p < 0.62) {
+    const I = p < 0.26 ? 1 : Math.max(0, 1 - (p - 0.26) / 0.36), v = cyc % 3;
+    const paths = [
+      [[[28, 12], [35, 23], [26, 32], [34, 43], [25, 54], [30, 70]], [[35, 23], [45, 29], [48, 39]], [[26, 32], [17, 38], [14, 49]]],
+      [[[100, 10], [93, 21], [102, 30], [94, 42], [103, 52], [97, 70]], [[93, 21], [83, 27], [80, 37]], [[102, 30], [112, 37], [116, 47]]],
+      [[[60, 12], [53, 22], [62, 30], [55, 36]], [[53, 22], [43, 26], [38, 36]], [[62, 30], [72, 34], [76, 42]]]
+    ][v];
+    paths.forEach((pp, i) => { const d = boltDense(pp); strokeBolt(g, d, d.length, i ? S.cols.slice(1).map(l => [Math.max(1, l[0] - 2), l[1], l[2]]) : S.cols, I, !i); });
+    if (I > 0.4 && v < 2) { const e = paths[0][paths[0].length - 1]; for (let k = 0; k < 5; k++) { const a = T * 19 + k * 1.3, r = 2 + ((T * 30 + k * 3) % 6); P(g, Math.round(e[0] + Math.cos(a) * r), Math.round(e[1] - Math.abs(Math.sin(a)) * r), 1, 1, k % 2 ? '#ffffff' : S.cols[1][1]); } }
+  }
+  // хмари поверх початку блискавки; у спалах підсвічені
+  [[0, 2, -2], [1, 52, 4], [2, 92, -3]].forEach(([k, b, y]) => { const cv = cloudCanvas(k, S.tint + (flash ? 'l' : '')), x = ((b + T * 7) % (128 + cv.width + 8)) - cv.width - 4; g.drawImage(cv, Math.round(x), y); });
+}
+function cardPixels(cv) {                                                 // розмір полотна = розмір картки в CSS-пікселях (не більше 128×80): картинка не зменшується, тож жоден рядок пікселів не випадає
+  const now = performance.now();
+  if (!cv._sz || now - cv._szT > 900) { const w = cv.clientWidth, h = cv.clientHeight; cv._sz = w > 60 && h > 40 ? [Math.min(128, w), Math.min(80, h)] : [128, 80]; cv._szT = now; }
+  return cv._sz;
 }
 function weatherSkinPreview(cv, name, T) {
-  const W = 64, H = 40; cv.width = 128; cv.height = 80;
-  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.setTransform(2, 0, 0, 2, 0, 0);
+  const W = 64, H = 40, sz = cardPixels(cv), ox = Math.round((128 - sz[0]) / 2), oy = Math.round((80 - sz[1]) * 0.62); cv.width = sz[0]; cv.height = sz[1];
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g._ox = ox; g._oy = oy; g.setTransform(2, 0, 0, 2, -ox, -oy);
   const SPEED = 5, wrap = (x0, w) => ((x0 + T * SPEED) % (W + w + 12 + 0)) - w - 6 + 6;     // усі хмари пливуть вправо з однаковою швидкістю
   if (name === 'aurora') {                                       // ніч, зорі, три шторки сяйва з променями, гори, сніг і хатка зі світлим вікном
     const gr = g.createLinearGradient(0, 0, 0, 34); gr.addColorStop(0, '#060a20'); gr.addColorStop(0.6, '#10224a'); gr.addColorStop(1, '#1c3d5e'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
@@ -264,22 +334,9 @@ function weatherSkinPreview(cv, name, T) {
     weatherHouse(g, 'night');
     return;
   }
-  if (BOLT_COLS[name]) {                                         // гроза: темне небо, хмари пливуть, раз на ~2,4 с — спалах і блискавка
-    const bc = { lightning: ['#2a1650', '#3d2275', '#5a3a96', '#8a6ad0'], lightninggreen: ['#0f3a1e', '#1a5a30', '#2f8a4c', '#6acf8a'], lightningred: ['#3a0f16', '#5a1a24', '#8a2f3c', '#d06a7a'] }[name];
-    g.fillStyle = bc[0]; g.fillRect(0, 0, W, H); g.fillStyle = bc[1]; g.fillRect(0, 0, W, 18);
-    [[0, 3, 24], [32, 9, 20]].forEach(([b, y, w]) => { const x = Math.round(wrap(b, w)); g.fillStyle = bc[2]; g.fillRect(x, y, w, 5); g.fillRect(x + 4, y - 2, w - 9, 3); g.fillStyle = bc[1]; g.fillRect(x, y + 4, w, 1); });
-    g.fillStyle = bc[3]; for (let i = 0; i < 14; i++) { const hs = hash2(i * 5 + 2, 9), x = ((hs % 70) - Math.floor(T * 14) % 70 + 70) % 70 - 3, y = (Math.floor(T * 30) + hs % 40) % 34; if (y > 12) g.fillRect(x, y, 1, 2); }       // косий дощ
-    R(g, 0, 34, W, 6, 'G'); weatherHouse(g, 'storm');
-    const C = 2.4, cyc = Math.floor(T / C), p = T % C;
-    const on = p < 0.1 || (p > 0.17 && p < 0.34), fade = p > 0.34 ? Math.max(0, 1 - (p - 0.34) / 0.25) : 1;
-    if (p < 0.06) { g.globalAlpha = 0.35; g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, 34); g.globalAlpha = 1; }
-    if (on || (p > 0.34 && fade > 0)) {
-      const PV = [[5, BOLT_COLS[name].main[1][1], 0.28], [3, BOLT_COLS[name].main[3][1], 0.75], [1, '#ffffff', 1]], st = pts => { const d = boltDense(pts); strokeBolt(g, d, d.length, PV, 1); };
-      g.globalAlpha = on ? 1 : fade * 0.6;
-      if (cyc % 2 === 0) { st([[18, 0], [22, 6], [17, 11], [23, 17], [19, 22], [22, 27]]); st([[22, 6], [28, 10], [31, 15]]); st([[17, 11], [11, 15], [9, 19]]); }
-      else { st([[46, 0], [43, 5], [48, 10], [44, 16], [47, 21], [44, 27]]); st([[48, 10], [54, 14]]); st([[44, 16], [39, 19]]); }
-      g.globalAlpha = 1;
-    }
+  if (BOLT_COLS[name]) {                                         // гроза: важкі хмари, косий дощ, місто вдалині; блискавка б'є з хмари й підсвічує її
+    g.setTransform(1, 0, 0, 1, -ox, -oy);
+    stormCardDraw(g, name, T);
     return;
   }
   for (let y = 0; y < H; y++) { g.fillStyle = y < 14 ? '#8fd3ea' : y < 28 ? '#b8e3f5' : '#dff3fa'; g.fillRect(0, y, W, 1); }

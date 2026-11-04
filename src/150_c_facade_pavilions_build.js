@@ -362,7 +362,7 @@ function buildShopCanvas(level, tiers) {
   });
 
   /* ========== ФАСАД (front) ========== */
-  const arch = skinShop ? null : (ARCH[currentEpoch().id] || null), AC = { es, w, h, look, level, floors, yG, yB, door, innerX, innerW };
+  const arch = skinShop ? (SKIN_ARCH[skinOn('shop')] || null) : (ARCH[currentEpoch().id] || null), AC = { es, w, h, look, level, floors, yG, yB, door, innerX, innerW };
   deferSign = true; pendingSign = null;
   if (arch && arch.front) { arch.front(g, AC); deferSign = false; } else {
   withPal(es.roofPal, () => drawRoof(g, look.roof, w, look.top, look));
