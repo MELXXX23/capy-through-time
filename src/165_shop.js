@@ -168,7 +168,7 @@ function updateStageEdges(dt) {
     const key = edgeKeyNow();
     if (key !== edgeKey && edgeNeed < 0) edgeNeed = skyDrawnN + 2;          // небо, пора року, свято, скін погоди чи дощ змінились — перечитати після двох нових кадрів
     if (edgeNeed >= 0 && skyDrawnN >= edgeNeed) {
-      const g = ui.view.getContext('2d'), x = Math.max(0, Math.floor(view.w / 2)), a = g.getImageData(x, 0, 1, 1).data, b = g.getImageData(x, Math.max(0, view.h - 1), 1, 1).data;
+      const g = ui.view.getContext('2d'), x = Math.max(0, Math.floor(viewCrop.x + viewCrop.w / 2)), a = g.getImageData(x, 0, 1, 1).data, b = g.getImageData(x, Math.max(0, view.h - 1), 1, 1).data;
       if (a[3] && b[3]) {
         const k = Math.min(0.9, sky.night * 0.72), un = d => [0, 1, 2].map(i => Math.max(0, Math.min(255, (d[i] - EDGE_NIGHT[i] * k) / (1 - k))));
         edgeKey = key; edgeNeed = -1; edgeBase = [un(a), un(b)];

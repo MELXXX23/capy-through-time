@@ -317,6 +317,8 @@ function warpAdvance(dt) {
   let step = Math.min(dt, Math.max(1 / 30, W.avgDt * 1.5));
   const lag = W.wall - W.t - step;
   if (lag > 0) step += Math.min(lag, step * 0.5);
+  // Перебудова не встигає (дуже повільний пристрій): перед самим відкриттям вир сповільнюється, щоб не було одного довгого кадру в мить удару. Запас є: звук розгону тримає ноту після свого кінця
+  if (!W.ready && W.t / W.dur >= WARP_HIT[(W.toEpoch | 0) % WARP_HIT.length] - 0.08 && (W.crawl || 0) < 1.5) { W.crawl = (W.crawl || 0) + dt; step *= 0.12; }
   W.t += step;
 }
 function updateWarp(dt) {

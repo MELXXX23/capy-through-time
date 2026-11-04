@@ -63,7 +63,7 @@ function frameStep(now) {
     updateFxPlus(dt);
     updateDailyReminder(dt);
   }
-  const hidden = (warp && warp.t >= WARP_FREEZE && !warp.warm && warp.t / warp.dur < warp.showK) || introCovers || cut.on;     // сцену не малюємо, поки її закриває вир або заставка: два кадри під виром (warp.warm) прогрівають нову епоху, а перед відкриттям вона вже намальована
+  const hidden = (warp && warp.t >= (perf.ema > 0.033 ? 0 : WARP_FREEZE) && !warp.warm && warp.t / warp.dur < warp.showK) || introCovers || cut.on;     // сцену не малюємо, поки її закриває вир або заставка: два кадри під виром (warp.warm) прогрівають нову епоху, а перед відкриттям вона вже намальована
   if (!hidden) { try { render(animClock); } catch (e) { frameErr(e); } }                       // у вирі подорожі сцену не малюємо: її все одно закриває вир, кадри легші; з 0,7 вир відкриває «дірку» — там уже має бути нова епоха
 
   uiTimer += dt;

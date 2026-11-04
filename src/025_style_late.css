@@ -131,8 +131,7 @@ body:is([data-epoch="2"], [data-epoch="3"], [data-epoch="6"], [data-epoch="7"]) 
 /* картка глави / епохи: по центру екрана, золота рамка, промінь світла */
 #dialog.isTitle { align-items: center; background-image: radial-gradient(ellipse at center, rgba(255,214,120,.16), rgba(14,8,10,.5) 75%); }
 #dialog.isTitle #dialogWrap { margin-top: 0; }
-#dialog.isTitle #dialogBox { justify-content: center; text-align: center; min-height: 190px; box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 7px #f4c15d, inset 0 0 0 9px var(--dark), inset 0 0 46px rgba(244,193,93,.5); }
-#dialog.isTitle #dialogWrap { filter: drop-shadow(0 0 22px rgba(244,193,93,.6)); }
+#dialog.isTitle #dialogBox { justify-content: center; text-align: center; min-height: 190px; box-shadow: inset 0 0 0 4px var(--dark), inset 0 0 0 7px #f4c15d, inset 0 0 0 9px var(--dark), inset 0 0 46px rgba(244,193,93,.5), 0 0 22px rgba(244,193,93,.6); }   /* зовнішнє сяйво — тінню картки, а не filter: розмиття filter на великій картці давало ривок у мить, коли закінчується заставка епохи */
 #dialog.isTitle #dlgText { font-size: clamp(16px, 3.4vmin, 24px); line-height: 2; padding-top: 22px; color: var(--red); text-shadow: 0 2px 0 rgba(255,255,255,.55); flex: none; min-height: calc(2em * 2); }
 #dialog.isTitle #dlgName { display: none; }
 #dialog.isTitle .dlg-main { align-self: center; }

@@ -527,7 +527,8 @@ function startWarp(view, demo) {
   const cv = ui.warpCanvas, W = 200, H = Math.max(80, Math.round(W * window.innerHeight / Math.max(1, window.innerWidth)));
   cv.width = W; cv.height = H;
   const snap = document.createElement('canvas'); snap.width = W; snap.height = H;
-  const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
+  const rv = ui.view.getBoundingClientRect(), rs = ui.scene.getBoundingClientRect(), kv = rv.width ? ui.view.width / rv.width : 1;   // лише видима частина полотна: на телефоні воно ширше за екран
+  const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, Math.max(0, (rs.left - rv.left) * kv), Math.max(0, (rs.top - rv.top) * kv), Math.min(ui.view.width, rs.width * kv), Math.min(ui.view.height, rs.height * kv), 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
   const target = view === undefined ? nextEpochId(curEpoch()) : (view % EPOCHS.length);
   const [fx, fy] = clockFaceFrac();
   clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('warpChime', target);
