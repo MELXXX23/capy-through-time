@@ -31,7 +31,8 @@ app.whenReady().then(async () => {
     let crashed = false;
     win.webContents.on('render-process-gone', (e, d) => { crashed = true; say('  ✗ ПРОЦЕС ГРИ ВПАВ: ' + d.reason); });
     win.webContents.on('unresponsive', () => say('  ! вікно гри не відповідає'));
-    for (let k = 0; k < 4; k++) { try { await win.loadFile(path.join(ROOT, 'desktop', 'app', 'game.html')); break; } catch (e) { if (k === 3) throw e; await wait(1500); } }
+    const GAME = (process.argv.find(a => a.startsWith('--game=')) || '').slice(7) || path.join(ROOT, 'desktop', 'app', 'game.html');   // --game=шлях: порівняти зі старою збіркою
+    for (let k = 0; k < 4; k++) { try { await win.loadFile(GAME); break; } catch (e) { if (k === 3) throw e; await wait(1500); } }
     if (p.dsf > 0) win.webContents.enableDeviceEmulation({ screenPosition: 'mobile', screenSize: { width: p.w, height: p.h }, viewPosition: { x: 0, y: 0 }, deviceScaleFactor: p.dsf, viewSize: { width: p.w, height: p.h }, scale: 1 });
     await wait(1500);
     const t0 = Date.now();

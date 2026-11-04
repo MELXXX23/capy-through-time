@@ -75,8 +75,8 @@
     achName_milestones: 'Milestones', achName_teamEver: 'Team Player', achName_teamMax: 'Master Craftsman', achName_raccoons: 'Raccoon Catcher',
     achName_wheel: 'Lucky One', achName_travels: 'Time Traveller', achName_crystals: 'Crystal Collection',
     achName_chapters: 'Reader', achName_holidays: 'Holiday Spirit', achName_hours: 'Dedicated Trader',
-    achDesc_taps: 'Tap the shop {0} times', achDesc_earned: 'Earn {0} coins in total', achDesc_level: 'Expand the shop to level {0}',
-    achDesc_deptsBought: 'Buy {0} departments', achDesc_milestones: 'Reach department milestones: {0}', achDesc_teamEver: 'Meet animals on your team: {0}',
+    achDesc_taps: 'Tap the shop {0} {0|time|times}', achDesc_earned: 'Earn {0} {0|coin|coins} in total', achDesc_level: 'Expand the shop to level {0}',
+    achDesc_deptsBought: 'Buy {0} {0|department|departments}', achDesc_milestones: 'Reach department milestones: {0}', achDesc_teamEver: 'Meet animals on your team: {0}',
     achDesc_teamMax: 'Upgrade an animal to level {0}', achDesc_raccoons: 'Catch raccoons: {0}', 
     achDesc_wheel: 'Play the circus or bonus games: {0}', achDesc_travels: 'Travel through time: {0}', achDesc_crystals: 'Collect crystals: {0}',
     achDesc_chapters: 'Read story chapters: {0}', achDesc_holidays: 'See holidays in town: {0}', achDesc_hours: 'Play hours: {0}',
@@ -139,12 +139,12 @@
     mailArrive: "✉️ The mail truck arrived. Pick up the letter by the road.",
     letterTitle: 'A letter from {0}', letterBtn: 'Claim bonus',
     letter_spike: "Hi, boss. Found an extra penny in the till and thought of you right away. Don't ask whose it is. Here's a bonus from the post office.",
-    letter_zoya: "It's Zoya. I came up with a promo: whoever reads this letter gets a bonus. That's you. Don't thank me, just recommend me.",
+    letter_zoya: "It's Zoe. I came up with a promo: whoever reads this letter gets a bonus. That's you. Don't thank me, just recommend me.",
     letter_bodya: "Bodie. Built a mailbox and sent the first letter. The bonus is attached like a nail to a plank: firmly and without extra words.",
     letter_sonia: "Hoo. I did the math: you deserve a bonus. The books balance, no need to check. You'll check anyway.",
     letter_leo: "The plan: you read this letter, get a bonus, we all come out ahead. Deal? I'll take silence as agreement.",
     letter_pao: "It's Pao. The letter has bamboo and luck. The discounts are gone, but the bonus is real.",
-    letterBoost_income: 'Income ×{0} for {1} min', letterBoost_tap: 'Tap ×{0} for {1} min', letterBoost_coins: '+{0} coins',
+    letterBoost_income: 'Income ×{0} for {1} min', letterBoost_tap: 'Tap ×{0} for {1} min', letterBoost_coins: '+{0} {0|coin|coins}',
     letterBoost_wheel: 'The circus is on its way to you!', letterBoost_sale: 'Sale ×2 for 2 minutes!', letterBoost_crystal: 'Crystal +1 💎',
     nightHint_1: "Night one. Something quietly ticks in Capy's pocket. Not a call from the bank.", nightHint_2: "Night two. The ticking is louder. Definitely not an alarm clock this time.",
     team_spike_sit_0: "Sit down. How was your day? Mine was prickly, as usual.", team_spike_sit_1: "So, how was it? Profit's fine, mood's questionable.",
@@ -175,6 +175,7 @@ const GENDER_TEXTS = {
       achName_level: 'Забудовник', achName_deptsBought: 'Закупник', achName_travels: 'Мандрівник часом',
       achName_chapters: 'Читач', achName_hours: 'Завзятий торговець'
     },
+    pl: { capy_say_1: 'Marzyłem o budce na rogu. I oto jest. Czasem wciąż nie mogę w to uwierzyć.' },
     en: {
       ch1_1: "A battered cart rolls onto the square. A capybara peeks out. The look says “I'm here on purpose”.",
       capy_say_1: "I have to water the leaves on my head. Yes, I know how that sounds.", capy_say_4: "The leaves on my head bring luck. Otherwise, why have them."

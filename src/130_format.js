@@ -30,7 +30,7 @@ Object.assign(translations.uk, {
   exportNag: 'Давно не було копії прогресу. Відкрий Налаштування, блок «Збереження», і натисни «Копіювати». Код збережи в нотатках.',
   restoredBak: 'Основне збереження було пошкоджене. Прогрес відновлено з другої копії.',
   setReport: 'Звіт про помилки', setReportNote: 'Якщо щось зламалось, натисни кнопку й надішли текст розробникам. Особистих даних там нема.',
-  aboutTitle: 'Про гру', aboutInfo: 'CapyTap: Market · випуск {0}\n© CapyTap Company\nШрифт Press Start 2P © 2012 The Press Start 2P Project Authors, ліцензія SIL Open Font License 1.1.', licenseBtn: 'Ліцензія шрифту', privacyBtn: 'Політика конфіденційності', reportBtn: 'Скопіювати звіт', reportCopied: 'Звіт скопійовано!', reportManual: 'Виділи текст і скопіюй його вручну.'
+  iapBuyTitle: "Купити набір", iapBuyText: "«{0}» входить у платний набір. Ціна: {1}. Покупка разова, скіни залишаються назавжди.", iapBuyYes: "Купити", iapThanks: "Дякуємо! Набір уже твій.", iapPending: "Оплата ще йде. Скін з’явиться, щойно Google її підтвердить.", iapFail: "Покупка зараз недоступна. Спробуй пізніше.", iapNoPrice: "Не вдалося дізнатись ціну. Перевір інтернет і спробуй ще раз.", iapRestore: "Відновити покупки", iapRestored: "Покупки відновлено.", iapNothing: "Покупок на цьому акаунті немає.", errRepeat: 'Щось пішло не так, але гра працює далі. Якщо бачиш дивне, перезапусти її. Звіт є в налаштуваннях.', aboutTitle: 'Про гру', aboutInfo: 'CapyTap: Market · випуск {0}\n© CapyTap Company\nШрифт Press Start 2P © 2012 The Press Start 2P Project Authors, ліцензія SIL Open Font License 1.1.', licenseBtn: 'Ліцензія шрифту', privacyBtn: 'Політика конфіденційності', reportBtn: 'Скопіювати звіт', reportCopied: 'Звіт скопійовано!', reportManual: 'Виділи текст і скопіюй його вручну.'
 });
 Object.assign(translations.en, {
   swEco: 'Power saving', setEcoNote: 'Fewer particles; no rain, steam or birds. Turns on by itself when the game is slow.',
@@ -40,7 +40,7 @@ Object.assign(translations.en, {
   exportNag: 'It has been a while since you backed up your progress. Open Settings, the Save block, and press Copy. Keep the code in your notes.',
   restoredBak: 'The main save was damaged. Your progress was restored from the second copy.',
   setReport: 'Error report', setReportNote: 'If something breaks, press the button and send the text to the developers. It has no personal data.',
-  aboutTitle: 'About', aboutInfo: 'CapyTap: Market · release {0}\n© CapyTap Company\nPress Start 2P font © 2012 The Press Start 2P Project Authors, SIL Open Font License 1.1.', licenseBtn: 'Font license', privacyBtn: 'Privacy policy', reportBtn: 'Copy report', reportCopied: 'Report copied!', reportManual: 'Select the text and copy it by hand.'
+  iapBuyTitle: "Buy the pack", iapBuyText: "“{0}” is part of a paid pack. Price: {1}. You pay once and keep the skins forever.", iapBuyYes: "Buy", iapThanks: "Thank you! The pack is yours.", iapPending: "Payment is still in progress. The skin appears as soon as Google confirms it.", iapFail: "Purchases are not available right now. Please try later.", iapNoPrice: "Could not get the price. Check your connection and try again.", iapRestore: "Restore purchases", iapRestored: "Purchases restored.", iapNothing: "No purchases on this account.", errRepeat: 'Something went wrong, but the game keeps running. If anything looks odd, restart it. The report is in Settings.', aboutTitle: 'About', aboutInfo: 'CapyTap: Market · release {0}\n© CapyTap Company\nPress Start 2P font © 2012 The Press Start 2P Project Authors, SIL Open Font License 1.1.', licenseBtn: 'Font license', privacyBtn: 'Privacy policy', reportBtn: 'Copy report', reportCopied: 'Report copied!', reportManual: 'Select the text and copy it by hand.'
 });
 function t(key, ...args) {
   const dict = translations[state.lang] || translations.en;
@@ -49,7 +49,17 @@ function t(key, ...args) {
   if (str === undefined) str = translations.en[key];
   if (str === undefined) return key;
   if (str.includes('💎')) str = str.replace(/💎/g, GEM_CH);      // піксельний кристал стилю епохи
+  if (str.includes('|')) str = str.replace(/\{(\d+)\|([^{}]+)\}/g, (_, i, forms) => pluralForm(args[i], forms.split('|')));   // {0|монета|монети|монет}
   return str.replace(/\{(\d+)\}/g, (_, i) => (args[i] !== undefined ? args[i] : ''));
+}
+// Форма слова за числом: скорочені числа («1,5 тис.») беруть останню форму
+function pluralForm(v, forms) {
+  const last = forms[forms.length - 1], s = String(v === undefined ? '' : v).replace(/[\s., ]/g, '');
+  if (!/^\d+$/.test(s) || s.length > 15) return last;
+  const n = +s, one = n % 10 === 1 && n % 100 !== 11, few = n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14);
+  if (forms.length < 3) return n === 1 ? forms[0] : last;
+  if (state.lang === 'pl') return n === 1 ? forms[0] : few ? forms[1] : last;
+  return one ? forms[0] : few ? forms[1] : last;
 }
 
 // Суфікс розряду: 0..4 — зі словника мови, далі aa, ab, ac, ... az, ba ...

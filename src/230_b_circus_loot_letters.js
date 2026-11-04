@@ -139,7 +139,7 @@ function closeCircus() {
   if (circus.bonus) { circus.bonus = false; return; }
   if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
 }
-function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_HIDDEN.includes(SKIN_POOL[i]) && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
+function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_HIDDEN.includes(SKIN_POOL[i]) && !SKIN_PAID[SKIN_POOL[i]] && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
 // Один випадковий сектор (з урахуванням скінів, що вже є) і його дія
 function rollCircusSector(noSmall, withSkins) {
   const pool = withSkins ? CIRCUS_SECTORS.concat(BONUS_GAME_SKINS) : CIRCUS_SECTORS;   // скіни є лише в призах бонус-ігор (лапшична, відьма), у цирку їх нема

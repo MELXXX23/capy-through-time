@@ -1297,6 +1297,12 @@ body.no-anim .skin-item.skin-pop .skin-prev, body.no-anim .skin-item.skin-pop::a
 .btn, .tab, .buy-mode { transition: transform .12s ease, filter .12s ease, background-color .18s ease, box-shadow .18s ease; }
 @media (prefers-reduced-motion: reduce) { .fxGhost, .pane:not([hidden]), #app.sheet-open #tabContent { animation: none !important; } }
 body.no-anim .fxGhost, body.no-anim .pane:not([hidden]), body.no-anim #app.sheet-open #tabContent { animation: none !important; }
+/* Телефон у горизонталі: газета й відгук уміщаються (р. 77). Кнопки в газеті й призі — зручні для пальця. Вкладки на 320 — у два рядки. */
+@media (max-height: 460px) { .np-paper { height: min(56dvh, 620px); } }
+#feedbackModal .modal-box { max-height: 94dvh; overflow-y: auto; }
+#npPrev, #npNext { min-width: 36px; min-height: 36px; }
+#lootWear, #lootClose { min-height: 36px; }
+@media (max-width: 340px) { .tab.secondary .tab-name { white-space: normal; text-overflow: clip; line-height: 1.15; overflow-wrap: anywhere; } }
 </style>
 <!--#part 030_body_open.html-->
 </head>
@@ -1863,11 +1869,11 @@ body.no-anim .fxGhost, body.no-anim .pane:not([hidden]), body.no-anim #app.sheet
   // ---- підказки до гри (тап — наступна)
   var TIPS = {
     uk: ['Тапни 5 разів по єноту-злодію, щоб він нічого не вкрав.', 'Золотий покупець дає більше за всіх. Встигни його тапнути!', 'Червоний «!» біля магазину — це цирк. Там можна виграти кристал чи бонус.', 'Біля дороги дві скриньки: синя для листів, червона для новин від розробників.', 'Кристали часу дає подорож у часі. Витрачай їх у Магазині часу.', 'Скін коштує 50 кристалів. А ще його можна виграти в бонус-іграх.', 'Осколки часу дає подорож у часі, а витрачаються вони в Магазині часу.', 'Пори року відкриються після другої епохи: сезон, Хелловін і час доби.', 'У Японії грай у лапшичну діда Рьо, а на Хелловін у казанки відьми: там можна виграти скін.', 'Щоб піти в нову епоху, збудуй торговий центр і дочекайся трьох ночей.', 'Завдання дня дає кристал. Заглядай до нього.', 'Дощ вмикає крапелька біля вивіски магазину.', 'Тапни по звірятку: підстрибне й щось скаже.', 'Люки димлять не від пожежі, а для затишку.', 'Телефон гріється? У налаштуваннях можна вимкнути хмари, пару й анімації.', 'Новий маркет будує Бодя: на старий кладуть біле полотно, а далі глянь сам.', 'Чим більше тапів, тим більше монет. Простіше нікуди.'],
-    en: ['Tap the thief raccoon 5 times so he steals nothing.', 'The golden shopper pays the most. Tap them in time!', 'The red "!" by the shop is the circus. You can win a crystal or a bonus there.', 'Two boxes by the road: blue for letters, red for the developers\' news.', 'Time travel gives time shards. Spend them in the Time shop.', 'A skin costs 50 crystals. You can also win one in the bonus games.', 'Seasons unlock after the second era: season, Halloween and time of day.', 'In Japan play Grandpa Ryo’s noodle cart, at Halloween the witch’s cauldrons: you can win a skin there.', 'To enter a new era, build the mall and wait three nights.', 'The daily task gives a crystal. Check on it.', 'The little drop by the shop sign turns rain on.', 'Tap an animal: it hops and says something.', 'Manholes steam for coziness, not because of a fire.', 'Phone getting warm? Turn off clouds, steam and animations in settings.', 'Bodya builds the new market: a white tarp goes over the old one, then see for yourself.', 'More taps, more coins. It could not be simpler.'],
-    pt: ["Toque 5 vezes no guaxinim ladrão para ele não roubar nada.","O cliente dourado paga mais que todos. Toque nele a tempo!","O “!” vermelho perto da loja é o circo. Lá dá para ganhar um cristal ou um bônus.","Duas caixas na calçada: a azul é das cartas, a vermelha traz as novidades dos desenvolvedores.","A viagem no tempo dá fragmentos de tempo. Gaste-os na loja do tempo.","Uma skin custa 50 cristais. Também dá para ganhar uma nos minijogos.","As estações liberam depois da segunda era: estação do ano, Halloween e hora do dia.","No Japão, jogue na barraca de macarrão do vovô Ryo; no Halloween, nos caldeirões da bruxa: dá para ganhar uma skin.","Para entrar numa nova era, construa o shopping e espere três noites.","A tarefa diária dá um cristal. Dê uma olhada nela.","A gotinha perto da placa da loja liga a chuva.","Toque em um bichinho: ele pula e diz algo.","Os bueiros soltam vapor por charme, não por causa de incêndio.","O celular esquentou? Desligue nuvens, vapor e animações nas configurações.","O Bodya constrói o novo mercado: uma lona branca cobre o antigo, depois é só ver.","Mais toques, mais moedas. Mais simples impossível."],
-    es: ["Toca 5 veces al mapache ladrón para que no robe nada.","El cliente dorado paga más que nadie. ¡Tócalo a tiempo!","El «!» rojo junto a la tienda es el circo. Allí puedes ganar un cristal o un bono.","Dos buzones junto a la calle: el azul es para cartas, el rojo trae las noticias de los desarrolladores.","El viaje en el tiempo da fragmentos de tiempo. Gástalos en la tienda del tiempo.","Una skin cuesta 50 cristales. También puedes ganar una en los minijuegos.","Las estaciones se desbloquean tras la segunda era: estación del año, Halloween y hora del día.","En Japón juega en el puesto de fideos del abuelo Ryo; en Halloween, en los calderos de la bruja: puedes ganar una skin.","Para pasar a una nueva era, construye el centro comercial y espera tres noches.","La tarea diaria da un cristal. Echa un vistazo.","La gotita junto al cartel de la tienda activa la lluvia.","Toca a un animalito: salta y dice algo.","Las alcantarillas echan vapor por ambiente, no por un incendio.","¿El móvil se calienta? Apaga nubes, vapor y animaciones en los ajustes.","Bodya construye el nuevo mercado: una lona blanca cubre el viejo y luego lo ves tú mismo.","Más toques, más monedas. Más sencillo, imposible."],
-    it: ["Tocca 5 volte il procione ladro così non ruba niente.","Il cliente dorato paga più di tutti. Toccalo in tempo!","Il «!» rosso vicino al negozio è il circo. Lì puoi vincere un cristallo o un bonus.","Due cassette vicino alla strada: quella blu è per le lettere, quella rossa porta le novità degli sviluppatori.","Il viaggio nel tempo dà frammenti di tempo. Spendili nel negozio del tempo.","Una skin costa 50 cristalli. Puoi anche vincerla nei minigiochi.","Le stagioni si sbloccano dopo la seconda epoca: stagione, Halloween e ora del giorno.","In Giappone gioca al carretto dei noodle del nonno Ryo; a Halloween ai calderoni della strega: puoi vincere una skin.","Per passare a una nuova epoca, costruisci il centro commerciale e aspetta tre notti.","La missione giornaliera dà un cristallo. Dai un’occhiata.","La gocciolina vicino all’insegna del negozio accende la pioggia.","Tocca un animaletto: salta e dice qualcosa.","I tombini fumano per atmosfera, non per un incendio.","Il telefono scalda? Spegni nuvole, vapore e animazioni nelle impostazioni.","Bodya costruisce il nuovo mercato: un telo bianco copre il vecchio, poi vedi tu stesso.","Più tocchi, più monete. Più semplice di così non si può."],
-    pl: ["Stuknij 5 razy szopa-złodzieja, żeby nic nie ukradł.","Złoty klient płaci najwięcej. Stuknij go na czas!","Czerwony wykrzyknik przy sklepie to cyrk. Można tam wygrać kryształ albo bonus.","Dwie skrzynki przy drodze: niebieska na listy, czerwona z nowinami od twórców.","Podróż w czasie daje odłamki czasu. Wydaj je w sklepie czasu.","Skórka kosztuje 50 kryształów. Można ją też wygrać w minigrach.","Pory roku odblokowują się po drugiej epoce: pora roku, Halloween i pora dnia.","W Japonii zagraj przy wózku z makaronem dziadka Ryo, na Halloween przy kotłach wiedźmy: można wygrać skórkę.","Żeby przejść do nowej epoki, zbuduj centrum handlowe i poczekaj trzy noce.","Zadanie dnia daje kryształ. Zerknij na nie.","Kropelka przy szyldzie sklepu włącza deszcz.","Stuknij zwierzaka: podskoczy i coś powie.","Włazy parują dla klimatu, a nie z powodu pożaru.","Telefon się grzeje? Wyłącz chmury, parę i animacje w ustawieniach.","Bodya buduje nowy rynek: biała plandeka zakrywa stary, a potem sam zobaczysz.","Więcej stuknięć, więcej monet. Prościej się nie da."]
+    en: ['Tap the thief raccoon 5 times so he steals nothing.', 'The golden shopper pays the most. Tap them in time!', 'The red "!" by the shop is the circus. You can win a crystal or a bonus there.', 'Two boxes by the road: blue for letters, red for the developers\' news.', 'Time travel gives time shards. Spend them in the Time shop.', 'A skin costs 50 crystals. You can also win one in the bonus games.', 'Seasons unlock after the second era: season, Halloween and time of day.', 'In Japan play Grandpa Ryo’s noodle cart, at Halloween the witch’s cauldrons: you can win a skin there.', 'To enter a new era, build the mall and wait three nights.', 'The daily task gives a crystal. Check on it.', 'The little drop by the shop sign turns rain on.', 'Tap an animal: it hops and says something.', 'Manholes steam for coziness, not because of a fire.', 'Phone getting warm? Turn off clouds, steam and animations in settings.', 'Bodie builds the new market: a white tarp goes over the old one, then see for yourself.', 'More taps, more coins. It could not be simpler.'],
+    pt: ["Toque 5 vezes no guaxinim ladrão para ele não roubar nada.","O cliente dourado paga mais que todos. Toque nele a tempo!","O “!” vermelho perto da loja é o circo. Lá dá para ganhar um cristal ou um bônus.","Duas caixas na calçada: a azul é das cartas, a vermelha traz as novidades dos desenvolvedores.","A viagem no tempo dá fragmentos de tempo. Gaste-os na loja do tempo.","Uma skin custa 50 cristais. Também dá para ganhar uma nos minijogos.","As estações liberam depois da segunda era: estação do ano, Halloween e hora do dia.","No Japão, jogue na barraca de macarrão do vovô Ryo; no Halloween, nos caldeirões da bruxa: dá para ganhar uma skin.","Para entrar numa nova era, construa o shopping e espere três noites.","A tarefa diária dá um cristal. Dê uma olhada nela.","A gotinha perto da placa da loja liga a chuva.","Toque em um bichinho: ele pula e diz algo.","Os bueiros soltam vapor por charme, não por causa de incêndio.","O celular esquentou? Desligue nuvens, vapor e animações nas configurações.","O Bodie constrói o novo mercado: uma lona branca cobre o antigo, depois é só ver.","Mais toques, mais moedas. Mais simples impossível."],
+    es: ["Toca 5 veces al mapache ladrón para que no robe nada.","El cliente dorado paga más que nadie. ¡Tócalo a tiempo!","El «!» rojo junto a la tienda es el circo. Allí puedes ganar un cristal o un bono.","Dos buzones junto a la calle: el azul es para cartas, el rojo trae las noticias de los desarrolladores.","El viaje en el tiempo da fragmentos de tiempo. Gástalos en la tienda del tiempo.","Una skin cuesta 50 cristales. También puedes ganar una en los minijuegos.","Las estaciones se desbloquean tras la segunda era: estación del año, Halloween y hora del día.","En Japón juega en el puesto de fideos del abuelo Ryo; en Halloween, en los calderos de la bruja: puedes ganar una skin.","Para pasar a una nueva era, construye el centro comercial y espera tres noches.","La tarea diaria da un cristal. Echa un vistazo.","La gotita junto al cartel de la tienda activa la lluvia.","Toca a un animalito: salta y dice algo.","Las alcantarillas echan vapor por ambiente, no por un incendio.","¿El móvil se calienta? Apaga nubes, vapor y animaciones en los ajustes.","Bodie construye el nuevo mercado: una lona blanca cubre el viejo y luego lo ves tú mismo.","Más toques, más monedas. Más sencillo, imposible."],
+    it: ["Tocca 5 volte il procione ladro così non ruba niente.","Il cliente dorato paga più di tutti. Toccalo in tempo!","Il «!» rosso vicino al negozio è il circo. Lì puoi vincere un cristallo o un bonus.","Due cassette vicino alla strada: quella blu è per le lettere, quella rossa porta le novità degli sviluppatori.","Il viaggio nel tempo dà frammenti di tempo. Spendili nel negozio del tempo.","Una skin costa 50 cristalli. Puoi anche vincerla nei minigiochi.","Le stagioni si sbloccano dopo la seconda epoca: stagione, Halloween e ora del giorno.","In Giappone gioca al carretto dei noodle del nonno Ryo; a Halloween ai calderoni della strega: puoi vincere una skin.","Per passare a una nuova epoca, costruisci il centro commerciale e aspetta tre notti.","La missione giornaliera dà un cristallo. Dai un’occhiata.","La gocciolina vicino all’insegna del negozio accende la pioggia.","Tocca un animaletto: salta e dice qualcosa.","I tombini fumano per atmosfera, non per un incendio.","Il telefono scalda? Spegni nuvole, vapore e animazioni nelle impostazioni.","Bodie costruisce il nuovo mercato: un telo bianco copre il vecchio, poi vedi tu stesso.","Più tocchi, più monete. Più semplice di così non si può."],
+    pl: ["Stuknij 5 razy szopa-złodzieja, żeby nic nie ukradł.","Złoty klient płaci najwięcej. Stuknij go na czas!","Czerwony wykrzyknik przy sklepie to cyrk. Można tam wygrać kryształ albo bonus.","Dwie skrzynki przy drodze: niebieska na listy, czerwona z nowinami od twórców.","Podróż w czasie daje odłamki czasu. Wydaj je w sklepie czasu.","Skórka kosztuje 50 kryształów. Można ją też wygrać w minigrach.","Pory roku odblokowują się po drugiej epoce: pora roku, Halloween i pora dnia.","W Japonii zagraj przy wózku z makaronem dziadka Ryo, na Halloween przy kotłach wiedźmy: można wygrać skórkę.","Żeby przejść do nowej epoki, zbuduj centrum handlowe i poczekaj trzy noce.","Zadanie dnia daje kryształ. Zerknij na nie.","Kropelka przy szyldzie sklepu włącza deszcz.","Stuknij zwierzaka: podskoczy i coś powie.","Włazy parują dla klimatu, a nie z powodu pożaru.","Telefon się grzeje? Wyłącz chmury, parę i animacje w ustawieniach.","Bodie buduje nowy rynek: biała plandeka zakrywa stary, a potem sam zobaczysz.","Więcej stuknięć, więcej monet. Prościej się nie da."]
   };
   var KNOWN = ['uk', 'en', 'pt', 'es', 'it', 'pl'], BOOT = {"uk":["Завантаження","👆 тапни, щоб побачити іншу підказку","Підказка: "],"en":["Loading","👆 tap for another tip","Tip: "],"pt":["Carregando","👆 toque para ver outra dica","Dica: "],"es":["Cargando","👆 toca para ver otro consejo","Consejo: "],"it":["Caricamento","👆 tocca per un altro suggerimento","Suggerimento: "],"pl":["Ładowanie","👆 dotknij, by zobaczyć inną wskazówkę","Wskazówka: "]};
   function pickLang(l) { l = (l || 'en').toLowerCase(); for (var q = 0; q < KNOWN.length; q++) if (KNOWN[q] !== 'en' && l.indexOf(KNOWN[q]) === 0) return KNOWN[q]; return 'en'; }
@@ -2079,6 +2085,7 @@ function bootDone() {
           <p class="ws-line" data-i18n="setReportNote"></p>
           <textarea id="reportBox" rows="6" readonly hidden></textarea>
           <button type="button" class="btn wide" id="reportBtn" data-i18n="reportBtn"></button>
+          <button type="button" class="btn wide" id="iapRestoreBtn" data-i18n="iapRestore" hidden></button>
           <button type="button" class="btn wide" id="privacyBtn" data-i18n="privacyBtn"></button>
         </div>
         <div class="card">
@@ -4800,7 +4807,7 @@ const translations = {
     // Офлайн
     offlineTitle: 'З поверненням!',
     offlineText: 'Поки тебе не було, магазин заробив',
-    offlineCoins: '{0} монеток 💤',
+    offlineCoins: '{0} {0|монетка|монетки|монеток} 💤',
     offlineBtn: 'Забрати',
     adOfflineBtn: '🎬 ×2: подивитись ролик',
     adPrivacyBtn: 'Параметри реклами',
@@ -4968,7 +4975,7 @@ const translations = {
     saleStart: "Розпродаж. Дохід ×{0} на 2 хвилини. Користуйся, поки всі не отямились.",
     raccoonStart: "Єнот Шнирь поцупив мішок. Дожени його: тапай по ньому.",
     raccoonWin: "Упіймано. Шнирь кинув мішок: +{0}.",
-    raccoonLose: "Шнирь утік і поцупив {0} монет.",
+    raccoonLose: "Шнирь утік і поцупив {0} {0|монета|монети|монет}.",
     raccoonFriend: "Шнирь лише пожартував і втік. Нічого не вкрав.",
     tonyaScared: "Тоня прогнала єнота ще біля входу.",
     shnyrSay_0: "Хе-хе, моє.", shnyrSay_1: "Мішок мій, монети теж.", shnyrSay_2: "Спробуй упіймай.",
@@ -5019,7 +5026,7 @@ const translations = {
     skinsReset: 'Скинути всі скіни до звичайного вигляду', skinsResetDone: 'Усі скіни зняті: звичайний вигляд. Куплені скіни нікуди не поділись.', skinsResetNone: 'Усе вже в звичайному вигляді.',
     skinDefault: 'Звичайний', skinWorn: 'Вдягнено', skinWear: 'Вдягнути', skinLocked: 'У цирку', skinLockedToast: 'Цей скін можна виграти в Цирку Фортуни.', skinBuy: 'Купити · {0} 💎', skinBuyTitle: 'Купити скін?', skinBuyText: '«{0}» коштує {1} кристалів. У тебе їх {2}. Ще його можна виграти в Цирку Фортуни.', skinBuyYes: 'Купити', skinNoCrystals: 'Не вистачає кристалів: потрібно {0} 💎. Скін можна виграти в цирку.', skinBought: 'Куплено: {0}', lootTag: '✨ ЕПІЧНА ЗДОБИЧ ✨', lootWear: 'Вдягнути', lootClose: 'Чудово!', rainOn: 'Дощ увімкнено 🌧', rainEco: 'Дощ увімкнено, але в режимі «Економія» він не йде. Вимкни економію в налаштуваннях', rainOff: 'Дощ вимкнено', goalTravel: '⏳ Можна в подорож: +{0} 💎', goalCrystal: "⏳ До першого осколка часу: {0}%", goalDept: '🛒 Купи «{0}»: {1}/{2}', goalHire: '🐾 Прокачай до {1} рівня: {0}', goalExpandNow: '🏪 Можна розширити магазин!', goalExpand: '🏪 Розширення магазину: {0}%', goalNext: '🛒 Далі: «{0}» · {1}%',
     dailyRemind: '📅 Завдання дня: виконано {0} із 3. Загляни у вкладку нагород!', dailyRemindClaim: '📅 Завдання дня виконано. Забери кристал у вкладці нагород!', dailyTitle: '📅 Завдання дня', dailyNote: 'Три цілі щодоби. За кожну — кристал, а за всі три ще один.', dailyClaim: 'Забрати 💎', dailyAll: 'Усі три: ще +1 💎', dailyAllDone: 'Усі три виконано: +1 💎 отримано', dailyDoneToast: 'Завдання дня виконано! Забери кристал у вкладці нагород.', dailyGot: 'Кристал +{0} 💎',
-    daily_taps: 'Натисни на магазин {0} разів', daily_depts: 'Купи відділи: {0} шт.', daily_team: 'Прокачай звірят: {0} разів', daily_catch: 'Спіймай звірят або привидів: {0}', daily_vip: 'Спіймай золотих покупців: {0}', daily_earn: 'Зароби монет: {0}', daily_wheel: 'Зіграй у цирк чи бонус-гру',
+    daily_taps: 'Натисни на магазин {0} {0|раз|рази|разів}', daily_depts: 'Купи відділи: {0} шт.', daily_team: 'Прокачай звірят: {0} {0|раз|рази|разів}', daily_catch: 'Спіймай звірят або привидів: {0}', daily_vip: 'Спіймай золотих покупців: {0}', daily_earn: 'Зароби монет: {0}', daily_wheel: 'Зіграй у цирк чи бонус-гру',
     vipWish: 'Хочу «{0}»!', vipToast: '🌟 До магазину завітав золотий покупець! Тапни по ньому.', vipThanks: 'Дякую! Ось тобі винагорода.', vipCrystal: 'Золотий покупець подарував кристал: +1 💎', vipGold: 'Золотий покупець дав ×5 золота: +{0} 🪙', vipSayCrystal: 'Тримай кристал!', vipSayGold: 'Тримай ×5 золота!',
     prize_income: 'Дохід ×{0} на {1} хв!',
     prize_tap: 'Тап ×{0} на {1} хв!',
@@ -5109,8 +5116,8 @@ const translations = {
     achName_milestones: 'Віхи успіху', achName_teamEver: 'Командна гра', achName_teamMax: 'Майстер своєї справи', achName_raccoons: 'Ловець єнотів',
     achName_wheel: 'Щасливчик', achName_travels: 'Мандрівниця часом', achName_crystals: 'Кристальна колекція',
     achName_chapters: 'Читачка', achName_holidays: 'Святковий настрій', achName_hours: 'Завзята торговка',
-    achDesc_taps: 'Тапни по магазину {0} разів', achDesc_earned: 'Зароби за весь час {0} монеток', achDesc_level: 'Розшир магазин до рівня {0}',
-    achDesc_deptsBought: 'Купи {0} відділів', achDesc_milestones: 'Досягни віх відділів: {0}', achDesc_teamEver: 'Познайомся зі звірятами в команді: {0}',
+    achDesc_taps: 'Тапни по магазину {0} {0|раз|рази|разів}', achDesc_earned: 'Зароби за весь час {0} {0|монетка|монетки|монеток}', achDesc_level: 'Розшир магазин до рівня {0}',
+    achDesc_deptsBought: 'Купи {0} {0|відділ|відділи|відділів}', achDesc_milestones: 'Досягни віх відділів: {0}', achDesc_teamEver: 'Познайомся зі звірятами в команді: {0}',
     achDesc_teamMax: 'Прокач звірятко до рівня {0}', achDesc_raccoons: 'Впіймай єнота разів: {0}', 
     achDesc_wheel: 'Зіграй у цирк чи бонус-ігри разів: {0}', achDesc_travels: 'Здійсни подорожей у часі: {0}', achDesc_crystals: 'Здобудь кристалів: {0}',
     achDesc_chapters: 'Прочитай глав історії: {0}', achDesc_holidays: 'Побач свят у місті: {0}', achDesc_hours: 'Пограй годин: {0}',
@@ -5181,7 +5188,7 @@ const translations = {
     letter_sonia: "У-гу. Порахувала: ти заслуговуєш на бонус. Баланс зійшовся, можеш не перевіряти. Все одно перевіриш.",
     letter_leo: "Є план: ти читаєш цей лист, отримуєш бонус, ми всі в плюсі. Домовились? Мовчання вважаю згодою.",
     letter_pao: "Це Пао. У листі бамбук і удача. Знижки не лишились, а от бонус — так.",
-    letterBoost_income: 'Дохід ×{0} на {1} хв', letterBoost_tap: 'Тап ×{0} на {1} хв', letterBoost_coins: '+{0} монеток',
+    letterBoost_income: 'Дохід ×{0} на {1} хв', letterBoost_tap: 'Тап ×{0} на {1} хв', letterBoost_coins: '+{0} {0|монетка|монетки|монеток}',
     letterBoost_wheel: 'Цирк уже поспішає до тебе!', letterBoost_sale: 'Розпродаж ×2 на 2 хвилини!', letterBoost_crystal: 'Кристал +1 💎',
     nightHint_1: "Ніч перша. У кишені Капі щось тихо цокає. Не дзвінок із банку.", nightHint_2: "Ніч друга. Цокання гучніше. Цього разу точно не будильник.",
     // Репліки на лавочці: звірята питають, як минув твій день
@@ -5268,7 +5275,7 @@ const translations = {
 
     offlineTitle: 'Welcome back!',
     offlineText: 'While you were away, the shop earned',
-    offlineCoins: '{0} coins 💤',
+    offlineCoins: '{0} {0|coin|coins} 💤',
     offlineBtn: 'Collect',
     adOfflineBtn: '🎬 ×2: watch a video',
     adPrivacyBtn: 'Ad privacy options',
@@ -5381,8 +5388,8 @@ const translations = {
     ch4_5: "In the pocket the watch ticked softly, as if winking. Looks like that wasn't the last time.",
     ch5_title: "New Colleagues",
     ch5_0: "The shop has grown into a supermarket. The whole street talks about Capy, and new workers are knocking on the door. Those who could, knocked.",
-    ch5_1: "I'm Bodya, a builder. Heard you're expanding. Need boards? I'll send the bill separately. And another one, for politeness.",
-    ch5_2: "Zoya. I sell everything that isn't nailed down. And what is nailed down, just slower. Give me a window and it'll start talking.",
+    ch5_1: "I'm Bodie, a builder. Heard you're expanding. Need boards? I'll send the bill separately. And another one, for politeness.",
+    ch5_2: "Zoe. I sell everything that isn't nailed down. And what is nailed down, just slower. Give me a window and it'll start talking.",
     ch5_3: "Hoo. I'm Sonia, an accountant. I work nights, by day I only blink. Someone has to count these coins before they run away.",
     ch5_4: "Tonya, security. I'm coming. Will be there soon. But I won't let anyone through.",
     ch5_5: "Come in, friends. Thank you for coming. Seriously.",
@@ -5433,7 +5440,7 @@ const translations = {
     saleStart: "Sale. Income ×{0} for 2 minutes. Use it before everyone wakes up.",
     raccoonStart: "Shnyr the raccoon grabbed a sack. Chase him: tap on him.",
     raccoonWin: "Caught. Shnyr dropped the sack: +{0}.",
-    raccoonLose: "Shnyr ran off and stole {0} coins.",
+    raccoonLose: "Shnyr ran off and stole {0} {0|coin|coins}.",
     raccoonFriend: "Shnyr was only joking and ran off. He stole nothing.",
     tonyaScared: "Tonya chased the raccoon off right at the entrance.",
     shnyrSay_0: "Heh-heh, mine.", shnyrSay_1: "The sack is mine, and the coins too.", shnyrSay_2: "Try and catch me.",
@@ -5484,7 +5491,7 @@ const translations = {
     skinsReset: 'Reset all skins to the default look', skinsResetDone: 'All skins removed: default look. Your skins are still yours.', skinsResetNone: 'Everything already has the default look.',
     skinDefault: 'Default', skinWorn: 'Worn', skinWear: 'Wear', skinLocked: 'Circus', skinLockedToast: 'You can win this skin at the Fortune Circus.', skinBuy: 'Buy · {0} 💎', skinBuyTitle: 'Buy this skin?', skinBuyText: '“{0}” costs {1} crystals. You have {2}. You can also win it at the Fortune Circus.', skinBuyYes: 'Buy', skinNoCrystals: 'Not enough crystals: you need {0} 💎. You can also win it at the circus.', skinBought: 'Bought: {0}', lootTag: '✨ EPIC LOOT ✨', lootWear: 'Wear it', lootClose: 'Awesome!', rainOn: 'Rain is on 🌧', rainEco: 'Rain is on, but it does not fall in Eco mode. Turn Eco off in settings', rainOff: 'Rain is off', goalTravel: '⏳ Time travel is ready: +{0} 💎', goalCrystal: "⏳ Toward the first time shard: {0}%", goalDept: '🛒 Buy “{0}”: {1}/{2}', goalHire: '🐾 Level up to {1}: {0}', goalExpandNow: '🏪 You can expand the shop!', goalExpand: '🏪 Shop expansion: {0}%', goalNext: '🛒 Next: “{0}” · {1}%',
     dailyRemind: '📅 Daily quests: {0} of 3 done. Check the awards tab!', dailyRemindClaim: '📅 A daily quest is done. Claim your crystal in the awards tab!', dailyTitle: '📅 Daily quests', dailyNote: 'Three goals a day. A crystal for each, and one more for all three.', dailyClaim: 'Claim 💎', dailyAll: 'All three: +1 💎 more', dailyAllDone: 'All three done: +1 💎 received', dailyDoneToast: 'Daily quest done! Claim the crystal in the awards tab.', dailyGot: 'Crystal +{0} 💎',
-    daily_taps: 'Tap the shop {0} times', daily_depts: 'Buy departments: {0}', daily_team: 'Upgrade animals: {0} times', daily_catch: 'Catch animals or ghosts: {0}', daily_vip: 'Catch golden shoppers: {0}', daily_earn: 'Earn coins: {0}', daily_wheel: 'Play the circus or a bonus game',
+    daily_taps: 'Tap the shop {0} {0|time|times}', daily_depts: 'Buy departments: {0}', daily_team: 'Upgrade animals: {0} {0|time|times}', daily_catch: 'Catch animals or ghosts: {0}', daily_vip: 'Catch golden shoppers: {0}', daily_earn: 'Earn coins: {0}', daily_wheel: 'Play the circus or a bonus game',
     vipWish: 'I want “{0}”!', vipToast: '🌟 A golden shopper has arrived! Tap them.', vipThanks: 'Thank you! Here is your reward.', vipCrystal: 'The golden shopper gave a crystal: +1 💎', vipGold: 'The golden shopper gave ×5 gold: +{0} 🪙', vipSayCrystal: 'Here, a crystal!', vipSayGold: 'Here, ×5 gold!',
     prize_income: 'Income ×{0} for {1} min!',
     prize_tap: 'Tap ×{0} for {1} min!',
@@ -5573,8 +5580,8 @@ const translations = {
     achName_milestones: 'Milestones', achName_teamEver: 'Team Player', achName_teamMax: 'Master Craftsman', achName_raccoons: 'Raccoon Catcher',
     achName_wheel: 'Lucky One', achName_travels: 'Time Traveller', achName_crystals: 'Crystal Collection',
     achName_chapters: 'Reader', achName_holidays: 'Holiday Spirit', achName_hours: 'Dedicated Trader',
-    achDesc_taps: 'Tap the shop {0} times', achDesc_earned: 'Earn {0} coins in total', achDesc_level: 'Expand the shop to level {0}',
-    achDesc_deptsBought: 'Buy {0} departments', achDesc_milestones: 'Reach department milestones: {0}', achDesc_teamEver: 'Meet animals on your team: {0}',
+    achDesc_taps: 'Tap the shop {0} {0|time|times}', achDesc_earned: 'Earn {0} {0|coin|coins} in total', achDesc_level: 'Expand the shop to level {0}',
+    achDesc_deptsBought: 'Buy {0} {0|department|departments}', achDesc_milestones: 'Reach department milestones: {0}', achDesc_teamEver: 'Meet animals on your team: {0}',
     achDesc_teamMax: 'Upgrade an animal to level {0}', achDesc_raccoons: 'Catch raccoons: {0}', 
     achDesc_wheel: 'Play the circus or bonus games: {0}', achDesc_travels: 'Travel through time: {0}', achDesc_crystals: 'Collect crystals: {0}',
     achDesc_chapters: 'Read story chapters: {0}', achDesc_holidays: 'See holidays in town: {0}', achDesc_hours: 'Play hours: {0}',
@@ -5637,12 +5644,12 @@ const translations = {
     mailArrive: "✉️ The mail truck arrived. Pick up the letter by the road.",
     letterTitle: 'A letter from {0}', letterBtn: 'Claim bonus',
     letter_spike: "Hi, boss. Found an extra penny in the till and thought of you right away. Don't ask whose it is. Here's a bonus from the post office.",
-    letter_zoya: "It's Zoya. I came up with a promo: whoever reads this letter gets a bonus. That's you. Don't thank me, just recommend me.",
+    letter_zoya: "It's Zoe. I came up with a promo: whoever reads this letter gets a bonus. That's you. Don't thank me, just recommend me.",
     letter_bodya: "Bodie. Built a mailbox and sent the first letter. The bonus is attached like a nail to a plank: firmly and without extra words.",
     letter_sonia: "Hoo. I did the math: you deserve a bonus. The books balance, no need to check. You'll check anyway.",
     letter_leo: "The plan: you read this letter, get a bonus, we all come out ahead. Deal? I'll take silence as agreement.",
     letter_pao: "It's Pao. The letter has bamboo and luck. The discounts are gone, but the bonus is real.",
-    letterBoost_income: 'Income ×{0} for {1} min', letterBoost_tap: 'Tap ×{0} for {1} min', letterBoost_coins: '+{0} coins',
+    letterBoost_income: 'Income ×{0} for {1} min', letterBoost_tap: 'Tap ×{0} for {1} min', letterBoost_coins: '+{0} {0|coin|coins}',
     letterBoost_wheel: 'The circus is on its way to you!', letterBoost_sale: 'Sale ×2 for 2 minutes!', letterBoost_crystal: 'Crystal +1 💎',
     nightHint_1: "Night one. Something quietly ticks in Capy's pocket. Not a call from the bank.", nightHint_2: "Night two. The ticking is louder. Definitely not an alarm clock this time.",
     team_spike_sit_0: "Sit down. How was your day? Mine was prickly, as usual.", team_spike_sit_1: "So, how was it? Profit's fine, mood's questionable.",
@@ -5673,6 +5680,7 @@ const GENDER_TEXTS = {
       achName_level: 'Забудовник', achName_deptsBought: 'Закупник', achName_travels: 'Мандрівник часом',
       achName_chapters: 'Читач', achName_hours: 'Завзятий торговець'
     },
+    pl: { capy_say_1: 'Marzyłem o budce na rogu. I oto jest. Czasem wciąż nie mogę w to uwierzyć.' },
     en: {
       ch1_1: "A battered cart rolls onto the square. A capybara peeks out. The look says “I'm here on purpose”.",
       capy_say_1: "I have to water the leaves on my head. Yes, I know how that sounds.", capy_say_4: "The leaves on my head bring luck. Otherwise, why have them."
@@ -6213,7 +6221,7 @@ Object.assign(translations.uk, {
   exportNag: 'Давно не було копії прогресу. Відкрий Налаштування, блок «Збереження», і натисни «Копіювати». Код збережи в нотатках.',
   restoredBak: 'Основне збереження було пошкоджене. Прогрес відновлено з другої копії.',
   setReport: 'Звіт про помилки', setReportNote: 'Якщо щось зламалось, натисни кнопку й надішли текст розробникам. Особистих даних там нема.',
-  aboutTitle: 'Про гру', aboutInfo: 'CapyTap: Market · випуск {0}\n© CapyTap Company\nШрифт Press Start 2P © 2012 The Press Start 2P Project Authors, ліцензія SIL Open Font License 1.1.', licenseBtn: 'Ліцензія шрифту', privacyBtn: 'Політика конфіденційності', reportBtn: 'Скопіювати звіт', reportCopied: 'Звіт скопійовано!', reportManual: 'Виділи текст і скопіюй його вручну.'
+  iapBuyTitle: "Купити набір", iapBuyText: "«{0}» входить у платний набір. Ціна: {1}. Покупка разова, скіни залишаються назавжди.", iapBuyYes: "Купити", iapThanks: "Дякуємо! Набір уже твій.", iapPending: "Оплата ще йде. Скін з’явиться, щойно Google її підтвердить.", iapFail: "Покупка зараз недоступна. Спробуй пізніше.", iapNoPrice: "Не вдалося дізнатись ціну. Перевір інтернет і спробуй ще раз.", iapRestore: "Відновити покупки", iapRestored: "Покупки відновлено.", iapNothing: "Покупок на цьому акаунті немає.", errRepeat: 'Щось пішло не так, але гра працює далі. Якщо бачиш дивне, перезапусти її. Звіт є в налаштуваннях.', aboutTitle: 'Про гру', aboutInfo: 'CapyTap: Market · випуск {0}\n© CapyTap Company\nШрифт Press Start 2P © 2012 The Press Start 2P Project Authors, ліцензія SIL Open Font License 1.1.', licenseBtn: 'Ліцензія шрифту', privacyBtn: 'Політика конфіденційності', reportBtn: 'Скопіювати звіт', reportCopied: 'Звіт скопійовано!', reportManual: 'Виділи текст і скопіюй його вручну.'
 });
 Object.assign(translations.en, {
   swEco: 'Power saving', setEcoNote: 'Fewer particles; no rain, steam or birds. Turns on by itself when the game is slow.',
@@ -6223,7 +6231,7 @@ Object.assign(translations.en, {
   exportNag: 'It has been a while since you backed up your progress. Open Settings, the Save block, and press Copy. Keep the code in your notes.',
   restoredBak: 'The main save was damaged. Your progress was restored from the second copy.',
   setReport: 'Error report', setReportNote: 'If something breaks, press the button and send the text to the developers. It has no personal data.',
-  aboutTitle: 'About', aboutInfo: 'CapyTap: Market · release {0}\n© CapyTap Company\nPress Start 2P font © 2012 The Press Start 2P Project Authors, SIL Open Font License 1.1.', licenseBtn: 'Font license', privacyBtn: 'Privacy policy', reportBtn: 'Copy report', reportCopied: 'Report copied!', reportManual: 'Select the text and copy it by hand.'
+  iapBuyTitle: "Buy the pack", iapBuyText: "“{0}” is part of a paid pack. Price: {1}. You pay once and keep the skins forever.", iapBuyYes: "Buy", iapThanks: "Thank you! The pack is yours.", iapPending: "Payment is still in progress. The skin appears as soon as Google confirms it.", iapFail: "Purchases are not available right now. Please try later.", iapNoPrice: "Could not get the price. Check your connection and try again.", iapRestore: "Restore purchases", iapRestored: "Purchases restored.", iapNothing: "No purchases on this account.", errRepeat: 'Something went wrong, but the game keeps running. If anything looks odd, restart it. The report is in Settings.', aboutTitle: 'About', aboutInfo: 'CapyTap: Market · release {0}\n© CapyTap Company\nPress Start 2P font © 2012 The Press Start 2P Project Authors, SIL Open Font License 1.1.', licenseBtn: 'Font license', privacyBtn: 'Privacy policy', reportBtn: 'Copy report', reportCopied: 'Report copied!', reportManual: 'Select the text and copy it by hand.'
 });
 function t(key, ...args) {
   const dict = translations[state.lang] || translations.en;
@@ -6232,7 +6240,17 @@ function t(key, ...args) {
   if (str === undefined) str = translations.en[key];
   if (str === undefined) return key;
   if (str.includes('💎')) str = str.replace(/💎/g, GEM_CH);      // піксельний кристал стилю епохи
+  if (str.includes('|')) str = str.replace(/\{(\d+)\|([^{}]+)\}/g, (_, i, forms) => pluralForm(args[i], forms.split('|')));   // {0|монета|монети|монет}
   return str.replace(/\{(\d+)\}/g, (_, i) => (args[i] !== undefined ? args[i] : ''));
+}
+// Форма слова за числом: скорочені числа («1,5 тис.») беруть останню форму
+function pluralForm(v, forms) {
+  const last = forms[forms.length - 1], s = String(v === undefined ? '' : v).replace(/[\s., ]/g, '');
+  if (!/^\d+$/.test(s) || s.length > 15) return last;
+  const n = +s, one = n % 10 === 1 && n % 100 !== 11, few = n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14);
+  if (forms.length < 3) return n === 1 ? forms[0] : last;
+  if (state.lang === 'pl') return n === 1 ? forms[0] : few ? forms[1] : last;
+  return one ? forms[0] : few ? forms[1] : last;
 }
 
 // Суфікс розряду: 0..4 — зі словника мови, далі aa, ab, ac, ... az, ba ...
@@ -16510,6 +16528,7 @@ function refreshTeamPortraits() {
 }
 function equipSkin(type, i) {
   if (i >= 0 && !skinOwned(i)) {
+    if (SKIN_PAID[SKIN_POOL[i]]) { Iap.offer(type, i); return; }                                   // платний скін: покупка через Google Play
     if (/^capy_ep\d$/.test(SKIN_POOL[i])) { showToast(t('skinOtherEpoch'), 'bad'); return; }      // скін епохи не продається: він вдягається сам у своїй епосі
     if (state.crystals < SKIN_PRICE) { showToast(t('skinNoCrystals', SKIN_PRICE), 'bad'); return; }
     askConfirm(t('skinBuyTitle'), t('skinBuyText', skinName(i), SKIN_PRICE, state.crystals), t('skinBuyYes'), () => {
@@ -16623,6 +16642,7 @@ function updateSkinsUI() {
       nm.textContent = (SKIN_SEASON[SKIN_POOL[o.i]] ? SKIN_SEASON[SKIN_POOL[o.i]] + ' ' : '') + (o.i === -2 ? t('skinEpoch', t('epoch_' + (viewEpoch() % EPOCHS.length))) : o.i < 0 ? t('skinDefault') : skinName(o.i));
       const st = document.createElement('span'); st.className = 'skin-state';
       st.textContent = o.i === -2 ? (worn ? '✓ ' + t('skinWorn') : '↩ ' + t('skinBackToEpoch')) : o.i < 0 ? (worn ? '✓ ' + t('skinWorn') : '') : !owned ? (/^capy_ep\d$/.test(SKIN_POOL[o.i]) ? t('skinOtherEpoch') : t('skinBuy', SKIN_PRICE)) : worn ? '✓ ' + t('skinWorn') : t('skinWear');
+      if (!owned && o.i >= 0 && SKIN_PAID[SKIN_POOL[o.i]]) st.textContent = Iap.priceLabel(SKIN_POOL[o.i]);
       if (!owned && o.i >= 0) { st.prepend(lockImg('lock')); b.appendChild(lockImg('lock-badge')); }
       b.append(nm, st);
       b.addEventListener('click', () => equipSkin(type, o.i));
@@ -16726,6 +16746,13 @@ function setupProgression() {
     if (!npDrag) return; const dx = e.clientX - npDrag.x, dy = e.clientY - npDrag.y; npDrag = null;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) npGo(dx < 0 ? 1 : -1);
     else if (Math.abs(dx) < 8 && Math.abs(dy) < 8 && !e.target.closest('button')) { const r = ui.npPaper.getBoundingClientRect(); npGo(e.clientX > r.left + r.width * 0.5 ? 1 : -1); }
+  });
+  document.addEventListener('keydown', e => {                       // Esc закриває верхнє вікно (клавіатура на ПК)
+    if (e.key !== 'Escape' || e.target.closest('input,textarea')) return;
+    for (const [m, b] of [['confirmModal', 'confirmNo'], ['lootModal', 'lootClose'], ['soundModal', 'soundClose'], ['feedbackModal', 'fbCancel'], ['circusModal', 'circusClose']]) {
+      const M = document.getElementById(m), B = document.getElementById(b);
+      if (M && !M.hidden) { if (B && !B.hidden) B.click(); return; }
+    }
   });
   document.addEventListener('keydown', e => { if (ui.newsModal.hidden || !ui.fbModal.hidden || e.target.closest('input,textarea')) return; if (e.key === 'ArrowRight') npGo(1); else if (e.key === 'ArrowLeft') npGo(-1); else if (e.key === 'Escape') closeNews(); });
   ui.siLater.addEventListener('click', () => { ui.siModal.hidden = true; });
@@ -19654,7 +19681,15 @@ function skinGrant(i) { if (i < 32) state.skinsMask |= (1 << i); else if (i < 64
 const SKINS_FREE_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
 const SKINS_FREE = (SKINS_FREE_BUILD && !GOD_PAUSED) || GOD_ON;          // скіни відкриваються виграшем у цирку або купівлею
 const SKIN_PRICE = 50;             // символічна ціна скіна в кристалах
+// Платні скіни (лише Android, 275_iap): скін → товар у Google Play. Нові скіни додавати в КІНЕЦЬ SKIN_POOL. Цирк їх не роздає, кристалами не купуються.
+const SKIN_PAID = {};
+const IAP_ALL = 'pack_all';           // товар «усі набори разом»
+let iapOwned = new Set();
+try { iapOwned = new Set(JSON.parse(localStorage.getItem('capyIapOwned') || '[]')); } catch (e) { /* немає копії */ }
+function iapKeep() { try { localStorage.setItem('capyIapOwned', JSON.stringify([...iapOwned])); } catch (e) { /* нічого */ } }
+function iapHas(id) { const p = SKIN_PAID[id]; return !!p && (iapOwned.has(p) || iapOwned.has(IAP_ALL)); }
 function skinOwned(i) {
+  if (SKIN_PAID[SKIN_POOL[i]]) return iapHas(SKIN_POOL[i]) || SKINS_FREE;
   if (SKIN_POOL[i] === 'capy_mel' || SKIN_POOL[i] === 'capy_nika') return true;                  // скіни розробників MEL і NIKA — подарунок усім
   const m = /^capy_ep(\d)$/.exec(SKIN_POOL[i]);
   if (m) return +m[1] === viewEpoch() % EPOCHS.length;      // скін епохи можна вдягнути лише в його власній епосі
@@ -20622,7 +20657,7 @@ function closeCircus() {
   if (circus.bonus) { circus.bonus = false; return; }
   if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
 }
-function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_HIDDEN.includes(SKIN_POOL[i]) && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
+function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_HIDDEN.includes(SKIN_POOL[i]) && !SKIN_PAID[SKIN_POOL[i]] && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
 // Один випадковий сектор (з урахуванням скінів, що вже є) і його дія
 function rollCircusSector(noSmall, withSkins) {
   const pool = withSkins ? CIRCUS_SECTORS.concat(BONUS_GAME_SKINS) : CIRCUS_SECTORS;   // скіни є лише в призах бонус-ігор (лапшична, відьма), у цирку їх нема
@@ -21021,7 +21056,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'New team heroes: Spike, Zoya and everyone else in a beautiful new look, with era costumes and street-matching skins. The pavement now changes smoothly when you pick a skin, and more customers walk the whole street. All transitions are smoother and the weather skins came alive.',
+    newH: 'What is new', new: 'New team heroes: Spike, Zoe and everyone else in a beautiful new look, with era costumes and street-matching skins. The pavement now changes smoothly when you pick a skin, and more customers walk the whole street. All transitions are smoother and the weather skins came alive.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
@@ -25634,6 +25669,7 @@ let animClock = 0;
 let frameErrN = 0;
 function frameErr(e) {
   if (frameErrN++ < 3) { logErr('frame', e && e.message, '', 0, 0, e && e.stack); console.error('frame: ' + (e && e.message)); }
+  if (frameErrN === 30) { try { showToast(t('errRepeat'), 'bad'); } catch (e2) { /* нічого */ } }   // збій повторюється: один раз кажемо гравцю, що робити
 }
 function frame(now) {
   try { frameStep(now); } catch (e) { frameErr(e); }
@@ -26099,6 +26135,77 @@ function adsOfferBonusSkip(def, waitMs) {                                      /
 }
 
 setTimeout(() => { try { Ads.init(); } catch (e) { adsLog(e); } }, 4000);   // після запуску гри, щоб форма згоди не лізла на першому кадрі
+//#part 275_iap.js
+/* =====================================================================
+   ОПЛАТИ Google Play — лише в Android-обгортці.
+   Увімкнено, тільки коли mobile/sync-web.js вставив window.__IAP (є файл mobile/iap.json).
+   На сайті, в itch і в exe нічого не робить: платні скіни там не показуються.
+   Що продається — SKIN_PAID (230_a1). Куплене зберігається в Google, тут лише копія на випадок без мережі;
+   у збереження й у код збереження покупки НЕ пишемо, інакше кодом можна було б ділитися.
+   Деталі й кроки власника гри: store/PLAY_PAYMENTS.md.
+   ===================================================================== */
+const Iap = (() => {
+  const CFG = (typeof window !== 'undefined' && window.__IAP) || null;
+  let plugin = null, prices = {}, busy = false;
+
+  function dropNotOwned() {                                         // повернули гроші: купленого скіна більше нема, знімаємо його
+    SKIN_TYPES.forEach(ty => { const i = state.skins[ty]; if (i >= 0 && SKIN_PAID[SKIN_POOL[i]] && !skinOwned(i)) setSkin(ty, ty === 'capy' ? -2 : -1); });
+  }
+  function apply(list) {
+    const was = [...iapOwned].sort().join();
+    iapOwned = new Set(list); iapKeep();
+    if ([...iapOwned].sort().join() !== was) { dropNotOwned(); skinsSig = ''; try { updateUI(); } catch (e) { /* ще не готово */ } }
+  }
+  async function refresh() {
+    if (!plugin) return false;
+    try { const r = await plugin.owned(); apply(r.owned || []); return true; } catch (e) { return false; }    // без мережі лишається остання копія
+  }
+  async function loadPrices() {
+    const ids = (CFG && CFG.products) || [...new Set(Object.values(SKIN_PAID))];
+    if (!plugin || !ids.length) return;
+    try { const r = await plugin.getProducts({ products: ids }); (r.products || []).forEach(p => { prices[p.id] = p.price; }); skinsSig = ''; } catch (e) { /* покажемо ціну пізніше */ }
+  }
+  async function buy(pid, type, i) {
+    if (busy) return;
+    busy = true;
+    try {
+      const r = await plugin.buy({ product: pid });
+      if (r.status === 'ok' || r.status === 'owned') {
+        apply([...iapOwned, pid]);
+        showToast(t('iapThanks'), 'good');
+        if (skinOwned(i)) equipSkin(type, i);
+        updateUI();
+      } else if (r.status === 'pending') showToast(t('iapPending'), 'good');
+      else if (r.status !== 'cancelled') showToast(t('iapFail'), 'bad');
+    } catch (e) { showToast(t('iapFail'), 'bad'); }
+    busy = false;
+  }
+  function offer(type, i) {
+    const pid = SKIN_PAID[SKIN_POOL[i]];
+    if (!plugin || !pid) { showToast(t('iapFail'), 'bad'); return; }
+    if (!prices[pid]) { loadPrices(); showToast(t('iapNoPrice'), 'bad'); return; }
+    askConfirm(t('iapBuyTitle'), t('iapBuyText', skinName(i), prices[pid]), t('iapBuyYes'), () => buy(pid, type, i));
+  }
+  function priceLabel(skinId) { return prices[SKIN_PAID[skinId]] || t('iapBuyYes'); }
+  async function restore() {
+    const ok = await refresh();
+    showToast(t(ok ? (iapOwned.size ? 'iapRestored' : 'iapNothing') : 'iapFail'), ok ? 'good' : 'bad');
+  }
+  async function init(testPlugin) {                                 // testPlugin — лише для автотесту
+    if (plugin) return;
+    plugin = testPlugin || (CFG ? nativePlugin('CapyBilling') : null);
+    if (!plugin) return;
+    const btn = document.getElementById('iapRestoreBtn');
+    if (btn) { btn.hidden = false; btn.onclick = restore; }
+    if (plugin.addListener) { try { plugin.addListener('changed', refresh); } catch (e) { /* нічого */ } }
+    await Promise.all([refresh(), loadPrices()]);
+    try { updateUI(); } catch (e) { /* ще не готово */ }
+  }
+  function testReset() { plugin = null; prices = {}; busy = false; const btn = document.getElementById('iapRestoreBtn'); if (btn) btn.hidden = true; }
+  return { init, offer, restore, refresh, priceLabel, testReset, on: () => !!plugin, active: !!CFG };
+})();
+if (!Iap.active) Object.keys(SKIN_PAID).forEach(id => { if (!SKIN_HIDDEN.includes(id)) SKIN_HIDDEN.push(id); });   // без оплат платних скінів не видно
+if (Iap.active) setTimeout(() => { try { Iap.init(); } catch (e) { /* гра працює й без оплат */ } }, 3000);
 //#part 275_japan.js
 /* =====================================================================
    БОНУСНА ЕПОХА «ЯПОНІЯ» (9-та, індекс 8; після Неону): дерев'яні будинки з дашками, сакура, ліхтарі, дракон, чайний будиночок гостя,
@@ -27066,7 +27173,7 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
     },
     bodya: {
       uk: ["Колись збудую греблю. Справжню, з табличкою «Збудував Бодя».", "Михась носить ящики повз мої сходи. Я їх щойно вирівняв. Щойно!", "Креслення у мене є. Поки що в голові. І трохи на серветці.", "Дошка скрипнула, і я вже знаю: не та. Спина мені вірить більше, ніж лінійка.", "Усі кажуть «будівельник». А я ще й гарно малюю плани. Ніхто ж не питає.", "Колись у мене була ідеальна дошка. Не знаю, куди поділась. Може, Тома знає.", "Нахилена полиця — не помилка. Це ухил на смак покупців.", "Чуєш, як гуде вулиця? Це не шум. Це план будови.", "Я люблю дерево. Воно не сперечається. Не те що Михась.", "Кря щойно натерла підлогу. Тепер я бобер, а не ковзаняр."],
-      en: ["One day I'll build a dam. A real one, with a plaque: \"Built by Bodya\".", "Mikhas carries crates past my stairs. I just straightened them. Just now!", "I have the blueprints. They're in my head for now. And a bit on a napkin.", "A board creaked and I already know: wrong one. My back trusts me more than a ruler.", "Everyone says \"builder\". I also draw nice plans. Nobody asks.", "I once had the perfect board. No idea where it went. Maybe Toma knows.", "A slanted shelf isn't a mistake. It's a tilt toward what customers like.", "Hear how the street hums? That's not noise. That's a building plan.", "I love wood. It doesn't argue. Unlike Mikhas.", "Kria just waxed the floor. Now I'm a beaver, not an ice skater."]
+      en: ["One day I'll build a dam. A real one, with a plaque: \"Built by Bodie\".", "Mikey carries crates past my stairs. I just straightened them. Just now!", "I have the blueprints. They're in my head for now. And a bit on a napkin.", "A board creaked and I already know: wrong one. My back trusts me more than a ruler.", "Everyone says \"builder\". I also draw nice plans. Nobody asks.", "I once had the perfect board. No idea where it went. Maybe Toma knows.", "A slanted shelf isn't a mistake. It's a tilt toward what customers like.", "Hear how the street hums? That's not noise. That's a building plan.", "I love wood. It doesn't argue. Unlike Mikey.", "Kria just waxed the floor. Now I'm a beaver, not an ice skater."]
     },
     zoya: {
       uk: ["Мрію про власну вітрину. Ніжно-рожеву. Щоб навіть каса мала настрій.", "Жужа назвала мій колір «персиковий шок». Беру як комплімент.", "Лео вчить мене «стратегій продажу». Я їх уже пів року застосовую. Просто називаю це «розмова».", "Є покупці, яким ще нічого не треба. Я чекаю. Вони зараз прозріють.", "Сьогодні шість разів сказала «останній екземпляр». Склад чесний, просто мовчить.", "Покупець замислився. Це моє улюблене. Допоможу йому замислитись ще трохи.", "Перша реакція — «дорого». Друга — «візьму». Я чекаю другої.", "Пао намалювала мій портрет на плакаті. Вуха вийшли великі. Мені подобається.", "Сьогодні мені подякували. Ще й повернулись. Я розчулилась.", "Жужа каже, що в мене «вічна розпродажна усмішка». Не знаю, що вона мала на увазі."],
@@ -27078,7 +27185,7 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
     },
     mikhas: {
       uk: ["Мріяв про пасіку. Став вантажником. Мед усе одно поряд, то й нічого.", "Тома пам’ятає, де що лежить. Я пам’ятаю, що воно важке. Гарна пара.", "Бодя будує, я ношу. Було б чудово, якби хтось іще казав «обережно».", "Ящик не питає, чи я втомився. За це я його й люблю.", "Не питай, що в коробці. Я теж не питаю. Так спокійніше.", "Мед у складі є. Не питайте звідки. Не мій.", "Люблю, коли ящик легкий. Буває раз на тиждень. Відзначаю.", "Соня спить удень, я працюю вдень. Зустрічаємось на повороті, обоє втомлені.", "Хтось сказав «підніми, будь ласка». Це вже хороша зміна.", "Моя спина тримає півміста. Дякую, що ніхто не сів зверху."],
-      en: ["I dreamed of a beehive. Became a porter. Honey's still nearby, so it's fine.", "Toma remembers where everything is. I remember that it's heavy. Good pair.", "Bodya builds, I carry. Would be great if someone also said \"careful\".", "A crate never asks if I'm tired. That's why I love it.", "Don't ask what's in the box. I don't either. It's calmer that way.", "There's honey in the stockroom. Don't ask where from. Not mine.", "I love it when a crate is light. Happens once a week. I mark the date.", "Sonia sleeps by day, I work by day. We meet at the corner, both exhausted.", "Someone said \"lift this, please\". Already a good shift.", "My back holds up half the town. Thanks for not sitting on top."]
+      en: ["I dreamed of a beehive. Became a porter. Honey's still nearby, so it's fine.", "Toma remembers where everything is. I remember that it's heavy. Good pair.", "Bodie builds, I carry. Would be great if someone also said \"careful\".", "A crate never asks if I'm tired. That's why I love it.", "Don't ask what's in the box. I don't either. It's calmer that way.", "There's honey in the stockroom. Don't ask where from. Not mine.", "I love it when a crate is light. Happens once a week. I mark the date.", "Sonia sleeps by day, I work by day. We meet at the corner, both exhausted.", "Someone said \"lift this, please\". Already a good shift.", "My back holds up half the town. Thanks for not sitting on top."]
     },
     sonia: {
       uk: ["Колись знайду ту копійку, що зникла в березні. Вона десь тут. Відчуваю.", "Лео сподобалась моя таблиця. Він не розуміє, що в ній, але сподобалась.", "Кава о третій ночі — не залежність. Це графік.", "Вдень я лише моргаю. Голова вмикається, коли гасне світло.", "Хтось залишив чек без дати. Не скажу хто. Але я бачу.", "Дебет із кредитом посварились. Я не втручаюсь. Ну, майже.", "Нічого так не заспокоює, як порожній стовпчик у таблиці.", "Лео, цифри не слухаються нарад. Я перевіряла.", "Тихіше ходіть: ніч любить рахувати в тиші.", "Мудра сова не дивиться на годинник. Вона дивиться на касу."],
@@ -27090,7 +27197,7 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
     },
     zhuzha: {
       uk: ["Колись мене запросять на тиждень моди. Капелюх уже обрала. Бракує запрошення.", "Зоя продає, я підбираю. Разом ми майже бізнес.", "Мурзик порадив «вдягнути щось із дротів». Подякувала й відійшла.", "Це не червоний. Це «вогонь у ліхтарі». Чуєте різницю? Ніхто не чує.", "Шарф і капелюх разом — ні. Я пробувала. Було погано. Дуже.", "Новий колір! Ні, не новий. Просто хтось нарешті його помітив.", "Пао питає, який колір плаката. Кажу: «Менше червоного». Вона додала червоного.", "Дві смужки — класика. Три — бунт. Чотири — це вже ми з Мурзиком.", "Люблю блискітки. Вони не виправдовуються. Вони просто сяють.", "Мода повертається. Спина теж. Не одночасно."],
-      en: ["One day they'll invite me to fashion week. I've already picked the hat. Just need the invite.", "Zoya sells, I style. Together we're almost a business.", "Murzyk advised me to \"wear something made of wires\". I thanked him and walked away.", "It's not red. It's \"fire in a lantern\". Hear the difference? Nobody does.", "Scarf and hat together? No. I tried. It was bad. Very bad.", "A new colour! No, not new. Someone finally noticed it.", "Pao asks what colour the poster should be. I say, \"Less red\". She added red.", "Two stripes: classic. Three: rebellion. Four: that's me and Murzyk.", "I love glitter. It doesn't make excuses. It just shines.", "Fashion comes back. So does my back pain. Not at the same time."]
+      en: ["One day they'll invite me to fashion week. I've already picked the hat. Just need the invite.", "Zoe sells, I style. Together we're almost a business.", "Murzyk advised me to \"wear something made of wires\". I thanked him and walked away.", "It's not red. It's \"fire in a lantern\". Hear the difference? Nobody does.", "Scarf and hat together? No. I tried. It was bad. Very bad.", "A new colour! No, not new. Someone finally noticed it.", "Pao asks what colour the poster should be. I say, \"Less red\". She added red.", "Two stripes: classic. Three: rebellion. Four: that's me and Murzyk.", "I love glitter. It doesn't make excuses. It just shines.", "Fashion comes back. So does my back pain. Not at the same time."]
     },
     leo: {
       uk: ["Усі думають, що я нічого не роблю. Я роблю нічого дуже наполегливо.", "Скоро ювілей крамниці. Треба вигадати, що ми святкуємо.", "Соня знайшла помилку в моєму звіті. Тепер я її побоююсь і поважаю.", "Нарада на п’ять хвилин. Тобто на годину. Принесіть печиво.", "Я не тікаю з нарад. Я виходжу по свіжі ідеї. Вони зазвичай у коридорі.", "Ми працюємо над планом. Він у процесі. Процес теж у процесі.", "Спізнююсь не я. Це решта приходять раніше за графік.", "Нова політика: нарада не довша за каву. Окрема нарада про те, яка це кава.", "Капі, на хвилинку? Це на пів години. Максимум.", "Головна навичка менеджера: мовчки дивитись у вікно. Практикую щодня."],
@@ -27098,7 +27205,7 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
     },
     pao: {
       uk: ["Хочу зняти ролик, де всі танцюють. Ніхто не погоджується. Поки.", "Лео каже, що мій слоган уже зайнятий. Вигадаю гірший, щоб точно наш.", "Новий плакат! Усе на ньому моє. Навіть кривий шрифт.", "Бамбук смачний. Це не реклама. Хоча... трішки реклама.", "Хештег вигадала вчора. Три лайки вже є. Два мої, один мамин.", "Моя поза на плакаті — найкраща. Інші пози відхилено.", "Сьогодні роздала двадцять листівок. Дев’ятнадцять повернулись. Це популярність.", "Зоя бере мої плакати для вітрини. Ще не сказала їй, що вони не готові.", "Мрію про рекламний щит на весь квартал. Ну або хоча б на дах.", "Бамбуковий чай — мій улюблений. Сьорбаю гучно. Для атмосфери."],
-      en: ["I want to shoot a video where everyone dances. Nobody agrees. Yet.", "Leo says my slogan is already taken. I'll invent a worse one, so it's definitely ours.", "New poster! Everything on it is mine. Even the crooked font.", "Bamboo is tasty. That's not an ad. Although... a little bit an ad.", "I made up a hashtag yesterday. Three likes already. Two are mine, one is Mum's.", "My pose on the poster is the best. Other poses rejected.", "Handed out twenty flyers today. Nineteen came back. That's popularity.", "Zoya takes my posters for the window. I haven't told her they aren't finished.", "I dream of a billboard across the whole block. Or at least on the roof.", "Bamboo tea is my favourite. I slurp loudly. For atmosphere."]
+      en: ["I want to shoot a video where everyone dances. Nobody agrees. Yet.", "Leo says my slogan is already taken. I'll invent a worse one, so it's definitely ours.", "New poster! Everything on it is mine. Even the crooked font.", "Bamboo is tasty. That's not an ad. Although... a little bit an ad.", "I made up a hashtag yesterday. Three likes already. Two are mine, one is Mum's.", "My pose on the poster is the best. Other poses rejected.", "Handed out twenty flyers today. Nineteen came back. That's popularity.", "Zoe takes my posters for the window. I haven't told her they aren't finished.", "I dream of a billboard across the whole block. Or at least on the roof.", "Bamboo tea is my favourite. I slurp loudly. For atmosphere."]
     },
     murzyk: {
       uk: ["Мрію про день без короткого замикання. Не сьогодні. Може, завтра.", "Шнирь просив позичити батарейку. Я сказав «позичай». Він сказав «ага». Більше я її не бачив.", "Дроти заплуталися. Я знаю, звідки вони. Це моя справа.", "Не чіпав. Воно саме. Просто поруч стояв я.", "Лампочку замінив. Світить не так, як раніше, але світить. Це вже перемога.", "Хтось просив «увімкнути світло». Шукав вимикач. Знайшов кнопку. Тепер у нас музика.", "Іскра була невеличка. Майже непомітна. Тільки Кря помітила.", "Лампочки мене люблять. Особливо перегорілі.", "У шафі сидить роутер. Дивиться на мене. Я на нього. Ніхто не кліпає.", "Якщо гасне світло, то це не я. Скоріше за все."],
@@ -27106,7 +27213,7 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
     },
     toma: {
       uk: ["Слонова пам’ять — не метафора. Тому я пам’ятаю й те, що вам хочеться забути.", "Михась носить, я записую. Він не любить, коли я записую.", "Мрію про склад, де нічого не губиться. Поки що трохи губиться. Мишка в курсі.", "Хто переставив ящики? Я пам’ятаю хто. Не скажу. Поки.", "Хобот — найкраща лінійка. Нею міряю все, навіть настрій.", "У вівторок о 14:32 хтось сказав «потім». Минуло вже багато вівторків. Я чекаю.", "Склад — мій храм. Михась — єдиний, кому я дозволяю торкатись ящиків.", "Мишка знову в складі. Я знаю її на ім’я. Вона мене теж.", "Інвентар — це любов, виміряна в коробках. Я люблю багато.", "Нікому не кажіть, але я все пам’ятаю, і це втомлює."],
-      en: ["An elephant's memory isn't a metaphor. That's why I remember what you'd rather forget.", "Mikhas carries, I write it down. He doesn't like it when I write it down.", "I dream of a stockroom where nothing gets lost. A little gets lost. The mouse knows.", "Who moved the crates? I remember who. Won't tell. Yet.", "The trunk is the best ruler. I measure everything with it, even moods.", "On a Tuesday at 14:32 someone said \"later\". Many Tuesdays have passed. I'm waiting.", "The stockroom is my temple. Mikhas is the only one I let touch the crates.", "The mouse is back in the stockroom. I know her by name. She knows mine too.", "Inventory is love, measured in boxes. I love a lot.", "Don't tell anyone, but I remember everything, and it's tiring."]
+      en: ["An elephant's memory isn't a metaphor. That's why I remember what you'd rather forget.", "Mikey carries, I write it down. He doesn't like it when I write it down.", "I dream of a stockroom where nothing gets lost. A little gets lost. The mouse knows.", "Who moved the crates? I remember who. Won't tell. Yet.", "The trunk is the best ruler. I measure everything with it, even moods.", "On a Tuesday at 14:32 someone said \"later\". Many Tuesdays have passed. I'm waiting.", "The stockroom is my temple. Mikey is the only one I let touch the crates.", "The mouse is back in the stockroom. I know her by name. She knows mine too.", "Inventory is love, measured in boxes. I love a lot.", "Don't tell anyone, but I remember everything, and it's tiring."]
     },
     shnyr: {
       uk: ["Тоня за мною стежить. Мені навіть подобається: ніхто досі так довго мною не цікавився.", "Виправляюсь. Вчора повернув п’ять монет. Три з них мої.", "Хочу, щоб тут довіряли. Хоч би один ключ. Від чогось невеликого.", "Бачу блискуче, лапа сама тягнеться. Тримаю її другою лапою. Допомагає.", "Мурзик про батарейку не питає. Я теж. Дружба.", "Бачу кишеню, розумію, що чужа. Відводжу очі. Роблю успіхи.", "Голка бачив, як я дивлюсь на касу. Тепер нам обом ніяково.", "Мене тут не бояться. Це вперше. Не знаю, що робити з руками.", "Раніше я тікав. Тепер мене кличуть на обід. Дивне відчуття.", "Тоня навчила мене чекати. Вчора чекав цілу хвилину. Пишаюсь."],
@@ -27172,11 +27279,11 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
   const COLD = {
     spike: {
       uk: ["Монети в голках покрились памороззю. Рахувати тепер холодно й дзвінко.", "Зоя пов’язала мені шарфик на одну голку. Решті доведеться терпіти.", "Зимою тепла лише та частина каси, на якій лежить моя лапа."],
-      en: ["The coins in my quills are frosted. Counting is cold and jingly now.", "Zoya tied a scarf onto one of my quills. The rest will have to cope.", "In winter only the part of the till under my paw stays warm."]
+      en: ["The coins in my quills are frosted. Counting is cold and jingly now.", "Zoe tied a scarf onto one of my quills. The rest will have to cope.", "In winter only the part of the till under my paw stays warm."]
     },
     bodya: {
       uk: ["Дошки на морозі співають. Ніхто не просив, а виходить як оркестр.", "Михась приніс ящики, і від них пахне снігом. Поставлю біля печі, хай оживуть.", "Мрію про майстерню з камінком. Креслення є, на серветці з-під чаю."],
-      en: ["Planks sing in the frost. Nobody asked, yet it sounds like an orchestra.", "Mikhas brought crates and they smell of snow. I'll put them by the stove to wake up.", "I dream of a workshop with a fireplace. The plans exist, on a tea napkin."]
+      en: ["Planks sing in the frost. Nobody asked, yet it sounds like an orchestra.", "Mikey brought crates and they smell of snow. I'll put them by the stove to wake up.", "I dream of a workshop with a fireplace. The plans exist, on a tea napkin."]
     },
     zoya: {
       uk: ["У вітрині іній малює візерунки. Це конкуренція, і вона гарна.", "Вушка змерзли, а настрій рожевий. Шапку б ще, теж рожеву.", "Жужа каже, що шарф — це аксесуар. Я кажу: порятунок, просто гарний."],
@@ -27208,7 +27315,7 @@ translations.en.itchRateHint = 'Enjoying the game? Rate it on itch.io: menu → 
     },
     pao: {
       uk: ["Бамбук замерз. Це не тренд, а катастрофа, і я вже придумую рекламу.", "Новий слоган: «Купи шарф — отримай тепло». Зоя вже хоче відсоток.", "Мрію про мандарини й плед. І щоб хтось заплатив за цей плед."],
-      en: ["The bamboo froze. It's not a trend, it's a disaster, and I'm already writing the ad.", "New slogan: \"Buy a scarf, get warmth\". Zoya already wants a cut.", "I dream of tangerines and a blanket. And someone else paying for the blanket."]
+      en: ["The bamboo froze. It's not a trend, it's a disaster, and I'm already writing the ad.", "New slogan: \"Buy a scarf, get warmth\". Zoe already wants a cut.", "I dream of tangerines and a blanket. And someone else paying for the blanket."]
     },
     murzyk: {
       uk: ["Лапи примерзли до клавіатури. Нічого, друкую двома, решта чекає.", "Дроти взимку тендітні, як мої нерви. Обидва краще не чіпати.", "Холодно? Увімкніть обігрівач. Або мене: я гарячий, коли встигаю з релізом."],
@@ -29543,7 +29650,7 @@ installLang("es", {
     "newDepts": "Nuevos departamentos: {0}",
     "offlineTitle": "¡Bienvenido de nuevo!",
     "offlineText": "Mientras estabas fuera, la tienda ganó",
-    "offlineCoins": "{0} monedas 💤",
+    "offlineCoins": "{0} {0|moneda|monedas} 💤",
     "offlineBtn": "Recoger",
     "adOfflineBtn": "🎬 ×2: ver un vídeo",
     "adPrivacyBtn": "Opciones de privacidad de anuncios",
@@ -29652,8 +29759,8 @@ installLang("es", {
     "ch4_5": "En el bolsillo, el reloj hizo tictac bajito, como guiñando un ojo. Parece que no fue la última vez.",
     "ch5_title": "Nuevos Compañeros",
     "ch5_0": "La tienda se ha convertido en un supermercado. Toda la calle habla de Capy y nuevos trabajadores llaman a la puerta. Los que pudieron, llamaron.",
-    "ch5_1": "Soy Bodya, constructor. He oído que estáis ampliando. ¿Necesitáis tablones? Os mando la factura por separado. Y otra más, por cortesía.",
-    "ch5_2": "Zoya. Vendo todo lo que no está clavado. Y lo que está clavado, solo que más despacio. Dame un escaparate y se pondrá a hablar.",
+    "ch5_1": "Soy Bodie, constructor. He oído que estáis ampliando. ¿Necesitáis tablones? Os mando la factura por separado. Y otra más, por cortesía.",
+    "ch5_2": "Zoe. Vendo todo lo que no está clavado. Y lo que está clavado, solo que más despacio. Dame un escaparate y se pondrá a hablar.",
     "ch5_3": "Uuh. Soy Sonia, contable. Trabajo de noche, de día solo parpadeo. Alguien tiene que contar estas monedas antes de que se escapen.",
     "ch5_4": "Tonya, seguridad. Voy. Llegaré pronto. Pero no dejaré pasar a nadie.",
     "ch5_5": "Pasad, amigos. Gracias por venir. De verdad.",
@@ -29704,7 +29811,7 @@ installLang("es", {
     "saleStart": "Rebajas. Ingresos ×{0} durante 2 minutos. Aprovéchalo antes de que todos despierten.",
     "raccoonStart": "El mapache Shnyr agarró un saco. Persíguelo: tócalo.",
     "raccoonWin": "¡Atrapado! Shnyr soltó el saco: +{0}.",
-    "raccoonLose": "Shnyr huyó y robó {0} monedas.",
+    "raccoonLose": "Shnyr huyó y robó {0} {0|moneda|monedas}.",
     "raccoonFriend": "Shnyr solo bromeaba y se fue corriendo. No robó nada.",
     "tonyaScared": "Tonya espantó al mapache justo en la entrada.",
     "shnyrSay_0": "Je, je, mío.",
@@ -29979,9 +30086,9 @@ installLang("es", {
     "dailyAllDone": "Las tres hechas: +1 💎 recibido",
     "dailyDoneToast": "¡Misión diaria hecha! Reclama el cristal en la pestaña de logros.",
     "dailyGot": "Cristal +{0} 💎",
-    "daily_taps": "Toca la tienda {0} veces",
+    "daily_taps": "Toca la tienda {0} {0|vez|veces}",
     "daily_depts": "Compra departamentos: {0}",
-    "daily_team": "Mejora a los animalitos: {0} veces",
+    "daily_team": "Mejora a los animalitos: {0} {0|vez|veces}",
     "daily_catch": "Atrapa animalitos o fantasmas: {0}",
     "daily_vip": "Atrapa clientes dorados: {0}",
     "daily_earn": "Gana monedas: {0}",
@@ -30008,7 +30115,7 @@ installLang("es", {
     "soundMuteOn": "🔇 Silenciar el sonido",
     "soundMuteOff": "🔊 Activar el sonido",
     "tab_workshop": "Taller",
-    "tab_seasons": "Estaciones",
+    "tab_seasons": "Estación",
     "setTimeTitle": "🕓 Hora del día",
     "tab_achievements": "Logros",
     "tab_settings": "Ajustes",
@@ -30138,10 +30245,10 @@ installLang("es", {
     "achName_chapters": "Lector",
     "achName_holidays": "Espíritu Festivo",
     "achName_hours": "Comerciante Dedicado",
-    "achDesc_taps": "Toca la tienda {0} veces",
-    "achDesc_earned": "Gana {0} monedas en total",
+    "achDesc_taps": "Toca la tienda {0} {0|vez|veces}",
+    "achDesc_earned": "Gana {0} {0|moneda|monedas} en total",
     "achDesc_level": "Amplía la tienda hasta el nivel {0}",
-    "achDesc_deptsBought": "Compra {0} departamentos",
+    "achDesc_deptsBought": "Compra {0} {0|departamento|departamentos}",
     "achDesc_milestones": "Alcanza hitos de departamentos: {0}",
     "achDesc_teamEver": "Conoce animalitos en tu equipo: {0}",
     "achDesc_teamMax": "Mejora a un animalito hasta el nivel {0}",
@@ -30288,14 +30395,14 @@ installLang("es", {
     "letterTitle": "Una carta de {0}",
     "letterBtn": "Reclamar bono",
     "letter_spike": "Hola, jefa. Encontré un centavo de más en la caja y pensé en ti enseguida. No preguntes de quién es. Aquí tienes un bono de correos.",
-    "letter_zoya": "Soy Zoya. Se me ocurrió una promo: quien lea esta carta se lleva un bono. Eres tú. No me des las gracias, solo recomiéndame.",
+    "letter_zoya": "Soy Zoe. Se me ocurrió una promo: quien lea esta carta se lleva un bono. Eres tú. No me des las gracias, solo recomiéndame.",
     "letter_bodya": "Bodie. Construí un buzón y mandé la primera carta. El bono va sujeto como un clavo a un tablón: firme y sin palabras de más.",
     "letter_sonia": "Uuh. Hice las cuentas: te mereces un bono. Los libros cuadran, no hace falta comprobar. Lo comprobarás igualmente.",
     "letter_leo": "El plan: lees esta carta, recibes un bono y todos salimos ganando. ¿Trato hecho? Tomaré el silencio como un sí.",
     "letter_pao": "Soy Pao. La carta trae bambú y suerte. Los descuentos se acabaron, pero el bono es de verdad.",
     "letterBoost_income": "Ingresos ×{0} durante {1} min",
     "letterBoost_tap": "Toque ×{0} durante {1} min",
-    "letterBoost_coins": "+{0} monedas",
+    "letterBoost_coins": "+{0} {0|moneda|monedas}",
     "letterBoost_wheel": "¡El circo va hacia ti!",
     "letterBoost_sale": "¡Rebajas ×2 durante 2 minutos!",
     "letterBoost_crystal": "Cristal +1 💎",
@@ -30427,10 +30534,10 @@ installLang("es", {
     "good_7_10": "Zona de Comida Callejera",
     "good_7_11": "Espectáculo de Hologramas",
     "team_spike_cold_0": "Las monedas de mis púas están escarchadas. Contar ahora es frío y sonoro.",
-    "team_spike_cold_1": "Zoya me ató una bufanda a una de las púas. El resto tendrá que aguantarse.",
+    "team_spike_cold_1": "Zoe me ató una bufanda a una de las púas. El resto tendrá que aguantarse.",
     "team_spike_cold_2": "En invierno solo se mantiene caliente la parte de la caja bajo mi pata.",
     "team_bodya_cold_0": "Los tablones cantan con la helada. Nadie lo pidió, pero suena como una orquesta.",
-    "team_bodya_cold_1": "Mikhas trajo cajas que huelen a nieve. Las pondré junto a la estufa para que despierten.",
+    "team_bodya_cold_1": "Mikey trajo cajas que huelen a nieve. Las pondré junto a la estufa para que despierten.",
     "team_bodya_cold_2": "Sueño con un taller con chimenea. Los planos existen, en una servilleta de té.",
     "team_zoya_cold_0": "La escarcha dibuja patrones en el escaparate. Es competencia, y es bonita.",
     "team_zoya_cold_1": "Tengo las orejas heladas pero el ánimo rosa. Un gorro ayudaría, rosa también.",
@@ -30454,7 +30561,7 @@ installLang("es", {
     "team_leo_cold_1": "La eficiencia bajó a cero grados Celsius. Eso también es una métrica, por cierto.",
     "team_leo_cold_2": "Abrigaos, equipo. No es un consejo, es un indicador clave de rendimiento.",
     "team_pao_cold_0": "El bambú se congeló. No es una tendencia, es un desastre, y ya estoy escribiendo el anuncio.",
-    "team_pao_cold_1": "Nuevo eslogan: «Compra una bufanda, llévate calor». Zoya ya quiere comisión.",
+    "team_pao_cold_1": "Nuevo eslogan: «Compra una bufanda, llévate calor». Zoe ya quiere comisión.",
     "team_pao_cold_2": "Sueño con mandarinas y una manta. Y con que otro pague la manta.",
     "team_murzyk_cold_0": "Mis patas se congelaron al teclado. Vale, escribo con dos, el resto espera.",
     "team_murzyk_cold_1": "Los cables en invierno son frágiles como mis nervios. Mejor no tocar ninguno.",
@@ -30534,6 +30641,17 @@ installLang("es", {
     "privacyBtn": "Política de privacidad",
     "reportBtn": "Copiar informe",
     "reportCopied": "¡Informe copiado!",
+    "iapBuyTitle": "Comprar el pack",
+    "iapBuyText": "«{0}» forma parte de un pack de pago. Precio: {1}. Pagas una vez y los skins son tuyos para siempre.",
+    "iapBuyYes": "Comprar",
+    "iapThanks": "¡Gracias! El pack ya es tuyo.",
+    "iapPending": "El pago sigue en curso. El skin aparecerá cuando Google lo confirme.",
+    "iapFail": "Las compras no están disponibles ahora. Inténtalo más tarde.",
+    "iapNoPrice": "No se pudo obtener el precio. Revisa la conexión e inténtalo de nuevo.",
+    "iapRestore": "Restaurar compras",
+    "iapRestored": "Compras restauradas.",
+    "iapNothing": "No hay compras en esta cuenta.",
+    "errRepeat": "Algo salió mal, pero el juego sigue. Si ves algo raro, reinícialo. El informe está en Ajustes.",
     "reportManual": "Selecciona el texto y cópialo a mano.",
     "shnyrPerk": "Ventaja de Shnyr: él mismo atrapa a los clientes dorados, y estos visitan una cuarta parte más a menudo.",
     "shnyrCatch": "¡Shnyr atrapó a un cliente dorado!",
@@ -31242,15 +31360,15 @@ installLang("es", {
     "team_spike_say_8": "Por las noches sueño con una caja fuerte. Sonríe. Me despierto feliz.",
     "team_spike_say_9": "Leo quiere un informe. Dije: «El informe está en la caja». Asintió. No lo entendió.",
     "team_spike_hire": "La caja es mía. No tocar.",
-    "team_bodya_say_0": "Algún día construiré una presa. De verdad, con una placa: «Construida por Bodya».",
-    "team_bodya_say_1": "Mikhas lleva cajas junto a mis escaleras. Las acabo de alinear. ¡Ahora mismo!",
+    "team_bodya_say_0": "Algún día construiré una presa. De verdad, con una placa: «Construida por Bodie».",
+    "team_bodya_say_1": "Mikey lleva cajas junto a mis escaleras. Las acabo de alinear. ¡Ahora mismo!",
     "team_bodya_say_2": "Tengo los planos. De momento están en mi cabeza. Y un poco en una servilleta.",
     "team_bodya_say_3": "Un tablón crujió y ya lo sé: es el equivocado. Mi espalda se fía más de mí que la regla.",
     "team_bodya_say_4": "Todos dicen «constructor». También dibujo planos bonitos. Nadie pregunta.",
     "team_bodya_say_5": "Una vez tuve el tablón perfecto. Ni idea de dónde fue a parar. Quizá Toma lo sepa.",
     "team_bodya_say_6": "Una estantería torcida no es un error. Es una inclinación hacia lo que gusta a los clientes.",
     "team_bodya_say_7": "¿Oyes cómo zumba la calle? Eso no es ruido. Es un plan de obra.",
-    "team_bodya_say_8": "Amo la madera. No discute. A diferencia de Mikhas.",
+    "team_bodya_say_8": "Amo la madera. No discute. A diferencia de Mikey.",
     "team_bodya_say_9": "Kria acaba de encerar el suelo. Ahora soy un castor, no un patinador.",
     "team_bodya_hire": "¿Dónde hay algo que romper? Quiero decir, construir.",
     "team_zoya_say_0": "Sueño con mi propio escaparate. Rosa suave. Para que hasta la caja tenga estado de ánimo.",
@@ -31277,7 +31395,7 @@ installLang("es", {
     "team_tonya_hire": "Estoy aquí. Casi. Pronto.",
     "team_mikhas_say_0": "Soñaba con una colmena. Me hice cargador. La miel sigue cerca, así que bien.",
     "team_mikhas_say_1": "Toma recuerda dónde está cada cosa. Yo recuerdo que pesa. Buena pareja.",
-    "team_mikhas_say_2": "Bodya construye, yo cargo. Sería genial que alguien también dijera «cuidado».",
+    "team_mikhas_say_2": "Bodie construye, yo cargo. Sería genial que alguien también dijera «cuidado».",
     "team_mikhas_say_3": "Una caja nunca pregunta si estoy cansado. Por eso la quiero.",
     "team_mikhas_say_4": "No preguntes qué hay en la caja. Yo tampoco. Así se está más tranquilo.",
     "team_mikhas_say_5": "Hay miel en el almacén. No preguntes de dónde. No es mía.",
@@ -31309,7 +31427,7 @@ installLang("es", {
     "team_kria_say_9": "Cada fregona tiene nombre. La mía se llama Zinaida. No preguntes.",
     "team_kria_hire": "Suelo, prepárate. Voy.",
     "team_zhuzha_say_0": "Algún día me invitarán a la semana de la moda. Ya elegí el sombrero. Solo falta la invitación.",
-    "team_zhuzha_say_1": "Zoya vende, yo estilizo. Juntas somos casi un negocio.",
+    "team_zhuzha_say_1": "Zoe vende, yo estilizo. Juntas somos casi un negocio.",
     "team_zhuzha_say_2": "Murzyk me aconsejó «ponerme algo hecho de cables». Le di las gracias y me fui.",
     "team_zhuzha_say_3": "No es rojo. Es «fuego en un farol». ¿Oyes la diferencia? Nadie la oye.",
     "team_zhuzha_say_4": "¿Bufanda y sombrero juntos? No. Lo intenté. Quedó mal. Muy mal.",
@@ -31337,7 +31455,7 @@ installLang("es", {
     "team_pao_say_4": "Ayer inventé un hashtag. Ya van tres me gusta. Dos son míos, uno de mamá.",
     "team_pao_say_5": "Mi pose en el cartel es la mejor. Otras poses rechazadas.",
     "team_pao_say_6": "Hoy repartí veinte folletos. Volvieron diecinueve. Eso es popularidad.",
-    "team_pao_say_7": "Zoya se lleva mis carteles para el escaparate. No le he dicho que no están terminados.",
+    "team_pao_say_7": "Zoe se lleva mis carteles para el escaparate. No le he dicho que no están terminados.",
     "team_pao_say_8": "Sueño con una valla publicitaria en toda la manzana. O al menos en el tejado.",
     "team_pao_say_9": "El té de bambú es mi favorito. Sorbo fuerte. Por ambiente.",
     "team_pao_hire": "Hola. Traje carteles.",
@@ -31353,12 +31471,12 @@ installLang("es", {
     "team_murzyk_say_9": "Si se apagan las luces, no fui yo. Lo más probable.",
     "team_murzyk_hire": "No he tocado nada. De momento.",
     "team_toma_say_0": "La memoria de elefante no es una metáfora. Por eso recuerdo lo que preferirías olvidar.",
-    "team_toma_say_1": "Mikhas carga, yo lo apunto. No le gusta que lo apunte.",
+    "team_toma_say_1": "Mikey carga, yo lo apunto. No le gusta que lo apunte.",
     "team_toma_say_2": "Sueño con un almacén donde nada se pierde. Algo se pierde. La ratona lo sabe.",
     "team_toma_say_3": "¿Quién movió las cajas? Recuerdo quién fue. No lo diré. Todavía.",
     "team_toma_say_4": "La trompa es la mejor regla. Lo mido todo con ella, hasta los estados de ánimo.",
     "team_toma_say_5": "Un martes a las 14:32 alguien dijo «luego». Han pasado muchos martes. Sigo esperando.",
-    "team_toma_say_6": "El almacén es mi templo. Mikhas es el único al que dejo tocar las cajas.",
+    "team_toma_say_6": "El almacén es mi templo. Mikey es el único al que dejo tocar las cajas.",
     "team_toma_say_7": "La ratona ha vuelto al almacén. La conozco por su nombre. Ella también sabe el mío.",
     "team_toma_say_8": "El inventario es amor medido en cajas. Yo amo mucho.",
     "team_toma_say_9": "No se lo digas a nadie, pero lo recuerdo todo, y es agotador.",
@@ -31461,7 +31579,7 @@ installLang("es", {
   skin: {"weather_aurora":["¡Mira arriba! El cielo baila.","Luces verdes sobre el mercado. Como en un cuento.","Es de noche, pero cuánta luz. Podría mirarla hasta el alba.","Dicen que son trocitos del sol. Bonita idea."],"capy_pirate":["El loro me robó la galleta otra vez. ¡Traidor!","¿Dónde está el tesoro? Ah, es la caja.","Yo-ho-ho... ah, ¡hola, queridos clientes!","Parche puesto. Ahora solo veo descuentos."],"capy_astro":["Houston, ¿huele a bollos?","Qué silencio en el casco... solo mis pensamientos y yo. ¡Ah, un cliente!","Gravedad cero es cuando nadie pide «un descuento más».","Un pequeño toque para Capy, un gigantesco beneficio para la tienda."],"capy_wizard":["Abracadabra... no, esa no. Ya me acuerdo, un segundo.","La barba crece sola. Yo no hice nada. Casi.","Perdí la varita. Al menos mis nervios siguen aquí.","Las estrellas de mi túnica están guiñando. O me lo imagino."],"capy_chef":["Huele de maravilla. ¡No soy yo, son los vecinos!","Gorro grande, cuchara más grande. ¿Ves?","El chef aconseja: no te comas la mercancía. Ya está elegido.","Sal, pimienta y un poco de paciencia. Ese es todo el secreto."],"capy_explorer":["Hay algo interesante tras esa esquina. O un gato.","Los prismáticos miran arriba, yo busco galletas.","La mochila pesa, ¡pero lleva tres bocadillos!","El mapa dice norte. Nosotros vamos al sur. Lo siento."],"capy_santa":["¡Jo-jo-jo! Alguien aquí se portó bien. Sin nombres.","El saco está vacío. Lo di todo... a mí misma.","La barba hace cosquillas. ¿Se supone que debe?","¡Cada día es un poco de Navidad cuando vistes de rojo!"],"capy_witch":["La escoba está en reparación. Ahora vuelo con esperanza.","La calabaza de mi espalda me mira fijamente. Yo la miro a ella.","¡La poción está lista! Solo olvidé qué lleva.","¡Brrr! ¿Alguien susurró «descuento»?"],"capy_flower":["Una mariposa se posó en mi espalda. Shh, que nadie se mueva.","Las flores huelen a primavera. Y yo huelo a flores. ¡Qué bien!","La corona se me ha torcido un poco. Hasta me gusta.","Las abejas ya han preguntado si pueden vivir aquí."],"capy_beach":["Quiero el mar. Pero al menos aquí está la sombra de la tienda.","La pelota de mi espalda no se escapa. ¡Yo sí, a la playa!","Gafas oscuras, ánimo brillante.","Una limonada, por favor. Con hielo. ¡Y sombrillita!"],"capy_autumn":["La bufanda es tan larga que tropiezo con ella.","Las hojas crujen, yo tengo café. Mañana perfecta.","El otoño huele a canela. ¿O soy yo?","Un jersey calentito es como un abrazo. Algo áspero."],"capy_ep0":["Boina ladeada, pluma arriba. Ahora soy una artista.","Este lirio de mi capa no es corriente. ¡Es caro!","En algún sitio suena un laúd. ¡Sal, quienquiera que seas!","Soy puro Renacimiento. ¿Y tú?"],"capy_ep1":["La radio solo capta una onda. ¡Bien!","La C es de «Súper Capy». Me lo inventé.","Una pompa de chicle... ay, explotó.","La chaqueta es vieja, el ánimo es nuevo."],"capy_ep2":["¡La bola de espejos brilla! Yo brillo un poquito también.","Gafas grandes, y lo veo todo. Hasta quién no paga.","¡Mis pies piden bailar!","¡Brillo, brillo, otro brillito más!"],"capy_ep3":["¡Nivel superado! Siguiente: una caja vacía.","Un mando en mi pecho. Para decisiones rápidas.","Una vuelta de moneda y es +1 vida.","Mis auriculares tocan música de 8 bits. ¡Un clásico!"],"capy_ep4":["Mi móvil está al 1%. ¡Mi ánimo, al 100!","¡Encontré wifi! Ahora la vida puede continuar.","La mochila está llena de pegatinas. Cuarenta y seis me gusta.","Nadie me siguió. Pero no me ofendo."],"capy_ep5":["El brote de mi mochila creció un centímetro. ¡Qué orgullo!","Los árboles crecen, y nosotros les ayudamos.","Una chaqueta de botellas viejas. ¡Nueva, pero con historia!","Respira hondo. Aquí es casi un bosque."],"capy_ep6":["Silencio... solo yo y las estrellas. Ah, me llama la caja.","¡El casco se empañó porque estoy feliz!","Me gusta la gravedad cero. Las galletas no se caen.","El cohete espera. Yo espero clientes."],"capy_ep7":["El neón parpadea y yo sonrío nerviosa.","Mi visor brilla, pero veo peor. ¡Ah, el estilo!","La ciudad de noche es como un espectáculo de luces.","Mis zapatillas también brillan. Camino como un farol."],"capy_knight":["Mi espada está afilada, mis precios son honrados. Al menos hoy.","Casco grande, solo se ve mi nariz. ¡Práctico!","Mientras llevo armadura, nadie me molesta. Un sueño.","¿Quién molesta a los clientes? ¡Atrás, estoy lista!"],"capy_hero":["La capa ondea, yo no. Situación bajo control.","Mi superpoder: encontrar galletas a tres metros.","La máscara aprieta un poco, pero así son los héroes.","¿Alguien gritó? ¡Tranquilo, ya voy!"],"capy_cowboy":["En este pueblo hay ley. Y la ley dice: compra.","El sombrero me resbala sobre los ojos. Manteniendo el equilibrio.","El sheriff está en la calle. ¡Silencio!","El pañuelo huele a polvo y aventura."],"capy_fairy":["Las alas me hacen cosquillas cuando río. Ji, ji.","Una pizca de magia, y el día se vuelve más brillante.","La corona apenas se sostiene en mis orejas. ¿Es normal?","Concedo todos los deseos. Menos «un descuento aún mayor»."],"capy_viking":["El casco con cuernos se engancha en la puerta. Otra vez.","El escudo es fuerte, yo soy blanda. ¡Equilibrio!","Al abordaje... digo, a la cocina. La cena está allí.","Una vikinga barbuda quiere un abrazo. ¿Quién se apunta?"],"capy_pilot":["Las gafas se me empañaron. Volando a ciegas, pero con cariño.","Bufanda larga, alas cortas. Ya me las arreglaré.","¡Abróchense los cinturones! Algo de turbulencia por delante.","El aterrizaje es suave como un bollo."],"capy_mel":["Soy Mel. Un zorro. Y no, no me convertiré en capibara, ya me lo han preguntado.","Nika dice que tengo demasiadas ideas. Aún no ha visto mis notas.","Este juego empezó con un píxel y una noche en vela. El píxel sigue aquí.","Cuando algo parpadea mal digo «es a propósito». Nika finge creerme.","El café de Nika es la mejor corrección de bugs. No sé explicarlo, pero funciona.","A veces abro el juego y veo cosas que nunca escribí. ¿Fuiste tú o Nika?","La cola es esponjosa, y los plazos aún más esponjosos.","Gracias por jugar. Sinceramente, el mejor momento de mi jornada de trabajo."],"capy_nika":["Soy Nika. Doy saltos cuando estoy nerviosa. Y me pongo nerviosa bastante a menudo.","Mel confunde otra vez toque y clic. No lo corrijo. Es nuestra tradición.","No le daré mi zanahoria a nadie. Ni a Mel. Sobre todo a Mel.","A veces dibujo, a veces programo, a veces solo muevo las orejas. Todo eso es trabajo.","Este juego trata de un pueblo en el que querrías vivir. Y un poco de capibaras.","Lazo en su sitio, orejas en su sitio, idea en su sitio. Solo se acabó el café.","Veo que llevas aquí un tiempo. ¿Cuántos días son? Gracias por ellos.","Mel me llama perfeccionista. Yo lo llamo «ya lo arreglaremos luego». Juntos somos un estudio."],"shop_candy":["Aquí todo es pegajoso. Pero agradable.","La piruleta es más alta que yo. Sueño cumplido.","No lamas las paredes. Me lo digo también a mí."],"shop_gold":["Brilla tanto que veo chispas.","El oro es frío, pero el ánimo es cálido.","El cajero lleva gafas de sol contra el deslumbramiento. ¡Es verdad!"],"shop_ice":["¡Brr! Pero qué bonito, como un cuento de hadas.","Cayó un carámbano. No sobre mí, menos mal.","Aquí los descuentos no se derriten. ¡Están congelados!"],"shop_wood":["Huele a resina y a calor. Como un bosque.","La cabaña de madera se mantiene firme. Como yo.","Crac-crac. Eso es bueno. ¡Eso es acogedor!"],"shop_garden":["Crecen flores en el tejado. ¿Quién las riega?","Aquí vive una abeja. Ya somos amigas.","Una tienda jardín: pasea y compra. Práctico."],"shop_xmas":["Las luces parpadean. Yo también quiero parpadear.","Seguro que hay algo bajo el árbol. No miro... miro.","La tienda huele a mandarinas. ¡Un sueño!"],"shop_halloween":["Alguien camina por el desván. No soy yo, lo juro.","La calabaza sonríe más que yo.","¿Truco o trato? Yo elijo el trato."],"shop_spring":["¡Llegó la primavera! Hasta a la caja.","Pétalos en el tejado. Qué dulzura.","Los pájaros cantan y los clientes sonríen."],"shop_autumn":["Las hojas del tejado crujen como un ratoncito.","Calentito, acogedor, huele a manzanas.","El otoño en una tienda es como un abrazo."],"weather_rainbow":["¡Un arcoíris! ¡Mira, mira! Ay, se fue.","Tantos colores que dejé de contar.","En algún lugar bajo él se esconde un bote de galletas."],"weather_lightning":["¡Bum! Fue fuerte, pero bonito.","El rayo es morado. Me gusta.","Me guardo las orejas bajo la gorra. Por si acaso."],"weather_lightninggreen":["¡Rayo verde! Seguro que es magia.","¡Bum-bum! ¿Por qué no rojo?","Alguien allá arriba está jugando con el neón."],"weather_lightningred":["¡Rayo rojo! Se me saltó el corazón.","Es tan brillante que entrecierro los ojos.","El cielo está enfadado, pero de una forma bonita."],"weather_cottoncloud":["Una nube de algodón de azúcar. ¿Quién le dio un mordisco?","Quiero subir y echarme una siesta. ¡Es dulce!","¿Lluvia de caramelo, alguien?"],"weather_goldcloud":["¡Una nube dorada! A veces caen monedas de ella.","El cielo decidió ganar dinero también. Buen trabajo.","Mira hacia arriba. ¡Quizá tengas suerte!"],"weather_starcloud":["Las estrellas de las nubes titilan. Pidiendo un deseo.","La nube reluce. Quiero ese sombrero.","Chis, chis... ¿La oyes cantar?"],"hero_party":["¡Fiesta todos los días! Confeti en cada bolsillo.","Ayudantes con gorros de fiesta. Solo un sueño.","¿Bailamos? La caja puede esperar."],"hero_ninja":["¿Pasó alguien corriendo? ¿No? Entonces fueron ninjas.","Silenciosos como una sombra. Dicen que eso es lo nuestro.","No los vi. Y no los veré. Buen trabajo."],"hero_chef":["Huele a bollos. ¿Quién cocina?","Los ayudantes chef alimentarán a los clientes y a mí.","Solo no os comáis la mercancía. Me lo digo a mí misma."],"hero_wizard":["¡Los ayudantes lanzan hechizos! La cola se acorta sola.","Las túnicas parpadean y yo sonrío.","¿Una varita mágica en el bolsillo? ¡Enséñame a mí también!"],"hero_royal":["Ayudantes con coronas. Majestad, ¡la caja está por allí!","¿Un rey con una salchicha? Eso es otro nivel.","El equipo real trabaja sin días libres."],"hero_santa":["Envuelven regalos tan rápido que no puedo seguirles el ritmo.","Gorros rojos por todas partes. ¡Llegaron las fiestas!","Jo-jo, eso no es una broma, ¡es un equipo!"],"hero_witch":["Brujitas vuelan entre las estanterías. Espero que no le den a nadie.","Los sombreros son puntiagudos. No te acerques demasiado.","Una poción para el servicio rápido. ¡Útil!"],"street_brick":["Un camino de ladrillos. ¿Adónde lleva? ¡A la caja!","Da gusto pisarlo. Cada ladrillo está derecho.","El camino es rojo. Como mis mejillas ahora."],"street_wood":["Los tablones crujen bajo mis patas. ¡Acogedor!","Un camino de madera huele a bosque.","Crac-crac. Como si viniera alguien. Ah, soy yo."],"street_leaves":["¡Crac-crac! Mi sonido favorito del otoño.","Hojas bajo las patas: una alfombra de oro oscuro.","Alguien esparció hojas. ¡Gracias, alma bondadosa!"],"street_snow":["¡Nieve! No, no te la comas. Yo también me contengo.","Mis patas están frías, mi corazón está caliente.","Crac-crac. La nieve también es música."],"street_moss":["El musgo es suave como una alfombra. Me voy a tumbar.","Los adoquines con musgo recuerdan muchas historias.","Una florecita crece en la grieta. ¡No la pises!"],"street_gold":["¡Un camino dorado! Aunque no es de rubíes.","Camino y brilla bajo mis patas. Qué bien.","Un ladrillo hecho de monedas. No lo toco, no es mío."],"capy_ep8":["El kimono es precioso, las sandalias aprietan. La belleza exige sacrificio.","El sombrero es como un farolillo: no veo, pero es acogedor.","El dragón me guiñó un ojo. O quizá fue el viento.","Té, arroz y sakura: la vida es buena."]},
   tour: {"shop":["m","Esta es la Tienda. Aquí tocas, mejoras tu toque y amplías la tienda. ¡Púlsala!"],"departments":["n","Los departamentos ganan monedas solos, incluso cuando no estás. ¡Púlsalos!"],"team":["m","En Equipo contratas animalitos ayudantes. Cada uno ayuda a su manera."],"story":["n","Diario: capítulos de la historia e historias de las épocas. Puedes releerlos."],"skins":["m","Skins: cambia el aspecto de Capy, la tienda y los héroes por cristales."],"seasons":["n","Estaciones y hora del día. El candado se abre tras la 2.ª época."],"achievements":["m","Logros: aquí te esperan premios por tus hazañas."],"settings":["n","Ajustes: idioma, sonido, visor de épocas y animaciones."],"news":["m","¡Y este es el buzón de los desarrolladores! Allí están las noticias de las actualizaciones, y puedes escribirnos. ¡Ábrelo!"],"end":["m","¡Eso es todo! Toca la tienda y hazla crecer. ¡Siempre estamos cerca!"],"endBtn":"¡A JUGAR!","skip":"Saltar tour"},
   cut: {"hi":"Hi!","intro":["Érase una vez","Capy vivía en un mundo de píxeles…"],"introN":["Érase una","vez, Capy","vivía en un","mundo de píxeles…"],"p1":"Guau... ¡Tengo una moneda!","b1":"¿Una primera moneda? ¡Entonces necesitas una tienda!","c2":"¿Una tienda?","b2":"¡Hasta una sola moneda puede convertirse en un negocio!","b3":"¡Mira con atención!","b4":"Ahora te toca a ti.","c5":"¿Qué hago?","b5":"¡Prueba a tocar!","hint":"TOCA LA TIENDA","click":"¡TOCA!","b6":"¡Cuanto más ganes, más podrás ampliar tu tienda!","b7":"¡Amplía la tienda, gana monedas y desbloquea nuevas épocas!","w1":"MEJORA.","w2":"TOCA.","w3":"CRECE.","i1":"TOQUE","i2":"MONEDAS","i3":"MEJORA","i4":"NIVEL","skip":"Saltar","m1":"¡Hola! Soy Mel,","n1":"y yo soy Nika. ¡Somos los desarrolladores!","m2":"Os mostraremos cómo funciona todo. ¿Empezamos?","go":"¡VAMOS!","tuk":"¡TAC!"},
-  about: {"mast":"SOBRE NOSOTROS","lead":"¡Hola, amigo!","newH":"Qué hay de nuevo","new":"Nuevos héroes del equipo: Spike, Zoya y todos los demás con un aspecto nuevo y precioso, trajes de cada época y skins a juego con la calle. Ahora la acera cambia suavemente al elegir una skin y más clientes recorren toda la calle. Todas las transiciones son más suaves y las skins de clima cobraron vida.","intro":["Somos MEL y NIKA, y hemos hecho este juego nosotros mismos, píxel a píxel.","Capy empieza con una moneda y una tiendita diminuta en la esquina. Tu misión: convertirla en un auténtico centro comercial y viajar por épocas enteras."],"nextH":"Lo que viene","next":"Por delante hay 8 épocas: del Renacimiento al Neón. Viaja en el tiempo y tu tienda se convertirá en algo más grande…","giftH":"Un regalo","gift":"Reclama el regalo de los desarrolladores: +100 monedas","giftDone":"Regalo ya reclamado. ¡Gracias por jugar!","writeH":"Contacto","write":"¿Encontraste un bug o tienes una idea? Pulsa Escribir a los desarrolladores abajo: lo leemos todo.","toast":"¡+100 monedas de los desarrolladores!","paper":"NOTICIAS DE LOS DESARROLLADORES · "},
+  about: {"mast":"SOBRE NOSOTROS","lead":"¡Hola, amigo!","newH":"Qué hay de nuevo","new":"Nuevos héroes del equipo: Spike, Zoe y todos los demás con un aspecto nuevo y precioso, trajes de cada época y skins a juego con la calle. Ahora la acera cambia suavemente al elegir una skin y más clientes recorren toda la calle. Todas las transiciones son más suaves y las skins de clima cobraron vida.","intro":["Somos MEL y NIKA, y hemos hecho este juego nosotros mismos, píxel a píxel.","Capy empieza con una moneda y una tiendita diminuta en la esquina. Tu misión: convertirla en un auténtico centro comercial y viajar por épocas enteras."],"nextH":"Lo que viene","next":"Por delante hay 8 épocas: del Renacimiento al Neón. Viaja en el tiempo y tu tienda se convertirá en algo más grande…","giftH":"Un regalo","gift":"Reclama el regalo de los desarrolladores: +100 monedas","giftDone":"Regalo ya reclamado. ¡Gracias por jugar!","writeH":"Contacto","write":"¿Encontraste un bug o tienes una idea? Pulsa Escribir a los desarrolladores abajo: lo leemos todo.","toast":"¡+100 monedas de los desarrolladores!","paper":"NOTICIAS DE LOS DESARROLLADORES · "},
   guide: {"head":"Consejos","sub":"Unas pistas para jugar con más facilidad y crecer más rápido.","items":[["💰 Cómo enriquecerte más rápido","<ul class=\"np-list\"><li>Contrata al erizo Spike lo antes posible. Cuesta solo 100 monedas y cada toque se vuelve 1,5 veces más fuerte.</li><li>El botón MÁX de Departamentos compra todo lo que tu dinero permita. No hace falta pulsar Comprar veinte veces.</li><li>Fíjate en la franja de la parte superior de la pantalla. Siempre muestra el siguiente objetivo, por ejemplo «Compra \"Velas y cerillas\": 7/25».</li></ul>","tipRich"],["🏪 Cómo crecer","<ul class=\"np-list\"><li>Para ampliar la tienda necesitas tres cosas: comprar los departamentos necesarios, mejorar a los animalitos y reunir monedas. Las condiciones están en la pestaña Departamentos, en el bloque Ampliación.</li><li>Cada nuevo nivel de la tienda da ×2 a todos los ingresos, así que amplía en cuanto puedas.</li></ul>","tipGrow"],["🎁 Bonos gratis","<ul class=\"np-list\"><li>Minijuegos de bonificación: la pista de baile en la época Disco, el carrito de fideos del abuelo Ryo en Japón y la cabaña de la bruja en Halloween. Allí se ganan skins.</li><li>El circo de la fortuna da cristales y bonos, así que no pases de largo junto a la carpa.</li><li>Recompensas de logros. Mira la pestaña de la copa, allí te esperan premios.</li><li>Eventos en la calle. El «!» rojo, una lechuza o un mapache aparecen solo un instante. Toca a tiempo y recibirás un bono.</li></ul>","tipFree"],["⏳ Para el futuro","El viaje en el tiempo reinicia la tienda, pero da fragmentos de tiempo, una nueva época y un bono permanente de ingresos. No le tengas miedo: la siguiente ronda va mucho más rápido.","clock"]]},
   soon: {"head":"Próximamente","sub":"En qué estamos trabajando. Aún no ha salido, pero casi.","items":[["Más épocas extra","Japón ya está en el juego. Vienen más épocas extra, cada una con su propia animación de viaje, historia, ayudante, invitado y decoraciones voladoras."],["Versiones para tiendas de aplicaciones","Estamos preparando versiones del juego para móviles y ordenadores en las tiendas de aplicaciones."]]},
   sec: {"news":"Sobre nosotros","guide":"Consejos","soon":"Próximamente"}
@@ -31558,7 +31676,7 @@ installLang("it", {
     "newDepts": "Nuovi reparti: {0}",
     "offlineTitle": "Bentornato!",
     "offlineText": "Mentre eri via, il negozio ha guadagnato",
-    "offlineCoins": "{0} monete 💤",
+    "offlineCoins": "{0} {0|moneta|monete} 💤",
     "offlineBtn": "Ritira",
     "adOfflineBtn": "🎬 ×2: guarda un video",
     "adPrivacyBtn": "Opzioni sulla privacy degli annunci",
@@ -31667,8 +31785,8 @@ installLang("it", {
     "ch4_5": "In tasca l'orologio ha fatto tic-tac piano, come se strizzasse l'occhio. Pare che non sia stata l'ultima volta.",
     "ch5_title": "Nuovi Colleghi",
     "ch5_0": "Il negozio è diventato un supermercato. Tutta la strada parla di Capy e nuovi lavoratori bussano alla porta. Quelli che ci sono riusciti, hanno bussato.",
-    "ch5_1": "Sono Bodya, costruttore. Ho sentito che vi state ampliando. Servono assi? Mando il conto a parte. E un altro, per cortesia.",
-    "ch5_2": "Zoya. Vendo tutto ciò che non è inchiodato. E ciò che è inchiodato, solo più lentamente. Dammi una vetrina e si metterà a parlare.",
+    "ch5_1": "Sono Bodie, costruttore. Ho sentito che vi state ampliando. Servono assi? Mando il conto a parte. E un altro, per cortesia.",
+    "ch5_2": "Zoe. Vendo tutto ciò che non è inchiodato. E ciò che è inchiodato, solo più lentamente. Dammi una vetrina e si metterà a parlare.",
     "ch5_3": "Uh-uh. Sono Sonia, contabile. Lavoro di notte, di giorno mi limito a sbattere le palpebre. Qualcuno deve contare queste monete prima che scappino.",
     "ch5_4": "Tonya, sicurezza. Sto arrivando. Sarò lì presto. Ma non farò passare nessuno.",
     "ch5_5": "Entrate, amici. Grazie di essere venuti. Sul serio.",
@@ -31719,7 +31837,7 @@ installLang("it", {
     "saleStart": "Saldi. Reddito ×{0} per 2 minuti. Approfittane prima che si sveglino tutti.",
     "raccoonStart": "Il procione Shnyr ha afferrato un sacco. Inseguilo: toccalo.",
     "raccoonWin": "Preso! Shnyr ha lasciato cadere il sacco: +{0}.",
-    "raccoonLose": "Shnyr è scappato e ha rubato {0} monete.",
+    "raccoonLose": "Shnyr è scappato e ha rubato {0} {0|moneta|monete}.",
     "raccoonFriend": "Shnyr stava solo scherzando ed è scappato. Non ha rubato niente.",
     "tonyaScared": "Tonya ha cacciato il procione proprio all'ingresso.",
     "shnyrSay_0": "He-he, mio.",
@@ -31994,9 +32112,9 @@ installLang("it", {
     "dailyAllDone": "Tutti e tre fatti: +1 💎 ricevuto",
     "dailyDoneToast": "Missione giornaliera completata! Ritira il cristallo nella scheda degli obiettivi.",
     "dailyGot": "Cristallo +{0} 💎",
-    "daily_taps": "Tocca il negozio {0} volte",
+    "daily_taps": "Tocca il negozio {0} {0|volta|volte}",
     "daily_depts": "Compra reparti: {0}",
-    "daily_team": "Potenzia gli animaletti: {0} volte",
+    "daily_team": "Potenzia gli animaletti: {0} {0|volta|volte}",
     "daily_catch": "Cattura animaletti o fantasmi: {0}",
     "daily_vip": "Cattura clienti dorati: {0}",
     "daily_earn": "Guadagna monete: {0}",
@@ -32025,8 +32143,8 @@ installLang("it", {
     "tab_workshop": "Officina",
     "tab_seasons": "Stagioni",
     "setTimeTitle": "🕓 Ora del giorno",
-    "tab_achievements": "Obiettivi",
-    "tab_settings": "Impostazioni",
+    "tab_achievements": "Trofei",
+    "tab_settings": "Opzioni",
     "statEpoch": "Epoca",
     "epoch_0": "Rinascimento",
     "epoch_1": "Retrò",
@@ -32153,10 +32271,10 @@ installLang("it", {
     "achName_chapters": "Lettore",
     "achName_holidays": "Spirito Festivo",
     "achName_hours": "Commerciante Devoto",
-    "achDesc_taps": "Tocca il negozio {0} volte",
-    "achDesc_earned": "Guadagna {0} monete in totale",
+    "achDesc_taps": "Tocca il negozio {0} {0|volta|volte}",
+    "achDesc_earned": "Guadagna {0} {0|moneta|monete} in totale",
     "achDesc_level": "Amplia il negozio fino al livello {0}",
-    "achDesc_deptsBought": "Compra {0} reparti",
+    "achDesc_deptsBought": "Compra {0} {0|reparto|reparti}",
     "achDesc_milestones": "Raggiungi i traguardi dei reparti: {0}",
     "achDesc_teamEver": "Conosci gli animaletti della tua squadra: {0}",
     "achDesc_teamMax": "Porta un animaletto al livello {0}",
@@ -32303,14 +32421,14 @@ installLang("it", {
     "letterTitle": "Una lettera da {0}",
     "letterBtn": "Ritira il bonus",
     "letter_spike": "Ciao, capa. Ho trovato un soldo in più in cassa e ho pensato subito a te. Non chiedere di chi è. Ecco un bonus dalle poste.",
-    "letter_zoya": "Sono Zoya. Ho inventato una promo: chi legge questa lettera riceve un bonus. Sei tu. Non ringraziarmi, raccomandami e basta.",
+    "letter_zoya": "Sono Zoe. Ho inventato una promo: chi legge questa lettera riceve un bonus. Sei tu. Non ringraziarmi, raccomandami e basta.",
     "letter_bodya": "Bodie. Ho costruito una cassetta delle lettere e ho mandato la prima. Il bonus è attaccato come un chiodo a un'asse: saldo e senza parole in più.",
     "letter_sonia": "Uh-uh. Ho fatto i conti: ti meriti un bonus. I libri tornano, non serve controllare. Controllerai comunque.",
     "letter_leo": "Il piano: leggi questa lettera, ricevi un bonus, ci guadagniamo tutti. Affare fatto? Prendo il silenzio come un sì.",
     "letter_pao": "Sono Pao. La lettera porta bambù e fortuna. Gli sconti sono finiti, ma il bonus è vero.",
     "letterBoost_income": "Reddito ×{0} per {1} min",
     "letterBoost_tap": "Tocco ×{0} per {1} min",
-    "letterBoost_coins": "+{0} monete",
+    "letterBoost_coins": "+{0} {0|moneta|monete}",
     "letterBoost_wheel": "Il circo sta arrivando da te!",
     "letterBoost_sale": "Saldi ×2 per 2 minuti!",
     "letterBoost_crystal": "Cristallo +1 💎",
@@ -32442,10 +32560,10 @@ installLang("it", {
     "good_7_10": "Area Street Food",
     "good_7_11": "Spettacolo di Ologrammi",
     "team_spike_cold_0": "Le monete tra i miei aculei sono brinate. Contare ora è freddo e tintinnante.",
-    "team_spike_cold_1": "Zoya mi ha legato una sciarpa a un aculeo. Il resto dovrà arrangiarsi.",
+    "team_spike_cold_1": "Zoe mi ha legato una sciarpa a un aculeo. Il resto dovrà arrangiarsi.",
     "team_spike_cold_2": "In inverno solo la parte della cassa sotto la mia zampa resta calda.",
     "team_bodya_cold_0": "Le assi cantano nel gelo. Nessuno l'ha chiesto, ma sembra un'orchestra.",
-    "team_bodya_cold_1": "Mikhas ha portato delle casse che sanno di neve. Le metto vicino alla stufa per farle svegliare.",
+    "team_bodya_cold_1": "Mikey ha portato delle casse che sanno di neve. Le metto vicino alla stufa per farle svegliare.",
     "team_bodya_cold_2": "Sogno un'officina con il camino. I progetti ci sono, su un tovagliolo del tè.",
     "team_zoya_cold_0": "Il gelo disegna motivi sulla vetrina. È concorrenza, ed è bella.",
     "team_zoya_cold_1": "Ho le orecchie congelate ma l'umore rosa. Un cappello aiuterebbe, rosa anche quello.",
@@ -32469,7 +32587,7 @@ installLang("it", {
     "team_leo_cold_1": "L'efficienza è scesa a zero gradi Celsius. Anche questo è un indicatore, tra l'altro.",
     "team_leo_cold_2": "Copritevi di più, squadra. Non è un consiglio, è un indicatore chiave di prestazione.",
     "team_pao_cold_0": "Il bambù si è congelato. Non è una tendenza, è un disastro, e sto già scrivendo la pubblicità.",
-    "team_pao_cold_1": "Nuovo slogan: «Compra una sciarpa, ricevi calore». Zoya vuole già una percentuale.",
+    "team_pao_cold_1": "Nuovo slogan: «Compra una sciarpa, ricevi calore». Zoe vuole già una percentuale.",
     "team_pao_cold_2": "Sogno mandarini e una coperta. E qualcun altro che paghi la coperta.",
     "team_murzyk_cold_0": "Le zampe mi si sono congelate sulla tastiera. Va bene, scrivo con due, le altre aspettano.",
     "team_murzyk_cold_1": "I fili d'inverno sono fragili come i miei nervi. Meglio non toccare né gli uni né gli altri.",
@@ -32549,6 +32667,17 @@ installLang("it", {
     "privacyBtn": "Informativa sulla privacy",
     "reportBtn": "Copia rapporto",
     "reportCopied": "Rapporto copiato!",
+    "iapBuyTitle": "Compra il pacchetto",
+    "iapBuyText": "«{0}» fa parte di un pacchetto a pagamento. Prezzo: {1}. Paghi una volta e le skin restano tue per sempre.",
+    "iapBuyYes": "Compra",
+    "iapThanks": "Grazie! Il pacchetto è tuo.",
+    "iapPending": "Il pagamento è in corso. La skin apparirà appena Google lo conferma.",
+    "iapFail": "Gli acquisti non sono disponibili ora. Riprova più tardi.",
+    "iapNoPrice": "Prezzo non disponibile. Controlla la connessione e riprova.",
+    "iapRestore": "Ripristina acquisti",
+    "iapRestored": "Acquisti ripristinati.",
+    "iapNothing": "Nessun acquisto su questo account.",
+    "errRepeat": "Qualcosa è andato storto, ma il gioco continua. Se noti stranezze, riavvialo. Il rapporto è nelle Impostazioni.",
     "reportManual": "Seleziona il testo e copialo a mano.",
     "shnyrPerk": "Bonus di Shnyr: cattura da solo i clienti dorati, e questi arrivano un quarto più spesso.",
     "shnyrCatch": "Shnyr ha catturato un cliente dorato!",
@@ -33257,15 +33386,15 @@ installLang("it", {
     "team_spike_say_8": "Di notte sogno una cassaforte. Sorride. Mi sveglio felice.",
     "team_spike_say_9": "Leo vuole un rapporto. Ho detto: «Il rapporto è in cassa». Ha annuito. Non ha capito.",
     "team_spike_hire": "La cassa è mia. Giù le mani.",
-    "team_bodya_say_0": "Un giorno costruirò una diga. Una vera, con una targa: «Costruita da Bodya».",
-    "team_bodya_say_1": "Mikhas porta casse davanti alle mie scale. Le avevo appena allineate. Proprio adesso!",
+    "team_bodya_say_0": "Un giorno costruirò una diga. Una vera, con una targa: «Costruita da Bodie».",
+    "team_bodya_say_1": "Mikey porta casse davanti alle mie scale. Le avevo appena allineate. Proprio adesso!",
     "team_bodya_say_2": "Ho i progetti. Per ora sono nella mia testa. E un po' su un tovagliolo.",
     "team_bodya_say_3": "Un'asse ha scricchiolato e lo so già: è quella sbagliata. La mia schiena si fida di me più del metro.",
     "team_bodya_say_4": "Tutti dicono «costruttore». Disegno anche bei progetti. Nessuno lo chiede.",
     "team_bodya_say_5": "Una volta avevo l'asse perfetta. Non so dove sia finita. Forse Toma lo sa.",
     "team_bodya_say_6": "Una mensola storta non è un errore. È un'inclinazione verso ciò che piace ai clienti.",
     "team_bodya_say_7": "Senti come ronza la strada? Non è rumore. È un piano di costruzione.",
-    "team_bodya_say_8": "Amo il legno. Non discute. A differenza di Mikhas.",
+    "team_bodya_say_8": "Amo il legno. Non discute. A differenza di Mikey.",
     "team_bodya_say_9": "Kria ha appena dato la cera al pavimento. Ora sono un castoro, non un pattinatore.",
     "team_bodya_hire": "Dov'è qualcosa da rompere? Cioè, da costruire.",
     "team_zoya_say_0": "Sogno la mia vetrina. Rosa tenue. Perché perfino la cassa abbia un umore.",
@@ -33292,7 +33421,7 @@ installLang("it", {
     "team_tonya_hire": "Sono qui. Quasi. Presto.",
     "team_mikhas_say_0": "Sognavo un alveare. Sono diventato facchino. Il miele è ancora vicino, quindi va bene.",
     "team_mikhas_say_1": "Toma ricorda dove sta ogni cosa. Io ricordo che pesa. Bella coppia.",
-    "team_mikhas_say_2": "Bodya costruisce, io trasporto. Sarebbe bello se qualcuno dicesse anche «attento».",
+    "team_mikhas_say_2": "Bodie costruisce, io trasporto. Sarebbe bello se qualcuno dicesse anche «attento».",
     "team_mikhas_say_3": "Una cassa non chiede mai se sono stanco. Per questo la amo.",
     "team_mikhas_say_4": "Non chiedere cosa c'è nella scatola. Io neanche. Si sta più tranquilli così.",
     "team_mikhas_say_5": "In magazzino c'è del miele. Non chiedere da dove. Non è mio.",
@@ -33324,7 +33453,7 @@ installLang("it", {
     "team_kria_say_9": "Ogni straccio ha un nome. Il mio si chiama Zinaida. Non chiedere.",
     "team_kria_hire": "Pavimento, preparati. Arrivo.",
     "team_zhuzha_say_0": "Un giorno mi inviteranno alla settimana della moda. Ho già scelto il cappello. Manca solo l'invito.",
-    "team_zhuzha_say_1": "Zoya vende, io faccio lo styling. Insieme siamo quasi un'azienda.",
+    "team_zhuzha_say_1": "Zoe vende, io faccio lo styling. Insieme siamo quasi un'azienda.",
     "team_zhuzha_say_2": "Murzyk mi ha consigliato di «indossare qualcosa fatto di fili». Ho ringraziato e me ne sono andata.",
     "team_zhuzha_say_3": "Non è rosso. È «fuoco in una lanterna». Senti la differenza? Nessuno la sente.",
     "team_zhuzha_say_4": "Sciarpa e cappello insieme? No. Ho provato. È venuto male. Malissimo.",
@@ -33352,7 +33481,7 @@ installLang("it", {
     "team_pao_say_4": "Ieri ho inventato un hashtag. Già tre mi piace. Due sono miei, uno della mamma.",
     "team_pao_say_5": "La mia posa sul manifesto è la migliore. Altre pose respinte.",
     "team_pao_say_6": "Oggi ho distribuito venti volantini. Diciannove sono tornati. Questa è popolarità.",
-    "team_pao_say_7": "Zoya prende i miei manifesti per la vetrina. Non le ho detto che non sono finiti.",
+    "team_pao_say_7": "Zoe prende i miei manifesti per la vetrina. Non le ho detto che non sono finiti.",
     "team_pao_say_8": "Sogno un cartellone su tutto l'isolato. O almeno sul tetto.",
     "team_pao_say_9": "Il tè al bambù è il mio preferito. Lo sorseggio rumorosamente. Per l'atmosfera.",
     "team_pao_hire": "Ciao. Ho portato dei manifesti.",
@@ -33368,12 +33497,12 @@ installLang("it", {
     "team_murzyk_say_9": "Se le luci si spengono, non sono stato io. Molto probabilmente.",
     "team_murzyk_hire": "Non ho toccato niente. Per ora.",
     "team_toma_say_0": "La memoria di un elefante non è una metafora. Per questo ricordo ciò che preferiresti dimenticare.",
-    "team_toma_say_1": "Mikhas trasporta, io annoto. A lui non piace che io annoti.",
+    "team_toma_say_1": "Mikey trasporta, io annoto. A lui non piace che io annoti.",
     "team_toma_say_2": "Sogno un magazzino dove niente si perde. Qualcosa si perde. La topolina lo sa.",
     "team_toma_say_3": "Chi ha spostato le casse? Ricordo chi è stato. Non lo dirò. Per ora.",
     "team_toma_say_4": "La proboscide è il miglior righello. Misuro tutto con lei, anche gli umori.",
     "team_toma_say_5": "Un martedì alle 14:32 qualcuno ha detto «dopo». Sono passati molti martedì. Aspetto.",
-    "team_toma_say_6": "Il magazzino è il mio tempio. Mikhas è l'unico a cui lascio toccare le casse.",
+    "team_toma_say_6": "Il magazzino è il mio tempio. Mikey è l'unico a cui lascio toccare le casse.",
     "team_toma_say_7": "La topolina è tornata in magazzino. La conosco per nome. Anche lei conosce il mio.",
     "team_toma_say_8": "L'inventario è amore misurato in scatole. Io amo molto.",
     "team_toma_say_9": "Non dirlo a nessuno, ma ricordo tutto, ed è faticoso.",
@@ -33476,7 +33605,7 @@ installLang("it", {
   skin: {"weather_aurora":["Guarda su! Il cielo balla.","Luci verdi sopra il mercato. Come in una fiaba.","È notte, eppure c'è tanta luce. La guarderei fino al mattino.","Dicono che siano pezzetti di sole. Bel pensiero."],"capy_pirate":["Il pappagallo mi ha rubato di nuovo il biscotto. Traditore!","Dov'è il tesoro? Ah, è la cassa.","Yo-ho-ho... oh, salve, cari clienti!","Benda sull'occhio messa. Ora vedo solo sconti."],"capy_astro":["Houston, sentite profumo di panini?","Che silenzio nel casco... solo io e i miei pensieri. Oh, un cliente!","Gravità zero è quando nessuno chiede «ancora uno sconto».","Un piccolo tocco per Capy, un gigantesco profitto per il negozio."],"capy_wizard":["Abracadabra... no, non è questa. Ora mi ricordo, un secondo.","La barba cresce da sola. Io non ho fatto niente. Quasi.","Ho perso la bacchetta. Almeno i nervi ci sono ancora.","Le stelle sul mio mantello ammiccano. O me lo immagino."],"capy_chef":["Che buon profumo. Non sono io, sono i vicini!","Cappello grande, cucchiaio più grande. Vedi?","Lo chef consiglia: non mangiare la merce. La scelta è fatta.","Sale, pepe e un po' di pazienza. Questo è tutto il segreto."],"capy_explorer":["C'è qualcosa di interessante dietro quell'angolo. O un gatto.","Il binocolo guarda in alto, io cerco biscotti.","Lo zaino è pesante, ma ha tre panini!","La mappa dice nord. Noi andiamo a sud. Scusate."],"capy_santa":["Oh-oh-oh! Qualcuno qui è stato bravo. Niente nomi.","Il sacco è vuoto. Ho dato tutto... a me stessa.","La barba fa il solletico. Deve farlo?","Ogni giorno è un po' di Natale quando vesti di rosso!"],"capy_witch":["La scopa è in riparazione. Ora volo di speranza.","La zucca sulla mia schiena mi fissa. Io la fisso di rimando.","La pozione è pronta! Ho solo dimenticato cosa c'è dentro.","Brrr! Qualcuno ha sussurrato «sconto»?"],"capy_flower":["Una farfalla si è posata sulla mia schiena. Shh, nessuno si muova.","I fiori profumano di primavera. E io profumo di fiori. Che bello!","La coroncina è scivolata un po'. Mi piace perfino.","Le api hanno già chiesto se possono abitare qui."],"capy_beach":["Voglio il mare. Ma almeno qui c'è l'ombra del negozio.","Il pallone sulla mia schiena non scappa. Io sì, in spiaggia!","Occhiali scuri, umore luminoso.","Una limonata, per favore. Con ghiaccio. E l'ombrellino!"],"capy_autumn":["La sciarpa è così lunga che ci inciampo.","Le foglie frusciano, io ho il caffè. Mattina perfetta.","L'autunno sa di cannella. O sono io?","Un maglione caldo è come un abbraccio. Leggermente ruvido."],"capy_ep0":["Basco di lato, piuma in su. Ora sono un'artista.","Questo giglio sul mio mantello non è comune. È costoso!","Da qualche parte suona un liuto. Esci fuori, chiunque tu sia!","Sono tutta Rinascimento. E tu?"],"capy_ep1":["La radio prende una sola onda. Va bene!","La C sta per «Super Capy». L'ho inventato io.","Una bolla di chewing gum... ah, è scoppiata.","La giacca è vecchia, l'umore è nuovo."],"capy_ep2":["La palla a specchi brilla! Anch'io brillo un pochino.","Occhiali grandi, e vedo tutto. Anche chi non paga.","I miei piedi chiedono di ballare!","Brilla, brilla, ancora un brillio!"],"capy_ep3":["Livello superato! Prossimo: una cassa vuota.","Un gamepad sul petto. Per decisioni rapide.","Un giro di moneta ed è +1 vita.","Le mie cuffie suonano musica a 8 bit. Un classico!"],"capy_ep4":["Il mio telefono è all'1%. Il mio umore è al 100!","Ho trovato il Wi-Fi! Ora la vita può continuare.","Lo zaino è pieno di adesivi. Quarantasei mi piace.","Nessuno mi ha seguita. Ma non mi offendo."],"capy_ep5":["Il germoglio sul mio zaino è cresciuto di un centimetro. Che orgoglio!","Gli alberi crescono e noi li aiutiamo.","Una giacca fatta di vecchie bottiglie. Nuova, ma con una storia!","Respira a fondo. Qui è quasi una foresta."],"capy_ep6":["Silenzio... solo io e le stelle. Oh, mi chiama la cassa.","Il casco si è appannato perché sono felice!","Mi piace la gravità zero. I biscotti non cadono.","Il razzo aspetta. Io aspetto i clienti."],"capy_ep7":["Il neon lampeggia e io sorrido nervosa.","La mia visiera brilla, ma vedo peggio. Ah, lo stile!","La città di notte è come uno spettacolo di luci.","Anche le mie scarpe brillano. Cammino come una lanterna."],"capy_knight":["La mia spada è affilata, i miei prezzi sono onesti. Almeno oggi.","Elmo grande, si vede solo il mio naso. Comodo!","Finché indosso l'armatura, nessuno mi disturba. Un sogno.","Chi disturba i clienti? Indietro, sono pronta!"],"capy_hero":["Il mantello svolazza, io no. Situazione sotto controllo.","Il mio superpotere: trovare biscotti a tre metri di distanza.","La maschera è un po' stretta, ma gli eroi sono così.","Qualcuno ha gridato? Calma, sto già arrivando!"],"capy_cowboy":["In questa città c'è la legge. E la legge dice: compra.","Il cappello mi scivola sugli occhi. Mantengo l'equilibrio.","Lo sceriffo è in strada. Silenzio!","Il fazzoletto sa di polvere e avventura."],"capy_fairy":["Le ali mi fanno il solletico quando rido. Ih, ih.","Un pizzico di magia, e la giornata diventa più luminosa.","La corona sta a malapena sulle mie orecchie. È normale?","Esaudisco ogni desiderio. Tranne «uno sconto ancora più grande»."],"capy_viking":["L'elmo con le corna si impiglia nella porta. Di nuovo.","Lo scudo è forte, io sono morbida. Equilibrio!","All'arrembaggio... cioè, in cucina. La cena è lì.","Una vichinga barbuta vuole un abbraccio. Chi ci sta?"],"capy_pilot":["Gli occhialoni si sono appannati. Volo alla cieca, ma con amore.","Sciarpa lunga, ali corte. Mi arrangerò.","Allacciate le cinture! Un po' di turbolenza in arrivo.","L'atterraggio è morbido come un panino."],"capy_mel":["Sono Mel. Una volpe. E no, non diventerò un capibara, me l'hanno già chiesto.","Nika dice che ho troppe idee. Non ha ancora visto i miei appunti.","Questo gioco è nato da un pixel e una notte insonne. Il pixel è ancora qui.","Quando qualcosa lampeggia male dico «è voluto». Nika finge di credermi.","Il caffè di Nika è la migliore correzione di bug. Non so spiegarlo, ma funziona.","A volte apro il gioco e vedo cose che non ho mai scritto. Sei stato tu o Nika?","La coda è soffice, e le scadenze lo sono ancora di più.","Grazie per aver giocato. Sinceramente, il momento migliore della mia giornata di lavoro."],"capy_nika":["Sono Nika. Salto quando sono nervosa. E sono nervosa abbastanza spesso.","Mel confonde di nuovo tocco e clic. Non lo correggo. È la nostra tradizione.","Non darò la mia carota a nessuno. Nemmeno a Mel. Soprattutto a Mel.","A volte disegno, a volte programmo, a volte muovo solo le orecchie. Tutto questo è lavoro.","Questo gioco parla di una città in cui vorresti vivere. E un po' di capibara.","Fiocco a posto, orecchie a posto, idea a posto. È finito solo il caffè.","Vedo che sei qui da un po'. Quanti giorni sono? Grazie per averli passati qui.","Mel mi chiama perfezionista. Io lo chiamo «lo sistemiamo dopo». Insieme siamo uno studio."],"shop_candy":["Qui tutto è appiccicoso. Ma piacevole.","Il lecca-lecca è più alto di me. Sogno realizzato.","Non leccare le pareti. Lo dico anche a me stessa."],"shop_gold":["Brilla così tanto che vedo scintille.","L'oro è freddo, ma l'umore è caldo.","Il cassiere porta gli occhiali da sole contro l'abbagliamento. Vero!"],"shop_ice":["Brr! Ma così bello, come una fiaba.","È caduto un ghiacciolo. Non su di me, per fortuna.","Qui gli sconti non si sciolgono. Sono congelati!"],"shop_wood":["Sa di resina e calore. Come un bosco.","La baita di legno sta salda. Come me.","Crac-crac. È un bene. È accogliente!"],"shop_garden":["Sul tetto crescono i fiori. Chi li annaffia?","Qui abita un'ape. Siamo già amiche.","Un negozio-giardino: passeggia e compra. Comodo."],"shop_xmas":["Le luci lampeggiano. Voglio lampeggiare anch'io.","Sotto l'albero c'è sicuramente qualcosa. Non guardo... guardo.","Il negozio sa di mandarini. Un sogno!"],"shop_halloween":["Qualcuno cammina in soffitta. Non sono io, giuro.","La zucca sorride più di me.","Dolcetto o scherzetto? Scelgo il dolcetto."],"shop_spring":["È arrivata la primavera! Anche alla cassa.","Petali sul tetto. Che dolcezza.","Gli uccelli cantano e i clienti sorridono."],"shop_autumn":["Le foglie sul tetto frusciano come un topolino.","Caldo, accogliente, sa di mele.","L'autunno in un negozio è come un abbraccio."],"weather_rainbow":["Un arcobaleno! Guarda, guarda! Oh, è sparito.","Così tanti colori che ho smesso di contare.","Da qualche parte sotto di esso si nasconde un barattolo di biscotti."],"weather_lightning":["Bum! Era forte, ma bello.","Il fulmine è viola. Mi piace.","Tengo le orecchie sotto il berretto. Per sicurezza."],"weather_lightninggreen":["Fulmine verde! Sicuramente è magia.","Bum-bum! Perché non rosso?","Lassù qualcuno gioca con il neon."],"weather_lightningred":["Fulmine rosso! Il cuore mi ha fatto un salto.","È così luminoso che strizzo gli occhi.","Il cielo è arrabbiato, ma in modo grazioso."],"weather_cottoncloud":["Una nuvola di zucchero filato. Chi ha dato un morso?","Voglio salirci e fare un pisolino. È dolce!","Pioggia di caramello, qualcuno?"],"weather_goldcloud":["Una nuvola dorata! A volte ne cadono monete.","Anche il cielo ha deciso di guadagnare. Bel lavoro.","Guarda in alto. Forse sarai fortunato!"],"weather_starcloud":["Le stelle tra le nuvole scintillano. Sto esprimendo un desiderio.","La nuvola luccica. Voglio quel cappello.","Zitti, zitti... La senti cantare?"],"hero_party":["Festa ogni giorno! Coriandoli in ogni tasca.","Aiutanti con cappellini da festa. Solo un sogno.","Balliamo? La cassa può aspettare."],"hero_ninja":["È passato qualcuno di corsa? No? Allora erano ninja.","Silenziosi come un'ombra. Dicono che sia una nostra specialità.","Non li ho visti. E non li vedrò. Bel lavoro."],"hero_chef":["Sa di panini. Chi cucina?","Gli aiutanti chef daranno da mangiare ai clienti e a me.","Solo non mangiate la merce. Lo dico anche a me stessa."],"hero_wizard":["Gli aiutanti lanciano incantesimi! La fila si accorcia da sola.","I mantelli lampeggiano e io sorrido.","Una bacchetta magica in tasca? Insegna anche a me!"],"hero_royal":["Aiutanti con la corona. Maestà, la cassa è da quella parte!","Un re con una salsiccia? È un altro livello.","La squadra reale lavora senza giorni liberi."],"hero_santa":["Incartano regali così in fretta che non riesco a stargli dietro.","Cappelli rossi ovunque. Sono arrivate le feste!","Oh-oh, non è uno scherzo, è una squadra!"],"hero_witch":["Streghette volano tra gli scaffali. Spero che non colpiscano nessuno.","I cappelli sono a punta. Non avvicinarti troppo.","Una pozione per il servizio rapido. Utile!"],"street_brick":["Una strada di mattoni. Dove porta? Alla cassa!","È bello camminarci. Ogni mattone è dritto.","La strada è rossa. Come le mie guance adesso."],"street_wood":["Le assi scricchiolano sotto le mie zampe. Accogliente!","Un sentiero di legno sa di bosco.","Crac-crac. Come se arrivasse qualcuno. Ah, sono io."],"street_leaves":["Crac-crac! Il mio suono preferito dell'autunno.","Foglie sotto le zampe: un tappeto di oro scuro.","Qualcuno ha sparso delle foglie. Grazie, anima gentile!"],"street_snow":["Neve! No, non mangiarla. Mi trattengo anch'io.","Le mie zampe sono fredde, il mio cuore è caldo.","Crac-crac. Anche la neve è musica."],"street_moss":["Il muschio è morbido come un tappeto. Vado a sdraiarmi.","Il selciato muschioso ricorda molte storie.","Un fiorellino cresce nella fessura. Non calpestarlo!"],"street_gold":["Una strada dorata! Anche se non è fatta di rubini.","Cammino e sotto le mie zampe luccica. Che bello.","Un mattone fatto di monete. Non lo tocco, non è mio."],"capy_ep8":["Il kimono è bellissimo, i sandali stringono. La bellezza esige sacrifici.","Il cappello è come una lanterna: non vedo, ma è accogliente.","Il drago mi ha fatto l'occhiolino. O forse era il vento.","Tè, riso e sakura: la vita è bella."]},
   tour: {"shop":["m","Questo è il Negozio. Qui tocchi, potenzi il tuo tocco e amplii il negozio. Premilo!"],"departments":["n","I reparti guadagnano monete da soli, anche quando non ci sei. Premili!"],"team":["m","In Squadra assumi animaletti aiutanti. Ognuno aiuta a modo suo."],"story":["n","Diario: capitoli della storia e storie delle epoche. Puoi rileggerli."],"skins":["m","Skin: cambia l'aspetto di Capy, del negozio e degli eroi con i cristalli."],"seasons":["n","Stagioni e ora del giorno. Il lucchetto si apre dopo la 2ª epoca."],"achievements":["m","Obiettivi: qui ti aspettano premi per i tuoi traguardi."],"settings":["n","Impostazioni: lingua, audio, visualizzatore di epoche e animazioni."],"news":["m","E questa è la cassetta postale degli sviluppatori! Lì ci sono le novità sugli aggiornamenti, e puoi scriverci. Aprila!"],"end":["m","È tutto! Tocca il negozio e fallo crescere. Siamo sempre vicini!"],"endBtn":"GIOCA!","skip":"Salta il tour"},
   cut: {"hi":"Ciao!","intro":["C'era una volta","Capy viveva in un mondo di pixel…"],"introN":["C'era una","volta Capy","viveva in un","mondo di pixel…"],"p1":"Wow... Ho una moneta!","b1":"Una prima moneta? Allora ti serve un negozio!","c2":"Un negozio?","b2":"Anche una sola moneta può diventare un'attività!","b3":"Guarda bene!","b4":"Ora tocca a te.","c5":"Cosa faccio?","b5":"Prova a toccare!","hint":"TOCCA IL NEGOZIO","click":"TOCCA!","b6":"Più guadagni, più puoi far crescere il tuo negozio!","b7":"Fai crescere il negozio, guadagna monete e sblocca nuove epoche!","w1":"POTENZIA.","w2":"TOCCA.","w3":"CRESCI.","i1":"TOCCO","i2":"MONETE","i3":"POTENZIA","i4":"LIVELLO","skip":"Salta","m1":"Ciao! Sono Mel,","n1":"e io sono Nika. Siamo gli sviluppatori!","m2":"Vi mostreremo come funziona tutto. Cominciamo?","go":"ANDIAMO!","tuk":"TOC!"},
-  about: {"mast":"CHI SIAMO","lead":"Ciao, amico!","newH":"Le novità","new":"Nuovi eroi della squadra: Spike, Zoya e tutti gli altri con un nuovo look bellissimo, costumi d'epoca e skin abbinate alla strada. Ora il marciapiede cambia in modo fluido quando scegli una skin e più clienti percorrono tutta la strada. Tutte le transizioni sono più fluide e le skin meteo hanno preso vita.","intro":["Siamo MEL e NIKA, e questo gioco l'abbiamo fatto noi, pixel dopo pixel.","Capy parte con una moneta e un negozietto minuscolo all'angolo. Il tuo compito: farlo diventare un vero centro commerciale e viaggiare attraverso intere epoche."],"nextH":"Cosa ci aspetta","next":"Davanti ci sono 8 epoche: dal Rinascimento al Neon. Viaggia nel tempo, e il tuo negozio diventerà qualcosa di più grande…","giftH":"Un regalo","gift":"Ritira il regalo degli sviluppatori: +100 monete","giftDone":"Regalo già ritirato. Grazie per aver giocato!","writeH":"Contatti","write":"Hai trovato un bug o hai un'idea? Premi Scrivi agli sviluppatori qui sotto: leggiamo tutto.","toast":"+100 monete dagli sviluppatori!","paper":"NOVITÀ DAGLI SVILUPPATORI · "},
+  about: {"mast":"CHI SIAMO","lead":"Ciao, amico!","newH":"Le novità","new":"Nuovi eroi della squadra: Spike, Zoe e tutti gli altri con un nuovo look bellissimo, costumi d'epoca e skin abbinate alla strada. Ora il marciapiede cambia in modo fluido quando scegli una skin e più clienti percorrono tutta la strada. Tutte le transizioni sono più fluide e le skin meteo hanno preso vita.","intro":["Siamo MEL e NIKA, e questo gioco l'abbiamo fatto noi, pixel dopo pixel.","Capy parte con una moneta e un negozietto minuscolo all'angolo. Il tuo compito: farlo diventare un vero centro commerciale e viaggiare attraverso intere epoche."],"nextH":"Cosa ci aspetta","next":"Davanti ci sono 8 epoche: dal Rinascimento al Neon. Viaggia nel tempo, e il tuo negozio diventerà qualcosa di più grande…","giftH":"Un regalo","gift":"Ritira il regalo degli sviluppatori: +100 monete","giftDone":"Regalo già ritirato. Grazie per aver giocato!","writeH":"Contatti","write":"Hai trovato un bug o hai un'idea? Premi Scrivi agli sviluppatori qui sotto: leggiamo tutto.","toast":"+100 monete dagli sviluppatori!","paper":"NOVITÀ DAGLI SVILUPPATORI · "},
   guide: {"head":"Consigli","sub":"Qualche suggerimento per giocare più facilmente e crescere più in fretta.","items":[["💰 Come arricchirsi più in fretta","<ul class=\"np-list\"><li>Assumi il riccio Spike il prima possibile. Costa solo 100 monete, e ogni tocco diventa 1,5 volte più forte.</li><li>Il pulsante MAX nei Reparti compra quanto il tuo denaro permette. Non serve premere Compra venti volte.</li><li>Guarda la striscia in alto sullo schermo. Mostra sempre il prossimo obiettivo, per esempio «Compra \"Candele e fiammiferi\": 7/25».</li></ul>","tipRich"],["🏪 Come crescere","<ul class=\"np-list\"><li>Per ampliare il negozio servono tre cose: comprare i reparti necessari, potenziare gli animaletti e raccogliere monete. Le condizioni sono nella scheda Reparti, nel blocco Ampliamento.</li><li>Ogni nuovo livello del negozio dà ×2 a tutto il reddito, quindi amplia alla prima occasione.</li></ul>","tipGrow"],["🎁 Bonus gratuiti","<ul class=\"np-list\"><li>Minigiochi bonus: la pista da ballo nell'epoca Disco, il carretto dei noodle di nonno Ryo in Giappone e la capanna della strega a Halloween. È lì che si vincono le skin.</li><li>Il circo della fortuna dà cristalli e bonus, quindi non passare oltre il tendone.</li><li>Ricompense degli obiettivi. Guarda la scheda con la coppa, lì ti aspettano dei premi.</li><li>Eventi in strada. Il «!» rosso, un gufo o un procione compaiono solo per un attimo. Tocca in tempo e ricevi un bonus.</li></ul>","tipFree"],["⏳ Per il futuro","Il viaggio nel tempo azzera il negozio ma dà frammenti di tempo, una nuova epoca e un bonus permanente al reddito. Non temerlo: il giro successivo è molto più veloce.","clock"]]},
   soon: {"head":"Prossimamente","sub":"A cosa stiamo lavorando. Non è ancora uscito, ma quasi.","items":[["Altre epoche bonus","Il Giappone è già nel gioco. In arrivo altre epoche bonus, ognuna con la sua animazione di viaggio, storia, aiutante, ospite e decorazioni volanti."],["Versioni per gli app store","Stiamo preparando le versioni del gioco per telefoni e computer negli app store."]]},
   sec: {"news":"Chi siamo","guide":"Consigli","soon":"Prossimamente"}
@@ -33572,7 +33701,7 @@ installLang("pl", {
     "newDepts": "Nowe działy: {0}",
     "offlineTitle": "Witaj z powrotem!",
     "offlineText": "Gdy cię nie było, sklep zarobił",
-    "offlineCoins": "{0} monet 💤",
+    "offlineCoins": "{0} {0|moneta|monety|monet} 💤",
     "offlineBtn": "Odbierz",
     "adOfflineBtn": "🎬 ×2: obejrzyj film",
     "adPrivacyBtn": "Opcje prywatności reklam",
@@ -33681,8 +33810,8 @@ installLang("pl", {
     "ch4_5": "W kieszeni zegarek cicho zatykał, jakby mrugał. Wygląda na to, że to nie był ostatni raz.",
     "ch5_title": "Nowi Koledzy",
     "ch5_0": "Sklep urósł do supermarketu. Cała ulica mówi o Capy, a do drzwi pukają nowi pracownicy. Ci, którzy dali radę, zapukali.",
-    "ch5_1": "Jestem Bodya, budowniczy. Słyszałem, że się rozbudowujecie. Potrzebne deski? Rachunek wyślę osobno. I jeszcze jeden, dla grzeczności.",
-    "ch5_2": "Zoya. Sprzedaję wszystko, co nie jest przybite. A co jest przybite, tylko wolniej. Daj mi witrynę, a zacznie mówić.",
+    "ch5_1": "Jestem Bodie, budowniczy. Słyszałem, że się rozbudowujecie. Potrzebne deski? Rachunek wyślę osobno. I jeszcze jeden, dla grzeczności.",
+    "ch5_2": "Zoe. Sprzedaję wszystko, co nie jest przybite. A co jest przybite, tylko wolniej. Daj mi witrynę, a zacznie mówić.",
     "ch5_3": "Hu-hu. Jestem Sonia, księgowa. Pracuję nocą, w dzień tylko mrugam. Ktoś musi policzyć te monety, zanim uciekną.",
     "ch5_4": "Tonya, ochrona. Idę. Będę niedługo. Ale nikogo nie przepuszczę.",
     "ch5_5": "Wchodźcie, przyjaciele. Dziękuję, że przyszliście. Naprawdę.",
@@ -33733,7 +33862,7 @@ installLang("pl", {
     "saleStart": "Wyprzedaż. Dochód ×{0} na 2 minuty. Skorzystaj, zanim wszyscy się obudzą.",
     "raccoonStart": "Szop Shnyr porwał worek. Goń go: stukaj w niego.",
     "raccoonWin": "Złapany! Shnyr upuścił worek: +{0}.",
-    "raccoonLose": "Shnyr uciekł i ukradł {0} monet.",
+    "raccoonLose": "Shnyr uciekł i ukradł {0} {0|moneta|monety|monet}.",
     "raccoonFriend": "Shnyr tylko żartował i uciekł. Niczego nie ukradł.",
     "tonyaScared": "Tonya przegoniła szopa już przy wejściu.",
     "shnyrSay_0": "He-he, moje.",
@@ -34008,9 +34137,9 @@ installLang("pl", {
     "dailyAllDone": "Wszystkie trzy wykonane: +1 💎 odebrany",
     "dailyDoneToast": "Zadanie dnia wykonane! Odbierz kryształ na karcie „Nagrody”.",
     "dailyGot": "Kryształ +{0} 💎",
-    "daily_taps": "Stuknij sklep {0} razy",
+    "daily_taps": "Stuknij sklep {0} {0|raz|razy|razy}",
     "daily_depts": "Kup działy: {0}",
-    "daily_team": "Ulepsz zwierzaki: {0} razy",
+    "daily_team": "Ulepsz zwierzaki: {0} {0|raz|razy|razy}",
     "daily_catch": "Złap zwierzaki lub duchy: {0}",
     "daily_vip": "Złap złotych klientów: {0}",
     "daily_earn": "Zarób monety: {0}",
@@ -34040,7 +34169,7 @@ installLang("pl", {
     "tab_seasons": "Pory roku",
     "setTimeTitle": "🕓 Pora dnia",
     "tab_achievements": "Nagrody",
-    "tab_settings": "Ustawienia",
+    "tab_settings": "Opcje",
     "statEpoch": "Epoka",
     "epoch_0": "Renesans",
     "epoch_1": "Retro",
@@ -34167,8 +34296,8 @@ installLang("pl", {
     "achName_chapters": "Czytelnik",
     "achName_holidays": "Świąteczny Duch",
     "achName_hours": "Oddany Kupiec",
-    "achDesc_taps": "Stuknij sklep {0} razy",
-    "achDesc_earned": "Zarób łącznie {0} monet",
+    "achDesc_taps": "Stuknij sklep {0} {0|raz|razy|razy}",
+    "achDesc_earned": "Zarób łącznie {0} {0|moneta|monety|monet}",
     "achDesc_level": "Rozbuduj sklep do poziomu {0}",
     "achDesc_deptsBought": "Kup działy: {0}",
     "achDesc_milestones": "Osiągnij progi działów: {0}",
@@ -34317,14 +34446,14 @@ installLang("pl", {
     "letterTitle": "List od: {0}",
     "letterBtn": "Odbierz premię",
     "letter_spike": "Cześć, szefowo. Znalazłem w kasie dodatkowy grosz i od razu pomyślałem o tobie. Nie pytaj, czyj jest. Oto premia z poczty.",
-    "letter_zoya": "Tu Zoya. Wymyśliłam promocję: kto przeczyta ten list, dostaje premię. To ty. Nie dziękuj, po prostu mnie poleć.",
+    "letter_zoya": "Tu Zoe. Wymyśliłam promocję: kto przeczyta ten list, dostaje premię. To ty. Nie dziękuj, po prostu mnie poleć.",
     "letter_bodya": "Bodie. Zbudowałem skrzynkę pocztową i wysłałem pierwszy list. Premia jest przybita jak gwóźdź do deski: mocno i bez zbędnych słów.",
     "letter_sonia": "Hu-hu. Policzyłam: należy ci się premia. Księgi się zgadzają, nie trzeba sprawdzać. I tak sprawdzisz.",
     "letter_leo": "Plan: czytasz ten list, dostajesz premię, wszyscy zyskujemy. Zgoda? Milczenie uznam za zgodę.",
     "letter_pao": "Tu Pao. W liście jest bambus i szczęście. Zniżki się skończyły, ale premia jest prawdziwa.",
     "letterBoost_income": "Dochód ×{0} na {1} min",
     "letterBoost_tap": "Stuknięcie ×{0} na {1} min",
-    "letterBoost_coins": "+{0} monet",
+    "letterBoost_coins": "+{0} {0|moneta|monety|monet}",
     "letterBoost_wheel": "Cyrk jedzie do ciebie!",
     "letterBoost_sale": "Wyprzedaż ×2 na 2 minuty!",
     "letterBoost_crystal": "Kryształ +1 💎",
@@ -34456,10 +34585,10 @@ installLang("pl", {
     "good_7_10": "Strefa Street Foodu",
     "good_7_11": "Pokaz Hologramów",
     "team_spike_cold_0": "Monety w moich kolcach pokryły się szronem. Liczenie jest teraz zimne i brzęczące.",
-    "team_spike_cold_1": "Zoya przywiązała mi szalik do jednego kolca. Reszta musi sobie radzić.",
+    "team_spike_cold_1": "Zoe przywiązała mi szalik do jednego kolca. Reszta musi sobie radzić.",
     "team_spike_cold_2": "Zimą ciepła zostaje tylko ta część kasy, na której leży moja łapa.",
     "team_bodya_cold_0": "Deski śpiewają na mrozie. Nikt nie prosił, a brzmi jak orkiestra.",
-    "team_bodya_cold_1": "Mikhas przyniósł skrzynie, które pachną śniegiem. Postawię je przy piecu, niech się obudzą.",
+    "team_bodya_cold_1": "Mikey przyniósł skrzynie, które pachną śniegiem. Postawię je przy piecu, niech się obudzą.",
     "team_bodya_cold_2": "Marzę o warsztacie z kominkiem. Plany są, na serwetce po herbacie.",
     "team_zoya_cold_0": "Szron rysuje wzory na witrynie. To konkurencja i do tego ładna.",
     "team_zoya_cold_1": "Uszy mi zmarzły, ale humor mam różowy. Przydałaby się czapka, też różowa.",
@@ -34483,7 +34612,7 @@ installLang("pl", {
     "team_leo_cold_1": "Efektywność spadła do zera stopni Celsjusza. To też wskaźnik, nawiasem mówiąc.",
     "team_leo_cold_2": "Ubierajcie się cieplej, zespole. To nie rada, to kluczowy wskaźnik efektywności.",
     "team_pao_cold_0": "Bambus zamarzł. To nie trend, to katastrofa, a ja już piszę reklamę.",
-    "team_pao_cold_1": "Nowe hasło: „Kup szalik, dostaniesz ciepło”. Zoya już chce prowizji.",
+    "team_pao_cold_1": "Nowe hasło: „Kup szalik, dostaniesz ciepło”. Zoe już chce prowizji.",
     "team_pao_cold_2": "Marzę o mandarynkach i kocu. I o tym, żeby ktoś inny zapłacił za koc.",
     "team_murzyk_cold_0": "Łapy przymarzły mi do klawiatury. Dobra, piszę dwiema, reszta poczeka.",
     "team_murzyk_cold_1": "Kable zimą są kruche jak moje nerwy. Lepiej nie dotykać ani jednych, ani drugich.",
@@ -34563,6 +34692,17 @@ installLang("pl", {
     "privacyBtn": "Polityka prywatności",
     "reportBtn": "Kopiuj raport",
     "reportCopied": "Raport skopiowany!",
+    "iapBuyTitle": "Kup pakiet",
+    "iapBuyText": "„{0}” należy do płatnego pakietu. Cena: {1}. Płacisz raz, a skórki zostają na zawsze.",
+    "iapBuyYes": "Kup",
+    "iapThanks": "Dziękujemy! Pakiet jest już Twój.",
+    "iapPending": "Płatność jest w toku. Skórka pojawi się, gdy Google ją potwierdzi.",
+    "iapFail": "Zakupy są teraz niedostępne. Spróbuj później.",
+    "iapNoPrice": "Nie udało się pobrać ceny. Sprawdź połączenie i spróbuj ponownie.",
+    "iapRestore": "Przywróć zakupy",
+    "iapRestored": "Zakupy przywrócone.",
+    "iapNothing": "Brak zakupów na tym koncie.",
+    "errRepeat": "Coś poszło nie tak, ale gra działa dalej. Jeśli coś wygląda dziwnie, uruchom ją ponownie. Raport jest w Ustawieniach.",
     "reportManual": "Zaznacz tekst i skopiuj go ręcznie.",
     "shnyrPerk": "Bonus Shnyra: sam łapie złotych klientów, a ci odwiedzają sklep o jedną czwartą częściej.",
     "shnyrCatch": "Shnyr złapał złotego klienta!",
@@ -35271,15 +35411,15 @@ installLang("pl", {
     "team_spike_say_8": "W nocy śni mi się sejf. Uśmiecha się. Budzę się szczęśliwy.",
     "team_spike_say_9": "Leo chce raportu. Powiedziałem: „Raport jest w kasie”. Pokiwał głową. Nie zrozumiał.",
     "team_spike_hire": "Kasa jest moja. Łapy precz.",
-    "team_bodya_say_0": "Kiedyś zbuduję tamę. Prawdziwą, z tabliczką: „Zbudował Bodya”.",
-    "team_bodya_say_1": "Mikhas nosi skrzynie obok moich schodów. Dopiero co je wyrównałem. Dopiero co!",
+    "team_bodya_say_0": "Kiedyś zbuduję tamę. Prawdziwą, z tabliczką: „Zbudował Bodie”.",
+    "team_bodya_say_1": "Mikey nosi skrzynie obok moich schodów. Dopiero co je wyrównałem. Dopiero co!",
     "team_bodya_say_2": "Plany mam. Na razie w głowie. I trochę na serwetce.",
     "team_bodya_say_3": "Deska skrzypnęła i już wiem: to nie ta. Plecy ufają mi bardziej niż miarka.",
     "team_bodya_say_4": "Wszyscy mówią „budowniczy”. Ja też ładnie rysuję plany. Nikt nie pyta.",
     "team_bodya_say_5": "Kiedyś miałem idealną deskę. Nie mam pojęcia, gdzie się podziała. Może Toma wie.",
     "team_bodya_say_6": "Krzywa półka to nie błąd. To przechył w stronę tego, co lubią klienci.",
     "team_bodya_say_7": "Słyszysz, jak szumi ulica? To nie hałas. To plan budowy.",
-    "team_bodya_say_8": "Kocham drewno. Nie dyskutuje. W przeciwieństwie do Mikhasa.",
+    "team_bodya_say_8": "Kocham drewno. Nie dyskutuje. W przeciwieństwie do Mikeya.",
     "team_bodya_say_9": "Kria właśnie wywoskowała podłogę. Teraz jestem bobrem, nie łyżwiarzem.",
     "team_bodya_hire": "Gdzie jest coś do zepsucia? To znaczy do zbudowania.",
     "team_zoya_say_0": "Marzę o własnej witrynie. Delikatnie różowej. Żeby nawet kasa miała nastrój.",
@@ -35306,7 +35446,7 @@ installLang("pl", {
     "team_tonya_hire": "Jestem. Prawie. Zaraz.",
     "team_mikhas_say_0": "Marzyłem o ulu. Zostałem tragarzem. Miód nadal jest w pobliżu, więc dobrze.",
     "team_mikhas_say_1": "Toma pamięta, gdzie co leży. Ja pamiętam, że jest ciężkie. Dobra para.",
-    "team_mikhas_say_2": "Bodya buduje, ja noszę. Byłoby super, gdyby ktoś jeszcze powiedział „ostrożnie”.",
+    "team_mikhas_say_2": "Bodie buduje, ja noszę. Byłoby super, gdyby ktoś jeszcze powiedział „ostrożnie”.",
     "team_mikhas_say_3": "Skrzynia nigdy nie pyta, czy jestem zmęczony. Dlatego ją kocham.",
     "team_mikhas_say_4": "Nie pytaj, co jest w pudle. Ja też nie pytam. Tak jest spokojniej.",
     "team_mikhas_say_5": "W magazynie jest miód. Nie pytaj, skąd. Nie mój.",
@@ -35338,7 +35478,7 @@ installLang("pl", {
     "team_kria_say_9": "Każdy mop ma imię. Mój nazywa się Zinaida. Nie pytaj.",
     "team_kria_hire": "Podłogo, przygotuj się. Idę.",
     "team_zhuzha_say_0": "Kiedyś zaproszą mnie na tydzień mody. Kapelusz już wybrałam. Brakuje tylko zaproszenia.",
-    "team_zhuzha_say_1": "Zoya sprzedaje, ja stylizuję. Razem jesteśmy prawie firmą.",
+    "team_zhuzha_say_1": "Zoe sprzedaje, ja stylizuję. Razem jesteśmy prawie firmą.",
     "team_zhuzha_say_2": "Wąsik poradził mi „założyć coś z kabli”. Podziękowałam i odeszłam.",
     "team_zhuzha_say_3": "To nie czerwień. To „ogień w lampionie”. Słyszysz różnicę? Nikt nie słyszy.",
     "team_zhuzha_say_4": "Szalik i kapelusz razem? Nie. Próbowałam. Było źle. Bardzo źle.",
@@ -35366,7 +35506,7 @@ installLang("pl", {
     "team_pao_say_4": "Wczoraj wymyśliłam hashtag. Już trzy polubienia. Dwa moje, jedno mamy.",
     "team_pao_say_5": "Moja poza na plakacie jest najlepsza. Inne pozy odrzucone.",
     "team_pao_say_6": "Rozdałam dziś dwadzieścia ulotek. Dziewiętnaście wróciło. To jest popularność.",
-    "team_pao_say_7": "Zoya bierze moje plakaty do witryny. Nie powiedziałam jej, że nie są skończone.",
+    "team_pao_say_7": "Zoe bierze moje plakaty do witryny. Nie powiedziałam jej, że nie są skończone.",
     "team_pao_say_8": "Marzę o billboardzie na całym kwartale. Albo chociaż na dachu.",
     "team_pao_say_9": "Herbata bambusowa to moja ulubiona. Siorbię głośno. Dla klimatu.",
     "team_pao_hire": "Cześć. Przyniosłam plakaty.",
@@ -35382,12 +35522,12 @@ installLang("pl", {
     "team_murzyk_say_9": "Jak zgasną światła, to nie ja. Najprawdopodobniej.",
     "team_murzyk_hire": "Niczego nie dotykałem. Na razie.",
     "team_toma_say_0": "Pamięć słonia to nie metafora. Dlatego pamiętam to, co wolałbyś zapomnieć.",
-    "team_toma_say_1": "Mikhas nosi, ja zapisuję. Nie lubi, gdy zapisuję.",
+    "team_toma_say_1": "Mikey nosi, ja zapisuję. Nie lubi, gdy zapisuję.",
     "team_toma_say_2": "Marzę o magazynie, w którym nic się nie gubi. Trochę się gubi. Mysz wie.",
     "team_toma_say_3": "Kto poprzestawiał skrzynie? Pamiętam, kto. Nie powiem. Jeszcze.",
     "team_toma_say_4": "Trąba to najlepsza miara. Mierzę nią wszystko, nawet nastroje.",
     "team_toma_say_5": "We wtorek o 14:32 ktoś powiedział „później”. Minęło wiele wtorków. Czekam.",
-    "team_toma_say_6": "Magazyn to moja świątynia. Mikhas jest jedynym, komu pozwalam dotykać skrzyń.",
+    "team_toma_say_6": "Magazyn to moja świątynia. Mikey jest jedynym, komu pozwalam dotykać skrzyń.",
     "team_toma_say_7": "Mysz wróciła do magazynu. Znam ją z imienia. Ona moje też zna.",
     "team_toma_say_8": "Inwentarz to miłość mierzona w pudełkach. Bardzo kocham.",
     "team_toma_say_9": "Nikomu nie mów, ale pamiętam wszystko, i to męczące.",
@@ -35490,7 +35630,7 @@ installLang("pl", {
   skin: {"weather_aurora":["Spójrz w górę! Niebo tańczy.","Zielone światła nad sklepem. Jak w bajce.","Jest noc, a tak jasno. Mogłabym patrzeć do rana.","Mówią, że to kawałki słońca. Ładna myśl."],"capy_pirate":["Papuga znów ukradła mi ciastko. Zdrajczyni!","Gdzie skarb? A, to kasa.","Jo-ho-ho... ach, dzień dobry, drodzy klienci!","Przepaska na oku założona. Teraz widzę tylko zniżki."],"capy_astro":["Houston, czujecie zapach bułeczek?","Tak cicho w hełmie... tylko ja i moje myśli. O, klient!","Zerowa grawitacja to wtedy, gdy nikt nie prosi o „jeszcze jedną zniżkę”.","Jedno małe stuknięcie dla Capy, jeden gigantyczny zysk dla sklepu."],"capy_wizard":["Abrakadabra... nie, nie to. Zaraz sobie przypomnę.","Broda rośnie sama. Ja nic nie robiłam. Prawie.","Zgubiłam różdżkę. Przynajmniej nerwy jeszcze mam.","Gwiazdy na mojej szacie mrugają. A może mi się wydaje."],"capy_chef":["Ślicznie pachnie. To nie ja, to sąsiedzi!","Duża czapka, jeszcze większa łyżka. Widzisz?","Szef kuchni radzi: nie jedz towaru. Wybór dokonany.","Sól, pieprz i trochę cierpliwości. To cały sekret."],"capy_explorer":["Za tym rogiem jest coś ciekawego. Albo kot.","Lornetka patrzy w górę, ja szukam ciastek.","Plecak jest ciężki, ale ma trzy kanapki!","Mapa mówi: północ. My idziemy na południe. Przepraszam."],"capy_santa":["Ho-ho-ho! Ktoś tu był grzeczny. Bez nazwisk.","Worek jest pusty. Wszystko rozdałam... sobie.","Broda łaskocze. Tak ma być?","Każdy dzień to trochę Bożego Narodzenia, gdy nosisz czerwień!"],"capy_witch":["Miotła jest w naprawie. Teraz lecę na nadziei.","Dynia na moich plecach się we mnie wpatruje. Ja wpatruję się w nią.","Eliksir gotowy! Tylko zapomniałam, co w nim jest.","Brr! Czy ktoś szepnął „zniżka”?"],"capy_flower":["Motyl usiadł mi na plecach. Cii, nikt się nie rusza.","Kwiaty pachną wiosną. A ja pachnę kwiatami. Miło!","Wianek trochę się zsunął. Nawet mi się podoba.","Pszczoły już pytały, czy mogą tu zamieszkać."],"capy_beach":["Chcę morza. Ale przynajmniej tu jest cień sklepu.","Piłka na moich plecach nie ucieknie. Ja tak, na plażę!","Ciemne okulary, jasny nastrój.","Poproszę lemoniadę. Z lodem. I z parasolką!"],"capy_autumn":["Szalik jest tak długi, że się o niego potykam.","Liście szeleszczą, ja mam kawę. Idealny poranek.","Jesień pachnie cynamonem. A może to ja?","Ciepły sweter jest jak uścisk. Lekko drapiący."],"capy_ep0":["Beret na bakier, pióro do góry. Teraz jestem artystką.","Ta lilia na moim płaszczu nie jest zwykła. Jest droga!","Gdzieś gra lutnia. Wyjdź, ktokolwiek jesteś!","Jestem cała Renesans. A ty?"],"capy_ep1":["Radio łapie tylko jedną falę. Dobrze!","C znaczy „Super Capy”. Sama wymyśliłam.","Balon z gumy do żucia... ach, pękł.","Kurtka stara, nastrój nowy."],"capy_ep2":["Kula dyskotekowa lśni! Ja też trochę błyszczę.","Duże okulary i widzę wszystko. Nawet kto nie płaci.","Moje stopy proszą o taniec!","Błysk, błysk, jeszcze jeden błysk!"],"capy_ep3":["Poziom zaliczony! Następny: pusta kasa.","Pad na piersi. Do szybkich decyzji.","Jedna runda z monetą i to +1 życie.","Moje słuchawki grają muzykę 8-bitową. Klasyka!"],"capy_ep4":["Mój telefon ma 1%. Mój nastrój ma 100!","Znalazłam Wi-Fi! Teraz życie może toczyć się dalej.","Plecak pełen naklejek. Czterdzieści sześć polubień.","Nikt mnie nie zaobserwował. Ale się nie obrażam."],"capy_ep5":["Kiełek na moim plecaku urósł o centymetr. Co za duma!","Drzewa rosną, a my im pomagamy.","Kurtka ze starych butelek. Nowa, ale z historią!","Odetchnij głęboko. Tu to prawie las."],"capy_ep6":["Cisza... tylko ja i gwiazdy. O, woła mnie kasa.","Hełm zaparował, bo jestem szczęśliwa!","Lubię zerową grawitację. Ciasteczka nie spadają.","Rakieta czeka. Ja czekam na klientów."],"capy_ep7":["Neon mruga, a ja uśmiecham się nerwowo.","Wizjer świeci, ale widzę gorzej. Ach, styl!","Miasto nocą jest jak pokaz świateł.","Moje buty też świecą. Chodzę jak latarnia."],"capy_knight":["Mój miecz jest ostry, moje ceny uczciwe. Przynajmniej dziś.","Duży hełm, widać tylko mój nos. Wygodnie!","Dopóki mam zbroję, nikt mi nie przeszkadza. Marzenie.","Kto przeszkadza klientom? Z drogi, jestem gotowa!"],"capy_hero":["Peleryna powiewa, ja nie. Sytuacja pod kontrolą.","Moja supermoc: znajdować ciastka z odległości trzech metrów.","Maska trochę ciśnie, ale tacy są bohaterowie.","Ktoś krzyknął? Spokojnie, już idę!"],"capy_cowboy":["W tym mieście obowiązuje prawo. A prawo mówi: kupuj.","Kapelusz zsuwa mi się na oczy. Trzymam równowagę.","Szeryf jest na ulicy. Cicho!","Chustka pachnie kurzem i przygodą."],"capy_fairy":["Skrzydełka łaskoczą, gdy się śmieję. Hi, hi.","Szczypta magii i dzień robi się jaśniejszy.","Korona ledwo trzyma się na uszach. Czy to normalne?","Spełniam każde życzenie. Oprócz „jeszcze większej zniżki”."],"capy_viking":["Hełm z rogami zahacza o drzwi. Znowu.","Tarcza jest mocna, ja jestem miękka. Równowaga!","Na abordaż... to znaczy do kuchni. Kolacja jest tam.","Brodata wikingka chce uścisku. Kto chętny?"],"capy_pilot":["Gogle mi zaparowały. Lecę na ślepo, ale z miłością.","Długi szalik, krótkie skrzydła. Jakoś sobie poradzę.","Zapnijcie pasy! Przed nami lekkie turbulencje.","Lądowanie jest miękkie jak bułeczka."],"capy_mel":["Jestem Mel. Lis. I nie, nie zostanę kapibarą, już pytali.","Nika mówi, że mam za dużo pomysłów. Jeszcze nie widziała moich notatek.","Ta gra zaczęła się od jednego piksela i jednej nieprzespanej nocy. Piksel nadal tu jest.","Gdy coś źle mruga, mówię „tak miało być”. Nika udaje, że mi wierzy.","Kawa od Niki to najlepsza poprawka błędów. Nie umiem tego wyjaśnić, ale działa.","Czasem otwieram grę i widzę rzeczy, których nigdy nie napisałem. To ty czy Nika?","Ogon jest puszysty, a terminy jeszcze puszystsze.","Dziękuję za grę. Szczerze, najlepszy moment mojego dnia pracy."],"capy_nika":["Jestem Nika. Podskakuję, gdy się denerwuję. A denerwuję się dość często.","Mel znów myli stuknięcie z kliknięciem. Nie poprawiam go. To nasza tradycja.","Nie oddam nikomu swojej marchewki. Nawet Melowi. Zwłaszcza Melowi.","Czasem rysuję, czasem koduję, czasem po prostu machnę uszami. To wszystko jest praca.","Ta gra jest o mieście, w którym chciałoby się mieszkać. I trochę o kapibarach.","Kokarda na miejscu, uszy na miejscu, pomysł na miejscu. Tylko kawa się skończyła.","Widzę, że jesteś tu już jakiś czas. Ile to dni? Dziękuję za nie.","Mel nazywa mnie perfekcjonistką. Ja jego „naprawimy później”. Razem jesteśmy studiem."],"shop_candy":["Wszystko jest tu lepkie. Ale miłe.","Lizak jest wyższy ode mnie. Marzenie spełnione.","Nie liż ścian. Mówię to też sobie."],"shop_gold":["Świeci tak, że widzę iskry.","Złoto jest zimne, ale nastrój ciepły.","Kasjer nosi ciemne okulary, żeby nie oślepnąć. Prawda!"],"shop_ice":["Brr! Ale tak pięknie, jak w bajce.","Spadł sopel. Nie na mnie, dzięki Bogu.","Zniżki tu się nie topią. Są zamrożone!"],"shop_wood":["Pachnie żywicą i ciepłem. Jak las.","Drewniana chatka stoi mocno. Jak ja.","Skrzyp-skrzyp. To dobrze. To przytulnie!"],"shop_garden":["Na dachu rosną kwiaty. Kto je podlewa?","Mieszka tu pszczoła. Już się przyjaźnimy.","Sklep-ogród: spaceruj i kupuj. Wygodnie."],"shop_xmas":["Światełka mrugają. Ja też chcę mrugać.","Pod choinką na pewno coś leży. Nie patrzę... patrzę.","Sklep pachnie mandarynkami. Marzenie!"],"shop_halloween":["Ktoś chodzi po strychu. To nie ja, słowo.","Dynia uśmiecha się szerzej niż ja.","Cukierek czy psikus? Wybieram cukierek."],"shop_spring":["Wiosna przyszła! Nawet do kasy.","Płatki na dachu. Jak słodko.","Ptaki śpiewają, a klienci się uśmiechają."],"shop_autumn":["Liście na dachu szeleszczą jak myszka.","Ciepło, przytulnie, pachnie jabłkami.","Jesień w sklepie jest jak uścisk."],"weather_rainbow":["Tęcza! Patrz, patrz! Ach, zniknęła.","Tyle kolorów, że przestałam liczyć.","Gdzieś pod nią kryje się garnek ciasteczek."],"weather_lightning":["Bum! Było głośno, ale ładnie.","Błyskawica jest fioletowa. Podoba mi się.","Chowam uszy pod czapką. Na wszelki wypadek."],"weather_lightninggreen":["Zielona błyskawica! Na pewno magia.","Bum-bum! Czemu nie czerwona?","Ktoś tam na górze bawi się neonem."],"weather_lightningred":["Czerwona błyskawica! Serce mi podskoczyło.","Jest tak jasna, że mrużę oczy.","Niebo jest złe, ale w ładny sposób."],"weather_cottoncloud":["Chmura z waty cukrowej. Kto ją nadgryzł?","Chcę się tam wspiąć i uciąć drzemkę. Jest słodko!","Karmelowy deszcz, ktoś chętny?"],"weather_goldcloud":["Złota chmura! Czasem spadają z niej monety.","Niebo też postanowiło zarabiać. Dobra robota.","Spójrz w górę. Może ci się poszczęści!"],"weather_starcloud":["Gwiazdy w chmurach migoczą. Pomyślę życzenie.","Chmura mieni się. Chcę ten kapelusz.","Cii, cii... Słyszysz, jak śpiewa?"],"hero_party":["Impreza codziennie! Konfetti w każdej kieszeni.","Pomocnicy w imprezowych czapeczkach. Sam sen.","Zatańczymy? Kasa może poczekać."],"hero_ninja":["Ktoś przebiegł? Nie? To byli ninja.","Cisi jak cień. Mówią, że to nasza specjalność.","Nie widziałam ich. I nie zobaczę. Dobra robota."],"hero_chef":["Pachnie bułeczkami. Kto gotuje?","Pomocnicy-kucharze nakarmią klientów i mnie.","Tylko nie jedzcie towaru. Mówię to też sobie."],"hero_wizard":["Pomocnicy rzucają zaklęcia! Kolejka skraca się sama.","Szaty mrugają, a ja się uśmiecham.","Magiczna różdżka w kieszeni? Naucz też mnie!"],"hero_royal":["Pomocnicy w koronach. Wasza Wysokość, kasa jest tam!","Król z kiełbasą? To następny poziom.","Królewski zespół pracuje bez dni wolnych."],"hero_santa":["Pakują prezenty tak szybko, że nie nadążam.","Czerwone czapki wszędzie. Święta nadeszły!","Ho-ho, to nie żart, to zespół!"],"hero_witch":["Małe wiedźmy latają między półkami. Mam nadzieję, że nikogo nie trafią.","Kapelusze są spiczaste. Nie podchodź zbyt blisko.","Eliksir na szybką obsługę. Przydatny!"],"street_brick":["Ceglana droga. Dokąd prowadzi? Do kasy!","Miło się po niej chodzi. Każda cegła jest prosta.","Droga jest czerwona. Jak teraz moje policzki."],"street_wood":["Deski skrzypią pod łapkami. Przytulnie!","Drewniana ścieżka pachnie lasem.","Skrzyp-skrzyp. Jakby ktoś szedł. A, to ja."],"street_leaves":["Chrup-chrup! Mój ulubiony jesienny dźwięk.","Liście pod łapkami: dywan ciemnego złota.","Ktoś rozsypał liście. Dzięki, dobra duszo!"],"street_snow":["Śnieg! Nie, nie jedz go. Ja też się powstrzymuję.","Łapki mam zimne, serce ciepłe.","Chrup-chrup. Śnieg to też muzyka."],"street_moss":["Mech jest miękki jak dywan. Idę się położyć.","Omszały bruk pamięta wiele historii.","W szczelinie rośnie kwiatek. Nie nadepnij na niego!"],"street_gold":["Złota droga! Chociaż nie z rubinów.","Idę, a pod łapkami skrzy się. Miło.","Cegła z monet. Nie dotykam, nie moja."],"capy_ep8":["Kimono piękne, sandały uwierają. Piękno wymaga poświęceń.","Kapelusz jest jak lampion: nic nie widzę, ale jest przytulnie.","Smok do mnie mrugnął. A może to wiatr.","Herbata, ryż i sakura: życie jest piękne."]},
   tour: {"shop":["m","To jest Sklep. Tutaj stukasz, wzmacniasz stuknięcie i rozbudowujesz sklep. Naciśnij!"],"departments":["n","Działy zarabiają monety same, nawet gdy cię nie ma. Naciśnij!"],"team":["m","W Zespole zatrudniasz zwierzaki-pomocników. Każdy pomaga po swojemu."],"story":["n","Dziennik: rozdziały historii i opowieści epok. Można je przeczytać ponownie."],"skins":["m","Skórki: zmieniaj wygląd Capy, sklepu i bohaterów za kryształy."],"seasons":["n","Pory roku i pora dnia. Kłódka otwiera się po 2. epoce."],"achievements":["m","Nagrody: czekają tu nagrody za twoje osiągnięcia."],"settings":["n","Ustawienia: język, dźwięk, przeglądarka epok i animacje."],"news":["m","A to jest skrzynka twórców! Są tam wieści o aktualizacjach i możesz do nas napisać. Otwórz!"],"end":["m","To wszystko! Stukaj sklep i rozwijaj go. Zawsze jesteśmy w pobliżu!"],"endBtn":"GRAJ!","skip":"Pomiń wprowadzenie"},
   cut: {"hi":"Hej!","intro":["Dawno, dawno temu","Capy żyła w pikselowym świecie…"],"introN":["Dawno,","dawno temu Capy","żyła w","pikselowym świecie…"],"p1":"Wow... Mam monetę!","b1":"Pierwsza moneta? To potrzebujesz sklepu!","c2":"Sklepu?","b2":"Nawet jedna moneta może urosnąć w biznes!","b3":"Patrz uważnie!","b4":"Teraz twoja kolej.","c5":"Co mam robić?","b5":"Spróbuj stuknąć!","hint":"STUKNIJ SKLEP","click":"STUKNIJ!","b6":"Im więcej zarabiasz, tym bardziej możesz rozbudować sklep!","b7":"Rozwijaj sklep, zarabiaj monety i odblokowuj nowe epoki!","w1":"ULEPSZAJ.","w2":"STUKAJ.","w3":"ROŚNIJ.","i1":"STUKNIĘCIE","i2":"MONETY","i3":"ULEPSZENIE","i4":"POZIOM","skip":"Pomiń","m1":"Cześć! Jestem Mel,","n1":"a ja jestem Nika. Jesteśmy twórcami!","m2":"Pokażemy, jak to wszystko działa. Zaczynamy?","go":"JAZDA!","tuk":"TAK!"},
-  about: {"mast":"O NAS","lead":"Cześć, przyjacielu!","newH":"Co nowego","new":"Nowi bohaterowie zespołu: Spike, Zoya i cała reszta w pięknym nowym wyglądzie, w strojach epok i skórkach pasujących do ulicy. Chodnik zmienia się teraz płynnie po wybraniu skórki, a więcej klientów przechodzi całą ulicą. Wszystkie przejścia są płynniejsze, a skórki pogody ożyły.","intro":["Jesteśmy MEL i NIKA i zrobiliśmy tę grę sami, piksel po pikselu.","Capy zaczyna z jedną monetą i malutkim sklepikiem na rogu. Twoje zadanie: rozwinąć go w prawdziwe centrum handlowe i podróżować przez całe epoki."],"nextH":"Co dalej","next":"Przed tobą 8 epok: od Renesansu do Neonu. Podróżuj w czasie, a twój sklep stanie się czymś większym…","giftH":"Prezent","gift":"Odbierz prezent od twórców: +100 monet","giftDone":"Prezent już odebrany. Dzięki za grę!","writeH":"Kontakt","write":"Błąd albo pomysł? Naciśnij „Napisz do twórców” poniżej: czytamy wszystko.","toast":"+100 monet od twórców!","paper":"WIEŚCI OD TWÓRCÓW · "},
+  about: {"mast":"O NAS","lead":"Cześć, przyjacielu!","newH":"Co nowego","new":"Nowi bohaterowie zespołu: Spike, Zoe i cała reszta w pięknym nowym wyglądzie, w strojach epok i skórkach pasujących do ulicy. Chodnik zmienia się teraz płynnie po wybraniu skórki, a więcej klientów przechodzi całą ulicą. Wszystkie przejścia są płynniejsze, a skórki pogody ożyły.","intro":["Jesteśmy MEL i NIKA i zrobiliśmy tę grę sami, piksel po pikselu.","Capy zaczyna z jedną monetą i malutkim sklepikiem na rogu. Twoje zadanie: rozwinąć go w prawdziwe centrum handlowe i podróżować przez całe epoki."],"nextH":"Co dalej","next":"Przed tobą 8 epok: od Renesansu do Neonu. Podróżuj w czasie, a twój sklep stanie się czymś większym…","giftH":"Prezent","gift":"Odbierz prezent od twórców: +100 monet","giftDone":"Prezent już odebrany. Dzięki za grę!","writeH":"Kontakt","write":"Błąd albo pomysł? Naciśnij „Napisz do twórców” poniżej: czytamy wszystko.","toast":"+100 monet od twórców!","paper":"WIEŚCI OD TWÓRCÓW · "},
   guide: {"head":"Porady","sub":"Kilka wskazówek, by grać łatwiej i rosnąć szybciej.","items":[["💰 Jak szybciej się wzbogacić","<ul class=\"np-list\"><li>Zatrudnij jeża Spike’a jak najwcześniej. Kosztuje tylko 100 monet, a każde stuknięcie staje się 1,5 raza silniejsze.</li><li>Przycisk MAKS w Działach kupuje tyle, na ile pozwalają pieniądze. Nie trzeba naciskać Kup dwadzieścia razy.</li><li>Patrz na pasek u góry ekranu. Zawsze pokazuje następny cel, na przykład „Kup «Świece i Zapałki»: 7/25”.</li></ul>","tipRich"],["🏪 Jak się rozwijać","<ul class=\"np-list\"><li>Aby rozbudować sklep, potrzebujesz trzech rzeczy: kupić wymagane działy, ulepszyć zwierzaki i zebrać monety. Warunki są na karcie Działy, w bloku Rozbudowa.</li><li>Każdy nowy poziom sklepu daje ×2 do całego dochodu, więc rozbudowuj przy pierwszej okazji.</li></ul>","tipGrow"],["🎁 Darmowe bonusy","<ul class=\"np-list\"><li>Minigry bonusowe: parkiet w epoce Disco, wózek z makaronem dziadka Ryo w Japonii i chatka wiedźmy na Halloween. To tam wygrywa się skórki.</li><li>Cyrk Fortuny daje kryształy i bonusy, więc nie mijaj namiotu obojętnie.</li><li>Nagrody za osiągnięcia. Zajrzyj na kartę z pucharem, czekają tam nagrody.</li><li>Zdarzenia na ulicy. Czerwony „!”, sowa lub szop pojawiają się tylko na chwilę. Stuknij w porę, a dostaniesz bonus.</li></ul>","tipFree"],["⏳ Na przyszłość","Podróż w czasie resetuje sklep, ale daje odłamki czasu, nową epokę i stały bonus do dochodu. Nie bój się jej: następna runda idzie dużo szybciej.","clock"]]},
   soon: {"head":"Wkrótce","sub":"Nad czym pracujemy. Jeszcze nie wyszło, ale już prawie.","items":[["Więcej epok bonusowych","Japonia jest już w grze. Kolejne epoki bonusowe w drodze, każda z własną animacją podróży, historią, pomocnikiem, gościem i latającymi dekoracjami."],["Wersje do sklepów z aplikacjami","Przygotowujemy wersje gry na telefony i komputery do sklepów z aplikacjami."]]},
   sec: {"news":"O nas","guide":"Porady","soon":"Wkrótce"}
@@ -35587,7 +35727,7 @@ installLang("pt", {
     "newDepts": "Novos departamentos: {0}",
     "offlineTitle": "Bem-vindo de volta!",
     "offlineText": "Enquanto você esteve fora, a loja rendeu",
-    "offlineCoins": "{0} moedas 💤",
+    "offlineCoins": "{0} {0|moeda|moedas} 💤",
     "offlineBtn": "Coletar",
     "adOfflineBtn": "🎬 ×2: ver um vídeo",
     "adPrivacyBtn": "Opções de privacidade de anúncios",
@@ -35696,8 +35836,8 @@ installLang("pt", {
     "ch4_5": "No bolso, o relógio fez tique-taque baixinho, como se piscasse. Parece que não foi a última vez.",
     "ch5_title": "Novos Colegas",
     "ch5_0": "A loja virou um supermercado. A rua inteira fala da Capy e novos trabalhadores batem à porta. Os que conseguiram, bateram.",
-    "ch5_1": "Sou o Bodya, construtor. Ouvi dizer que vocês estão ampliando. Precisam de tábuas? Mando a conta separada. E outra, por educação.",
-    "ch5_2": "Zoya. Eu vendo tudo o que não está pregado. E o que está pregado, só mais devagar. Me dê uma vitrine e ela começa a falar.",
+    "ch5_1": "Sou o Bodie, construtor. Ouvi dizer que vocês estão ampliando. Precisam de tábuas? Mando a conta separada. E outra, por educação.",
+    "ch5_2": "Zoe. Eu vendo tudo o que não está pregado. E o que está pregado, só mais devagar. Me dê uma vitrine e ela começa a falar.",
     "ch5_3": "Hu-hu. Sou a Sonia, contadora. Trabalho à noite, de dia só pisco. Alguém precisa contar essas moedas antes que fujam.",
     "ch5_4": "Tonya, segurança. Estou chegando. Logo estarei aí. Mas não vou deixar ninguém passar.",
     "ch5_5": "Entrem, amigos. Agradeço por terem vindo. De verdade.",
@@ -35748,7 +35888,7 @@ installLang("pt", {
     "saleStart": "Promoção. Renda ×{0} por 2 minutos. Aproveite antes que todo mundo acorde.",
     "raccoonStart": "O guaxinim Shnyr pegou um saco. Corra atrás dele: toque nele.",
     "raccoonWin": "Pegou! O Shnyr largou o saco: +{0}.",
-    "raccoonLose": "O Shnyr fugiu e roubou {0} moedas.",
+    "raccoonLose": "O Shnyr fugiu e roubou {0} {0|moeda|moedas}.",
     "raccoonFriend": "O Shnyr só estava brincando e fugiu. Não roubou nada.",
     "tonyaScared": "A Tonya espantou o guaxinim logo na entrada.",
     "shnyrSay_0": "He-he, é meu.",
@@ -36023,9 +36163,9 @@ installLang("pt", {
     "dailyAllDone": "As três concluídas: +1 💎 recebido",
     "dailyDoneToast": "Missão diária concluída! Resgate o cristal na aba de conquistas.",
     "dailyGot": "Cristal +{0} 💎",
-    "daily_taps": "Toque na loja {0} vezes",
+    "daily_taps": "Toque na loja {0} {0|vez|vezes}",
     "daily_depts": "Compre departamentos: {0}",
-    "daily_team": "Melhore os bichinhos: {0} vezes",
+    "daily_team": "Melhore os bichinhos: {0} {0|vez|vezes}",
     "daily_catch": "Pegue bichinhos ou fantasmas: {0}",
     "daily_vip": "Pegue clientes dourados: {0}",
     "daily_earn": "Ganhe moedas: {0}",
@@ -36054,7 +36194,7 @@ installLang("pt", {
     "tab_workshop": "Oficina",
     "tab_seasons": "Estações",
     "setTimeTitle": "🕓 Hora do dia",
-    "tab_achievements": "Conquistas",
+    "tab_achievements": "Troféus",
     "tab_settings": "Ajustes",
     "statEpoch": "Era",
     "epoch_0": "Renascimento",
@@ -36182,10 +36322,10 @@ installLang("pt", {
     "achName_chapters": "Leitor",
     "achName_holidays": "Espírito de Festa",
     "achName_hours": "Comerciante Dedicado",
-    "achDesc_taps": "Toque na loja {0} vezes",
-    "achDesc_earned": "Ganhe {0} moedas no total",
+    "achDesc_taps": "Toque na loja {0} {0|vez|vezes}",
+    "achDesc_earned": "Ganhe {0} {0|moeda|moedas} no total",
     "achDesc_level": "Amplie a loja até o nível {0}",
-    "achDesc_deptsBought": "Compre {0} departamentos",
+    "achDesc_deptsBought": "Compre {0} {0|departamento|departamentos}",
     "achDesc_milestones": "Alcance metas de departamentos: {0}",
     "achDesc_teamEver": "Conheça bichinhos na sua equipe: {0}",
     "achDesc_teamMax": "Melhore um bichinho até o nível {0}",
@@ -36332,14 +36472,14 @@ installLang("pt", {
     "letterTitle": "Uma carta de {0}",
     "letterBtn": "Resgatar bônus",
     "letter_spike": "Oi, chefe. Achei um centavo a mais no caixa e pensei em você na hora. Não pergunte de quem é. Aqui está um bônus dos correios.",
-    "letter_zoya": "É a Zoya. Bolei uma promoção: quem ler esta carta ganha um bônus. Você. Não precisa agradecer, só me recomende.",
+    "letter_zoya": "É a Zoe. Bolei uma promoção: quem ler esta carta ganha um bônus. Você. Não precisa agradecer, só me recomende.",
     "letter_bodya": "Bodie. Construí uma caixa de correio e mandei a primeira carta. O bônus vai preso como prego em tábua: firme e sem palavras demais.",
     "letter_sonia": "Hu-hu. Fiz as contas: você merece um bônus. Os livros fecham, não precisa conferir. Você vai conferir mesmo assim.",
     "letter_leo": "O plano: você lê esta carta, ganha um bônus, todo mundo sai ganhando. Fechado? Vou considerar o silêncio como concordância.",
     "letter_pao": "É a Pao. A carta traz bambu e sorte. Os descontos acabaram, mas o bônus é de verdade.",
     "letterBoost_income": "Renda ×{0} por {1} min",
     "letterBoost_tap": "Toque ×{0} por {1} min",
-    "letterBoost_coins": "+{0} moedas",
+    "letterBoost_coins": "+{0} {0|moeda|moedas}",
     "letterBoost_wheel": "O circo está a caminho!",
     "letterBoost_sale": "Promoção ×2 por 2 minutos!",
     "letterBoost_crystal": "Cristal +1 💎",
@@ -36471,10 +36611,10 @@ installLang("pt", {
     "good_7_10": "Praça de Comida de Rua",
     "good_7_11": "Show de Hologramas",
     "team_spike_cold_0": "As moedas nos meus espinhos estão congeladas. Contar agora é frio e tilintante.",
-    "team_spike_cold_1": "A Zoya amarrou um cachecol em um dos meus espinhos. O resto vai ter que se virar.",
+    "team_spike_cold_1": "A Zoe amarrou um cachecol em um dos meus espinhos. O resto vai ter que se virar.",
     "team_spike_cold_2": "No inverno só a parte da caixa debaixo da minha pata fica quente.",
     "team_bodya_cold_0": "As tábuas cantam na geada. Ninguém pediu, mas parece uma orquestra.",
-    "team_bodya_cold_1": "O Mikhas trouxe caixotes que cheiram a neve. Vou pôr perto do fogão para acordarem.",
+    "team_bodya_cold_1": "O Mikey trouxe caixotes que cheiram a neve. Vou pôr perto do fogão para acordarem.",
     "team_bodya_cold_2": "Sonho com uma oficina com lareira. Os planos existem, num guardanapo de chá.",
     "team_zoya_cold_0": "A geada desenha padrões na vitrine. É concorrência, e é bonita.",
     "team_zoya_cold_1": "Minhas orelhas congelaram, mas meu humor é cor-de-rosa. Uma touca ajudaria, rosa também.",
@@ -36498,7 +36638,7 @@ installLang("pt", {
     "team_leo_cold_1": "A eficiência caiu a zero grau Celsius. Isso também é uma métrica, aliás.",
     "team_leo_cold_2": "Agasalhem-se, equipe. Não é conselho, é indicador-chave de desempenho.",
     "team_pao_cold_0": "O bambu congelou. Não é tendência, é desastre, e já estou escrevendo o anúncio.",
-    "team_pao_cold_1": "Novo slogan: \"Compre um cachecol, ganhe calor\". A Zoya já quer comissão.",
+    "team_pao_cold_1": "Novo slogan: \"Compre um cachecol, ganhe calor\". A Zoe já quer comissão.",
     "team_pao_cold_2": "Sonho com tangerinas e um cobertor. E com outra pessoa pagando pelo cobertor.",
     "team_murzyk_cold_0": "Minhas patas congelaram no teclado. Tudo bem, digito com duas, o resto espera.",
     "team_murzyk_cold_1": "Fios no inverno são frágeis como meus nervos. Melhor não mexer em nenhum dos dois.",
@@ -36578,6 +36718,17 @@ installLang("pt", {
     "privacyBtn": "Política de privacidade",
     "reportBtn": "Copiar relatório",
     "reportCopied": "Relatório copiado!",
+    "iapBuyTitle": "Comprar o pacote",
+    "iapBuyText": "“{0}” faz parte de um pacote pago. Preço: {1}. Você paga uma vez e as skins ficam para sempre.",
+    "iapBuyYes": "Comprar",
+    "iapThanks": "Obrigado! O pacote já é seu.",
+    "iapPending": "O pagamento ainda está em andamento. A skin aparece assim que o Google confirmar.",
+    "iapFail": "As compras não estão disponíveis agora. Tente mais tarde.",
+    "iapNoPrice": "Não foi possível obter o preço. Verifique a conexão e tente novamente.",
+    "iapRestore": "Restaurar compras",
+    "iapRestored": "Compras restauradas.",
+    "iapNothing": "Nenhuma compra nesta conta.",
+    "errRepeat": "Algo deu errado, mas o jogo continua. Se notar algo estranho, reinicie. O relatório está nas Configurações.",
     "reportManual": "Selecione o texto e copie manualmente.",
     "shnyrPerk": "Bônus do Shnyr: ele mesmo pega os clientes dourados, e eles aparecem um quarto mais vezes.",
     "shnyrCatch": "O Shnyr pegou um cliente dourado!",
@@ -37286,15 +37437,15 @@ installLang("pt", {
     "team_spike_say_8": "À noite sonho com um cofre. Ele sorri. Acordo feliz.",
     "team_spike_say_9": "O Leo quer um relatório. Eu disse: \"O relatório está no caixa\". Ele assentiu. Não entendeu.",
     "team_spike_hire": "A caixa é minha. Não toque.",
-    "team_bodya_say_0": "Um dia vou construir uma represa. Uma de verdade, com placa: \"Construída por Bodya\".",
-    "team_bodya_say_1": "O Mikhas carrega caixotes diante das minhas escadas. Eu acabei de alinhá-los. Agora mesmo!",
+    "team_bodya_say_0": "Um dia vou construir uma represa. Uma de verdade, com placa: \"Construída por Bodie\".",
+    "team_bodya_say_1": "O Mikey carrega caixotes diante das minhas escadas. Eu acabei de alinhá-los. Agora mesmo!",
     "team_bodya_say_2": "Eu tenho as plantas. Por enquanto estão na minha cabeça. E um pouco num guardanapo.",
     "team_bodya_say_3": "Uma tábua rangeu e já sei: é a errada. Minhas costas confiam mais em mim que a régua.",
     "team_bodya_say_4": "Todo mundo diz \"construtor\". Eu também desenho plantas bonitas. Ninguém pergunta.",
     "team_bodya_say_5": "Uma vez tive a tábua perfeita. Não faço ideia de onde foi parar. Talvez o Toma saiba.",
     "team_bodya_say_6": "Uma prateleira torta não é erro. É uma inclinação para o que os clientes gostam.",
     "team_bodya_say_7": "Ouviu como a rua zumbe? Isso não é barulho. É um projeto de obra.",
-    "team_bodya_say_8": "Amo madeira. Ela não discute. Diferente do Mikhas.",
+    "team_bodya_say_8": "Amo madeira. Ela não discute. Diferente do Mikey.",
     "team_bodya_say_9": "A Kria acabou de encerar o chão. Agora sou um castor, não um patinador.",
     "team_bodya_hire": "Cadê algo para quebrar? Quer dizer, construir.",
     "team_zoya_say_0": "Sonho com a minha própria vitrine. Rosa suave. Para até a caixa ter um astral.",
@@ -37321,7 +37472,7 @@ installLang("pt", {
     "team_tonya_hire": "Estou aqui. Quase. Logo.",
     "team_mikhas_say_0": "Eu sonhava com uma colmeia. Virei carregador. O mel ainda está por perto, então tudo bem.",
     "team_mikhas_say_1": "O Toma lembra onde está cada coisa. Eu lembro que é pesado. Boa dupla.",
-    "team_mikhas_say_2": "O Bodya constrói, eu carrego. Seria ótimo se alguém também dissesse \"cuidado\".",
+    "team_mikhas_say_2": "O Bodie constrói, eu carrego. Seria ótimo se alguém também dissesse \"cuidado\".",
     "team_mikhas_say_3": "Um caixote nunca pergunta se estou cansado. Por isso eu o amo.",
     "team_mikhas_say_4": "Não pergunte o que tem na caixa. Eu também não pergunto. Fica mais tranquilo assim.",
     "team_mikhas_say_5": "Tem mel no estoque. Não pergunte de onde. Não é meu.",
@@ -37353,7 +37504,7 @@ installLang("pt", {
     "team_kria_say_9": "Todo esfregão tem nome. O meu se chama Zinaida. Não pergunte.",
     "team_kria_hire": "Chão, prepare-se. Estou chegando.",
     "team_zhuzha_say_0": "Um dia vão me convidar para a semana de moda. Já escolhi o chapéu. Só falta o convite.",
-    "team_zhuzha_say_1": "A Zoya vende, eu estilizo. Juntas somos quase um negócio.",
+    "team_zhuzha_say_1": "A Zoe vende, eu estilizo. Juntas somos quase um negócio.",
     "team_zhuzha_say_2": "O Murzyk me aconselhou a \"usar algo feito de fios\". Agradeci e fui embora.",
     "team_zhuzha_say_3": "Não é vermelho. É \"fogo numa lanterna\". Ouviu a diferença? Ninguém ouve.",
     "team_zhuzha_say_4": "Cachecol e chapéu juntos? Não. Eu tentei. Foi ruim. Muito ruim.",
@@ -37381,7 +37532,7 @@ installLang("pt", {
     "team_pao_say_4": "Inventei uma hashtag ontem. Já são três curtidas. Duas são minhas, uma é da mamãe.",
     "team_pao_say_5": "Minha pose no cartaz é a melhor. Outras poses rejeitadas.",
     "team_pao_say_6": "Distribuí vinte panfletos hoje. Dezenove voltaram. Isso é popularidade.",
-    "team_pao_say_7": "A Zoya leva meus cartazes para a vitrine. Eu não contei que não estão prontos.",
+    "team_pao_say_7": "A Zoe leva meus cartazes para a vitrine. Eu não contei que não estão prontos.",
     "team_pao_say_8": "Sonho com um outdoor em todo o quarteirão. Ou pelo menos no telhado.",
     "team_pao_say_9": "Chá de bambu é o meu favorito. Eu sorvo alto. Pelo clima.",
     "team_pao_hire": "Olá. Trouxe cartazes.",
@@ -37397,12 +37548,12 @@ installLang("pt", {
     "team_murzyk_say_9": "Se as luzes apagarem, não fui eu. Muito provavelmente.",
     "team_murzyk_hire": "Não encostei em nada. Ainda.",
     "team_toma_say_0": "Memória de elefante não é metáfora. Por isso eu me lembro do que você preferiria esquecer.",
-    "team_toma_say_1": "O Mikhas carrega, eu anoto. Ele não gosta quando eu anoto.",
+    "team_toma_say_1": "O Mikey carrega, eu anoto. Ele não gosta quando eu anoto.",
     "team_toma_say_2": "Sonho com um estoque onde nada se perde. Um pouco se perde. A ratinha sabe.",
     "team_toma_say_3": "Quem mexeu nos caixotes? Eu lembro quem foi. Não vou contar. Ainda.",
     "team_toma_say_4": "A tromba é a melhor régua. Meço tudo com ela, até humores.",
     "team_toma_say_5": "Numa terça às 14h32 alguém disse \"depois\". Muitas terças se passaram. Estou esperando.",
-    "team_toma_say_6": "O estoque é o meu templo. O Mikhas é o único que deixo tocar nos caixotes.",
+    "team_toma_say_6": "O estoque é o meu templo. O Mikey é o único que deixo tocar nos caixotes.",
     "team_toma_say_7": "A ratinha voltou ao estoque. Eu a conheço pelo nome. Ela também sabe o meu.",
     "team_toma_say_8": "Inventário é amor medido em caixas. Eu amo muito.",
     "team_toma_say_9": "Não conte a ninguém, mas eu me lembro de tudo, e isso cansa.",
@@ -37505,7 +37656,7 @@ installLang("pt", {
   skin: {"weather_aurora":["Olhe! O céu está dançando.","Luzes verdes no mercado. Como um conto de fadas.","É noite, mas está tão claro. Dava para ver até de manhã.","Dizem que são pedacinhos do sol. Que ideia bonita."],"capy_pirate":["O papagaio roubou meu biscoito de novo. Traidor!","Cadê o tesouro? Ah, é a caixa.","Iô-hô-hô... ah, olá, queridos clientes!","Tapa-olho colocado. Agora só enxergo descontos."],"capy_astro":["Houston, vocês estão sentindo cheiro de pãezinhos?","Tão silencioso no capacete... só eu e meus pensamentos. Ah, um cliente!","Gravidade zero é quando ninguém pede \"mais um desconto\".","Um pequeno toque para a Capy, um lucro gigante para a loja."],"capy_wizard":["Abra-ca-dabra... não, essa não. Já lembro, um segundo.","A barba cresce sozinha. Eu não fiz nada. Quase.","Perdi minha varinha. Pelo menos meus nervos ainda estão aqui.","As estrelas do meu manto estão piscando. Ou estou imaginando."],"capy_chef":["Está cheirando bem. Não sou eu, são os vizinhos!","Chapéu grande, colher maior. Viu?","O chef aconselha: não coma a mercadoria. A escolha foi feita.","Sal, pimenta e um pouco de paciência. Esse é todo o segredo."],"capy_explorer":["Tem algo interessante depois daquela esquina. Ou um gato.","O binóculo olha para cima, eu procuro biscoitos.","A mochila é pesada, mas tem três sanduíches!","O mapa diz norte. Nós vamos para o sul. Desculpe."],"capy_santa":["Ho-ho-ho! Alguém aqui se comportou bem. Sem nomes.","O saco está vazio. Dei tudo... para mim mesma.","A barba faz cócegas. Deveria?","Todo dia é um pouquinho de Natal quando se veste vermelho!"],"capy_witch":["A vassoura está no conserto. Agora voo na esperança.","A abóbora nas minhas costas me encara. Eu a encaro de volta.","A poção está pronta! Só esqueci o que tem nela.","Brrr! Alguém sussurrou \"desconto\"?"],"capy_flower":["Uma borboleta pousou nas minhas costas. Psiu, ninguém se mexa.","Flores cheiram a primavera. E eu cheiro a flores. Que bom!","A coroa de flores escorregou um pouco. Até gostei.","As abelhas já perguntaram se podem morar aqui."],"capy_beach":["Eu quero o mar. Mas pelo menos aqui tem a sombra da loja.","A bola nas minhas costas não foge. Eu fujo, para a praia!","Óculos escuros, humor brilhante.","Uma limonada, por favor. Com gelo. E guarda-chuvinha!"],"capy_autumn":["O cachecol é tão comprido que eu tropeço nele.","As folhas farfalham, eu tenho café. Manhã perfeita.","O outono cheira a canela. Ou sou eu?","Uma blusa quente é como um abraço. Um pouco áspero."],"capy_ep0":["Boina de lado, pena para cima. Agora sou uma artista.","Este lírio no meu manto não é simples. É caro!","Um alaúde toca em algum lugar. Apareça, quem quer que seja!","Sou toda Renascimento. E você?"],"capy_ep1":["O rádio pega uma onda só. Tudo bem!","O C é de \"Super Capy\". Eu inventei.","Uma bola de chiclete... ah, estourou.","A jaqueta é velha, o astral é novo."],"capy_ep2":["A bola de espelhos está brilhando! Eu brilho um pouquinho também.","Óculos grandes, e vejo tudo. Até quem não paga.","Meus pés estão pedindo uma dança!","Brilha, brilha, mais um brilho!"],"capy_ep3":["Fase concluída! Próxima: uma caixa vazia.","Um controle no meu peito. Para decisões rápidas.","Uma volta de moeda e é +1 vida.","Meus fones tocam música 8 bits. Um clássico!"],"capy_ep4":["Meu celular está com 1%. Meu humor está em 100!","Achei Wi-Fi! Agora a vida pode continuar.","A mochila está cheia de adesivos. Quarenta e seis curtidas.","Ninguém me seguiu. Mas não me ofendo."],"capy_ep5":["O broto na minha mochila cresceu um centímetro. Que orgulho!","As árvores crescem, e nós ajudamos.","Uma jaqueta de garrafas velhas. Nova, mas com história!","Respire fundo. Aqui é quase uma floresta."],"capy_ep6":["Silêncio... só eu e as estrelas. Ah, a caixa está chamando.","O capacete embaçou porque estou feliz!","Eu gosto de gravidade zero. Os biscoitos não caem.","O foguete está esperando. Eu estou esperando clientes."],"capy_ep7":["O neon pisca e eu sorrio nervosa.","Minha viseira brilha, mas enxergo pior. Ah, o estilo!","A cidade à noite é como um show de luzes.","Meus tênis também brilham. Ando como uma lanterna."],"capy_knight":["Minha espada é afiada, meus preços são honestos. Pelo menos hoje.","Capacete grande, só meu nariz aparece. Prático!","Enquanto estou de armadura, ninguém me incomoda. Um sonho.","Quem está incomodando os clientes? Recue, estou pronta!"],"capy_hero":["A capa esvoaça, eu não. Situação sob controle.","Meu superpoder: achar biscoitos a três metros de distância.","A máscara está um pouco apertada, mas heróis são assim.","Alguém gritou? Calma, já estou indo!"],"capy_cowboy":["Há lei nesta cidade. E a lei diz: compre.","Meu chapéu escorrega sobre os olhos. Mantendo o equilíbrio.","O xerife está na rua. Silêncio!","O lenço cheira a poeira e aventura."],"capy_fairy":["Minhas asas fazem cócegas quando eu rio. Hi-hi.","Uma pitada de magia, e o dia fica mais brilhante.","A coroa mal se segura nas minhas orelhas. Isso é normal?","Eu realizo todos os desejos. Menos \"um desconto ainda maior\"."],"capy_viking":["O elmo de chifres enrosca na porta. De novo.","O escudo é forte, eu sou macia. Equilíbrio!","Ao abordar... quer dizer, à cozinha. O jantar está lá.","Uma viking barbada quer um abraço. Quem topa?"],"capy_pilot":["Meus óculos embaçaram. Voando às cegas, mas com amor.","Cachecol comprido, asas curtas. Eu me viro.","Apertem os cintos! Um pouco de turbulência à frente.","O pouso é macio como um pãozinho."],"capy_mel":["Eu sou o Mel. Uma raposa. E não, não vou virar capivara, já perguntaram.","A Nika diz que tenho ideias demais. Ela ainda não viu minhas anotações.","Este jogo começou com um pixel e uma noite em claro. O pixel ainda está aqui.","Quando algo pisca errado, eu digo \"é de propósito\". A Nika finge acreditar.","O café da Nika é a melhor correção de bug. Não sei explicar, mas funciona.","Às vezes abro o jogo e vejo coisas que nunca escrevi. Foi você ou a Nika?","A cauda é fofa, e os prazos são ainda mais fofos.","Obrigado por jogar. Sinceramente, o melhor momento do meu dia de trabalho."],"capy_nika":["Eu sou a Nika. Eu pulo quando estou nervosa. E fico nervosa com bastante frequência.","O Mel confunde toque e clique de novo. Não o corrijo. É a nossa tradição.","Não vou dar minha cenoura a ninguém. Nem ao Mel. Principalmente ao Mel.","Às vezes desenho, às vezes programo, às vezes só balanço as orelhas. Tudo isso é trabalho.","Este jogo é sobre uma cidade onde você gostaria de morar. E um pouco sobre capivaras.","Laço no lugar, orelhas no lugar, ideia no lugar. Só o café acabou.","Vejo que você está aqui há um tempo. Quantos dias já são? Obrigada por eles.","O Mel me chama de perfeccionista. Eu o chamo de \"a gente corrige depois\". Juntos somos um estúdio."],"shop_candy":["Tudo é grudento aqui. Mas é gostoso.","O pirulito é mais alto que eu. Sonho realizado.","Não lamba as paredes. Estou dizendo isso a mim mesma também."],"shop_gold":["Brilha tanto que vejo faíscas.","O ouro é frio, mas o astral é quente.","O caixa usa óculos escuros contra o ofuscamento. É verdade!"],"shop_ice":["Brrr! Mas tão lindo, como um conto de fadas.","Caiu um pingente de gelo. Não em mim, graças a Deus.","Aqui os descontos não derretem. Estão congelados!"],"shop_wood":["Cheira a resina e calor. Como uma floresta.","A cabana de madeira se mantém firme. Como eu.","Crec-crec. Isso é bom. Isso é aconchegante!"],"shop_garden":["Flores crescem no telhado. Quem as rega?","Uma abelha mora aqui. Já somos amigas.","Uma loja-jardim: passeie e compre. Prático."],"shop_xmas":["As luzes piscam. Eu também quero piscar.","Com certeza tem algo debaixo da árvore. Eu não estou olhando... estou olhando.","A loja cheira a tangerinas. Um sonho!"],"shop_halloween":["Alguém está andando no sótão. Não sou eu, juro.","A abóbora sorri mais largo que eu.","Doce ou travessura? Eu escolho o doce."],"shop_spring":["A primavera chegou! Até na caixa.","Pétalas no telhado. Que fofura.","Os pássaros cantam e os clientes sorriem."],"shop_autumn":["Folhas no telhado farfalham como um ratinho.","Quentinho, aconchegante, cheira a maçãs.","O outono numa loja é como um abraço."],"weather_rainbow":["Um arco-íris! Olha, olha! Ah, sumiu.","Tantas cores que parei de contar.","Em algum lugar debaixo dele se esconde um pote de biscoitos."],"weather_lightning":["Bum! Foi alto, mas bonito.","O raio é roxo. Eu gosto.","Mantendo as orelhas sob o boné. Por precaução."],"weather_lightninggreen":["Raio verde! Definitivamente é mágica.","Bum-bum! Por que não vermelho?","Alguém lá em cima está brincando com neon."],"weather_lightningred":["Raio vermelho! Meu coração pulou.","É tão brilhante que eu aperto os olhos.","O céu está bravo, mas de um jeito bonito."],"weather_cottoncloud":["Uma nuvem de algodão-doce. Quem deu uma mordida?","Quero subir lá e tirar uma soneca. É doce!","Chuva de caramelo, alguém quer?"],"weather_goldcloud":["Uma nuvem dourada! Às vezes caem moedas dela.","O céu resolveu lucrar também. Bom trabalho.","Olhe para cima. Talvez você tenha sorte!"],"weather_starcloud":["As estrelas nas nuvens estão cintilando. Fazendo um pedido.","A nuvem cintila. Quero aquele chapéu.","Psiu, psiu... Você ouve ela cantando?"],"hero_party":["Festa todo dia! Confete em cada bolso.","Ajudantes de chapéu de festa. Só um sonho.","Vamos dançar? A caixa pode esperar."],"hero_ninja":["Alguém passou correndo? Não? Então foram os ninjas.","Silenciosos como uma sombra. Dizem que isso é nosso.","Eu não os vi. E não vou ver. Bom trabalho."],"hero_chef":["Cheira a pãezinhos. Quem está cozinhando?","Os ajudantes chefs vão alimentar os clientes e a mim.","Só não comam a mercadoria. Estou dizendo isso a mim mesma."],"hero_wizard":["Os ajudantes estão lançando feitiços! A fila encolhe sozinha.","As túnicas piscam, e eu sorrio.","Uma varinha mágica no bolso? Me ensine também!"],"hero_royal":["Ajudantes de coroa. Vossa Majestade, a caixa é por ali!","Um rei com uma salsicha? Isso é o próximo nível.","A equipe real trabalha sem folga."],"hero_santa":["Eles embrulham presentes tão rápido que não acompanho.","Gorros vermelhos por toda parte. As festas chegaram!","Ho-ho, isso não é piada, é uma equipe!"],"hero_witch":["Bruxinhas voam entre as prateleiras. Espero que ninguém seja atingido.","Os chapéus são pontudos. Não chegue muito perto.","Uma poção para atendimento rápido. Útil!"],"street_brick":["Uma estrada de tijolos. Aonde leva? À caixa!","Bom de pisar. Cada tijolo está reto.","A estrada é vermelha. Como as minhas bochechas agora."],"street_wood":["As tábuas rangem sob as minhas patas. Aconchegante!","Um caminho de madeira cheira a floresta.","Crec-crec. Como se alguém estivesse vindo. Ah, sou eu."],"street_leaves":["Crec-crec! Meu som favorito do outono.","Folhas sob as patas: um tapete de ouro escuro.","Alguém espalhou folhas. Obrigada, alma gentil!"],"street_snow":["Neve! Não, não coma. Eu também me seguro.","Minhas patas estão frias, meu coração está quente.","Crec-crec. A neve também é música."],"street_moss":["O musgo é macio como um tapete. Vou me deitar.","Paralelepípedos com musgo guardam muitas histórias.","Uma florzinha cresce na fresta. Não pise nela!"],"street_gold":["Uma estrada dourada! Mas não é feita de rubis.","Eu ando e ela cintila sob as minhas patas. Que bom.","Um tijolo feito de moedas. Não vou tocar, não é meu."],"capy_ep8":["O quimono é lindo, as sandálias apertam. A beleza exige sacrifício.","O chapéu é como uma lanterna: não enxergo, mas é aconchegante.","O dragão piscou para mim. Ou talvez tenha sido o vento.","Chá, arroz e sakura: a vida é boa."]},
   tour: {"shop":["m","Esta é a Loja. Aqui você toca, melhora seu toque e amplia a loja. Toque aqui!"],"departments":["n","Os departamentos ganham moedas sozinhos, mesmo quando você está fora. Toque!"],"team":["m","Na Equipe você contrata bichinhos ajudantes. Cada um ajuda do seu jeito."],"story":["n","Diário: capítulos da história e histórias das eras. Você pode relê-los."],"skins":["m","Skins: mude o visual da Capy, da loja e dos heróis por cristais."],"seasons":["n","Estações e hora do dia. O cadeado abre após a 2ª era."],"achievements":["m","Conquistas: prêmios esperam aqui por seus feitos."],"settings":["n","Ajustes: idioma, som, visualização de eras e animações."],"news":["m","E esta é a caixa de correio dos desenvolvedores! Lá estão as novidades das atualizações, e você pode escrever para nós. Abra!"],"end":["m","É só isso! Toque na loja e faça-a crescer. Estamos sempre por perto!"],"endBtn":"JOGAR!","skip":"Pular tour"},
   cut: {"hi":"Oi!","intro":["Era uma vez,","a Capy vivia num mundo de pixels…"],"introN":["Era uma","vez, a Capy","vivia num","mundo de pixels…"],"p1":"Uau... Eu tenho uma moeda!","b1":"Uma primeira moeda? Então você precisa de uma loja!","c2":"Uma loja?","b2":"Até uma única moeda pode virar um negócio!","b3":"Observe bem!","b4":"Agora é a sua vez.","c5":"O que eu faço?","b5":"Tente tocar!","hint":"TOQUE NA LOJA","click":"TOQUE!","b6":"Quanto mais você ganha, mais pode ampliar a sua loja!","b7":"Amplie a loja, ganhe moedas e desbloqueie novas eras!","w1":"MELHORE.","w2":"TOQUE.","w3":"CRESÇA.","i1":"TOQUE","i2":"MOEDAS","i3":"MELHORIA","i4":"NÍVEL","skip":"Pular","m1":"Oi! Eu sou o Mel,","n1":"e eu sou a Nika. Nós somos os desenvolvedores!","m2":"Vamos mostrar como tudo funciona. Vamos começar?","go":"VAMOS LÁ!","tuk":"TAQUE!"},
-  about: {"mast":"SOBRE NÓS","lead":"Oi, amigo!","newH":"O que há de novo","new":"Novos heróis da equipe: Spike, Zoya e todos os outros com um visual novo e lindo, trajes de cada era e skins que combinam com a rua. A calçada agora muda suavemente ao escolher uma skin, e mais clientes percorrem a rua inteira. Todas as transições ficaram mais suaves e as skins de clima ganharam vida.","intro":["Somos MEL e NIKA, e fizemos este jogo nós mesmos, pixel por pixel.","A Capy começa com uma moeda e uma lojinha minúscula na esquina. Sua missão: transformá-la num verdadeiro shopping e viajar por eras inteiras."],"nextH":"O que vem por aí","next":"Pela frente há 8 eras: do Renascimento ao Neon. Viaje no tempo, e sua loja se tornará algo maior…","giftH":"Um presente","gift":"Resgate o presente dos desenvolvedores: +100 moedas","giftDone":"Presente já resgatado. Obrigado por jogar!","writeH":"Contato","write":"Encontrou um bug ou tem uma ideia? Toque em \"Escrever para os desenvolvedores\" abaixo: lemos tudo.","toast":"+100 moedas dos desenvolvedores!","paper":"NOVIDADES DOS DESENVOLVEDORES · "},
+  about: {"mast":"SOBRE NÓS","lead":"Oi, amigo!","newH":"O que há de novo","new":"Novos heróis da equipe: Spike, Zoe e todos os outros com um visual novo e lindo, trajes de cada era e skins que combinam com a rua. A calçada agora muda suavemente ao escolher uma skin, e mais clientes percorrem a rua inteira. Todas as transições ficaram mais suaves e as skins de clima ganharam vida.","intro":["Somos MEL e NIKA, e fizemos este jogo nós mesmos, pixel por pixel.","A Capy começa com uma moeda e uma lojinha minúscula na esquina. Sua missão: transformá-la num verdadeiro shopping e viajar por eras inteiras."],"nextH":"O que vem por aí","next":"Pela frente há 8 eras: do Renascimento ao Neon. Viaje no tempo, e sua loja se tornará algo maior…","giftH":"Um presente","gift":"Resgate o presente dos desenvolvedores: +100 moedas","giftDone":"Presente já resgatado. Obrigado por jogar!","writeH":"Contato","write":"Encontrou um bug ou tem uma ideia? Toque em \"Escrever para os desenvolvedores\" abaixo: lemos tudo.","toast":"+100 moedas dos desenvolvedores!","paper":"NOVIDADES DOS DESENVOLVEDORES · "},
   guide: {"head":"Dicas","sub":"Algumas dicas para jogar com mais facilidade e crescer mais rápido.","items":[["💰 Como enriquecer mais rápido","<ul class=\"np-list\"><li>Contrate o ouriço Spike o quanto antes. Ele custa só 100 moedas, e cada toque fica 1,5 vez mais forte.</li><li>O botão MÁX em Departamentos compra tanto quanto o seu dinheiro permitir. Não precisa tocar em Comprar vinte vezes.</li><li>Observe a faixa no topo da tela. Ela sempre mostra a próxima meta, por exemplo \"Compre \"Velas e fósforos\": 7/25\".</li></ul>","tipRich"],["🏪 Como crescer","<ul class=\"np-list\"><li>Para ampliar a loja você precisa de três coisas: comprar os departamentos necessários, melhorar os bichinhos e juntar moedas. As condições estão na aba Departamentos, no bloco Ampliação.</li><li>Cada novo nível da loja dá ×2 em toda a renda, então amplie na primeira oportunidade.</li></ul>","tipGrow"],["🎁 Bônus grátis","<ul class=\"np-list\"><li>Minijogos bônus: a pista de dança na era Disco, a carrocinha de macarrão do vovô Ryo no Japão e a cabana da bruxa no Halloween. É lá que se ganham skins.</li><li>O circo da fortuna dá cristais e bônus, então não passe direto pela tenda.</li><li>Recompensas de conquistas. Olhe a aba com a taça, há prêmios esperando lá.</li><li>Eventos na rua. O \"!\" vermelho, uma coruja ou um guaxinim aparecem só por um instante. Toque a tempo e ganhe um bônus.</li></ul>","tipFree"],["⏳ Para o futuro","A viagem no tempo reinicia a loja, mas dá fragmentos de tempo, uma nova era e um bônus permanente de renda. Não tenha medo dela: a próxima rodada fica muito mais rápida.","clock"]]},
   soon: {"head":"Em breve","sub":"No que estamos trabalhando. Ainda não saiu, mas está quase.","items":[["Mais eras bônus","O Japão já está no jogo. Mais eras bônus estão chegando, cada uma com sua própria animação de viagem, história, ajudante, convidado e decorações voadoras."],["Versões para lojas de aplicativos","Estamos preparando versões do jogo para celulares e computadores nas lojas de aplicativos."]]},
   sec: {"news":"Sobre nós","guide":"Dicas","soon":"Em breve"}

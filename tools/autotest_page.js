@@ -202,6 +202,57 @@
   await check('збереження: старі версії', () => {
     for (const v of [1, 5, 9, 12, 14, 15]) { const d = migrateSave({ v, state: createDefaultState() }); if (d.v !== CONFIG.SAVE_VERSION) throw new Error('міграція з v' + v + ' не дійшла до кінця'); }
   }, 50);
+  await check('збереження: поля, яких не було в старому файлі', () => {
+    const base = createDefaultState(), keys = Object.keys(base);
+    for (const k of keys) {                                       // без кожного поля окремо: гра має взяти значення за замовчуванням
+      const old = JSON.parse(JSON.stringify(base)); delete old[k];
+      const fresh = createDefaultState(); mergeInto(fresh, migrateSave({ v: CONFIG.SAVE_VERSION, state: old }).state);
+      if (base[k] !== undefined && fresh[k] === undefined) throw new Error('поле ' + k + ' зникло після завантаження');
+    }
+    for (let v = 1; v < CONFIG.SAVE_VERSION; v++) {               // усі старі версії з порожнім мінімумом
+      const d = migrateSave({ v, state: JSON.parse(JSON.stringify(base)) });
+      if (d.v !== CONFIG.SAVE_VERSION) throw new Error('міграція з v' + v + ' не дійшла до кінця');
+      const fresh = createDefaultState(); mergeInto(fresh, d.state);
+      for (const k of keys) if (base[k] !== undefined && fresh[k] === undefined) throw new Error('v' + v + ': зникло поле ' + k);
+    }
+  }, 50);
+  await check('оплати: купівля, повернення грошей, цирк і код збереження', async () => {
+    const id = 'capy_pirate', i = SKIN_POOL.indexOf(id), keepMask = state.skinsMask, keepWorn = state.skins.capy;
+    let google = [];
+    const fake = { owned: async () => ({ owned: google.slice() }), getProducts: async () => ({ products: [{ id: 'pack_t', price: '$0.99' }] }), buy: async () => { google = ['pack_t']; return { status: 'ok' }; } };
+    SKIN_PAID[id] = 'pack_t'; state.skinsMask &= ~(1 << i);
+    try {
+      await Iap.init(fake);
+      if (skinOwned(i)) throw new Error('платний скін відкритий без покупки');
+      if (circusFreeSkins('capy').includes(i)) throw new Error('цирк роздає платний скін');
+      if (Iap.priceLabel(id) !== '$0.99') throw new Error('немає ціни: ' + Iap.priceLabel(id));
+      equipSkin('capy', i);
+      const yes = document.querySelector('#confirmYes'); if (!yes) throw new Error('немає вікна покупки');
+      if (document.querySelector('#confirmModal').hidden) throw new Error('вікно покупки не відкрилось');
+      yes.click(); await sleep(150);
+      if (!skinOwned(i)) throw new Error('після покупки скіна немає');
+      if (state.skins.capy !== i) throw new Error('куплений скін не вдягнувся');
+      if (makeExportCode().includes('pack_t') || JSON.stringify(state).includes('pack_t')) throw new Error('покупка потрапила в збереження');
+      google = []; await Iap.refresh();
+      if (skinOwned(i)) throw new Error('після повернення грошей скін лишився');
+      if (state.skins.capy === i) throw new Error('після повернення грошей скін вдягнений');
+      if (document.querySelector('#iapRestoreBtn').hidden) throw new Error('немає кнопки «Відновити покупки»');
+    } finally {
+      delete SKIN_PAID[id]; state.skinsMask = keepMask; state.skins.capy = keepWorn; iapOwned = new Set(); iapKeep(); Iap.testReset(); skinsSig = '';
+      document.querySelector('#confirmModal').hidden = true;
+    }
+    if (!Iap.active && !document.querySelector('#iapRestoreBtn').hidden) throw new Error('кнопка покупок видима на сайті');
+  }, 50);
+  await check('форми множини', () => {
+    const keep = state.lang;
+    try {
+      state.lang = 'uk';
+      const cases = [[1, 'разів', 'раз'], [2, 'разів', 'рази'], [5, 'разів', 'разів'], [11, 'разів', 'разів'], [21, 'разів', 'раз'], ['1,5 тис.', 'разів', 'разів']];
+      for (const [n, , want] of cases) { const s = t('daily_taps', n); if (s.includes('|') || !s.endsWith(' ' + want)) throw new Error('uk ' + n + ': ' + s); }
+      state.lang = 'en'; if (!t('daily_taps', 1).endsWith('1 time') || !t('daily_taps', 3).endsWith('3 times')) throw new Error('en: ' + t('daily_taps', 1));
+      for (const l of ['uk', 'en', 'es', 'it', 'pl', 'pt']) { state.lang = l; if (/\{\d/.test(t('offlineCoins', 3))) throw new Error(l + ': ' + t('offlineCoins', 3)); }
+    } finally { state.lang = keep; }
+  }, 50);
   await check('зірки помічників: 10 прокачувань = зірка, міграція зі старих зірок', () => {
     const d = migrateSave({ v: 16, state: Object.assign(createDefaultState(), { teamStars: TEAM.map((m, i) => (i === 0 ? 2 : 0)) }) });
     if (d.state.teamPlus[0] !== 20 || d.state.teamStars !== undefined) throw new Error('стара зірка не стала 10 прокачуваннями');

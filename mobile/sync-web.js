@@ -31,6 +31,11 @@ let ads = null;
 try { ads = JSON.parse(fs.readFileSync(path.join(__dirname, 'ads.json'), 'utf8')); } catch (e) { /* нема файлу */ }
 if (ads) html = html.replace('</title>', '</title>\n<script>window.__ADS=' + JSON.stringify(ads) + ';</script>');
 console.log('Реклама: ' + (ads ? (ads.testing ? 'ТЕСТОВИЙ режим' : 'ЖИВІ ID') : 'немає'));
+// Оплати Google Play: лише коли є mobile/iap.json (див. iap.example.json, store/PLAY_PAYMENTS.md). Без нього застосунок без оплат.
+let iap = null;
+try { iap = JSON.parse(fs.readFileSync(path.join(__dirname, 'iap.json'), 'utf8')); } catch (e) { /* нема файлу */ }
+if (iap) html = html.replace('</title>', '</title>\n<script>window.__IAP=' + JSON.stringify(iap) + ';</script>');
+console.log('Оплати: ' + (iap ? 'УВІМКНЕНО (' + (iap.products || []).length + ' товарів)' : 'немає'));
 const www = path.join(__dirname, 'www');
 fs.mkdirSync(path.join(www, 'fonts'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'docs', 'fonts', 'PressStart2P-Regular.ttf'), path.join(www, 'fonts', 'PressStart2P-Regular.ttf'));

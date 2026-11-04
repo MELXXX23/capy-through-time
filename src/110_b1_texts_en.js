@@ -66,7 +66,7 @@
 
     offlineTitle: 'Welcome back!',
     offlineText: 'While you were away, the shop earned',
-    offlineCoins: '{0} coins 💤',
+    offlineCoins: '{0} {0|coin|coins} 💤',
     offlineBtn: 'Collect',
     adOfflineBtn: '🎬 ×2: watch a video',
     adPrivacyBtn: 'Ad privacy options',

@@ -63,7 +63,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'New team heroes: Spike, Zoya and everyone else in a beautiful new look, with era costumes and street-matching skins. The pavement now changes smoothly when you pick a skin, and more customers walk the whole street. All transitions are smoother and the weather skins came alive.',
+    newH: 'What is new', new: 'New team heroes: Spike, Zoe and everyone else in a beautiful new look, with era costumes and street-matching skins. The pavement now changes smoothly when you pick a skin, and more customers walk the whole street. All transitions are smoother and the weather skins came alive.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',

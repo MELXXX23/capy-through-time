@@ -154,6 +154,7 @@ function refreshTeamPortraits() {
 }
 function equipSkin(type, i) {
   if (i >= 0 && !skinOwned(i)) {
+    if (SKIN_PAID[SKIN_POOL[i]]) { Iap.offer(type, i); return; }                                   // платний скін: покупка через Google Play
     if (/^capy_ep\d$/.test(SKIN_POOL[i])) { showToast(t('skinOtherEpoch'), 'bad'); return; }      // скін епохи не продається: він вдягається сам у своїй епосі
     if (state.crystals < SKIN_PRICE) { showToast(t('skinNoCrystals', SKIN_PRICE), 'bad'); return; }
     askConfirm(t('skinBuyTitle'), t('skinBuyText', skinName(i), SKIN_PRICE, state.crystals), t('skinBuyYes'), () => {
@@ -267,6 +268,7 @@ function updateSkinsUI() {
       nm.textContent = (SKIN_SEASON[SKIN_POOL[o.i]] ? SKIN_SEASON[SKIN_POOL[o.i]] + ' ' : '') + (o.i === -2 ? t('skinEpoch', t('epoch_' + (viewEpoch() % EPOCHS.length))) : o.i < 0 ? t('skinDefault') : skinName(o.i));
       const st = document.createElement('span'); st.className = 'skin-state';
       st.textContent = o.i === -2 ? (worn ? '✓ ' + t('skinWorn') : '↩ ' + t('skinBackToEpoch')) : o.i < 0 ? (worn ? '✓ ' + t('skinWorn') : '') : !owned ? (/^capy_ep\d$/.test(SKIN_POOL[o.i]) ? t('skinOtherEpoch') : t('skinBuy', SKIN_PRICE)) : worn ? '✓ ' + t('skinWorn') : t('skinWear');
+      if (!owned && o.i >= 0 && SKIN_PAID[SKIN_POOL[o.i]]) st.textContent = Iap.priceLabel(SKIN_POOL[o.i]);
       if (!owned && o.i >= 0) { st.prepend(lockImg('lock')); b.appendChild(lockImg('lock-badge')); }
       b.append(nm, st);
       b.addEventListener('click', () => equipSkin(type, o.i));
@@ -370,6 +372,13 @@ function setupProgression() {
     if (!npDrag) return; const dx = e.clientX - npDrag.x, dy = e.clientY - npDrag.y; npDrag = null;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) npGo(dx < 0 ? 1 : -1);
     else if (Math.abs(dx) < 8 && Math.abs(dy) < 8 && !e.target.closest('button')) { const r = ui.npPaper.getBoundingClientRect(); npGo(e.clientX > r.left + r.width * 0.5 ? 1 : -1); }
+  });
+  document.addEventListener('keydown', e => {                       // Esc закриває верхнє вікно (клавіатура на ПК)
+    if (e.key !== 'Escape' || e.target.closest('input,textarea')) return;
+    for (const [m, b] of [['confirmModal', 'confirmNo'], ['lootModal', 'lootClose'], ['soundModal', 'soundClose'], ['feedbackModal', 'fbCancel'], ['circusModal', 'circusClose']]) {
+      const M = document.getElementById(m), B = document.getElementById(b);
+      if (M && !M.hidden) { if (B && !B.hidden) B.click(); return; }
+    }
   });
   document.addEventListener('keydown', e => { if (ui.newsModal.hidden || !ui.fbModal.hidden || e.target.closest('input,textarea')) return; if (e.key === 'ArrowRight') npGo(1); else if (e.key === 'ArrowLeft') npGo(-1); else if (e.key === 'Escape') closeNews(); });
   ui.siLater.addEventListener('click', () => { ui.siModal.hidden = true; });

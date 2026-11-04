@@ -224,4 +224,10 @@ body.no-anim .skin-item.skin-pop .skin-prev, body.no-anim .skin-item.skin-pop::a
 .btn, .tab, .buy-mode { transition: transform .12s ease, filter .12s ease, background-color .18s ease, box-shadow .18s ease; }
 @media (prefers-reduced-motion: reduce) { .fxGhost, .pane:not([hidden]), #app.sheet-open #tabContent { animation: none !important; } }
 body.no-anim .fxGhost, body.no-anim .pane:not([hidden]), body.no-anim #app.sheet-open #tabContent { animation: none !important; }
+/* Телефон у горизонталі: газета й відгук уміщаються (р. 77). Кнопки в газеті й призі — зручні для пальця. Вкладки на 320 — у два рядки. */
+@media (max-height: 460px) { .np-paper { height: min(56dvh, 620px); } }
+#feedbackModal .modal-box { max-height: 94dvh; overflow-y: auto; }
+#npPrev, #npNext { min-width: 36px; min-height: 36px; }
+#lootWear, #lootClose { min-height: 36px; }
+@media (max-width: 340px) { .tab.secondary .tab-name { white-space: normal; text-overflow: clip; line-height: 1.15; overflow-wrap: anywhere; } }
 </style>

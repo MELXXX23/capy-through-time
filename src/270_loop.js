@@ -12,6 +12,7 @@ let animClock = 0;
 let frameErrN = 0;
 function frameErr(e) {
   if (frameErrN++ < 3) { logErr('frame', e && e.message, '', 0, 0, e && e.stack); console.error('frame: ' + (e && e.message)); }
+  if (frameErrN === 30) { try { showToast(t('errRepeat'), 'bad'); } catch (e2) { /* нічого */ } }   // збій повторюється: один раз кажемо гравцю, що робити
 }
 function frame(now) {
   try { frameStep(now); } catch (e) { frameErr(e); }

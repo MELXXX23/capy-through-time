@@ -1,0 +1,22 @@
+# Перевірка кожного push: гра збирається, у скриптах немає синтаксичних помилок, файл не зламаний.
+name: Перевірка збірки
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'tools/build.js', '.github/workflows/check.yml']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Зібрати game.html (build.js сам перевіряє синтаксис)
+        run: node tools/build.js
+      - name: Файл гри не порожній і містить збереження
+        run: |
+          size=$(wc -c < game.html)
+          test "$size" -gt 1000000
+          grep -q "capyThroughTime_save" game.html

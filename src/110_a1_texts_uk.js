@@ -75,7 +75,7 @@ const translations = {
     // Офлайн
     offlineTitle: 'З поверненням!',
     offlineText: 'Поки тебе не було, магазин заробив',
-    offlineCoins: '{0} монеток 💤',
+    offlineCoins: '{0} {0|монетка|монетки|монеток} 💤',
     offlineBtn: 'Забрати',
     adOfflineBtn: '🎬 ×2: подивитись ролик',
     adPrivacyBtn: 'Параметри реклами',

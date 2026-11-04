@@ -6,11 +6,15 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.Plugin;
 
 public class MainActivity extends BridgeActivity {
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
+        // Оплати є лише в збірці з mobile/iap.json (src/iap/java); без них цього класу просто немає
+        try { registerPlugin((Class<? extends Plugin>) Class.forName("com.capy.capytapmarket.CapyBillingPlugin")); } catch (ClassNotFoundException e) { /* збірка без оплат */ }
         super.onCreate(savedInstanceState);
         // Великий шрифт у налаштуваннях телефона не має ламати розкладку гри
         getBridge().getWebView().getSettings().setTextZoom(100);

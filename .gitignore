@@ -6,6 +6,7 @@ desktop/dist-*/
 mobile/node_modules/
 mobile/www/
 mobile/ads.json
+tools/layouts_last.txt
 *.jks
 *.keystore
 *.aab

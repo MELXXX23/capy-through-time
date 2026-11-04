@@ -27,7 +27,15 @@ function skinGrant(i) { if (i < 32) state.skinsMask |= (1 << i); else if (i < 64
 const SKINS_FREE_BUILD = false;   // прапорець збірки: для exe його ставить desktop/prepare.js
 const SKINS_FREE = (SKINS_FREE_BUILD && !GOD_PAUSED) || GOD_ON;          // скіни відкриваються виграшем у цирку або купівлею
 const SKIN_PRICE = 50;             // символічна ціна скіна в кристалах
+// Платні скіни (лише Android, 275_iap): скін → товар у Google Play. Нові скіни додавати в КІНЕЦЬ SKIN_POOL. Цирк їх не роздає, кристалами не купуються.
+const SKIN_PAID = {};
+const IAP_ALL = 'pack_all';           // товар «усі набори разом»
+let iapOwned = new Set();
+try { iapOwned = new Set(JSON.parse(localStorage.getItem('capyIapOwned') || '[]')); } catch (e) { /* немає копії */ }
+function iapKeep() { try { localStorage.setItem('capyIapOwned', JSON.stringify([...iapOwned])); } catch (e) { /* нічого */ } }
+function iapHas(id) { const p = SKIN_PAID[id]; return !!p && (iapOwned.has(p) || iapOwned.has(IAP_ALL)); }
 function skinOwned(i) {
+  if (SKIN_PAID[SKIN_POOL[i]]) return iapHas(SKIN_POOL[i]) || SKINS_FREE;
   if (SKIN_POOL[i] === 'capy_mel' || SKIN_POOL[i] === 'capy_nika') return true;                  // скіни розробників MEL і NIKA — подарунок усім
   const m = /^capy_ep(\d)$/.exec(SKIN_POOL[i]);
   if (m) return +m[1] === viewEpoch() % EPOCHS.length;      // скін епохи можна вдягнути лише в його власній епосі
