@@ -57,7 +57,7 @@ function islandCanvas(w, v) {                                      // літаю
       px(cx + ox + x, oy + y, gr[q < 0.18 ? 0 : q < 0.4 ? 1 : q < 0.62 ? 2 : q < 0.82 ? 3 : 4]);
     }
   };
-  const trunk = (ox, h2) => { g.fillStyle = '#3c2a22'; g.fillRect(cx + ox - 1, ty - h2, 3, h2 + 1); g.fillStyle = '#8a5e3a'; g.fillRect(cx + ox - 1, ty - h2, 1, h2 + 1); };
+  const trunk = (ox, h2) => { const tx = Math.floor(cx + ox - 1); g.fillStyle = '#3c2a22'; g.fillRect(tx, ty - h2, 3, h2 + 1); g.fillStyle = '#8a5e3a'; g.fillRect(tx, ty - h2, 1, h2 + 1); };
   if (v === 0) { trunk(-4, 11); crown(-4, ty - 17, 9); crown(3, ty - 12, 6); }
   else if (v === 1) { trunk(-6, 9); crown(-6, ty - 14, 7); crown(5, ty - 5, 5); crown(11, ty - 3, 3); }
   else { trunk(-8, 8); crown(-8, ty - 12, 6); trunk(4, 10); crown(4, ty - 16, 8); }
@@ -125,8 +125,9 @@ function noteCanvas(c, g) {                                         // нота-
   else { head(sx, by); bp(sx + 3, by - 19, 2, 19, hex); bp(sx + 3, by - 19, 1, 19, mixHex(hex, '#ffffff', 0.5)); head(sx, by); }
   const id = b.getImageData(0, 0, W, H).data, solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && id[(y * W + x) * 4 + 3] > 40;
   // м'яке сяйво, потім контур, потім заливка
-  const grd = q.createRadialGradient(W / 2, H / 2, 2, W / 2, H / 2, 17); grd.addColorStop(0, mixHex(hex, '#ffffff', 0.4).replace('rgb', 'rgba').replace(')', ',0.5)')); grd.addColorStop(1, 'rgba(255,255,255,0)');
-  q.fillStyle = grd; q.fillRect(0, 0, W, H);
+  q.fillStyle = mixHex(hex, '#ffffff', 0.4);
+  [[16, 0.14], [12, 0.18]].forEach(([r, al]) => { q.globalAlpha = al; for (let dy = -r; dy <= r; dy++) { const hf = Math.round(Math.sqrt(r * r + 0.5 - dy * dy)); q.fillRect((W >> 1) - hf, (H >> 1) + dy, hf * 2, 1); } });
+  q.globalAlpha = 1;
   q.fillStyle = '#2a1f2e';
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!solid(x, y) && (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1) || solid(x - 1, y - 1) || solid(x + 1, y + 1))) q.fillRect(x, y, 1, 1);
   q.drawImage(body, 0, 0);

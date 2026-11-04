@@ -89,7 +89,7 @@ function R(g, x, y, w, h, ch) {
   g.fillRect(x, y, w, h);
 }
 function disc(g, cx, cy, r, ch) {
-  g.fillStyle = PALETTE[ch];
+  g.fillStyle = PALETTE[ch]; cx = Math.round(cx); cy = Math.round(cy);
   for (let dy = -r; dy <= r; dy++) {
     const half = Math.round(Math.sqrt(r * r + 0.5 - dy * dy));
     g.fillRect(cx - half, cy + dy, half * 2 + 1, 1);
@@ -517,7 +517,7 @@ function farSkyline(g, x0, W) {
     const hs = hash2(x + 31, 7), bw = 12 + hs % 14, bh = 14 + (hs >>> 4) % 28;
     switch (ep) {
       case 'renaissance': R(g, x, base - bh, bw, bh, col); R(g, x + (bw >> 1) - 1, base - bh - 8, 3, 8, col); for (let k = 0; k < bw; k += 3) R(g, x + k, base - bh - 2, 2, 2, col); break;
-      case 'retro': R(g, x, base - bh / 2, bw, bh / 2, col); if (hs % 3 === 0) { R(g, x + 2, base - bh / 2 - 7, bw - 4, 7, col); R(g, x + 4, base - bh / 2 - 10, 2, 3, col); } break;
+      case 'retro': { const hh = bh >> 1; R(g, x, base - hh, bw, hh, col); if (hs % 3 === 0) { R(g, x + 2, base - hh - 7, bw - 4, 7, col); R(g, x + 4, base - hh - 10, 2, 3, col); } break; }
       case 'disco': R(g, x, base - bh, bw, bh, col); for (let yy = base - bh + 3; yy < base - 3; yy += 5) for (let k = 2; k < bw - 2; k += 4) R(g, x + k, yy, 2, 2, hash2(k + x, yy) % 3 ? col : 'y'); break;
       case 'arcade': for (let k = 0; k < bh; k++) R(g, x + Math.round(k * bw / (2 * bh)), base - k, Math.max(1, bw - Math.round(k * bw / bh)), 1, col); break;
       case 'internet': R(g, x, base - bh - 10, bw - 3, bh + 10, col); R(g, x + (bw >> 2), base - bh - 16, 1, 6, col); for (let yy = base - bh - 6; yy < base - 3; yy += 6) R(g, x + 2, yy, bw - 7, 2, 'a'); break;

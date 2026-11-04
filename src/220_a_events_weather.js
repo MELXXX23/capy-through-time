@@ -43,7 +43,7 @@ function updateSeasonFx(dt) {
   if (T >= D) { seasonFx.on = false; cv.hidden = true; ui.seasonBanner.hidden = true; return; }
   g.clearRect(0, 0, W, H);
   const a = Math.min(1, T / 0.35) * Math.min(1, (D - T) / 0.75);
-  const F = (x, y, w, h, c, al) => { g.globalAlpha = al === undefined ? 1 : al; g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); g.globalAlpha = 1; };
+  const F = (x, y, w, h, c, al) => { g.globalAlpha = al === undefined ? 1 : al; g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h))); g.globalAlpha = 1; };
   const D2 = (cx, cy, r, c, al) => { g.globalAlpha = al; g.fillStyle = c; for (let dy = -r; dy <= r; dy++) { const hf = Math.round(Math.sqrt(r * r + 0.5 - dy * dy)); g.fillRect(Math.round(cx - hf), Math.round(cy + dy), hf * 2 + 1, 1); } g.globalAlpha = 1; };
   const n = Math.max(30, Math.round(W * H / 260));
   const kind = seasonFx.kind;
@@ -384,7 +384,8 @@ function drawRaccoon() {
   const x = Math.round(r.x), y = Math.round(r.y);
   ctx.globalAlpha = 0.22; R(ctx, x - 8, y, 16, 2, 'd'); ctx.globalAlpha = 1;
   const face = r.vx < 0;
-  drawSprite(ctx, 'npc_shnyr', x - 8, y - 16 - step - hop, { flip: step === 1, sx: 1.35, sy: 1.35 });
+  const shn0 = OUTLINED.test('npc_shnyr') ? getOutlinedCanvas('npc_shnyr') : getSpriteCanvas('npc_shnyr'), shn = evenScaled(shn0, 1.35), shO = OUTLINED.test('npc_shnyr') ? 1 : 0;
+  drawCanvasSprite(ctx, shn, x - 8 - shO + (shn0.width - shn.width) / 2, y - 16 - step - hop - shO + shn0.height - shn.height, { flip: step === 1 });
   if (r.hasSack !== false) {   // мішок із монетами
     const sx = face ? x - 19 : x + 10, sy0 = y - 19 - step - hop;
     R(ctx, sx, sy0, 9, 11, 'l'); R(ctx, sx, sy0, 9, 1, 'c');

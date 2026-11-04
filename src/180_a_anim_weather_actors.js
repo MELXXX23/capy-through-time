@@ -94,6 +94,24 @@ const BIRD_SPECIES = [
   { back: '#4f9ad6', wing: '#3b7ab3', tip: '#27567f', belly: '#ffe08a', head: '#f4f0e0', beak: '#2a1d1a', cap: '#2f6fb0', size: 0.85 }          // синиця
 ];
 const BIRD_FRAMES = 6, birdFrameCache = {};
+// Зменшення піксель-арту «за більшістю кольору»: кожен новий піксель бере найчастіший колір свого шматка (не губить контур, як звичайне зменшення).
+function pxShrink(src, tw, th) {
+  const W = src.width, H = src.height, d = src.getContext('2d').getImageData(0, 0, W, H).data, c = document.createElement('canvas'); c.width = tw; c.height = th; const g = c.getContext('2d');
+  for (let ty = 0; ty < th; ty++) for (let tx = 0; tx < tw; tx++) {
+    const x0 = Math.floor(tx * W / tw), x1 = Math.max(x0 + 1, Math.floor((tx + 1) * W / tw)), y0 = Math.floor(ty * H / th), y1 = Math.max(y0 + 1, Math.floor((ty + 1) * H / th));
+    const cnt = new Map(); let solid = 0, all = 0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { const i = (y * W + x) * 4; all++; if (d[i + 3] > 100) { solid++; const k = (d[i] << 16) | (d[i + 1] << 8) | d[i + 2]; cnt.set(k, (cnt.get(k) || 0) + 1); } }
+    if (solid * 2 < all) continue;
+    let best = 0, bn = -1; cnt.forEach((n, k) => { if (n > bn) { bn = n; best = k; } });
+    g.fillStyle = '#' + best.toString(16).padStart(6, '0'); g.fillRect(tx, ty, 1, 1);
+  }
+  return c;
+}
+const birdSmallCache = {};
+function birdSmall(sp, f) {
+  const key = sp + '|' + f, k = BIRD_SPECIES[sp].size * 0.6;
+  return birdSmallCache[key] || (birdSmallCache[key] = pxShrink(birdFrame(sp, f), Math.round(30 * k), Math.round(26 * k)));
+}
 function birdFrame(sp, f) {                                   // кадр f (0…5) птаха виду sp: дивиться вправо, canvas 30×26
   const key = sp + '|' + f;
   if (birdFrameCache[key]) return birdFrameCache[key];
@@ -153,10 +171,10 @@ function drawBirds() {
   if (vis <= 0.05 || !birds.length) return;
   birds.forEach(b => {
     const S = BIRD_SPECIES[b.sp], f = animOn() ? Math.floor(animClock * b.wing + b.ph) % BIRD_FRAMES : 2;
-    const cv = birdFrame(b.sp, f), dir = b.vx > 0 ? 1 : -1;
+    const cv = birdSmall(b.sp, f), dir = b.vx > 0 ? 1 : -1;
     const y = Math.round(b.y + Math.sin(animClock * 1.3 + b.bob) * 2 + (f === 0 || f === 5 ? 1 : f === 3 ? -1 : 0));
     ctx.globalAlpha = vis;
-    drawCanvasSprite(ctx, cv, Math.round(b.x) - 15, y - 13, { flip: dir < 0, sx: S.size * 0.6, sy: S.size * 0.6 });
+    drawCanvasSprite(ctx, cv, Math.round(b.x) - 15 + Math.round((30 - cv.width) / 2), y - 13 + 26 - cv.height, { flip: dir < 0 });
   });
   ctx.globalAlpha = 1;
 }
@@ -164,8 +182,8 @@ function drawBirds() {
 // Хмара-канвас: купчаста / середня / довга. Темніші, з об'ємом: світла кромка зверху-ліворуч, борозенки між «бульбашками», важка тінь знизу
 const cloudCache = {};
 const CLOUD_SKIN_TINT = { cottoncloud: 'cotton', goldcloud: 'gold', starcloud: 'star', diamondcloud: 'diamond' };     // скіни погоди, що міняють колір хмар
-function cloudCanvas(kind, tint) {
-  const key = kind + '|' + tint;
+function cloudCanvas(kind, tint, big) {
+  const key = kind + '|' + tint + (big ? '|b' : ''), Z = big ? 1.5 : 1;       // велика хмара малюється у власному розмірі, а не розтягується: пікселі того самого розміру, що й усюди
   if (cloudCache[key]) return cloudCache[key];
   const T = {
     '': ['#f4f7fb', '#d6dfec', '#adbacd', '#8795ad', '#66748e'],
@@ -189,20 +207,20 @@ function cloudCanvas(kind, tint) {
     [[11, 14, 9], [22, 10, 10], [33, 13, 9], [17, 16, 9], [27, 16, 8]],
     [[11, 11, 8], [22, 9, 9], [35, 10, 9], [48, 11, 8], [58, 12, 6], [28, 12, 8], [41, 12, 8]]
   ][kind % 3];
-  const W = [64, 44, 68][kind % 3], H = [34, 26, 22][kind % 3], c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
-  const inP = (p, x, y) => (x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]) * 1.2 <= p[2] * p[2];
+  const W = Math.round([64, 44, 68][kind % 3] * Z), H = Math.round([34, 26, 22][kind % 3] * Z), c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  const inP = (p, x, y) => (x - p[0] * Z) * (x - p[0] * Z) + (y - p[1] * Z) * (y - p[1] * Z) * 1.2 <= p[2] * p[2] * Z * Z;
   const BITES = tint === 'cotton' ? [[[45, 9, 6.3], [51, 12, 4.6], [57, 16, 3.8]], null, [[35, 3, 6.5], [41, 5, 4.6], [29, 5, 3.8]]][kind % 3] : null;      // сліди зубів: хмари 0 і 2 надкушені, хмара 1 цілa
-  const inCl = (x, y) => y <= H - 3 && puffs.some(p => inP(p, x, y)) && !(BITES && BITES.some(b => (x - b[0]) * (x - b[0]) + (y - b[1]) * (y - b[1]) <= b[2] * b[2]));
+  const inCl = (x, y) => y <= H - 3 && puffs.some(p => inP(p, x, y)) && !(BITES && BITES.some(b => (x - b[0] * Z) * (x - b[0] * Z) + (y - b[1] * Z) * (y - b[1] * Z) <= b[2] * b[2] * Z * Z));
   let top = H, bot = 0;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (inCl(x, y)) { top = Math.min(top, y); bot = Math.max(bot, y); }
   const litPts = [], starPts = [];                                                  // світлі точки (для мерехтіння золотих хмар) і зорі (для зоряних)
   for (let y = top; y <= bot; y++) for (let x = 0; x < W; x++) {
     if (!inCl(x, y)) continue;
     const v = (y - top) / Math.max(1, bot - top);
-    let sh = v * 0.62 + ((x * 3 + y * 7) % 5 === 0 ? 0.07 : 0) + ((x + y) & 1 ? 0.03 : 0);
+    let sh = v * 0.62;                                                   // чисті смуги тонів, без випадкових крапок
     sh -= inCl(x - 2, y - 2) ? 0 : 0.34;                                   // світла кромка зверху-ліворуч
     sh += inCl(x + 2, y + 2) ? 0 : 0.2;                                    // тінь на нижньо-правому краї
-    puffs.forEach(p => { const d = Math.hypot(x - p[0], (y - p[1]) * 1.1); if (d > p[2] - 1.6 && d <= p[2] && y > p[1] && inCl(x, y + 3)) sh += 0.17; });   // борозенки між «бульбашками»
+    puffs.forEach(p => { const d = Math.hypot(x - p[0] * Z, (y - p[1] * Z) * 1.1); if (d > p[2] * Z - 1.6 && d <= p[2] * Z && y > p[1] * Z && inCl(x, y + 3)) sh += 0.17; });   // борозенки між «бульбашками»
     g.fillStyle = sh < 0.1 ? T[0] : sh < 0.3 ? T[1] : sh < 0.5 ? T[2] : sh < 0.72 ? T[3] : T[4];
     g.fillRect(x, y, 1, 1);
     if (sh < 0.3 && (x * 7 + y * 13) % 9 === 0) litPts.push([x, y]);
@@ -219,7 +237,7 @@ const CLOUD_BY_SEASON = { spring: [1.0, 'white'], summer: [0.35, 'white'], autum
 const cloudCoins = [], starDust = [];
 let cloudCoinT = 2.5;
 function cloudBox(c) {
-  const cv = cloudCanvas(c.kind || 0, ''), sc = c.big ? 1.5 : 1, dw = Math.max(1, Math.round(cv.width * sc)), dh = Math.max(1, Math.round(cv.height * sc));
+  const cv = cloudCanvas(c.kind || 0, ''), bg = c.big ? cloudCanvas(c.kind || 0, '', true) : cv, sc = 1, dw = bg.width, dh = bg.height;
   return { x: Math.round(c.x) + Math.round((cv.width - dw) / 2), y: Math.round(c.y) + Math.round(cv.height - dh), w: dw, h: dh, sc };
 }
 function sparkPlus(x, y, a, col) { ctx.globalAlpha = a; R(ctx, x, y, 1, 1, '#ffffff'); ctx.globalAlpha = a * 0.7; R(ctx, x - 1, y, 3, 1, col); R(ctx, x, y - 1, 1, 3, col); ctx.globalAlpha = 1; }
@@ -227,20 +245,20 @@ function drawCloudsLayer() {
   if (!state.settings.clouds || auroraCalm()) return;
   const sk = skinOn('weather'), tint0 = CLOUD_SKIN_TINT[sk];
   clouds.forEach(c => {
-    const tint = tint0 || c.v || '', sc = c.big ? 1.5 : 1, o = { sx: sc, sy: sc }, cv = cloudCanvas(c.kind || 0, tint);
+    const tint = tint0 || c.v || '', sc = 1, cv = cloudCanvas(c.kind || 0, tint, c.big), bx0 = cloudBox(c);
     if (sk === 'starcloud' && animOn()) {
       const b = cloudBox(c), SPEC = ['star', 'sp_blue', 'star2', 'sp_green', 'sp_gold', 'sp_orange', 'sp_red', 'star3'];
       const u = (((animClock * 0.14 + c.x * 0.0035) % 1) + 1) % 1 * SPEC.length, i0 = Math.floor(u) % SPEC.length, fr = u - Math.floor(u), sm = fr * fr * (3 - 2 * fr);        // повільний перелив усім спектром
       ctx.globalAlpha = 1;
-      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[i0]), Math.round(c.x), Math.round(c.y), o);
-      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[(i0 + 1) % SPEC.length]), Math.round(c.x), Math.round(c.y), { sx: sc, sy: sc, alpha: sm });
-      cloudCanvas(c.kind || 0, 'star').starPts.forEach(([px, py], i) => {                                                                                                          // зорі мерехтять хрестиками
+      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[i0], c.big), bx0.x, bx0.y);
+      drawCanvasSprite(ctx, cloudCanvas(c.kind || 0, SPEC[(i0 + 1) % SPEC.length], c.big), bx0.x, bx0.y, { alpha: sm });
+      cloudCanvas(c.kind || 0, 'star', c.big).starPts.forEach(([px, py], i) => {                                                                                                          // зорі мерехтять хрестиками
         const v = Math.sin(animClock * 2.6 + i * 1.9 + c.x * 0.013); if (v < 0.35) return;
         sparkPlus(b.x + Math.round(px * sc), b.y + Math.round(py * sc), (v - 0.35) / 0.65, '#ffe9a0');
       });
       return;
     }
-    drawCanvasSprite(ctx, cv, Math.round(c.x), Math.round(c.y), o);
+    drawCanvasSprite(ctx, cv, bx0.x, bx0.y);
     if ((sk === 'goldcloud' || sk === 'diamondcloud') && animOn()) {
       const b = cloudBox(c);
       const dia = sk === 'diamondcloud', step = dia ? 2 : 3, thr = dia ? 0.62 : 0.8;      // діамантові: удвічі більше відблисків, довші спалахи, кольорові іскорки

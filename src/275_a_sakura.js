@@ -204,7 +204,7 @@ function drawTreeBed(g, x, season, part) {
 }
 function treeBedBuild(season, part) {
   const W = 42, H = 22, OX = 21, OY = 11, c = document.createElement('canvas'); c.width = W; c.height = H;
-  const g = c.getContext('2d'), px = (x, y, col) => { g.fillStyle = col; g.fillRect(x + OX, y + OY, 1, 1); };
+  const g = c.getContext('2d'), px = (x, y, col) => { g.fillStyle = col; g.fillRect(Math.round(x + OX), Math.round(y + OY), 1, 1); };
   const snow = season === 'winter', RX = 16, RY = 4.2, IX = 13.6, IY = 2.8, CY = -1, FH = 4;
   const inE = (x, y, rx, ry) => ((x + 0.5) / rx) ** 2 + ((y - CY + 0.5) / ry) ** 2 <= 1;
   const S = { out: '#3a2418', top: '#e3cfa6', lit: '#f4e6c4', mid: '#c9ad80', side: '#c07a4c', dark: '#a3613c', joint: '#6e3f26', soil: '#5c3d26', soilD: '#43291a', soilL: '#7a5236' };

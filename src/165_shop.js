@@ -61,6 +61,14 @@ function syncPanelPad() {
   if (Math.abs((parseFloat(ui.stage.style.paddingBottom) || 0) - need) > 1) ui.stage.style.paddingBottom = need + 'px';
 }
 function snapK(k) { const r = Math.round(k); return (r >= 1 && Math.abs(k - r) < 0.13) ? r : k; }       // масштаб ціле число, якщо майже ціле (чіткі пікселі), інакше дробовий: картинка завжди на всю ширину
+// ПК і великі екрани: лише цілий масштаб. Дробовий дає пікселі різної ширини («брудні» лінії), а тут один піксель екрана добре видно.
+// Беремо найближче ціле, що вміщається (kMax). Дробовий лишається тільки в дуже малому вікні, коли менше ціле зробило б сцену дрібнішою більш ніж на третину.
+function snapKInt(k, kMax) {
+  let r = Math.max(1, k >= 1.34 && k < 1.5 ? 2 : Math.round(k));
+  if (r > kMax) r = Math.max(1, Math.floor(kMax));
+  return k / r > 1.34 ? k : r;
+}
+const wantIntK = (dpr, mobile) => dpr < 2 || (!mobile && Math.min(innerWidth, innerHeight) >= 600);       // телефони (щільний екран, затверджені розкладки) не чіпаємо
 function layoutScene() {
   syncPanelPad();
   const W0 = CONFIG.SCENE_W, H0 = CONFIG.SCENE_H;
@@ -85,7 +93,8 @@ function layoutScene() {
     const kSky = availH * dpr * (1 - skyFrac) / (shopH + (H0 - LAYOUT.curbY) + EB + 30);
     const topRelM = Math.min(LAYOUT.horizonY - MAX_HOUSE_H, shop ? LAYOUT.curbY - shop.h - 6 - (shop.level >= 6 ? CLOCK_H : 0) : 999), kHouse = availH * dpr * (1 - (ui.app.classList.contains('sheet-open') ? 0.44 : 0.38)) / (H0 + EB - topRelM);       // і над найвищими будинками лишається небо (з відкритим меню — трохи більше)
     const fitK = shop ? (availW - 2 * 38) * dpr / shop.w : Infinity;                 // магазин цілком, з відступом під стрілки ◀ ▶ з обох боків (раніше впирався в краї екрана)
-    k = snapK(Math.max(1, Math.min(availW * dpr / (want * 0.9), availH * dpr / H1, kSky, kHouse, fitK)));   // можна обрізати до 10%; масштаб дробовий, щоб маркет займав усю ширину й неба було менше
+    k = Math.max(1, Math.min(availW * dpr / (want * 0.9), availH * dpr / H1, kSky, kHouse, fitK));   // можна обрізати до 10%; масштаб дробовий, щоб маркет займав усю ширину й неба було менше
+    k = wantIntK(dpr, true) ? snapKInt(k, Math.min(availH * dpr / H1, fitK)) : snapK(k);
     cropW = availW * dpr / k;                                                      // на всю ширину екрана, без смуг по боках
     offX = Math.max(CONFIG.MOBILE_PAD, Math.ceil((cropW - W0) / 2) + 8);
   } else {
@@ -95,7 +104,8 @@ function layoutScene() {
     const topRel = Math.min(LAYOUT.horizonY - MAX_HOUSE_H, shop ? LAYOUT.curbY - shop.h - 6 - (shop.level >= 6 ? CLOCK_H : 0) : 999); let skyF = shop && shop.level >= 6 ? (pcOpen ? 0.2 : 0.1) : (pcOpen ? 0.4 : 0.28);
     if (Math.min(innerWidth, innerHeight) < 600) skyF += 0.06;       if (state.eid === 8 && shop && shop.level >= 6 && Math.min(innerWidth, innerHeight) < 600) skyF += 0.3;       // Японія, телефон горизонтально: ще більше неба й гори для нічного дракона                       // телефон горизонтально: ще більше неба над будинками
     const kSkyPC = availH * dpr * (1 - skyF) / (H0 + EB - topRel);
-    k = snapK(Math.max(1, Math.min(availW * dpr / CONFIG.MIN_VIEW_W, kH, kW, kSkyPC) * 0.92));       // ПК: трохи менший масштаб, щоб лишалося більше неба і бруківки
+    k = Math.max(1, Math.min(availW * dpr / CONFIG.MIN_VIEW_W, kH, kW, kSkyPC) * 0.92);       // ПК: трохи менший масштаб, щоб лишалося більше неба і бруківки
+    k = wantIntK(dpr, false) ? snapKInt(k, Math.min(availW * dpr / CONFIG.MIN_VIEW_W, kH)) : snapK(k);
     kz = k;
     const visW = Math.min(CONFIG.MAX_VIEW_W, availW * dpr / kz);                     // скільки пікселів сцени вміщується в ширину (дробове)
     offX = Math.max(0, Math.ceil((visW - W0) / 2), Math.ceil((CONFIG.WORLD_W - W0) / 2));        // вулиця завжди широка, видно лише її частину
@@ -226,8 +236,15 @@ function updatePanelToggle() {
 function fitSign() {
   const el = ui.sign, span = ui.signText;
   let size = 9;
+  const dpr = window.devicePixelRatio || 1, over = () => span.offsetHeight > el.clientHeight * 0.92 || span.scrollWidth > el.clientWidth * 0.94;      // з запасом, щоб довгі назви (напр. англійські) не торкались краю вивіски
+  if (dpr < 1.75) {                                                // ПК: лише чіткі розміри шрифту (1/8 розміру = ціла кількість пікселів екрана)
+    let cell = Math.max(1, Math.floor(9 * sceneUnit * dpr / 8));
+    el.style.fontSize = (cell * 8 / dpr) + 'px';
+    while (cell > 1 && over()) { cell = cell === 2 ? 1.5 : cell === 1.5 ? 1 : cell - 1; el.style.fontSize = (cell * 8 / dpr) + 'px'; }
+    return;
+  }
   el.style.fontSize = (size * sceneUnit) + 'px';
-  while (size > 3 && (span.offsetHeight > el.clientHeight * 0.92 || span.scrollWidth > el.clientWidth * 0.94)) {         // з запасом, щоб довгі назви (напр. англійські) не торкались краю вивіски
+  while (size > 3 && over()) {
     size -= 0.5;
     el.style.fontSize = (size * sceneUnit) + 'px';
   }

@@ -102,6 +102,16 @@ function spacePlanets() {
 }
 // Диско: великі прожектори на щоглах за будинками. Стоять на місці у світі (рухаються разом із камерою), кожен має три промені, що гойдаються й блимають різними кольорами
 const DISCO_COLS = ['f', 'T', 'y', 'N', 'p', 'j'];
+function pxTri(g, x0, y0, x1, y1, x2, y2) {                      // трикутник без згладжування: цілими рядками
+  const top = Math.ceil(Math.min(y0, y1, y2)), bot = Math.floor(Math.max(y0, y1, y2));
+  const ed = (y, ax, ay, bx, by, m) => { if ((ay <= y && by > y) || (by <= y && ay > y)) { const v = ax + (y - ay) * (bx - ax) / (by - ay); if (v < m[0]) m[0] = v; if (v > m[1]) m[1] = v; } };
+  const m = [0, 0];
+  for (let y = top; y <= bot; y++) {
+    m[0] = 1e9; m[1] = -1e9;
+    ed(y, x0, y0, x1, y1, m); ed(y, x1, y1, x2, y2, m); ed(y, x2, y2, x0, y0, m);
+    if (m[1] >= m[0]) { const a = Math.round(m[0]); g.fillRect(a, y, Math.max(1, Math.round(m[1]) - a), 1); }
+  }
+}
 function discoLamps(time) {
   const W = worldR() - worldL(), n = Math.max(4, Math.round(W / 170)), a0 = 0.16 + 0.22 * sky.night, on = animOn();
   for (let k = 0; k < n; k++) {
@@ -113,8 +123,8 @@ function discoLamps(time) {
       const idx = Math.floor((on ? time * 1.3 : 0) + k + b * 2) % DISCO_COLS.length, blink = on ? Math.floor(time * 2.2 + ph + b * 1.7) % 4 !== 0 : true;
       if (!blink) continue;
       ctx.globalAlpha = a0; ctx.fillStyle = PALETTE[DISCO_COLS[idx]];
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(ang - 0.12) * len, y + Math.sin(ang - 0.12) * len); ctx.lineTo(x + Math.cos(ang + 0.12) * len, y + Math.sin(ang + 0.12) * len); ctx.closePath(); ctx.fill();
-      ctx.globalAlpha = a0 * 0.9; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(ang - 0.04) * len, y + Math.sin(ang - 0.04) * len); ctx.lineTo(x + Math.cos(ang + 0.04) * len, y + Math.sin(ang + 0.04) * len); ctx.closePath(); ctx.fill();
+      pxTri(ctx, x, y, x + Math.cos(ang - 0.12) * len, y + Math.sin(ang - 0.12) * len, x + Math.cos(ang + 0.12) * len, y + Math.sin(ang + 0.12) * len);
+      ctx.globalAlpha = a0 * 0.9; pxTri(ctx, x, y, x + Math.cos(ang - 0.04) * len, y + Math.sin(ang - 0.04) * len, x + Math.cos(ang + 0.04) * len, y + Math.sin(ang + 0.04) * len);
     }
     ctx.globalAlpha = 1;
     const lens = DISCO_COLS[Math.floor((on ? time * 2 : 0) + k) % DISCO_COLS.length];              // корпус прожектора з кольоровою лінзою, що змінюється

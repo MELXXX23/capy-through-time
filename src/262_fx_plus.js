@@ -20,14 +20,15 @@ const EPFX = {
   neon: { pulse: { c: '#ff8a1a', hz: 1.6 }, beams: ['#ff8a1a', '#3af0d0'], rise: { cols: ['#ff8a1a', '#3af0d0'], n: 22, v: 20 }, glint: '#ffe9c4' },
   japan: { fall: { cols: ['#ffc3d6', '#ff8fb4', '#ffe3ec'], n: 34, v: 11, big: true }, fly: { cols: ['#ffe9a0', '#ffc86a'], n: 12 }, rays: '#ffd0d8', glint: '#fff2e8' }
 };
-const fxPx = (x, y, w, h, c) => R(ctx, Math.round(x), Math.round(y), w, h, c);
+const fxPx = (x, y, w, h, c) => R(ctx, Math.round(x), Math.round(y), Math.round(w), Math.round(h), c);
 function fxFrac(i, j) { return (hash2(i * 7 + 3, j * 11 + 5) % 1000) / 1000; }
 
+function fxFallTop() { return Math.max(-view.offY, LAYOUT.horizonY - 96); }      // листя, конфеті й іскри — від рівня дахів донизу: чисте небо, без випадкових цяток
 function fxSeed(id, L) {
   const C = EPFX[id] || {}, A = Math.min(3, Math.max(1, view.w * (view.offY + LAYOUT.horizonY) / (320 * 160))) * (L === 1 ? 0.5 : 1);
-  const top = -view.offY, bot = LAYOUT.streetTop + 14, x0 = worldL();
+  const top = fxFallTop(), bot = LAYOUT.streetTop + 14, x0 = worldL(), dens = (bot - top) / Math.max(1, bot + view.offY);
   FXP.falls = []; FXP.flies = [];
-  const mk = (cfg, up) => { const n = Math.min(90, Math.round(cfg.n * A)); for (let i = 0; i < n; i++) FXP.falls.push({ x: x0 + Math.random() * view.w, y: top + Math.random() * (bot - top), v: cfg.v * (0.6 + Math.random() * 0.8), sw: 3 + Math.random() * 5, ph: Math.random() * 6.28, big: cfg.big ? Math.random() > 0.55 : false, sq: cfg.sq || 0, c: cfg.cols[i % cfg.cols.length], up }); };
+  const mk = (cfg, up) => { const n = Math.min(90, Math.round(cfg.n * A * dens)); for (let i = 0; i < n; i++) FXP.falls.push({ x: x0 + Math.random() * view.w, y: top + Math.random() * (bot - top), v: cfg.v * (0.6 + Math.random() * 0.8), sw: 3 + Math.random() * 5, ph: Math.random() * 6.28, big: cfg.big ? Math.random() > 0.55 : false, sq: cfg.sq || 0, c: cfg.cols[i % cfg.cols.length], up }); };
   if (C.fall) mk(C.fall, false);
   if (C.rise) mk(C.rise, true);
   if (C.fly) { const n = Math.min(40, Math.round(C.fly.n * A)); for (let i = 0; i < n; i++) FXP.flies.push({ x: x0 + Math.random() * view.w, y: top + (LAYOUT.horizonY - top) * (0.35 + Math.random() * 0.65), ph: Math.random() * 6.28, sp: 0.5 + Math.random() * 1.1, c: C.fly.cols[i % C.fly.cols.length], b: !!C.fly.bfly }); }
@@ -44,7 +45,7 @@ function updateFxPlus(dt) {
   FXP.rainPeak = Math.max(weather.rain, FXP.rainPeak - dt * 0.02);
   if (FXP.rb >= 0) { FXP.rb += dt; if (FXP.rb > 50) FXP.rb = -1; }
   else if (FXP.rainPeak > 0.5 && weather.rain < 0.25 && sky.night < 0.45 && theme.season !== 'halloween') { FXP.rb = 0; FXP.rainPeak = 0; }       // після дощу виходить веселка
-  const top = -view.offY, bot = LAYOUT.streetTop + 14, x0 = worldL();
+  const top = fxFallTop(), bot = LAYOUT.streetTop + 14, x0 = worldL();
   for (const p of FXP.falls) {
     p.y += (p.up ? -p.v : p.v) * dt;
     p.x += ((p.up ? 0 : 4) + Math.sin(FXP.t * 0.8 + p.ph) * 5) * dt + Math.sin(FXP.t * 1.9 + p.ph) * p.sw * dt;
@@ -233,9 +234,10 @@ function fxFront() {
   }
   ctx.globalAlpha = 1;
   if (C.glint && shop && !build && L >= 1) {                  // блиски-зірочки на фасаді й даху
-    for (let i = 0; i < (L === 1 ? 4 : 8); i++) {
+    for (let i = 0; i < (L === 1 ? 3 : 5); i++) {
       const cyc = 3.6, tt = t + i * 0.9 + fxFrac(i, 90) * 3, k = (tt % cyc) / 0.9; if (k > 1) continue;
       const n = Math.floor(tt / cyc), x = shop.x + shop.w * (0.06 + 0.88 * fxFrac(i + n * 8, 91)), y = LAYOUT.curbY - shop.h * (0.1 + 0.88 * fxFrac(i + n * 8, 92)), s = Math.sin(k * Math.PI), r = Math.round(1 + s * 3);
+      if (shop.sign && y > shop.y + shop.sign.y - 18 && y < shop.y + shop.sign.y + shop.sign.h + 3) continue;       // написи вивіски лишаємо чистими
       fxPx(x - r, y, r * 2 + 1, 1, C.glint); fxPx(x, y - r, 1, r * 2 + 1, C.glint); ctx.globalAlpha = 0.5; fxPx(x - 1, y - 1, 3, 3, '#ffffff'); ctx.globalAlpha = 1;
     }
   }

@@ -51,7 +51,8 @@ function bbgSpawn(kind, T, fresh) {
   const W = bbg.w, H = bbg.h, r = bbgRand;
   if (kind === 'rise') {
     const name = T.rise[Math.floor(r() * T.rise.length)];
-    return { kind, name, x: 6 + r() * (W - 12), y: fresh ? r() * H : H + 8, v: 5 + r() * 6, sw: 1.5 + r() * 2.5, ph: r() * 6.3, body: T.flags[Math.floor(r() * T.flags.length)], fr: Math.floor(r() * 4) };
+    const side = r() * 0.2 * (W - 12);                                   // фігурки пливуть по краях вікна, щоб не лізти під текст і кнопки
+    return { kind, name, x: r() < 0.5 ? 6 + side : W - 6 - side, y: fresh ? r() * H : H + 8, v: 5 + r() * 6, sw: 1.5 + r() * 2.5, ph: r() * 6.3, body: T.flags[Math.floor(r() * T.flags.length)], fr: Math.floor(r() * 4) };
   }
   return { kind, x: r() * W, y: fresh ? r() * H : -3, v: 9 + r() * 10, sw: 2 + r() * 4, ph: r() * 6.3, c: T.conf[Math.floor(r() * T.conf.length)], fl: r() * 6.3 };
 }
@@ -100,7 +101,7 @@ function bbgDraw(dt) {
   // промені з-під заголовка, повільно обертаються
   const cx = W / 2, cy = H * 0.3, R = Math.max(W, H) * 1.2, n = 12, a0 = t * 0.12;
   g.fillStyle = T.ray; g.globalAlpha = 0.22;
-  for (let i = 0; i < n; i++) { const a = a0 + i * Math.PI * 2 / n; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); g.lineTo(cx + Math.cos(a + 0.2) * R, cy + Math.sin(a + 0.2) * R); g.closePath(); g.fill(); }
+  for (let i = 0; i < n; i++) { const a = a0 + i * Math.PI * 2 / n; pxTri(g, cx, cy, cx + Math.cos(a) * R, cy + Math.sin(a) * R, cx + Math.cos(a + 0.2) * R, cy + Math.sin(a + 0.2) * R); }
   g.globalAlpha = 1;
   // зірочки мерехтять
   bbg.stars.forEach(s => { const k = Math.sin(t * s.sp * 2 + s.ph); if (k > 0.2) bbgSprite(g, 'star', k > 0.85 ? 0 : k > 0.55 ? 1 : 2, s.x, s.y, '#ffd23f', 0.75); });
@@ -110,7 +111,7 @@ function bbgDraw(dt) {
       p.y -= p.v * dt;
       const x = p.x + Math.sin(t * 0.9 + p.ph) * p.sw;
       const fr = p.name === 'coin' ? Math.floor(t * 6 + p.ph) : p.name === 'bat' ? Math.floor(t * 5 + p.ph) : 0;
-      bbgSprite(g, p.name, fr, x, p.y + (p.name === 'bat' ? Math.sin(t * 3 + p.ph) * 2 : 0), p.body, 0.7);
+      bbgSprite(g, p.name, fr, x, p.y + (p.name === 'bat' ? Math.sin(t * 3 + p.ph) * 2 : 0), p.body, 0.5);
       if (p.y < -10) bbg.parts[i] = bbgSpawn('rise', T, false);
     } else {
       p.y += p.v * dt; p.fl += dt * 5;

@@ -13,6 +13,7 @@
 | `023_style_boot.css` | 38 | CSS: екран завантаження, бульбашки, кат-сцена, газета |  |
 | `024_style_modal_phone.css` | 21 | CSS: модальні вікна, телефон |  |
 | `025_style_late.css` | 25 | CSS: пізні правки (поверх решти) |  |
+| `026_style_crisp.html` | 1 | — |  |
 | `030_body_open.html` | 1 | HTML: початок body |  |
 | `040_boot_script.html` | 79 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
 | `050_body_markup.html` | 18 | HTML: розмітка гри (панель, меню, вікна) |  |
@@ -45,7 +46,7 @@
 | `151_c_arch_arcade_internet_eco.js` | 39 | ARCH: епохи 3–5 (Аркади, Інтернет, Еко) |  |
 | `151_d_arch_space_neon.js` | 26 | ARCH: епохи 6–7 (Космос, Неон) |  |
 | `160_refs.js` | 7 | посилання на елементи DOM (ui) | $, ui, ctx, skyLayer, shop, uiCache, sceneUnit, viewCrop |
-| `165_shop.js` | 18 | rebuildShop, layoutScene, камера, панель на телефоні | deferLayers, rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK |
+| `165_shop.js` | 19 | rebuildShop, layoutScene, камера, панель на телефоні | deferLayers, rebuildShop, placeShopOverlay, updateSignText, cam, layoutReady, syncPanelPad, snapK |
 | `165_tab_icons_hd.js` | 14 | — | TAB_ICONS_HD, tabImgHD, tabGlyphHD |
 | `170_ui.js` | 32 | інтерфейс: вкладки, картки відділів і команди | detectLanguage, setText, outlineCanvas, tabGlyph, tabIconCanvas, buildTabs, TABS_PRIMARY, setSheet |
 | `175_buy.js` | 1 | купівля | buyDept, expandShop |
@@ -95,6 +96,7 @@
 | `260_render.js` | 30 | головний render, будівельна техніка | render, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum, drawTruckWheel |
 | `262_fx_plus.js` | 28 | — | FXP, fxLevel, EPFX, fxPx, fxFrac, fxSeed, updateFxPlus, fxCoin |
 | `263_build_cinema.js` | 8 | — | bc, bcSweepCv, bcMake, bcPlace, buildCinemaStart, buildCinemaTick, buildCinemaEnd, drawBuildSweep |
+| `264_crisp.js` | 2 | — | crispFontRules, crispFontSize, crispCollectRules, crispFonts, crispSig, crispSync |
 | `264_smooth_ui.js` | 2 | — |  |
 | `265_b_icons_art.js` | 9 | — | PX_PAL, PX_ART, pxArtCache, pxArt, pxArtImg |
 | `265_d_card_scenes.js` | 20 | — | cardRect, cardMod, cardSparkle, cardBall, cardTri, cardSky, cardStars, CARD_GY |

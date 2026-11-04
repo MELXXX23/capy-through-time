@@ -1,0 +1,53 @@
+<!--#part 026_style_crisp.html-->
+<style>
+/* ===== Чіткість (р. 78): піксельні картинки меню лише в цілому масштабі =====
+   --dpr ставить crispSync() (264_crisp.js). Формула: round(ціль × dpr / бітмап) × бітмап / dpr — рівно ціла кількість пікселів екрана на піксель малюнка.
+   Спершу звичайне значення (старий браузер без round() просто пропустить другий рядок). */
+:root { --dpr: 1; }
+.team-card .portrait { width: 102px; height: 81px; width: calc(round(102 * var(--dpr) / 34, 1) * 34px / var(--dpr)); height: calc(round(102 * var(--dpr) / 34, 1) * 27px / var(--dpr)); }
+.toast canvas { width: 32px; height: 32px; }
+.tab-lock { width: 12px; height: 14px; }
+#setSeason .btn img.lock, .skin-state img.lock { width: 12px; height: 14px; vertical-align: -3px; }
+.skin-item .lock-badge { width: 24px; height: 28px; }
+/* Центрування без пів-пікселя (текст не розмивається) */
+#eventBanner, #toasts { left: 0; right: 0; margin-inline: auto; transform: none; }
+#eventBanner { width: fit-content; }
+/* Вивіска: тінь на цілий піксель; нічний напис — чіткий контур замість розмитого сяйва */
+#signText { text-shadow: 0 max(1px, round(calc(var(--u) * 0.5), 1px)) 0 var(--darker); }
+#shopOverlay.lit #signText { text-shadow: 1px 0 0 var(--glow, #ffd36a), -1px 0 0 var(--glow, #ffd36a), 0 -1px 0 var(--glow, #ffd36a), 0 max(1px, round(calc(var(--u) * 0.5), 1px)) 0 var(--darker); }
+/* Заставка: рух цілими пікселями, без розмитих ореолів і поворотів піксельної Капі */
+#boot .b-capy { filter: none; animation: bRunPx .6s steps(1, end) infinite; }
+@keyframes bRunPx { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-6px); } 50% { transform: translateY(-10px); } 75% { transform: translateY(-6px); } }
+#boot .b-shadow { border-radius: 0; clip-path: polygon(16% 0, 84% 0, 84% 25%, 100% 25%, 100% 75%, 84% 75%, 84% 100%, 16% 100%, 16% 75%, 0 75%, 0 25%, 16% 25%); animation-timing-function: steps(1, end); }
+#boot .b-road { animation-timing-function: steps(96); }
+#boot .b-street { animation-timing-function: steps(var(--stp, 2000)); }
+#boot .b-city { animation-timing-function: steps(var(--vwn, 1920)); }
+#boot .b-fly, #boot .b-car { animation-timing-function: steps(var(--flyn, 2120)); }
+#boot .b-fly[style*="bFlyL"] { animation-timing-function: steps(var(--flyl, 2160)); }
+#boot .b-glow, #boot .b-vig { display: none; }
+#boot .b-haze { background: linear-gradient(to top, rgba(var(--hz), .5) 0 20%, rgba(var(--hz), .34) 20% 40%, rgba(var(--hz), .2) 40% 60%, rgba(var(--hz), .09) 60% 80%, transparent 80%); }
+#boot .b-ground::after { background: linear-gradient(to bottom, transparent 0 25%, rgba(0, 0, 0, calc(var(--gd, .38) * .35)) 25% 50%, rgba(0, 0, 0, calc(var(--gd, .38) * .65)) 50% 75%, rgba(0, 0, 0, var(--gd, .38)) 75%); }
+#boot #bootOrb .moon, #boot #bootOrb .moon.hw, #boot #bootOrb .bigclock { filter: none; animation: none; }
+#boot #bootOrb .moon { position: relative; }
+#boot #bootOrb .moon > .halo { position: absolute; left: 50%; top: 50%; }
+#boot #bootOrb .moon > .halo svg, #boot #bootOrb .sunball svg { display: block; }
+#boot #bootOrb .sunball { width: auto; height: auto; background: none; border-radius: 0; box-shadow: none; }
+#boot #bootOrb .sunrays { background: none; border-radius: 0; -webkit-mask-image: none; mask-image: none; image-rendering: pixelated; animation: bRayPx 5s steps(1, end) infinite; }
+@keyframes bRayPx { 0%, 100% { opacity: 1; } 33% { opacity: .82; } 66% { opacity: .68; } }
+#boot .ff, #boot .ff.gr { border-radius: 0; box-shadow: 0 0 0 2px rgba(255, 240, 140, .32); }
+#boot .mote { box-shadow: 0 0 0 2px rgba(255, 240, 180, .28); }
+/* ПК і великі екрани (телефони мають затверджені розкладки) */
+@media (min-width: 821px) and (min-height: 600px) {
+  .tab { --icw: 64px; --icw: calc(round(48 * var(--dpr) / 32, 1) * 32px / var(--dpr)); }
+  #bonusOpenI { width: 32px; height: 32px; width: calc(round(24 * var(--dpr) / 16, 1) * 16px / var(--dpr)); height: calc(round(24 * var(--dpr) / 16, 1) * 16px / var(--dpr)); }
+  .bubble { font-size: 8px; font-size: calc(round(10 * var(--dpr) / 8, 1) * 8px / var(--dpr)); }
+  /* хатка відьми й лапшична: гра вдвічі крупніше, рівно ×2 */
+  #circusModal.hag:not(.mg) .modal-box { width: min(96vw, 560px); }
+  #circusModal.hag:not(.mg) #circusWheel { width: min(100%, 512px, max(256px, calc((100dvh - 400px) * 1.6))); }
+  /* заставка: заголовок і написи чіткими розмірами */
+  #boot .b-title { font-size: 48px; }
+  #boot .b-tip b { font-size: 12px; }
+  #boot .b-tip small { font-size: 8px; }
+  #circusModal .modal-box, #circusModal.mg .modal-box { padding-top: 40px; }
+}
+</style>
