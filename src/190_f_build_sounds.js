@@ -318,7 +318,6 @@ function bsSynthCode() {
   };
   const BS_MUS = [-21.5, -22.4, -23.6, -21, -25.7, -21, -21.6, -24.7, -19.5];   // гучність музики епох у грі, LUFS (виміри: previews/build_sound)
   return {
-    tools: { kit, nf, knock, thump, setLevel, mus: BS_MUS, setSeed: s => { seed = s; }, rnd },   // для цирку (190_g): той самий синтез і те саме мірило гучності
     names: ep => { const c = SETS[ep].clips, first = ['arr', 'cr', 'pl'], rest = Object.keys(c).filter(s => first.indexOf(s) < 0); return first.concat(rest); },
     clip: (ep, name, sr) => {
       const def = SETS[ep].clips[name], isBed = name === 'bed', XF = 0.4, sec = def[0] + (isBed ? XF : 0);
@@ -390,9 +389,6 @@ setInterval(buildSoundAhead, 5000);
 /* ---------- Програвання ---------- */
 function bsPlay(name, at, gain, rate) {
   const B = BS.bank, buf = B && B.clips[name]; if (!buf) return null;
-  return bsSource(buf, at, gain, rate);
-}
-function bsSource(buf, at, gain, rate) {
   const ac = audio.ctx, s = ac.createBufferSource(), g = ac.createGain();
   s.buffer = buf; if (rate && rate !== 1) s.playbackRate.value = rate;
   g.gain.value = gain == null ? 1 : gain;

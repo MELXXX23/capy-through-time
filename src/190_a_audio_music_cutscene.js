@@ -326,6 +326,15 @@ const SFX = {
     noiseHit(audio.sfxGain, t + 0.2, 1.2, 0.12, 'lowpass', 300);
     for (let i = 0; i < 10; i++) tone(audio.sfxGain, 'sawtooth', 70 + (i % 2) * 14, t + i * 0.16, 0.14, 0.12, 55);
   },
+  build() {   // стукіт молотків під час будівництва
+    const ac = audio.ctx, t0 = ac.currentTime + 0.05;
+    for (let i = 0; i < 9; i++) {
+      const t = t0 + i * 0.27;
+      noiseHit(audio.sfxGain, t, 0.07, 0.5, 'bandpass', 1500);
+      tone(audio.sfxGain, 'square', 150, t, 0.06, 0.25, 70);
+    }
+    noiseHit(audio.sfxGain, t0, 2.4, 0.12, 'lowpass', 600);
+  },
   levelup() {
     melody('square', [['C5', 0.1], ['E5', 0.1], ['G5', 0.1], ['C6', 0.22], ['G5', 0.1], ['C6', 0.1], ['E6', 0.1], ['G6', 0.55]], 0.22);
     melody('triangle', [['C4', 0.1], ['E4', 0.1], ['G4', 0.1], ['C5', 0.22], ['G4', 0.1], ['C5', 0.1], ['E5', 0.1], ['G5', 0.55]], 0.35);
