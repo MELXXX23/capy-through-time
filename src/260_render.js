@@ -123,12 +123,13 @@ function render(time) {
 const shineTmp = document.createElement('canvas');
 function drawStreetShine() {                                    // золота дорога: широка смуга блиску біжить діагоналлю, а на цеглинах спалахують зірочки
   const stSk = skinOn('street');
-  if ((stSk !== 'gold' && stSk !== 'diamond') || !animOn() || !layoutReady) return;
+  if ((stSk !== 'gold' && stSk !== 'diamond') || !animOn() || !layoutReady || (cobbleJob && !cobbleJob.waiting)) return;      // золоту дорогу ще малюють — блиску поки нема на чому
   const stDia = stSk === 'diamond';
   const x0 = -view.offX, W = view.w, top = LAYOUT.streetTop + 1, bot = worldB() - (view.extraB >= 30 ? 36 : 0);
   if (bot <= top) return;
   const cyc = (animClock % 10) / 2.2, span = W + (bot - top) * 0.8 + 60, bx = x0 - 30 + cyc * span;      // смуга раз на 10 с
   ctx.save(); ctx.beginPath(); ctx.rect(x0, top, W, bot - top); ctx.clip();
+  if (cobbleLay) { ctx.beginPath(); cobbleLayPath(ctx); ctx.clip(); }      // золота дорога ще лягає: блищить лише вже вкладена частина
   for (let y = top; y < bot; y += 2) { const x = Math.round(bx - (y - top) * 0.8); ctx.globalAlpha = 0.30; R(ctx, x - 8, y, 34, 2, stDia ? '#d8f4ff' : '#fff7c0'); ctx.globalAlpha = 0.55; R(ctx, x, y, 14, 2, '#ffffff'); }
   ctx.globalAlpha = 1;
   if (skinBurst()) for (let r = 0, y = top; y < bot; r++, y += 6) for (let x = Math.floor((x0 - 12) / 12) * 12 + (r % 2) * 6 - 12; x < x0 + W; x += 12) {                    // ті самі цеглини, що малює cobbleExtra

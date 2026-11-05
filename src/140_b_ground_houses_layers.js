@@ -161,22 +161,48 @@ function* groundLayerGen() {
   // дерева вздовж тротуару
   for (const tr of treeSpots(x0, W)) { drawStreetTree(g, tr.x, tr.v, buildSeason); yield; }
 
-  // бруківка
-  yield* cobbleStrips(g, x0, LAYOUT.streetTop + 1, W, H - LAYOUT.streetTop - 1, skinOn('street') || 'stone');
-  manholeSpots.length = 0;
-  const my = Math.min(H - 48, 188);                                   // люки: один ряд уздовж дороги, не часто
-  if (!skinOn('street') || skinOn('street') === 'moss') for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
-  if (view.extraB >= 30) drawRoadG(g, x0, W, H);
-  yield;
-  if (buildSeason === 'winter') yield* winterGroundGen(g, x0, W, H);
-  if (buildSeason === 'autumn' || buildSeason === 'spring') yield* autumnGroundLeavesGen(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
-  yield;
-  g.globalAlpha = 0.1; R(g, x0, H - 20, W, 20, 'd'); g.globalAlpha = 1;
+  c._curb = curbStrip(c);
+  yield* streetPartGen(g, x0, W, H);
   const trees = treeSpots(x0, W);
   houseDoors = houseDoors.filter(d => !trees.some(tr => Math.abs(tr.x - d.x) < 28));      // двері, закриті деревом, не використовуються: звірята туди не заходять
   houseGlass = houseGlass.filter(r => !windowHidden(r, trees));        // вікна, закриті деревами чи магазином, не світяться й не блимають привидами
   if (typeof ARCH !== 'undefined' && ARCH.japan && ARCH.japan.filterNeon) ARCH.japan.filterNeon(r => !windowHidden(r, trees));      // неонові вивіски Японії, закриті деревами чи магазином, уночі не світяться
   houseLit = buildLitLayer(houseGlass);
+  return c;
+}
+// Над вулицею лежить чистий шматок: камені, сніг і листя скінів вилазять угору за край вулиці на кілька пікселів, а при зміні скіна їх треба прибрати
+const STREET_UP = 12;
+function curbStrip(c) {
+  const s = document.createElement('canvas'); s.width = c.width; s.height = STREET_UP;
+  s.getContext('2d', { willReadFrequently: true }).drawImage(c, 0, -(LAYOUT.streetTop + 1 - STREET_UP + view.offY));   // у звичайній пам'яті, як і шар: інакше на великому екрані перше малювання цього шматка стопорить кадр на 0,3–0,5 с
+  return s;
+}
+// Вулиця: бруківка, люки, дорога, сніг чи листя на землі. Лише вона залежить від скіна вулиці
+// parts — [[x, w], …]: де малювати бруківку, коли міняється лише скін (полотно обрізане по цих шматках, дорога вже намальована)
+function* streetPartGen(g, x0, W, H, parts) {
+  // бруківка
+  const style = skinOn('street') || 'stone';
+  for (const [x, w] of parts || [[x0, W]]) yield* cobbleStrips(g, x, LAYOUT.streetTop + 1, w, H - LAYOUT.streetTop - 1, style);
+  manholeSpots.length = 0;
+  const my = Math.min(H - 48, 188);                                   // люки: один ряд уздовж дороги, не часто
+  if (!skinOn('street') || skinOn('street') === 'moss') for (let mx = Math.floor(x0 / 340) * 340 + 100; mx < x0 + W - 8; mx += 340) { const hx = mx + (hash2(mx, 3) % 21) - 10, hy = my + (hash2(3, mx) % 5) - 2; manholeG(g, hx, hy); manholeSpots.push({ x: hx, y: hy }); }
+  if (!parts && view.extraB >= 30) drawRoadG(g, x0, W, H);
+  yield;
+  if (buildSeason === 'winter') yield* winterGroundGen(g, x0, W, H);
+  if (buildSeason === 'autumn' || buildSeason === 'spring') yield* autumnGroundLeavesGen(g, x0, W, H, treeSpots(x0, W), buildSeason === 'spring');
+  yield;
+  g.globalAlpha = 0.1; R(g, x0, H - 20, W, 20, 'd'); g.globalAlpha = 1;
+}
+// Той самий шар із новою бруківкою в шматках parts: місто вже готове, тож малюємо лише їх (у багато разів швидше за весь шар і будинки не змінюються)
+function* streetLayerGen(base, parts) {
+  if (base.width !== view.w || base.height !== view.h || !base._curb) return buildGroundLayer();
+  const { c, g } = newLayer(true), H = worldB(), top = LAYOUT.streetTop + 1 - STREET_UP, bot = view.extraB >= 30 ? H - 37 : H;
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(base, 0, 0); g.restore();
+  c._curb = base._curb;
+  g.save(); g.beginPath(); parts.forEach(([x, w]) => g.rect(x, top, w, bot - top)); g.clip();
+  g.drawImage(base._curb, -view.offX, top);
+  yield* streetPartGen(g, -view.offX, view.w, H, parts);
+  g.restore();
   return c;
 }
 // Осіннє листя: купи під деревами, розсип по тротуару, бруківці й дорозі
