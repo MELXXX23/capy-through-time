@@ -35,9 +35,9 @@ let dustAcc = { shop: 0, capy: 0, hero: 0 };
 const HERO_DUST = { candy: 1, sand: 1, moss: 1, brick: 1, wood: 1 };      // скіни звірят за вулицями: кожен має свій пил, що сиплеться без пауз
 function dustKind(type) { const s = skinOn(type); return (s === 'gold' || s === 'diamond' || (type === 'hero' && HERO_DUST[s])) ? s : null; }
 function skinBurst() { return (animClock % 10) < 1.5; }      // вікно спалаху блиску скінів (1,5 с із кожних 10)
-const POP_COLS = { capy: ['#fff6c8', '#ffd96a', '#ffffff'], hero: ['#ffe3f0', '#ffb8d6', '#ffffff'], shop: ['#fff0c0', '#ffc878', '#ffffff'], weather: ['#e4f6ff', '#a8dcff', '#ffffff'], street: ['#eaffd8', '#b8e890', '#ffffff'] };
+const POP_COLS = { capy: ['#fff6c8', '#ffd96a', '#ffffff'], hero: ['#ffe3f0', '#ffb8d6', '#ffffff'], shop: ['#fff0c0', '#ffc878', '#ffffff'], weather: ['#e4f6ff', '#a8dcff', '#ffffff'] };
 let skinJustWorn = null;
-function skinPopBurst(type) {          // м'який сплеск іскор там, де змінився вигляд: Капі, герої, магазин, небо чи бруківка (Капі не рухається)
+function skinPopBurst(type) {          // м'який сплеск іскор там, де змінився вигляд: Капі, герої, магазин чи небо (Капі не рухається); у бруківки свій рух (265_icons_plus)
   if (!animOn() || build || !layoutReady) return;
   const cols = POP_COLS[type] || POP_COLS.capy, n = ecoOn() ? 12 : 26, cp = LAYOUT.capy;
   const spots = {
@@ -45,7 +45,6 @@ function skinPopBurst(type) {          // м'який сплеск іскор т
     hero: () => { const a = actors[Math.floor(Math.random() * actors.length)]; return a ? { x: a.x + rand(-10, 10), y: a.y - rand(2, 26) } : null; },
     shop: () => shop ? { x: shop.x + rand(-10, shop.w + 10), y: shop.y + rand(-8, shop.h - 4) } : null,
     weather: () => shop ? { x: shop.x + shop.w / 2 + rand(-230, 230), y: -view.offY + rand(8, 100) } : null,
-    street: () => shop ? { x: shop.x + shop.w / 2 + rand(-230, 230), y: LAYOUT.streetTop + rand(4, 40) } : null,
   }[type] || (() => null);
   for (let i = 0; i < n && skinDust.length < 160; i++) {
     const p = spots(); if (!p) continue;
@@ -174,20 +173,21 @@ function equipSkin(type, i) {
 function resetAllSkins() {
   const def = { capy: -2, shop: -1, weather: -1, street: -1, hero: -1 };
   let changed = false;
+  const oldG = state.skins.street !== def.street ? groundLayer : null;
   SKIN_TYPES.forEach(ty => { if (state.skins[ty] !== def[ty]) { state.skins[ty] = def[ty]; changed = true; } });
   if (!changed) { showToast(t('skinsResetNone'), 'good'); return; }
-  drawCapiPortrait(); refreshTeamPortraits(); rebuildShop(true); groundLayer = buildGroundLayer();
+  drawCapiPortrait(); refreshTeamPortraits(); rebuildShop(true); groundLayer = buildGroundLayer(); startCobbleLay(oldG);
   playSfx('upgrade'); skinsSig = ''; updateSkinsUI(); showToast(t('skinsResetDone'), 'good'); saveGame();
 }
 function setSkin(type, i) {
   state.skins[type] = i;
   skinJustWorn = i === -1 || i === -2 ? null : { type, i }; setTimeout(() => { skinJustWorn = null; }, 1200);
-  if (i >= 0 || (i === -2 && type === 'capy')) setTimeout(() => skinPopBurst(type), 120);
+  if ((i >= 0 && type !== 'street') || (i === -2 && type === 'capy')) setTimeout(() => skinPopBurst(type), 120);      // вулиця без іскор: там досить самого руху бруківки
   if (i !== -1) { const nm = skinOn(type); if (nm) setTimeout(() => capySay(type + '_' + nm), 350); }       // Капі коментує новий скін
   if (type === 'capy') drawCapiPortrait();
   else if (type === 'hero') refreshTeamPortraits();
   else if (type === 'shop') { rebuildShop(true); groundLayer = buildGroundLayer(); }      // скін «Будівлі» міняє і задні будинки
-  else if (type === 'street') { const oldG = groundLayer; groundLayer = buildGroundLayer(); startCobbleLay(oldG); }
+  else if (type === 'street') changeStreetLayer();
   playSfx('wear');
   skinsSig = '';
   updateSkinsUI();

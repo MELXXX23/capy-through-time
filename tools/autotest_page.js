@@ -243,6 +243,23 @@
     }
     if (!Iap.active && !document.querySelector('#iapRestoreBtn').hidden) throw new Error('кнопка покупок видима на сайті');
   }, 50);
+  await check('зміна бруківки: той самий малюнок, що й повна побудова, вимкнені анімації без руху', async () => {
+    const keepWorn = state.skins.street, keepOwned = skinOwned, keepAnim = state.settings.animations;
+    const px = c => c.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, c.width, c.height).data;
+    const settle = async () => {       // прихована сторінка малює рідко, тому кадр качаємо самі
+      for (let i = 0; i < 400 && (cobbleJob || cobbleLay); i++) { ctx.save(); ctx.translate(view.offX, view.offY); drawCobbleLay(); ctx.restore(); await sleep(10); }
+      if (cobbleJob || cobbleLay) throw new Error('рух не завершився');
+    };
+    const same = name => { const A = px(groundLayer), B = px(buildGroundLayer()); for (let i = 0; i < A.length; i++) if (Math.abs(A[i] - B[i]) > 1) throw new Error(name + ': не збігається з повною побудовою'); };
+    try {
+      skinOwned = () => true;
+      for (const name of ['candy', 'moss', 'gold']) { setSkin('street', SKIN_POOL.indexOf('street_' + name)); await settle(); same(name); }
+      setSkin('street', SKIN_POOL.indexOf('street_sand')); setSkin('street', SKIN_POOL.indexOf('street_wood')); await settle(); same('подвійний вибір');
+      state.settings.animations = false; setSkin('street', -1); if (cobbleLay) throw new Error('рух при вимкнених анімаціях'); await settle(); same('без анімацій');
+    } finally {
+      skinOwned = keepOwned; state.settings.animations = keepAnim; state.skins.street = keepWorn; groundLayer = buildGroundLayer(); skinsSig = '';
+    }
+  }, 50);
   await check('форми множини', () => {
     const keep = state.lang;
     try {

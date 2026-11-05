@@ -200,34 +200,70 @@ setInterval(() => {
   });
 }, 110);
 
-/* ---------- 4. Бруківка «лягає» на землю при виборі скіна ---------- */
-let cobbleLay = null;
-function startCobbleLay(oldLayer) {
-  if (!animOn() || !oldLayer || reduceMotionOn()) { cobbleLay = null; return; }
-  cobbleLay = { old: oldLayer, t0: performance.now() };
-}
+/* ---------- 4. Зміна бруківки при виборі скіна: один рух, нова вулиця розходиться від дверей магазину ---------- */
+// Край чистий, без прозорості: за ним ще стара бруківка, перед ним уже нова. Вся видима вулиця міняється за COBBLE_DUR секунд на будь-якому екрані.
+let cobbleLay = null, cobbleJob = null;
+const COBBLE_DUR = 0.85, COBBLE_ROW = 6, COBBLE_CELL = 6;                 // тривалість, висота ряду й крок краю (як камінь бруківки)
 function reduceMotionOn() { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
-const COBBLE_SW = 5, COBBLE_BANDS = 3, COBBLE_DUR = 0.9, COBBLE_SPREAD = 1.1;     // ширина смужки, кількість поясів по висоті, тривалість однієї клітинки, розкид затримок
-function drawCobbleLay() {                                        // true — малюнок вулиці зроблено тут; стара бруківка плавно підіймається й тане, а нова проступає з-під неї; дорога внизу стоїть
-  if (!cobbleLay) return false;
-  const T = (performance.now() - cobbleLay.t0) / 1000;
-  if (T > COBBLE_SPREAD + COBBLE_DUR + 0.1) { cobbleLay = null; return false; }
-  const ox = -view.offX, oy = -view.offY, cw = groundLayer.width, ch = groundLayer.height, H = worldB();
-  const top = Math.max(0, Math.round(LAYOUT.streetTop + 1 + view.offY)), bot = Math.min(ch, Math.round((view.extraB >= 30 ? H - 37 : H) + view.offY)), h = bot - top;
-  ctx.drawImage(groundLayer, ox, oy);                               // нова вулиця (разом із бруківкою) вже лежить під старою
-  const mid = (shop ? shop.x + shop.w / 2 : 0) + view.offX, bh = Math.ceil(h / COBBLE_BANDS), old = cobbleLay.old;
-  for (let x = 0; x < cw; x += COBBLE_SW) {
-    const w = Math.min(COBBLE_SW, cw - x), dist = Math.min(1, Math.abs(x + COBBLE_SW / 2 - mid) / Math.max(200, cw / 2));
-    for (let b = 0; b < COBBLE_BANDS; b++) {
-      const y = top + b * bh, hh = Math.min(bh, bot - y); if (hh <= 0) break;
-      const delay = dist * COBBLE_SPREAD * 0.8 + (Math.sin(x * 0.045 + b * 1.3) * 0.5 + 0.5) * COBBLE_SPREAD * 0.2, k = Math.max(0, Math.min(1, (T - delay) / COBBLE_DUR));
-      if (k >= 1) continue;                                          // ця клітинка вже стала новою
-      const e = k * k * (3 - 2 * k), lift = Math.round(e * 3);       // стара трохи підіймається вгору й розчиняється
-      ctx.globalAlpha = 1 - e;
-      ctx.drawImage(old, x, y + lift, w, hh - lift, ox + x, oy + y, w, hh - lift);
-    }
+// Новий скін вулиці: спершу малюємо лише видиму частину порціями між кадрами, щоб гра не завмирала, і рух починається одразу; решту домальовуємо після нього
+function changeStreetLayer() {
+  if (!layoutReady || !groundLayer) return;                              // шарів ще нема: перша побудова сама візьме новий скін
+  const x0 = -view.offX, xa = Math.max(x0, Math.floor(viewCrop.x + x0) - 24), xb = Math.min(x0 + view.w, Math.ceil(viewCrop.x + viewCrop.w + x0) + 24);
+  cobbleJob = { base: groundLayer, gen: streetLayerGen(groundLayer, [[xa, xb - xa]]), rest: [[x0, xa - x0], [xb, x0 + view.w - xb]].filter(p => p[1] > 0), quiet: !!warp || !animOn() || reduceMotionOn() };
+  pumpCobbleJob();
+}
+function pumpCobbleJob() {
+  const job = cobbleJob;
+  if (groundLayer !== job.base) { cobbleJob = null; return; }            // шар уже перебудували (подорож, пора року, розмір вікна), новий скін там є
+  if (job.waiting && cobbleLay) return;                                  // поза екраном домальовуємо вже після руху
+  const t0 = performance.now(), slice = job.quiet && !job.waiting ? 1e9 : 8; let r;
+  do r = job.gen.next(); while (!r.done && performance.now() - t0 < slice);
+  if (!r.done) return;
+  if (job.waiting) { cobbleJob = null; groundLayer = r.value; return; }
+  const old = cobbleLay ? cobbleLaySnapshot() : groundLayer;             // попередній рух ще йде: новий починається з того, що зараз на екрані
+  groundLayer = r.value;
+  if (job.quiet) cobbleLay = null; else startCobbleLay(old);
+  if (!job.rest.length) { cobbleJob = null; return; }
+  job.base = groundLayer; job.waiting = true; job.gen = streetLayerGen(groundLayer, job.rest);
+}
+function startCobbleLay(old) {
+  cobbleLay = null;
+  if (!old || !animOn() || reduceMotionOn() || old.width !== groundLayer.width || old.height !== groundLayer.height) return;
+  const H = worldB(), top = Math.round(LAYOUT.streetTop + 1 + view.offY), y1 = Math.min(old.height, Math.round((view.extraB >= 30 ? H - 37 : H) + view.offY));
+  const vL = viewCrop.x, vR = vL + viewCrop.w, mid = Math.round(Math.max(vL, Math.min(vR, (shop ? shop.x + shop.w / 2 : 0) + view.offX)));   // камеру відвели від магазину — рух іде з краю екрана
+  const halfW = Math.max(mid - vL, vR - mid, 40), reach = halfW * Math.SQRT2 + 3 * COBBLE_CELL;      // еліпс вписаний у видиму вулицю; останніми міняються нижні кути
+  cobbleLay = { old, t0: performance.now(), k: 0, top, y0: top - STREET_UP, y1, mid, reach, ky: halfW / Math.max(1, y1 - top), xa: Math.max(0, Math.floor(mid - reach)), xb: Math.min(old.width, Math.ceil(mid + reach)) };
+}
+function cobbleRows(fn) {                                                // для кожного ряду: fn(y, h, a, b), [a, b) — там уже нова бруківка
+  const L = cobbleLay, R = L.reach * Math.sin(Math.PI / 2 * Math.pow(L.k, 1.2)), C = COBBLE_CELL;      // м'який початок і довге плавне гальмування
+  for (let y = L.y0, r = 0; y < L.y1; y += COBBLE_ROW, r++) {
+    const h = Math.min(COBBLE_ROW, L.y1 - y), d = Math.max(0, y + h / 2 - L.top) * L.ky, q = R * R - d * d;
+    if (q <= 0) { fn(y, h, L.mid, L.mid); continue; }
+    const hw = Math.sqrt(q), ph = r % 2 ? C >> 1 : 0;                    // ряди зсунуті, як цеглини, і край кожного трохи свій
+    fn(y, h, Math.floor((L.mid - hw - (hash2(r, 41) % 3) * C + ph) / C) * C - ph, Math.ceil((L.mid + hw + (hash2(r, 43) % 3) * C + ph) / C) * C - ph);
   }
-  ctx.globalAlpha = 1;
+}
+function drawCobbleOld(g, ox, oy) {                                      // стара бруківка там, куди край ще не дійшов
+  const L = cobbleLay;
+  cobbleRows((y, h, a, b) => {
+    const a1 = Math.max(L.xa, Math.min(a, L.xb)), b1 = Math.max(L.xa, Math.min(b, L.xb));
+    if (a1 > L.xa) g.drawImage(L.old, L.xa, y, a1 - L.xa, h, ox + L.xa, oy + y, a1 - L.xa, h);
+    if (L.xb > b1) g.drawImage(L.old, b1, y, L.xb - b1, h, ox + b1, oy + y, L.xb - b1, h);
+  });
+}
+function cobbleLaySnapshot() {
+  const c = document.createElement('canvas'); c.width = groundLayer.width; c.height = groundLayer.height;
+  const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(groundLayer, 0, 0); drawCobbleOld(g, 0, 0);
+  return c;
+}
+function cobbleLayPath(g) { cobbleRows((y, h, a, b) => { if (b > a) g.rect(a - view.offX, y - view.offY, b - a, h); }); }     // уже вкладена частина (золота дорога блищить лише на ній)
+function drawCobbleLay() {                                               // true — вулицю вже намальовано тут
+  if (cobbleJob) pumpCobbleJob();
+  if (!cobbleLay) return false;
+  const L = cobbleLay; L.k = (performance.now() - L.t0) / (COBBLE_DUR * 1000);
+  if (L.k >= 1 || !animOn() || L.old.width !== groundLayer.width || L.old.height !== groundLayer.height) { cobbleLay = null; return false; }
+  ctx.drawImage(groundLayer, -view.offX, -view.offY);
+  drawCobbleOld(ctx, -view.offX, -view.offY);
   return true;
 }
 
