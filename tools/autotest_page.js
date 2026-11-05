@@ -260,6 +260,16 @@
       skinOwned = keepOwned; state.settings.animations = keepAnim; state.skins.street = keepWorn; groundLayer = buildGroundLayer(); skinsSig = '';
     }
   }, 50);
+  await check('бруківка не вилазить за рамки дороги', () => {
+    const styles = ['stone', 'snow', 'leaves'].concat(SKIN_POOL.filter(id => id.startsWith('street_')).map(id => id.slice(7)));
+    for (const st of styles) {
+      const c = document.createElement('canvas'); c.width = 200; c.height = 120;
+      const g = c.getContext('2d', { willReadFrequently: true });
+      paintCobble(g, 40, 37, 120, 50, st);
+      const d = g.getImageData(0, 0, 200, 120).data;
+      for (let y = 0; y < 120; y++) for (let x = 0; x < 200; x++) if (d[(y * 200 + x) * 4 + 3] && (x < 40 || x >= 160 || y < 37 || y >= 87)) throw new Error(st + ': піксель поза рамкою ' + x + ',' + y);
+    }
+  }, 50);
   await check('форми множини', () => {
     const keep = state.lang;
     try {

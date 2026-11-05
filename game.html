@@ -7364,7 +7364,11 @@ function cobbleExtra(g, X0, Y0, W, H, style) {                       // нові
   return false;
 }
 //#part 140_b_ground_houses_layers.js
-function paintCobble(g, X0, Y0, W, H, style) {
+function paintCobble(g, X0, Y0, W, H, style) {                     // візерунки рахуються від спільної сітки, тому камені можуть почати вище рамки: обрізаємо рівно по дорозі
+  g.save(); g.beginPath(); g.rect(X0, Y0, W, H); g.clip();
+  try { paintCobbleRaw(g, X0, Y0, W, H, style); } finally { g.restore(); }
+}
+function paintCobbleRaw(g, X0, Y0, W, H, style) {
   if (cobbleExtra(g, X0, Y0, W, H, style)) return;
   if (style === 'snow' || style === 'leaves') {                    // звичайний булижник + сніг або листя зверху
     paintCobble(g, X0, Y0, W, H, 'stone');
