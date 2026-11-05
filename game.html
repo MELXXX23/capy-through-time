@@ -22640,7 +22640,7 @@ function drawMailBox() {
   } else { R(g, x + 10, y - 20, 6, 3, 'd'); R(g, x + 11, y - 19, 4, 1, 'r'); }                                      // прапорець опущений
 }
 // Червона скринька «Новини» поруч із синім поштоматом: тап — відкриває лист від розробників; поки новину не прочитано, прапорець угорі блимає
-const NEWS_VERSION = 30;
+const NEWS_VERSION = 31;
 function newsUnread() { return (state.newsSeen | 0) < NEWS_VERSION; }
 function newsBoxX() { return mailBoxX() - 27; }
 function drawNewsBox() {
@@ -22836,7 +22836,7 @@ function newsAnimate(change, dir) {                                            /
 const NEWS_ABOUT = {
   uk: {
     mast: 'ПРО НАС', lead: 'Привіт, друже!',
-    newH: 'Що нового', new: 'Нові герої команди: Голка, Зоя та всі інші в красивому новому вигляді, з костюмами епох і скінами під вулиці. Бруківка плавно змінюється, коли обираєш скін, а звірят-покупців більше по всій вулиці. Усі переходи плавніші, скіни погоди ожили.',
+    newH: 'Що нового', new: 'Усі звірята й речі в їхніх лапах перемальовані, покупці трохи більші, а скіни стали кращими. Гра чіткіша, Фудзі гостріша, а бруківка змінюється одним спокійним рухом. Переходи між епохами плавніші, а будування в кожній епосі звучить по-своєму.',
     intro: ['Ми — MEL і NIKA, і цю гру зробили самі, піксель за пікселем.', 'Капі починає з однієї монетки й крихітної крамнички на розі. Твоє завдання: виростити її в справжній торговий центр і пройти крізь цілі епохи.'],
     nextH: 'Що попереду', next: 'Попереду 8 епох: від Відродження до Неону. Подорожуй у часі, і твій магазин стане чимось більшим…',
     giftH: 'Подарунок', gift: 'Забрати подарунок від розробників: +100 монет', giftDone: 'Подарунок уже забрано. Дякуємо, що граєш!',
@@ -22844,7 +22844,7 @@ const NEWS_ABOUT = {
   },
   en: {
     mast: 'ABOUT US', lead: 'Hi, friend!',
-    newH: 'What is new', new: 'New team heroes: Spike, Zoe and everyone else in a beautiful new look, with era costumes and street-matching skins. The pavement now changes smoothly when you pick a skin, and more customers walk the whole street. All transitions are smoother and the weather skins came alive.',
+    newH: 'What is new', new: 'All the animals and the things in their paws are redrawn, customers are a little bigger, and the skins look better. The game is crisper, Fuji is sharper, and the pavement changes in one calm motion. Era transitions are smoother, and building sounds different in every era.',
     intro: ['We are MEL and NIKA, and we made this game ourselves, pixel by pixel.', 'Capy starts with one coin and a tiny shop on the corner. Your job: grow it into a real shopping mall and travel through whole eras.'],
     nextH: 'What is ahead', next: 'Ahead are 8 eras: from the Renaissance to Neon. Travel through time, and your shop will become something bigger…',
     giftH: 'A gift', gift: 'Claim the developers\' gift: +100 coins', giftDone: 'Gift already claimed. Thanks for playing!',
