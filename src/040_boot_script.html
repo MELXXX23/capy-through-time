@@ -7,6 +7,7 @@
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + rows.length + '" width="' + w * sc + '" height="' + rows.length * sc + '" shape-rendering="crispEdges">' + h + '</svg>';
   }
   var q = location.search, bootEl = document.getElementById('boot'), VW = innerWidth, VH = innerHeight;
+  bootEl.style.setProperty('--vwn', VW); bootEl.style.setProperty('--flyn', VW + 200); bootEl.style.setProperty('--flyl', VW + 240);       // рух рівно по 1 пікселю: місто й машини не «пливуть» і не розмиваються
   var sc = Math.max(3, Math.min(6, Math.floor(Math.min(VW, VH) / 110))), cs = Math.max(2, sc - 1);
   function pad(a) { var w = 0; a.forEach(function (x) { w = Math.max(w, x.length); }); return a.map(function (x) { while (x.length < w) x += '.'; return x; }); }
   function sp(a, p, k) { return svg(pad(a), p, k); }
@@ -42,13 +43,24 @@
     fest: { bg: 'linear-gradient(#04061a 0%, #0e1440 36%, #23246a 64%, #4a2f7a 86%, #8a4a86 100%)', gr: '#24203f', gb: '#ffd36a', rd: '8, 6, 26', puff: '#ffe9a8' }
   }[scene];
   bootEl.classList.add('s-' + scene);
-  bootEl.style.background = SD.bg;
+  bootEl.style.background = (function (bg) {                       // небо смугами, як у самій грі, а не плавним градієнтом
+    var st = (bg.match(/#[0-9a-f]{6}\s+\d+%/gi) || []).map(function (s) { var p = s.split(/\s+/); return [parseInt(p[0].slice(1, 3), 16), parseInt(p[0].slice(3, 5), 16), parseInt(p[0].slice(5, 7), 16), parseFloat(p[1])]; });
+    if (st.length < 2) return bg;
+    var N = 18, out = [];
+    for (var i = 0; i < N; i++) {
+      var t = (i + 0.5) / N * 100, a = st[0], b = st[st.length - 1];
+      for (var k = 0; k + 1 < st.length; k++) if (t >= st[k][3] && t <= st[k + 1][3]) { a = st[k]; b = st[k + 1]; break; }
+      var f = (t - a[3]) / Math.max(1, b[3] - a[3]);
+      out.push('rgb(' + Math.round(a[0] + (b[0] - a[0]) * f) + ',' + Math.round(a[1] + (b[1] - a[1]) * f) + ',' + Math.round(a[2] + (b[2] - a[2]) * f) + ') ' + (i * 100 / N).toFixed(2) + '% ' + ((i + 1) * 100 / N).toFixed(2) + '%');
+    }
+    return 'linear-gradient(' + out.join(',') + ')';
+  })(SD.bg);
   bootEl.style.setProperty('--gr', SD.gr); bootEl.style.setProperty('--gb', SD.gb); bootEl.style.setProperty('--rd', SD.rd); bootEl.style.setProperty('--puff', SD.puff);
 
   // ---- Капі із заставки (cutCapyHi + обличчя), готові PNG ×4; бігунок: підскок, гойдання, ніжки й моргання; приладдя за сценою
   var CUTCAPY = {"w":112,"h":96,"sets":{"base":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABgCAYAAADFNvbQAAAAAXNSR0IArs4c6QAABWVJREFUeF7t3b2KFEEQAOC5wEcQTjTcTBAFzUzMVIzEWIxFI5/B0EAUBSOfwMjgojMxU1AEE1kw0MMDQzEy8KjDPvt6+6eqpqpnero20r2e7rr6pnq6d/dmtwZ7NJ2Braajt+AHA2z8JDBAA2w8A42HbxVogI1noPHwrQINsPEMNB6+VaABNp6BxsO3CjTAdjNwfrX9F6L/uN4XOZGl+8NkViRwzEBzauMSHcbEhZTuj5KrrgBTieZCSvdHgXNtuwHEJttPYqoiJfvioPnHdA14Y7V9mIvX6/2xeSwez52eSx13ARhWjIMLk6MNqYFogJ6iNqAbShJy8YDY6nPJrYUotX0xQK8Cr1w+NTx4+SF52Xl050LpkhT9ea7PsZCLBkytFsNrIMC5RyzZXLhQUwPSAIdhkAS8/+zdRhU+uXvp2HOSkIsFxOzVoBJ9vLAKc5UXg0rNryFgrtqpC50uAB3EmOmRAhZCpgBzkNiV6iIBXfXFKihExF7fqIAltFi1hrFhEBcFGE6bNQA5UKWlLAVyMYAYPMo1rpRk7Z9jEbsE1E6+RP9dAVKqTyK5tfrAIDZdgVPD+QsbjWthapXqL26aBIzt8bCrSYnqSa1IP+/9HHYfXpcYYqOPVDWqAmI201K/bS1AwAMo9zh7+uThP/3nNBCrAtaEg+TVwoOxUoAOEUC1ptMYomgFLhnO4YXV5iqQ+uoLZ+ZRBayJV7Pi/ERTXo2pVYViFTj1woJzRlOP0QZ88/ZHMaTwDWcRwKmX88XfWqhBbvUJQ/jTKaUCMXDuVxAF7AXOJU8akAInDtgbXgnRL3JM9XHwYAyxCjTA9Lw8FtAhxT7+KALYKx6mCqXw3Fgh4ijA3uHCmuO+FpqbPkMgMUDDk1nKYq59KlOoAfIAVycuHh24/vN+wADmRmJNoYaHx/PBYkd92/t99PTOl118x/9akgANjpbfEh705gPC/6mIaEDDo+FBawOk52xWR8wG0KqPf17kEK89fj68uHUbfQ189en7cPPcmWPBoKZQA+QDhkf6oAAIjxAlNhrgxdoWAQ1PDi/Wk7/5j0E6uBS0Aer6FHuHfaCPlDogVaUGWEyxbgN/Ix+DzE2vIR58vHDjDV2bQusBUkcyQGrGFNpzX0qL4UF4VoEKSLkuDbBywqWH4wCmqs8qUFoH0R8FMAfnhrIpFJF0ySYYwNi9alJ/rWuAAjpf938le3m6sxYYIX1PUwMcmd4p8ewaOBIPDtcEZN3kwDbydNUQcey0iYGzRQzdCXVE7i5MFBjUYLaRx6YJ3y4GqAFnFYg3IbU0QFK65tcYc2cJyahtGyGZzWHYuN+o5vQZ3UbAk7YS5anWrj4D5Dklj5oNoFUhXXYKvGQFGuACAA0RjzhV9WUr0AAXAGiIZcQpq69YgQZ4HDD2zkP4wrX2vi88pVD3iel9X0h5y8gAy7NW9RbNA/Y8lebwIC9NTKFTAZaSFytFSKjUzfBggXLv6ipb8c0A1kTkwMWqgQvpryxzgFPjoVahsdNPe1EjBehip0IuHlCzGjl4mM+gYBHDfV2sAmPj1V59upMTtY3QqkJIVurrUN2YUl/IyAUs3SnJxdkc4JgqDM/yWt9pi0EsxUb51HSN/Q67Ag3wP89U1cdexPhnFnVBk/vYXY2vBS9VYSy+XFxT4qkAal7TsMnK3YBdOj5sTFrT6agp1AUVJkz6msZNUgpSKj5uXJKYswaUSpDWCSYV3xhQEcDYggae417TNBITq8Y5xcdFVAWkBqUBl5rmqbFBe834OPGILGJyK1JsULUSw/12mVrxYfPltxOrQA7kVInBQk4VHwVSBbA0bc0lMSnIucSHgTwA0Lh9FABvsWMAAAAASUVORK5CYII=","rain":"data:image/png;base64,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","winter":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABgCAYAAADFNvbQAAAAAXNSR0IArs4c6QAABl5JREFUeF7t3T2IHVUUAOBZUAsrg66smkbZRqOSgFoJYpEiYqFBW0kdEAU7e+0Eg6JglV6IKVIEhATBKgoJagzIwxQaXbKKgmihgnLe5kzuO7k/59w5986dN2ea7O67f+9+c+7Pm5eZjc6OSffAxqRbb43vDHDiJ4EBVgB85P57/sNqvv3pF9U+Vy2sQl9MpgoX7cL3u327n3pos/9ZA9MAC5wSiOfC0WoQciiiASoDUrzLV39b1nDgwX231KSBaIAFAN3IiwFC1YA4JAoNsDBgqngDTPVQ5ddhCI3Nfb650CKwMlKsOs4CBvPbHNggnNskzirUTZ8TibOeAw9uby032JcWO8l+eO3k7/1mHPKcOHbXhrvXO/z2YuV0+vTN7f730D5w8+XTfZqDhx5dyQ/lc85PViJOQVNKg3C0zTFICghAMYBLF7/pi9/9+IX+Z4R2X4cXKaB7AsQic1aAITgOJAVMAWi9jvghxNkAcvFcTDcixwLE9gCkD3HWgM9vby3758xiJzoD/P3Xvx2d47QiDCumQygtH9L5EGcBSKMP4aiaDxLwYK5LdXDp10ORaICOIgVEPN8iY4wI9CGuPSA3+rBzXEQDbGBvIQF89un7ujdOXuxbbYAjA4ZWnnQOBDg8DHBkNLd6A2wIQ9oUzr4PItGNPhqF7xw71L36wRe2CpV2vkZ6FxAg4HCHR6wDX6N1AlzrB2zs13IVing+HIoYA5Rc16uNjReC1wqQDpsGWPu0GlAfB883x4WqhCHUInAAiDSrBJBTtgFyekkpjTYeNMsWMUo4sWJKwEma7SK/d/zJYFZuulABdOHlXuaa5CLGt8cLrSYlINy0oei8fG23O/fWc9xiROlCiEUBOZtp0buIJK4FCHgAhceBB/b+r4P7txKIVQFrwkHn1cLDudEHiIgAGhtOh5ywPkTVCFxnOHdhEwJ0cUogFgWsiVcz4lwUycq0BCC0hSKqReDYC4shQxM3b2nA85//nGwK/daACuDYy/nku1ZKEFt9QhW4oIGfJRHIgcO3oAo4FzjsPG1ACZw64NzwUojSBUwOHtShFoEGGB6XOcNnDBCRfF9/VAGcKx4nCrXwsC6KOAhw7nA05nI/4+REnzqg4eksZTlzX5Eh1ADzALdvf6LPuPjny44DGKspawg1PD6eC+bL9cO1P/s/n/3uHL/gGylFgAYn698UHpTmAsLvUkQ2oOHJ8CC1Acr7rKkczQBa9OWfFzHEIyc+7D566RX2HHjqqx+7o4/vX2kMawg1wHxAmtMFBUA4KIqvNsDzpU0CGp4enq8kd/Pvg0S4ELQBlvVJlg77QBcplCEUpQaY7OKyCdyNvA8yNrxSPPh64S0XdG0IrQcorckApT1WIH3uR2k+PGieRWABpFiRBli5w7WrywEMRZ9FoKMj+caZNip3y+C7GZ8NoTc0APCTxx5e/vbZzq/Lf5/ZunvFqtTfX/z6ysrm3nfHqNCdFA2wEcA77rwtGtgGmBj3xo7AGGDsPqYWgQ1HIOdOwgbYICAHDgcUA2wEMOeG57aNINsI3yoUVojcA/Njeu6qFeowQG4vB9LF9oEUxleEBNqX3wAHAoayu6vTWBUACN/Kjt2QoEQTbQ4UbC8mAQiNtEtKN6kkEUj3cpLVZG50ev+DpwFOHNCicDhgjejzbiOw6RaFez2RO4SODmhRmA9YCy8agQZ4E/D1zXuTa4x3d693uIhpBtAQ94ZQCWBNvGQEGqB8DmwOcO6I0kWMASZnm7oJ1gJwzlFogAMC5urOH+Lc759dqN1+Ej6Yhucnca9GwCq0ySG09uY+Bw7aCHjukXtXQ/r8JC5g7iUh8VnqZMi62V3pT2m0APF9SiEpIHcbMRnAknNiDh6NPN8ZzUWk1/NgCDXAwBgBnRV6HCpmST3fljv8DAFcuyF06JxIz3LJM225YLlR6ItAAyS9aYBDTsPVvFmLGLcI6YLG9wg4LI/7WPAhbz81lM4qAn2LmZJzGnePFbsBu7R9sIjhHpNahcaiUHtO48LRjg5BarUvt13cE4KTbvAQKolC6YpSq4MopAF6Tg3f2Z47p2nBxUYJeK2l9nGizZdGJQJ9UZjToBJwoS1Pa+3LaQ/kUQMcglgSLhWFnI6r1T5OW2gaVUDp2T5Wx3AfEzRW+ySQRQBTkK10TAiylfZxIP8HAtMoMnWO6cAAAAAASUVORK5CYII=","time":"data:image/png;base64,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"},"blink":{"x":66,"y":24,"url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAKRJREFUSEtj3Nvi+Z8BD8iddhqfNF65yVmmOOUZqW0xPsuQXUG2xcRagMvLBC0mO5wJaBy1mFYhi2HuaFCPBjXNQoCoxEVKeU1siTayLN5/5DkDUT6mZkSDLAWBkWExzLd09/GAWIxsKU19rMJqAk+Td36fYaCZxcgWYcsFj59+hQvvuLWPOqmakKUgG5EtplpQjzyLQUGHz9eeE6czzAqJQ4ljAMhcfA1Ywg9sAAAAAElFTkSuQmCC"}};
   var cset = 'base';                                                                 // без шапок і окулярів у всіх сценах
-  var cp = document.getElementById('bootCapy'), cK = Math.max(1.4, Math.min(2.2, Math.min(VW, VH) / 270)), CW = Math.round(CUTCAPY.w * cK), CH = Math.round(CUTCAPY.h * cK);
+  var cp = document.getElementById('bootCapy'), cK = Math.max(1, Math.round(Math.max(1.4, Math.min(2.2, Math.min(VW, VH) / 270)) * (window.devicePixelRatio || 1))) / (window.devicePixelRatio || 1), CW = Math.round(CUTCAPY.w * cK), CH = Math.round(CUTCAPY.h * cK);
   cp.style.width = CW + 'px'; cp.style.height = CH + 'px'; cp.style.marginLeft = (-CW / 2) + 'px';
   var pf = document.getElementById('bootPuff'); pf.style.marginLeft = (-CW / 2 + 12) + 'px';
   pf.innerHTML = '<i></i><i></i><i></i><i></i>';
@@ -156,13 +168,27 @@
   // ---- небесне тіло та зорі
   var orb = document.getElementById('bootOrb'), stars = bootEl.querySelector('.b-stars');
   stars.style.display = 'none';                                                     // зорі-цятки прибрано (просила користувачка)
+  function bHalo(r, col) { var R2 = r + 5, h = disc(R2, function (x, y, dx, dy) { var d = Math.sqrt(dx * dx + dy * dy); return d <= r ? '.' : d <= r + 2.5 ? 'a' : 'b'; }), o = -R2 * sc; return '<span class="halo" style="margin:' + o + 'px 0 0 ' + o + 'px">' + svg(h, { a: col + '.26)', b: col + '.12)' }, sc) + '</span>'; }
   function disc(r, fn) { return grid(r * 2, r * 2, function (x, y) { var dx = x + 0.5 - r, dy = y + 0.5 - r; return dx * dx + dy * dy <= r * r ? fn(x, y, dx, dy) : '.'; }); }
   if (scene === 'night' || scene === 'snow') {
     var mr = 12, moon = disc(mr, function (x, y, dx, dy) { var c = (dx + dy * 0.6) < -2 ? 'w' : (dx + dy) < 4 ? 'Y' : 'e'; if ((x === 6 && y === 7) || (x === 14 && y === 11) || (x === 9 && y === 16) || (x === 7 && y === 8) || (x === 15 && y === 12)) c = 'e'; return c; });
-    orb.innerHTML = '<span class="moon">' + svg(moon, { w: '#fff8e4', Y: '#f2e6bc', e: '#cdbf98' }, sc) + '</span>';
+    orb.innerHTML = '<span class="moon">' + bHalo(mr, 'rgba(255,244,214,') + svg(moon, { w: '#fff8e4', Y: '#f2e6bc', e: '#cdbf98' }, sc) + '</span>';
     orb.style.left = scene === 'night' ? '70%' : '24%'; orb.style.bottom = scene === 'night' ? '50%' : '58%';
   }
-  if (scene === 'dawn') { orb.innerHTML = '<span class="sunrays"></span><span class="sunball"></span>'; orb.style.left = '26%'; orb.style.bottom = '53%'; }
+  if (scene === 'dawn') {
+    var sr = 20, sun = disc(sr, function (x, y, dx, dy) { var d = Math.sqrt(dx * dx + dy * dy); return d < 7.5 ? 'w' : d < 11.5 ? 'Y' : d < 15.5 ? 'o' : d < 18 ? 'a' : 'b'; }), sh = sr * sc;
+    var rn = Math.max(1, Math.floor(Math.min(VW * 0.9, 620) / 156));
+    orb.innerHTML = '<canvas class="sunrays" width="156" height="156" style="width:' + 156 * rn + 'px;height:' + 156 * rn + 'px;margin:' + (-78 * rn) + 'px 0 0 ' + (-78 * rn) + 'px"></canvas><span class="sunball" style="margin:' + (-sh) + 'px 0 0 ' + (-sh) + 'px">' + svg(sun, { w: '#fffbe0', Y: '#ffe27a', o: '#ffb24a', a: 'rgba(255,190,90,.42)', b: 'rgba(255,190,90,.2)' }, sc) + '</span>';
+    (function () {                                                 // промені: один раз, чистими пікселями, смугами яскравості
+      var g = orb.firstChild.getContext('2d');
+      for (var y = 0; y < 156; y++) for (var x = 0; x < 156; x++) {
+        var dx = x + 0.5 - 78, dy = y + 0.5 - 78, r = Math.sqrt(dx * dx + dy * dy) / 78; if (r >= 0.8) continue;
+        var deg = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 24; if (deg > 6) continue;
+        g.fillStyle = 'rgba(255,244,190,' + (r < 0.36 ? 0.3 : r < 0.5 ? 0.21 : r < 0.65 ? 0.13 : 0.06) + ')'; g.fillRect(x, y, 1, 1);
+      }
+    })();
+    orb.style.left = '26%'; orb.style.bottom = '53%';
+  }
   if (scene === 'time') {
     var teeth = '', hub = '';
     for (var tk = 0; tk < 12; tk++) { var an = tk * 30; teeth += '<rect x="-3" y="-60" width="6" height="12" fill="#ffd36a" transform="rotate(' + an + ')"/>'; }
@@ -175,7 +201,7 @@
   if (scene === 'halloween') {                                                     // великий помаранчевий місяць із кратерами
     var CR = [[9, 9, 2], [20, 12, 3], [12, 21, 2], [22, 23, 1], [7, 16, 1], [17, 27, 1]];
     var hm = disc(16, function (x, y, dx, dy) { for (var ci = 0; ci < CR.length; ci++) { var ex = x - CR[ci][0], ey = y - CR[ci][1]; if (ex * ex + ey * ey <= CR[ci][2] * CR[ci][2]) return 'e'; } return (dx + dy * 0.5) < -6 ? 'w' : (dx + dy * 0.7) < 7 ? 'Y' : 'e'; });
-    orb.innerHTML = '<span class="moon hw">' + svg(hm, { w: '#ffe2a0', Y: '#ffab4a', e: '#d8702e' }, sc) + '</span>';
+    orb.innerHTML = '<span class="moon hw">' + bHalo(16, 'rgba(255,150,60,') + svg(hm, { w: '#ffe2a0', Y: '#ffab4a', e: '#d8702e' }, sc) + '</span>';
     orb.style.left = '68%'; orb.style.bottom = '57%';
   }
 
@@ -229,7 +255,7 @@
       html += '<span style="left:' + Math.round(x0) + 'px;bottom:' + (17 * sc - 4) + 'px">' + sv + '</svg></span>';
     });
   }
-  st.innerHTML = html; st.style.width = (per * 2) + 'px'; st.style.setProperty('--p', per + 'px'); st.style.setProperty('--sd', (per / 192) + 's');
+  st.innerHTML = html; st.style.width = (per * 2) + 'px'; st.style.setProperty('--p', per + 'px'); st.style.setProperty('--stp', Math.round(per)); st.style.setProperty('--sd', (per / 192) + 's');
 
   // ---- небо: об’єкти по сцені
   var BLIMP = ['....OOOOOOOOOOOO....', '..OOwwwwwwwwwwwwOO..', '.OwwwwrrrwwwwwrrwwO.', 'OwwwwwrrrwwwwwrrwwwO', '.OwwwwrrrwwwwwrrwwO.', '..OOwwwwwwwwwwwwOO..', '....OOOOOOOOOOOO....', '.......OyyyyO.......', '.......OOOOOO.......'];
@@ -274,7 +300,7 @@
   // ---- канва неба (за містом): кажани в Хелловін, феєрверки на святі; 1 піксель канви = px екранних, як піксель-арт гри
   if (scene === 'halloween' || scene === 'fest') (function () {
     var px = Math.max(2, sc - 2), W = Math.ceil(VW / px), H = Math.ceil(VH / px), cv = document.createElement('canvas');
-    cv.width = W; cv.height = H; cv.className = 'b-cv';
+    cv.width = W; cv.height = H; cv.className = 'b-cv'; cv.style.width = W * px + 'px'; cv.style.height = H * px + 'px';
     bootEl.insertBefore(cv, document.getElementById('bootCityFar'));
     var g = cv.getContext('2d'), last = performance.now(), step;
     var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -355,7 +381,7 @@
   // ---- канва для решти сцен (b-cv fr — шар перед містом): сяйво + НЛО + зорепад (night), промені + відблиски (dawn), блискавки + бризки (rain), сяйво + заметіль (snow), портал часу (time)
   if (['night', 'dawn', 'rain', 'snow', 'time'].indexOf(scene) >= 0) (function () {
     var px = Math.max(2, sc - 2), W = Math.ceil(VW / px), H = Math.ceil(VH / px);
-    function mk(cls) { var c = document.createElement('canvas'); c.width = W; c.height = H; c.className = 'b-cv' + cls; return c; }
+    function mk(cls) { var c = document.createElement('canvas'); c.width = W; c.height = H; c.className = 'b-cv' + cls; c.style.width = W * px + 'px'; c.style.height = H * px + 'px'; return c; }
     var cvB = mk(''), cvF = mk(' fr');
     bootEl.insertBefore(cvB, document.getElementById('bootCityFar'));
     bootEl.insertBefore(cvF, document.getElementById('bootFx'));
@@ -371,7 +397,7 @@
         for (var x = 0; x < W; x++) {
           var wv = Math.sin(x * 0.045 + T * 0.55 + b * 1.7) + Math.sin(x * 0.021 - T * 0.37 + b) * 0.8;
           var top = y0 + b * H * 0.035 + wv * amp, h = H * 0.17 + Math.sin(x * 0.03 + T * 0.8 + b) * H * 0.05, vis = 0.55 + 0.45 * Math.sin(x * 0.012 + T * 0.3 + b * 2);
-          for (var k = 0; k < K; k++) { g.globalAlpha = Math.sin((k + 0.5) / K * Math.PI) * al * vis; g.fillRect(x, top + k * h / K, 1, h / K + 1); }
+          for (var k = 0; k < K; k++) { g.globalAlpha = Math.sin((k + 0.5) / K * Math.PI) * al * vis; g.fillRect(x, Math.round(top + k * h / K), 1, Math.ceil(h / K) + 1); }
         }
       }
       g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';

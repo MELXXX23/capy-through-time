@@ -33,7 +33,7 @@ function openBonus(def) {                                            // def — 
   ui.circusModal.classList.add('hag', 'mg');                           // mg: без клоуна, гра на всю рамку
   ui.circusWheel.width = 192; ui.circusWheel.height = 120;
   mgReset(d.o);
-  ui.circusModal.hidden = false;
+  ui.circusModal.hidden = false; pxFit(ui.circusWheel);
   ui.circusTitle.textContent = t(d.k.title); ui.circusSub.textContent = t(d.k.sub); ui.circusSkinNote.textContent = t('mgSkinOnly'); ui.circusSkinNote.hidden = false;
   ui.circusClose.textContent = t('wheelClose'); ui.circusResult.textContent = '';
   updateCircusButtons();

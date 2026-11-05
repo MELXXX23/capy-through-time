@@ -324,7 +324,8 @@ function pxArt(name) {
   rows.forEach((row, y) => { for (let x = 0; x < 16; x++) { const c = PX_PAL[row[x]]; if (c) { g.fillStyle = c; g.fillRect(x, y, 1, 1); } } });
   return (pxArtCache[name] = cv);
 }
+function pxIcoSize(px) { const dpr = window.devicePixelRatio || 1; return Math.max(1, Math.round(px * dpr / 16)) * 16 / dpr; }       // ціла кількість пікселів екрана на піксель значка
 function pxArtImg(name, px) {
   const im = document.createElement('img'); im.className = 'px-ico'; im.alt = ''; im.src = pxArt(name).toDataURL();
-  im.width = im.height = px || 20; im.setAttribute('aria-hidden', 'true'); return im;
+  im.width = im.height = pxIcoSize(px || 20); im.setAttribute('aria-hidden', 'true'); return im;
 }

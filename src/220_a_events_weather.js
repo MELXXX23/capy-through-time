@@ -27,7 +27,7 @@ const seasonFx = { on: false, t: 0, dur: 2.1, kind: '', n: [], k: 4 };
 function sfxHash(i, j) { const v = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return v - Math.floor(v); }
 function playSeasonFx(kind) {
   if (!animOn() || !ui.seasonFx) return;
-  const cv = ui.seasonFx, k = Math.max(3, Math.round(Math.min(innerWidth, 900) / 150));
+  const sk = Math.max(1, Math.round(sceneUnit)), cv = ui.seasonFx, k = (window.devicePixelRatio || 1) < 1.75 && !mobileMQ.matches ? sk * Math.ceil(3 / sk) : Math.max(3, Math.round(Math.min(innerWidth, 900) / 150));       // ПК: пікселі хвилі кратні пікселям сцени, щоб не було «мішаних» пікселів
   seasonFx.k = k; cv.width = Math.ceil(innerWidth / k); cv.height = Math.ceil(innerHeight / k);
   Object.assign(seasonFx, { on: true, t: 0, kind });
   cv.hidden = false;
@@ -43,9 +43,9 @@ function updateSeasonFx(dt) {
   if (T >= D) { seasonFx.on = false; cv.hidden = true; ui.seasonBanner.hidden = true; return; }
   g.clearRect(0, 0, W, H);
   const a = Math.min(1, T / 0.35) * Math.min(1, (D - T) / 0.75);
-  const F = (x, y, w, h, c, al) => { g.globalAlpha = al === undefined ? 1 : al; g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); g.globalAlpha = 1; };
+  const F = (x, y, w, h, c, al) => { g.globalAlpha = al === undefined ? 1 : al; g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h))); g.globalAlpha = 1; };
   const D2 = (cx, cy, r, c, al) => { g.globalAlpha = al; g.fillStyle = c; for (let dy = -r; dy <= r; dy++) { const hf = Math.round(Math.sqrt(r * r + 0.5 - dy * dy)); g.fillRect(Math.round(cx - hf), Math.round(cy + dy), hf * 2 + 1, 1); } g.globalAlpha = 1; };
-  const n = Math.max(30, Math.round(W * H / 260));
+  const n = Math.max(30, Math.round(W * H / 260 * Math.min(1, (seasonFx.k / 6) * (seasonFx.k / 6))));
   const kind = seasonFx.kind;
   const TINT = { winter: '207,232,255', spring: '255,196,224', summer: '255,233,160', autumn: '255,176,96', halloween: '70,34,120' }[kind] || '255,255,255';
   const wp = Math.min(1, T / 0.9);
@@ -53,11 +53,6 @@ function updateSeasonFx(dt) {
     const gx = (W + 120) * wp - 60, gr = g.createLinearGradient(gx - 70, 0, gx + 30, 0);
     gr.addColorStop(0, 'rgba(' + TINT + ',0)'); gr.addColorStop(0.65, 'rgba(' + TINT + ',0.5)'); gr.addColorStop(1, 'rgba(' + TINT + ',0)');
     g.fillStyle = gr; g.fillRect(0, 0, W, H);
-  }
-  const BOKEH = { winter: '#dff1ff', spring: '#ffd0e6', summer: '#fff2a0', autumn: '#ffc080', halloween: '#a070ff' }[kind] || '#fff';
-  for (let i = 0; i < 9; i++) {                                                  // м'які відблиски на тлі
-    const bx = (sfxHash(i, 40) * W + T * (6 + i * 2)) % W, by = H * (0.12 + 0.7 * sfxHash(i, 41)) + Math.sin(T * 1.5 + i) * 3, br = 5 + 11 * sfxHash(i, 42);
-    D2(bx, by, br, BOKEH, 0.09 * a); D2(bx, by, Math.max(2, br - 3), BOKEH, 0.06 * a);
   }
   if (kind === 'winter') {
     F(0, 0, W, H, '#cfe8ff', 0.3 * a);
@@ -129,7 +124,7 @@ function showSeasonsIntro() {
   state.seasonsIntro = 1; saveGame();
   ui.siTitle.textContent = t('seasonIntroTitle'); ui.siText.textContent = t('seasonIntroText');
   ui.siGo.textContent = t('seasonIntroGo'); ui.siLater.textContent = t('seasonIntroLater');
-  const g = ui.siIcon.getContext('2d'); g.imageSmoothingEnabled = false; const sic = tabGlyph('seasons'), sdraw = () => { g.clearRect(0, 0, 48, 48); g.drawImage(sic, 0, 0, 48, 48); }; sdraw(); if (sic._cb) sic._cb.push(sdraw);
+  const g = ui.siIcon.getContext('2d'); g.imageSmoothingEnabled = false; const sic = tabGlyph('seasons'), sdraw = () => { g.clearRect(0, 0, 32, 32); g.drawImage(sic, 0, 0, 32, 32); }; sdraw(); if (sic._cb) sic._cb.push(sdraw);
   ui.siModal.hidden = false; playSfx('wheelWin');
 }
 function updateSeasonsIntro() {
@@ -384,7 +379,8 @@ function drawRaccoon() {
   const x = Math.round(r.x), y = Math.round(r.y);
   ctx.globalAlpha = 0.22; R(ctx, x - 8, y, 16, 2, 'd'); ctx.globalAlpha = 1;
   const face = r.vx < 0;
-  drawSprite(ctx, 'npc_shnyr', x - 8, y - 16 - step - hop, { flip: step === 1, sx: 1.35, sy: 1.35 });
+  const shn0 = OUTLINED.test('npc_shnyr') ? getOutlinedCanvas('npc_shnyr') : getSpriteCanvas('npc_shnyr'), shn = evenScaled(shn0, 1.35), shO = OUTLINED.test('npc_shnyr') ? 1 : 0;
+  drawCanvasSprite(ctx, shn, x - 8 - shO + (shn0.width - shn.width) / 2, y - 16 - step - hop - shO + shn0.height - shn.height, { flip: step === 1 });
   if (r.hasSack !== false) {   // мішок із монетами
     const sx = face ? x - 19 : x + 10, sy0 = y - 19 - step - hop;
     R(ctx, sx, sy0, 9, 11, 'l'); R(ctx, sx, sy0, 9, 1, 'c');

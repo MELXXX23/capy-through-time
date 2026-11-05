@@ -42,7 +42,11 @@ function setIconBox(box, src) {                                   // src — е�
   if (typeof src === 'string' && box.dataset.ch === src) return;
   box.dataset.ch = key; box.textContent = '';
   const cv = document.createElement('canvas'), base = typeof src === 'string' ? pxEmojiIcon(src) : src;
-  cv.width = base.width; cv.height = base.height; cv.getContext('2d').drawImage(base, 0, 0);
+  if (base.width !== base.height) {                               // висока фігура героя: не сплющуємо в квадрат, а беремо голову й плечі 18×18 (у рамці рівно ×2 чи ×3)
+    const bd = base.getContext('2d').getImageData(0, 0, base.width, base.height).data; let top = 0;
+    find: for (; top < base.height; top++) for (let x = 0; x < base.width; x++) if (bd[(top * base.width + x) * 4 + 3] > 40) break find;
+    cv.width = cv.height = 18; cv.getContext('2d').drawImage(base, -Math.round((base.width - 18) / 2), -Math.max(0, Math.min(top, base.height - 18)));
+  } else { cv.width = base.width; cv.height = base.height; cv.getContext('2d').drawImage(base, 0, 0); }
   cv.setAttribute('aria-hidden', 'true'); box.appendChild(cv);
 }
 

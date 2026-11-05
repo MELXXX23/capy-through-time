@@ -3,7 +3,7 @@
    ВКЛАДКА «СКІНИ»: виграні в цирку наряди для Капі, магазину, погоди й героїв. Тап — вдягнути, ще раз — зняти.
    ===================================================================== */
 const SKIN_ICONS = { capy: 'hat', shop: 'shop', weather: 'weather', street: 'street', hero: 'hero', epoch: 'epoch' };   // назви піксельних іконок (265_b_icons_art.js)
-function skinCatIcon(type) { return '<img class="px-ico" alt="" aria-hidden="true" width="22" height="22" src="' + pxArt(SKIN_ICONS[type] || 'hat').toDataURL() + '"> '; }
+function skinCatIcon(type) { return '<img class="px-ico" alt="" aria-hidden="true" width="' + pxIcoSize(22) + '" height="' + pxIcoSize(22) + '" src="' + pxArt(SKIN_ICONS[type] || 'hat').toDataURL() + '"> '; }
 let skinsSig = '';
 /* ---- Літаючі прикраси навколо скінів магазину: цукерки / золоті монетки / кристали. Повільно спливають угору, гойдаються
         й м'яко підстрибують при тапі разом із магазином (пружина shopAnim) ---- */

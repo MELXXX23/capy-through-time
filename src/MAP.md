@@ -13,8 +13,9 @@
 | `023_style_boot.css` | 38 | CSS: екран завантаження, бульбашки, кат-сцена, газета |  |
 | `024_style_modal_phone.css` | 21 | CSS: модальні вікна, телефон |  |
 | `025_style_late.css` | 26 | CSS: пізні правки (поверх решти) |  |
+| `026_style_crisp.html` | 12 | CSS: чіткість (цілий масштаб значків, рамки без розмиття, заставка) |  |
 | `030_body_open.html` | 1 | HTML: початок body |  |
-| `040_boot_script.html` | 79 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
+| `040_boot_script.html` | 82 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
 | `050_body_markup.html` | 18 | HTML: розмітка гри (панель, меню, вікна) |  |
 | `100_a_core_config.js` | 40 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
 | `100_b3_chibi_models.js` | 23 | — | CHIBI_ARM_Y, CHIBI_MODELS |
@@ -47,13 +48,13 @@
 | `151_d_arch_space_neon.js` | 26 | ARCH: епохи 6–7 (Космос, Неон) |  |
 | `151_e_arch_skins.js` | 50 | — | SKIN_ARCH |
 | `160_refs.js` | 7 | посилання на елементи DOM (ui) | $, ui, ctx, skyLayer, shop, uiCache, sceneUnit, viewCrop |
-| `165_shop.js` | 19 | rebuildShop, layoutScene, камера, панель на телефоні | deferLayers, shopSlicing, rebuildShop, rebuildShopSliced, rebuildShopGen, placeShopOverlay, updateSignText, cam |
+| `165_shop.js` | 20 | rebuildShop, layoutScene, камера, панель на телефоні | deferLayers, shopSlicing, rebuildShop, rebuildShopSliced, rebuildShopGen, placeShopOverlay, updateSignText, cam |
 | `165_tab_icons_hd.js` | 14 | — | TAB_ICONS_HD, tabImgHD, tabGlyphHD |
 | `170_ui.js` | 32 | інтерфейс: вкладки, картки відділів і команди | detectLanguage, setText, outlineCanvas, tabGlyph, tabIconCanvas, buildTabs, TABS_PRIMARY, setSheet |
 | `175_buy.js` | 1 | купівля | buyDept, expandShop |
 | `178_offline.js` | 2 | дохід, поки гравця не було | addOfflineEarnings, refreshOfflineModal, showOfflineModal, claimOffline |
 | `180_a9_team_props.js` | 19 | — | PAW_COL, PAW_TINT, TPG, TP, TPBX, TPART, TPX, TPAW |
-| `180_a_anim_weather_actors.js` | 43 | анімації: погода, хмари, звірята-помічники (actorHome, syncActors, updateActors) | shopAnim, capyAnim, fx, clouds, weather, raindrops, updateWeather, rainSpotCache |
+| `180_a_anim_weather_actors.js` | 44 | анімації: погода, хмари, звірята-помічники (actorHome, syncActors, updateActors) | shopAnim, capyAnim, fx, clouds, weather, raindrops, updateWeather, rainSpotCache |
 | `180_b_actor_draw_lines.js` | 47 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, PROP_CV, drawCrispProp, ACTOR_K, actorK, evenPlanCache, evenPlan |
 | `180_c_customers_updates.js` | 46 | покупці (spawnCustomer, drawCustomer, spaceHelmet), updateAnimations, спливаючі числа | skinLineLast, skinLine, capySay, buyStar, hireOrUpgrade, CUSTOMERS_BY_LEVEL, customerTarget, passEdge |
 | `190_a_audio_music_cutscene.js` | 43 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
@@ -74,7 +75,7 @@
 | `220_a_events_weather.js` | 39 | події, сезони, погода, райдуга, дощ, блискавки (початок) | theme, snow, bats, trouble, sackDrop, eventTimer, inRange, isBlackFriday |
 | `220_b1_rainbow_lightning_skyx.js` | 24 | райдуга, блискавки, прикраси неба (початок) | RAINBOW_M, rainbowM, rainbowCanvas, rainbowGeom, drawRainbowSkin, bolts, boltTimer, boltPath |
 | `220_b2_rainbow_lightning_skyx.js` | 23 | прикраси неба (skyx*), кеш-спрайти | skyxDrone, skyxIsland, skyBlockCache, skyHash, skyxBlock, islandCanvas, skyxIsland2, droneBody |
-| `220_c_epoch_sky_fx.js` | 46 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, discoLamps, drawSkyExtra |
+| `220_c_epoch_sky_fx.js` | 48 | прикраси неба по епохах, епохальні ефекти, зірки | INV_ART, skyxInvader, skyxButterfly, SPACE_PL, spacePlanets, DISCO_COLS, pxTri, discoBeam |
 | `220_d_night_garlands_halloween.js` | 44 | нічне небо, гірлянди, Хелловін (привиди, туман) | drawSkyScreen, drawNightShade, SEASON_MOOD, BULB_SETS, bulbColors, awningBulbs, garlandSpans, garlandY |
 | `221_sky_life.js` | 4 | — | skyLife, SKY_LIFE_COLS, skyLifeGlow, seedSkyLife, drawSkyLife |
 | `230_a1_skins_circus_hag.js` | 27 | СКІНИ: пули, ціни, володіння | CIRCUS_SECTORS, BONUS_GAME_SKINS, circusFreq, WEATHER_ORDER, SKIN_HIDDEN, SKIN_TYPES, SKIN_POOL, SKIN_SEASON |
@@ -82,7 +83,7 @@
 | `230_a3_hag_v2.js` | 11 | — | hvEll, witchV2, hagFly, hagOrbitPos, hagEase, hagCruiseY, hagStartFlight, hagTap |
 | `230_a4_hag_hut.js` | 12 | — | hutLeg, hutFace, hutV2 |
 | `230_a5_hag_scene.js` | 18 | — | HAG_W, hvHash, hvBat, hvMoon, hvTree, hagBg, hagBgBuild, hagCauldronV2 |
-| `230_b_circus_loot_letters.js` | 43 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawWheelIcon, MUL_DIG, mulLabel, drawCircusIcon |
+| `230_b_circus_loot_letters.js` | 44 | колесо цирку, лут, газета (початок), листи | circusCanvas, drawCircus, drawBang, hitCircus, drawWheelIcon, MUL_DIG, mulLabel, drawCircusIcon |
 | `230_c_news_wheel_events.js` | 28 | газета (сторінки), листи, updateEvents/initEvents | npI, newsPortrait, newsSec, NP_SEC, NP_GUIDE, NP_SOON, npArticle, buildListPages |
 | `230_d_circus_themes.js` | 30 | цирк по епохах: CIRCUS_THEMES (палітра, деталі, гірлянда), малює CIRCUS_ART з 230_a | CIRCUS_THEMES, circusGarland |
 | `240_story.js` | 44 | сюжет: діалоги, гості, камео | dialog, storyTimer, cameos, speakerSprite, speakerName, pageText, renderDialogText, buildChoiceButtons |
@@ -95,10 +96,11 @@
 | `246_b_help.js` | 19 | допомога гостям: тексти EN, підключення |  |
 | `250_tap.js` | 8 | тапи | hapticSwitch, buzz, evMult, doTap, toScenePoint, hitShop, setupInput |
 | `260_render.js` | 31 | головний render, будівельна техніка | render, renderScene, shineTmp, drawStreetShine, drawShopShine, drawShopLayered, drawBuildTent, drawDrum |
-| `262_fx_plus.js` | 29 | — | FXP, fxLevel, EPFX, fxPx, fxFrac, fxSeed, updateFxPlus, fxCoin |
+| `262_fx_plus.js` | 30 | — | FXP, fxLevel, EPFX, fxPx, fxFrac, fxFallTop, fxSeed, updateFxPlus |
 | `263_build_cinema.js` | 8 | — | bc, bcSweepCv, bcMake, bcPlace, buildCinemaStart, buildCinemaTick, buildCinemaEnd, drawBuildSweep |
+| `264_crisp.js` | 3 | чіткість: розміри шрифту під екран ПК, pxFit (полотно у вікні в цілому масштабі) | crispFontRules, crispFontSize, crispCollectRules, crispFonts, pxFit, crispSig, crispSync |
 | `264_smooth_ui.js` | 2 | — |  |
-| `265_b_icons_art.js` | 9 | — | PX_PAL, PX_ART, pxArtCache, pxArt, pxArtImg |
+| `265_b_icons_art.js` | 9 | — | PX_PAL, PX_ART, pxArtCache, pxArt, pxIcoSize, pxArtImg |
 | `265_d_card_scenes.js` | 21 | — | cardRect, cardMod, cardSparkle, cardBall, cardTri, cardSky, cardStars, CARD_GY |
 | `265_e_capy_scenes.js` | 23 | — | CAPY_SCENES |
 | `265_icons_plus.js` | 42 | — | pxIconCache, pxEmojiIcon, iconBox, setIconBox, iconBackdrop, iconAvgColor, mixCol, skinTwinkles |
@@ -119,7 +121,7 @@
 | `279_bonus_games.js` | 20 | бонус-ігри під епохи: реєстр MG_DEFS, спільний мінірушій mgMake (таймер, ціль, приз), «Танцпол» (епоха 2), «Спам» (епоха 4); перезарядка 12 год на епоху, приз-скін | BONUS_COOLDOWN_MIN, BONUS_LOSE_MIN, MG_DEFS, mgGame, mgForEpoch, mgActive, mgCur, bonusCooldownMs |
 | `279_c_bonus_games_more.js` | 25 | бонус-ігри епох 0 Фреска, 1 Джубокс, 3 Клешня, 5 Сортування, 6 Кристали, 7 Нічна траса (mgMake) + їх тексти |  |
 | `279_d_bonus_games_jp_hw.js` | 12 | — | dsc |
-| `279_e_bonus_bg.js` | 11 | — | BBG_P, BBG_THEMES, BBG_ART, bbg, bbgShade, bbgMix, bbgThemeId, bbgSprite |
+| `279_e_bonus_bg.js` | 12 | — | BBG_P, BBG_THEMES, BBG_ART, bbg, bbgShade, bbgMix, bbgThemeId, bbgSprite |
 | `279_y_lang_base.js` | 1 | — | installLang |
 | `279_z_lang_es.js` | 168 | — |  |
 | `279_z_lang_it.js` | 168 | — |  |

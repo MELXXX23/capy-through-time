@@ -213,7 +213,7 @@ function placeBubble(el, x, y, bb0) {
   const bb = bb0 || bubbleBounds(), hw = (el._w || (el._w = el.offsetWidth)) / 2 / sceneUnit + 2, hh = (el._h || (el._h = el.offsetHeight)) / sceneUnit + 6;
   const cx = Math.max(bb.il + hw, Math.min(bb.ir - hw, x)), cy = Math.max(bb.it + hh, Math.min(bb.b - 4, y));
   el._cx = cx;
-  el.style.left = Math.round((cx + view.offX) * sceneUnit) + 'px'; el.style.top = Math.round((cy + view.offY) * sceneUnit) + 'px';
+  el.style.left = (Math.round((cx + view.offX) * sceneUnit) + (el._w % 2 ? 0.5 : 0)) + 'px'; el.style.top = Math.round((cy + view.offY) * sceneUnit) + 'px';
   const lim = Math.max(0, el.offsetWidth / 2 - 9);
   el.style.setProperty('--tail', Math.max(-lim, Math.min(lim, Math.round((x - cx) * sceneUnit))) + 'px');   // хвостик показує на звірятко, навіть коли бульбашка підсунута від краю кадру
 }

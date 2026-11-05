@@ -114,7 +114,7 @@ function openCircus() {
   else if (hag) { ui.circusWheel.width = HAG_W; ui.circusWheel.height = HAG_H; if (hagGame.phase === 'idle' || hagGame.phase === 'done') hagReset(); if (state.circus.spun && hagGame.phase === 'idle') hagGame.phase = 'done'; }
   else { ui.circusWheel.width = 128; ui.circusWheel.height = 140; }
   ui.clownCanvas.width = hag ? 144 : 72; ui.clownCanvas.height = hag ? 80 : 40;       // портрет відьми в подвійній роздільності
-  ui.circusModal.hidden = false;
+  ui.circusModal.hidden = false; pxFit(ui.circusWheel);
   ui.circusTitle.textContent = t(nd ? 'noodleTitle' : hag ? 'hagTitle' : 'circusTitle'); ui.circusSub.textContent = t(nd ? 'noodleSub' : hag ? 'hagSub' : 'circusSub');
   ui.circusSkinNote.textContent = t('circusBonusOnly'); ui.circusSkinNote.hidden = hag || nd;             // напис «Тут лише бонуси» (колесо дає бонуси й кристали, не скіни) — лише в цирку, у Рьо й відьми без нього
   ui.circusClose.textContent = t(state.circus.spun ? (nd ? 'noodleDone' : hag ? 'hagDone' : 'circusDone') : 'wheelClose');
@@ -468,7 +468,7 @@ function newsPic(kind) {
     R(g, 66, 14, 12, 12, 'd'); R(g, 68, 16, 8, 8, 'h'); R(g, 82, 14, 12, 12, 'd'); R(g, 84, 16, 8, 8, 'h');
     [[20, 20], [136, 24], [30, 52], [130, 54]].forEach(([sx, sy]) => { R(g, sx, sy - 3, 1, 7, 'y'); R(g, sx - 3, sy, 7, 1, 'y'); });
   } else {                                                                         // обкладинка: Капі на тлі променів
-    for (let i = 0; i < 24; i++) { const a0 = i / 24 * Math.PI * 2; g.fillStyle = i % 2 ? PALETTE.y : PALETTE.h; g.beginPath(); g.moveTo(80, 60); g.arc(80, 60, 120, a0, a0 + Math.PI / 24 * 2); g.closePath(); g.fill(); }
+    for (let y = 0; y < 84; y++) for (let x = 0; x < 160; x++) { const a = Math.atan2(y - 60, x - 80) + Math.PI, i = Math.floor(a / (Math.PI * 2) * 24); g.fillStyle = i % 2 ? PALETTE.y : PALETTE.h; g.fillRect(x, y, 1, 1); }
     const cs = getSpriteCanvas('capy'); g.drawImage(cs, 0, 0, cs.width, cs.height, 80 - cs.width * 1.5, 82 - cs.height * 3, cs.width * 3, cs.height * 3);
   }
   return c;
