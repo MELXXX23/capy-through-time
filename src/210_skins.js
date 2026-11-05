@@ -206,11 +206,8 @@ function skinPreviewCanvas(type, name, cv0) {
       heroSkinPreview(cv, performance.now() / 1000);
     } else if (type === 'street') {
       streetSkinPreview(cv, name || 'stone', PT);
-    } else if (type === 'shop') {                                   // «Будівлі»: маркет на тлі задніх будинків у стилі скіна
-      const geo = buildShopCanvas(state.shopLevel, state.depts.map(tierOf));
-      cv.width = geo.w + 64; cv.height = geo.h + 6; g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-      skinTownPreview(g, cv.width, cv.height);
-      g.drawImage(geo.canvas, 32, 4);
+    } else if (type === 'shop') {                                   // «Будівлі»: фасад крупно й без зменшення (265_icons_plus.js)
+      shopSkinPreview(cv, name, PT);
     } else {                                                         // скіни погоди: рухомі картки (265_icons_plus.js)
       weatherSkinPreview(cv, name, PT);
     }
@@ -273,6 +270,7 @@ function updateSkinsUI() {
       b.append(nm, st);
       b.addEventListener('click', () => equipSkin(type, o.i));
       grid.appendChild(b);
+      skinPreviewCanvas(type, o.name, cv);                               // уже в сторінці: полотно бере точний розмір картки, тож пікселі рівні з першого кадру
     }, j * 45));                                                         // кожну картку — окремим кадром: найважчі (магазини) не збираються разом
     ui.skinsList.appendChild(card);
     if (fillOrder++ === 0) fill(); else later(fill, fillOrder * 50);

@@ -359,10 +359,56 @@ const capyRimCache = {};
 const CAPY_K = 1.26;                                  // Капі збільшена на 26% (було 30%, зменшено на 3%)
 function capyHopY() { const k = (animClock - capyAnim.hopAt) / 0.5; return k >= 0 && k < 1 ? Math.round(Math.sin(k * Math.PI) * 10) : 0; }       // підскок Капі при тапі на неї (пікселі сцени)
 function capyScaled(fn) { const cp = LAYOUT.capy, px = cp.x + 14, py = cp.footY; ctx.save(); ctx.translate(px, py); ctx.scale(CAPY_K, CAPY_K); ctx.translate(-px, -py); fn(); ctx.restore(); }
+// Капі ×1,5 рівними пікселями (р. 78): звичайне збільшення давало то 1, то 2 пікселі й рвані контури. Тут Scale3x (ті самі кольори, плавні діагоналі) і зменшення вдвічі за більшістю; око лишається рівним квадратом.
+const capyBigCache = new WeakMap();
+function capyBig(src) {
+  let out = capyBigCache.get(src); if (out) return out;
+  const W = src.width, H = src.height, d = src.getContext('2d').getImageData(0, 0, W, H).data, px = new Uint32Array(W * H);
+  for (let i = 0; i < W * H; i++) px[i] = d[i * 4 + 3] < 40 ? 0 : (((d[i * 4] << 24) | (d[i * 4 + 1] << 16) | (d[i * 4 + 2] << 8) | d[i * 4 + 3]) >>> 0);
+  const at = (x, y) => (x < 0 || y < 0 || x >= W || y >= H ? 0 : px[y * W + x]), W3 = W * 3, t3 = new Uint32Array(W3 * H * 3);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const A = at(x - 1, y - 1), B = at(x, y - 1), C = at(x + 1, y - 1), D = at(x - 1, y), E = at(x, y), F = at(x + 1, y), G = at(x - 1, y + 1), I = at(x, y + 1), J = at(x + 1, y + 1);
+    const e = [E, E, E, E, E, E, E, E, E];
+    if (B !== I && D !== F) {
+      if (D === B) e[0] = D; if ((D === B && E !== C) || (B === F && E !== A)) e[1] = B; if (B === F) e[2] = F;
+      if ((D === B && E !== G) || (D === I && E !== A)) e[3] = D; if ((B === F && E !== J) || (I === F && E !== C)) e[5] = F;
+      if (D === I) e[6] = D; if ((D === I && E !== J) || (I === F && E !== G)) e[7] = I; if (I === F) e[8] = F;
+    }
+    for (let j = 0; j < 3; j++) for (let k = 0; k < 3; k++) t3[(y * 3 + j) * W3 + x * 3 + k] = e[j * 3 + k];
+  }
+  const lum = v => ((v >>> 24) + ((v >>> 16) & 255) + ((v >>> 8) & 255)) / 3;
+  const W2 = Math.floor(W3 / 2), H2 = Math.floor(H * 3 / 2), res = new Uint32Array(W2 * H2);
+  for (let y = 0; y < H2; y++) for (let x = 0; x < W2; x++) {
+    const a = [t3[y * 2 * W3 + x * 2], t3[y * 2 * W3 + x * 2 + 1], t3[(y * 2 + 1) * W3 + x * 2], t3[(y * 2 + 1) * W3 + x * 2 + 1]];
+    let best = a[0], bn = -1;
+    a.forEach(v => { let n = 0; a.forEach(q => { if (q === v) n++; }); const sc = n + (v ? 0.5 : 0) + (v && lum(v) < 70 ? 0.6 : 0); if (sc > bn) { bn = sc; best = v; } });
+    res[y * W2 + x] = best;
+  }
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {                       // око (майже чорний квадрат на шерсті) не закруглюємо
+    const v = px[y * W + x]; if (!v || lum(v) > 24) continue;
+    const near = [at(x - 1, y), at(x + 1, y), at(x, y - 1), at(x, y + 1)].filter(q => q === v).length; if (!near) continue;
+    for (let j = Math.floor(y * 1.5); j < Math.floor((y + 1) * 1.5); j++) for (let k = Math.floor(x * 1.5); k < Math.floor((x + 1) * 1.5); k++) if (k < W2 && j < H2) res[j * W2 + k] = v;
+  }
+  out = document.createElement('canvas'); out.width = W2; out.height = H2;
+  const g = out.getContext('2d', { willReadFrequently: true }), im = g.createImageData(W2, H2);
+  for (let i = 0; i < W2 * H2; i++) { const v = res[i]; im.data[i * 4] = v >>> 24; im.data[i * 4 + 1] = (v >>> 16) & 255; im.data[i * 4 + 2] = (v >>> 8) & 255; im.data[i * 4 + 3] = v & 255; }
+  g.putImageData(im, 0, 0);
+  capyBigCache.set(src, out);
+  return out;
+}
 function drawCapyBody(breath) {
-  const cp = LAYOUT.capy;
-  drawSprite(ctx, capySprite(), cp.x, cp.footY - 24, { flip: cp.flip, sx: 1.2, sy: 1.2 * (1 + 0.045 * breath), variant: capyAnim.blinkLeft > 0 ? 'blink' : '' });
-  const ov = capyOverlay(); if (ov) drawCanvasSprite(ctx, ov, cp.x, cp.footY - 24, { flip: cp.flip, sx: 1.2, sy: 1.2 * (1 + 0.045 * breath) });      // блиски скіна (100_e3)
+  const cp = LAYOUT.capy, src = getSpriteCanvas(capySprite(), capyAnim.blinkLeft > 0 ? 'blink' : ''), big = capyBig(src);
+  const m = ctx.getTransform(), K = m.a / CAPY_K, w0 = src.width, dw = Math.round(w0 * 1.2);              // K — масштаб сцени без збільшення Капі; центр і ноги там само, де були
+  const X = m.a * (Math.round(cp.x + (w0 - dw) / 2) + dw / 2) + m.e, Y = m.d * (cp.footY - 24 + src.height) + m.f;
+  const w = big.width, h = big.height, x = Math.round(X - w * K / 2), y = Math.round(Y - h * K), lift = Math.round(breath * 1.6), sp = h - 9;
+  const blit = c => {                                                             // дихання цілими пікселями: тулуб піднімається, ноги стоять, стик заповнює повторений рядок
+    if (!lift) { ctx.drawImage(c, 0, 0); return; }
+    ctx.drawImage(c, 0, 0, w, sp, 0, -lift, w, sp); ctx.drawImage(c, 0, sp - 1, w, 1, 0, sp - lift, w, lift); ctx.drawImage(c, 0, sp, w, h - sp, 0, sp, w, h - sp);
+  };
+  ctx.save(); ctx.setTransform(cp.flip ? -K : K, 0, 0, K, cp.flip ? x + w * K : x, y); ctx.imageSmoothingEnabled = false;
+  blit(big);
+  const ov = capyOverlay(); if (ov) blit(ov);                                     // блиски скіна (100_e3)
+  ctx.restore();
 }
 function drawCapyRim(x, y, flip) {                                              // тонкий теплий контур: Капі вночі не зливається з темною вулицею
   const name = capySprite(), src = getSpriteCanvas(name);

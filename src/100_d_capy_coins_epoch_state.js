@@ -3,7 +3,7 @@ SPRITES.capy_pirate = { rows: makeCapySkinRows('pirate') };
 SPRITES.capy_astro = { rows: makeCapySkinRows('astro'), variants: { blink: { K: PALETTE.B } } };
 ['wizard', 'chef', 'explorer', 'detective', 'sailor', 'santa', 'witch', 'flower', 'beach', 'autumn'].forEach(k => { SPRITES['capy_' + k] = { rows: makeCapySkinRows(k), variants: { blink: { K: PALETTE.B } } }; });   // незалежні від епохи скіни Капі
 // Нові скіни Капі (затінені еліпсами, плащі й шарфи вигнуті): лицар, супергерой, ковбой, фея, вікінг, пілот
-Object.assign(PALETTE, { '1': '#f1f5fb', '2': '#aab7cb', '3': '#6f7f9a', '4': '#454f69', '5': '#9a3326', '6': '#ec8a6e', '7': '#e3b04b', '8': '#b57a1f', '9': '#7a5a3a', '@': '#5a3d28', '#': '#c9a678', '%': '#e8d3a0', '&': '#3a6fb0', '*': '#8fc1f0' });
+Object.assign(PALETTE, { '1': '#f1f5fb', '2': '#aab7cb', '3': '#6f7f9a', '4': '#454f69', '5': '#9a3326', '6': '#ec8a6e', '7': '#e3b04b', '8': '#b57a1f', '9': '#7a5a3a', '@': '#5a3d28', '#': '#c9a678', '%': '#e8d3a0', '&': '#3a6fb0', '*': '#8fc1f0', 'Ґ': '#e2403a', 'Ж': '#a82a30', 'Щ': '#ff9478', 'Ч': '#74182a', 'Ш': '#d9e2ef', 'Э': '#8b97ab', 'Я': '#5b6780', 'Ю': '#3a4358', 'Ь': '#e8d9ff', 'Ц': '#bfa8f0', 'Ф': '#ffe8f2', 'Л': '#b5482e', 'Д': '#f4a13a' });
 function makeCapyNewRows(kind) {
   const W = 38, H = 24;
   const grid = Array.from({ length: H }, (_, y) => (y < 3 || y > 23) ? Array(W).fill('.') : (CAPY_BASE[y - 3] + '.'.repeat(W - 27)).split(''));
@@ -18,100 +18,158 @@ function makeCapyNewRows(kind) {
   const outlineAll = (chars, col) => { const todo = []; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (chars.includes(at(x, y))) [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { if (at(x + dx, y + dy) === '.') todo.push([x + dx, y + dy]); }); todo.forEach(([x, y]) => put(x, y, col || 'O')); };
   const stream = (x0, y0, x1, amp, th0, th1, wav, cols) => { for (let x = x0; x <= x1; x++) { const t = (x - x0) / (x1 - x0), cy = y0 + t * amp + Math.sin(t * wav) * 1.6, th = th0 + (th1 - th0) * t; for (let k = 0; k < th; k++) { const y = cy + k - th / 2; put(x, y, cols(x, k, th, t)); } } };
   if (kind === 'knight') {
-    dye(12, 25, 9, 17, (x, y) => y === 9 ? '1' : y <= 11 ? '2' : y <= 14 ? '2' : y <= 16 ? '3' : '4');
-    for (let y = 10; y <= 17; y++) if (isFur(12, y)) put(12, y, '1');
-    for (let x = 16; x <= 25; x += 4) for (let y = 10; y <= 16; y++) if (at(x, y) === '2' || at(x, y) === '3') put(x, y, y > 13 ? '4' : '3');
-    rect(14, 21, 11, 17, 'r'); rect(14, 21, 11, 12, '6'); rect(14, 14, 11, 17, '6'); rect(21, 21, 12, 17, '5'); rect(14, 21, 17, 17, '5');
-    art(16, 12, ['.7.', '777', '.7.', '.7.', '.8.']);
-    for (let x = 14; x <= 21; x += 2) put(x, 18, x % 4 ? '5' : 'r');
-    ell(12.5, 10.5, 3.2, 2.6, ['1', '2', '3'], true);                               // наплічник
-    ell(11, 10.5, 2.5, 3, ['2', '3', '3'], true, 9, 12);                            // горжет на шиї
-    ell(8.2, 5.8, 7, 3.9, ['1', '2', '3'], true, 2, 7);                               // шолом
-    rect(2, 14, 7, 7, '3'); rect(2, 14, 6, 6, '2'); put(3, 6, '1'); put(4, 6, '1');
-    rect(8, 9, 7, 7, '4');
-    art(7, 0, ['.66r.', '6rrr5', 'rrr55']); art(12, 2, ['5', '5']);
-
-    outlineAll('123456rR');
+    // лати: світло зліва-згори, блиск на наплічнику, синій табард із гербом, щит на спині, шолом із забралом і плюмажем
+    const neckX = y => 14 - (y - 9) * 0.85;
+    for (let y = 9; y <= 19; y++) for (let x = 5; x <= 26; x++) if (isFur(x, y) && x >= neckX(y)) put(x, y, y <= 10 ? '1' : y >= 18 || x >= 25 ? 'Я' : (x + y) % 9 === 0 ? 'Ш' : y >= 16 ? 'Э' : 'Ш');
+    for (let x = 12; x <= 25; x += 4) for (let y = 10; y <= 19; y++) if (at(x, y) === 'Ш' || at(x, y) === 'Э') put(x, y, 'Э');       // стики пластин
+    rect(13, 20, 11, 19, '&'); rect(13, 20, 11, 11, '*'); rect(13, 13, 11, 18, '*'); rect(20, 20, 12, 19, 'n'); rect(13, 20, 19, 19, 'n');   // табард
+    art(15, 12, ['..y..', 'yyyyy', '..y..', '..y..', '..7..']);                                                     // золотий хрест
+    for (let x = 7; x <= 12; x++) if (at(x, 17) !== '.' && at(x, 17) !== 'O') put(x, 17, '7');
+    ell(11.5, 10.5, 3.2, 2.8, ['1', 'Ш', 'Э'], true);                                                                // наплічник
+    // щит на спині
+    art(20, 3, ['rrrrrr', 'r6rr5r', 'ryyyy5', 'r6yr5r', '.r6r5.', '..r5..']);
+    ell(8.2, 5.8, 7, 3.9, ['1', 'Ш', 'Э'], true, 2, 7);                                                              // шолом
+    rect(2, 14, 7, 7, 'Я'); rect(2, 14, 6, 6, 'Э'); rect(3, 5, 6, 6, 'Ш'); rect(3, 8, 7, 7, 'k'); rect(9, 9, 6, 7, 'Э');   // забрало
+    art(6, 0, ['.66r.', '6rrr5', '.rr5.']); art(11, 2, ['r5', '.5']);                                                 // плюмаж
+    for (let y = 20; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y) || (at(x, y) === 'M' && y >= 21)) put(x, y, y === 20 ? 'Ш' : y === 21 ? 'Э' : 'Я');
+    outlineAll('1ШЭЯ&*n7y56rR', 'O');
   } else if (kind === 'hero') {
-    stream(14, 8, 36, 5, 2, 5, 4.2, (x, k, th, t) => (k < 1 ? '6' : k > th - 2 ? '5' : 'r'));
-    for (let x = 14; x < 27; x++) { put(x, 8, 'r'); put(x, 7, '5'); }
-    rect(13, 14, 8, 10, 'r'); put(13, 9, '7'); put(14, 9, '7');
-    dye(12, 25, 9, 17, (x, y) => y === 9 ? '*' : y <= 12 ? '&' : y <= 15 ? 'n' : 'z');
-    for (let y = 10; y <= 16; y++) if (isFur(12, y)) put(12, y, '*');
-    art(16, 11, ['..y..', '.y7y.', 'y777y', '.y7y.', '..y..']);
-    rect(12, 25, 16, 16, '7'); put(18, 16, '8'); put(19, 16, 'y');
-    for (let y = 21; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y)) put(x, y, y === 21 ? 'r' : '5');
-    for (let y = 7; y <= 10; y++) for (let x = 4; x <= 12; x++) if (isFur(x, y) || at(x, y) === 'K') put(x, y, 'z');
-    put(7, 8, 'w'); put(8, 8, 'w'); put(7, 9, 'K'); put(8, 9, 'K'); put(4, 8, '4');
-    put(13, 9, 'z'); put(14, 8, 'z'); put(15, 8, '4');
-    outlineAll('rR56z&n*7');
+    // костюм на все тіло з природним коміром (не прямокутна попона), плащ намальований вручну: хвиля, складки, поділ (р. 78)
+    const suitFrom = y => 14 - (y - 9) * 0.85;
+    for (let y = 9; y <= 19; y++) for (let x = 6; x <= 26; x++) if (isFur(x, y) && x >= suitFrom(y)) put(x, y, y === 9 ? '*' : (x >= 25 || y >= 18) ? 'n' : x >= 23 || y >= 16 ? '&' : y <= 11 ? '*' : '&');
+    for (let y = 10; y <= 16; y++) { const x = Math.ceil(suitFrom(y)); if (at(x, y) === '&' || at(x, y) === '*') put(x, y, 'S'); }      // світла окантовка коміра
+    art(14, 12, ['..y..', '.y6y.', 'y6r6y', '.y6y.', '..y..']);                                                                     // емблема на грудях
+    for (let x = 8; x <= 26; x++) if (at(x, 18) === '&' || at(x, 18) === 'n' || at(x, 18) === 'S') put(x, 18, x % 2 ? '7' : '8');
+    art(20, 18, ['yy']);                                                                                                             // пояс із пряжкою
+    for (let y = 20; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y)) put(x, y, y === 20 ? '6' : y === 21 ? 'r' : '5');    // чоботи
+    for (let y = 7; y <= 10; y++) for (let x = 3; x <= 13; x++) if (isFur(x, y) || at(x, y) === 'K') put(x, y, 'z');             // маска
+    put(2, 8, 'z'); put(14, 7, 'z'); put(15, 6, 'z');                                                                               // зав'язки маски
+    art(6, 8, ['wwww', 'wKK.']);                                                                                                     // око в прорізі
+    art(13, 5, [
+      '........ЩЩЩЩЩЩ...........',
+      '.....ЩЩЩҐҐҐҐҐҐҐЩЩ........',
+      '..ЩЩҐҐҐҐҐҐҐҐҐҐҐҐҐҐЩЩ.....',
+      'ЩЩҐҐҐҐҐҐЖЖҐҐҐҐҐҐҐҐҐҐЩЩЩ..',
+      'ҐҐҐҐҐЖЖЖЖҐҐҐҐҐҐЖЖҐҐҐҐҐҐЩЩ',
+      '.ҐҐҐҐҐҐҐҐҐҐҐҐЖЖЖЖҐҐҐҐҐҐҐҐ',
+      '...ЧЧЧЧҐҐҐҐҐҐҐҐҐҐҐҐҐЖЖҐҐҐ',
+      '......ЧЧЧЧЧҐҐҐҐҐҐҐҐЖЖЖЖҐҐ',
+      '...........ЧЧЧЧҐҐҐҐҐҐҐҐЖЖ',
+      '...............ЧЧҐҐҐҐҐҐҐҐ',
+      '..................ЧҐҐҐҐЧҐ',
+      '....................ЧЧЧ.Ч',
+      '.....................Ч..Ч'
+    ]);
+    art(12, 8, ['yy', '77']);                                                                                                        // золота застібка на шиї
+    outlineAll('ҐЖЩЧrR56z&n*7yS8', 'O');
   } else if (kind === 'cowboy') {
-    dye(12, 25, 9, 17, (x, y) => y === 9 ? '#' : y >= 16 ? '@' : (x % 6 === 0 ? '@' : y <= 12 ? '9' : 'b'));
-    for (let y = 10; y <= 16; y++) if (isFur(12, y)) put(12, y, '@');
-    for (let x = 12; x <= 25; x++) { put(x, 17, x % 2 ? 'd' : 'b'); if (at(x, 18) === 'B') put(x, 18, x % 2 ? 'b' : '@'); }
-    art(17, 11, ['..y..', 'yyyyy', '.yyy.', 'y.y.y']);
+    // шкіряний жилет на світлій сорочці, джинси, червона бандана, зірка шерифа, капелюх із широкими крисами й ласо на спині
+    const neckX = y => 14 - (y - 9) * 0.85;
+    for (let y = 9; y <= 19; y++) for (let x = 5; x <= 26; x++) if (isFur(x, y) && x >= neckX(y)) put(x, y, y >= 16 ? (y === 19 || x >= 24 ? 'n' : '&') : y === 9 ? '%' : x >= 16 ? (x >= 24 ? '@' : 'b') : '%');
+    for (let y = 10; y <= 15; y++) if (at(16, y) === 'b') put(16, y, '#');                                          // край жилета
+    for (let x = 7; x <= 25; x++) if (at(x, 15) !== '.' && at(x, 15) !== 'O') put(x, 15, '@'); art(13, 15, ['y7']);  // пояс
+    art(18, 11, ['..y..', 'yy7yy', '.yyy.', '.y.y.']);                                                              // зірка шерифа
     art(5, 13, ['rrrrr', 'rwrwr', '.rrr.', '..r..']); put(4, 13, 'r'); put(10, 13, 'r');
-    ell(8.3, 4.2, 4.6, 3.6, ['%', '#', '9'], true, 0, 5);                              // тулія
-    rect(4, 12, 4, 4, '@'); put(8, 4, '7'); put(9, 4, '7');                            // стрічка з пряжкою
-    for (let x = -1; x <= 17; x++) { const t = (x - 8) / 9, y = 5 + t * t * -2.2 + 2.2; put(x, y, x < 8 ? '#' : '9'); put(x, y + 1, '@'); }
-    put(-1, 4, '9'); put(17, 4, '9');
-    outlineAll('%#9@bd');
+    for (let y = 20; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y) || (at(x, y) === 'M' && y >= 21)) put(x, y, y <= 21 ? '&' : '@');
+    ell(8.3, 4.2, 4.6, 3.6, ['%', '#', '9'], true, 0, 5);                                                           // тулія
+    rect(4, 12, 4, 4, '@'); put(8, 4, '7'); put(9, 4, '7');
+    for (let x = -1; x <= 17; x++) { const t = (x - 8) / 9, y = 5 + t * t * -2.2 + 2.2; put(x, y, x < 8 ? '%' : '#'); put(x, y + 1, '9'); }
+    put(-1, 4, '#'); put(17, 4, '9');
+    outlineAll('%#9@bd&nry7', 'O');
   } else if (kind === 'gold' || kind === 'diamond') {
-    const fur0 = grid.map(r => r.map(c => c === 'B' || c === 'L')), spot0 = grid.map(r => r.map(c => c === 'L'));
-    const fm = (x, y) => !!(fur0[y] && fur0[y][x]), sp = (x, y) => !!(spot0[y] && spot0[y][x]);
+    const fur0 = grid.map(r => r.map(c => c === 'B' || c === 'L'));
+    const fm = (x, y) => !!(fur0[y] && fur0[y][x]);
     if (kind === 'gold') {
-      dye(0, 26, 0, 23, (x, y) => sp(x, y) ? '8' : (!fm(x, y - 1) || !fm(x - 1, y)) ? 'y' : (!fm(x, y + 1) || !fm(x + 1, y)) ? '8' : (x * 2 + y * 3) % 17 === 0 ? 'w' : ((x * 3 + y * 5) % 11 === 0 ? '7' : 'h'));
+      // золотий зливок у формі Капі (р. 78): чисті тони металу, широкий косий блиск, темні складки внизу, без дрібних цяток
+      dye(0, 26, 0, 23, (x, y) => {
+        if (!fm(x, y - 1) || !fm(x - 1, y)) return 'y';
+        if (!fm(x, y + 1) || !fm(x + 1, y)) return '8';
+        const band = (x + y * 0.6 - 13) % 15; if (band >= 0 && band < 2.4) return 'w';
+        if (y >= 18 || x >= 24) return '7';
+        return (x + y) % 19 === 0 ? 'y' : 'h';
+      });
+      for (let y = 0; y < H; y++) for (let x = 0; x <= 26; x++) { const ch = at(x, y); if (ch === 'M') put(x, y, y < 8 ? '7' : y < 16 ? '7' : '8'); }
+      put(2, 10, '9'); put(1, 10, '9');                                                                                  // ніздря
       art(5, 0, ['y..y..y.', 'yyyyyyyy', 'y7y6y7yy', '88888888']); put(8, 2, 'N'); put(5, 2, 'J'); put(12, 2, 'J');
-      outlineAll('yh78', 'O');
-      [[26, 4], [30, 7], [20, 0], [3, 1], [29, 15]].forEach(([x, y]) => { put(x, y, 'y'); put(x - 1, y, 'w'); put(x + 1, y, 'w'); put(x, y - 1, 'w'); put(x, y + 1, 'w'); });
+      outlineAll('yh78w', 'O');
     } else {
-      dye(0, 26, 0, 23, (x, y) => { if (sp(x, y)) return 's'; if (!fm(x, y - 1) || !fm(x - 1, y)) return '1'; if (!fm(x, y + 1) || !fm(x + 1, y)) return 'n'; const f = (Math.floor((x + y) / 3) + Math.floor((x - y + 40) / 3)) % 4; return f === 0 ? 'S' : f === 1 ? 'a' : f === 2 ? 's' : 'w'; });
-      art(5, 0, ['N..N..N.', 'NaN1N1Na', 'a1a1a1a1', 'sssssss.']); put(8, 2, 'w');
-      outlineAll('NaS1sw', 'O');
-      [[26, 4], [30, 7], [20, 0], [3, 1], [29, 15], [31, 11]].forEach(([x, y]) => { put(x, y, 'N'); put(x - 1, y, '1'); put(x + 1, y, '1'); put(x, y - 1, '1'); put(x, y + 1, '1'); });
+      // кришталева Капі (р. 78): тіло огранене трикутниками (світло зліва-згори, темніше до низу), голова гладша, темно-синій контур замість коричневого
+      const SEED = [[4, 8, 'S'], [9, 6, '1'], [13, 8, 'a'], [8, 12, 'S'], [13, 13, 's']];
+      const face = (x, y) => { let bi = 0, bd = 1e9; SEED.forEach((p, i) => { const q = Math.pow(p[0] - x, 2) + Math.pow(p[1] - y, 2) * 1.25; if (q < bd) { bd = q; bi = i; } }); return bi; };
+      const TONE = ['1', 'S', 'a', 's', '*', '&'], CELL = 4;
+      const facet = (x, y) => { const u = Math.floor(x / CELL), v = Math.floor(y / CELL), tri = (x % CELL) + (y % CELL) < CELL ? 0 : 1, k = Math.imul(u * 7 + v * 13 + tri * 5 + 3, 2654435761) >>> 0, r = (k >>> 8) % 100 / 100; if ((k >>> 16) % 11 === 0) return 'N'; const l = 0.55 * (y - 9) / 11 + 0.45 * (x - 13) / 13 + (r - 0.5) * 1.05; return TONE[Math.max(0, Math.min(5, Math.floor((l + 0.15) * 4.6)))]; };
+      for (let y = 0; y < H; y++) for (let x = 0; x <= 26; x++) {
+        if (!fm(x, y)) continue;
+        if (x >= 14 || y >= 16) { put(x, y, facet(x, y)); continue; }
+        const i = face(x, y), t0 = SEED[i][2], edge = face(x - 1, y) !== i || face(x, y - 1) !== i;
+        put(x, y, edge && (t0 === '1' || t0 === 'S' || t0 === 'a') ? '1' : t0);
+      }
+      for (let y = 0; y < H; y++) for (let x = 0; x <= 26; x++) { const ch = at(x, y); if (ch === 'M') put(x, y, y < 8 ? 's' : y < 16 ? 'a' : '&'); else if (ch === 'O') put(x, y, 'z'); }
+      put(2, 10, 'n'); put(1, 10, 'z'); put(3, 13, 's'); put(2, 13, 's'); put(1, 13, 's');                                              // ніздря й тінь під мордочкою
+      put(7, 8, '1'); put(8, 8, 'z'); put(7, 9, 'K'); put(8, 9, 'K');                                                                    // око з блиском
+      art(5, 0, ['...N....', 'N..N..N.', 'N1N1N1N.', 'SaSaSaS.']); put(8, 1, 'w');                                                       // корона
+      outlineAll('NaS1sw*&', 'z');
     }
   } else if (kind === 'fairy') {
-    const wing = (cx, cy, rx, ry, rot) => { for (let y = Math.floor(cy - ry - 4); y <= Math.ceil(cy + ry + 4); y++) for (let x = Math.floor(cx - rx - 4); x <= Math.ceil(cx + rx + 4); x++) { const dx = x - cx, dy = y - cy, c = Math.cos(rot), s = Math.sin(rot), u = (dx * c + dy * s) / rx, v = (-dx * s + dy * c) / ry, d = u * u + v * v; if (d > 1 || at(x, y) !== '.') continue; put(x, y, d > 0.68 ? 'f' : d < 0.12 ? 'w' : (u * 0.6 + v * 0.8 < -0.1 ? 'q' : 'p')); } };
-    wing(22, 3.5, 7, 3, -0.7); wing(25.5, 8, 5.2, 2.3, -0.2); wing(17.5, 2.5, 4.5, 2.2, -1.1);
-    dye(12, 25, 9, 17, (x, y) => y === 9 ? 'w' : y <= 12 ? 'q' : y <= 14 ? 'p' : 'f');
-    for (let y = 10; y <= 17; y++) if (isFur(12, y)) put(12, y, 'w');
-    for (let x = 12; x <= 25; x++) { put(x, 17, x % 2 ? 'p' : 'q'); if (isFur(x, 18)) put(x, 18, x % 2 ? 'f' : 'p'); }
-    art(16, 11, ['..y..', '.y7y.', '..y..']); for (let k = 0; k < 6; k++) put(13 + k * 2, 14, 'w');
-    art(11, 9, ['www']); art(4, 3, ['.y.y.y.', '.y7y7y.', '..y6y..']); put(7, 2, 'w'); put(6, 1, 'y');
-    [[26, 4], [30, 6], [20, 0], [3, 1]].forEach(([x, y]) => { put(x, y, 'y'); put(x - 1, y, 'w'); put(x + 1, y, 'w'); put(x, y - 1, 'w'); put(x, y + 1, 'w'); });
-    outlineAll('qpfw', 'u');
+    // сукня з фігурним подолом, чисті прозорі на вигляд крила (дві пари, світла кромка, жилки), корона й чарівний пилок
+    art(15, 0, [
+      '..........ЬЬЬ.',
+      '.......ЬЬЦЦЦЬ.',
+      '....ЬЬЦЦqЦЦЦЬ.',
+      '..ЬЦЦqqЦЦЦwЦЬ.',
+      '.ЬЦqqЦЦЦЦwwЦ..',
+      'ЬЦqЦЦЦЦЦЦЦЬЬ..',
+      'ЬqЦЦЦЬЬЬЬЬ....',
+      '.ЬЬЬЬ.........'
+    ]);
+    art(21, 8, [
+      'ЬФФФФЬЬ...',
+      '.ЬФФqФФФЬЬ',
+      '..ЬФФqqФФЬ',
+      '...ЬЬФФwФЬ',
+      '.....ЬЬФЬ.',
+      '.......Ь..'
+    ]);
+    const neckX = y => 14 - (y - 9) * 0.85;
+    for (let y = 9; y <= 19; y++) for (let x = 5; x <= 26; x++) if (isFur(x, y) && x >= neckX(y)) put(x, y, y === 9 ? 'w' : y <= 12 ? 'q' : y <= 15 ? 'p' : y <= 17 ? 'f' : 'p');
+    for (let x = 7; x <= 26; x++) { if (at(x, 19) !== '.' && at(x, 19) !== 'O') put(x, 19, x % 2 ? 'f' : 'w'); if (at(x, 18) !== '.' && at(x, 18) !== 'O') put(x, 18, x % 2 ? 'p' : 'f'); }
+    art(16, 11, ['..y..', '.y7y.', '..y..']); for (let k = 0; k < 7; k++) put(10 + k * 2, 14, 'w');
+    art(4, 3, ['.y.y.y.', '.y7y7y.', '..y6y..']); put(7, 2, 'w'); put(6, 1, 'y');
+    [[3, 1], [20, 8]].forEach(([x, y]) => { put(x, y, 'y'); put(x - 1, y, 'w'); put(x + 1, y, 'w'); put(x, y - 1, 'w'); put(x, y + 1, 'w'); });
+    outlineAll('ЬЦФqpfw', 'u');
     outlineAll('y7', 'O');
   } else if (kind === 'viking') {
-    ell(26.5, 12.5, 4.6, 4.6, ['7', '8', '9'], true); ell(26.5, 12.5, 3.4, 3.4, ['b', '9', '@'], true); for (let a = 0; a < 8; a++) put(26.5 + Math.cos(a * 0.785) * 3.8, 12.5 + Math.sin(a * 0.785) * 3.8, '7');
-    ell(26.5, 12.5, 1.5, 1.5, ['1', '7', '8'], true); put(26, 12, '1');
-    outlineAll('789b@1', 'O');
-    dye(12, 25, 9, 17, (x, y) => y <= 11 ? (x % 2 ? 'w' : 'E') : y <= 13 ? 'e' : 'b');
-    for (let x = 12; x <= 25; x++) { put(x, 12, x % 2 ? 'E' : 'e'); if (isFur(x, 9)) put(x, 9, 'w'); }
-    rect(12, 25, 15, 15, '@'); art(17, 15, ['77']); art(17, 14, ['88']);
-    for (let x = 12; x <= 25; x++) { put(x, 17, x % 2 ? 'd' : 'b'); }
-
+    // хутряний комір, тканий пояс, круглий щит із чотирма секторами й залізним умбоном, рогатий шолом і руда борода
+    const neckX = y => 14 - (y - 9) * 0.85;
+    for (let y = 9; y <= 19; y++) for (let x = 5; x <= 26; x++) if (isFur(x, y) && x >= neckX(y)) put(x, y, y <= 11 ? ((x + y) % 2 ? 'w' : 'E') : y === 12 ? (x % 2 ? 'E' : 'e') : y >= 17 || x >= 25 ? '@' : y >= 15 ? 'b' : 'l');
+    for (let x = 7; x <= 26; x++) if (at(x, 16) !== '.' && at(x, 16) !== 'O') put(x, 16, x % 3 ? '@' : '7'); art(17, 15, ['77', '88']);
+    for (let y = 2; y <= 12; y++) for (let x = 16; x <= 27; x++) { const dx = x - 21.5, dy = y - 7, d = dx * dx + dy * dy; if (d > 24) continue; put(x, y, d > 16 ? '7' : d <= 2 ? 'Ш' : ((dx < 0) === (dy < 0)) ? 'r' : 'w'); }   // щит
+    put(21, 6, '1'); put(21, 7, 'Э'); put(22, 7, 'Я');
+    outlineAll('7rwШЭЯ1', 'O');
     ell(8.2, 5.8, 7, 3.9, ['Y', 'E', 'e'], true, 2, 7);
     rect(2, 14, 6, 6, '7'); rect(2, 14, 7, 7, '8'); put(8, 7, '7'); put(8, 6, '1'); rect(1, 15, 5, 5, 'e');
-    art(0, 0, ['w.w'.slice(0,1)+'..', 'ww.', '.ww', '.ww', '..w']); art(0, 1, ['']);
-    art(13, 0, ['..w', '.ww', 'ww.', 'ww.', 'w..']);
-
-    outlineAll('wYEe7o', 'O');
-  } else {
-    stream(13, 10, 32, -2, 3, 3, 4.5, (x, k, th, t) => (Math.floor(x / 2) % 2 ? 'w' : 'r'));
-
-    dye(12, 25, 9, 17, (x, y) => y === 9 ? '#' : y <= 11 ? 'b' : (y <= 15 ? '9' : '@'));
-    for (let y = 10; y <= 17; y++) if (isFur(12, y)) put(12, y, 'b');
-    for (let x = 13; x <= 25; x += 4) for (let y = 11; y <= 16; y++) if (['b', '9', '@'].includes(at(x, y))) put(x, y, y < 13 ? '9' : '@');
-    rect(13, 25, 13, 13, '@'); art(17, 14, ['yy', 'yy']); put(17, 15, 'y');
-    for (let x = 11; x <= 14; x++) { put(x, 9, 'w'); put(x, 10, x % 2 ? 'E' : 'w'); put(x, 11, 'w'); }
-    art(10, 11, ['ww']); art(13, 12, ['w']);
+    art(0, 0, ['w..', 'ww.', '.ww', '.ww', '..w']); art(13, 0, ['..w', '.ww', 'ww.', 'ww.', 'w..']);                  // роги
+    // борода
+    art(3, 14, ['oooooo', 'ojjjjo', 'ojjAjo', '.ojjo.', '.oAo..', '..o...']);
+    for (let y = 20; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y) || (at(x, y) === 'M' && y >= 21)) put(x, y, y <= 21 ? 'b' : '@');
+    outlineAll('wYEe7oj@blA', 'O');
+  } else if (kind === 'pilot') {
+    // шкірянка з овчинним коміром, крильця-значок, довгий шарф, шолом з окулярами
+    for (let x = 13; x <= 34; x++) { const t = (x - 13) / 21, cy = 9 - t * 3 + Math.sin(t * 7) * 1.3 * t; for (let k = 0; k < 3; k++) put(x, cy + k, Math.floor(x / 3) % 2 ? 'w' : 'r'); put(x, cy + 2, Math.floor(x / 3) % 2 ? 'E' : '5'); }
+    const neckX = y => 14 - (y - 9) * 0.85;
+    for (let y = 9; y <= 19; y++) for (let x = 5; x <= 26; x++) if (isFur(x, y) && x >= neckX(y)) put(x, y, y >= 18 || x >= 24 ? '@' : y <= 11 ? '#' : y === 16 ? 'd' : '9');
+    for (let y = 10; y <= 15; y++) if (at(19, y) === '#' || at(19, y) === '9') put(19, y, '@');
+    art(14, 12, ['yy.yy', '.yyy.']);                                                                                // значок-крильця
+    art(21, 13, ['b', 'b']); put(16, 16, 'y'); put(17, 16, 'y');
+    for (let x = 9; x <= 14; x++) { put(x, 9 + Math.max(0, 12 - x), 'w'); put(x, 10 + Math.max(0, 12 - x), x % 2 ? 'E' : 'w'); }   // овчинний комір
     ell(8.3, 5.6, 6.8, 4.4, ['#', 'b', '@'], true, 1, 7);
-    rect(2, 14, 7, 7, '@'); rect(2, 4, 8, 9, '@');                                          // клапани шолома над вухом
+    rect(2, 14, 7, 7, '@'); rect(2, 4, 8, 9, '@');
     put(3, 9, 'd'); put(13, 8, '@'); put(14, 8, '@'); put(14, 9, '@');
     ell(5.5, 4.8, 2.2, 1.9, ['y', 'h', '8'], true); ell(5.5, 4.8, 1.3, 1.1, ['1', 'a', '*'], true);
     ell(10.5, 4.8, 2.2, 1.9, ['y', 'h', '8'], true); ell(10.5, 4.8, 1.3, 1.1, ['1', 'a', '*'], true);
     rect(7, 9, 5, 5, 'd');
-    outlineAll('#b9@hy8wEr5', 'O');
+    for (let y = 20; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y) || (at(x, y) === 'M' && y >= 21)) put(x, y, y <= 21 ? 'd' : 'k');
+    outlineAll('#b9@hy8wEr5kd', 'O');
   }
   let maxX = 26; grid.forEach(r => r.forEach((c, x) => { if (c !== '.' && x > maxX) maxX = x; }));     // зайвий порожній простір ззаду обрізаємо
   return grid.map(row => '.' + row.slice(0, maxX + 1).reverse().join(''));
@@ -142,38 +200,42 @@ function makeCapyOldDetail(kind) {
   const sparkle = (x, y, c) => { put(x, y, c || 'y'); put(x - 1, y, 'w'); put(x + 1, y, 'w'); put(x, y - 1, 'w'); put(x, y + 1, 'w'); };
   const beard = cols => { [[15, 1, 8], [16, 1, 8], [17, 2, 8], [18, 2, 7], [19, 3, 6], [20, 4, 5]].forEach(([y, x0, x1]) => { for (let x = x0; x <= x1; x++) put(x, y, x === x0 ? cols[0] : (x === x1 ? cols[2] : cols[1])); }); art(1, 14, [cols[1] + cols[1] + cols[1] + cols[1] + cols[1]]); put(0, 13, cols[1]); put(1, 13, cols[0]); };
 
-  const suit = (rows, rim, dark) => { for (let y = 9; y <= 17; y++) for (let x = 12; x <= 25; x++) if (isFur(x, y)) { let c = rows[y - 9]; if (dark && x >= 24 && y >= 11) c = dark; put(x, y, c); } };
+  // костюм на все тіло (р. 78): не прямокутна попона, а вся шерсть за лінією шиї; rows — кольори рядків 9…17, далі подовжуємо до живота
+  const neckX = y => 14 - (y - 9) * 0.85;
+  const suit = (rows, rim, dark) => { for (let y = 9; y <= 19; y++) for (let x = 5; x <= 26; x++) if (isFur(x, y) && x >= neckX(y)) { let c = y <= 16 ? rows[y - 9] : y === 19 ? rows[8] : rows[7]; if (dark && x >= 24 && y >= 11) c = dark; put(x, y, c); } if (rim) for (let y = 10; y <= 17; y++) { const x = Math.ceil(neckX(y)); if (at(x, y) !== '.' && at(x, y) !== 'O') put(x, y, rim); } };
+  const boots = (a1, a2) => { for (let y = 20; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y) || (at(x, y) === 'M' && y >= 21)) put(x, y, y <= 21 ? a1 : a2); };
   const cone = (spec, cols) => { spec.forEach(([y, x0, x1]) => { for (let x = x0; x <= x1; x++) put(x, y, x - x0 < 2 ? cols[0] : (x1 - x < 2 ? cols[2] : cols[1])); }); };
   const plus = (x, y, petal, mid) => { put(x, y, mid); put(x - 1, y, petal); put(x + 1, y, petal); put(x, y - 1, petal); put(x, y + 1, petal); };
 
   if (kind === 'pirate') {
-    suit(['r', 'R', 'R', 'R', 'R', 'R', 'R', 'P', 'h'], 'w', 'P');
-    for (let x = 12; x <= 25; x++) put(x, 9, x % 2 ? 'h' : 'r');
-    rect(13, 25, 14, 14, 'k'); art(18, 13, ['hh', 'hh']); put(18, 14, 'k');                                  // чорний пояс із пряжкою
-    [10, 11, 12].forEach(y => { put(14, y, 'h'); put(16, y, 'h'); });                                          // золоті ґудзики
-    art(11, 9, ['ww', 'wE']); art(7, 14, ['rrrrrr', '.rrrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));     // жабо й хустка (з темним контуром, щоб не скидалась на язик)
-    art(19, 3, ['..rr.', '.rkrr', 'yrrr.', '.gggg', '.gnng', '..gg.']);                                         // зелений папуга
-    ell(8.2, 5.2, 7, 3.7, ['4', 'k', 'k'], true, 1, 7);                                                         // трикутний капелюх
-    rect(1, 15, 6, 6, 'k'); rect(0, 16, 7, 7, 'k'); put(0, 6, 'k'); put(16, 6, 'k'); rect(2, 14, 7, 7, 'h'); put(3, 7, 'y'); put(4, 7, 'y');
-    art(6, 3, ['.ww.', 'wkkw', '.ww.']); put(3, 2, 'y'); put(13, 2, 'y');                                       // череп і золоті кутики
-    rect(6, 8, 8, 10, 'k'); put(5, 7, 'k'); put(5, 6, 'k'); put(10, 9, 'k'); put(11, 8, 'k'); put(9, 10, 'k'); put(7, 9, '4'); put(6, 8, '4');   // пов'язка на оці
+    suit(['h', 'r', 'r', 'r', 'r', 'r', 'r', 'R', 'h'], 'h', 'R');
+    for (let x = 6; x <= 25; x++) if (at(x, 15) === 'r' || at(x, 15) === 'R' || at(x, 15) === 'h') put(x, 15, 'k');
+    art(16, 14, ['hhh', 'hkh', 'hhh']);                                                                         // чорний пояс із пряжкою
+    [11, 13].forEach(y => { put(16, y, 'h'); put(20, y, 'h'); put(24, y, 'h'); });                              // золоті ґудзики
+    art(9, 11, ['.ww', 'wwE', 'wEw', '.wE']);                                                                   // жабо
+    boots('k', 'k'); put(11, 21, '4'); put(21, 21, '4');
+    art(18, 1, ['...rr.', '..rkrr', '.yrrr.', 'yy.ggg', '...gmgg', '...gmgG', '....gGG', '....h.h']);            // папуга: червона голова, зелене тіло, жовтий дзьоб, лапки на спині
+    ell(8.2, 4.6, 7.4, 3.6, ['4', 'k', 'k'], true, 0, 6);                                                        // трикутний капелюх
+    rect(1, 15, 6, 6, 'k'); rect(0, 16, 7, 7, 'k'); put(-1, 6, 'k'); put(17, 6, 'k'); put(-1, 5, 'k'); put(17, 5, 'k'); rect(1, 15, 6, 6, 'h'); rect(3, 4, 6, 6, 'y');
+    art(6, 2, ['.ww.', 'wkkw', '.ww.', '.w.w']);                                                                 // череп
+    rect(6, 8, 8, 10, 'k'); put(5, 8, 'k'); put(4, 7, 'k'); put(9, 9, 'k'); put(10, 9, 'k'); put(11, 8, 'k'); put(7, 9, '4');   // пов'язка на оці
     put(13, 12, 'h'); put(13, 13, 'y');                                                                          // сережка
-    outlineAll('rRPkh4wnyEgo', 'O');
+    outlineAll('rRPkh4wnyEgmGo', 'O');
   } else if (kind === 'astro') {
-    suit(['1', '1', '1', '1', '1', '2', '2', '3', '3'], null, '2');
-    rect(14, 20, 11, 13, '4'); rect(14, 20, 11, 11, '3'); put(15, 12, 'r'); put(17, 12, 'y'); put(19, 12, 'N'); put(15, 13, 'o'); put(17, 13, 'a'); put(19, 13, 'w');   // панель на грудях
-    art(22, 10, ['nnn', 'wrw', 'nnn']);                                                                           // прапорець
-    rect(12, 25, 15, 15, 'r');                                                                                    // червоний пояс
-    rect(18, 24, 3, 8, 'E'); rect(18, 24, 3, 3, '1'); rect(24, 24, 4, 8, '3'); rect(18, 24, 8, 8, '3'); rect(20, 22, 5, 6, '4'); put(21, 5, 'N'); put(21, 6, 'o');   // ранець
+    suit(['1', '1', '1', 'Ш', 'Ш', 'Ш', 'Ш', 'Э', 'Я'], '1', 'Э');
+    rect(13, 18, 11, 14, 'Я'); rect(13, 18, 11, 11, 'Ю'); put(14, 12, 'r'); put(16, 12, 'y'); put(14, 13, 'N'); put(16, 13, 'o'); put(18, 12, 'w');   // панель на грудях
+    art(21, 11, ['nnn', 'wrw', 'nnn']);                                                                           // прапорець
+    for (let x = 7; x <= 25; x++) if (at(x, 16) !== '.' && at(x, 16) !== 'O') put(x, 16, x % 3 ? 'r' : '5');      // червоний пояс
+    rect(18, 24, 3, 8, 'Ш'); rect(18, 24, 3, 3, '1'); rect(24, 24, 4, 8, 'Э'); rect(18, 24, 8, 8, 'Э'); rect(20, 22, 5, 6, 'Я'); put(21, 5, 'N'); put(21, 6, 'o');   // ранець
     glass('a');
     [[6, 2], [7, 1], [4, 3]].forEach(q => put(q[0], q[1], 'w')); put(11, 2, 'w');
-    art(10, -1 + 1, ['d', 'd']); put(10, 0, 'r');
-    for (let y = 21; y <= 23; y++) for (let x = 0; x < 27; x++) if (isFur(x, y)) put(x, y, y === 21 ? '2' : '3');
-    outlineAll('1w23E4rynod', 'O');
+    art(10, 0, ['d', 'd']); put(10, 0, 'r');
+    boots('Ш', 'Э');
+    outlineAll('1w23E4rynodШЭЯЮ5', 'O');
   } else if (kind === 'wizard') {
-    suit(['v', 'u', 'u', 'u', 'P', 'P', 'P', 'V', 'y'], 'v', 'V');
-    [[15, 11], [19, 13], [22, 11], [16, 15], [21, 15], [24, 13]].forEach(q => put(q[0], q[1], 'y')); put(19, 12, 'w'); put(19, 14, 'w');
-    art(13, 9, ['hhh']);
+    suit(['v', 'v', 'u', 'u', 'u', 'P', 'P', 'P', 'y'], 'y', 'V');
+    [[16, 11], [20, 13], [23, 11], [17, 15], [22, 15], [25, 13], [13, 13]].forEach(q => put(q[0], q[1], 'y')); put(20, 12, 'w'); put(20, 14, 'w'); put(19, 13, 'w'); put(21, 13, 'w');
+    for (let x = 8; x <= 25; x++) if (at(x, 16) !== '.' && at(x, 16) !== 'O') put(x, 16, x % 2 ? 'h' : 'y');       // мотузяний пояс
     beard(['1', 'w', 'E']);   // борода
     cone([[6, 2, 15], [5, 3, 14], [4, 4, 13], [3, 5, 12], [2, 7, 13], [1, 10, 14], [0, 12, 15]], ['v', 'u', 'P']);
     rect(0, 16, 7, 7, 'P'); rect(1, 15, 7, 7, 'u'); rect(0, 16, 7, 7, 'P'); rect(2, 14, 6, 6, 'h'); put(7, 6, 'y'); put(8, 6, 'w'); put(6, 6, 'y');
@@ -181,32 +243,61 @@ function makeCapyOldDetail(kind) {
     outlineAll('vuPVyhw1E', 'O');
   } else if (kind === 'chef') {
     suit(['1', 'w', 'w', 'w', 'w', 'w', 'w', 'E', 'E'], '1', 'E');
-    [11, 13, 15].forEach(y => { put(15, y, 'k'); put(19, y, 'k'); }); for (let y = 10; y <= 17; y++) put(17, y, 'E');
+    [11, 13, 15].forEach(y => { put(14, y, 'k'); put(17, y, 'k'); });                                             // подвійний ряд ґудзиків
+    for (let y = 10; y <= 19; y++) if (at(19, y) === 'w' || at(19, y) === 'E' || at(19, y) === '1') put(19, y, 'E');
     art(7, 14, ['rrrrrr', '.rwrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));
-    art(21, 11, ['EEE', 'EEE']); put(22, 10, 'n');
-    art(21, 3, ['l', 'c', 'c', 'c', 'c', 'c']); ell(21, 2, 1.7, 1.9, ['y', 'c', 'l'], true);                       // дерев'яна ложка на спині
-    ell(5.2, 3.2, 3.2, 2.9, ['1', 'w', 'E'], true); ell(8.6, 2.4, 3.4, 2.6, ['1', 'w', 'E'], true); ell(12, 3.4, 3, 2.7, ['1', 'w', 'E'], true);
-    rect(3, 14, 5, 7, 'w'); rect(3, 14, 7, 7, 'E'); rect(3, 14, 5, 5, '1');
-    [4, 7, 10, 13].forEach(x => { put(x, 5, 'E'); put(x, 6, 'E'); }); [6, 9, 12].forEach(x => { put(x, 3, 'E'); put(x, 2, 'E'); });
+    art(3, 0, [
+      '..1111.1111.',
+      '.1wwwwwwwwwE',
+      '1wwwwwwwwwwE',
+      '1wwEwwwEwwwE',
+      '1wwEwwwEwwwE',
+      '.1wEwwwEwwE.',
+      '.wwwwwwwwwE.',
+      '.EEEEEEEEEE.'
+    ]);
     outlineAll('1wEclyn', 'O');
   } else if (kind === 'explorer') {
-    suit(['%', 'c', 'c', 'c', 'c', 'c', 'c', 'l', 'b'], null, 'l');
-    art(14, 11, ['bbbb', 'bccb', 'bbbb']); art(20, 11, ['bbbb', 'bccb', 'bbbb']); put(15, 11, 'h'); put(21, 11, 'h');
-    for (let x = 12; x <= 25; x++) put(x, 14, 'b');
-    art(7, 14, ['rrrrrr', '.rwrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));                       // хустка на шиї (з темним контуром)
-    ell(8.2, 5.2, 7.2, 3.6, ['%', 'c', 'l'], true, 1, 7);
-    rect(0, 16, 7, 7, 'l'); rect(1, 15, 6, 6, 'b'); put(8, 1, '%'); [4, 12].forEach(x => put(x, 3, 'l')); put(8, 2, 'c');
-    outlineAll('%clbgGhykad', 'O');
+    suit(['%', '%', '#', '#', '#', '#', '#', '#', '9'], '%', '9');
+    art(14, 11, ['9999', '9##9', '9999']); art(20, 11, ['9999', '9##9', '9999']); put(15, 11, 'h'); put(21, 11, 'h');  // кишені
+    for (let x = 7; x <= 25; x++) if (at(x, 15) !== '.' && at(x, 15) !== 'O') put(x, 15, 'b'); art(17, 15, ['hh']);     // пояс
+    art(7, 14, ['GGGGGG', '.GmGG.', '..GG..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));   // зелена хустка
+    art(18, 3, ['.GGGGGG.', 'GggggmmG', 'GggggggG', 'GbbGGbbG', 'GggggggG', '.GGGGGG.']); put(22, 2, 'b'); put(23, 2, 'b');   // рюкзак зі смужками
+    boots('@', 'b');
+    ell(8.2, 5.2, 7.2, 3.6, ['1', '%', '#'], true, 1, 7);                                                          // світлий тропічний шолом
+    rect(0, 16, 7, 7, '#'); rect(1, 15, 6, 6, 'b'); put(8, 1, '1'); [4, 12].forEach(x => put(x, 3, '#')); put(8, 2, '%');
+    outlineAll('%#9@1bgGmhyk', 'O');
+  } else if (kind === 'detective') {
+    // світлий тренч із поясом і коміром, темний капелюх, лупа на спині
+    suit(['%', 'c', 'c', 'c', 'c', 'c', 'l', 'l', 'b'], '%', 'l');
+    for (let x = 7; x <= 25; x++) if (at(x, 15) !== '.' && at(x, 15) !== 'O') put(x, 15, 'b'); art(16, 14, ['bhb', 'hbh', 'bhb']);
+    [11, 13].forEach(y => { put(13, y, 'b'); put(16, y, 'b'); });
+    art(8, 11, ['.%%%', '%%c.', '%c..']);                                                                               // комір
+    art(19, 1, ['.hhhh.', 'haaaah', 'ha1aah', 'haaaah', '.hhhh.', '....bb', '.....bb']);                                // лупа
+    boots('b', 'd');
+    ell(8.2, 4.8, 6.4, 3.2, ['9', '@', 'd'], true, 1, 6); rect(0, 16, 7, 7, 'd'); rect(2, 14, 6, 6, 'k'); put(8, 1, 'd'); put(7, 1, 'd');
+    outlineAll('%clbhad1@9k', 'O');
+  } else if (kind === 'sailor') {
+    // біла форма, синій гюйс зі смужками, червона хустка, якір, безкозирка
+    suit(['w', 'w', 'w', 'w', 'w', 'w', 'E', 'n', 'n'], '*', 'E');
+    for (let y = 9; y <= 13; y++) for (let x = 12; x <= 19; x++) if (at(x, y) !== '.' && at(x, y) !== 'O' && (x - 12) + (y - 9) * 0.9 < 7) put(x, y, (x + y) % 5 === 0 ? 'w' : 'n');   // гюйс
+    art(19, 13, ['.n.', 'nnn', '.n.', 'n.n', '.n.']);                                                                   // якір
+    art(7, 14, ['rrrrrr', '.rwrr.', '..rr..']); [[7, 15], [12, 15], [8, 16], [11, 16], [9, 17], [10, 17]].forEach(q => put(q[0], q[1], 'O'));
+    boots('n', 'z');
+    ell(8.2, 4.6, 6.4, 2.8, ['w', 'w', 'E'], true, 1, 6); rect(1, 15, 6, 6, 'E'); rect(1, 15, 7, 7, 'n'); rect(0, 16, 7, 7, 'n'); art(7, 3, ['y', 'y']);
+    outlineAll('wEn*rzy', 'O');
   } else if (kind === 'santa') {
-    suit(['w', 'r', 'r', 'r', 'r', 'r', 'r', 'R', 'w'], 'w', 'R');
-    for (let x = 12; x <= 25; x++) { put(x, 14, 'k'); put(x, 9, 'w'); }
-    art(18, 13, ['hhh', 'hkh', 'hhh']);
+    suit(['w', 'r', 'r', 'r', 'r', 'r', 'R', 'R', 'w'], 'w', 'R');
+    for (let x = 6; x <= 25; x++) if (at(x, 15) !== '.' && at(x, 15) !== 'O') put(x, 15, 'k');
+    art(18, 14, ['hhh', 'hkh', 'hhh']);
     beard(['1', 'w', 'E']);
+    // мішок із подарунками на спині
+    ell(21.5, 6.2, 4.2, 3.6, ['c', 'l', 'b'], true); rect(19, 24, 2, 2, 'd'); put(21, 1, 'r'); put(22, 1, 'r'); put(21, 0, 'g'); put(23, 1, 'y'); put(19, 6, 'c'); put(23, 8, 'b');
+    boots('k', 'k');
     ell(8.2, 5.2, 7, 3.4, ['p', 'r', 'R'], true, 2, 6);
-    cone([[5, 13, 17], [4, 14, 18], [6, 16, 20]], ['p', 'r', 'R']);
+    art(13, 1, ['.rr...', '.rrrr.', '..rrrr', '....rr']); art(17, 4, ['ww', 'ww']);                                  // кінчик шапки з помпоном
     rect(1, 15, 6, 7, 'w'); rect(2, 14, 7, 7, 'E'); [3, 7, 10, 13].forEach(x => put(x, 6, 'E'));
-    ell(19.5, 7.5, 2.3, 2.3, ['1', 'w', 'E'], true);
-    outlineAll('prRw1Ekhy', 'O');
+    outlineAll('prRw1Ekhyclbd', 'O');
   } else if (kind === 'witch') {
     suit(['v', 'V', 'V', 'V', 'P', 'P', 'P', 'V', 'o'], 'v', 'V');
     for (let x = 12; x <= 25; x++) if (isFur(x, 16) || at(x, 16) === 'V') put(x, 16, 'j');
@@ -219,14 +310,14 @@ function makeCapyOldDetail(kind) {
     outlineAll('vVPojyGgkh', 'O');
   } else if (kind === 'flower') {
     suit(['w', 'q', 'q', 'q', 'q', 'm', 'p', 'p', 'w'], 'w', 'p');
-    for (let x = 12; x <= 25; x++) { if (isFur(x, 18)) put(x, 18, x % 2 ? 'q' : 'w'); put(x, 17, x % 2 ? 'w' : 'q'); }
+    for (let x = 7; x <= 25; x++) { if (at(x, 19) !== '.' && at(x, 19) !== 'O') put(x, 19, x % 2 ? 'q' : 'w'); if (at(x, 18) !== '.' && at(x, 18) !== 'O') put(x, 18, x % 2 ? 'w' : 'p'); }
     plus(16, 12, 'w', 'f'); plus(22, 12, 'w', 'y'); put(14, 16, 'f'); put(19, 16, 'w'); put(24, 16, 'f');
     art(17, 13, ['pp.pp']);
-    art(19, 5, ['uu.k.uu', 'uvukuvu', '.uukuu.', '..ukuu.'.slice(0, 7)]); put(20, 4, 'k'); put(22, 4, 'k');         // метелик
+    art(19, 1, ['uu.k.uu', 'uvukuvu', '.uukuu.', '..u.u..']); put(20, 0, 'k'); put(24, 0, 'k');                        // метелик вище спини, окремо від тіла
     rect(2, 14, 4, 4, 'g'); rect(2, 14, 5, 5, 'G');
     plus(3, 3, 'p', 'y'); plus(6, 3, 'w', 'y'); plus(9, 3, 'u', 'y'); plus(12, 3, 'f', 'y');
     put(4, 5, 'g'); put(8, 5, 'g'); put(11, 5, 'g'); put(13, 5, 'g');
-    outlineAll('wqpfmgGuyabk', 'O');
+    outlineAll('wqpfmgGuyvabk', 'O');
   } else if (kind === 'beach') {
     suit(['*', 'T', 'T', 'T', 'T', 'T', 'n', 'n', 'w'], '*', 'n');
     plus(15, 12, 'f', 'y'); plus(21, 12, 'w', 'y'); plus(18, 15, 'y', 'f'); put(24, 15, 'f');
@@ -302,15 +393,17 @@ function makeCapyOldDetail(kind) {
     ell(11.8, 8.6, 1.8, 2.8, ['f', 'p', 'r'], true); rect(11, 12, 6, 6, 'k'); put(12, 11, 'w');
     outlineAll('1wEan&*nfprzyhN34k', 'O');
   } else if (kind === 'ep5') {
+    // Еко-епоха: зелене худі з листком, солом'яний капелюх із паростком, полотняна торба
     suit(['m', 'g', 'g', 'g', 'g', 'g', 'G', 'G', 'b'], 'm', 'G');
-    art(15, 11, ['.m.', 'mgm', 'mGm', '.G.']); put(16, 12, 'g');
-    ell(21.5, 7.3, 3.7, 3.1, ['g', 'G', 'G'], true); rect(18, 25, 8, 8, 'b'); art(19, 5, ['mmmm']); put(24, 8, 'b');
-    art(21, 2, ['G', 'G']); art(19, 1, ['mm', '.m']); art(22, 1, ['gg', 'g.']);
+    art(14, 11, ['..m..', '.mgm.', 'mggGm', '.mGm.', '..b..']);                                                        // листок на грудях
+    for (let x = 7; x <= 25; x++) if (at(x, 17) !== '.' && at(x, 17) !== 'O') put(x, 17, x % 3 ? 'b' : 'c');
+    art(19, 1, ['.mg.gm.', '.mgGgm.', '..gGg..', '...G...', 'tttttt.', '.ttQt..', '.tttt..']);        // паросток у глиняному горщику
     ell(8.2, 5.3, 7, 3.6, ['%', 'c', 'l'], true, 2, 6);
-    rect(0, 16, 7, 7, 'l'); rect(1, 15, 6, 6, 'c'); rect(2, 14, 5, 5, 'g'); rect(3, 13, 6, 6, 'G'); [4, 7, 10].forEach(x => { put(x, 4, 'm'); put(x + 1, 4, 'g'); });
-    plus(13, 3, 'f', 'y'); art(2, 4, ['mg']);
-    rect(17, 26, 0, 10, '.'); rect(18, 24, 10, 10, 'g'); rect(18, 22, 9, 9, 'g'); rect(16, 19, 8, 8, 'g'); put(16, 7, 'g');      // р. 73: рюкзак прибрано, спина плавно йде вниз (х дзеркальні)
-    outlineAll('mgGbl%cfyN', 'O');
+    rect(0, 16, 7, 7, 'l'); rect(1, 15, 6, 6, 'c'); rect(2, 14, 5, 5, 'g'); [4, 7, 10].forEach(x => { put(x, 4, 'y'); });
+    art(7, 0, ['mg.gm', '.mgm.', '..G..']);                                                                             // паросток на капелюсі
+    plus(13, 3, 'f', 'y');
+    boots('l', 'b');
+    outlineAll('mgGbl%#9cfyNtQ', 'O');
   } else if (kind === 'ep6') {
     suit(['*', '&', '&', 'n', 'n', 'n', 'n', 'z', 'z'], null, 'z');
     rect(12, 25, 12, 12, 'N'); rect(12, 25, 15, 15, 'N');
@@ -357,7 +450,7 @@ function makeCapyOldDetail(kind) {
   let maxX = 26 + ox; grid.forEach(r => r.forEach((c, x) => { if (c !== '.' && x > maxX) maxX = x; }));
   return grid.map(row => '.' + row.slice(0, maxX + 1).reverse().join(''));
 }
-['pirate', 'astro', 'wizard', 'chef', 'explorer', 'santa', 'witch', 'flower', 'beach', 'autumn', 'ep0', 'ep1', 'ep2', 'ep3', 'ep4', 'ep5', 'ep6', 'ep7', 'ep8'].forEach(k => { SPRITES['capy_' + k] = { rows: makeCapyOldDetail(k), variants: k === 'pirate' ? undefined : { blink: { K: PALETTE.B } } }; });
+['pirate', 'astro', 'wizard', 'chef', 'explorer', 'detective', 'sailor', 'santa', 'witch', 'flower', 'beach', 'autumn', 'ep0', 'ep1', 'ep2', 'ep3', 'ep4', 'ep5', 'ep6', 'ep7', 'ep8'].forEach(k => { SPRITES['capy_' + k] = { rows: makeCapyOldDetail(k), variants: k === 'pirate' ? undefined : { blink: { K: PALETTE.B } } }; });
 // Привид 11×13 (для «Полювання на привидів») і малий привид 5×7 (блимає у вікнах будинків на Хелловін)
 SPRITES.ghost = { rows: [
   '...ddddd...',

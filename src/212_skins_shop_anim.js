@@ -3,13 +3,14 @@
    РУХОМІ ДЕТАЛІ СКІНІВ МАГАЗИНУ: фон вивіски живе під кожен скін (текст вивіски — HTML поверх), у «Океану» ще
    фонтанчики на даху й акваріум з рибками на першому поверсі. Виклики — у 260_render.js (drawShopLayered).
    ===================================================================== */
+let sg = ctx;                                          // куди малює анімація вивіски: сцена або картка скіна (shopSkinPreview)
 const SKIN_SIGN_ANIM = {};
 function signStripes(x0, y0, w, h, t, base, hi, speed, step, wid) {          // діагональні смуги, що біжать
-  R(ctx, x0, y0, w, h, base);
+  R(sg, x0, y0, w, h, base);
   const o = Math.floor(t * speed);
   for (let y = 0; y < h; y++) for (let s = -step * 2 - (o % step); s < w + step; s += step) {
     const x = s + (h - y), xa = Math.max(0, x), ww = Math.min(x + wid, w) - xa;
-    if (ww > 0) R(ctx, x0 + xa, y0 + y, ww, 1, hi);
+    if (ww > 0) R(sg, x0 + xa, y0 + y, ww, 1, hi);
   }
 }
 function signFlakes(x0, y0, w, h, t, n, speed, draw) {                     // частинки, що падають/дрейфують по вивісці
@@ -18,20 +19,20 @@ function signFlakes(x0, y0, w, h, t, n, speed, draw) {                     // ч
     draw(Math.round(x0 + x), Math.round(y0 + y), i);
   }
 }
-function signSpark(x, y, c) { R(ctx, x - 1, y, 3, 1, c); R(ctx, x, y - 1, 1, 3, c); R(ctx, x, y, 1, 1, '#ffffff'); }
+function signSpark(x, y, c) { R(sg, x - 1, y, 3, 1, c); R(sg, x, y - 1, 1, 3, c); R(sg, x, y, 1, 1, '#ffffff'); }
 SKIN_SIGN_ANIM.ocean = (x0, y0, w, h, t) => {                                // жива вода: хвилі біжать, гребені блищать, бульбашки спливають
   for (let x = 0; x < w; x++) {
     const a = Math.round(4 + Math.sin(x * 0.23 + t * 2.1) * 1.4 + Math.sin(x * 0.07 - t * 1.2) * 1.2), b = Math.round(9 + Math.sin(x * 0.18 - t * 1.7 + 2) * 1.1);
-    R(ctx, x0 + x, y0, 1, h, '#1d4f8f'); R(ctx, x0 + x, y0, 1, a, '#2f74bd'); R(ctx, x0 + x, y0 + a, 1, 1, '#9fe2ff'); R(ctx, x0 + x, y0 + b, 1, 1, '#3f8ad0');
-    if (((x + Math.floor(t * 6)) % 23) < 3) R(ctx, x0 + x, y0 + a - 1, 1, 1, '#ffffff');
+    R(sg, x0 + x, y0, 1, h, '#1d4f8f'); R(sg, x0 + x, y0, 1, a, '#2f74bd'); R(sg, x0 + x, y0 + a, 1, 1, '#9fe2ff'); R(sg, x0 + x, y0 + b, 1, 1, '#3f8ad0');
+    if (((x + Math.floor(t * 6)) % 23) < 3) R(sg, x0 + x, y0 + a - 1, 1, 1, '#ffffff');
   }
-  for (let i = 0; i < 7; i++) { const bx = (i * 47 + 11) % w, by = h - ((t * 5 + i * 2.3) % (h + 2)); R(ctx, x0 + bx + Math.round(Math.sin(t * 3 + i)), Math.round(y0 + by), 1, 1, '#d8f6ff'); }
+  for (let i = 0; i < 7; i++) { const bx = (i * 47 + 11) % w, by = h - ((t * 5 + i * 2.3) % (h + 2)); R(sg, x0 + bx + Math.round(Math.sin(t * 3 + i)), Math.round(y0 + by), 1, 1, '#d8f6ff'); }
 };
 SKIN_SIGN_ANIM.candy = (x0, y0, w, h, t) => signStripes(x0, y0, w, h, t, '#c43d78', '#e46aa0', 7, 10, 5);
 SKIN_SIGN_ANIM.gold = (x0, y0, w, h, t) => {
   signStripes(x0, y0, w, h, t, '#8a5a12', '#a8741c', 3, 8, 3);
   const bx = ((t * 60) % (w + 80)) - 40;
-  ctx.globalAlpha = 0.55; for (let y = 0; y < h; y++) { const x = Math.round(bx - y * 0.8), xa = Math.max(0, x), ww = Math.min(x + 6, w) - xa; if (ww > 0) R(ctx, x0 + xa, y0 + y, ww, 1, '#fff2b0'); } ctx.globalAlpha = 1;
+  sg.globalAlpha = 0.55; for (let y = 0; y < h; y++) { const x = Math.round(bx - y * 0.8), xa = Math.max(0, x), ww = Math.min(x + 6, w) - xa; if (ww > 0) R(sg, x0 + xa, y0 + y, ww, 1, '#fff2b0'); } sg.globalAlpha = 1;
   for (let i = 0; i < 6; i++) if (Math.sin(t * 2.6 + i * 1.9) > 0.6) signSpark(x0 + (i * 61 + 9) % w, y0 + 3 + (i * 5) % (h - 6), '#fff6c0');
 };
 SKIN_SIGN_ANIM.diamond = (x0, y0, w, h, t) => {
@@ -39,22 +40,22 @@ SKIN_SIGN_ANIM.diamond = (x0, y0, w, h, t) => {
   for (let i = 0; i < 8; i++) if (Math.sin(t * 3 + i * 2.3) > 0.5) signSpark(x0 + (i * 43 + 5) % w, y0 + 2 + (i * 7) % (h - 4), '#8ff0ff');
 };
 SKIN_SIGN_ANIM.xmas = (x0, y0, w, h, t) => {
-  R(ctx, x0, y0, w, h, '#2f6b48');
-  signFlakes(x0, y0, w, h, t, Math.round(w / 14), 4, (x, y) => R(ctx, x, y, 1, 1, '#ffffff'));
-  for (let x = 3; x < w - 3; x += 7) { const on = (Math.floor(t * 2) + x / 7) % 3 !== 0; R(ctx, x0 + x, y0 + h - 2, 2, 2, on ? ['#ff5a5a', '#ffe08a', '#7ad6ff'][(x / 7 | 0) % 3] : '#1d4a30'); }
+  R(sg, x0, y0, w, h, '#2f6b48');
+  signFlakes(x0, y0, w, h, t, Math.round(w / 14), 4, (x, y) => R(sg, x, y, 1, 1, '#ffffff'));
+  for (let x = 3; x < w - 3; x += 7) { const on = (Math.floor(t * 2) + x / 7) % 3 !== 0; R(sg, x0 + x, y0 + h - 2, 2, 2, on ? ['#ff5a5a', '#ffe08a', '#7ad6ff'][(x / 7 | 0) % 3] : '#1d4a30'); }
 };
 SKIN_SIGN_ANIM.halloween = (x0, y0, w, h, t) => {
-  R(ctx, x0, y0, w, h, '#2b1a4f');
-  ctx.globalAlpha = 0.7; for (let x = 0; x < w; x++) { const f = Math.max(1, Math.round(3 + Math.sin(x * 0.11 + t * 0.9) * 1.6 + Math.sin(x * 0.27 - t * 1.4))); R(ctx, x0 + x, y0 + h - f, 1, f, '#5d3a8a'); } ctx.globalAlpha = 1;
-  for (let i = 0; i < 3; i++) { if (Math.sin(t * 0.7 + i * 2.1) < 0.2 || (t * 3 + i) % 4 < 0.25) continue; const ex = x0 + 10 + (i * 97) % Math.max(1, w - 20), ey = y0 + 4 + (i % 2) * 2; R(ctx, ex, ey, 1, 1, '#ff9e3a'); R(ctx, ex + 3, ey, 1, 1, '#ff9e3a'); }
+  R(sg, x0, y0, w, h, '#2b1a4f');
+  sg.globalAlpha = 0.7; for (let x = 0; x < w; x++) { const f = Math.max(1, Math.round(3 + Math.sin(x * 0.11 + t * 0.9) * 1.6 + Math.sin(x * 0.27 - t * 1.4))); R(sg, x0 + x, y0 + h - f, 1, f, '#5d3a8a'); } sg.globalAlpha = 1;
+  for (let i = 0; i < 3; i++) { if (Math.sin(t * 0.7 + i * 2.1) < 0.2 || (t * 3 + i) % 4 < 0.25) continue; const ex = x0 + 10 + (i * 97) % Math.max(1, w - 20), ey = y0 + 4 + (i % 2) * 2; R(sg, ex, ey, 1, 1, '#ff9e3a'); R(sg, ex + 3, ey, 1, 1, '#ff9e3a'); }
 };
 SKIN_SIGN_ANIM.spring = (x0, y0, w, h, t) => {
-  R(ctx, x0, y0, w, h, '#3f8a55'); R(ctx, x0, y0, w, 3, '#4f9a63');
-  signFlakes(x0, y0, w, h, t, Math.round(w / 16), 3, (x, y, i) => R(ctx, x, y, 2, 1, i % 2 ? '#ffc9d4' : '#ef8fa3'));
+  R(sg, x0, y0, w, h, '#3f8a55'); R(sg, x0, y0, w, 3, '#4f9a63');
+  signFlakes(x0, y0, w, h, t, Math.round(w / 16), 3, (x, y, i) => R(sg, x, y, 2, 1, i % 2 ? '#ffc9d4' : '#ef8fa3'));
 };
 SKIN_SIGN_ANIM.autumn = (x0, y0, w, h, t) => {
-  R(ctx, x0, y0, w, h, '#8a4a1c'); R(ctx, x0, y0, w, 3, '#9a5a24');
-  signFlakes(x0, y0, w, h, t, Math.round(w / 15), 4, (x, y, i) => { const c = ['#e8863c', '#c4553d', '#f2b84b'][i % 3]; if (Math.floor(t * 3 + i) % 2) R(ctx, x, y, 2, 1, c); else R(ctx, x, y, 1, 2, c); });
+  R(sg, x0, y0, w, h, '#8a4a1c'); R(sg, x0, y0, w, 3, '#9a5a24');
+  signFlakes(x0, y0, w, h, t, Math.round(w / 15), 4, (x, y, i) => { const c = ['#e8863c', '#c4553d', '#f2b84b'][i % 3]; if (Math.floor(t * 3 + i) % 2) R(sg, x, y, 2, 1, c); else R(sg, x, y, 1, 2, c); });
 };
 /* ---- Океан: фонтанчики на даху (дірочки, з яких б'є вода, бризкає й розвіюється парою) ---- */
 function drawRoofFountains(t) {

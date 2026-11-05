@@ -1,7 +1,7 @@
 //#part 150_a3_skins_new_decor.js
 /* =====================================================================
    НОВІ СКІНИ: магазин «Океан» (палітра + декор фасаду), бруківки «Цукерна», «Піщана».
-   Підключаються гачками: SHOP_DECO_EXTRA (skinShopDeco у 150_a2), STREET_EXTRA (cobbleExtra у 140_a); літаючі прикраси — у 211_skins_new_fx.js.
+   Підключаються гачками: SHOP_DECO_EXTRA (океанський фасад, 151_e), STREET_EXTRA (cobbleExtra у 140_a); літаючі прикраси — у 211_skins_new_fx.js.
    ===================================================================== */
 Object.assign(SHOP_SKINS, {
   ocean:  { roofPal: { r: 'n', n: 'T' }, trim: 'o', col: ['T', 'S'], frame: ['n', 's'], glass: 'S', base: 'n', band: null, awningCols: ['T', 'w'], signFill: 'n', inner: ['a', 'S', 'm', '*'] }
@@ -83,16 +83,22 @@ SHOP_DECO_EXTRA.ocean = function (g, w, h, look, yG, door, top) {
   [[w - 12, top + 52, 2], [10, top + 46, 2], [dc, yG + 4, 2]].forEach(([bx, by, br]) => bubbleG(g, bx, by, br));                                  // бульбашки на колонах (нижче вивіски)
 };
 // ---------------- Бруківки ----------------
-STREET_EXTRA.candy = function (g, X0, Y0, W, H) {            // цукерна: пастельні плитки-цукерки з посипкою й мармеладками
+STREET_EXTRA.candy = function (g, X0, Y0, W, H) {            // цукрова: великі глазуровані плитки рядами (спокійний ритм кольорів), рідкісні плитки з посипкою й льодяником
   const RH = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
-  RH(X0, Y0, W, H, '#f4cfe0');
-  const SETS = [['#ffb6d2', '#ffd9e8', '#e58bb0'], ['#bff0d8', '#e4fff1', '#8fcfb0'], ['#fff1a8', '#fffbd4', '#e3cc6a'], ['#cbbcff', '#e6deff', '#a090e0'], ['#ffd2a8', '#ffe8d0', '#e6a674']];
-  for (let r = 0, y = Y0; y < Y0 + H; r++, y += 6) for (let x = Math.floor((X0 - 12) / 12) * 12 + (r % 2) * 6 - 12; x < X0 + W; x += 12) {
-    const hs = hash2(x, r), P = SETS[hs % 5];
-    RH(x + 1, y + 1, 11, 5, P[0]); RH(x + 1, y + 1, 11, 1, P[1]); RH(x + 1, y + 5, 11, 1, P[2]); RH(x + 11, y + 2, 1, 4, P[2]);
-    if (hs % 4 === 0) { for (let i = 0; i < 5; i++) RH(x + 2 + i * 2, y + 2 + (i % 2), 1, 1, '#ffffff'); }               // білі смужки-глазур
-    else if (hs % 4 === 1) { RH(x + 3, y + 3, 2, 1, '#ff6fa8'); RH(x + 7, y + 2, 2, 1, '#52c4ff'); RH(x + 5, y + 4, 2, 1, '#ffd23f'); RH(x + 9, y + 4, 1, 1, '#7ad66a'); }   // посипка
-    else if (hs % 4 === 2 && hs % 7 < 3) { RH(x + 4, y + 2, 4, 3, '#ffffff'); RH(x + 5, y + 2, 2, 3, '#ff6fa8'); RH(x + 4, y + 3, 4, 1, '#ff6fa8'); }                          // льодяник-закрутка
+  const SEAM = '#d97fa8', TW = 18, TH = 9;
+  RH(X0, Y0, W, H, SEAM);
+  const PINK = ['#ffb6d2', '#ffdcea', '#ec94b8'], CREAM = ['#fff3d8', '#fffdf0', '#ecd6a8'], MINT = ['#bff0d8', '#e6fff3', '#8fd2b4'], LILAC = ['#d4c6ff', '#ece6ff', '#a999e6'], PEACH = ['#ffd9b0', '#ffeeda', '#ecb27e'];
+  const SETS = [PINK, CREAM, MINT, LILAC, CREAM, PEACH];
+  const ACC = [['#ffd98a', '#fff0c4', '#e8b65e'], ['#ffb6d2', '#ffdcea', '#ec94b8'], ['#a8e4ff', '#dcf5ff', '#74bfe6']];
+  for (let r = Math.floor(Y0 / TH), y = r * TH; y < Y0 + H; r++, y += TH) for (let x = Math.floor((X0 - TW) / TW) * TW + (((r % 2) + 2) % 2) * (TW >> 1) - TW; x < X0 + W; x += TW) {
+    const hs = hash2(x + 7, r * 3 + 1), base = SETS[((r % 6) + 6) % 6], P = hs % 9 === 0 ? ACC[(hs >>> 4) % 3] : base;
+    RH(x + 1, y + 1, TW - 1, TH - 1, P[0]);
+    RH(x + 2, y + 1, TW - 3, 1, P[1]); RH(x + 1, y + 2, 1, TH - 3, P[1]);                                  // світла кромка зверху-ліворуч
+    RH(x + 2, y + TH - 1, TW - 3, 1, P[2]); RH(x + TW - 1, y + 2, 1, TH - 3, P[2]);                        // тінь знизу-праворуч
+    RH(x + 3, y + 2, 4, 1, '#ffffff');                                                                     // глянцевий блиск
+    const k = (hs >>> 7) % 16;
+    if (k < 2) [[5, 5, '#ff6fa8'], [9, 4, '#52c4ff'], [12, 6, '#ffd23f'], [7, 7, '#7ad66a'], [14, 4, '#ff6fa8']].forEach(q => RH(x + q[0], y + q[1], 2, 1, q[2]));      // посипка
+    else if (k === 2) { RH(x + 7, y + 2, 5, 5, '#ffffff'); RH(x + 8, y + 2, 3, 5, '#ff6fa8'); RH(x + 7, y + 3, 5, 3, '#ff6fa8'); RH(x + 8, y + 3, 3, 3, '#ffffff'); RH(x + 9, y + 4, 1, 1, '#ff6fa8'); }       // льодяник-закрутка
   }
 };
 STREET_EXTRA.sand = function (g, X0, Y0, W, H) {              // піщана: пісок із хвилястими слідами, мушлями й морськими зірками

@@ -170,7 +170,8 @@ function capyFxPreview(g, nm, w, h, t) {
   g.globalAlpha = 1;
 }
 function capySkinPreview(cv, name, t) {                           // Капі в скіні «дихає» на тлі, навколо — частинки скіна
-  const c = getSpriteCanvas(capySprite()), W = Math.max(44, c.width + 18), H = 38;
+  // рівно ×2 до ширини картки (р. 78): кожен піксель однаковий, більше сцени навколо; поза сторінкою — старий розмір
+  const c = getSpriteCanvas(capySprite()), cw = cv.clientWidth, W = cw > 60 ? Math.max(c.width + 6, Math.floor(cw / 2)) : Math.max(44, c.width + 18), H = 38;
   if (cv.width !== W) { cv.width = W; cv.height = H; }
   const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
   const bg = CAPY_BG[name] || [['#8fd3ea', '#b8e3f5', '#dff3fa'], ['#8fcf7a', '#5aa85a']];
@@ -188,7 +189,7 @@ setInterval(() => {
   const t = performance.now() / 1000;
   ui.skinsList.querySelectorAll('canvas.skin-prev').forEach(cv => {
     const sp = cv._sp; if (!sp) return;
-    if (sp[0] === 'weather' || sp[0] === 'street') { skinPreviewCanvas(sp[0], sp[1], cv); return; }
+    if (sp[0] === 'weather' || sp[0] === 'street' || sp[0] === 'shop') { skinPreviewCanvas(sp[0], sp[1], cv); return; }
     if (sp[0] !== 'capy' && sp[0] !== 'hero') return;
     const save = skinPreview[sp[0]]; skinPreview[sp[0]] = sp[1];
     try { if (sp[0] === 'capy') capySkinPreview(cv, sp[1] || '', t); else heroSkinPreview(cv, t); } finally { if (save === undefined) delete skinPreview[sp[0]]; else skinPreview[sp[0]] = save; }
@@ -226,25 +227,197 @@ function drawCobbleLay() {                                        // true — м
   return true;
 }
 
+/* ---------- Картка скіна магазину (р. 78): фасад 1-го рівня в рідних пікселях (полотно = розмір картки), жива вивіска й частинки скіна ---------- */
+const shopCardCache = {};
+function shopCardBase(name) {
+  const tiers = state.depts.map(tierOf), key = (name || '') + '|' + (viewEpoch() % EPOCHS.length) + '|' + tiers.slice(0, 2).join('');
+  if (!shopCardCache[key]) { const geo = buildShopCanvas(1, tiers); shopCardCache[key] = { c: geo.canvas, w: geo.w, h: geo.h, sign: geo.sign }; }
+  return shopCardCache[key];
+}
+const SHOP_CARD_SKY = { candy: ['#ffc4dc', '#ffe4ef'], gold: ['#ffe39a', '#fff4cc'], diamond: ['#a8dcfa', '#dcf4ff'], wood: ['#a8d8ec', '#dcf0f6'], garden: ['#a8e4c4', '#e4f8d4'], xmas: ['#8cb4dc', '#d4e4f4'], halloween: ['#1c1238', '#3a2458'], ocean: ['#5fc0ec', '#bff0f8'], ice: ['#a8dcfa', '#e8f8ff'], spring: ['#ffc8dc', '#fff0f4'], autumn: ['#f4c88c', '#fde8c0'] };
+const SHOP_CARD_FX = {
+  candy(g, W, H, t) { for (let i = 0; i < 12; i++) cardRect(g, cardMod(i * 37 + Math.sin(t + i) * 3, W), cardMod(i * 19 + t * 13, H), 2, 1, ['#ff5f8f', '#52c4ff', '#ffd23f', '#7ad66a'][i % 4]); },
+  gold(g, W, H, t) { for (let i = 0; i < 8; i++) if ((t * 0.8 + i * 0.27) % 1 < 0.4) cardSparkle(g, 6 + (i * 37) % (W - 12), 6 + (i * 23) % (H - 12), '#fff6c0'); },
+  diamond(g, W, H, t) { for (let i = 0; i < 9; i++) if ((t * 0.9 + i * 0.31) % 1 < 0.42) cardSparkle(g, 5 + (i * 41) % (W - 10), 5 + (i * 19) % (H - 10), i % 3 ? '#ffffff' : '#8ff0ff'); },
+  wood(g, W, H, t) { for (let i = 0; i < 4; i++) { const p = (t * 0.28 + i * 0.25) % 1; g.globalAlpha = 0.65 * (1 - p); cardRect(g, Math.round(W * 0.2 + Math.sin(p * 6 + i) * 3 + p * 6), Math.round(14 - p * 16), 3 + Math.round(p * 2), 2 + Math.round(p * 2), '#e8e4dc'); g.globalAlpha = 1; } },
+  garden(g, W, H, t) { [[0.2, 0.32, '#ff8fbc'], [0.72, 0.5, '#ffd84f']].forEach(([fx, fy, c], i) => { const x = Math.round(W * fx + Math.sin(t * 0.7 + i * 2) * 12), y = Math.round(H * fy + Math.sin(t * 1.3 + i) * 5), fl = Math.floor(t * 8 + i) % 2; cardRect(g, x, y, 1, 2, '#3a2a1e'); cardRect(g, x - 2, y - fl, 2, 2 - fl, c); cardRect(g, x + 1, y - fl, 2, 2 - fl, c); }); for (let i = 0; i < 5; i++) cardRect(g, cardMod(i * 29 + t * 6, W), cardMod(i * 17 + t * 8, H), 1, 1, '#ffffff'); },
+  xmas(g, W, H, t) { for (let i = 0; i < 18; i++) cardRect(g, cardMod(i * 23 + Math.sin(t * 1.2 + i) * 3, W), cardMod(i * 13 + t * (8 + (i % 3) * 3), H), 1 + (i % 4 === 0 ? 1 : 0), 1 + (i % 4 === 0 ? 1 : 0), '#ffffff'); },
+  halloween(g, W, H, t) { [[0.25, 8], [0.68, 14]].forEach(([fx, y0], i) => { const x = Math.round(W * fx + Math.sin(t * 0.8 + i * 2.2) * 16), y = y0 + Math.round(Math.sin(t * 1.7 + i) * 3), fl = Math.floor(t * 8 + i) % 2; cardRect(g, x - 1, y, 3, 2, '#120c24'); cardRect(g, x - 4, y - fl, 3, 1, '#120c24'); cardRect(g, x + 2, y - fl, 3, 1, '#120c24'); cardRect(g, x - 1, y, 1, 1, '#ff9e3c'); cardRect(g, x + 1, y, 1, 1, '#ff9e3c'); }); },
+  ocean(g, W, H, t) { for (let i = 0; i < 10; i++) { const y = H - cardMod(i * 17 + t * (7 + (i % 3) * 2), H + 4), x = cardMod(i * 31, W) + Math.round(Math.sin(t * 2 + i) * 2), r = i % 3 === 0; cardRect(g, x, y, r ? 2 : 1, r ? 2 : 1, '#d8f6ff'); if (r) cardRect(g, x, y, 1, 1, '#ffffff'); } },
+  ice(g, W, H, t) { SHOP_CARD_FX.xmas(g, W, H, t); },
+  spring(g, W, H, t) { for (let i = 0; i < 12; i++) cardRect(g, cardMod(i * 23 + Math.sin(t + i) * 5, W), cardMod(i * 17 + t * 9, H), 2, 1, i % 2 ? '#ff9fc0' : '#ffe4ef'); },
+  autumn(g, W, H, t) { for (let i = 0; i < 11; i++) cardRect(g, cardMod(i * 23 + Math.sin(t * 1.3 + i) * 5, W), cardMod(i * 17 + t * 10, H), 2, 1, ['#e8701e', '#d23a2a', '#f2b84b'][i % 3]); }
+};
+function shopSkinPreview(cv, name, t) {
+  const sz = cardPixels(cv), W = sz[0], H = sz[1], base = shopCardBase(name);
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+  const sky = SHOP_CARD_SKY[name] || null;
+  if (sky) { cardRect(g, 0, 0, W, H, sky[1]); cardRect(g, 0, 0, W, Math.round(H * 0.22), sky[0]); for (let x = 0; x < W; x += 2) cardRect(g, x, Math.round(H * 0.22), 1, 1, sky[0]); }
+  else { const c = currentEpoch().sky || ['s', 'S', 'w']; for (let y = 0; y < H; y++) R(g, 0, y, W, 1, c[Math.min(2, Math.floor(y * 3 / H))]); }
+  const x0 = Math.round((W - base.w) / 2), y0 = Math.round((H - base.h) * 0.3);
+  g.drawImage(base.c, x0, y0);
+  if (SKIN_SIGN_ANIM[name]) {
+    const s = base.sign, keep = sg; sg = g;
+    try { g.save(); g.beginPath(); g.rect(x0 + s.x, y0 + s.y, s.w, s.h); g.clip(); SKIN_SIGN_ANIM[name](x0 + s.x, y0 + s.y, s.w, s.h, t); g.restore(); } finally { sg = keep; g.globalAlpha = 1; }
+  }
+  if (SHOP_CARD_FX[name]) SHOP_CARD_FX[name](g, W, H, t);
+}
+
 /* ---------- 5. Скіни погоди: рухомі картки (р. 72) ---------- */
 // Картка погоди: полотно 128×80, логіка малюнка — у координатах 64×40 (масштаб ×2); маркет 1-го рівня (×0,4) малюється вже в повних пікселях (р. 73)
 const weatherMarketCache = {};
-function weatherMarket(kind) {                                          // зменшений до 0,4 маркет; ніч і гроза трохи затемнюють його
-  const key = kind + '|' + state.lang;
-  if (weatherMarketCache[key]) return weatherMarketCache[key];
-  const geo = buildShopCanvas(1, state.depts.map(tierOf)), w = Math.round(geo.w * 0.4), h = Math.round(geo.h * 0.4);
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(geo.canvas, 0, 0, w, h);
-  if (kind !== 'day') { g.globalCompositeOperation = 'source-atop'; g.globalAlpha = kind === 'night' ? 0.6 : 0.42; g.fillStyle = kind === 'night' ? '#0c1636' : '#1a1030'; g.fillRect(0, 0, w, h); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; }
-  return (weatherMarketCache[key] = c);
+function weatherMarket(kind) {                                          // маленький маркет, намальований у повних пікселях; уночі й у грозу темніший, а вікна світяться
+  if (weatherMarketCache[kind]) return weatherMarketCache[kind];
+  const W = 74, H = 40, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), P = AR.P, WALL = '#ecdcb2', WALL2 = '#cdb98a', TRIM = '#f8eed0', DK = '#6a4a30', W1 = '#f6bccb', W2 = '#bfe3c8';
+  const glass = (x, y, w, h, col) => { P(g, x, y, w, h, DK); P(g, x + 1, y + 1, w - 2, h - 2, col); };
+  // дах і вивіска
+  for (let y = 8; y <= 13; y++) { const a = 9 - (y - 8), b = W - 9 + (y - 8); P(g, a, y, b - a, 1, y === 8 ? '#e08a5a' : y % 2 ? '#c9643a' : '#b4552f'); for (let k = a + 1 + (y % 2) * 2; k < b - 1; k += 4) P(g, k, y, 1, 1, '#8a3f24'); }
+  P(g, 19, 0, 36, 9, '#3a2415'); P(g, 20, 1, 34, 7, '#5a3a20'); P(g, 20, 1, 34, 1, '#7a5230'); AR.txt(g, 23, 2, 'CAPYTAP', '#ffd870');
+  // карниз, стіна, верхні вікна
+  P(g, 1, 14, W - 2, 1, TRIM); P(g, 1, 15, W - 2, 1, '#a8946a'); P(g, 3, 16, W - 6, 10, WALL); P(g, 3, 16, 2, 22, WALL2); P(g, W - 5, 16, 2, 22, WALL2);
+  const lit = [];
+  for (let i = 0; i < 5; i++) {
+    const x = 7 + i * 13; glass(x, 17, 9, 8, i % 2 ? W2 : W1); P(g, x, 17, 1, 1, WALL); P(g, x + 8, 17, 1, 1, WALL); P(g, x + 4, 18, 1, 6, DK); P(g, x + 2, 19, 1, 2, '#ffffff');
+    P(g, x + 1, 25, 7, 1, '#7a4a2a'); P(g, x + 2, 24, 1, 1, '#e8353a'); P(g, x + 4, 24, 1, 1, '#ffd84f'); P(g, x + 6, 24, 1, 1, '#e8353a'); lit.push([x + 1, 18, 3, 6], [x + 5, 18, 3, 6]);
+  }
+  // навіс
+  P(g, 2, 26, W - 4, 1, TRIM);
+  for (let x = 2, i = 0; x < W - 2; x += 5, i++) { const cl = i % 2 ? '#fff4dc' : '#d9483b', w = Math.min(5, W - 2 - x); P(g, x, 27, w, 4, cl); P(g, x + 1, 31, Math.max(1, w - 2), 1, cl); }
+  // низ: вітрини й двері
+  P(g, 3, 31, W - 6, 6, WALL); for (let x = 2, i = 0; x < W - 2; x += 5, i++) { const cl = i % 2 ? '#fff4dc' : '#d9483b', w = Math.min(5, W - 2 - x); P(g, x + 1, 31, Math.max(1, w - 2), 1, cl); }
+  P(g, 3, 32, W - 6, 1, WALL2);
+  [[7, 21], [46, 21]].forEach(([x, w]) => { glass(x, 33, w, 5, '#ffe9ae'); P(g, x + 1, 35, w - 2, 1, '#d9a860'); for (let k = x + 2; k < x + w - 2; k += 3) P(g, k, 34, 1, 1, ['#e8353a', '#4f9a63', '#3a6fb0'][(k >> 1) % 3]); lit.push([x + 1, 34, w - 2, 3]); });
+  P(g, 30, 32, 14, 6, DK); P(g, 31, 33, 5, 5, '#7fbce8'); P(g, 38, 33, 5, 5, '#7fbce8'); P(g, 32, 34, 1, 3, '#d8f0ff'); P(g, 39, 34, 1, 3, '#d8f0ff');
+  P(g, 28, 34, 1, 2, '#ffd870'); P(g, 45, 34, 1, 2, '#ffd870');
+  // цоколь
+  P(g, 0, 38, W, 1, '#c8b48a'); P(g, 0, 39, W, 1, '#7a6648'); P(g, 28, 38, 18, 1, TRIM);
+  if (kind !== 'day') {
+    g.globalCompositeOperation = 'source-atop'; g.globalAlpha = kind === 'night' ? 0.62 : 0.4; g.fillStyle = kind === 'night' ? '#0c1636' : '#1a1030'; g.fillRect(0, 0, W, H); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+    lit.forEach(([x, y, w, h]) => P(g, x, y, w, h, '#ffe28a'));                    // вікна світяться
+    AR.txt(g, 23, 2, 'CAPYTAP', '#ffd870');
+  }
+  return (weatherMarketCache[kind] = c);
 }
 function weatherHouse(g, kind) {
-  const m = weatherMarket(kind); g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
-  g.drawImage(m, Math.round((128 - m.width) / 2), 74 - m.height); g.restore();
+  const m = weatherMarket(kind), ox = g._ox || 0, oy = g._oy || 0; g.save(); g.setTransform(1, 0, 0, 1, -ox, -oy);
+  g.drawImage(m, Math.round((128 - m.width) / 2), 76 - m.height); g.restore();
+}
+// Статичні тла карток гроз: небо смугами з пунктирними переходами, силует далекого міста, мокра бруківка
+const STORM_CARD = {
+  lightning: { sky: ['#1c1038', '#2a1650', '#3d2275', '#5a3a96'], hill: '#20123e', win: '#ffd870', road: ['#2c2440', '#463a60', '#7a6aa8'], rain: '#a58ae0', tint: 'storm_v', cols: [[5, '#7a2fd0', 0.75], [3, '#c9a0ff', 1], [1, '#ffffff', 1]] },
+  lightninggreen: { sky: ['#0a2414', '#0f3a1e', '#1a5a30', '#2f8a4c'], hill: '#0c2c18', win: '#ffe28a', road: ['#1a2c22', '#2e4a38', '#5a8a6a'], rain: '#7fd8a0', tint: 'storm_g', cols: [[5, '#1d9a45', 0.75], [3, '#8ff0ac', 1], [1, '#ffffff', 1]] },
+  lightningred: { sky: ['#240a10', '#3a0f16', '#5a1a24', '#8a2f3c'], hill: '#2c0c14', win: '#ffd870', road: ['#2c1a20', '#4a2e36', '#8a5a66'], rain: '#e88a96', tint: 'storm_r', cols: [[5, '#c4202e', 0.75], [3, '#ff9a9a', 1], [1, '#ffffff', 1]] }
+};
+const stormBackCache = {};
+function stormBack(name) {
+  if (stormBackCache[name]) return stormBackCache[name];
+  const S = STORM_CARD[name], c = document.createElement('canvas'); c.width = 128; c.height = 80;
+  const g = c.getContext('2d'), P = AR.P, band = [0, 16, 32, 48, 80];
+  for (let i = 0; i < 4; i++) P(g, 0, band[i], 128, band[i + 1] - band[i], S.sky[i]);
+  for (let i = 1; i < 4; i++) for (let x = 0; x < 128; x++) { if ((x + band[i]) % 2 === 0) P(g, x, band[i], 1, 1, S.sky[i - 1]); if (x % 4 === 0) P(g, x, band[i] + 1, 1, 1, S.sky[i - 1]); }
+  // далеке місто
+  [[0, 22], [10, 28], [20, 18], [84, 20], [96, 30], [108, 24], [118, 16]].forEach(([x, h], i) => { P(g, x, 72 - h, 12, h, S.hill); for (let k = 0; k < 3; k++) if ((i + k) % 2 === 0) P(g, x + 2 + k * 3, 72 - h + 3 + (k % 2) * 4, 2, 2, S.win); });
+  // мокра дорога
+  P(g, 0, 72, 128, 8, S.road[0]); P(g, 0, 72, 128, 1, S.road[2]); for (let i = 0; i < 12; i++) { const hs = hash2(i * 7 + 1, 3); P(g, hs % 124, 74 + (hs >>> 5) % 5, 3 + (hs >>> 9) % 6, 1, S.road[1]); }
+  return (stormBackCache[name] = c);
+}
+function stormCardDraw(g, name, T) {
+  const S = STORM_CARD[name], P = AR.P;
+  g.drawImage(stormBack(name), 0, 0);
+  const C = 1.7, cyc = Math.floor(T / C), p = animOn() ? T % C : 0.2, flash = p < 0.09 || (p > 0.15 && p < 0.26);
+  if (flash) { g.globalAlpha = 0.28; P(g, 0, 0, 128, 72, S.cols[1][1]); g.globalAlpha = 1; }
+  // дощ
+  for (let i = 0; i < 26; i++) { const hs = hash2(i * 5 + 2, 9), x = ((hs % 136) - Math.floor(T * 30) % 136 + 136) % 136 - 4, y = (Math.floor(T * 74) + (hs >>> 5) % 80) % 80; if (y < 73) { P(g, x, y, 1, 2, S.rain); P(g, x - 1, y + 2, 1, 2, S.rain); } }
+  weatherHouse(g, 'storm');
+  // блискавка: з-під хмари вниз, кожного разу з іншого боку
+  if (p < 0.62) {
+    const I = p < 0.26 ? 1 : Math.max(0, 1 - (p - 0.26) / 0.36), v = cyc % 3;
+    const paths = [
+      [[[28, 12], [35, 23], [26, 32], [34, 43], [25, 54], [30, 70]], [[35, 23], [45, 29], [48, 39]], [[26, 32], [17, 38], [14, 49]]],
+      [[[100, 10], [93, 21], [102, 30], [94, 42], [103, 52], [97, 70]], [[93, 21], [83, 27], [80, 37]], [[102, 30], [112, 37], [116, 47]]],
+      [[[60, 12], [53, 22], [62, 30], [55, 36]], [[53, 22], [43, 26], [38, 36]], [[62, 30], [72, 34], [76, 42]]]
+    ][v];
+    paths.forEach((pp, i) => { const d = boltDense(pp); strokeBolt(g, d, d.length, i ? S.cols.slice(1).map(l => [Math.max(1, l[0] - 2), l[1], l[2]]) : S.cols, I, !i); });
+    if (I > 0.4 && v < 2) { const e = paths[0][paths[0].length - 1]; for (let k = 0; k < 5; k++) { const a = T * 19 + k * 1.3, r = 2 + ((T * 30 + k * 3) % 6); P(g, Math.round(e[0] + Math.cos(a) * r), Math.round(e[1] - Math.abs(Math.sin(a)) * r), 1, 1, k % 2 ? '#ffffff' : S.cols[1][1]); } }
+  }
+  // хмари поверх початку блискавки; у спалах підсвічені
+  [[0, 2, -2], [1, 52, 4], [2, 92, -3]].forEach(([k, b, y]) => { const cv = cloudCanvas(k, S.tint + (flash ? 'l' : '')), x = ((b + T * 7) % (128 + cv.width + 8)) - cv.width - 4; g.drawImage(cv, Math.round(x), y); });
+}
+// Денні картки погоди: небо смугами з пунктирними стиками, далекі пагорби, трава; хмари й веселка в рідних пікселях, не затуляють маркет
+const DAY_CARD = {
+  '': ['#7ec8e6', '#a8dcf0', '#d4f0fa'], rainbow: ['#7ec8e6', '#a8dcf0', '#e4f6fc'], cottoncloud: ['#9ad4ee', '#ffd8e8', '#fff2f6'], goldcloud: ['#8ccce4', '#d4e8cc', '#fff0c0'],
+  starcloud: ['#5a4aa8', '#8f78d0', '#dcc4f0'], diamondcloud: ['#9adcf6', '#c8eefa', '#f0fbff']
+};
+const dayBackCache = {};
+function dayCardBack(name) {
+  const key = DAY_CARD[name] ? name : '';
+  if (dayBackCache[key]) return dayBackCache[key];
+  const S = DAY_CARD[key], c = document.createElement('canvas'); c.width = 128; c.height = 80;
+  const g = c.getContext('2d'), P = AR.P, band = [0, 22, 44, 80];
+  for (let i = 0; i < 3; i++) P(g, 0, band[i], 128, band[i + 1] - band[i], S[i]);
+  for (let i = 1; i < 3; i++) for (let x = 0; x < 128; x++) { if ((x + band[i]) % 2 === 0) P(g, x, band[i], 1, 1, S[i - 1]); if (x % 4 === 0) P(g, x, band[i] + 1, 1, 1, S[i - 1]); }
+  const hill = key === 'starcloud' ? ['#6a5a9a', '#54467e'] : ['#a4d8a8', '#7fc08a'];
+  for (let x = 0; x < 128; x++) { const h1 = Math.round(10 + Math.sin(x * 0.07 + 1) * 4 + Math.sin(x * 0.19) * 1.5), h2 = Math.round(6 + Math.sin(x * 0.11 + 3) * 3); P(g, x, 72 - h1, 1, h1, hill[0]); P(g, x, 72 - h2, 1, h2, hill[1]); }
+  P(g, 0, 72, 128, 8, '#5aa85a'); P(g, 0, 72, 128, 1, '#8fd47a'); for (let i = 0; i < 26; i++) { const hs = hash2(i * 7 + 1, 11); P(g, hs % 126, 73 + (hs >>> 5) % 6, 2, 1, i % 3 ? '#4a9450' : '#7cc46c'); }
+  return (dayBackCache[key] = c);
+}
+const CARD_STAR_SPEC = ['star', 'sp_blue', 'star2', 'sp_green', 'sp_gold', 'sp_orange', 'sp_red', 'star3'];
+function dayCardDraw(g, name, T) {
+  const P = AR.P;
+  g.drawImage(dayCardBack(name), 0, 0);
+  const tint = CLOUD_SKIN_TINT[name] || '', cl = (k, b, y, sp) => { const cv = cloudCanvas(k, tint), x = Math.round(((b + T * sp) % (128 + cv.width + 8)) - cv.width - 4); return { cv, x, y }; };
+  if (name === 'rainbow') {                                                       // велика дуга навколо маркету, блискітки біжать по ній, біля основ хмарки
+    const rb = weatherRainbow(), cx = 64, cy = 74, R0 = 56;
+    g.drawImage(rb, cx - rb.width / 2, cy - (rb.height - 2));
+    for (let k = 0; k < 7; k++) {
+      const th = ((T * 0.16 + k / 7) % 1) * Math.PI, r = R0 - 3 - (k * 5) % 22, x = Math.round(cx - Math.cos(th) * r), y = Math.round(cy - Math.sin(th) * r);
+      if (Math.sin(T * 4 + k * 2.3) > 0) cardSparkle(g, x, y, '#fff6c0');
+    }
+    g.drawImage(cloudCanvas(1, ''), -14, 50); g.drawImage(cloudCanvas(1, ''), 98, 50);
+    weatherHouse(g, 'day');
+    return;
+  }
+  weatherHouse(g, 'day');
+  if (!tint) {                                                                    // звичайна погода: сонце, білі хмарки, пташки
+    P(g, 16, 8, 9, 9, '#ffe27a'); P(g, 14, 10, 13, 5, '#ffe27a'); P(g, 18, 6, 5, 13, '#ffe27a'); P(g, 18, 9, 3, 2, '#fff6c0');
+    [[1, 6, 4, 4], [2, 70, 14, 3]].forEach(([k, b, y, sp]) => { const c = cl(k, b, y, sp); g.drawImage(c.cv, c.x, c.y); });
+    [[34, 16, 0], [46, 11, 1], [92, 20, 2]].forEach(([x, y, i]) => { const fl = Math.floor(T * 3 + i) % 2, xx = Math.round(x + T * 4) % 128; P(g, xx - 2, y - fl, 2, 1, '#3a4a5a'); P(g, xx + 1, y - fl, 2, 1, '#3a4a5a'); P(g, xx, y, 1, 1, '#3a4a5a'); });
+    return;
+  }
+  const clouds2 = [cl(0, 6, -3, 5), cl(1, 62, 6, 5), cl(2, 104, 0, 5)];
+  clouds2.forEach(c => {
+    if (name === 'starcloud') {                                                   // колір пливе всім спектром, зорі мерехтять
+      const u = (((T * 0.14 + c.x * 0.004) % 1) + 1) % 1 * CARD_STAR_SPEC.length, i0 = Math.floor(u) % CARD_STAR_SPEC.length, fr = u - Math.floor(u), k = [0, 1, 2][clouds2.indexOf(c)];
+      g.drawImage(cloudCanvas(k, CARD_STAR_SPEC[i0]), c.x, c.y); g.globalAlpha = fr; g.drawImage(cloudCanvas(k, CARD_STAR_SPEC[(i0 + 1) % CARD_STAR_SPEC.length]), c.x, c.y); g.globalAlpha = 1;
+      cloudCanvas(k, 'star').starPts.forEach(([px, py], i) => { if (Math.sin(T * 2.6 + i * 1.9) > 0.45) { P(g, c.x + px, c.y + py, 1, 1, '#ffffff'); if (i % 3 === 0) { P(g, c.x + px - 1, c.y + py, 3, 1, '#ffe9a0'); P(g, c.x + px, c.y + py - 1, 1, 3, '#ffe9a0'); P(g, c.x + px, c.y + py, 1, 1, '#ffffff'); } } });
+    } else {
+      g.drawImage(c.cv, c.x, c.y);
+      if (name === 'goldcloud' || name === 'diamondcloud') c.cv.litPts.forEach(([px, py], i) => { if (i % 3) return; const v = Math.sin(T * 2.2 + i * 2.7 + c.x * 0.02); if (v > 0.72) cardSparkle(g, c.x + px, c.y + py, name === 'goldcloud' ? '#fff2b0' : ['#d8f6ff', '#ffd6f4', '#c8fff0'][i % 3]); });
+    }
+  });
+  if (name === 'goldcloud') for (let i = 0; i < 5; i++) {                         // монетки падають і зникають на траві
+    const p = (T * 0.34 + i * 0.2) % 1, x = Math.round(14 + (i * 27) % 104 + Math.sin(i * 3) * 2), y = Math.round(26 + p * p * 48), w = [3, 2, 1, 2][Math.floor(T * 9 + i) % 4];
+    P(g, x - (w >> 1), y, w, 3, '#b5802a'); P(g, x - (w >> 1), y, w, 2, '#ffd23f'); if (w > 1) P(g, x - (w >> 1), y, 1, 1, '#fff6c0');
+  } else if (name === 'starcloud') for (let i = 0; i < 14; i++) {                 // зоряний пил
+    P(g, cardMod(i * 19 + Math.sin(T + i) * 3, 128), 24 + cardMod(i * 11 + T * 9, 48), 1, 1, ['#fff6c0', '#c9b8ff', '#9be8ff', '#ffc4ec'][i % 4]);
+  } else if (name === 'diamondcloud') for (let i = 0; i < 16; i++) {              // діамантовий пил
+    const y = 24 + cardMod(i * 13 + T * 11, 48), x = cardMod(i * 23 + Math.sin(T * 0.8 + i) * 3, 128); P(g, x, y, 1, 1, ['#ffffff', '#d8f6ff', '#9be8ff'][i % 3]); if (i % 5 === 0 && (Math.floor(T * 4) + i) % 2) { P(g, x - 1, y, 3, 1, '#ffffff'); P(g, x, y - 1, 1, 3, '#ffffff'); }
+  } else if (name === 'cottoncloud') for (let i = 0; i < 7; i++) {                // цукрова вата: клаптики повільно летять униз
+    const x = cardMod(i * 31 + Math.sin(T * 0.6 + i) * 6, 128), y = 26 + cardMod(i * 13 + T * 5, 44); P(g, x, y, 3, 2, '#ffd9e8'); P(g, x + 1, y - 1, 2, 1, '#fff1f6'); P(g, x, y + 1, 2, 1, '#f4b6d0');
+  }
+}
+let weatherRainbowCv = null;
+function weatherRainbow() { return weatherRainbowCv || (weatherRainbowCv = buildRainbow(56, 4, 3, false)); }
+function cardPixels(cv) {                                                 // розмір полотна = розмір картки в CSS-пікселях (не більше 128×80): картинка не зменшується, тож жоден рядок пікселів не випадає
+  const now = performance.now();
+  if (!cv._sz || now - cv._szT > 900) { const w = cv.clientWidth, h = cv.clientHeight; cv._sz = w > 60 && h > 40 ? [Math.min(128, w), Math.min(80, h)] : [128, 80]; cv._szT = now; }
+  return cv._sz;
 }
 function weatherSkinPreview(cv, name, T) {
-  const W = 64, H = 40; cv.width = 128; cv.height = 80;
-  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.setTransform(2, 0, 0, 2, 0, 0);
+  const W = 64, H = 40, sz = cardPixels(cv), ox = Math.round((128 - sz[0]) / 2), oy = Math.round((80 - sz[1]) * 0.62); cv.width = sz[0]; cv.height = sz[1];
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g._ox = ox; g._oy = oy; g.setTransform(2, 0, 0, 2, -ox, -oy);
   const SPEED = 5, wrap = (x0, w) => ((x0 + T * SPEED) % (W + w + 12 + 0)) - w - 6 + 6;     // усі хмари пливуть вправо з однаковою швидкістю
   if (name === 'aurora') {                                       // ніч, зорі, три шторки сяйва з променями, гори, сніг і хатка зі світлим вікном
     const gr = g.createLinearGradient(0, 0, 0, 34); gr.addColorStop(0, '#060a20'); gr.addColorStop(0.6, '#10224a'); gr.addColorStop(1, '#1c3d5e'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
@@ -264,40 +437,11 @@ function weatherSkinPreview(cv, name, T) {
     weatherHouse(g, 'night');
     return;
   }
-  if (BOLT_COLS[name]) {                                         // гроза: темне небо, хмари пливуть, раз на ~2,4 с — спалах і блискавка
-    const bc = { lightning: ['#2a1650', '#3d2275', '#5a3a96', '#8a6ad0'], lightninggreen: ['#0f3a1e', '#1a5a30', '#2f8a4c', '#6acf8a'], lightningred: ['#3a0f16', '#5a1a24', '#8a2f3c', '#d06a7a'] }[name];
-    g.fillStyle = bc[0]; g.fillRect(0, 0, W, H); g.fillStyle = bc[1]; g.fillRect(0, 0, W, 18);
-    [[0, 3, 24], [32, 9, 20]].forEach(([b, y, w]) => { const x = Math.round(wrap(b, w)); g.fillStyle = bc[2]; g.fillRect(x, y, w, 5); g.fillRect(x + 4, y - 2, w - 9, 3); g.fillStyle = bc[1]; g.fillRect(x, y + 4, w, 1); });
-    g.fillStyle = bc[3]; for (let i = 0; i < 14; i++) { const hs = hash2(i * 5 + 2, 9), x = ((hs % 70) - Math.floor(T * 14) % 70 + 70) % 70 - 3, y = (Math.floor(T * 30) + hs % 40) % 34; if (y > 12) g.fillRect(x, y, 1, 2); }       // косий дощ
-    R(g, 0, 34, W, 6, 'G'); weatherHouse(g, 'storm');
-    const C = 2.4, cyc = Math.floor(T / C), p = T % C;
-    const on = p < 0.1 || (p > 0.17 && p < 0.34), fade = p > 0.34 ? Math.max(0, 1 - (p - 0.34) / 0.25) : 1;
-    if (p < 0.06) { g.globalAlpha = 0.35; g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, 34); g.globalAlpha = 1; }
-    if (on || (p > 0.34 && fade > 0)) {
-      const PV = [[5, BOLT_COLS[name].main[1][1], 0.28], [3, BOLT_COLS[name].main[3][1], 0.75], [1, '#ffffff', 1]], st = pts => { const d = boltDense(pts); strokeBolt(g, d, d.length, PV, 1); };
-      g.globalAlpha = on ? 1 : fade * 0.6;
-      if (cyc % 2 === 0) { st([[18, 0], [22, 6], [17, 11], [23, 17], [19, 22], [22, 27]]); st([[22, 6], [28, 10], [31, 15]]); st([[17, 11], [11, 15], [9, 19]]); }
-      else { st([[46, 0], [43, 5], [48, 10], [44, 16], [47, 21], [44, 27]]); st([[48, 10], [54, 14]]); st([[44, 16], [39, 19]]); }
-      g.globalAlpha = 1;
-    }
+  if (BOLT_COLS[name]) {                                         // гроза: важкі хмари, косий дощ, місто вдалині; блискавка б'є з хмари й підсвічує її
+    g.setTransform(1, 0, 0, 1, -ox, -oy);
+    stormCardDraw(g, name, T);
     return;
   }
-  for (let y = 0; y < H; y++) { g.fillStyle = y < 14 ? '#8fd3ea' : y < 28 ? '#b8e3f5' : '#dff3fa'; g.fillRect(0, y, W, 1); }
-  R(g, 0, 34, W, 6, 'g'); R(g, 0, 34, W, 1, 'm');
-  if (name === 'rainbow') {                                      // веселка розкривається зліва направо, тримається й тане; цикл 5,5 с
-    const C = 6.5, p = T % C, r = Math.min(1, p / 2.6), e = r * r * (3 - 2 * r), a = p > 5.6 ? Math.max(0, 1 - (p - 5.6) / 0.9) : 1;
-    const rb = buildRainbow(30, 3.4, 3, false);
-    g.save(); g.beginPath(); g.rect(0, 0, Math.round(e * (W + 2)), H); g.clip(); g.globalAlpha = a; g.drawImage(rb, -1, 1); g.restore(); g.globalAlpha = 1;
-    if (r < 1) { g.fillStyle = '#ffffff'; g.fillRect(Math.round(e * (W + 2)) - 1, 14 + Math.round(Math.abs(Math.sin(e * 3.14)) * -2), 1, 1); }
-    weatherHouse(g, 'day');
-    [[3, 6], [34, 12]].forEach(([b, y]) => { const x = Math.round(wrap(b, 14)); R(g, x, y, 12, 4, 'w'); R(g, x + 3, y - 2, 8, 3, 'w'); });
-    return;
-  }
-  weatherHouse(g, 'day');
-  if (CLOUD_SKIN_TINT[name]) {
-    const c0 = cloudCanvas(0, CLOUD_SKIN_TINT[name]), c1 = cloudCanvas(1, CLOUD_SKIN_TINT[name]);
-    g.drawImage(c0, Math.round(wrap(2, c0.width)), 0); g.drawImage(c1, Math.round(wrap(34, c1.width)), 6);
-  } else {
-    [[6, 8], [40, 14]].forEach(([b, y]) => { const x = Math.round(wrap(b, 14)); R(g, x, y, 12, 4, 'w'); R(g, x + 3, y - 2, 8, 3, 'w'); });
-  }
+  g.setTransform(1, 0, 0, 1, -ox, -oy);
+  dayCardDraw(g, name, T);
 }

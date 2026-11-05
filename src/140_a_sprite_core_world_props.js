@@ -575,6 +575,7 @@ function cobbleExtra(g, X0, Y0, W, H, style) {                       // нові
       const t = ['#f4c84a', '#ecbc38', '#ffd966', '#e3b030'][hash2(x, r) % 4];
       RH(x + 1, y + 1, 11, 5, t); RH(x + 1, y + 1, 11, 1, '#fff0a0'); RH(x + 1, y + 5, 11, 1, '#b8841c'); RH(x + 11, y + 2, 1, 4, '#c8941e');
       if (hash2(x + 5, r) % 7 === 0) { RH(x + 3, y + 2, 1, 1, '#ffffff'); RH(x + 2, y + 3, 3, 1, '#fff6c0'); }
+      else if (hash2(x + 9, r) % 9 === 0) { RH(x + 5, y + 2, 3, 3, '#c8941e'); RH(x + 4, y + 3, 5, 1, '#c8941e'); RH(x + 6, y + 2, 1, 3, '#fff0a0'); RH(x + 5, y + 3, 3, 1, '#fff0a0'); }      // карбована монета
     }
     return true;
   }
