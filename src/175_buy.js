@@ -30,7 +30,6 @@ function expandShop() {
   recalcIncome();
   rebuildShop(true);
   startBuild(old);
-  playSfx('build');
   updateMusic();
   layoutScene();
   updateUI();

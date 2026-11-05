@@ -25,7 +25,7 @@ function hitCircus(p) {
     const b = bangPos();
     if (Math.abs(p.x - b.x) <= 12 && p.y >= b.y - 30 && p.y <= b.y + 6) {
       c.phase = 2.5; circus.drive = 0; circus.sx = undefined; circus.sx = circusStartX(); circus.x = circus.sx; saveGame();
-      if (c.hag) { circus.hold = true; circus.holdT = 0; hagTap(); playSfx('hagCackle'); } else playSfx('build');
+      if (c.hag) { circus.hold = true; circus.holdT = 0; hagTap(); playSfx('hagCackle'); } else circusSoundStart('drive');
       return true;
     }
   } else if (c.phase === 3) {
@@ -137,7 +137,7 @@ function closeCircus() {
   if (circusBusy()) return;
   ui.circusModal.hidden = true;
   if (circus.bonus) { circus.bonus = false; return; }
-  if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); playSfx('build'); saveGame(); }
+  if (state.circus.spun && state.circus.phase === 3) { state.circus.phase = 3.5; circus.setupT = CONFIG.CIRCUS_SETUP_SECONDS; circus.x = circusStopX(); circusSoundStart('pack'); saveGame(); }
 }
 function circusFreeSkins(type) { return SKIN_POOL.map((id, i) => i).filter(i => SKIN_POOL[i].split('_')[0] === type && !SKIN_HIDDEN.includes(SKIN_POOL[i]) && !SKIN_PAID[SKIN_POOL[i]] && !SKIN_POOL[i].startsWith('capy_ep') && SKIN_POOL[i] !== 'capy_mel' && SKIN_POOL[i] !== 'capy_nika' && !skinHas(i)); }   // скіни епох у колесі не випадають
 // Один випадковий сектор (з урахуванням скінів, що вже є) і його дія

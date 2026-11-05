@@ -23,7 +23,7 @@ function applyTimeTravelSteps() {
   state.runStartEarned = state.totalEarned;
   state.events.incomeBoostUntil = 0; state.events.tapBoostUntil = 0;
   trouble = null; sackDrop = null;
-  build = null; ui.shopOverlay.style.visibility = '';
+  build = null; buildSoundStop(); ui.shopOverlay.style.visibility = '';
   actors.length = 0;
   customers.length = 0;
   recalcIncome();
@@ -457,7 +457,7 @@ function debugBuild(L) {
   const old = { canvas: shop.canvas, x: shop.x, y: shop.y, w: shop.w, h: shop.h };
   state.shopLevel = L; rebuildShop(true);
   startBuild(old);
-  playSfx('build'); updateMusic(); layoutScene(); updateUI();
+  updateMusic(); layoutScene(); updateUI();
 }
 function closeAllOverlaysForBuild() {                                      // вкладку з меню на телефоні ховаємо, щоб було видно сцену
   try { if (mobileMQ.matches && state.settings.panelOpen) { state.settings.panelOpen = false; applyPanel(); } } catch (e) { /* не страшно */ }
