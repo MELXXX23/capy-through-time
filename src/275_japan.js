@@ -703,9 +703,9 @@
     g.globalAlpha = 1;
     const cs = getSpriteCanvas(capySprite()), cap = Math.min(1, seg(k, 0.12, 0.3) * (1 - seg(k, 0.66, 0.76))), cw = cs.width * sc * 1.5, chh = cs.height * sc * 1.5;
     if (cap > 0) { g.save(); g.translate(cx, cy + Math.sin(k * 24) * sc * 1.5); g.rotate(Math.sin(k * 7) * 0.2); g.globalAlpha = cap; g.drawImage(cs, -cw / 2, -chh / 2, cw, chh); g.restore(); g.globalAlpha = 1; }
-    g.textAlign = 'center'; g.textBaseline = 'middle';
-    warp.icons.forEach((ic, i) => { const f = (kt * 2.1 + i / warp.icons.length) % 1, an = i * 2.4 + k * 2, r = Math.pow(f, 1.6) * diag * 0.7; g.globalAlpha = Math.sin(f * Math.PI) * kt; g.font = Math.round((5 + f * 20) * sc) + 'px sans-serif'; g.fillText(ic, cx + Math.cos(an) * r, cy + Math.sin(an) * r * 0.75); });
+    warp.icons.forEach((ic, i) => { const f = (kt * 2.1 + i / warp.icons.length) % 1, an = i * 2.4 + k * 2, r = Math.pow(f, 1.6) * diag * 0.7; g.globalAlpha = Math.sin(f * Math.PI) * kt; warpIcon(g, i, cx + Math.cos(an) * r, cy + Math.sin(an) * r * 0.75, Math.round((5 + f * 20) * sc)); });
     g.globalAlpha = 1;
+    if (kr <= 0 && k > 0.68) { g.fillStyle = '#fff'; g.globalAlpha = ez(seg(k, 0.68, 0.74)); g.fillRect(0, 0, W, H); g.globalAlpha = 1; }   // світло наростає до удару, а не спалахує за один кадр (як у Неоні й Космосі)
     if (kr > 0) { g.fillStyle = '#fff'; g.globalAlpha = 1 - kr; g.fillRect(0, 0, W, H); g.globalAlpha = 1; warpReveal(g, cx, cy, ez(kr) * diag * 1.05, sc, kr); }
   }
   WARP_BY_EPOCH.push(drawWarpJapan);

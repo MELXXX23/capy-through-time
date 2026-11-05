@@ -3,8 +3,8 @@
 function warpPix(g, snap, W, H, b) {                             // знімок сцени, укрупнений до блоків b×b
   if (!warp.px) warp.px = document.createElement('canvas');
   const pw = Math.max(1, Math.ceil(W / b)), ph = Math.max(1, Math.ceil(H / b));
-  warp.px.width = pw; warp.px.height = ph;
-  const pg = warp.px.getContext('2d'); pg.imageSmoothingEnabled = false; pg.drawImage(snap, 0, 0, pw, ph);
+  if (warp.px.width !== pw || warp.px.height !== ph) { warp.px.width = pw; warp.px.height = ph; }      // полотно міняємо лише коли змінився розмір блоків, а не щокадру
+  const pg = warp.px.getContext('2d'); pg.clearRect(0, 0, pw, ph); pg.imageSmoothingEnabled = false; pg.drawImage(snap, 0, 0, pw, ph);
   g.imageSmoothingEnabled = false; g.drawImage(warp.px, 0, 0, pw, ph, 0, 0, pw * b, ph * b);
 }
 function warpCapy(g, x, y, s, rot, a) {                           // Капі в центрі подорожі
@@ -185,49 +185,63 @@ function drawWarpSpace(k) {
     warpCapy(g, cx + sh, cy, sc * 1.5, Math.sin(k * 8) * 0.12, ca);
     g.globalAlpha = ca * 0.6; g.strokeStyle = '#bfe8ff'; g.lineWidth = Math.max(1, sc * 0.9); g.beginPath(); g.arc(cx + sh, cy - 2 * sc, 11 * sc, 0, 7); g.stroke(); g.fillStyle = 'rgba(160,220,255,.15)'; g.fill(); g.globalAlpha = 1;
   }
-  g.textAlign = 'center'; g.textBaseline = 'middle'; warp.icons.forEach((ic, i) => { const f = (kt * 1.7 + i / warp.icons.length) % 1, an = i * 2.4 + k * 2, r = Math.pow(f, 1.6) * diag * 0.7; g.globalAlpha = Math.sin(f * Math.PI) * kt * 0.9; g.font = Math.round((5 + f * 18) * sc) + 'px sans-serif'; g.fillText(ic, cx + Math.cos(an) * r, cy + Math.sin(an) * r * 0.75); });
+  warp.icons.forEach((ic, i) => { const f = (kt * 1.7 + i / warp.icons.length) % 1, an = i * 2.4 + k * 2, r = Math.pow(f, 1.6) * diag * 0.7; g.globalAlpha = Math.sin(f * Math.PI) * kt * 0.9; warpIcon(g, i, cx + Math.cos(an) * r, cy + Math.sin(an) * r * 0.75, Math.round((5 + f * 18) * sc)); });
   g.globalAlpha = 1;
   if (fl > 0) { const gr = g.createRadialGradient(cx, cy, 0, cx, cy, ez(fl) * diag * 0.9 + 1); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.7, 'rgba(190,220,255,.9)'); gr.addColorStop(1, 'rgba(190,220,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }
   if (kr > 0) { g.fillStyle = '#fff'; g.globalAlpha = 1 - kr; g.fillRect(0, 0, W, H); g.globalAlpha = 1; warpReveal(g, cx, cy, ez(kr) * diag * 1.05, sc, kr); }
 }
 // Відродження: давня Греція. Біле мармурове небо, колони, оливкові гілки й дерева, звірята-ангелятка з німбами й крильцями
+// Дрібниці грецького вира, що повторюються, — готові заготовки (вдвічі детальніші за полотно вира): окремий шлях на кожен листок, крило й дерево з'їдав більшу частину кадру
+const warpSpr = new Map();
+function warpSprite(key, w, h, draw) {
+  let c = warpSpr.get(key);
+  if (!c) { c = document.createElement('canvas'); c.width = Math.ceil(w * 2); c.height = Math.ceil(h * 2); const g = c.getContext('2d'); g.scale(2, 2); draw(g); warpSpr.set(key, c); }
+  return c;
+}
+function warpLeaf(g, col, x, y, rot, rx, ry) {                     // овальний листок: заготовка-коло потрібного кольору, стиснута до овалу
+  const c = warpSprite('leaf' + col, 4, 4, s => { s.fillStyle = col; s.beginPath(); s.arc(2, 2, 2, 0, 7); s.fill(); });
+  const co = Math.cos(rot), si = Math.sin(rot); g.setTransform(co, si, -si, co, x, y); g.imageSmoothingEnabled = true; g.drawImage(c, -rx, -ry, rx * 2, ry * 2); g.imageSmoothingEnabled = false; g.setTransform(1, 0, 0, 1, 0, 0);
+}
 function warpWing(g, x, y, s, flap, dir) {                         // одне пір'яне крильце
-  g.save(); g.translate(x, y); g.scale(dir, 1); g.rotate(-0.55 + flap * 0.75);
-  g.fillStyle = '#ffffff'; g.strokeStyle = '#cdbb8a'; g.lineWidth = Math.max(1, s * 0.07);
-  g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(s * 0.6, -s * 1.0, s * 1.5, -s * 0.55); g.quadraticCurveTo(s * 1.2, -s * 0.25, s * 1.45, -s * 0.02); g.quadraticCurveTo(s * 1.0, 0.0, s * 1.08, s * 0.3); g.quadraticCurveTo(s * 0.5, s * 0.15, 0, s * 0.35); g.closePath(); g.fill(); g.stroke();
-  g.restore();
+  const m = 1.5, c = warpSprite('wing' + s.toFixed(1), s * 1.5 + m * 2, s * 1.35 + m * 2, p => {
+    p.translate(m, s * 1.0 + m); p.fillStyle = '#ffffff'; p.strokeStyle = '#cdbb8a'; p.lineWidth = Math.max(1, s * 0.07);
+    p.beginPath(); p.moveTo(0, 0); p.quadraticCurveTo(s * 0.6, -s * 1.0, s * 1.5, -s * 0.55); p.quadraticCurveTo(s * 1.2, -s * 0.25, s * 1.45, -s * 0.02); p.quadraticCurveTo(s * 1.0, 0.0, s * 1.08, s * 0.3); p.quadraticCurveTo(s * 0.5, s * 0.15, 0, s * 0.35); p.closePath(); p.fill(); p.stroke();
+  });
+  g.save(); g.translate(x, y); g.scale(dir, 1); g.rotate(-0.55 + flap * 0.75); g.imageSmoothingEnabled = true; g.drawImage(c, -m, -s * 1.0 - m, c.width / 2, c.height / 2); g.imageSmoothingEnabled = false; g.restore();
 }
 function warpAngel(g, cs, x, y, s, flap, a, rot) {                  // звірятко з крильцями й золотим німбом
   const w = cs.width * s, h = cs.height * s;
   g.save(); g.translate(x, y); g.rotate(rot || 0); g.globalAlpha = a;
   warpWing(g, -w * 0.18, -h * 0.05, w * 0.5, flap, -1); warpWing(g, w * 0.18, -h * 0.05, w * 0.5, flap, 1);
   g.drawImage(cs, -w / 2, -h / 2, w, h);
-  g.strokeStyle = '#8a6a10'; g.lineWidth = Math.max(1.6, s * 1.9); g.beginPath(); g.ellipse(0, -h * 0.6, w * 0.26, h * 0.085, 0, 0, 7); g.stroke();
-  g.strokeStyle = '#ffe36a'; g.lineWidth = Math.max(1, s * 1.1); g.beginPath(); g.ellipse(0, -h * 0.6, w * 0.26, h * 0.085, 0, 0, 7); g.stroke();
+  const hm = Math.max(1.6, s * 1.9), hx = w * 0.26 + hm, hy = h * 0.085 + hm, hc = warpSprite('halo' + w.toFixed(1) + '_' + h.toFixed(1), hx * 2, hy * 2, p => { p.translate(hx, hy); p.strokeStyle = '#8a6a10'; p.lineWidth = hm; p.beginPath(); p.ellipse(0, 0, w * 0.26, h * 0.085, 0, 0, 7); p.stroke(); p.strokeStyle = '#ffe36a'; p.lineWidth = Math.max(1, s * 1.1); p.beginPath(); p.ellipse(0, 0, w * 0.26, h * 0.085, 0, 0, 7); p.stroke(); });
+  g.imageSmoothingEnabled = true; g.drawImage(hc, -hx, -h * 0.6 - hy, hc.width / 2, hc.height / 2); g.imageSmoothingEnabled = false;
   g.restore(); g.globalAlpha = 1;
 }
-function warpOlive(g, x, y, s, sway, a) {                           // оливкове дерево: покручений стовбур, сріблясто-зелена крона, чорні оливки
-  g.save(); g.globalAlpha = a; g.translate(x, y); g.scale(s, s);
-  g.strokeStyle = '#5a4630'; g.lineCap = 'round'; g.lineWidth = 5; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(-7, -9, 6, -14, -2 + sway, -26); g.stroke();
-  g.lineWidth = 3; g.beginPath(); g.moveTo(-1, -14); g.quadraticCurveTo(-10, -20, -13 + sway, -27); g.stroke(); g.beginPath(); g.moveTo(1, -16); g.quadraticCurveTo(10, -22, 13 + sway, -28); g.stroke();
-  [[-12, -29, 11, '#6f8a3e'], [12, -30, 11, '#6f8a3e'], [0, -35, 14, '#8aa650'], [-6, -27, 9, '#a9c06c'], [8, -26, 9, '#a9c06c']].forEach(([cx, cy, r, c]) => { g.fillStyle = c; g.beginPath(); g.ellipse(cx + sway, cy, r, r * 0.72, 0, 0, 7); g.fill(); });
-  g.fillStyle = '#d5e1a0'; for (let i = 0; i < 10; i++) { g.fillRect(-16 + warpSeed(i) * 32 + sway, -44 + warpSeed(i + 5) * 22, 3, 1); }
-  g.fillStyle = '#2c2038'; for (let i = 0; i < 6; i++) { g.beginPath(); g.ellipse(-12 + warpSeed(i + 20) * 24 + sway, -40 + warpSeed(i + 30) * 18, 1.5, 1.1, 0, 0, 7); g.fill(); }
-  g.restore();
+function warpOlive(g, x, y, s, sway, a) {                           // оливкове дерево: покручений стовбур, сріблясто-зелена крона, чорні оливки; готове дерево лише нахиляється від вітру
+  const K = 1.2, ox = 30, oy = 58, c = warpSprite('olive', 60 * K, 66 * K, p => {
+    p.scale(K, K); p.translate(ox, oy);
+    p.strokeStyle = '#5a4630'; p.lineCap = 'round'; p.lineWidth = 5; p.beginPath(); p.moveTo(0, 0); p.bezierCurveTo(-7, -9, 6, -14, -2, -26); p.stroke();
+    p.lineWidth = 3; p.beginPath(); p.moveTo(-1, -14); p.quadraticCurveTo(-10, -20, -13, -27); p.stroke(); p.beginPath(); p.moveTo(1, -16); p.quadraticCurveTo(10, -22, 13, -28); p.stroke();
+    [[-12, -29, 11, '#6f8a3e'], [12, -30, 11, '#6f8a3e'], [0, -35, 14, '#8aa650'], [-6, -27, 9, '#a9c06c'], [8, -26, 9, '#a9c06c']].forEach(([cx, cy, r, col]) => { p.fillStyle = col; p.beginPath(); p.ellipse(cx, cy, r, r * 0.72, 0, 0, 7); p.fill(); });
+    p.fillStyle = '#d5e1a0'; for (let i = 0; i < 10; i++) { p.fillRect(-16 + warpSeed(i) * 32, -44 + warpSeed(i + 5) * 22, 3, 1); }
+    p.fillStyle = '#2c2038'; for (let i = 0; i < 6; i++) { p.beginPath(); p.ellipse(-12 + warpSeed(i + 20) * 24, -40 + warpSeed(i + 30) * 18, 1.5, 1.1, 0, 0, 7); p.fill(); }
+  });
+  g.globalAlpha = a; g.setTransform(s, 0, -sway / 30 * s, s, x, y); g.imageSmoothingEnabled = true; g.drawImage(c, -ox, -oy, c.width / 2 / K, c.height / 2 / K); g.imageSmoothingEnabled = false; g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1;
 }
 function warpOliveBranch(g, x0, y0, dx, len, sc, a, sw) {            // гілка з листям і оливками, що росте з кута
   const N = 22, last = Math.floor(N * len), pt = i => { const t = i / N; return [x0 + dx * (t * 62 * sc + Math.sin(t * 5 + sw) * 3 * sc), y0 + t * 70 * sc + Math.sin(t * 3 + sw) * 2 * sc]; };
   g.save(); g.globalAlpha = a; g.strokeStyle = '#5a4630'; g.lineWidth = Math.max(1, sc * 0.9); g.beginPath();
   for (let i = 0; i <= last; i++) { const [x, y] = pt(i); if (i) g.lineTo(x, y); else g.moveTo(x, y); } g.stroke();
   for (let i = 2; i <= last; i += 2) {
-    const [x, y] = pt(i); [-1, 1].forEach(side => { g.save(); g.translate(x, y); g.rotate(side * 0.9 + dx * 0.3); g.fillStyle = i % 4 ? '#8fa85a' : '#a9c06c'; g.beginPath(); g.ellipse(side * 4 * sc, 0, 4.4 * sc, 1.5 * sc, 0, 0, 7); g.fill(); g.restore(); });
+    const [x, y] = pt(i); [-1, 1].forEach(side => { const rot = side * 0.9 + dx * 0.3, d = side * 4 * sc; warpLeaf(g, i % 4 ? '#8fa85a' : '#a9c06c', x + Math.cos(rot) * d, y + Math.sin(rot) * d, rot, 4.4 * sc, 1.5 * sc); });
     if (i % 6 === 0) { g.fillStyle = '#2c2038'; g.beginPath(); g.ellipse(x - dx * 2 * sc, y + 3 * sc, 1.7 * sc, 2.3 * sc, 0, 0, 7); g.fill(); g.fillStyle = '#7a6aa0'; g.fillRect(x - dx * 2.6 * sc, y + 2 * sc, 0.7 * sc, 0.9 * sc); }
   }
   g.restore();
 }
 function warpMeander(g, y, h, W, sc, off, col, a) {                  // грецький меандр, що біжить уздовж краю
   const s = h, step = s * 1.3; g.save(); g.globalAlpha = a; g.strokeStyle = col; g.lineWidth = Math.max(1, s * 0.16); g.lineCap = 'square';
-  for (let x = -step + (off % step); x < W; x += step) { g.beginPath(); g.moveTo(x, y + s); g.lineTo(x, y); g.lineTo(x + s, y); g.lineTo(x + s, y + s * 0.7); g.lineTo(x + s * 0.3, y + s * 0.7); g.lineTo(x + s * 0.3, y + s * 0.35); g.lineTo(x + s * 0.65, y + s * 0.35); g.stroke(); }
+  g.beginPath(); for (let x = -step + (off % step); x < W; x += step) { g.moveTo(x, y + s); g.lineTo(x, y); g.lineTo(x + s, y); g.lineTo(x + s, y + s * 0.7); g.lineTo(x + s * 0.3, y + s * 0.7); g.lineTo(x + s * 0.3, y + s * 0.35); g.lineTo(x + s * 0.65, y + s * 0.35); } g.stroke();
   g.restore();
 }
 function drawWarpGreece(k) {
@@ -239,7 +253,7 @@ function drawWarpGreece(k) {
   g.globalCompositeOperation = 'lighter';                                           // промені світла згори
   for (let i = 0; i < 9; i++) { const an = Math.PI / 2 + (i - 4) * 0.2 + Math.sin(k * 3 + i) * 0.04; g.globalAlpha = 0.16 * kt; g.fillStyle = '#ffe9a0'; g.beginPath(); g.moveTo(cx, -H * 0.1); g.lineTo(cx + Math.cos(an - 0.05) * diag * 1.2, -H * 0.1 + Math.sin(an - 0.05) * diag * 1.2); g.lineTo(cx + Math.cos(an + 0.05) * diag * 1.2, -H * 0.1 + Math.sin(an + 0.05) * diag * 1.2); g.closePath(); g.fill(); }
   g.globalCompositeOperation = 'source-over';
-  for (let i = 0; i < 5; i++) { const x = ((warpSeed(i + 3) + k * (0.15 + 0.1 * i)) % 1.4 - 0.2) * W, y = H * (0.12 + 0.14 * i), r = (9 + warpSeed(i) * 7) * sc * 0.8; g.globalAlpha = 0.85 * kt; g.fillStyle = '#fff'; [[0, 0, 1], [-0.8, 0.2, 0.7], [0.8, 0.25, 0.75], [0.2, -0.35, 0.7]].forEach(([dx, dy, f]) => { g.beginPath(); g.ellipse(x + dx * r, y + dy * r, r * f, r * f * 0.55, 0, 0, 7); g.fill(); }); }
+  for (let i = 0; i < 5; i++) { const x = ((warpSeed(i + 3) + k * (0.15 + 0.1 * i)) % 1.4 - 0.2) * W, y = H * (0.12 + 0.14 * i), r = (9 + warpSeed(i) * 7) * sc * 0.8; g.globalAlpha = 0.85 * kt; const cw = r * 3.2, ch = r * 1.8, cl = warpSprite('cloud' + i, cw, ch, p => { p.fillStyle = '#fff'; p.beginPath(); [[0, 0, 1], [-0.8, 0.2, 0.7], [0.8, 0.25, 0.75], [0.2, -0.35, 0.7]].forEach(([dx, dy, f]) => { const ex = cw / 2 + dx * r, ey = ch / 2 + dy * r; p.moveTo(ex + r * f, ey); p.ellipse(ex, ey, r * f, r * f * 0.55, 0, 0, 7); }); p.fill(); }); g.imageSmoothingEnabled = true; g.drawImage(cl, x - cw / 2, y - ch / 2, cw, ch); g.imageSmoothingEnabled = false; }
   g.globalAlpha = 1;
   const fy = H * 0.88, ty = H * 0.14;                                               // колони піднімаються знизу
   const col = (x, w2, a) => {
@@ -247,7 +261,7 @@ function drawWarpGreece(k) {
     g.fillStyle = '#e9e1d0'; g.fillRect(x - w2 * 0.62, top2, w2 * 1.24, h2(2)); g.fillRect(x - w2 * 0.7, top2 + h2(2), w2 * 1.4, h2(1.2));                      // капітель
     g.fillStyle = '#f7f2e6'; g.fillRect(x - w2 / 2, top2 + h2(3.2), w2, bot - top2 - h2(5));                                                                 // стовбур
     g.fillStyle = '#d6ccb4'; g.fillRect(x + w2 * 0.18, top2 + h2(3.2), w2 * 0.32, bot - top2 - h2(5));
-    g.strokeStyle = '#cfc4a8'; g.lineWidth = 1; for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(x + i * w2 * 0.2, top2 + h2(3.2)); g.lineTo(x + i * w2 * 0.2, bot - h2(1.8)); g.stroke(); }
+    g.fillStyle = '#cfc4a8'; for (let i = -2; i <= 2; i++) g.fillRect(x + i * w2 * 0.2 - 0.5, top2 + h2(3.2), 1, bot - h2(1.8) - top2 - h2(3.2));
     g.fillStyle = '#e9e1d0'; g.fillRect(x - w2 * 0.66, bot - h2(1.8), w2 * 1.32, h2(1.8)); g.restore();
   }, h2 = f => f * sc * 1.6;
   col(W * 0.07, W * 0.07, 1); col(W * 0.93, W * 0.07, 1); col(W * 0.25, W * 0.045, 0.7); col(W * 0.75, W * 0.045, 0.7);
@@ -258,42 +272,58 @@ function drawWarpGreece(k) {
   warpOliveBranch(g, W * 0.1, H * 0.1, 1, kv, sc, kt, k * 4); warpOliveBranch(g, W * 0.9, H * 0.1, -1, kv, sc, kt, k * 4 + 2);
   warpOlive(g, W * 0.16, fy + h2(1.2), sc * 0.9 * kv, Math.sin(k * 6) * 1.5, kt); warpOlive(g, W * 0.84, fy + h2(1.2), sc * 0.9 * kv, Math.sin(k * 6 + 2) * 1.5, kt); warpOlive(g, W * 0.5, fy + h2(0.9), sc * 0.55 * kv, Math.sin(k * 6 + 4) * 1.2, kt * 0.9);
   const R = Math.min(W, H * 1.3) * 0.34 * ez(seg(k, 0.3, 0.7));                     // лавровий вінок розкривається навколо Капі
-  if (R > 2) for (let i = 0; i < 30; i++) { const an = i / 30 * Math.PI * 2 + k * 1.2; g.save(); g.translate(cx + Math.cos(an) * R, cy + Math.sin(an) * R * 0.78); g.rotate(an + Math.PI / 2 + (i % 2 ? 0.5 : -0.5)); g.globalAlpha = kt; g.fillStyle = i % 2 ? '#6fa04a' : '#9bc46a'; g.beginPath(); g.ellipse(0, 0, 4 * sc * 0.8, 1.6 * sc * 0.8, 0, 0, 7); g.fill(); g.restore(); }
+  if (R > 2) { g.globalAlpha = kt; for (let i = 0; i < 30; i++) { const an = i / 30 * Math.PI * 2 + k * 1.2; warpLeaf(g, i % 2 ? '#6fa04a' : '#9bc46a', cx + Math.cos(an) * R, cy + Math.sin(an) * R * 0.78, an + Math.PI / 2 + (i % 2 ? 0.5 : -0.5), 4 * sc * 0.8, 1.6 * sc * 0.8); } g.globalAlpha = 1; }
   const flap = Math.sin(k * 40) * 0.5 + 0.5, fa = seg(k, 0.16, 0.3) * (1 - seg(k, 0.68, 0.74));
   const kids = ['spike', 'bodya', 'zoya', 'mikhas', 'sonia', 'kria', 'murzyk'].map(id => TEAM.find(m => m.id === id)).filter(Boolean);       // звірята-ангелятка літають по колу
   kids.forEach((m, i) => { const an = i / kids.length * Math.PI * 2 - k * 4.2, rr = Math.min(W, H * 1.4) * (0.27 + 0.03 * Math.sin(k * 9 + i)); warpAngel(g, getSpriteCanvas('team_' + m.id + '_e0'), cx + Math.cos(an) * rr, cy + Math.sin(an) * rr * 0.62 + Math.sin(k * 20 + i) * sc, sc * 0.8, Math.sin(k * 40 + i) * 0.5 + 0.5, fa, Math.sin(k * 7 + i) * 0.12); });
   warpAngel(g, getSpriteCanvas(capySprite()), cx, cy + Math.sin(k * 14) * 1.5 * sc, sc * 1.6, flap, fa, Math.sin(k * 6) * 0.06);
-  g.textAlign = 'center'; g.textBaseline = 'middle'; warp.icons.forEach((ic, i) => { const f = (kt * 1.5 + i / warp.icons.length) % 1; g.globalAlpha = Math.sin(f * Math.PI) * kt * 0.85; g.font = Math.round((6 + f * 12) * sc) + 'px sans-serif'; g.fillText(ic, cx + Math.cos(i * 2.2 + k * 2) * f * diag * 0.45, cy + Math.sin(i * 2.2 + k * 2) * f * diag * 0.3); }); g.globalAlpha = 1;
+  warp.icons.forEach((ic, i) => { const f = (kt * 1.5 + i / warp.icons.length) % 1; g.globalAlpha = Math.sin(f * Math.PI) * kt * 0.85; warpIcon(g, i, cx + Math.cos(i * 2.2 + k * 2) * f * diag * 0.45, cy + Math.sin(i * 2.2 + k * 2) * f * diag * 0.3, Math.round((6 + f * 12) * sc)); }); g.globalAlpha = 1;
   if (kr > 0) {                                                                    // золоте сяйво й коло з оливкових листочків відкривають нову епоху
     g.globalAlpha = Math.sin(kr * Math.PI) * 0.55; g.fillStyle = '#fff6c8'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
     const r = ez(kr) * diag * 1.05; warpReveal(g, cx, cy, r, sc, kr);
-    for (let i = 0; i < 36; i++) { const an = i / 36 * Math.PI * 2; g.save(); g.translate(cx + Math.cos(an) * r, cy + Math.sin(an) * r); g.rotate(an + Math.PI / 2 + (i % 2 ? 0.6 : -0.6)); g.globalAlpha = 1 - kr; g.fillStyle = i % 2 ? '#7f9a4a' : '#a9c06c'; g.beginPath(); g.ellipse(0, 0, 4 * sc * 0.8, 1.5 * sc * 0.8, 0, 0, 7); g.fill(); g.restore(); }
+    g.globalAlpha = 1 - kr; for (let i = 0; i < 36; i++) { const an = i / 36 * Math.PI * 2; warpLeaf(g, i % 2 ? '#7f9a4a' : '#a9c06c', cx + Math.cos(an) * r, cy + Math.sin(an) * r, an + Math.PI / 2 + (i % 2 ? 0.6 : -0.6), 4 * sc * 0.8, 1.5 * sc * 0.8); }
     g.globalAlpha = 1;
   }
 }
 const WARP_BY_EPOCH = [drawWarpGreece, drawWarpRewind, drawWarpDisco, drawWarpArcade, drawWarpNet, drawWarpEco, drawWarpSpace, drawWarpTunnel];
 const WARP_COVER = 0.42;                                              // с: вир проявляється 0,4 с (CSS twIn), далі він закриває всю сторінку, і під ним можна міняти що завгодно
+const WARP_FREEZE = 0.2;                                              // с: за цей час вир уже майже непрозорий, сцену можна не малювати: кадри легші саме тоді, коли вир стартує
 // Перебудова епохи під виром: щойно він закрив сторінку, робимо її порціями за часом, кадр ніколи не затримується.
-// Нова епоха готова задовго до відкриття; якщо пристрій дуже повільний, бюджет росте, а перед самим відкриттям решта добудовується разом.
+// Нова епоха готова задовго до відкриття. Вир іде за годинником, тому на повільному пристрої бюджет — частка кадру, що росте ближче до відкриття: краще кілька рідших кадрів, ніж один довгий ривок у мить удару; перед самим відкриттям решта добудовується разом.
 function warpPump(k, hitK, dt) {
   const W = warp;
   if (!W.applied) { if (W.t < WARP_COVER) return; W.applied = true; W.steps = W.view !== undefined ? setEpochPreviewSteps(W.view) : applyTimeTravelSteps(); return; }
   if (W.warm > 0) W.warm--;
   if (!W.steps) return;
-  const all = k >= hitK - 0.02, end = performance.now() + Math.max(k < hitK * 0.5 ? 3 : k < hitK * 0.8 ? 7 : 12, dt * 150);
+  const near = Math.min(1, k / (hitK - 0.06)), all = k >= hitK - 0.02, end = performance.now() + Math.max(k < hitK * 0.5 ? 3 : k < hitK * 0.8 ? 7 : 12, dt * 1000 * (0.2 + 0.55 * near));
   while (W.iter || W.steps.length) {
     if (W.iter) { if (W.iter.next().done) W.iter = null; }
     else {
       if (W.steps[0].late && k < 0.5 && !all) break;
-      const r = W.steps.shift()(); if (r && r.next) W.iter = r;
+      const st = W.steps.shift(), r = st(); if (r && r.next) W.iter = r;
+      if (st.frame && !all) break;
     }
     if (!all && performance.now() >= end) break;
   }
   if (!W.ready && !W.iter && (!W.steps.length || W.steps[0].late)) { W.ready = true; W.warm = 2; stageEdgesFromLayers(); }   // сцена готова: два кадри під виром прогрівають її малювання
 }
+// Час вира йде за годинником, бо звук грає в реальному часі. Поодинокий довгий кадр не стрибає вперед, втрачене вир плавно наздоганяє;
+// на стабільно повільному пристрої в нього менше кадрів, а не вдвічі довша тривалість (інакше удар запізнювався за звуком розгону).
+function warpAdvance(dt) {
+  const W = warp;
+  W.wall = (W.wall || 0) + dt;
+  const avg = W.avgDt || Math.min(dt, 1 / 30);
+  W.avgDt = avg + (Math.min(dt, avg * 3) - avg) * 0.1;
+  let step = Math.min(dt, Math.max(1 / 30, W.avgDt * 1.5));
+  const lag = W.wall - W.t - step;
+  if (lag > 0) step += Math.min(lag, step * 0.5);
+  // Перебудова не встигає (дуже повільний пристрій): перед самим відкриттям вир сповільнюється, щоб не було одного довгого кадру в мить удару. Запас є: звук розгону тримає ноту після свого кінця
+  if (!W.ready && W.t / W.dur >= WARP_HIT[(W.toEpoch | 0) % WARP_HIT.length] - 0.08 && (W.crawl || 0) < 1.5) { W.crawl = (W.crawl || 0) + dt; step *= 0.12; }
+  W.t += step;
+}
 function updateWarp(dt) {
   if (!warp) return;
-  warp.t += Math.min(dt, 1 / 30);                                      // довгий кадр перебудови сцени не стрибає вперед: рух вира лишається рівним
+  warpAdvance(dt);
   const k = Math.min(1, warp.t / warp.dur);
   if (k >= WARP_HIT[(warp.toEpoch | 0) % WARP_HIT.length]) warpSoundHit();     // удар звуку в мить, коли відкривається нова епоха
   (WARP_BY_EPOCH[(warp.toEpoch | 0) % EPOCHS.length] || drawWarpGreece)(k);               // у кожної епохи своя анімація подорожі

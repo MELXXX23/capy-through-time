@@ -3,7 +3,15 @@
    МАЛЮВАННЯ КАДРУ
    ===================================================================== */
 
+// Телефон: полотно — уся вулиця, а видно лише шматок навколо камери. Решту відсікаємо одним прямокутником: шари на всю ширину й заливки ночі та дощу малюються лише там, де їх видно.
 function render(time) {
+  const x0 = Math.max(0, Math.floor(viewCrop.x) - VIS_PAD), x1 = Math.min(view.w, Math.ceil(viewCrop.x + viewCrop.w) + VIS_PAD);
+  if (x1 - x0 >= view.w) { renderScene(time); return; }
+  ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, x1 - x0, view.h); ctx.clip();
+  try { renderScene(time); ctx.restore(); }
+  catch (e) { for (let i = 0; i < 40; i++) ctx.restore(); throw e; }   // кадр обірвався: прибираємо і відсікання, і все незакрите
+}
+function renderScene(time) {
   drawSkyScreen(time);
   ctx.save();
   ctx.translate(view.offX, view.offY);          // далі все малюється в координатах «ядра» сцени

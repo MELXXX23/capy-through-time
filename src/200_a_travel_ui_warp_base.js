@@ -65,13 +65,15 @@ function currentEpoch() { return EPOCHS[viewEpoch() % EPOCHS.length]; }
 // Крок перебудови — функція; якщо вона повертає генератор, той виконується порціями (updateWarp), а без вира — одразу цілком
 function runStepsNow(list) { list.forEach(fn => { const r = fn(); if (r && r.next) while (!r.next().done); }); }
 const warpLate = fn => { fn.late = true; return fn; };            // цей крок — не раніше середини вира (музика нової епохи, збереження)
+const warpFrame = fn => { fn.frame = true; return fn; };          // після цього кроку кадр закінчується: перерахунок стилів сторінки не додається до наступної роботи
 function* layerSteps(gen, rebuild, set) {                          // шар порціями; якщо за цей час змінився розмір вікна, будуємо заново
   const c = yield* gen;
   set(c.width === view.w && c.height === view.h ? c : rebuild());
 }
 function epochLayerSteps(noShop, panels) {
   return [
-    () => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); if (panels) panels(); },   // панелі — на перших кадрах: вир уже закрив їх і ще майже не рухається, тож перекомпонування сторінки непомітне
+    warpFrame(() => { document.body.dataset.epoch = String(viewEpoch() % EPOCHS.length); refreshCoinIcon(); }),
+    ...(panels ? [warpFrame(panels)] : []),                                                                    // панелі — на перших кадрах: вир уже закрив їх і ще майже не рухається, тож перекомпонування сторінки непомітне
     () => layerSteps(skyLayerGen(), buildSkyLayer, c => { skyLayer = c; }),
     () => layerSteps(groundLayerGen(), buildGroundLayer, c => { groundLayer = c; }),
     // спрайти героїв нової епохи — по одному на кадр, ще до портретів (інакше портрети будували їх усі разом — ривок ~0,1 с)
@@ -80,10 +82,10 @@ function epochLayerSteps(noShop, panels) {
       theme.key = null;              // змусити updateTheme перерахувати прикраси
       seedEpochFx();
       updateTheme();
-      refreshTeamPortraits();
-      drawCapiPortrait();             // скін Капі залежить від епохи
     },
-    ...(noShop ? [] : [() => { if (shop) rebuildShop(true); }]),
+    () => { refreshTeamPortraits(); },
+    () => { drawCapiPortrait(); },    // скін Капі залежить від епохи
+    ...(noShop ? [] : [() => (shop ? rebuildShopSliced() : null)]),
     // спрайти покупців нової епохи — заздалегідь, по одному на кадр: інакше вони будувались у першому кадрі нової епохи (ривок до 0,3 с)
     ...CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => () => { try { evenScaled(getSpriteCanvas(tp + '_' + f), CUST_K); } catch (e) { /* домалюється */ } }))
   ];
@@ -91,6 +93,7 @@ function epochLayerSteps(noShop, panels) {
 function rebuildEpochLayers() { runStepsNow(epochLayerSteps()); }
 // Спрайти покупців не залежать від епохи: будуємо їх заздалегідь у вільний час, щоб ні подорож, ні перший покупець цього типу не давали ривка
 function warpWarmIdle() {
+  warpIconsPrepare(typeof OffscreenCanvas === 'undefined' ? [nextEpochId(curEpoch())] : EPOCH_GOODS_ICONS.map((x, i) => i));   // значки вира всіх епох: окремий потік кадрам не заважає
   const list = CUSTOMER_TYPES.flatMap(tp => [0, 1].map(f => tp + '_' + f));
   const later = fn => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 400));
   const next = d => {
@@ -205,6 +208,17 @@ function eiLine(g, x0, y0, x1, y1, c, w) {                      // лінія з
   w = w || 1; const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)))); g.fillStyle = c;
   for (let k = 0; k <= n; k++) g.fillRect(Math.round(x0 + (x1 - x0) * k / n - w / 2 + 0.5), Math.round(y0 + (y1 - y0) * k / n - w / 2 + 0.5), w, w);
 }
+// Нерухомі частини заставки малюємо один раз на окреме полотно, далі лише копіюємо: ті самі пікселі, у десятки разів менше операцій. stamp — коли шар застарів (напр. номер кроку анімації)
+const eiLayers = new Map();
+function eiLayer(key, w, h, stamp, draw) {
+  let c = eiLayers.get(key);
+  if (!c || c.width !== w || c.height !== h) { c = document.createElement('canvas'); c.width = w; c.height = h; c._g = eiCrisp(c.getContext('2d')); c._g.imageSmoothingEnabled = false; c._st = undefined; eiLayers.set(key, c); }
+  if (c._st !== stamp) { c._st = stamp; c._g.clearRect(0, 0, w, h); draw(c._g); }
+  return c;
+}
+function eiPolyFill(g, pts, c) {                                // великий напівпрозорий промінь: контуром, а не рядками (край при такій прозорості не помітний, операцій у сотню разів менше)
+  g.fillStyle = c; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]); g.closePath(); g.fill();
+}
 function eiPoly(g, pts, c) {                                    // багатокутник рядками пікселів
   const Hc = g.canvas.height; let y0 = Infinity, y1 = -Infinity; pts.forEach(p => { y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }); g.fillStyle = c;
   for (let y = Math.max(0, Math.floor(y0)); y <= Math.min(Hc, Math.ceil(y1)); y++) {
@@ -215,12 +229,14 @@ function eiPoly(g, pts, c) {                                    // багато�
   }
 }
 function eiBall(g, cx, cy, r, cols, tile) {                      // куля зі світлом зліва згори: cols — від темного до світлого; tile — квадратики дзеркальної кулі
-  cx = Math.round(cx); cy = Math.round(cy);
-  for (let y = -r; y < r; y++) for (let x = -r; x < r; x++) {
-    const nx = (x + 0.5) / r, ny = (y + 0.5) / r, q = nx * nx + ny * ny; if (q > 1) continue;
-    let l = -nx * 0.55 - ny * 0.65 + Math.sqrt(1 - q) * 0.55; if (tile && ((Math.floor((x + 40) / tile) + Math.floor((y + 40) / tile)) & 1)) l -= 0.22;
-    eiR(g, cx + x, cy + y, 1, 1, cols[Math.max(0, Math.min(cols.length - 1, Math.floor((l + 0.35) * cols.length / 1.25)))]);
-  }
+  const c = eiLayer('ball' + r + cols[0] + (tile || 0), r * 2, r * 2, 0, lg => {
+    for (let y = -r; y < r; y++) for (let x = -r; x < r; x++) {
+      const nx = (x + 0.5) / r, ny = (y + 0.5) / r, q = nx * nx + ny * ny; if (q > 1) continue;
+      let l = -nx * 0.55 - ny * 0.65 + Math.sqrt(1 - q) * 0.55; if (tile && ((Math.floor((x + 40) / tile) + Math.floor((y + 40) / tile)) & 1)) l -= 0.22;
+      eiR(lg, r + x, r + y, 1, 1, cols[Math.max(0, Math.min(cols.length - 1, Math.floor((l + 0.35) * cols.length / 1.25)))]);
+    }
+  });
+  g.drawImage(c, Math.round(cx) - r, Math.round(cy) - r);
 }
 function eiSprite(g, rows, x, y, map, k) {                      // піксельний малюнок рядками; k — розмір пікселя
   k = k || 1; x = Math.round(x); y = Math.round(y);
@@ -270,7 +286,7 @@ const EI_DRAW = [
   (g, W, H, t) => {
     const e = Math.min(1, t / 1.8), ez = e * e * (3 - 2 * e), lift = Math.round((1 - ez) * H), top = Math.round(H * 0.1), bot = Math.round(H * 0.9);
     g.globalCompositeOperation = 'lighter';
-    for (let i = 0; i < 9; i++) { const an = Math.PI / 2 + (i - 4) * 0.22 + Math.sin(t * 0.4 + i) * 0.03, L = W * 1.4, ox = W / 2, oy = -H * 0.1; g.globalAlpha = i % 2 ? 0.08 : 0.12; eiPoly(g, [[ox, oy], [ox + Math.cos(an - 0.05) * L, oy + Math.sin(an - 0.05) * L], [ox + Math.cos(an + 0.05) * L, oy + Math.sin(an + 0.05) * L]], '#ffe9a0'); }
+    for (let i = 0; i < 9; i++) { const an = Math.PI / 2 + (i - 4) * 0.22 + Math.sin(t * 0.4 + i) * 0.03, L = W * 1.4, ox = W / 2, oy = -H * 0.1; g.globalAlpha = i % 2 ? 0.08 : 0.12; eiPolyFill(g, [[ox, oy], [ox + Math.cos(an - 0.05) * L, oy + Math.sin(an - 0.05) * L], [ox + Math.cos(an + 0.05) * L, oy + Math.sin(an + 0.05) * L]], '#ffe9a0'); }
     g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
     eiColumn(g, W * 0.2, 11, top + lift, bot + lift, 1); eiColumn(g, W * 0.8, 11, top + lift, bot + lift, 1);
     eiColumn(g, W * 0.07, 18, top + lift, bot + lift, 0); eiColumn(g, W * 0.93, 18, top + lift, bot + lift, 0);
@@ -280,7 +296,10 @@ const EI_DRAW = [
     const ty = top - Math.round((1 - ez) * H * 0.3);                                                          // фриз згори: меандр і зубчики
     eiR(g, 0, ty - 10, W, 10, '#f2ead6'); eiR(g, 0, ty - 10, W, 1, '#fffaf0'); eiKey(g, ty - 9, W, t * 12, '#c19a2e', '#ecd078'); eiR(g, 0, ty - 1, W, 1, '#b8ab8c');
     for (let x = 0; x < W; x += 4) { eiR(g, x, ty, 2, 2, '#e9e1d0'); eiR(g, x + 1, ty + 1, 1, 1, '#b8ab8c'); }
-    eiOlive(g, W * 0.12, ty, 1, Math.min(0.6, t / 2.2), t * 1.3); eiOlive(g, W * 0.88, ty, -1, Math.min(0.6, t / 2.2), t * 1.3 + 2);
+    [[0.12, 1, 0], [0.88, -1, 2]].forEach(([ax, dx, ph], j) => {                       // гілки гойдаються дуже повільно: кожну перемальовуємо 15 разів на секунду і не в одному кадрі
+      const st = Math.floor(t * 15 + j * 0.5), tq = (st - j * 0.5) / 15;
+      g.drawImage(eiLayer('olive' + j, W, H, st, lg => eiOlive(lg, W * ax, 8, dx, Math.min(0.6, tq / 2.2), tq * 1.3 + ph)), 0, ty - 8);
+    });
     for (let k = 0; k < 2; k++) { const f = ((t * 0.09 + k * 0.5) % 1.2) - 0.1, x = f * W * (k ? -1 : 1) + (k ? W : 0), y = H * (0.3 + k * 0.08) + Math.sin(t * 2 + k) * 4; eiSprite(g, EI_DOVE[Math.floor(t * 5 + k) % 2], x, y, { w: '#fffaf0', g: '#cfc8d8' }); }
     for (let i = 0; i < 26; i++) { const x = ((eiRand(i) + t * 0.02 * (1 + eiRand(i, 3))) % 1) * W, y = ((eiRand(i, 5) + t * 0.05) % 1) * H, s = Math.sin(t * 2 + i); if (s < 0.1) continue; eiR(g, x, y, 1, 1, '#ffe9a0'); if (s > 0.8) { eiR(g, x - 1, y, 3, 1, '#ffe9a0'); eiR(g, x, y - 1, 1, 3, '#ffe9a0'); eiR(g, x, y, 1, 1, '#fff'); } }
   },
@@ -305,7 +324,7 @@ const EI_DRAW = [
     for (let r = 0; r < Math.ceil((H - fy) / T); r++) for (let c = 0; c < Math.ceil(W / T); c++) { const cc = cols[(r * 3 + c * 2 + beat) % 4], on = (r + c + beat) % 2; g.globalAlpha = on ? 0.8 : 0.5; eiR(g, c * T, fy + r * T, T - 1, T - 1, cc); g.globalAlpha = on ? 0.6 : 0.25; eiR(g, c * T + 1, fy + r * T + 1, T - 3, 1, '#fff'); }
     g.globalAlpha = 1; eiR(g, 0, fy - 1, W, 1, '#1a1024');
     g.globalCompositeOperation = 'lighter';
-    [0.1, 0.5, 0.9].forEach((px, j) => { for (let i = 0; i < 3; i++) { const an = Math.PI / 2 + Math.sin(t * 1.3 + j * 2 + i) * 0.8 + (i - 1) * 0.35, ox = W * px; g.globalAlpha = 0.17; eiPoly(g, [[ox, 0], [ox + Math.cos(an - 0.09) * W, Math.sin(an - 0.09) * W], [ox + Math.cos(an + 0.09) * W, Math.sin(an + 0.09) * W]], cols[(i + j) % 4]); } });
+    [0.1, 0.5, 0.9].forEach((px, j) => { for (let i = 0; i < 3; i++) { const an = Math.PI / 2 + Math.sin(t * 1.3 + j * 2 + i) * 0.8 + (i - 1) * 0.35, ox = W * px; g.globalAlpha = 0.17; eiPolyFill(g, [[ox, 0], [ox + Math.cos(an - 0.09) * W, Math.sin(an - 0.09) * W], [ox + Math.cos(an + 0.09) * W, Math.sin(an + 0.09) * W]], cols[(i + j) % 4]); } });
     g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
     [[0.1, 0.16], [0.9, 0.2]].forEach(([bx, by], j) => {
       const r = Math.round(Math.min(W, H) * 0.09), cx = Math.round(W * bx), cy = Math.round(H * by);
@@ -344,11 +363,11 @@ const EI_DRAW = [
   // 5 Еко — ліани з листям і квітами ростуть із кутів, листя кружляє, сонячні промені, метелики
   (g, W, H, t) => {
     const leaf = ['#2f8f4a', '#5fbf5a', '#9fd45a', '#e8b44a', '#e87a4a', '#ff9fc0'];
-    g.globalCompositeOperation = 'lighter'; for (let i = 0; i < 7; i++) { g.globalAlpha = 0.11; const x = W * (0.7 + i * 0.04); eiPoly(g, [[x, -4], [x - W * 0.5 - i * 6, H], [x - W * 0.5 + 10, H]], '#fff6c8'); } g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    g.drawImage(eiLayer('ecoRays', W, H, 0, lg => { lg.globalCompositeOperation = 'lighter'; for (let i = 0; i < 7; i++) { lg.globalAlpha = 0.11; const x = W * (0.7 + i * 0.04); eiPoly(lg, [[x, -4], [x - W * 0.5 - i * 6, H], [x - W * 0.5 + 10, H]], '#fff6c8'); } lg.globalCompositeOperation = 'source-over'; lg.globalAlpha = 1; }), 0, 0);   // промені стоять на місці
     const kv = Math.min(1, t / 2.6);
     [[0, H, 1], [W, H, -1]].forEach(([x0, y0, d], vi) => {
       const N = 40, last = Math.floor(N * kv), P = i => { const t2 = i / N; return [x0 + d * (Math.sin(t2 * 6 + vi) * W * 0.06 + t2 * W * 0.3), y0 - t2 * H * 0.92]; };
-      for (let i = 1; i <= last; i++) { const [ax, ay] = P(i - 1), [bx, by] = P(i); eiLine(g, ax, ay, bx, by, '#1f5a30', 3); eiLine(g, ax, ay, bx, by, '#2f7a42', 2); }
+      g.drawImage(eiLayer('vine' + vi, W, H, last, lg => { for (let i = 1; i <= last; i++) { const [ax, ay] = P(i - 1), [bx, by] = P(i); eiLine(lg, ax, ay, bx, by, '#1f5a30', 3); eiLine(lg, ax, ay, bx, by, '#2f7a42', 2); } }), 0, 0);   // стебло міняється лише коли виростає новий відрізок
       for (let i = 3; i <= last; i += 3) { const [x, y] = P(i), sw = Math.sin(t * 1.6 + i) * 0.15; eiEll(g, x + d * 4, y, 5.2, 2.8, d * 0.5 + sw, '#1f5a30'); eiEll(g, x + d * 4, y, 4.3, 2, d * 0.5 + sw, leaf[i % 3]); eiR(g, x + d * 4 - 1, y - 1, 2, 1, '#c8f08a'); }
       if (kv > 0.85) { const [x, y] = P(last); for (let p = 0; p < 6; p++) eiDisc(g, x + Math.cos(p * 1.047 + t * 0.5) * 4.5, y + Math.sin(p * 1.047 + t * 0.5) * 4.5, 2.8, p % 2 ? '#ff9fc0' : '#ffb8d0'); eiDisc(g, x, y, 2.6, '#ffe08a'); eiR(g, x - 1, y - 1, 1, 1, '#fff'); }
     });
@@ -364,8 +383,10 @@ const EI_DRAW = [
     g.globalAlpha = 1;
     [[0.12, 0.2, 0.09, ['#5a2418', '#a84a2a', '#e8794a', '#f2b48a', '#ffe0c8'], 0], [0.9, 0.78, 0.13, ['#1a3a70', '#2f6ab0', '#5fa8e8', '#bfe0ff', '#f0f8ff'], 1], [0.82, 0.14, 0.05, ['#4a2070', '#7a3ab0', '#b46ae8', '#e6c4ff'], 0]].forEach(([px, py, pr, cs, ring], i) => {
       const r = Math.round(Math.min(W, H) * pr), x = Math.round(W * px + Math.sin(t * 0.3 + i) * 3), y = Math.round(H * py);
-      const ringPx = front => { if (!ring) return; const co = Math.cos(-0.4), si = Math.sin(-0.4); for (let yy = -r * 2; yy <= r * 2; yy++) for (let xx = -r * 2; xx <= r * 2; xx++) { const u = ((xx + 0.5) * co + (yy + 0.5) * si) / (r * 1.7), v = (-(xx + 0.5) * si + (yy + 0.5) * co) / (r * 0.45), q = u * u + v * v; if (q < 0.78 || q > 1.08 || (v > 0) !== front) continue; eiR(g, x + xx, y + yy, 1, 1, q > 0.95 ? cs[2] : cs[3]); } };
-      ringPx(false); eiBall(g, x, y, r, cs); ringPx(true);
+      g.drawImage(eiLayer('planet' + i, r * 4 + 1, r * 4 + 1, 0, lg => {               // планета готова: її малюнок не змінюється, вона лише повільно пливе
+        const ringPx = front => { if (!ring) return; const co = Math.cos(-0.4), si = Math.sin(-0.4); for (let yy = -r * 2; yy <= r * 2; yy++) for (let xx = -r * 2; xx <= r * 2; xx++) { const u = ((xx + 0.5) * co + (yy + 0.5) * si) / (r * 1.7), v = (-(xx + 0.5) * si + (yy + 0.5) * co) / (r * 0.45), q = u * u + v * v; if (q < 0.78 || q > 1.08 || (v > 0) !== front) continue; eiR(lg, r * 2 + xx, r * 2 + yy, 1, 1, q > 0.95 ? cs[2] : cs[3]); } };
+        ringPx(false); eiBall(lg, r * 2, r * 2, r, cs); ringPx(true);
+      }), x - r * 2, y - r * 2);
     });
     const f = (t * 0.12) % 1.4, rx = (f - 0.2) * W, ry = H * 0.45 - f * H * 0.4, fl = Math.floor(t * 18) % 2;
     eiSprite(g, ['..r..', '.rrr.', '.www.', '.wsw.', '.www.', 'rwwwr', 'r.o.r', '..' + (fl ? 'y' : 'o') + '..', fl ? '..y..' : '.....'], rx - 5, ry - 9, { r: '#e04a4a', w: '#fff', s: '#5fa8e8', o: '#ffb43a', y: '#fff6b0' }, 2);
@@ -374,10 +395,12 @@ const EI_DRAW = [
   // 7 Неон — сітка синтвейву, смугасте сонце, лазери й неонова рамка
   (g, W, H, t) => {
     const hy = Math.round(H * 0.6), cx = W / 2, R0 = Math.round(H * 0.33), SUN = ['#ffe36a', '#ffc04a', '#ff9a5a', '#ff6a7a', '#ff2fb0'];
-    for (let y = hy - R0; y < hy; y++) { const k = (y - (hy - R0)) / R0, gap = k > 0.45 && ((hy - y) % 6) < 1 + Math.floor((k - 0.45) * 6); if (gap) continue; const hw = Math.round(Math.sqrt(Math.max(0, R0 * R0 - (hy - y) * (hy - y)))); eiR(g, cx - hw, y, hw * 2, 1, SUN[Math.min(4, Math.floor(k * 5))]); }
-    eiR(g, 0, hy, W, H - hy, '#12002a');
-    const glowLine = (x0, y0, x1, y1, c) => { g.globalAlpha = 0.3; eiLine(g, x0, y0, x1, y1, c, 3); g.globalAlpha = 1; eiLine(g, x0, y0, x1, y1, c, 1); };
-    for (let i = -14; i <= 14; i++) glowLine(cx + i * 2, hy, cx + i * W * 0.14, H, '#ff2fb0');
+    g.drawImage(eiLayer('neon', W, H, 0, g => {                                       // сонце й перспектива сітки стоять на місці
+      for (let y = hy - R0; y < hy; y++) { const k = (y - (hy - R0)) / R0, gap = k > 0.45 && ((hy - y) % 6) < 1 + Math.floor((k - 0.45) * 6); if (gap) continue; const hw = Math.round(Math.sqrt(Math.max(0, R0 * R0 - (hy - y) * (hy - y)))); eiR(g, cx - hw, y, hw * 2, 1, SUN[Math.min(4, Math.floor(k * 5))]); }
+      eiR(g, 0, hy, W, H - hy, '#12002a');
+      const glowLine = (x0, y0, x1, y1, c) => { g.globalAlpha = 0.3; eiLine(g, x0, y0, x1, y1, c, 3); g.globalAlpha = 1; eiLine(g, x0, y0, x1, y1, c, 1); };
+      for (let i = -14; i <= 14; i++) glowLine(cx + i * 2, hy, cx + i * W * 0.14, H, '#ff2fb0');
+    }), 0, 0);
     for (let i = 0; i < 9; i++) { const f = ((i + t * 1.2) % 9) / 9, y = Math.round(hy + f * f * (H - hy)); g.globalAlpha = 0.3; eiR(g, 0, y - 1, W, 3, '#ff2fb0'); g.globalAlpha = 1; eiR(g, 0, y, W, 1, '#ff2fb0'); }
     eiR(g, 0, hy, W, 1, '#ff8ad8');
     [['#2ff5ff', 0], ['#ff2fb0', W]].forEach(([c, x0], j) => { for (let i = 0; i < 3; i++) { const an = (j ? Math.PI : 0) + (j ? -1 : 1) * (0.2 + 0.2 * i + Math.sin(t * 1.5 + i + j) * 0.12); g.globalAlpha = 0.45; eiLine(g, x0, H * 0.05, x0 + Math.cos(an) * W, H * 0.05 + Math.sin(an) * W, c, 1); } });
@@ -393,11 +416,19 @@ function eiLoop() {
   try { (EI_DRAW[i] || EI_DRAW[0])(g, cv.width, cv.height, t); } catch (e) { /* заставка не має ламати гру */ }
   eiRaf = requestAnimationFrame(eiLoop);
 }
+// Заготовки заставки — ще під виром: перший її кадр збігається зі спалахом, тож ривка там не має бути
+function eiWarm() {
+  const i = curEpoch(), cv = ui.eiFx, g = cv.getContext('2d');
+  cv._ep = i; cv._w = window.innerWidth; cv._h = window.innerHeight; cv.width = 240; cv.height = Math.max(120, Math.round(240 * window.innerHeight / Math.max(1, window.innerWidth)));
+  eiCrisp(g); g.imageSmoothingEnabled = false; g.lineWidth = 1;
+  try { (EI_DRAW[i] || EI_DRAW[0])(g, cv.width, cv.height, 3); } catch (e) { /* заставка не має ламати гру */ }
+  drawEpochEmblem(ui.eiEmblem.getContext('2d', { willReadFrequently: true }), i); ui.eiEmblem._ep = i;
+}
 function finishEpochIntro() {
   epochIntro.timers.forEach(clearTimeout); epochIntro.timers = [];
   if (eiRaf) { cancelAnimationFrame(eiRaf); eiRaf = 0; }
-  ui.epochIntro.hidden = true; ui.epochIntro.classList.remove('out');
-  epochIntro.active = false;
+  ui.epochIntro.hidden = true; ui.epochIntro.classList.remove('out', 'in');
+  epochIntro.active = false; eiLayers.clear();
   const cb = epochIntro.done; epochIntro.done = null;
   if (cb) cb();
   if (state.epoch > 0) setTimeout(() => showToast(t('routeToast', fmt(shardThreshold())), 'big'), 900);       // нагадування, що робити далі
@@ -410,9 +441,9 @@ function playEpochIntro(epochNo, done) {
   const i = curEpoch(), ep = EPOCHS[i], box = ui.epochIntro;
   box.dataset.ep = i; epochIntro.idx = i; eiT0 = performance.now(); if (eiRaf) cancelAnimationFrame(eiRaf); eiLoop();      // перший кадр одразу: інакше на мить видно полотно попередньої заставки
   box.style.setProperty('--ei1', PALETTE[ep.sky[0]]); box.style.setProperty('--ei2', PALETTE[ep.sky[1]]); box.style.setProperty('--ei3', PALETTE[ep.sky[2]]);
-  drawEpochEmblem(ui.eiEmblem.getContext('2d'), i);
+  if (ui.eiEmblem._ep !== i) drawEpochEmblem(ui.eiEmblem.getContext('2d', { willReadFrequently: true }), i);
+  ui.eiEmblem._ep = undefined;
   ui.eiNum.textContent = t('epochLabel', EPOCH_ROMAN[i]);
-  ui.eiTitle.textContent = '';
   ui.eiSub.textContent = t('epochSub_' + i);
   ui.eiSparks.innerHTML = '';
   for (let k = 0; k < 30; k++) {                       // іскорки, що злітають угору
@@ -424,10 +455,13 @@ function playEpochIntro(epochNo, done) {
     sp.style.animationDelay = (Math.random() * 4) + 's';
     ui.eiSparks.appendChild(sp);
   }
-  box.hidden = false; box.classList.remove('out');
+  box.hidden = false; box.classList.remove('out', 'in');
   if (!warpSoundFresh()) playSfx('levelup');           // після подорожі звучить її прибуття, власна фанфара заставки зайва
   const full = t('epochTitle_' + i);
-  for (let k = 1; k <= full.length; k++) epochIntro.timers.push(setTimeout(() => { ui.eiTitle.textContent = full.slice(0, k); if (k % 3 === 0) playSfx('pip'); }, 1900 + k * 65));
+  // Весь заголовок стоїть на місці одразу, ще не надруковані літери невидимі: рядок не тремтить із кожною літерою, а на телефоні емблема не підскакує, коли текст переходить на другий рядок
+  ui.eiTitle.textContent = ''; const shown = document.createElement('span'), rest = document.createElement('span'); rest.style.visibility = 'hidden'; rest.textContent = full; ui.eiTitle.append(shown, rest);
+  for (let k = 1; k <= full.length; k++) epochIntro.timers.push(setTimeout(() => { shown.textContent = full.slice(0, k); rest.textContent = full.slice(k); if (k % 3 === 0) playSfx('pip'); }, 1900 + k * 65));
+  epochIntro.timers.push(setTimeout(() => box.classList.add('in'), 1450));    // прорізна маска (clip-path) відкрила заставку повністю: далі вона лише даремно навантажувала б кожен кадр
   epochIntro.timers.push(setTimeout(() => box.classList.add('out'), 6200));
   epochIntro.timers.push(setTimeout(finishEpochIntro, 6900));
 }
@@ -447,9 +481,44 @@ function prestigeGain() {
 }
 function startLevel() { return 1; }                                                      // «Швидкий старт» прибрано: кожна подорож починається з крамнички
 
+// Значки товарів у вирі — готові аркуші, по одному на епоху. Перший fillText нового емодзі змушує браузер шукати шрифт (вир завмирав на першому кадрі до 0,8 с), а зміна розміру шрифту коштувала щокадру.
+// Тому емодзі малює окремий потік наперед, а вир лише масштабує готове. Немає потоку — по одному значку у вільний час; значок, який ще не готовий, просто не малюється.
+// Потік віддає звичайні пікселі, а не ImageBitmap: той міг жити на відеокарті потоку, і після його завершення все намальоване далі в кадрі пропадало (Неон без світла й без відкриття епохи).
+const WI_S = 48, WI_FONT = 32, WI_COLS = 4;                             // клітинка аркуша, шрифт, стовпчиків: найбільший значок у вирі ≈ 31 px
+const warpAtlas = {}, warpAtlasAsked = {};                              // епоха → полотно-аркуш
+function warpIconsIdle(eps) {                                           // запасний шлях
+  const jobs = [], later = fn => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 200));
+  eps.forEach(e => {
+    const list = EPOCH_GOODS_ICONS[e], c = document.createElement('canvas'); c.width = WI_S * WI_COLS; c.height = WI_S * Math.ceil(list.length / WI_COLS);
+    const g = c.getContext('2d'); g.font = WI_FONT + 'px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; warpAtlas[e] = c;
+    list.forEach((ic, i) => jobs.push(() => g.fillText(ic, (i % WI_COLS + 0.5) * WI_S, (Math.floor(i / WI_COLS) + 0.5) * WI_S)));
+  });
+  const next = () => { const j = jobs.shift(); if (j) { try { j(); } catch (e) { /* без цього значка */ } } if (jobs.length) later(next); };
+  if (jobs.length) later(next);
+}
+function warpIconsPrepare(eps) {
+  const need = eps.filter(e => !warpAtlasAsked[e] && EPOCH_GOODS_ICONS[e]); need.forEach(e => { warpAtlasAsked[e] = 1; });
+  if (!need.length) return;
+  if (typeof OffscreenCanvas === 'undefined' || typeof Worker === 'undefined') { warpIconsIdle(need); return; }
+  const code = 'onmessage=e=>{const{jobs,S,F,C}=e.data;jobs.forEach(j=>{let p=null;const w=S*C,h=S*Math.ceil(j.list.length/C);try{const c=new OffscreenCanvas(w,h),g=c.getContext("2d",{willReadFrequently:true});g.font=F+"px sans-serif";g.textAlign="center";g.textBaseline="middle";j.list.forEach((ic,i)=>{const x=i%C*S,y=Math.floor(i/C)*S;g.save();g.beginPath();g.rect(x,y,S,S);g.clip();g.fillText(ic,x+S/2,y+S/2);g.restore()});const d=g.getImageData(0,0,w,h).data;for(let i=3;i<d.length;i+=4)if(d[i]){p=d.buffer;break}}catch(x){}postMessage({e:j.e,p,w,h},p?[p]:[])});postMessage({done:1})}';
+  try {
+    const url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' })), w = new Worker(url), left = new Set(need);
+    const stop = () => { w.terminate(); URL.revokeObjectURL(url); warpIconsIdle([...left]); };     // що потік не зміг, домалює основний у вільний час
+    w.onmessage = e => { const m = e.data; if (m.done) { stop(); return; } if (m.p) { const c = document.createElement('canvas'); c.width = m.w; c.height = m.h; c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(m.p), m.w, m.h), 0, 0); warpAtlas[m.e] = c; left.delete(m.e); } };
+    w.onerror = stop;
+    w.postMessage({ jobs: need.map(e => ({ e, list: EPOCH_GOODS_ICONS[e] })), S: WI_S, F: WI_FONT, C: WI_COLS });
+  } catch (e) { warpIconsIdle(need); }
+}
+// Те саме, що fillText(значок i, x, y) зі шрифтом px і вирівнюванням по центру
+function warpIcon(g, i, x, y, px) {
+  const c = warpAtlas[warp.toEpoch]; if (!c) return;
+  const s = px * WI_S / WI_FONT;
+  g.imageSmoothingEnabled = true; g.drawImage(c, (i % WI_COLS) * WI_S, Math.floor(i / WI_COLS) * WI_S, WI_S, WI_S, x - s / 2, y - s / 2, s, s); g.imageSmoothingEnabled = false;
+}
 function askTimeTravel() {
   const gain = prestigeGain();
   if (!state.story.finale || gain < 1) return;
+  warpIconsPrepare([nextEpochId(curEpoch())]);
   warpSoundAhead(nextEpochId(curEpoch()), CONFIG.WARP_SECONDS);          // поки гравець вирішує, звук уже синтезується
   askConfirm(t('warpConfirmTitle'), t('warpConfirmText', gain, eraStep((state.stats && state.stats.timeTravels) || 0)), t('warpConfirmYes'), travelWithThanks);
 }
@@ -458,12 +527,14 @@ function startWarp(view, demo) {
   const cv = ui.warpCanvas, W = 200, H = Math.max(80, Math.round(W * window.innerHeight / Math.max(1, window.innerWidth)));
   cv.width = W; cv.height = H;
   const snap = document.createElement('canvas'); snap.width = W; snap.height = H;
-  const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
+  const rv = ui.view.getBoundingClientRect(), rs = ui.scene.getBoundingClientRect(), kv = rv.width ? ui.view.width / rv.width : 1;   // лише видима частина полотна: на телефоні воно ширше за екран
+  const sg = snap.getContext('2d'); sg.imageSmoothingEnabled = false; sg.drawImage(ui.view, Math.max(0, (rs.left - rv.left) * kv), Math.max(0, (rs.top - rv.top) * kv), Math.min(ui.view.width, rs.width * kv), Math.min(ui.view.height, rs.height * kv), 0, 0, W, H);     // знімок сцени «до»: вона закручується у вир
   const target = view === undefined ? nextEpochId(curEpoch()) : (view % EPOCHS.length);
   const [fx, fy] = clockFaceFrac();
   clockFx.chime = 1; clockFx.rings.push({ t: 0 }, { t: -0.3 }); playSfx('warpChime', target);
   warp = { demo: !!demo, fromEpoch: viewEpoch() % EPOCHS.length, toEpoch: target, t: 0, applied: false, fx, fy, W, H, snap, view, dur: (view === undefined || demo) ? CONFIG.WARP_SECONDS : 3, icons: EPOCH_GOODS_ICONS[target].slice() };       // у вирі летять товари тієї епохи, куди ми потрапляємо
   warp.showK = WARP_HIT[target % WARP_HIT.length] - 0.012; warp.warm = 0; warp.iter = null;   // showK — коли знову малювати сцену: перед самим відкриттям нової епохи
+  warpIconsPrepare([target]);                                            // зазвичай уже готові; якщо ні, значки з'являться трохи пізніше, вир не чекає
   ui.timeWarp.classList.remove('out'); ui.timeWarp.hidden = false;
   playSfx('warp', warp.dur, target);
 }
@@ -495,7 +566,9 @@ function drawWarpTunnel(k) {
   for (let j = 0; j < N; j++) {                                                    // кільця тунелю в перспективі: далекі малі, близькі великі
     const z = ((j + spd) % N) / N, size = Math.pow(z, 2.4) * big + 3, ei = (j + Math.floor((j + spd) / N) * 3) % EPOCHS.length, sky = EPOCHS[ei].sky;
     g.save(); g.translate(cx, cy); g.rotate(k * 2.2 + z * 1.1 * (j % 2 ? 1 : -1)); g.globalAlpha = Math.min(1, z * 3) * Math.min(1, kt * 2) * 0.95;
-    g.lineWidth = Math.max(1, (1 + z * 7) * sc * 0.6); g.strokeStyle = neon ? NEON_RINGS[j % 4] : PALETTE[sky[j % 3]]; if (neon) { g.shadowColor = g.strokeStyle; g.shadowBlur = 6 * sc; } g.strokeRect(-size / 2, -size / 2, size, size); g.shadowBlur = 0;
+    g.lineWidth = Math.max(1, (1 + z * 7) * sc * 0.6); g.strokeStyle = neon ? NEON_RINGS[j % 4] : PALETTE[sky[j % 3]];
+    if (neon) { const a = g.globalAlpha, lw = g.lineWidth; g.globalAlpha = a * 0.14; g.lineWidth = lw + 9 * sc; g.strokeRect(-size / 2, -size / 2, size, size); g.globalAlpha = a * 0.26; g.lineWidth = lw + 4.5 * sc; g.strokeRect(-size / 2, -size / 2, size, size); g.globalAlpha = a; g.lineWidth = lw; }   // сяйво кільця: два ширші прозорі контури (розмиття shadowBlur на 20 кільцях з'їдало весь кадр)
+    g.strokeRect(-size / 2, -size / 2, size, size);
     g.lineWidth = Math.max(1, g.lineWidth * 0.35); g.strokeStyle = '#fff'; g.strokeRect(-size / 2 + g.lineWidth * 2, -size / 2 + g.lineWidth * 2, size - g.lineWidth * 4, size - g.lineWidth * 4);
     g.restore();
   }
@@ -513,10 +586,9 @@ function drawWarpTunnel(k) {
   const cs = getSpriteCanvas(capySprite());                                         // Капі летить тунелем
   const cap = Math.min(1, seg(k, 0.12, 0.3) * (1 - seg(k, 0.66, 0.76))), cw = cs.width * sc * 1.5, chh = cs.height * sc * 1.5;
   if (cap > 0) { g.save(); g.translate(cx, cy + Math.sin(k * 30) * sc * 1.5); g.rotate(Math.sin(k * 9) * 0.25 + k * 1.2); g.globalAlpha = cap; g.drawImage(cs, -cw / 2, -chh / 2, cw, chh); g.restore(); g.globalAlpha = 1; }
-  g.textAlign = 'center'; g.textBaseline = 'middle';
   warp.icons.forEach((ic, i) => {                                                  // значки нової епохи летять уздовж стін
     const f = (kt * 2.1 + i / warp.icons.length) % 1, an = i * 2.4 + k * 2, r = Math.pow(f, 1.6) * diag * 0.7;
-    g.globalAlpha = Math.sin(f * Math.PI) * kt; g.font = Math.round((5 + f * 20) * sc) + 'px sans-serif'; g.fillText(ic, cx + Math.cos(an) * r, cy + Math.sin(an) * r * 0.75);
+    g.globalAlpha = Math.sin(f * Math.PI) * kt; warpIcon(g, i, cx + Math.cos(an) * r, cy + Math.sin(an) * r * 0.75, Math.round((5 + f * 20) * sc));
   });
   g.globalAlpha = 1;
   if (kl > 0) { const gr = g.createRadialGradient(cx, cy, 0, cx, cy, ez(kl) * diag * 0.8 + 1); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.6, 'rgba(255,224,138,.85)'); gr.addColorStop(1, 'rgba(255,224,138,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }   // світло в кінці тунелю

@@ -281,7 +281,7 @@ function updateEvents(dt) {
   if (sig !== uiCache.eventSig) { uiCache.eventSig = sig; changed = true; }
   if (changed) recalcIncome();
   if (!theme.blackFriday && now >= state.events.nextSale) startSale(now);
-  const quiet = !trouble && !ghostHunt && !dialog.active && !epochIntro.active && !build && ui.modal.hidden;
+  const quiet = !warp && !trouble && !ghostHunt && !dialog.active && !epochIntro.active && !build && ui.modal.hidden;
   if (quiet && state.story.done >= 2) {                // раз на кілька хвилин вилітають привиди (Хелловін) або герої поточної епохи
     if (!nextGhostAt) nextGhostAt = now + rand(25, 50) * 1000;
     else if (now >= nextGhostAt) startGhostHunt();
