@@ -17,12 +17,13 @@
 | `040_boot_script.html` | 79 | JS: екран завантаження (окремий маленький скрипт до головного) |  |
 | `050_body_markup.html` | 18 | HTML: розмітка гри (панель, меню, вікна) |  |
 | `100_a_core_config.js` | 40 | ГОЛОВНИЙ СКРИПТ починається тут: «режим бога», CONFIG, вкладки, відділи, рівні, товари епох, ноти (дані) | GOD_HASH, sha256hex, GOD_OWNER, GOD_PAUSED, GOD_ON, errLog, logErr, CONFIG |
+| `100_b3_chibi_models.js` | 10 | — | CHIBI_ARM_Y, CHIBI_MODELS |
 | `100_b_music_epochs_customers.js` | 44 | музика (MUSIC, EPOCH_MUSIC), майстерня часу, EPOCHS, досягнення, SPRITES, PALETTE, покупці CHIBI | arpBar, DRUMS_CALM, DRUMS_BOUNCE, MUSIC, DRUMS_CHIP, DRUMS_CHILL, MUSIC_STYLES, EPOCH_MUSIC |
 | `100_c_team_costumes_capy.js` | 45 | костюми героїв по епохах (TEAM_COSTUMES, composeTeamCostume, скіни героїв), спрайти Капі | CHIBI_LOWER, composeChibi, TEAM_GLASSES, teamDeco, TEAM_COSTUMES, teamEyes, composeTeamCostume, TEAM_SKIN_BODY |
 | `100_d_capy_coins_epoch_state.js` | 44 | Капі (нові/старі рядки), монети й кристали епох, curEpoch/nextEpochId/viewEpoch | makeCapyNewRows, makeCapyOldDetail, EPOCH_COIN_ROWS, EPOCH_COIN_COLORS, SHARD_CH, GEM_CH, GEM_ROWS, gemUrls |
 | `100_e2_skin_anim.js` | 9 | — | SKIN_NF, skinAF, sk_sw, sk_set, sk_tip, sk_on, SK_GOLD, SKIN_ANIM |
 | `100_e3_capy_skin_anim.js` | 3 | — | capyFurCols, capyFurPal, capyOvCache, capyOverlayCanvas, capyOverlay |
-| `100_e_team_new.js` | 24 | — | TEAM_SPECIES, TEAM_TINT, tintCanvas, TEAM_PAD, teamBaseCache, teamBaseCanvas, outRGB, outMix |
+| `100_e_team_new.js` | 25 | — | TEAM_SPECIES, TEAM_TINT, tintCanvas, TEAM_PAD, teamBaseCache, teamBaseCanvas, outRGB, outMix |
 | `100_f_guests_new.js` | 7 | — | GUEST_LOOK, guestRobotHead, guestSprite |
 | `110_a1_texts_uk.js` | 13 | ТЕКСТИ uk (початок translations): назви, рівні, відділи, розширення, офлайн, команда | translations |
 | `110_a2_texts_uk.js` | 34 | ТЕКСТИ uk: сюжет, події, свята, міні-ігри |  |
@@ -50,10 +51,10 @@
 | `170_ui.js` | 32 | інтерфейс: вкладки, картки відділів і команди | detectLanguage, setText, outlineCanvas, tabGlyph, tabIconCanvas, buildTabs, TABS_PRIMARY, setSheet |
 | `175_buy.js` | 1 | купівля | buyDept, expandShop |
 | `178_offline.js` | 2 | дохід, поки гравця не було | addOfflineEarnings, refreshOfflineModal, showOfflineModal, claimOffline |
-| `180_a9_team_props.js` | 13 | — | PAW_COL, PAW_TINT, TPG, TP, TPBX, TPART, TPX, TPAW |
+| `180_a9_team_props.js` | 17 | — | PAW_COL, PAW_TINT, TPG, TP, TPBX, TPART, TPX, TPAW |
 | `180_a_anim_weather_actors.js` | 41 | анімації: погода, хмари, звірята-помічники (actorHome, syncActors, updateActors) | shopAnim, capyAnim, fx, clouds, weather, raindrops, updateWeather, rainSpotCache |
-| `180_b_actor_draw_lines.js` | 46 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, PROP_CV, drawCrispProp, ACTOR_K, actorK, evenScaleCache, evenScaled |
-| `180_c_customers_updates.js` | 45 | покупці (spawnCustomer, drawCustomer, spaceHelmet), updateAnimations, спливаючі числа | skinLineLast, skinLine, capySay, buyStar, hireOrUpgrade, CUSTOMERS_BY_LEVEL, customerTarget, passEdge |
+| `180_b_actor_draw_lines.js` | 47 | малювання помічників, ACTOR_K, репліки, скіни-репліки | pickWanderTarget, drawTeamProp, PROP_CV, drawCrispProp, ACTOR_K, actorK, evenPlanCache, evenPlan |
+| `180_c_customers_updates.js` | 46 | покупці (spawnCustomer, drawCustomer, spaceHelmet), updateAnimations, спливаючі числа | skinLineLast, skinLine, capySay, buyStar, hireOrUpgrade, CUSTOMERS_BY_LEVEL, customerTarget, passEdge |
 | `190_a_audio_music_cutscene.js` | 43 | звук і музика (Web Audio), початок кат-сцени | audio, MUSIC_PARSED, NOTE_INDEX, noteFreq, parseMusic, initAudio, unlockSilent, resumeAudio |
 | `190_b_cutscene_draw.js` | 40 | кат-сцена: малювання | cutFace, cutMark, cutEmo, cutTextPx, cutPopText, cutSpark, cutBubble, cutSayState |
 | `190_c_cutscene_panel_tour_sfx.js` | 42 | кат-сцена: панель; екскурсія по меню; playSfx | cutCache, cutW2S, cutDrawFrame, cutPanel, cutPix, CUT_ARROW, CUT_UP, cutArrowR |

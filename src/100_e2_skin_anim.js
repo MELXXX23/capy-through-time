@@ -13,7 +13,7 @@ const sk_on = (f, per, ph, len) => ((f + ph) % per) < len;                      
 const SK_GOLD = ['#ffe08a', '#f2b84b', '#ffe27a', '#f2c230', '#ffe05a', '#f0b830', '#c9961c', '#e8b030', '#d9a53a'];
 const SKIN_ANIM = {
   party: {
-    hat: (h, f) => { sk_tip(h, 0, sk_sw(f), 'y'); if (sk_on(f, 4, 0, 2)) h[2] = h[2].replace(/T/g, 'y'); return h; },
+    hat: (h, f) => { sk_tip(h, 0, sk_sw(f), 'y'); if (sk_on(f, 4, 0, 2)) for (let i = 3; i < h.length; i++) h[i] = h[i].replace(/T/g, 'y'); return h; },
     paint: (a, f) => { const cl = ['#ffe05a', '#5ad2f0', '#ffffff', '#ff9fd0']; [[5, 21], [8, 22], [11, 21], [6, 24], [10, 23], [13, 22], [7, 25], [12, 25]].forEach((p, i) => a.px(p[0], p[1], cl[(i + (f >> 1)) % 4], 1)); },
     glints: [[8, 20, 2, '#fff7b0'], [13, 24, 7, '#ffffff']]
   },
@@ -27,7 +27,7 @@ const SKIN_ANIM = {
     glints: [[7, 21, 1, '#bfe6ff'], [10, 23, 6, '#ffffff'], [6, 20, 4, '#ff9a9a']], shine: ['#d23a3a']
   },
   wizard: {
-    hat: (h, f) => { if (sk_on(f, 10, 3, 2)) h[0] = '.......ww.......'; if (sk_on(f, 10, 6, 2)) sk_set(h, 2, 7, 'w'); return h; },
+    hat: (h, f) => { if (sk_on(f, 10, 3, 2)) h[0] = '.......ww.......'; if (sk_on(f, 10, 6, 2)) sk_set(h, 3, 8, 'w'); if (sk_on(f, 10, 1, 2)) sk_set(h, 5, 6, 'w'); return h; },
     paint: (a, f) => { [[6, 21], [11, 22], [8, 24], [13, 24], [5, 23]].forEach((p, i) => { const k = (f + i * 2) % SKIN_NF; a.px(p[0], p[1], k < 2 ? '#ffffff' : k > 6 ? '#c9a020' : '#ffe05a', 1); }); },
     shine: SK_GOLD, glints: [[11, 22, 1, '#fff7b0'], [6, 21, 6, '#ffffff']]
   },
@@ -36,7 +36,7 @@ const SKIN_ANIM = {
     shine: SK_GOLD, glints: [[8, 23, 3, '#fff7b0'], [9, 25, 8, '#ffffff']]
   },
   santa: {
-    hat: (h, f) => { const s = sk_sw(f); sk_tip(h, 0, s, 'w'); if (s) sk_set(h, 1, 7 + s * 2, '.'); return h; },
+    hat: (h, f) => { if (sk_sw(f) > 0) { h[1] = '......rrrrrr....'; h[2] = '.....rrrrrrww...'; h[3] = '.....rrrrrrww...'; } return h; },   // помпон гойдається
     shine: ['#f0c030'], glints: [[5, 22, 1, '#d8f0ff'], [13, 24, 6, '#ffffff']]
   },
   witch: {

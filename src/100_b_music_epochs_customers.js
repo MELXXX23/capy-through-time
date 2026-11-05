@@ -344,7 +344,7 @@ const SPRITES = {
   // Капі 28×24 (дивиться вправо; X — око, при кліпанні стає шерстю). Дівчина: квіточка, рожева сукня й бантик
 
 };
-// Покупці у стилі «чібі»: велика голова, тіло-ґудзик, дві ніжки, м'який контур. Малюються кодом один раз на старті (18×23, ноги внизу)
+// Покупці у стилі «чібі»: кольори (PAL) і сумки; самі моделі — 100_b3_chibi_models.js. Малюються кодом один раз на старті (18×23, ноги внизу)
 const CHIBI = (function () {
   const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return { c, g: c.getContext('2d'), w, h }; };
   const rect = (S, x, y, w, h, col) => { S.g.fillStyle = col; S.g.fillRect(x, y, w, h); };
@@ -387,67 +387,7 @@ const CHIBI = (function () {
     frog:     { b: '#6dbb5a', s: '#4f9a43', h: '#8ad278', o: '#2a5a24' },
     foxcub:   { b: '#e8742c', s: '#c85a1c', h: '#f4985a', o: '#5e2a10' }
   };
-  const eye = (S, x, y) => { rect(S, x, y, 2, 2, E); px(S, x, y, WH); };
-  function make(a, frame) {
-    const p = PAL[a], S = mk(16, 21), hy = 11, step = frame ? 1 : 0, DK = '#2a1d1a';
-    let fc = p.s, belly = p.h;                                    // колір ніжок і животика
-    // --- що за головою / тілом (вуха, роги, хвіст)
-    switch (a) {
-      case 'bunny': ell(S, 5.5, 4, 1.8, 4.5, p.b, p.s); ell(S, 10.5, 4, 1.8, 4.5, p.b, p.s); rect(S, 5, 2, 1, 5, PK); rect(S, 10, 2, 1, 5, PK); break;
-      case 'mouse': ell(S, 3.5, 7, 2.6, 2.6, p.b, p.s); ell(S, 12.5, 7, 2.6, 2.6, p.b, p.s); ell(S, 3.5, 7, 1.4, 1.4, PK); ell(S, 12.5, 7, 1.4, 1.4, PK); break;
-      case 'dog': ell(S, 3, 10, 2, 3.4, '#6f4526'); ell(S, 13, 10, 2, 3.4, '#6f4526'); belly = '#e8c08a'; break;
-      case 'duck': px(S, 7, 4, p.b); px(S, 8, 3, p.b); px(S, 9, 4, p.b); fc = '#e8863c'; break;
-      case 'cat': rect(S, 3, 4, 3, 3, p.b); px(S, 3, 3, p.b); px(S, 4, 5, PK); rect(S, 10, 4, 3, 3, p.b); px(S, 12, 3, p.b); px(S, 11, 5, PK); rect(S, 13, 14, 3, 5, p.b); px(S, 15, 13, p.b); belly = '#fff4dc'; break;
-      case 'pig': ell(S, 3.5, 6, 2, 2, p.b, p.s); ell(S, 12.5, 6, 2, 2, p.b, p.s); px(S, 3, 6, PK); px(S, 12, 6, PK); fc = '#d98aa0'; break;
-      case 'sheep': ell(S, 2.5, 9, 2, 1.6, '#4a3e38'); ell(S, 13.5, 9, 2, 1.6, '#4a3e38'); fc = '#4a3e38'; break;
-      case 'cow': ell(S, 2.5, 8, 2.2, 1.4, '#fff4dc', p.s); ell(S, 13.5, 8, 2.2, 1.4, '#fff4dc', p.s); rect(S, 4, 4, 2, 2, '#e8d8a8'); rect(S, 10, 4, 2, 2, '#e8d8a8'); fc = '#4a3a34'; break;
-      case 'squirrel': ell(S, 13.5, 14, 2.6, 5, p.b, p.s); ell(S, 13.5, 12, 1.4, 3, p.h); rect(S, 4, 4, 2, 3, p.b); px(S, 4, 3, DK); rect(S, 10, 4, 2, 3, p.b); px(S, 11, 3, DK); belly = '#fff0d0'; break;
-      case 'deer': rect(S, 4, 2, 1, 4, '#7a5030'); rect(S, 3, 2, 1, 1, '#7a5030'); px(S, 5, 3, '#7a5030'); rect(S, 11, 2, 1, 4, '#7a5030'); rect(S, 12, 2, 1, 1, '#7a5030'); px(S, 10, 3, '#7a5030'); ell(S, 2.5, 8, 2, 1.4, p.b, p.s); ell(S, 13.5, 8, 2, 1.4, p.b, p.s); belly = '#fff0d0'; break;
-      case 'raccoon': ell(S, 3.5, 6.5, 2.4, 2.4, p.b, p.s); ell(S, 12.5, 6.5, 2.4, 2.4, p.b, p.s); ell(S, 3.5, 6.5, 1.2, 1.2, '#3a3a40'); ell(S, 12.5, 6.5, 1.2, 1.2, '#3a3a40'); rect(S, 13, 15, 3, 4, p.b); rect(S, 13, 16, 3, 1, '#3a3a40'); rect(S, 13, 18, 3, 1, '#3a3a40'); belly = '#cfcfd2'; break;
-      case 'hedgehog': for (let i = 0; i < 6; i++) { px(S, 3 + i * 2, 5 + (i % 2), '#5a4030'); px(S, 3 + i * 2, 6 + (i % 2), '#5a4030'); } px(S, 1, 9, '#5a4030'); px(S, 14, 9, '#5a4030'); px(S, 1, 12, '#5a4030'); px(S, 14, 12, '#5a4030'); belly = '#f0d8b0'; break;
-      case 'penguin': belly = '#ffffff'; fc = '#f08a2e'; ell(S, 2, 17, 1.6, 2.6, p.b); ell(S, 14, 17, 1.6, 2.6, p.b); break;
-      case 'koala': ell(S, 2.5, 7, 3, 3, p.b, p.s); ell(S, 13.5, 7, 3, 3, p.b, p.s); ell(S, 2.5, 7, 1.6, 1.6, '#f4eee6'); ell(S, 13.5, 7, 1.6, 1.6, '#f4eee6'); belly = '#e6e8ea'; break;
-      case 'tiger': ell(S, 3.5, 6.5, 2.2, 2.2, p.b, p.s); ell(S, 12.5, 6.5, 2.2, 2.2, p.b, p.s); ell(S, 3.5, 6.5, 1.1, 1.1, '#fff4dc'); ell(S, 12.5, 6.5, 1.1, 1.1, '#fff4dc'); belly = '#fff4dc'; break;
-      case 'monkey': ell(S, 1.8, 11, 2.2, 2.4, p.b, p.s); ell(S, 14.2, 11, 2.2, 2.4, p.b, p.s); ell(S, 1.8, 11, 1.1, 1.2, '#f0c898'); ell(S, 14.2, 11, 1.1, 1.2, '#f0c898'); rect(S, 13, 15, 3, 1, p.b); rect(S, 15, 13, 1, 3, p.b); belly = '#f0c898'; break;
-      case 'hamster': ell(S, 3.5, 6.5, 1.8, 1.8, p.b, p.s); ell(S, 12.5, 6.5, 1.8, 1.8, p.b, p.s); px(S, 3, 6, PK); px(S, 12, 6, PK); belly = '#fff4dc'; break;
-      case 'chick': px(S, 8, 3, p.b); px(S, 7, 4, p.b); px(S, 9, 4, p.b); px(S, 8, 4, p.b); fc = '#f08a2e'; break;
-      case 'frog': fc = '#4f9a43'; belly = '#d8f0b0'; break;
-      case 'foxcub': rect(S, 3, 3, 3, 4, p.b); px(S, 3, 2, DK); px(S, 4, 2, DK); rect(S, 10, 3, 3, 4, p.b); px(S, 11, 2, DK); px(S, 12, 2, DK); rect(S, 13, 14, 3, 5, p.b); rect(S, 14, 17, 2, 2, '#fff4dc'); belly = '#fff4dc'; break;
-    }
-    // --- ніжки й тіло
-    ell(S, 5.5, 20, 2.2, 1, fc); ell(S, 10.5, 20, 2.2, 1, fc); if (step) rect(S, 4, 19, 3, 1, fc);
-    ell(S, 8, 17, 4.6, 3.3, p.b, p.s);
-    ell(S, 8, 17.5, 2.6, 1.8, belly);
-    if (a === 'cow') { rect(S, 10, 15, 3, 2, '#3a2a24'); }
-    if (a === 'tiger') { [[4, 15], [11, 15], [4, 18], [11, 18]].forEach(q => rect(S, q[0], q[1], 1, 2, DK)); }
-    if (a === 'deer') { [[6, 15], [10, 16], [8, 18]].forEach(q => px(S, q[0], q[1], '#fff4dc')); }
-    if (a === 'hedgehog') ell(S, 8, 17.5, 2.6, 1.8, '#f0d8b0');
-    // --- голова
-    ell(S, 8, hy, 6.2, 5.2, p.b, p.s, p.h);
-    // --- обличчя
-    switch (a) {
-      case 'bunny': case 'mouse': eye(S, 4, hy - 1); eye(S, 10, hy - 1); [[7, 2], [8, 2], [3, 2], [12, 2], [4, 2], [11, 2]].forEach(q => px(S, q[0], hy + q[1], PK)); break;
-      case 'dog': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.4, 3, 2, '#e8c08a'); px(S, 7, hy + 1, E); px(S, 8, hy + 1, E); rect(S, 7, hy + 3, 2, 1, PK); break;
-      case 'duck': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.4, 3, 1.5, '#e8863c'); rect(S, 5, hy + 3, 6, 1, '#c96d28'); px(S, 3, hy + 2, '#ffb0a0'); px(S, 12, hy + 2, '#ffb0a0'); break;
-      case 'cat': eye(S, 4, hy - 1); eye(S, 10, hy - 1); [[7, -5], [9, -5], [8, -4]].forEach(q => px(S, q[0], hy + q[1], p.s)); rect(S, 3, hy - 4, 1, 2, p.s); rect(S, 12, hy - 4, 1, 2, p.s); px(S, 7, hy + 2, PK); px(S, 8, hy + 2, PK); px(S, 7, hy + 3, DK); px(S, 8, hy + 3, DK); rect(S, 0, hy + 1, 2, 1, '#fff4dc'); rect(S, 14, hy + 1, 2, 1, '#fff4dc'); break;
-      case 'pig': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.6, 3, 2, '#e888a0'); px(S, 7, hy + 2, '#8a4258'); px(S, 9, hy + 2, '#8a4258'); px(S, 3, hy + 2, '#ff9ab0'); px(S, 12, hy + 2, '#ff9ab0'); break;
-      case 'sheep': ell(S, 8, hy + 0.6, 4.2, 4.2, '#6a5a52'); rect(S, 5, hy - 1, 2, 2, WH); rect(S, 9, hy - 1, 2, 2, WH); px(S, 5, hy, DK); px(S, 10, hy, DK); px(S, 7, hy + 2, '#3a2e2a'); px(S, 8, hy + 2, '#3a2e2a'); ell(S, 5, 6, 1.6, 1.4, p.b); ell(S, 8, 5.4, 1.8, 1.5, p.b); ell(S, 11, 6, 1.6, 1.4, p.b); break;
-      case 'cow': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 5.5, hy - 3, 2.2, 1.6, '#3a2a24'); ell(S, 8, hy + 2.8, 3.6, 2, '#f4a8b8'); px(S, 7, hy + 2, '#a8586c'); px(S, 9, hy + 2, '#a8586c'); break;
-      case 'squirrel': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.4, 2.8, 1.8, '#fff0d0'); px(S, 7, hy + 2, DK); px(S, 8, hy + 2, DK); px(S, 3, hy + 2, '#ff9a7a'); px(S, 12, hy + 2, '#ff9a7a'); break;
-      case 'deer': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.6, 2.6, 1.8, '#e8c898'); px(S, 7, hy + 2, DK); px(S, 8, hy + 2, DK); break;
-      case 'raccoon': rect(S, 2, hy - 2, 12, 3, '#3a3a40'); rect(S, 3, hy - 1, 2, 2, WH); rect(S, 11, hy - 1, 2, 2, WH); px(S, 4, hy, DK); px(S, 11, hy, DK); ell(S, 8, hy + 2.6, 2.6, 1.8, '#d8d8dc'); rect(S, 7, hy + 1, 2, 1, DK); break;
-      case 'hedgehog': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2, 5, 3.4, '#f0d8b0'); eye(S, 4, hy - 1); eye(S, 10, hy - 1); px(S, 7, hy + 2, DK); px(S, 8, hy + 2, DK); break;
-      case 'penguin': ell(S, 8, hy + 1, 4.8, 4, '#ffffff'); eye(S, 4, hy - 1); eye(S, 10, hy - 1); rect(S, 6, hy + 2, 4, 2, '#f08a2e'); rect(S, 7, hy + 4, 2, 1, '#d4701c'); break;
-      case 'koala': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.2, 2, 1.8, '#3a3438'); break;
-      case 'tiger': eye(S, 4, hy - 1); eye(S, 10, hy - 1); rect(S, 7, hy - 5, 2, 2, DK); rect(S, 3, hy - 4, 1, 2, DK); rect(S, 12, hy - 4, 1, 2, DK); rect(S, 1, hy + 1, 2, 1, DK); rect(S, 13, hy + 1, 2, 1, DK); ell(S, 8, hy + 2.6, 3, 2, '#fff4dc'); rect(S, 7, hy + 2, 2, 1, '#e0707a'); break;
-      case 'monkey': ell(S, 8, hy + 1.4, 4.6, 3.6, '#f0c898'); eye(S, 4, hy - 1); eye(S, 10, hy - 1); px(S, 7, hy + 2, '#7a4a30'); px(S, 8, hy + 2, '#7a4a30'); rect(S, 6, hy + 4, 4, 1, '#7a4a30'); break;
-      case 'hamster': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 3.5, hy - 2, 2.4, 1.8, '#e0a860'); ell(S, 12.5, hy - 2, 2.4, 1.8, '#e0a860'); ell(S, 8, hy + 2.6, 4.6, 2, '#fff4dc'); px(S, 7, hy + 1, PK); px(S, 8, hy + 1, PK); px(S, 3, hy + 2, '#ffb0a0'); px(S, 12, hy + 2, '#ffb0a0'); break;
-      case 'chick': eye(S, 4, hy - 1); eye(S, 10, hy - 1); rect(S, 6, hy + 2, 4, 2, '#f08a2e'); px(S, 3, hy + 2, '#ffb0a0'); px(S, 12, hy + 2, '#ffb0a0'); break;
-      case 'frog': ell(S, 4.5, hy - 5, 2.4, 2.4, p.b, p.s, p.h); ell(S, 11.5, hy - 5, 2.4, 2.4, p.b, p.s, p.h); rect(S, 3, hy - 6, 3, 3, WH); rect(S, 10, hy - 6, 3, 3, WH); rect(S, 4, hy - 5, 2, 2, DK); rect(S, 11, hy - 5, 2, 2, DK); rect(S, 4, hy + 2, 8, 1, '#2a5a24'); rect(S, 3, hy + 1, 1, 1, '#2a5a24'); rect(S, 12, hy + 1, 1, 1, '#2a5a24'); px(S, 6, hy, '#2a5a24'); px(S, 9, hy, '#2a5a24'); px(S, 3, hy + 3, '#ff9ab0'); px(S, 12, hy + 3, '#ff9ab0'); break;
-      case 'foxcub': eye(S, 4, hy - 1); eye(S, 10, hy - 1); ell(S, 8, hy + 2.8, 5.4, 2.4, '#fff4dc'); ell(S, 8, hy + 2.8, 5.4, 2.4, '#fff4dc'); rect(S, 7, hy + 1, 2, 2, DK); break;
-    }
-    return outline(S, p.o);
-  }
+  const make = (a, frame) => CHIBI_MODELS.build(a, frame | 0, PAL[a], mk, outline);      // малюнки звірят — у 100_b3_chibi_models.js
   // Пакети з покупками: 3 види (багет і зелень / квіти / яблуко), різні кольори, білі ручки
   const BAGS = {};
   const BAG_COL = { p: ['#ef8fa3', '#d4537e'], h: ['#f2b84b', '#c98a1e'], g: ['#4f9a63', '#2f7a4a'], n: ['#3d5a8c', '#2d467a'], u: ['#8b6bb0', '#6a4a94'] };

@@ -31,8 +31,7 @@
 })();
 // Додаємо покупців як спрайти «тип_кадр» (готові малюнки-canvas)
 CUSTOMER_TYPES.forEach(type => {
-  SPRITES[type + '_0'] = { canvas: CHIBI.make(type, 0) };
-  SPRITES[type + '_1'] = { canvas: CHIBI.make(type, 1) };
+  [0, 1, 2].forEach(f => { SPRITES[type + '_' + f] = { get canvas() { delete this.canvas; return (this.canvas = CHIBI.make(type, f)); } }; });      // малюються при першому зверненні
 });
 // Звірята-працівники: збираємо 16×16 з верхньої половини голови + спільного тулуба, права половина — дзеркало
 const CHIBI_LOWER = ['...d1111', '...d1122', '...d1222', '...d1222', '...d1111', '....33..'];
